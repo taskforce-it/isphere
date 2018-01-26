@@ -11,11 +11,14 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ibm.as400.access.AS400Message;
+
 public class JournalEntries {
 
     private List<JournalEntry> journalEntries;
     private boolean isOverflow;
     private int numAvailableRows;
+    private List<AS400Message> messages;
 
     public JournalEntries() {
 
@@ -66,5 +69,13 @@ public class JournalEntries {
     public void clear() {
 
         journalEntries.clear();
+    }
+
+    public void setMessages(List<AS400Message> messages) {
+        this.messages = messages;
+    }
+
+    public AS400Message[] getMessages() {
+        return messages.toArray(new AS400Message[messages.size()]);
     }
 }

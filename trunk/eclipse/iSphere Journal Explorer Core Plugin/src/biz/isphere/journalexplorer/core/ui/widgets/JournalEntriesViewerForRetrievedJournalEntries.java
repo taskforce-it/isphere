@@ -20,8 +20,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 
+import com.ibm.as400.access.AS400Message;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
@@ -89,11 +92,31 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                     JournalDAO journalDAO = new JournalDAO(journaledObject);
                     JournalEntries data = journalDAO.getJournalData();
 
+                    AS400Message[] messages = data.getMessages();
+                    if (messages.length != 0) {
+                        if (isNoDataLoadedException(messages)) {
+                            throw new NoJournalEntriesLoadedException(journaledObject.getJournalLibraryName(), journaledObject.getJournalName());
+                        } else {
+                            throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
+                        }
+                    }
+
                     setInputData(data);
 
                 } catch (Exception e) {
                     dataLoadException = e;
                 }
+            }
+
+            private boolean isNoDataLoadedException(AS400Message[] messages) {
+
+                for (AS400Message as400Message : messages) {
+                    if (NoJournalEntriesLoadedException.ID.equals(as400Message.getID())) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
         };

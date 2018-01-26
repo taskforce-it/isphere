@@ -93,6 +93,7 @@ public class RJNE0200 {
      * @return parameter list of the QjoRetrieveJournalEntries API.
      */
     public ProgramParameter[] getProgramParameters(JrneToRtv aJrneToRtv) {
+
         parameterList = new ProgramParameter[6];
 
         setReceiverData(new byte[bufferSize]);
@@ -103,6 +104,15 @@ public class RJNE0200 {
         setErrorCode(ERROR_CODE);
 
         resetReader();
+
+        int size = 0;
+        for (ProgramParameter parameter : parameterList) {
+            size += parameter.getOutputDataLength();
+        }
+
+        if (size % 16 != 0) {
+            throw new IllegalArgumentException("*** Parameter list must be aligned to a 16-byte-boundary ***"); //$NON-NLS-1$
+        }
 
         return parameterList;
     }

@@ -35,7 +35,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
             QSYSObjectPathName pathName = new QSYSObjectPathName(libraryName, fileName, "FILE"); //$NON-NLS-1$
-            ObjectDescription objectDescription = new ObjectDescription(system, pathName);
+            ObjectDescription objectDescription = new ObjectDescription(system, pathName.getPath());
 
             JournaledObject journaledObject = new JournaledFile(connectionName, objectDescription, memberName);
             if (!journaledObject.isJournaled()) {

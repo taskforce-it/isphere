@@ -10,8 +10,10 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DateTimeHelper;
@@ -68,6 +70,7 @@ public class JournalDAO {
         AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
 
+        List<AS400Message> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
 
@@ -88,9 +91,13 @@ public class JournalDAO {
                     }
 
                 }
+            } else {
+                messages = tRetriever.getMessages();
             }
 
-        } while (rjne0200 != null && rjne0200.moreEntriesAvailable());
+        } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null);
+
+        journalEntries.setMessages(messages);
 
         return journalEntries;
     }

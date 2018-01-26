@@ -78,6 +78,8 @@ public class Messages extends NLS {
     public static String Error_No_record_level_operation;
     public static String Error_Object_A_B_is_not_journaled;
 
+    public static String Exception_No_entries_converted_or_received_from_journal_A_B;
+
     public static String Warning_Not_all_journal_entries_loaded;
 
     public static String ColLabel_OutputFile_Rrn;

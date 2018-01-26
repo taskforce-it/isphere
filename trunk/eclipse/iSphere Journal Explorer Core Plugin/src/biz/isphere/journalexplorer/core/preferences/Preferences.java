@@ -337,8 +337,8 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
         preferenceStore.setDefault(BUFFER_SIZE, getInitialRetrieveJournalEntriesBufferSize());
 
-        preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate()));
-        preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate()));
+        preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate().getTime()));
+        preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate().getTime()));
         preferenceStore.setDefault(RECORD_ENTRIES_ONLY, getInitialRecordsOnly());
     }
 

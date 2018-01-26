@@ -600,6 +600,7 @@ public class JrneToRtv {
      * @param value
      */
     private void addStructureData(RetrieveCriterion aRetrieveCriterion) {
+
         AS400Bin4 parm1Type = new AS400Bin4();
         AS400Bin4 parm2Type = new AS400Bin4();
         AS400Bin4 parm3Type = new AS400Bin4();
@@ -634,8 +635,7 @@ public class JrneToRtv {
     }
 
     private Calendar getTime(String aTimestamp) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
-        Date date = format.parse(aTimestamp);
+        Date date = dateFormatter.parse(aTimestamp);
         Calendar calendar = GregorianCalendar.getInstance();
         calendar.setTime(date);
         return calendar;

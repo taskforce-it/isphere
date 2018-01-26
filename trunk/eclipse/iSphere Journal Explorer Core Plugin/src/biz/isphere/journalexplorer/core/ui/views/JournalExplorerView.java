@@ -37,6 +37,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -187,7 +188,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         } catch (Throwable e) {
 
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            if (e instanceof NoJournalEntriesLoadedException) {
+                MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            } else {
+                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
 
             if (journalEntriesViewer != null) {
                 journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);
@@ -424,7 +429,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         // CTabItem tabItem = tabs.getItem(tabs.getSelectionIndex());
         // if (tabItem instanceof JournalEntriesViewerForOutputFiles) {
-        // JournalEntriesViewerForOutputFiles viewer = (JournalEntriesViewerForOutputFiles)tabItem;
+        // JournalEntriesViewerForOutputFiles viewer =
+        // (JournalEntriesViewerForOutputFiles)tabItem;
         // return viewer;
         // }
         //
