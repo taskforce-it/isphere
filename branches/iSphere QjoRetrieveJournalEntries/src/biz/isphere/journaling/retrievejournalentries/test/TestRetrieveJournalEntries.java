@@ -1,13 +1,15 @@
 package biz.isphere.journaling.retrievejournalentries.test;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
-
-import biz.isphere.journaling.retrievejournalentries.JournalEntries;
-import biz.isphere.journaling.retrievejournalentries.JrneToRtv;
-import biz.isphere.journaling.retrievejournalentries.QjoRetrieveJournalEntries;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
+
+import biz.isphere.journaling.retrievejournalentries.JrneToRtv;
+import biz.isphere.journaling.retrievejournalentries.QjoRetrieveJournalEntries;
+import biz.isphere.journaling.retrievejournalentries.RJNE0200;
 
 public class TestRetrieveJournalEntries {
 
@@ -25,9 +27,9 @@ public class TestRetrieveJournalEntries {
         try {
 
             tAS400 = new AS400("ghentw.gfd.de", "webuser", "webuser");
-            JrneToRtv tJrneToRtv = getSelectionCriteria("GH282DTL", "GH282DTL");
+            JrneToRtv tJrneToRtv = getSelectionCriteria("GH362DTL", "GH362DTL");
             QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(tAS400, tJrneToRtv);
-            JournalEntries tJournalEntries = null;
+            RJNE0200 tJournalEntries = null;
 
             int tTotal = 0;
 
@@ -41,10 +43,10 @@ public class TestRetrieveJournalEntries {
                     System.out.println("Entries:");
 
                     while (tJournalEntries.nextEntry()) {
-                        System.out.println(tJournalEntries.getEntrySpecificDataLength() + ": " + tJournalEntries.getSequenceNumber().toString()
-                            + " / " + tJournalEntries.getEntryType() + " / " + tJournalEntries.getTimestamp() + " / "
-                            + tJournalEntries.getObjectLibrary() + "/" + tJournalEntries.getObjectName() + "(" + tJournalEntries.getFileMember()
-                            + ")");
+                        System.out
+                            .println(tJournalEntries.getEntrySpecificDataLength() + ": " + tJournalEntries.getSequenceNumber().toString() + " / "
+                                + tJournalEntries.getEntryType() + " / " + tJournalEntries.getTimestamp() + " / " + tJournalEntries.getObjectLibrary()
+                                + "/" + tJournalEntries.getObjectName() + "(" + tJournalEntries.getFileMember() + ")");
                         if (tJournalEntries.isFileObject()) {
                             System.out.print("==> ");
                             Object[] tDataItems = tJournalEntries.getEntrySpecificData();
@@ -84,14 +86,31 @@ public class TestRetrieveJournalEntries {
 
         JrneToRtv tJrneToRtv = new JrneToRtv(aJournal, aLibrary);
 
-        tJrneToRtv.setFromTime("2014-05-05-06.20.03");
-        tJrneToRtv.setToTime("2014-05-05-06.20.04");
+        tJrneToRtv.setFromTime(today(-3));
+        tJrneToRtv.setToTime(today());
         tJrneToRtv.setEntTyp("*RCD");
         tJrneToRtv.setRcvRng("*CURCHAIN");
         tJrneToRtv.setNbrEnt(MAX_NUM_ENTRIES);
 
         tJrneToRtv.setFormatMinimzedData("*YES");
 
+        tJrneToRtv.setFile("SCSTWT", "GH362DTL", "*FIRST");
+        tJrneToRtv.addFile("WRKDR", "GH362DTL", "*FIRST");
+
         return tJrneToRtv;
+    }
+
+    private String today() {
+        return today(0);
+    }
+
+    private String today(int minutes) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR, minutes);
+
+        return formatter.format(calendar.getTime());
     }
 }

@@ -10,20 +10,23 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
-import biz.isphere.journaling.retrievejournalentries.internal.AS400StringUtils;
-import biz.isphere.journaling.retrievejournalentries.internal.JournalCode;
-import biz.isphere.journaling.retrievejournalentries.internal.JournalEntryType;
-import biz.isphere.journaling.retrievejournalentries.internal.RetrieveCriterion;
-import biz.isphere.journaling.retrievejournalentries.internal.RetrieveKey;
 
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400Timestamp;
+
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.journaling.retrievejournalentries.internal.FileCriterion;
+import biz.isphere.journaling.retrievejournalentries.internal.JournalCode;
+import biz.isphere.journaling.retrievejournalentries.internal.JournalEntryType;
+import biz.isphere.journaling.retrievejournalentries.internal.RetrieveCriterion;
+import biz.isphere.journaling.retrievejournalentries.internal.RetrieveKey;
 
 /**
  * Class representing 'Journal Entry to Retrieve' section of the
@@ -63,11 +66,14 @@ public class JrneToRtv {
     private boolean isDirty = true;
     SimpleDateFormat dateFormatter = null;
 
+    private List<FileCriterion> fileCriterions;
+
     public JrneToRtv(String aJournal, String aLibrary) {
         journal = aJournal;
         library = aLibrary;
         selectionCriteria = new HashMap<RetrieveKey, RetrieveCriterion>();
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+        fileCriterions = new LinkedList<FileCriterion>();
     }
 
     public String getJournal() {
@@ -154,8 +160,8 @@ public class JrneToRtv {
      */
     public void setFromEnt(String aFromSequenceNumberSpecialValue) {
         if (!FRMENT_FIRST.equals(aFromSequenceNumberSpecialValue)) {
-            throw new IllegalArgumentException(String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.",
-                RetrieveKey.FROMENT.getDescription()));
+            throw new IllegalArgumentException(
+                String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.", RetrieveKey.FROMENT.getDescription()));
         }
         String temp = padRight(aFromSequenceNumberSpecialValue, 20);
         addSelectionCriterion(RetrieveKey.FROMENT, new AS400Text(20), temp.replace(' ', '0'));
@@ -313,7 +319,7 @@ public class JrneToRtv {
     public void setJrnCde(JournalCode[] aJournalCodes) {
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < aJournalCodes.length; i++) {
-            code.append(padRight(aJournalCodes[i].getKey(), 10));
+            code.append(padRight(aJournalCodes[i].label(), 10));
             code.append(padRight(JRNCDE_ALLSLT, 10));
         }
 
@@ -373,7 +379,7 @@ public class JrneToRtv {
         RetrieveKey rtvKey = RetrieveKey.ENTTYP;
         StringBuilder entry = new StringBuilder();
         for (int i = 0; i < aJournalEntryTypes.length; i++) {
-            entry.append(padRight(aJournalEntryTypes[i].getKey(), 10));
+            entry.append(padRight(aJournalEntryTypes[i].label(), 10));
         }
         String temp = entry.toString();
         int count = aJournalEntryTypes.length;
@@ -388,6 +394,35 @@ public class JrneToRtv {
         AS400Structure temp2Structure = new AS400Structure(type);
 
         addSelectionCriterion(rtvKey, temp2Structure, temp2);
+    }
+
+    /**
+     * Set retrieval criterion 16: FileCriterion.
+     * 
+     * @param file - Specifies the name of the file that contains the member.
+     * @param library - Specifies the library where the file is stored.
+     * @param member - Specifies the name of the member, whose journal entries
+     *        are retrieved.
+     */
+    public void setFile(String file, String library, String member) {
+        FileCriterion fileCriterion = new FileCriterion(file, library, member);
+
+        fileCriterions.clear();
+        fileCriterions.add(fileCriterion);
+    }
+
+    /**
+     * Add retrieval criterion 16: FileCriterion.
+     * 
+     * @param file - Specifies the name of the file that contains the member.
+     * @param library - Specifies the library where the file is stored.
+     * @param member - Specifies the name of the member, whose journal entries
+     *        are retrieved.
+     */
+    public void addFile(String file, String library, String member) {
+        FileCriterion fileCriterion = new FileCriterion(file, library, member);
+
+        fileCriterions.add(fileCriterion);
     }
 
     /**
@@ -411,8 +446,9 @@ public class JrneToRtv {
     public void setFormatMinimzedData(String aFormatMinimizedData) {
         RetrieveKey rtvKey = RetrieveKey.FMTMINDTA;
         if (!FMTMINDTA_YES.equals(aFormatMinimizedData) && !FMTMINDTA_NO.equals(aFormatMinimizedData)) {
-            throw new IllegalArgumentException(String.format("Value for '%s' must be either '*YES' or '*NO' if String; "
-                + "or 'Boolean.TRUE' or 'Boolean.FALSE' if Boolean.", rtvKey.getDescription()));
+            throw new IllegalArgumentException(
+                String.format("Value for '%s' must be either '*YES' or '*NO' if String; " + "or 'Boolean.TRUE' or 'Boolean.FALSE' if Boolean.",
+                    rtvKey.getDescription()));
         }
 
         String temp = padRight(aFormatMinimizedData, 10);
@@ -501,6 +537,8 @@ public class JrneToRtv {
             return;
         }
 
+        addFileCriterions();
+
         structure = new ArrayList<AS400DataType>();
         structure.add(new AS400Bin4());
         // first element is the number of variable length records
@@ -512,6 +550,38 @@ public class JrneToRtv {
         }
 
         isDirty = false;
+    }
+
+    private void addFileCriterions() {
+
+        RetrieveKey rtvKey = RetrieveKey.FILE;
+
+        int arraySize = fileCriterions.size() * 3 + 1;
+        Object[] temp2 = new Object[arraySize];
+        AS400DataType type[] = new AS400DataType[fileCriterions.size() * 3 + 1];
+
+        int x = 0;
+        temp2[x] = new Integer(fileCriterions.size());
+        type[x] = new AS400Bin4();
+
+        x++;
+        for (int i = 0; i < fileCriterions.size(); i++) {
+
+            FileCriterion fileCriterion = fileCriterions.get(i);
+
+            temp2[x] = fileCriterion.getFile();
+            temp2[x + 1] = fileCriterion.getLibrary();
+            temp2[x + 2] = fileCriterion.getMember();
+
+            type[x] = new AS400Text(10);
+            type[x + 1] = new AS400Text(10);
+            type[x + 2] = new AS400Text(10);
+
+            x = x + 3;
+        }
+
+        AS400Structure temp2Structure = new AS400Structure(type);
+        addSelectionCriterion(rtvKey, temp2Structure, temp2);
     }
 
     /**
@@ -527,8 +597,8 @@ public class JrneToRtv {
         AS400Bin4 parm3Type = new AS400Bin4();
         AS400DataType parm4Type = aRetrieveCriterion.getDataType();
 
-        Integer parm1Value = new Integer(parm1Type.getByteLength() + parm2Type.getByteLength() + parm3Type.getByteLength()
-            + parm4Type.getByteLength());
+        Integer parm1Value = new Integer(
+            parm1Type.getByteLength() + parm2Type.getByteLength() + parm3Type.getByteLength() + parm4Type.getByteLength());
         Integer parm2Value = new Integer(aRetrieveCriterion.getKey().getKey());
         Integer parm3Value = new Integer(parm4Type.getByteLength());
         Object parm4Value = aRetrieveCriterion.getValue();
@@ -548,11 +618,11 @@ public class JrneToRtv {
     }
 
     private String padRight(String aFormatMinimizedData, int byteLength) {
-        return AS400StringUtils.padRight(aFormatMinimizedData, byteLength);
+        return StringHelper.getFixLength(aFormatMinimizedData, byteLength);
     }
 
     private String padLeft(String aFormatMinimizedData, int byteLength) {
-        return AS400StringUtils.padLeft(aFormatMinimizedData, byteLength);
+        return StringHelper.getFixLengthLeading(aFormatMinimizedData, byteLength);
     }
 
     private Calendar getTime(String aTimestamp) throws ParseException {

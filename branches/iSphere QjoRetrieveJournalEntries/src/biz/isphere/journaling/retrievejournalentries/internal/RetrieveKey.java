@@ -22,7 +22,7 @@ public enum RetrieveKey {
     DEPENT /*     */(13, "Dependent entries"),
     INCENT /*     */(14, "Include entries"),
     NULLINDLEN /* */(15, "Null value indicators length"),
-    FILE /*       */(16, "File"),
+    FILE /*       */(16, "FileCriterion"),
     OBJ /*        */(17, "Object"),
     OBJPATH /*    */(18, "Object Path"),
     OBJFID /*     */(19, "Object file identifier"),

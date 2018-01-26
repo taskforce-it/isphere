@@ -37,7 +37,7 @@ public class QjoRetrieveJournalEntries {
         serviceProgram = new ServiceProgramCall(aSystem);
         serviceProgram.setProgram("/QSYS.LIB/QJOURNAL.SRVPGM");
         serviceProgram.setProcedureName("QjoRetrieveJournalEntries");
-        serviceProgram.setAlignOn16Bytes(true);
+        // serviceProgram.setAlignOn16Bytes(true); // WDSC lacks that procedure
         messages = new ArrayList<AS400Message>();
     }
 
@@ -49,8 +49,8 @@ public class QjoRetrieveJournalEntries {
      * 
      * @return retrieved journal entries
      */
-    public JournalEntries execute() throws Exception {
-        JournalEntries tJournalEntries = new JournalEntries(system, jrneToRtv.getJournal(), jrneToRtv.getLibrary());
+    public RJNE0200 execute() throws Exception {
+        RJNE0200 tJournalEntries = new RJNE0200(system, jrneToRtv.getJournal(), jrneToRtv.getLibrary());
 
         if (retrieveJournalEntries(tJournalEntries.getProgramParameters(jrneToRtv))) {
             if (tJournalEntries.moreEntriesAvailable()) {

@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.journaling.retrievejournalentries.internal.AS400StringUtils;
-import biz.isphere.journaling.retrievejournalentries.internal.DynamicRecordFormat;
-import biz.isphere.journaling.retrievejournalentries.internal.DynamicRecordFormatsStore;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
@@ -20,6 +15,11 @@ import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
+
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.journaling.retrievejournalentries.internal.DynamicRecordFormat;
+import biz.isphere.journaling.retrievejournalentries.internal.DynamicRecordFormatsStore;
 
 /**
  * Class representing the receiver variable. Mainly used to decode the following
@@ -35,7 +35,7 @@ import com.ibm.as400.access.ProgramParameter;
  * 
  * @author Stanley, Thomas Raddatz
  */
-public class JournalEntries {
+public class RJNE0200 {
 
     private static final int RECEIVER_LEN = 1024 * 32; // 32 KB
     private static final String FORMAT_NAME = "RJNE0200";
@@ -60,11 +60,11 @@ public class JournalEntries {
 
     private DynamicRecordFormatsStore store;
 
-    public JournalEntries(AS400 aSystem, String aJournalName, String aJournalLibrary) {
+    public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary) {
         this(aSystem, aJournalName, aJournalLibrary, RECEIVER_LEN);
     }
 
-    public JournalEntries(AS400 aSystem, String aJournalName, String aJournalLibrary, int aBufferSize) {
+    public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary, int aBufferSize) {
         if ((aBufferSize % 16) != 0) {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
@@ -859,8 +859,8 @@ public class JournalEntries {
     public byte[] getEntrySpecificDataRaw() {
 
         int tLength = getEntrySpecificDataLength();
-        Object[] result = (Object[])getEntrySpecificDataStructureRaw(tLength)
-            .toObject(getOutputData(), entryHeaderStartPos + getDspToThsJrnEntData());
+        Object[] result = (Object[])getEntrySpecificDataStructureRaw(tLength).toObject(getOutputData(),
+            entryHeaderStartPos + getDspToThsJrnEntData());
 
         byte[] result2 = ((byte[])result[2]);
 
@@ -891,7 +891,7 @@ public class JournalEntries {
     }
 
     private void setJournal(String journal, String library) {
-        String jrnLib = AS400StringUtils.padRight(journal, 10) + AS400StringUtils.padRight(library, 10);
+        String jrnLib = StringHelper.getFixLength(journal, 10) + StringHelper.getFixLength(library, 10);
         parameterList[2] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Text(20).toBytes(jrnLib));
     }
 
@@ -900,8 +900,8 @@ public class JournalEntries {
     }
 
     private void setJrneToRtv(JrneToRtv aJrneToRtv) {
-        parameterList[4] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Structure(aJrneToRtv.getStructure()).toBytes(aJrneToRtv
-            .getData()));
+        parameterList[4] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE,
+            new AS400Structure(aJrneToRtv.getStructure()).toBytes(aJrneToRtv.getData()));
     }
 
     private void setErrorCode(int error) {
