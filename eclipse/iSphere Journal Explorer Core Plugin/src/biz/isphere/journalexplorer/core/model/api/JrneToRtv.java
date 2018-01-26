@@ -21,14 +21,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.journalexplorer.core.model.JournalCode;
+import biz.isphere.journalexplorer.core.model.JournalEntryType;
+
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
-
-import biz.isphere.base.internal.StringHelper;
-import biz.isphere.journalexplorer.core.model.JournalCode;
-import biz.isphere.journalexplorer.core.model.JournalEntryType;
 
 /**
  * Class representing 'Journal Entry to Retrieve' section of the
@@ -44,8 +44,8 @@ import biz.isphere.journalexplorer.core.model.JournalEntryType;
  * 
  * To see an example using AS400Structure for a composite type of data types:
  * http://publib.boulder.ibm.com/html/as400/java/rzahh115.htm#HDRRZAHH-COMEX
- * 
- * @author Stanley, Thomas Raddatz
+ * <p>
+ * This class has been inspired by the RJNE0100 example written by Stanley Vong.
  */
 public class JrneToRtv {
 
@@ -165,8 +165,8 @@ public class JrneToRtv {
      */
     public void setFromEnt(String aFromSequenceNumberSpecialValue) {
         if (!FRMENT_FIRST.equals(aFromSequenceNumberSpecialValue)) {
-            throw new IllegalArgumentException(
-                String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.", RetrieveKey.FROMENT.getDescription()));
+            throw new IllegalArgumentException(String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.",
+                RetrieveKey.FROMENT.getDescription()));
         }
         String temp = padRight(aFromSequenceNumberSpecialValue, 20);
         addSelectionCriterion(RetrieveKey.FROMENT, new AS400Text(20), temp.replace(' ', '0'));
@@ -453,9 +453,8 @@ public class JrneToRtv {
     public void setFormatMinimzedData(String aFormatMinimizedData) {
         RetrieveKey rtvKey = RetrieveKey.FMTMINDTA;
         if (!FMTMINDTA_YES.equals(aFormatMinimizedData) && !FMTMINDTA_NO.equals(aFormatMinimizedData)) {
-            throw new IllegalArgumentException(
-                String.format("Value for '%s' must be either '*YES' or '*NO' if String; " + "or 'Boolean.TRUE' or 'Boolean.FALSE' if Boolean.",
-                    rtvKey.getDescription()));
+            throw new IllegalArgumentException(String.format("Value for '%s' must be either '*YES' or '*NO' if String; "
+                + "or 'Boolean.TRUE' or 'Boolean.FALSE' if Boolean.", rtvKey.getDescription()));
         }
 
         String temp = padRight(aFormatMinimizedData, 10);
@@ -605,8 +604,8 @@ public class JrneToRtv {
         AS400Bin4 parm3Type = new AS400Bin4();
         AS400DataType parm4Type = aRetrieveCriterion.getDataType();
 
-        Integer parm1Value = new Integer(
-            parm1Type.getByteLength() + parm2Type.getByteLength() + parm3Type.getByteLength() + parm4Type.getByteLength());
+        Integer parm1Value = new Integer(parm1Type.getByteLength() + parm2Type.getByteLength() + parm3Type.getByteLength()
+            + parm4Type.getByteLength());
         Integer parm2Value = new Integer(aRetrieveCriterion.getKey().getKey());
         Integer parm3Value = new Integer(parm4Type.getByteLength());
         Object parm4Value = aRetrieveCriterion.getValue();
