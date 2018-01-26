@@ -11,6 +11,11 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class defines the IBM i journal entry types of journal code 'R'.
+ * <p>
+ * This class has been inspired by the RJNE0100 example written by Stanley Vong.
+ */
 public enum JournalEntryType {
     BR ("Before-image of record updated for rollback operation"),
     DL ("Record deleted in the physical file member"),

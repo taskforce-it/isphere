@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400Bin8;
@@ -26,12 +29,11 @@ import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
 
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.journalexplorer.core.preferences.Preferences;
-
 /**
  * Class, representing the QjoRetrieveJournalEntries API. Used to retrieve the
  * journal entries.
+ * <p>
+ * This class has been inspired by the RJNE0100 example written by Stanley Vong.
  * 
  * @author Thomas Raddatz
  */

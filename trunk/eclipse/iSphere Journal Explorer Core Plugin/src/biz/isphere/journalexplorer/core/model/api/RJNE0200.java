@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
@@ -24,9 +27,6 @@ import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
 
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
-
 /**
  * Class representing the receiver variable. Mainly used to decode the following
  * of format RJNE0200:
@@ -38,8 +38,8 @@ import biz.isphere.base.internal.StringHelper;
  *    b2. the entry null section
  *    b3. the entry detail section
  * </pre>
- * 
- * @author Stanley, Thomas Raddatz
+ * <p>
+ * This class has been inspired by the RJNE0100 example written by Stanley Vong.
  */
 public class RJNE0200 {
 
@@ -877,8 +877,8 @@ public class RJNE0200 {
     public byte[] getEntrySpecificDataRaw() {
 
         int tLength = getEntrySpecificDataLength();
-        Object[] result = (Object[])getEntrySpecificDataStructureRaw(tLength).toObject(getOutputData(),
-            entryHeaderStartPos + getDspToThsJrnEntData());
+        Object[] result = (Object[])getEntrySpecificDataStructureRaw(tLength)
+            .toObject(getOutputData(), entryHeaderStartPos + getDspToThsJrnEntData());
 
         byte[] result2 = ((byte[])result[2]);
 
@@ -918,8 +918,8 @@ public class RJNE0200 {
     }
 
     private void setJrneToRtv(JrneToRtv aJrneToRtv) {
-        parameterList[4] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE,
-            new AS400Structure(aJrneToRtv.getStructure()).toBytes(aJrneToRtv.getData()));
+        parameterList[4] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Structure(aJrneToRtv.getStructure()).toBytes(aJrneToRtv
+            .getData()));
     }
 
     private void setErrorCode(int error) {

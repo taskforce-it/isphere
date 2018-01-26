@@ -11,6 +11,11 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class defines the IBM i journal codes.
+ * <p>
+ * This class has been inspired by the RJNE0100 example written by Stanley Vong.
+ */
 public enum JournalCode {
     A ("System Accounting Entry"),
     B ("Integrated File System"),
