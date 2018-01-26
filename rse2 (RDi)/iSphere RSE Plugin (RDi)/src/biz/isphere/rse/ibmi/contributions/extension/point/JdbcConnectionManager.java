@@ -21,13 +21,13 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.Preferences;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400JDBCDriver;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
-
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.preferences.Preferences;
 
 public class JdbcConnectionManager implements ICommunicationsListener {
 
@@ -164,9 +164,6 @@ public class JdbcConnectionManager implements ICommunicationsListener {
         try {
 
             if (jdbcConnection.isClosed()) {
-                jdbcConnection = null;
-            } else if (!jdbcConnection.isValid(30)) {
-                jdbcConnection.close();
                 jdbcConnection = null;
             }
 
