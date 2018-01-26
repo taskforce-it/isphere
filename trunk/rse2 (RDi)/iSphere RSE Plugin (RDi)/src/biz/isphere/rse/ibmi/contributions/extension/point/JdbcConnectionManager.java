@@ -48,14 +48,13 @@ public class JdbcConnectionManager implements ICommunicationsListener {
 
         if (ce.getState() == CommunicationsEvent.AFTER_CONNECT) {
 
-            // TODO:
+            // Nothing to do here (so far).
 
         } else if (ce.getState() == CommunicationsEvent.BEFORE_DISCONNECT) {
 
             Collection<Connection> tJdbcConnections = jdbcConnections.values();
             for (Connection connection : tJdbcConnections) {
                 try {
-                    System.out.println("Closing JDBC connection: " + connection.hashCode());
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -146,7 +145,6 @@ public class JdbcConnectionManager implements ICommunicationsListener {
             jdbcConnection = as400JDBCDriver.connect(system, properties, null);
 
             addConnectionToCache(ibmiConnection, properties, jdbcConnection);
-            System.out.println("Produced JDBC connection: " + jdbcConnection.hashCode());
 
         } catch (Throwable e) {
         }
