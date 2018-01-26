@@ -15,12 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Bin4;
+import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.AS400Text;
+import com.ibm.as400.access.BinaryConverter;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
-import com.ibm.as400.access.ServiceProgramCall;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -37,7 +41,6 @@ public class QjoRetrieveJournalEntries {
     private JrneToRtv jrneToRtv;
     private int maxNumEntries;
 
-    private ServiceProgramCall serviceProgram;
     private List<AS400Message> messages;
 
     public QjoRetrieveJournalEntries(AS400 aSystem, JrneToRtv aJrneToRtv) throws Exception {
@@ -45,10 +48,6 @@ public class QjoRetrieveJournalEntries {
         jrneToRtv = aJrneToRtv;
         maxNumEntries = aJrneToRtv.getNbrEnt();
 
-        serviceProgram = new ServiceProgramCall(aSystem);
-        serviceProgram.setProgram("/QSYS.LIB/QJOURNAL.SRVPGM");
-        serviceProgram.setProcedureName("QjoRetrieveJournalEntries");
-        serviceProgram.setAlignOn16Bytes(true);
         messages = new ArrayList<AS400Message>();
     }
 
@@ -98,8 +97,12 @@ public class QjoRetrieveJournalEntries {
     /**
      * Calls the QjoRetrieveJournalEntries API and retrieves error messages if
      * the API failed working.
+     * <p>
+     * We have to go the hard way and call program 'QZRUCLSP' instead of using
+     * class ServiceProgramCall, because WDSCi does not support method
+     * setAlignOn16Bytes(). That method seems to be introduced with 6.1.
      * 
-     * @param parameters - parameters passed to the API
+     * @param serviceProgramParameters - parameters passed to the API
      * @return <code>true</code> on success, else <code>false</code>.
      * @throws PropertyVetoException
      * @throws ObjectDoesNotExistException
@@ -109,12 +112,55 @@ public class QjoRetrieveJournalEntries {
      * @throws AS400SecurityException
      * @throws Exception
      */
-    private boolean retrieveJournalEntries(ProgramParameter[] parameters) throws PropertyVetoException, AS400SecurityException,
+    private boolean retrieveJournalEntries(ProgramParameter[] serviceProgramParameters) throws PropertyVetoException, AS400SecurityException,
         ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
+
+        ProgramParameter[] programParameters = new ProgramParameter[7 + serviceProgramParameters.length];
+
+        // Parameter 1: Qualified service program name
+        programParameters[0] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Text(20).toBytes("QJOURNAL  QSYS      "));
+
+        // Parameter 2: Export name
+        programParameters[1] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Text(25).toBytes("QjoRetrieveJournalEntries"));
+
+        // Parameter 3: Return value format
+        programParameters[2] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Bin4().toBytes(0));
+
+        // Parameter 4: Parameter formats
+        byte[] parameterFormatBytes = new byte[serviceProgramParameters.length * 4];
+        for (int i = 0; i < serviceProgramParameters.length; ++i) {
+            BinaryConverter.intToByteArray(serviceProgramParameters[i].getParameterType(), parameterFormatBytes, i * 4);
+        }
+
+        programParameters[3] = new ProgramParameter(parameterFormatBytes);
+
+        // Parameter 5: Number of parameters
+        programParameters[4] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Bin4().toBytes(serviceProgramParameters.length));
+
+        // Parameter 6: Error code
+        programParameters[5] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Bin8().toBytes(0));
+
+        // Parameter 7: Return Value
+        programParameters[6] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new AS400Bin4().toBytes(0));
+
+        int totalLengthOfProgramParameters = 0;
+        for (int i = 0; i <= 6; i++) {
+            totalLengthOfProgramParameters += programParameters[i].getInputData().length;
+        }
+
+        int paddedErrorCodeLength = 8 + (16 - totalLengthOfProgramParameters % 16);
+        programParameters[5] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, new byte[paddedErrorCodeLength]);
+
+        // Append service program parameters to parameter list of QZRUCLSP.
+        for (int i = 0; i < serviceProgramParameters.length; i++) {
+            programParameters[7 + i] = serviceProgramParameters[i];
+        }
+
         messages.clear();
-        serviceProgram.setParameterList(parameters);
-        if (serviceProgram.run() != true) {
-            messages.addAll(Arrays.asList(serviceProgram.getMessageList()));
+
+        ProgramCall programCall = new ProgramCall(system, "/QSYS.LIB/QZRUCLSP.PGM", programParameters);
+        if (programCall.run() != true) {
+            messages.addAll(Arrays.asList(programCall.getMessageList()));
             return false;
         } else {
             return true;
