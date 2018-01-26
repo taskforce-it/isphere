@@ -54,7 +54,6 @@ public class JdbcConnectionManager implements ICommunicationsListener {
             Collection<Connection> tJdbcConnections = jdbcConnections.values();
             for (Connection connection : tJdbcConnections) {
                 try {
-                    System.out.println("Closing JDBC connection: " + connection.hashCode());
                     connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -145,7 +144,6 @@ public class JdbcConnectionManager implements ICommunicationsListener {
             jdbcConnection = as400JDBCDriver.connect(system, properties, null);
 
             addConnectionToCache(ISeriesConnection, properties, jdbcConnection);
-            System.out.println("Produced JDBC connection: " + jdbcConnection.hashCode());
 
         } catch (Throwable e) {
         }
