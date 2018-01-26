@@ -37,7 +37,7 @@ The available color options are:
 	</tr>
 </table>
 <p>
-The available SQL options are:
+The available <i>Limitation properties</i> are:
 <table>
 	<tr>
 		<td valign="top" width="30%">Maximum number of journal entries to retrieve</td>
@@ -47,6 +47,14 @@ The available SQL options are:
 		                 actual number of items that can be downloaded to your PC depends on the amount of memory
 		                 available. The initial default value is 1000. With RDP 8.0 on a PC with 16 GB Ram it was
 		                 possible to download 20000 items of 8kb.</td>
+	<tr>
+	</tr>
+		<td valign="top" width="30%">Buffer size for retrieving journal entries</td>
+		<td valign="top">-</td>
+		<td valign="top">Use this option to specify the size of the communication buffer between the client and the 
+		                 host when retrieving journal entries. The buffer must be large enough to hold at least
+		                 one journal entry. The value specified here is aligned to the next lower 16-byte-boundary
+		                 before it is used for calling the remote API.</td>
 	</tr>
 </table>
 <p>

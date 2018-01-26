@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,10 @@ import java.sql.SQLException;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
@@ -29,15 +29,15 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
      */
     protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
 
-    private File outputFile;
+    private OutputFile outputFile;
 
-    public AbstractTypeDAO(File outputFile) throws Exception {
+    public AbstractTypeDAO(OutputFile outputFile) throws Exception {
         super(outputFile.getConnectionName());
 
         this.outputFile = outputFile;
     }
 
-    public JournalEntries load(String whereClause, IStatusListener statusListener) throws Exception {
+    public JournalEntries load(String whereClause) throws Exception {
 
         JournalEntries journalEntries = new JournalEntries();
 
@@ -52,11 +52,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             }
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
-            if (maxNumRows >= 0) {
-                sqlStatement = sqlStatement + " FETCH FIRST " + (maxNumRows + 1) + " ROWS ONLY"; //$NON-NLS-1$ //$NON-NLS-2$
-            } else {
-                maxNumRows = Integer.MAX_VALUE;
-            }
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -65,7 +60,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             if (resultSet != null) {
 
                 JournalEntry journalEntry = null;
-                StatusEvent statusEvent = new StatusEvent(outputFile);
 
                 while (resultSet.next()) {
 
@@ -73,17 +67,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
                         handleOverflowError(journalEntries);
                     } else {
                         journalEntry = new JournalEntry(outputFile);
-                        journalEntry.setOutFileLibrary(outputFile.getOutFileLibrary());
-                        journalEntry.setOutFileName(outputFile.getOutFileName());
-
                         journalEntries.add(populateJournalEntry(resultSet, journalEntry));
-
-                        if (statusListener != null) {
-                            if (journalEntries.size() % 100 == 0) {
-                                statusEvent.setNumItems(journalEntries.size());
-                                statusListener.updateStatus(statusEvent);
-                            }
-                        }
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
@@ -128,7 +112,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         }
     }
 
-    private String getSqlCountStatement(File outputFile) {
+    private String getSqlCountStatement(OutputFile outputFile) {
 
         String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getOutFileLibrary(), outputFile.getOutFileName());
 

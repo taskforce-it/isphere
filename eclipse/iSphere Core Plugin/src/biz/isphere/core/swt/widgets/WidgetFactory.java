@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -444,6 +444,21 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces a combo field.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return combo field
+     */
+    public static Combo createDecimalCombo(Composite parent) {
+
+        Combo combo = WidgetFactory.getInstance().produceComboField(parent, SWT.NONE);
+        combo.addVerifyListener(new NumericOnlyVerifyListener(true, false));
+
+        return combo;
+    }
+
+    /**
      * Produces an upper-case combo field.
      * 
      * @param parent a composite control which will be the parent of the new
@@ -503,8 +518,9 @@ public final class WidgetFactory {
     /**
      * Produces a checkbox field with a label.
      * 
-     * @param parent a composite control which will be the parent of the new
+     * @param parent - a composite control which will be the parent of the new
      *        instance (cannot be null)
+     * @param label - label of the checkbox
      * @return checkbox field
      */
     public static Button createCheckbox(Composite parent, String label) {
@@ -629,7 +645,19 @@ public final class WidgetFactory {
      * @return radio button field
      */
     public static Button createRadioButton(Composite parent) {
-        return WidgetFactory.getInstance().produceRadioButton(parent);
+        return WidgetFactory.getInstance().produceRadioButton(parent, null);
+    }
+
+    /**
+     * Produces a radio button field.
+     * 
+     * @param parent - a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param label - label of the radio button
+     * @return radio button field
+     */
+    public static Button createRadioButton(Composite parent, String label) {
+        return WidgetFactory.getInstance().produceRadioButton(parent, label);
     }
 
     /**
@@ -810,9 +838,13 @@ public final class WidgetFactory {
         return pushButton;
     }
 
-    private Button produceRadioButton(Composite parent) {
+    private Button produceRadioButton(Composite parent, String label) {
 
         Button radioButton = new Button(parent, SWT.RADIO);
+
+        if (label != null) {
+            radioButton.setText(label);
+        }
 
         return radioButton;
     }

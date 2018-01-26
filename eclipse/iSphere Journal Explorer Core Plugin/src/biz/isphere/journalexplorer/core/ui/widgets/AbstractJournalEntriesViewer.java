@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,40 +26,21 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
-import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
-import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
-import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.MetaColumn;
-import biz.isphere.journalexplorer.core.model.MetaDataCache;
-import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.model.dao.IStatusListener;
-import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
-import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 
 /**
@@ -72,126 +52,66 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewer extends CTabItem
+    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
-    private SelectionListener selectionListener;
-    private IStatusListener statusListener;
     private Composite container;
     private TableViewer tableViewer;
-    private String connectionName;
-    private File outputFile;
-    private MetaTable outputFileMetaData;
-    private JournalDAO journalDAO;
     private JournalEntries data;
-    private Exception dataLoadException;
     private Set<ISelectionChangedListener> selectionChangedListeners;
-    private String whereClause;
+    boolean isSqlEditorVisible;
 
-    private boolean showSqlEditor;
-    private SqlEditor sqlEditor;
-
-    public JournalEntriesViewer(CTabFolder parent, File outputFile, SelectionListener selectionListener, IStatusListener statusListener) {
+    public AbstractJournalEntriesViewer(CTabFolder parent, String label) {
         super(parent, SWT.NONE);
 
-        this.outputFile = outputFile;
-        this.selectionListener = selectionListener;
-        this.statusListener = statusListener;
-        this.connectionName = outputFile.getConnectionName();
-        this.container = new Composite(parent, SWT.NONE);
-
+        setText(label);
         setSqlEditorVisibility(false);
+
+        this.container = new Composite(parent, SWT.NONE);
 
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         Preferences.getInstance().addPropertyChangeListener(this);
-
-        this.initializeComponents();
     }
 
-    private void initializeComponents() {
+    protected void initializeComponents() {
 
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        setText(connectionName + ": " + outputFile.getQualifiedName());
-        createTableViewer(container);
+        tableViewer = createTableViewer(container);
         container.layout(true);
         setControl(container);
     }
 
-    private void createTableViewer(Composite container) {
-
-        try {
-
-            AbstractTypeViewerFactory factory = null;
-            switch (getOutfileType(outputFile)) {
-            case JournalOutputType.TYPE5:
-                factory = new Type5ViewerFactory();
-                break;
-            case JournalOutputType.TYPE4:
-                factory = new Type4ViewerFactory();
-                break;
-            case JournalOutputType.TYPE3:
-                factory = new Type3ViewerFactory();
-                break;
-            case JournalOutputType.TYPE2:
-                factory = new Type2ViewerFactory();
-                break;
-            default:
-                factory = new Type1ViewerFactory();
-                break;
-            }
-
-            tableViewer = factory.createTableViewer(container);
-            tableViewer.addSelectionChangedListener(this);
-
-        } catch (Exception e) {
-            MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
+    protected Composite getContainer() {
+        return container;
     }
 
-    private int getOutfileType(File outputFile) throws Exception {
-
-        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-        metaTable.setJournalOutputFile(true);
-
-        return metaTable.getOutfileType();
+    public boolean hasSqlEditor() {
+        return false;
     }
 
-    public void openJournal() throws Exception {
+    public boolean isSqlEditorVisible() {
+        return isSqlEditorVisible;
+    }
 
-        dataLoadException = null;
-        if (isAvailable(sqlEditor)) {
-            whereClause = sqlEditor.getWhereClause().trim();
-            sqlEditor.setFocus();
-        }
+    public void setSqlEditorVisibility(boolean visible) {
+        this.isSqlEditorVisible = visible;
+    }
 
-        Runnable loadJournalDataJob = new Runnable() {
+    protected abstract TableViewer createTableViewer(Composite container);
 
-            public void run() {
+    public abstract void openJournal() throws Exception;
 
-                try {
+    protected void setInputData(JournalEntries data) {
 
-                    journalDAO = new JournalDAO(outputFile);
-                    journalDAO.setStatusListener(statusListener);
-                    data = journalDAO.getJournalData(whereClause);
-                    container.layout(true);
-                    tableViewer.setInput(null);
-                    tableViewer.setUseHashlookup(true);
-                    tableViewer.setItemCount(data.size());
-                    tableViewer.setInput(data);
-                    tableViewer.setSelection(null);
+        this.data = data;
 
-                } catch (Exception e) {
-                    dataLoadException = e;
-                }
-            }
-
-        };
-
-        BusyIndicator.showWhile(getDisplay(), loadJournalDataJob);
-
-        if (dataLoadException != null) {
-            throw dataLoadException;
-        }
+        container.layout(true);
+        tableViewer.setInput(null);
+        tableViewer.setUseHashlookup(true);
+        tableViewer.setItemCount(data.size());
+        tableViewer.setInput(data);
+        tableViewer.setSelection(null);
     }
 
     @Override
@@ -316,83 +236,6 @@ public class JournalEntriesViewer extends CTabItem implements ISelectionChangedL
             }
             refreshTable();
             return;
-        }
-    }
-
-    public boolean isSqlEditorVisible() {
-        return showSqlEditor;
-    }
-
-    public void setSqlEditorVisibility(boolean isVisible) {
-        showSqlEditor = isVisible;
-        setSqlEditorEnablement();
-    }
-
-    private void setSqlEditorEnablement() {
-
-        if (showSqlEditor) {
-            createSqlEditor();
-        } else {
-            destroySqlEditor();
-        }
-    }
-
-    private void createSqlEditor() {
-
-        if (!isAvailable(sqlEditor)) {
-            sqlEditor = new SqlEditor(container, SWT.NONE);
-            sqlEditor.setContentAssistProposals(getContentAssistProposals());
-            sqlEditor.addSelectionListener(selectionListener);
-            sqlEditor.setWhereClause(journalDAO.getWhereClause());
-            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-            gd.heightHint = 80;
-            sqlEditor.setLayoutData(gd);
-            container.layout();
-            sqlEditor.setFocus();
-        }
-    }
-
-    private boolean isAvailable(Control control) {
-
-        if (control != null && !control.isDisposed()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private ContentAssistProposal[] getContentAssistProposals() {
-
-        List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
-
-        MetaTable metaData = getMetaData();
-        for (MetaColumn column : metaData.getColumns()) {
-            proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
-        }
-
-        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
-    }
-
-    private MetaTable getMetaData() {
-
-        if (outputFileMetaData == null) {
-            try {
-                outputFileMetaData = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-            } catch (Exception e) {
-                outputFileMetaData = null;
-            }
-        }
-
-        return outputFileMetaData;
-    }
-
-    private void destroySqlEditor() {
-
-        if (sqlEditor != null) {
-            // Important, must be called to ensure the SqlEditor is removed from
-            // the list of preferences listeners.
-            sqlEditor.dispose();
-            container.layout();
         }
     }
 }

@@ -8,7 +8,7 @@
 
 package biz.isphere.journalexplorer.core.ui.model;
 
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 
 /**
  * This class creates a "Journal Entries Viewer" widget for a *TYPE3 output file
@@ -17,7 +17,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
  * that fields <i>Date</i> and <i>Time</i> have been replaced with a
  * <i>Timestamp</i> field. But that does not affect the UI.
  * 
- * @see JournalEntriesViewer
+ * @see JournalEntriesViewerForOutputFiles
  * @see AbstractTypeViewerFactory
  */
 public class Type3ViewerFactory extends Type2ViewerFactory {

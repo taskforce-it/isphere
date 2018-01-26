@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class MetaDataCache {
         }
     }
 
-    public MetaTable retrieveMetaData(File file) throws Exception {
+    public MetaTable retrieveMetaData(OutputFile file) throws Exception {
         return loadMetadata(file.getConnectionName(), file.getOutFileLibrary(), file.getOutFileName());
     }
 

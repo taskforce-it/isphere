@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,16 @@ public class Messages extends NLS {
     public static String Number_of_journal_entries_A;
     public static String Number_of_journal_entries_A_of_B;
     public static String SqlEditor_WHERE;
+    public static String DisplayJournalEntriesDialog_Title;
+    public static String DisplayJournalEntriesDialog_From_date_colon;
+    public static String DisplayJournalEntriesDialog_From_time_colon;
+    public static String DisplayJournalEntriesDialog_To_date_colon;
+    public static String DisplayJournalEntriesDialog_To_time_colon;
+    public static String DisplayJournalEntriesDialog_Time_Default;
+    public static String DisplayJournalEntriesDialog_Time_Today;
+    public static String DisplayJournalEntriesDialog_Time_Yesterday;
+    public static String DisplayJournalEntriesDialog_Time_Record_entries_only;
+    public static String DisplayJournalEntriesDialog_Fast_date_presets;
 
     public static String Error_Unknown_data_type;
     public static String Error_No_NULL_indicator_information_available;
@@ -66,6 +76,7 @@ public class Messages extends NLS {
     public static String Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B;
     public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
     public static String Error_No_record_level_operation;
+    public static String Error_Object_A_B_is_not_journaled;
 
     public static String Warning_Not_all_journal_entries_loaded;
 
@@ -129,8 +140,9 @@ public class Messages extends NLS {
     public static String Clear_Colors;
     public static String File_A_B_does_not_exist;
 
-    public static String Sql_Properties;
+    public static String Limitation_Properties;
     public static String Maximum_number_of_rows_to_fetch;
+    public static String Buffer_size;
 
     public static String ColumnHeading_ColumnName;
     public static String ColumnHeading_Description;

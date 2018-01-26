@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,23 +14,24 @@ package biz.isphere.journalexplorer.core.model;
 import java.sql.Time;
 import java.util.Date;
 
+import com.ibm.as400.access.AS400Text;
+
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
-
-import com.ibm.as400.access.AS400Text;
 
 public class JournalEntry {
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
-    private File outputFile;
+    private OutputFile outputFile;
 
     private String connectionName;
-    private String outFileName;
-    private String outFileLibrary;
     private int id;
     private int entryLength; // JOENTL
     private long sequenceNumber; // JOSEQN
@@ -46,9 +47,9 @@ public class JournalEntry {
     private String objectName; // JOOBJ
     private String objectLibrary; // JOLIB
     private String memberName; // JOMBR
-    private int countRrn; // JOCTRR
+    private long countRrn; // JOCTRR
     private String flag; // JOFLAG
-    private int commitmentCycle; // JOCCID
+    private long commitmentCycle; // JOCCID
     private String userProfile; // JOUSPF
     private String systemName; // JOSYNM
     private String journalID; // JOJID
@@ -89,11 +90,11 @@ public class JournalEntry {
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
 
-    public JournalEntry(File outputFile) {
+    public JournalEntry(OutputFile outputFile) {
         this.outputFile = outputFile;
     }
 
-    public File getOutputFile() {
+    public OutputFile getOutputFile() {
         return outputFile;
     }
 
@@ -123,7 +124,7 @@ public class JournalEntry {
     }
 
     public String getKey() {
-        return Messages.bind(Messages.Journal_RecordNum, new Object[] { connectionName, outFileLibrary, outFileName, id });
+        return Messages.bind(Messages.Journal_RecordNum, new Object[] { getConnectionName(), getOutFileLibrary(), getOutFileName(), getId() });
     }
 
     public String getQualifiedObjectName() {
@@ -139,19 +140,11 @@ public class JournalEntry {
     }
 
     public String getOutFileName() {
-        return outFileName;
-    }
-
-    public void setOutFileName(String outFileName) {
-        this.outFileName = outFileName.trim();
+        return outputFile.getOutFileName();
     }
 
     public String getOutFileLibrary() {
-        return outFileLibrary;
-    }
-
-    public void setOutFileLibrary(String outFileLibrary) {
-        this.outFileLibrary = outFileLibrary.trim();
+        return outputFile.getOutFileLibrary();
     }
 
     // //////////////////////////////////////////////////////////
@@ -302,6 +295,10 @@ public class JournalEntry {
         this.jobNumber = jobNumber;
     }
 
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = IntHelper.tryParseInt(jobNumber, -1);
+    }
+
     /**
      * Returns the 'Name of Program'.
      * <p>
@@ -417,11 +414,11 @@ public class JournalEntry {
      * 
      * @return value of field 'JOCTRR'.
      */
-    public int getCountRrn() {
+    public long getCountRrn() {
         return countRrn;
     }
 
-    public void setCountRrn(int countRrn) {
+    public void setCountRrn(long countRrn) {
         this.countRrn = countRrn;
     }
 
@@ -447,11 +444,11 @@ public class JournalEntry {
      * 
      * @return value of field 'JOCCID'.
      */
-    public int getCommitmentCycle() {
+    public long getCommitmentCycle() {
         return commitmentCycle;
     }
 
-    public void setCommitmentCycle(int commitmentCycle) {
+    public void setCommitmentCycle(long commitmentCycle) {
         this.commitmentCycle = commitmentCycle;
     }
 
@@ -595,6 +592,14 @@ public class JournalEntry {
         this.incompleteDataText = null;
     }
 
+    public void setIncompleteData(boolean incompleteData) {
+        if (incompleteData) {
+            setIncompleteData("1");
+        } else {
+            setIncompleteData("0");
+        }
+    }
+
     /**
      * Returns the 'Ignored by APY/RMVJRNCHG'.
      * <p>
@@ -656,6 +661,14 @@ public class JournalEntry {
     public void setMinimizedSpecificData(String minimizedSpecificData) {
         this.minimizedSpecificData = minimizedSpecificData.trim();
         this.minimizedSpecificDataText = null;
+    }
+
+    public void setMinimizedSpecificData(boolean minimizedSpecificData) {
+        if (minimizedSpecificData) {
+            setMinimizedSpecificData("1");
+        } else {
+            setMinimizedSpecificData("0");
+        }
     }
 
     /**
@@ -922,7 +935,7 @@ public class JournalEntry {
     }
 
     /**
-     * Returns the 'File Type'.
+     * Returns the 'OutputFile Type'.
      * <p>
      * Date type in journal output file: CHAR(1)
      * 
@@ -1019,12 +1032,16 @@ public class JournalEntry {
         return specificData;
     }
 
+    public void setStringSpecificData(byte[] specificData) {
+
+        AS400Text text = new AS400Text(specificData.length, Preferences.getInstance().getJournalEntryCcsid());
+        this.stringSpecificData = StringHelper.trimR((String)text.toObject(specificData));
+    }
+
     public void setStringSpecificData(String specificData) {
-        AS400Text text;
 
         byte[] bytes = datatypeConverterDelegate.parseHexBinary(specificData);
-        text = new AS400Text(bytes.length, 284);
-        this.stringSpecificData = (String)text.toObject(bytes);
+        setStringSpecificData(bytes);
     }
 
     public void setSpecificData(byte[] specificData) {

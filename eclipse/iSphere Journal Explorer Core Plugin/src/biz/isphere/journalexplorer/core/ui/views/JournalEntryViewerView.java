@@ -42,7 +42,7 @@ import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 /**
@@ -50,7 +50,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
  * "Journal Explorer" view.
  * 
  * @see JournalExplorerView
- * @see JournalEntriesViewer
+ * @see JournalEntriesViewerForOutputFiles
  */
 public class JournalEntryViewerView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
 

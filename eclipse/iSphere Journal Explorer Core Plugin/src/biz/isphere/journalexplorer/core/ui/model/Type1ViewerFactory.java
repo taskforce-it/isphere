@@ -11,13 +11,13 @@ package biz.isphere.journalexplorer.core.ui.model;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 
 /**
  * This class creates a "Journal Entries Viewer" widget for a *TYPE1 output file
  * of the DSPJRN command.
  * 
- * @see JournalEntriesViewer
+ * @see JournalEntriesViewerForOutputFiles
  * @see AbstractTypeViewerFactory
  */
 public class Type1ViewerFactory extends AbstractTypeViewerFactory {

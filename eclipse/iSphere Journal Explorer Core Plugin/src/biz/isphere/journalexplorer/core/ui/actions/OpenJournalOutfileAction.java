@@ -17,7 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
 
 public abstract class OpenJournalOutfileAction extends Action {
@@ -25,7 +25,7 @@ public abstract class OpenJournalOutfileAction extends Action {
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_OPEN_JOURNAL_OUTFILE;
 
     private Shell shell;
-    private File outputFile;
+    private OutputFile outputFile;
 
     public OpenJournalOutfileAction(Shell shell) {
         super(Messages.JournalExplorerView_OpenJournal);
@@ -45,7 +45,7 @@ public abstract class OpenJournalOutfileAction extends Action {
         postRunAction();
     }
 
-    public File getOutputFile() {
+    public OutputFile getOutputFile() {
         return outputFile;
     }
 
@@ -59,7 +59,7 @@ public abstract class OpenJournalOutfileAction extends Action {
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 addJournalDialog.getConnectionName())) {
-                outputFile = new File(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
+                outputFile = new OutputFile(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
             }
         }
     }

@@ -12,18 +12,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum JournalEntryType {
-    BR ("Before-image of record updated for rollback"),
-    DL ("Record deleted from physical file member"),
-    DR ("Record deleted for rollback"),
+    BR ("Before-image of record updated for rollback operation"),
+    DL ("Record deleted in the physical file member"),
+    DR ("Record deleted for rollback operation"),
     IL ("Increment record limit"),
-    PT ("Record added to physical file member"),
-    PX ("Record added directly to physical file member"),
-    UB ("Before-image of record updated in physical file member"),
-    UP ("After-image of record updated in physical file member"),
-    UR ("After-image of record updated for rollback");
+    PT ("Record added to a physical file member"),
+    PX ("Record added directly by RRN (relative record number) to a physical file member"),
+    UB ("Before-image of a record that is updated in the physical file member"),
+    UP ("After-image of a record that is updated in the physical file member"),
+    UR ("After-image of a record that is updated for rollback information");
 
     private static Map<String, JournalEntryType> values;
 
+    private String label;
     private String description;
 
     static {
@@ -38,7 +39,12 @@ public enum JournalEntryType {
     }
 
     private JournalEntryType(String description) {
+        this.label = this.name();
         this.description = description;
+    }
+
+    public String label() {
+        return label;
     }
 
     public String getDescription() {
