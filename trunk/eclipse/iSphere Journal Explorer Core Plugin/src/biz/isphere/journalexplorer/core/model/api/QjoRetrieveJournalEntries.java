@@ -34,8 +34,8 @@ import com.ibm.as400.access.ProgramParameter;
  * journal entries.
  * <p>
  * This class has been inspired by the RJNE0100 example written by Stanley Vong.
- * 
- * @author Thomas Raddatz
+ * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
+ * February 19, 2013.
  */
 public class QjoRetrieveJournalEntries {
 

@@ -46,6 +46,8 @@ import com.ibm.as400.access.AS400Text;
  * http://publib.boulder.ibm.com/html/as400/java/rzahh115.htm#HDRRZAHH-COMEX
  * <p>
  * This class has been inspired by the RJNE0100 example written by Stanley Vong.
+ * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
+ * February 19, 2013.
  */
 public class JrneToRtv {
 

@@ -40,6 +40,8 @@ import com.ibm.as400.access.ProgramParameter;
  * </pre>
  * <p>
  * This class has been inspired by the RJNE0100 example written by Stanley Vong.
+ * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
+ * February 19, 2013.
  */
 public class RJNE0200 {
 
