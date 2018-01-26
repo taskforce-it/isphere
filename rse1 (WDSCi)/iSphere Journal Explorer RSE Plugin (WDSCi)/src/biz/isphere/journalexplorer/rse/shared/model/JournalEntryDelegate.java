@@ -12,6 +12,7 @@ import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
 
@@ -28,7 +29,7 @@ public class JournalEntryDelegate {
     public static Time getTime(int time, Character timeSeparator) {
 
         AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, timeSeparator);
-        Time timeObject = as400time.parse(Integer.toString(time));
+        Time timeObject = as400time.parse(StringHelper.getFixLengthLeading(Integer.toString(time), 6));
 
         return new Time(timeObject.getTime());
     }
