@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
+
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile;
-
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
 
 public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
@@ -63,8 +63,6 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 }
             }
         }
-
-        return;
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
