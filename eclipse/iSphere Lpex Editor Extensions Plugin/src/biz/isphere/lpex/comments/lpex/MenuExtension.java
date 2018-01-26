@@ -16,9 +16,7 @@ import java.util.Set;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.rse.core.RSECorePlugin;
 
-import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.core.lpex.menu.model.UserAction;
@@ -214,14 +212,5 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         popupMenu = removeMenuItems(popupMenu, "MARK-Quelle.Start", "MARK-Quelle.End"); //$NON-NLS-1$ //$NON-NLS-2$
 
         doSetLpexViewPopup(popupMenu);
-    }
-
-    @Override
-    protected void waitForRseSubsystem() {
-        try {
-            RSECorePlugin.waitForInitCompletion();
-        } catch (InterruptedException e) {
-            MessageDialogAsync.displayError("Lpex Editor: RSE plug-in has not been correctly initialized.");
-        }
     }
 }
