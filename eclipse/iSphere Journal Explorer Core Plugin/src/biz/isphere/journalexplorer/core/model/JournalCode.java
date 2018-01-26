@@ -15,6 +15,8 @@ import java.util.Map;
  * This class defines the IBM i journal codes.
  * <p>
  * This class has been inspired by the RJNE0100 example written by Stanley Vong.
+ * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
+ * February 19, 2013.
  */
 public enum JournalCode {
     A ("System Accounting Entry"),
