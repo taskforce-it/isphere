@@ -10,8 +10,8 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.ResultSet;
 
-import biz.isphere.journalexplorer.core.model.File;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 
 public class Type2DAO extends Type1DAO {
 
@@ -43,7 +43,7 @@ public class Type2DAO extends Type1DAO {
         "      FROM %s.%s as result";
     // @formatter:on
 
-    public Type2DAO(File outputFile) throws Exception {
+    public Type2DAO(OutputFile outputFile) throws Exception {
         super(outputFile);
     }
 
@@ -57,8 +57,8 @@ public class Type2DAO extends Type1DAO {
 
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
 
-        journalEntry.setJobName(resultSet.getString("JOUSPF"));
-        journalEntry.setJobName(resultSet.getString("JOSYNM"));
+        journalEntry.setUserProfile(resultSet.getString("JOUSPF"));
+        journalEntry.setSystemName(resultSet.getString("JOSYNM"));
 
         return journalEntry;
     }

@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.views,
  org.eclipse.jface.text,
  biz.isphere.base,
+ biz.isphere.base.help,
  biz.isphere.core,
  biz.isphere.journalexplorer.rse,
  biz.isphere.journalexplorer.base

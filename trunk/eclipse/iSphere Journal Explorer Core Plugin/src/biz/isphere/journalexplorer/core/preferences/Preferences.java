@@ -1,5 +1,8 @@
 package biz.isphere.journalexplorer.core.preferences;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +14,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
@@ -59,14 +64,28 @@ public final class Preferences implements ColumnsDAO {
 
     private static final String COLOR_NULL = "[null]"; //$NON-NLS-1$
 
-    public static final String SQL = DOMAIN + "SQL."; //$NON-NLS-1$
+    public static final String LIMITATIONS = DOMAIN + "LIMITATIONS."; //$NON-NLS-1$
 
-    public static final String MAX_NUM_ROWS_TO_FETCH = SQL + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
+    public static final String MAX_NUM_ROWS_TO_FETCH = LIMITATIONS + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
+
+    public static final String BUFFER_SIZE = LIMITATIONS + "BUFFER_SIZE"; //$NON-NLS-1$
+
+    public static final String LOAD_JOURNAL_ENTRIES = DOMAIN + "LOAD_JOURNAL_ENTRIES."; //$NON-NLS-1$
+
+    public static final String STARTING_DATE = LOAD_JOURNAL_ENTRIES + "STARTING_DATE"; //$NON-NLS-1$
+
+    public static final String ENDING_DATE = LOAD_JOURNAL_ENTRIES + "ENDING_DATE"; //$NON-NLS-1$
+
+    public static final String RECORD_ENTRIES_ONLY = LOAD_JOURNAL_ENTRIES + "RECORD_ENTRIES_ONLY"; //$NON-NLS-1$
+
+    private SimpleDateFormat dateFormatter;
 
     /**
      * Private constructor to ensure the Singleton pattern.
      */
     private Preferences() {
+
+        this.dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
     }
 
     /**
@@ -131,7 +150,49 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public int getMaximumNumberOfRowsToFetch() {
-        return preferenceStore.getInt(MAX_NUM_ROWS_TO_FETCH);
+
+        int maxNumRows = preferenceStore.getInt(MAX_NUM_ROWS_TO_FETCH);
+        if (maxNumRows <= 0) {
+            maxNumRows = Integer.MAX_VALUE;
+        }
+
+        return maxNumRows;
+    }
+
+    public int getRetrieveJournalEntriesBufferSize() {
+
+        return preferenceStore.getInt(BUFFER_SIZE);
+    }
+
+    public Calendar getStartingDate() {
+
+        String date = preferenceStore.getString(STARTING_DATE);
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateFormatter.parse(date));
+            return calendar;
+        } catch (ParseException e) {
+            return getInitialStartingDate();
+        }
+    }
+
+    public Calendar getEndingDate() {
+
+        String date = preferenceStore.getString(ENDING_DATE);
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateFormatter.parse(date));
+            return calendar;
+        } catch (ParseException e) {
+            return getInitialEndingDate();
+        }
+    }
+
+    public boolean isRecordsOnly() {
+
+        return preferenceStore.getBoolean(RECORD_ENTRIES_ONLY);
     }
 
     /*
@@ -157,6 +218,29 @@ public final class Preferences implements ColumnsDAO {
 
     public void setMaximumNumberOfRowsToFetch(int maxNumRows) {
         preferenceStore.setValue(MAX_NUM_ROWS_TO_FETCH, maxNumRows);
+    }
+
+    public void setRetrieveJournalEntriesBufferSize(int bufferSize) {
+        preferenceStore.setValue(BUFFER_SIZE, bufferSize);
+    }
+
+    public void setStartingDate(Calendar calendar) {
+
+        String dateString = dateFormatter.format(calendar.getTime());
+
+        preferenceStore.setValue(STARTING_DATE, dateString);
+    }
+
+    public void setEndingDate(Calendar calendar) {
+
+        String dateString = dateFormatter.format(calendar.getTime());
+
+        preferenceStore.setValue(ENDING_DATE, dateString);
+    }
+
+    public void setRecordsOnly(boolean recordsOnly) {
+
+        preferenceStore.setValue(RECORD_ENTRIES_ONLY, recordsOnly);
     }
 
     /*
@@ -251,6 +335,11 @@ public final class Preferences implements ColumnsDAO {
         }
 
         preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
+        preferenceStore.setDefault(BUFFER_SIZE, getInitialRetrieveJournalEntriesBufferSize());
+
+        preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate()));
+        preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate()));
+        preferenceStore.setDefault(RECORD_ENTRIES_ONLY, getInitialRecordsOnly());
     }
 
     /*
@@ -341,6 +430,36 @@ public final class Preferences implements ColumnsDAO {
 
     public int getInitialMaximumNumberOfRowsToFetch() {
         return 1000;
+    }
+
+    public int getInitialRetrieveJournalEntriesBufferSize() {
+        return 128 * 1024; // 128 KB
+    }
+
+    public Calendar getInitialStartingDate() {
+        return DateTimeHelper.getStartOfDay();
+    }
+
+    public Calendar getInitialEndingDate() {
+        return DateTimeHelper.getEndOfDay();
+    }
+
+    public boolean getInitialRecordsOnly() {
+        return true;
+    }
+
+    public String[] getRetrieveJournalEntriesBufferSizeLabels() {
+
+        List<String> labels = new LinkedList<String>();
+
+        labels.add("64 " + IntHelper.KILO_BYTE); //$NON-NLS-1$
+        labels.add("256 " + IntHelper.KILO_BYTE); //$NON-NLS-1$
+        labels.add("1 " + IntHelper.MEGA_BYTE); //$NON-NLS-1$
+        labels.add("4 " + IntHelper.MEGA_BYTE); //$NON-NLS-1$
+        labels.add("8 " + IntHelper.MEGA_BYTE); //$NON-NLS-1$
+        labels.add("16 " + IntHelper.MEGA_BYTE); //$NON-NLS-1$
+
+        return labels.toArray(new String[labels.size()]);
     }
 
     private JournalEntryAppearanceAttributes createAppearanceAttributes(String columnName) {

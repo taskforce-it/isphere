@@ -32,7 +32,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 /**
@@ -100,7 +100,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
 
             if (viewPart instanceof JournalExplorerView) {
-                JournalEntriesViewer currentViewer = ((JournalExplorerView)viewPart).getCurrentViewer();
+                AbstractJournalEntriesViewer currentViewer = ((JournalExplorerView)viewPart).getCurrentViewer();
                 if (currentViewer != null) {
                     JournalEntry[] selectedItems = currentViewer.getSelectedItems();
                     selection = new StructuredSelection(new StructuredSelection(selectedItems));
@@ -193,8 +193,8 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                     int joesdLength = journalEntry.getSpecificDataLength();
                     int recordLength = metatable.getRecordLength();
                     if (joesdLength < recordLength) {
-                        messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,
-                            recordLength));
+                        messages.add(
+                            Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength, recordLength));
                     }
                 } else {
 

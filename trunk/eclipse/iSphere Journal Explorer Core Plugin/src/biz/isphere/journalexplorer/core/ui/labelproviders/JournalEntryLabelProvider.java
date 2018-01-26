@@ -27,13 +27,13 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 
 /**
  * This class is the label provider for a "Journal Entry" column.
  * 
  * @see JournalEntryColumn
- * @see JournalEntriesViewer
+ * @see JournalEntriesViewerForOutputFiles
  */
 public class JournalEntryLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
@@ -152,11 +152,11 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
         case JOMBR:
             return journal.getMemberName();
         case JOCTRR:
-            return Integer.toString(journal.getCountRrn());
+            return Long.toString(journal.getCountRrn());
         case JOFLAG:
             return journal.getFlag();
         case JOCCID:
-            return Integer.toString(journal.getCommitmentCycle());
+            return Long.toString(journal.getCommitmentCycle());
         case JOUSPF:
             return journal.getUserProfile();
         case JOSYNM:
@@ -204,12 +204,14 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
         case JOFILTYP:
             return journal.getFileTypeIndicatorText();
         case JOCMTLVL:
-            return Integer.toString(journal.getCommitmentCycle());
+            return Long.toString(journal.getCommitmentCycle());
         case JOESD:
             // For displaying purposes, replace 0x00 with blanks.
             // Otherwise, the string was truncate by JFace
             String stringSpecificData = journal.getStringSpecificData();
-            if (stringSpecificData.lastIndexOf('\0') >= 0) {
+            if (stringSpecificData == null) {
+                return "";
+            } else if (stringSpecificData.lastIndexOf('\0') >= 0) {
                 return stringSpecificData.replace('\0', ' ').substring(1, Math.min(200, stringSpecificData.length()));
             } else {
                 return stringSpecificData;

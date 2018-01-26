@@ -1,6 +1,10 @@
 
 Changelog: iSphere 3.1.5.b004
 -----------------------------
+ • Added menu option for displaying journal entries of selected files
+   or members.
+ • Added JDBC connection manager for supporting Kerberos JDBC connections.
+   (Temporary patch for an IBM defect.) 
  • Added preferences value to limit the number of journal entries 
    downloaded nto a client PC. The default value is 1000.
 

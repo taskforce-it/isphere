@@ -17,6 +17,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -38,13 +39,15 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     private JournalEntryAppearanceAttributesEditor editor;
     private JournalEntryAppearanceAttributes[] columns;
     private int maxNumRowsToFetch;
+    private int bufferSize;
 
     private Preferences preferences;
 
     private Button checkboxEnableColoring;
     private Group groupColors;
-    private Group groupSqlAttributes;
+    private Group groupLimitationProperties;
     private Text textMaxNumRowsToFetch;
+    private Combo comboBufferSize;
 
     public JournalExplorerPreferencePage() {
         super();
@@ -97,15 +100,15 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
     private void createGroupSqlAttributes(Composite container) {
 
-        groupSqlAttributes = new Group(container, SWT.NONE);
-        groupSqlAttributes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        groupSqlAttributes.setLayout(new GridLayout(2, false));
-        groupSqlAttributes.setText(Messages.Sql_Properties);
+        groupLimitationProperties = new Group(container, SWT.NONE);
+        groupLimitationProperties.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupLimitationProperties.setLayout(new GridLayout(2, false));
+        groupLimitationProperties.setText(Messages.Limitation_Properties);
 
-        Label labelMaxNumRowsToFetch = new Label(groupSqlAttributes, SWT.NONE);
+        Label labelMaxNumRowsToFetch = new Label(groupLimitationProperties, SWT.NONE);
         labelMaxNumRowsToFetch.setText(Messages.Maximum_number_of_rows_to_fetch);
 
-        textMaxNumRowsToFetch = WidgetFactory.createDecimalText(groupSqlAttributes);
+        textMaxNumRowsToFetch = WidgetFactory.createDecimalText(groupLimitationProperties);
         textMaxNumRowsToFetch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         textMaxNumRowsToFetch.setTextLimit(5);
         textMaxNumRowsToFetch.addModifyListener(new ModifyListener() {
@@ -114,6 +117,22 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
                 maxNumRowsToFetch = IntHelper.tryParseInt(textMaxNumRowsToFetch.getText(), preferences.getInitialMaximumNumberOfRowsToFetch());
             }
         });
+
+        Label labelBufferSize = new Label(groupLimitationProperties, SWT.NONE);
+        labelBufferSize.setText(Messages.Buffer_size);
+
+        comboBufferSize = WidgetFactory.createDecimalCombo(groupLimitationProperties);
+        comboBufferSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        comboBufferSize.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent event) {
+                bufferSize = IntHelper.tryParseInt(comboBufferSize.getText(), -1);
+                if (bufferSize == -1) {
+                    bufferSize = (int)Math.min(IntHelper.convertLabelToStorageSize(comboBufferSize.getText()), Integer.MAX_VALUE);
+                }
+            }
+        });
+        comboBufferSize.setItems(preferences.getRetrieveJournalEntriesBufferSizeLabels());
     }
 
     @Override
@@ -142,6 +161,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         preferences.setSortedJournalEntryAppearanceAttributes(columns);
         preferences.setMaximumNumberOfRowsToFetch(maxNumRowsToFetch);
+        preferences.setRetrieveJournalEntriesBufferSize(bufferSize);
     }
 
     protected void setScreenToValues() {
@@ -150,6 +170,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         columns = preferences.getSortedJournalEntryAppearancesAttributes();
         maxNumRowsToFetch = preferences.getMaximumNumberOfRowsToFetch();
+        bufferSize = preferences.getRetrieveJournalEntriesBufferSize();
 
         setScreenValues();
     }
@@ -160,6 +181,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         columns = preferences.getInitialSortedJournalEntryAppearanceAttributes();
         maxNumRowsToFetch = preferences.getInitialMaximumNumberOfRowsToFetch();
+        bufferSize = preferences.getInitialRetrieveJournalEntriesBufferSize();
 
         setScreenValues();
     }
@@ -168,6 +190,12 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         editor.setInput(columns);
         textMaxNumRowsToFetch.setText(Integer.toString(maxNumRowsToFetch));
+
+        String bufferSizeLabel = IntHelper.convertStorageSizeToLabel(bufferSize);
+        if (bufferSizeLabel == null) {
+            bufferSizeLabel = Long.toString(bufferSize);
+        }
+        comboBufferSize.setText(bufferSizeLabel);
 
         setControlsEnablement();
     }

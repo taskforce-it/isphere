@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,51 @@
 
 package biz.isphere.core.internal;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import biz.isphere.core.preferences.Preferences;
 
 public final class DateTimeHelper {
+
+    public static Calendar getStartOfDay() {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar;
+    }
+
+    public static Calendar getEndOfDay() {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar;
+    }
+
+    public static Calendar getStartOfDay(int days) {
+
+        Calendar calendar = getStartOfDay();
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+
+        return calendar;
+    }
+
+    public static Calendar getEndOfDay(int days) {
+
+        Calendar calendar = getEndOfDay();
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+
+        return calendar;
+    }
 
     public static String getDateFormatted(Date date) {
         return Preferences.getInstance().getDateFormatter().format(date);
@@ -32,6 +71,13 @@ public final class DateTimeHelper {
         buffer.append(getTimeFormatted(timestamp));
 
         return buffer.toString();
+    }
+
+    public static String getTimestampFormattedISO(Date timestamp) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+
+        return formatter.format(timestamp);
     }
 
     public static Date combineDateTime(Date date, Date time) {

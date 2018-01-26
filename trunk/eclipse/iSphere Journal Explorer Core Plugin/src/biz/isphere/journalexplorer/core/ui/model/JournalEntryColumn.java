@@ -12,13 +12,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 
 /**
  * This class represents a column of the "Journal Entries Viewer" widget. It
  * defines the properties of the column, such as column heading, color, width.
  * 
- * @see JournalEntriesViewer
+ * @see JournalEntriesViewerForOutputFiles
  * @see JournalEntryLabelProvider
  */
 public class JournalEntryColumn {

@@ -10,7 +10,7 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.ResultSet;
 
-import biz.isphere.journalexplorer.core.model.File;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 
 public class Type4DAO extends Type3DAO {
@@ -47,7 +47,7 @@ public class Type4DAO extends Type3DAO {
         "      FROM %s.%s as result";
     // @formatter:on
 
-    public Type4DAO(File outputFile) throws Exception {
+    public Type4DAO(OutputFile outputFile) throws Exception {
         super(outputFile);
     }
 

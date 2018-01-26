@@ -1,85 +1,145 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Initial idea and development: Isaac Ramirez Herrera
- * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
 package biz.isphere.journalexplorer.core.model.dao;
 
-import biz.isphere.journalexplorer.core.model.File;
+import java.sql.Time;
+import java.util.Date;
+
+import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
+import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
-import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
+import biz.isphere.journalexplorer.core.model.api.QjoRetrieveJournalEntries;
+import biz.isphere.journalexplorer.core.model.api.RJNE0200;
+import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 /**
- * This class loads the exported journal *TYPE1 to *TYPE5 data that has been
- * exported by DSPJRN to an output file. For example:
- * 
- * <pre>
- * DSPJRN JRN(library/journal) FILE((library/file)) RCVRNG(*CURCHAIN) 
- *   FROMTIME(060417 140000) TOTIME(060417 160000) ENTTYP(*RCD)    
- *   OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3) OUTFILE(library/file)    
- *   ENTDTALEN(1024)
- * </pre>
+ * This class retrieves journal entries from the journal a given object is
+ * associated to.
  */
-public class JournalDAO extends DAOBase {
+public class JournalDAO {
 
-    private AbstractTypeDAO typeDAO;
-    private String whereClause;
-    private IStatusListener listener;
+    private JournaledObject journaledObject;
 
-    public JournalDAO(File outputFile) throws Exception {
-        super(outputFile.getConnectionName());
+    public JournalDAO(JournaledObject journaledObject) throws Exception {
 
-        switch (getOutfileType(outputFile)) {
-        case JournalOutputType.TYPE5:
-            typeDAO = new Type5DAO(outputFile);
-            break;
-        case JournalOutputType.TYPE4:
-            typeDAO = new Type4DAO(outputFile);
-            break;
-        case JournalOutputType.TYPE3:
-            typeDAO = new Type3DAO(outputFile);
-            break;
-        case JournalOutputType.TYPE2:
-            typeDAO = new Type2DAO(outputFile);
-            break;
-        default:
-            typeDAO = new Type1DAO(outputFile);
-            break;
+        this.journaledObject = journaledObject;
+    }
+
+    public JournalEntries getJournalData() throws Exception {
+        return load();
+    }
+
+    public JournalEntries load() throws Exception {
+
+        JournalEntries journalEntries = new JournalEntries();
+
+        int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+
+        JrneToRtv tJrneToRtv = new JrneToRtv(journaledObject.getJournalLibraryName(), journaledObject.getJournalName());
+
+        String startingDate = DateTimeHelper.getTimestampFormattedISO(journaledObject.getStartingDate());
+        String endingDate = DateTimeHelper.getTimestampFormattedISO(journaledObject.getEndingDate());
+
+        tJrneToRtv.setFromTime(startingDate);
+        tJrneToRtv.setToTime(endingDate);
+
+        if (journaledObject.isRecordsOnly()) {
+            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_RCD);
+        } else {
+            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_ALL);
         }
+
+        tJrneToRtv.setNbrEnt(maxNumRows);
+        tJrneToRtv.setFile(journaledObject.getLibraryName(), journaledObject.getObjectName(), "*FIRST"); //$NON-NLS-1$
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
+        QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
+
+        RJNE0200 rjne0200 = null;
+        int id = 0;
+
+        do {
+
+            rjne0200 = tRetriever.execute();
+            if (rjne0200 != null) {
+                while (rjne0200.nextEntry()) {
+
+                    id++;
+
+                    JournalEntry journalEntry = new JournalEntry(new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR2")); //$NON-NLS-1$ //$NON-NLS-2$
+
+                    journalEntries.add(populateJournalEntry(journaledObject.getConnectionName(), id, rjne0200, journalEntry));
+
+                    if (journalEntry.isRecordEntryType()) {
+                        MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                    }
+
+                }
+            }
+
+        } while (rjne0200 != null && rjne0200.moreEntriesAvailable());
+
+        return journalEntries;
     }
 
-    public void setStatusListener(IStatusListener listener) {
-        this.listener = listener;
-    }
+    private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) {
 
-    public String getSqlStatement() {
-        return typeDAO.getSqlStatement();
-    }
+        // AbstractTypeDAO
+        journalEntry.setConnectionName(connectionName);
+        journalEntry.setId(id);
+        journalEntry.setCommitmentCycle(journalEntryData.getCommitCycleId());
+        journalEntry.setEntryLength(journalEntryData.getEntrySpecificDataLength());
+        journalEntry.setEntryType(journalEntryData.getEntryType());
+        journalEntry.setIncompleteData(journalEntryData.isIncompleteData());
+        journalEntry.setJobName(journalEntryData.getJobName());
+        journalEntry.setJobNumber(journalEntryData.getJobNumber());
+        journalEntry.setJobUserName(journalEntryData.getUserName());
+        journalEntry.setCountRrn(journalEntryData.getRelativeRecordNumber());
+        journalEntry.setFlag("???");
+        journalEntry.setJournalCode(journalEntryData.getJournalCode());
+        journalEntry.setMemberName(journalEntryData.getFileMember());
+        journalEntry.setMinimizedSpecificData(journalEntryData.isMinimizedEntrySpecificData());
+        journalEntry.setObjectLibrary(journalEntryData.getObjectLibrary());
+        journalEntry.setObjectName(journalEntryData.getObjectName());
+        journalEntry.setProgramName(journalEntryData.getProgramName());
+        journalEntry.setSequenceNumber(journalEntryData.getSequenceNumber());
+        journalEntry.setSpecificData(journalEntryData.getEntrySpecificDataRaw());
+        journalEntry.setStringSpecificData(journalEntryData.getEntrySpecificDataRaw());
 
-    public String getWhereClause() {
-        return whereClause;
-    }
+        try {
+            Date timestamp = journalEntryData.getTimestamp();
+            journalEntry.setDate(timestamp);
+            journalEntry.setTime(new Time(timestamp.getTime()));
+        } catch (Exception e) {
+        }
 
-    public void setWhereClause(String whereClause) {
-        this.whereClause = whereClause;
-    }
+        // Type1DAO (extends the AbstractTypeDAO)
+        // Depending of the journal out type, the timestamp can be a
+        // single field or splitted in JODATE and JOTYPE.
+        // For TYPE1 output files it is splitted into Date and Time.
+        // journalEntry.setDate(timestamp);
+        // journalEntry.setTime(new Time(timestamp.getTime()));
 
-    public JournalEntries getJournalData(String whereClause) throws Exception {
-        setWhereClause(whereClause);
-        return typeDAO.load(getWhereClause(), listener);
-    }
+        // Type2DAO (extends the Type1DAO)
+        journalEntry.setUserProfile(journalEntryData.getUserProfile());
+        journalEntry.setSystemName(journalEntryData.getSystemName());
 
-    private int getOutfileType(File outputFile) throws Exception {
+        // Type3DAO (extends the AbstractTypeDAO)
+        // journalEntry.setNullIndicators(journalEntryData.getNbrOfEntriesRetrieved());
 
-        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-
-        return metaTable.getOutfileType();
+        return journalEntry;
     }
 }

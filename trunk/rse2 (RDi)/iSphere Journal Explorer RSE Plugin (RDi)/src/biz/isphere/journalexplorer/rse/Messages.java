@@ -20,6 +20,7 @@ public class Messages extends NLS {
     public static String DAOBase_Failed_to_connect_to_A;
     public static String DAOBase_Invalid_or_missing_connection_name_A;
     public static String DAOBase_Connection_A_not_found;
+    public static String Display_Journal_Entries;
 
     static {
         // initialize resource bundle
