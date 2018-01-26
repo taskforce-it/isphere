@@ -8,7 +8,6 @@
 
 package biz.isphere.journalexplorer.core.model.api;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,13 +20,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
-import com.ibm.as400.access.AS400Timestamp;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.JournalCode;
@@ -205,9 +202,10 @@ public class JrneToRtv {
      *        considered for retrieval
      */
     public void setFromTime(Calendar aStartingTimestamp) {
-        TimeZone temp = aStartingTimestamp.getTimeZone();
-        Timestamp temp2 = new Timestamp(aStartingTimestamp.getTime().getTime());
-        addSelectionCriterion(RetrieveKey.FROMTIME, new AS400Timestamp(temp), temp2);
+        // TimeZone temp = aStartingTimestamp.getTimeZone();
+        // Timestamp temp2 = new
+        // Timestamp(aStartingTimestamp.getTime().getTime());
+        addSelectionCriterion(RetrieveKey.FROMTIME, new AS400Text(26), dateFormatter.format(aStartingTimestamp.getTime()) + ".000000");
         rmvSelectionCriterion(RetrieveKey.FROMENT);
     }
 
@@ -252,9 +250,10 @@ public class JrneToRtv {
      *        considered for retrieval
      */
     public void setToTime(Calendar anEndingTimestamp) {
-        TimeZone temp = anEndingTimestamp.getTimeZone();
-        Timestamp temp2 = new Timestamp(anEndingTimestamp.getTime().getTime());
-        addSelectionCriterion(RetrieveKey.TOTIME, new AS400Timestamp(temp), temp2);
+        // TimeZone temp = anEndingTimestamp.getTimeZone();
+        // Timestamp temp2 = new
+        // Timestamp(anEndingTimestamp.getTime().getTime());
+        addSelectionCriterion(RetrieveKey.TOTIME, new AS400Text(26), dateFormatter.format(anEndingTimestamp.getTime()) + ".000000");
         rmvSelectionCriterion(RetrieveKey.TOENT);
     }
 

@@ -76,6 +76,11 @@ public class JournalEntries {
     }
 
     public AS400Message[] getMessages() {
+
+        if (messages == null) {
+            return new AS400Message[0];
+        }
+
         return messages.toArray(new AS400Message[messages.size()]);
     }
 }
