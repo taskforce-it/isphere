@@ -19,6 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.editors,
  org.eclipse.ui.workbench.texteditor,
  org.eclipse.help,
+ org.eclipse.rse.core,
  biz.isphere.base,
  biz.isphere.common.libraries
 Bundle-ClassPath: .,
