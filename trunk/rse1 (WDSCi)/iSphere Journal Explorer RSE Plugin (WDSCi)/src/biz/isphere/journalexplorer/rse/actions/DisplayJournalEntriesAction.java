@@ -51,8 +51,7 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
 
         for (DataElement dataElement : selectedObjectsList) {
 
-            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-            if (type.isSourceMember()) {
+            if (isMember(dataElement)) {
 
                 String connectionName = ISeriesDataElementUtil.getConnection(dataElement).getAliasName();
                 String libraryName = ISeriesDataElementHelpers.getLibrary(dataElement);
@@ -60,7 +59,7 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
                 String memberName = ISeriesDataElementHelpers.getFile(dataElement);
                 DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
 
-            } else if (type.isFile()) {
+            } else if (isFile(dataElement)) {
 
                 String connectionName = ISeriesDataElementUtil.getConnection(dataElement).getAliasName();
                 String libraryName = ISeriesDataElementHelpers.getLibrary(dataElement);
@@ -92,10 +91,7 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
                 for (Object object : objects) {
                     if (object instanceof DataElement) {
                         DataElement dataElement = (DataElement)object;
-                        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                        if (type.isMember()) {
-                            selectedObjectsList.add(dataElement);
-                        } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isFile()) {
+                        if (isSupportedObject(dataElement)) {
                             selectedObjectsList.add(dataElement);
                         }
                     }
@@ -107,5 +103,21 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
         }
 
         return selectedObjectsList.size();
+    }
+
+    private boolean isSupportedObject(DataElement dataElement) {
+        return isFile(dataElement) || isMember(dataElement);
+    }
+
+    private boolean isFile(DataElement dataElement) {
+
+        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+        return type.isFile();
+    }
+
+    private boolean isMember(DataElement dataElement) {
+
+        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+        return type.isMember();
     }
 }
