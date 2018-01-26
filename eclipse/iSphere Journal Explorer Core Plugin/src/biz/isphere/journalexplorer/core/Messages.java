@@ -64,7 +64,7 @@ public class Messages extends NLS {
     public static String DisplayJournalEntriesDialog_From_time_colon;
     public static String DisplayJournalEntriesDialog_To_date_colon;
     public static String DisplayJournalEntriesDialog_To_time_colon;
-    public static String DisplayJournalEntriesDialog_Time_Default;
+    public static String DisplayJournalEntriesDialog_Time_Last_used_values;
     public static String DisplayJournalEntriesDialog_Time_Today;
     public static String DisplayJournalEntriesDialog_Time_Yesterday;
     public static String DisplayJournalEntriesDialog_Time_Record_entries_only;

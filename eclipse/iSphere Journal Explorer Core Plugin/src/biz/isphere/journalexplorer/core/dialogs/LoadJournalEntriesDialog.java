@@ -125,7 +125,7 @@ public class LoadJournalEntriesDialog extends XDialog {
         grpDatePresets.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         grpDatePresets.setText(Messages.DisplayJournalEntriesDialog_Fast_date_presets);
 
-        radioBtnDefault = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Default);
+        radioBtnDefault = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Last_used_values);
         radioBtnDefault.addSelectionListener(new TimeRangeSelectionListener());
 
         radioBtnToday = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Today);
@@ -319,7 +319,7 @@ public class LoadJournalEntriesDialog extends XDialog {
                 return;
             }
 
-            if (label.equals(Messages.DisplayJournalEntriesDialog_Time_Default)) {
+            if (label.equals(Messages.DisplayJournalEntriesDialog_Time_Last_used_values)) {
                 loadDateScreenValues();
             } else if (label.equals(Messages.DisplayJournalEntriesDialog_Time_Today)) {
                 setDateScreenvaluesToToday();
