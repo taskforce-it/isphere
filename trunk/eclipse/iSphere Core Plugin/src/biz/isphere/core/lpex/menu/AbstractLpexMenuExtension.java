@@ -72,8 +72,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
 
     public void initializeLpexEditor(LpexMenuExtensionPlugin plugin) {
 
-        waitForRseSubsystem();
-
         // Just in case RDi crashed before.
         uninstall();
 
@@ -88,8 +86,6 @@ public abstract class AbstractLpexMenuExtension implements ILpexMenuExtension {
             LpexPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(listener);
         }
     }
-
-    protected abstract void waitForRseSubsystem();
 
     public void uninstall() {
 

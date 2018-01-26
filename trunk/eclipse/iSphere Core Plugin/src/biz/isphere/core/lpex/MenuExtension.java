@@ -16,9 +16,7 @@ import java.util.Set;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.rse.core.RSECorePlugin;
 
-import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.lpex.actions.CompareEditorLpexAction;
 import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
 import biz.isphere.core.lpex.menu.LpexMenu;
@@ -152,14 +150,5 @@ public class MenuExtension extends AbstractLpexMenuExtension implements IPropert
         }
 
         // Preferences.getInstance().setUserKeyActions(buffer.toString());
-    }
-
-    @Override
-    protected void waitForRseSubsystem() {
-        try {
-            RSECorePlugin.waitForInitCompletion();
-        } catch (InterruptedException e) {
-            MessageDialogAsync.displayError("iSphere RSE: RSE plug-in has not been correctly initialized.");
-        }
     }
 }
