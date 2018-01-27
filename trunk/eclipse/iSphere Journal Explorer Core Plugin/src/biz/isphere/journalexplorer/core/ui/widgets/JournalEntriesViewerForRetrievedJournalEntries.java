@@ -20,13 +20,12 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 
-import com.ibm.as400.access.AS400Message;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -42,8 +41,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer implements ISelectionChangedListener,
+    ISelectionProvider, IPropertyChangeListener {
 
     private String connectionName;
     private JournaledObject journaledObject;
@@ -92,7 +91,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                     JournalDAO journalDAO = new JournalDAO(journaledObject);
                     JournalEntries data = journalDAO.getJournalData();
 
-                    AS400Message[] messages = data.getMessages();
+                    IBMiMessage[] messages = data.getMessages();
                     if (messages.length != 0) {
                         if (isNoDataLoadedException(messages)) {
                             throw new NoJournalEntriesLoadedException(journaledObject.getJournalLibraryName(), journaledObject.getJournalName());
@@ -108,10 +107,10 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                 }
             }
 
-            private boolean isNoDataLoadedException(AS400Message[] messages) {
+            private boolean isNoDataLoadedException(IBMiMessage[] messages) {
 
-                for (AS400Message as400Message : messages) {
-                    if (NoJournalEntriesLoadedException.ID.equals(as400Message.getID())) {
+                for (IBMiMessage ibmiMessage : messages) {
+                    if (NoJournalEntriesLoadedException.ID.equals(ibmiMessage.getID())) {
                         return true;
                     }
                 }

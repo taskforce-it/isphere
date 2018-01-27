@@ -12,6 +12,7 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import biz.isphere.base.internal.IntHelper;
@@ -92,8 +93,15 @@ public class QjoRetrieveJournalEntries {
      * 
      * @return list of API error messages
      */
-    public List<AS400Message> getMessages() {
-        return messages;
+    public List<IBMiMessage> getMessages() {
+
+        List<IBMiMessage> ibmiMessages = new LinkedList<IBMiMessage>();
+
+        for (AS400Message message : messages) {
+            ibmiMessages.add(new IBMiMessage(message));
+        }
+
+        return ibmiMessages;
     }
 
     /**

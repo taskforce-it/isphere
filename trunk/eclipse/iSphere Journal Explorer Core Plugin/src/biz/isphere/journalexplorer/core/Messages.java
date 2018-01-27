@@ -77,10 +77,13 @@ public class Messages extends NLS {
     public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
     public static String Error_No_record_level_operation;
     public static String Error_Object_A_B_is_not_journaled;
+    
+    public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry;
 
     public static String Exception_No_entries_converted_or_received_from_journal_A_B;
 
     public static String Warning_Not_all_journal_entries_loaded;
+    public static String Warning_Not_all_journal_entries_loaded_unknown_size;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;

@@ -11,6 +11,8 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
+
 import com.ibm.as400.access.AS400Message;
 
 public class JournalEntries {
@@ -18,7 +20,7 @@ public class JournalEntries {
     private List<JournalEntry> journalEntries;
     private boolean isOverflow;
     private int numAvailableRows;
-    private List<AS400Message> messages;
+    private List<IBMiMessage> messages;
 
     public JournalEntries() {
 
@@ -71,16 +73,16 @@ public class JournalEntries {
         journalEntries.clear();
     }
 
-    public void setMessages(List<AS400Message> messages) {
+    public void setMessages(List<IBMiMessage> messages) {
         this.messages = messages;
     }
 
-    public AS400Message[] getMessages() {
+    public IBMiMessage[] getMessages() {
 
         if (messages == null) {
-            return new AS400Message[0];
+            return new IBMiMessage[0];
         }
 
-        return messages.toArray(new AS400Message[messages.size()]);
+        return messages.toArray(new IBMiMessage[messages.size()]);
     }
 }
