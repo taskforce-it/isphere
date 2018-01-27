@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Journal Explorer Core
 Bundle-SymbolicName: biz.isphere.journalexplorer.core;singleton:=true
-Bundle-Version: 3.1.5.b003
+Bundle-Version: 3.2.0.b004
 Bundle-Activator: biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
