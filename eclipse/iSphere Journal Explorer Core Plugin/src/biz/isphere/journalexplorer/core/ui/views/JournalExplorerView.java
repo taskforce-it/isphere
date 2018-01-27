@@ -272,8 +272,14 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                 int numItems = journalEntries.size();
                 int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
                 if (journalEntries.isOverflow()) {
+                    String messageText;
+                    if (numItemsAvailable < 0) {
+                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable, numItems);
+                    } else {
+                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItems);
+                    }
                     DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED,
-                        Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItems));
+                        messageText);
                 }
             }
         }
