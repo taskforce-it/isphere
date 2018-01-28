@@ -15,7 +15,7 @@
             id="biz.isphere.core.views.categories">
       </category>
       <view
-            icon="icons/journal_explorer2.png"
+            icon="icons/journal_explorer.png"
             class="biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"
             category="biz.isphere.core.views.categories"
             name="%JournalExplore_View"
@@ -49,7 +49,7 @@
 	       id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
 	       name="%Perspective_Journal_Explorer"
 	       class="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout"
-	       icon="icons/journal_explorer2.png">
+	       icon="icons/journal_explorer.png">
       </perspective>
        
    </extension>   
