@@ -32,7 +32,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_DETAILS = "details.png";
     public static final String IMAGE_HIGHLIGHT = "highlight.png";
     public static final String IMAGE_HORIZONTAL_RESULTS_VIEW = "horizontal_results_view.gif";
-    public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer2.png";
+    public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer.png";
     public static final String IMAGE_CONFIGURE_PARSERS = "configure_parsers.gif";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
@@ -60,9 +60,8 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+     * BundleContext )
      */
     @Override
     public void start(BundleContext context) throws Exception {
@@ -72,9 +71,8 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+     * BundleContext )
      */
     @Override
     public void stop(BundleContext context) throws Exception {
