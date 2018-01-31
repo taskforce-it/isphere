@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.Messages;
@@ -26,8 +28,6 @@ import biz.isphere.journalexplorer.core.model.api.QjoRetrieveJournalEntries;
 import biz.isphere.journalexplorer.core.model.api.RJNE0200;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * This class retrieves journal entries from the journal a given object is
@@ -82,8 +82,8 @@ public class JournalDAO {
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
                     messages = new LinkedList<IBMiMessage>();
-                    messages.add(new IBMiMessage("RJE0001",
-                        Messages.RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry));
+                    messages.add(
+                        new IBMiMessage("RJE0001", Messages.RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry));
                 } else {
                     while (rjne0200.nextEntry()) {
 
@@ -105,7 +105,7 @@ public class JournalDAO {
 
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.size() < maxNumRows);
 
-        if (rjne0200.hasNext() || rjne0200.moreEntriesAvailable()) {
+        if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);
         }
 
