@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.2.0.r
+--------------------------
+ • Fixed NullPointerException when no entries were converted or received
+   from a journal.
+
 Changelog: iSphere 3.2.0.b004
 -----------------------------
  • Added menu option for displaying journal entries of selected files
