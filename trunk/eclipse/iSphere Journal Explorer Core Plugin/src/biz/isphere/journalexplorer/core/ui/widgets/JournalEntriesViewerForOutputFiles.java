@@ -37,8 +37,8 @@ import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
+import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -58,8 +58,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
+    IPropertyChangeListener {
 
     private SelectionListener loadJournalEntriesSelectionListener;
     private OutputFile outputFile;
@@ -155,6 +155,10 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         if (dataLoadException != null) {
             throw dataLoadException;
         }
+    }
+
+    public boolean hasSqlEditorVisible() {
+        return true;
     }
 
     public boolean isSqlEditorVisible() {

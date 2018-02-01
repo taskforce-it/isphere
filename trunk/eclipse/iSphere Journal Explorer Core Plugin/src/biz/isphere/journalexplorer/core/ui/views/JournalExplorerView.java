@@ -354,7 +354,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             editSqlAction.setEnabled(false);
             editSqlAction.setChecked(false);
         } else {
-            editSqlAction.setEnabled(true);
+            editSqlAction.setEnabled(viewer.hasSqlEditor());
             editSqlAction.setChecked(viewer.isSqlEditorVisible());
         }
 
