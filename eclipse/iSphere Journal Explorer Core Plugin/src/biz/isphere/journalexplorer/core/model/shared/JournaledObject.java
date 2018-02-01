@@ -35,7 +35,7 @@ public class JournaledObject {
 
         setJournalAttributes(objectDescription);
         setStartingDate(DateTimeHelper.getStartOfDay().getTime());
-        setStartingDate(DateTimeHelper.getEndOfDay().getTime());
+        setEndingDate(DateTimeHelper.getEndOfDay().getTime());
         setRecordsOnly(true);
     }
 
