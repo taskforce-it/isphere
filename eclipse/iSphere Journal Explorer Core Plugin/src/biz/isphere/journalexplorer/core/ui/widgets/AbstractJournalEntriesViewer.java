@@ -52,8 +52,7 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewer extends CTabItem
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private Composite container;
     private TableViewer tableViewer;
@@ -87,6 +86,10 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem
     }
 
     public boolean hasSqlEditor() {
+        return false;
+    }
+
+    public boolean hasSqlEditorVisible() {
         return false;
     }
 
