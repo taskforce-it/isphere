@@ -178,7 +178,7 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         calendar.set(Calendar.YEAR, startingDateDate.getYear());
         calendar.set(Calendar.MONTH, startingDateDate.getMonth());
-        calendar.set(Calendar.DAY_OF_YEAR, startingDateDate.getDay());
+        calendar.set(Calendar.DAY_OF_MONTH, startingDateDate.getDay());
 
         calendar.set(Calendar.HOUR_OF_DAY, startingDateTime.getHours());
         calendar.set(Calendar.MINUTE, startingDateTime.getMinutes());

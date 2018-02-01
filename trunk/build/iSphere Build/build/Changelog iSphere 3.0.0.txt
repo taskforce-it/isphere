@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.2.1.r
+--------------------------
+ • Fixed method getTimestamp() of class LoadJournalEntriesDialog, which 
+   incorrectly used Calendar.DAY_OF_YEAR to set the day. That worked for 
+   January but no longer with February.
+
 Changelog: iSphere 3.2.0.r
 --------------------------
  • Fixed NullPointerException when no entries were converted or received
