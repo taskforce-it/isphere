@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.2.0.r
+Bundle-Version: 3.2.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Added Kerberos authentication for JDBC connections. Added menu option to display journal entries from the context menus of files and members.
-X-Beta-Version: 3.2.0.r
+X-Bundle-Info: Bug fix release of Journal Explorer plug-in.
+X-Beta-Version: 0.0.0.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added Kerberos authentication for JDBC connections. Added menu option to display journal entries from the context menus of files and members.
+X-Beta-Info: .
