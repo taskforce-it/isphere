@@ -65,6 +65,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                     if (journalEntries.size() >= maxNumRows) {
                         handleOverflowError(journalEntries);
+                        break;
                     } else {
                         journalEntry = new JournalEntry(outputFile);
                         journalEntries.add(populateJournalEntry(resultSet, journalEntry));
