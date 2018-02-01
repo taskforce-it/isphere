@@ -13,9 +13,9 @@
 package biz.isphere.core.swt.widgets.datetime;
 
 import java.text.AttributedCharacterIterator;
+import java.text.DateFormat.Field;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -323,11 +323,14 @@ public final class DateEdit extends Composite implements IDateEdit {
     }
 
     /**
-     * sets date into the calendar.
+     * Sets the values for the calendar fields YEAR, MONTH, and DAY_OF_MONTH.
+     * Previous values of other calendar fields are retained. If this is not
+     * desired, call clear() first.
      * 
-     * @param year - an integer between 1752 and 9999
-     * @param month - an integer between 1 and 12
-     * @param day - a positive integer beginning with 1
+     * @param year - the value used to set the YEAR calendar field.
+     * @param month - the value used to set the MONTH calendar field. Month
+     *        value is 0-based. e.g., 0 for January.
+     * @param day - the value used to set the DAY_OF_MONTH calendar field.
      */
     public void setDate(int year, int month, int day) {
         Calendar date = (Calendar)MIN_DATE_TIME.clone();
