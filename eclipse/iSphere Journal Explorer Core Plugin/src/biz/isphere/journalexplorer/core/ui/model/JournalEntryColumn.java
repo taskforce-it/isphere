@@ -48,11 +48,11 @@ public class JournalEntryColumn {
     }
 
     public JournalEntryColumn(JournalEntryColumnUI columnDef, String tooltipText, int width) {
-        this(columnDef, columnDef.name(), tooltipText, width, SWT.NONE);
+        this(columnDef, columnDef.columnName(), tooltipText, width, SWT.NONE);
     }
 
     public JournalEntryColumn(JournalEntryColumnUI columnDef, String tooltipText, int width, int style) {
-        this(columnDef, columnDef.name(), tooltipText, width, style);
+        this(columnDef, columnDef.columnName(), tooltipText, width, style);
     }
 
     public JournalEntryColumn(JournalEntryColumnUI columnDef, String text, String tooltipText, int width) {

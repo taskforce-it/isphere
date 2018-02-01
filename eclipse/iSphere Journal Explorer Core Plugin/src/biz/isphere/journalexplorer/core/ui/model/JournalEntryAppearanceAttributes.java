@@ -25,15 +25,21 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryAppearanceAttribu
 public class JournalEntryAppearanceAttributes {
 
     private String columnName;
+    private String columnDescription;
     private Color color;
 
-    public JournalEntryAppearanceAttributes(String columnName, Color color) {
+    public JournalEntryAppearanceAttributes(String columnName, String columnDescription, Color color) {
         this.columnName = columnName;
+        this.columnDescription = columnDescription;
         this.color = color;
     }
 
     public String getColumnName() {
         return columnName;
+    }
+
+    public String getColumnDescription() {
+        return columnDescription;
     }
 
     public Color getColor() {

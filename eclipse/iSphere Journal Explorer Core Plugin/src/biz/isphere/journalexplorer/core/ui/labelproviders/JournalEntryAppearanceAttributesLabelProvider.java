@@ -38,7 +38,7 @@ public class JournalEntryAppearanceAttributesLabelProvider extends LabelProvider
         case 0: // Name
             return columnColorEntry.getColumnName();
         case 1: // Description
-            return ""; // columnColorEntry.getTooltipText();
+            return columnColorEntry.getColumnDescription();
         case 2: // Color
             return ""; //$NON-NLS-1$
         default:
