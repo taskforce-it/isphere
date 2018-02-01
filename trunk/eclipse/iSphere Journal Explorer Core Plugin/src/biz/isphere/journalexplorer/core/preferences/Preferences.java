@@ -138,7 +138,15 @@ public final class Preferences implements ColumnsDAO {
                 color = getInitialColumnColor(columnName);
             }
 
-            journalEntryAppearanceAttributes.add(new JournalEntryAppearanceAttributes(columnName, color));
+            JournalEntryColumnUI columnUI = JournalEntryColumnUI.find(columnName);
+            String columnDescription;
+            if (columnUI != null) {
+                columnDescription = columnUI.description();
+            } else {
+                columnDescription = ""; //$NON-NLS-1$
+            }
+
+            journalEntryAppearanceAttributes.add(new JournalEntryAppearanceAttributes(columnName, columnDescription, color));
         }
 
         return journalEntryAppearanceAttributes.toArray(new JournalEntryAppearanceAttributes[journalEntryAppearanceAttributes.size()]);
@@ -359,71 +367,71 @@ public final class Preferences implements ColumnsDAO {
         List<JournalEntryAppearanceAttributes> sortedNames = new LinkedList<JournalEntryAppearanceAttributes>();
 
         // Entry seq#, code, type, ...
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.ID.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTL.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSEQN.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCODE.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTT.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JODATE.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTIME.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.ID.columnName(), JournalEntryColumnUI.ID.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTL.columnName(), JournalEntryColumnUI.JOENTL.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSEQN.columnName(), JournalEntryColumnUI.JOSEQN.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCODE.columnName(), JournalEntryColumnUI.JOCODE.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTT.columnName(), JournalEntryColumnUI.JOENTT.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JODATE.columnName(), JournalEntryColumnUI.JODATE.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTIME.columnName(), JournalEntryColumnUI.JOTIME.description()));
 
         // Job, that added the journal entry ...
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJOB.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSER.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JONBR.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJOB.columnName(), JournalEntryColumnUI.JOJOB.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSER.columnName(), JournalEntryColumnUI.JOUSER.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JONBR.columnName(), JournalEntryColumnUI.JONBR.description()));
         // .. extended attributes
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSPF.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTHDX.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOUSPF.columnName(), JournalEntryColumnUI.JOUSPF.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTHDX.columnName(), JournalEntryColumnUI.JOTHDX.description()));
 
         // Program, that added the journal entry
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMLIB.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGM.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMLIB.columnName(), JournalEntryColumnUI.JOPGMLIB.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGM.columnName(), JournalEntryColumnUI.JOPGM.description()));
         // .. extended attributes
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMDEV.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMASP.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMDEV.columnName(), JournalEntryColumnUI.JOPGMDEV.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOPGMASP.columnName(), JournalEntryColumnUI.JOPGMASP.description()));
 
         // Object that was changed
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLIB.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJ.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMBR.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJTYP.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFILTYP.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLIB.columnName(), JournalEntryColumnUI.JOLIB.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJ.columnName(), JournalEntryColumnUI.JOOBJ.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMBR.columnName(), JournalEntryColumnUI.JOMBR.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJTYP.columnName(), JournalEntryColumnUI.JOOBJTYP.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFILTYP.columnName(), JournalEntryColumnUI.JOFILTYP.description()));
 
         // System that the object resides on
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYNM.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYNM.columnName(), JournalEntryColumnUI.JOSYNM.description()));
 
         // Journal entry flags
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCTRR.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFLAG.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCCID.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJID.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCST.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTGR.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOINCDAT.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOIGNAPY.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMINESD.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJIND.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYSSEQ.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCTRR.columnName(), JournalEntryColumnUI.JOCTRR.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOFLAG.columnName(), JournalEntryColumnUI.JOFLAG.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCCID.columnName(), JournalEntryColumnUI.JOCCID.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJID.columnName(), JournalEntryColumnUI.JOJID.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCST.columnName(), JournalEntryColumnUI.JORCST.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTGR.columnName(), JournalEntryColumnUI.JOTGR.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOINCDAT.columnName(), JournalEntryColumnUI.JOINCDAT.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOIGNAPY.columnName(), JournalEntryColumnUI.JOIGNAPY.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOMINESD.columnName(), JournalEntryColumnUI.JOMINESD.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOOBJIND.columnName(), JournalEntryColumnUI.JOOBJIND.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOSYSSEQ.columnName(), JournalEntryColumnUI.JOSYSSEQ.description()));
 
         // Journal receiver
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCV.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVLIB.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVDEV.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVASP.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOARM.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCV.columnName(), JournalEntryColumnUI.JORCV.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVLIB.columnName(), JournalEntryColumnUI.JORCVLIB.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVDEV.columnName(), JournalEntryColumnUI.JORCVDEV.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORCVASP.columnName(), JournalEntryColumnUI.JORCVASP.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOARM.columnName(), JournalEntryColumnUI.JOARM.description()));
 
         // Remote address
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOADF.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORPORT.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORADR.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOADF.columnName(), JournalEntryColumnUI.JOADF.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORPORT.columnName(), JournalEntryColumnUI.JORPORT.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JORADR.columnName(), JournalEntryColumnUI.JORADR.description()));
 
         // Logical unit of work
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLUW.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOXID.name()));
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCMTLVL.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOLUW.columnName(), JournalEntryColumnUI.JOLUW.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOXID.columnName(), JournalEntryColumnUI.JOXID.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCMTLVL.columnName(), JournalEntryColumnUI.JOCMTLVL.description()));
 
         // Entry specific data
-        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOESD.name()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOESD.columnName(), JournalEntryColumnUI.JOESD.description()));
 
         return sortedNames.toArray(new JournalEntryAppearanceAttributes[sortedNames.size()]);
     }
@@ -462,11 +470,11 @@ public final class Preferences implements ColumnsDAO {
         return labels.toArray(new String[labels.size()]);
     }
 
-    private JournalEntryAppearanceAttributes createAppearanceAttributes(String columnName) {
+    private JournalEntryAppearanceAttributes createAppearanceAttributes(String columnName, String columnDescription) {
 
         Color color = getInitialColumnColor(columnName);
 
-        return new JournalEntryAppearanceAttributes(columnName, color);
+        return new JournalEntryAppearanceAttributes(columnName, columnDescription, color);
     }
 
     private Color getInitialColumnColor(String columnName) {
