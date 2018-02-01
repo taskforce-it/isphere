@@ -60,18 +60,30 @@ public class XDateEdit implements IDateEdit, SelectionListener {
         dateTime.setEnabled(enabled);
     }
 
+    /**
+     * Sets the values for the calendar fields YEAR, MONTH, and DAY_OF_MONTH.
+     */
     public void setDate(int year, int month, int day) {
         dateTime.setDate(year, month, day);
     }
 
+    /**
+     * Returns the year.
+     */
     public int getYear() {
         return dateTime.getYear();
     }
 
+    /**
+     * Returns the month of the year. January is 0 and December is 11.
+     */
     public int getMonth() {
         return dateTime.getMonth();
     }
 
+    /**
+     * Returns the day of the month. The first day of the month has value 1.
+     */
     public int getDay() {
         return dateTime.getDay();
     }
