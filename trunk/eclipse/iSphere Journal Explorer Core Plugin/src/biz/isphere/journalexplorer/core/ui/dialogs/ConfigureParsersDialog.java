@@ -208,10 +208,12 @@ public class ConfigureParsersDialog extends XDialog {
                     metaTable.setDefinitionLibrary((String)value);
                     metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
+                    break;
                 case 2: // Parser name
                     metaTable.setDefinitionName((String)value);
                     metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
+                    break;
                 case 3: // Parsing offset
                     try {
                         metaTable.setParsingOffset(Integer.parseInt((String)value));
@@ -220,6 +222,7 @@ public class ConfigureParsersDialog extends XDialog {
                     } catch (Exception e) {
                         ISpherePlugin.logError("*** Failed to set parsing offset ***", e); //$NON-NLS-1$
                     }
+                    break;
                 default:
                 }
             }
