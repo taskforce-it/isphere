@@ -1,6 +1,12 @@
 
 Changelog: iSphere 3.2.1.r
 --------------------------
+ • Fixed incorrect enablement of button "SQL Editor" in class 
+   JournalExplorerView.
+ • Fixed problem, that loading journal entries did not stop, when the 
+   maximum number of entries had been loaded.
+ • Fixed missing column descriptions on Journal Explorer preference page.
+ • Fixed NumberFormatException in class ConfigureParserDialog.
  • Fixed method getTimestamp() of class LoadJournalEntriesDialog, which 
    incorrectly used Calendar.DAY_OF_YEAR to set the day. That worked for 
    January but no longer with February.
