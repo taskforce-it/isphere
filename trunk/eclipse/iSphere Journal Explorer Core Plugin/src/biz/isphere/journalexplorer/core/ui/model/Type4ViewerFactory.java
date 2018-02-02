@@ -28,22 +28,23 @@ public class Type4ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.JOENTT, 
         JournalEntryColumnUI.JOSEQN, 
         JournalEntryColumnUI.JOCODE,
-        JournalEntryColumnUI.JOENTL, 
+        JournalEntryColumnUI.JOENTL,
         JournalEntryColumnUI.JODATE, 
-        JournalEntryColumnUI.JOTIME, 
-        JournalEntryColumnUI.JOSYNM, 
+        JournalEntryColumnUI.JOTIME,
+        JournalEntryColumnUI.JOSYNM, // Added for Type2 viewer
         JournalEntryColumnUI.JOJOB,
         JournalEntryColumnUI.JOUSER, 
         JournalEntryColumnUI.JONBR, 
-        JournalEntryColumnUI.JOUSPF, 
+        JournalEntryColumnUI.JOUSPF, // Added for Type2 viewer
         JournalEntryColumnUI.JOPGM, 
-        JournalEntryColumnUI.JOLIB, 
-        JournalEntryColumnUI.JOOBJ, 
+        JournalEntryColumnUI.JOLIB,
+        JournalEntryColumnUI.JOOBJ,
         JournalEntryColumnUI.JOMBR,
-        JournalEntryColumnUI.JOJID, 
-        JournalEntryColumnUI.JORCST, 
-        JournalEntryColumnUI.JOTGR, 
-        JournalEntryColumnUI.JOIGNAPY, 
+        JournalEntryColumnUI.JOCTRR,
+        JournalEntryColumnUI.JOJID, // Added for Type4 viewer
+        JournalEntryColumnUI.JORCST, // Added for Type4 viewer
+        JournalEntryColumnUI.JOTGR, // Added for Type4 viewer
+        JournalEntryColumnUI.JOIGNAPY, // Added for Type4 viewer
         JournalEntryColumnUI.JOMINESD, 
         JournalEntryColumnUI.JOESD };
     // @formatter:on
