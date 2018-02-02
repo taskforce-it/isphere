@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.2.2.r
+--------------------------
+ • Added column JOCTRR (relative record number) to Journal Explorer view.
+
 Changelog: iSphere 3.2.1.r
 --------------------------
  • Fixed incorrect enablement of button "SQL Editor" in class 

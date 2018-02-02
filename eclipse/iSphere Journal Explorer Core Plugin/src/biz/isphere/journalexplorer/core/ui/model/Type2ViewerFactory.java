@@ -27,19 +27,20 @@ public class Type2ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.ID, 
         JournalEntryColumnUI.JOENTT, 
         JournalEntryColumnUI.JOSEQN, 
-        JournalEntryColumnUI.JOCODE, 
+        JournalEntryColumnUI.JOCODE,
         JournalEntryColumnUI.JOENTL,
         JournalEntryColumnUI.JODATE, 
-        JournalEntryColumnUI.JOTIME, 
-        JournalEntryColumnUI.JOSYNM, 
-        JournalEntryColumnUI.JOJOB, 
+        JournalEntryColumnUI.JOTIME,
+        JournalEntryColumnUI.JOSYNM, // Added for Type2 viewer
+        JournalEntryColumnUI.JOJOB,
         JournalEntryColumnUI.JOUSER, 
         JournalEntryColumnUI.JONBR, 
-        JournalEntryColumnUI.JOUSPF,
+        JournalEntryColumnUI.JOUSPF, // Added for Type2 viewer
         JournalEntryColumnUI.JOPGM, 
-        JournalEntryColumnUI.JOLIB, 
-        JournalEntryColumnUI.JOOBJ, 
-        JournalEntryColumnUI.JOMBR, 
+        JournalEntryColumnUI.JOLIB,
+        JournalEntryColumnUI.JOOBJ,
+        JournalEntryColumnUI.JOMBR,
+        JournalEntryColumnUI.JOCTRR,
         JournalEntryColumnUI.JOMINESD, 
         JournalEntryColumnUI.JOESD };
     // @formatter:on

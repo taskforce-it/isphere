@@ -27,45 +27,46 @@ public class Type5ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.ID, 
         JournalEntryColumnUI.JOENTT, 
         JournalEntryColumnUI.JOSEQN, 
-        JournalEntryColumnUI.JOCODE, 
+        JournalEntryColumnUI.JOCODE,
         JournalEntryColumnUI.JOENTL,
         JournalEntryColumnUI.JODATE, 
         JournalEntryColumnUI.JOTIME,
-        JournalEntryColumnUI.JOCCID,
-        JournalEntryColumnUI.JOLUW,
-        JournalEntryColumnUI.JOXID,
-        JournalEntryColumnUI.JOCMTLVL,
-        JournalEntryColumnUI.JOSYNM, 
-        JournalEntryColumnUI.JOSYSSEQ, 
-        JournalEntryColumnUI.JOJOB, 
+        JournalEntryColumnUI.JOCCID, // Added for Type5 viewer
+        JournalEntryColumnUI.JOLUW, // Added for Type5 viewer
+        JournalEntryColumnUI.JOXID, // Added for Type5 viewer
+        JournalEntryColumnUI.JOCMTLVL, // Added for Type5 viewer
+        JournalEntryColumnUI.JOSYNM, // Added for Type2 viewer 
+        JournalEntryColumnUI.JOSYSSEQ,
+        JournalEntryColumnUI.JOJOB,
         JournalEntryColumnUI.JOUSER, 
         JournalEntryColumnUI.JONBR, 
-        JournalEntryColumnUI.JOTHDX, 
-        JournalEntryColumnUI.JOUSPF,
+        JournalEntryColumnUI.JOTHDX, // Added for Type5 viewer
+        JournalEntryColumnUI.JOUSPF, // Added for Type2 viewer
         JournalEntryColumnUI.JOPGM, 
-        JournalEntryColumnUI.JOPGMLIB, 
-        JournalEntryColumnUI.JOPGMDEV, 
-        JournalEntryColumnUI.JOPGMASP, 
-        JournalEntryColumnUI.JOLIB, 
+        JournalEntryColumnUI.JOPGMLIB, // Added for Type5 viewer
+        JournalEntryColumnUI.JOPGMDEV, // Added for Type5 viewer
+        JournalEntryColumnUI.JOPGMASP, // Added for Type5 viewer
+        JournalEntryColumnUI.JOLIB,
         JournalEntryColumnUI.JOOBJ,
-        JournalEntryColumnUI.JOOBJIND,
-        JournalEntryColumnUI.JOOBJTYP,
-        JournalEntryColumnUI.JOFILTYP,
-        JournalEntryColumnUI.JOMBR, 
-        JournalEntryColumnUI.JOJID, 
-        JournalEntryColumnUI.JORCV, 
-        JournalEntryColumnUI.JORCVLIB, 
-        JournalEntryColumnUI.JORCVDEV, 
-        JournalEntryColumnUI.JORCVASP, 
-        JournalEntryColumnUI.JOARM, 
-        JournalEntryColumnUI.JOADF, 
-        JournalEntryColumnUI.JORPORT, 
-        JournalEntryColumnUI.JORADR, 
-        JournalEntryColumnUI.JORCST, 
-        JournalEntryColumnUI.JOTGR,
-        JournalEntryColumnUI.JOIGNAPY, 
+        JournalEntryColumnUI.JOOBJIND, // Added for Type5 viewer
+        JournalEntryColumnUI.JOOBJTYP, // Added for Type5 viewer
+        JournalEntryColumnUI.JOFILTYP, // Added for Type5 viewer
+        JournalEntryColumnUI.JOMBR,
+        JournalEntryColumnUI.JOCTRR,
+        JournalEntryColumnUI.JOJID, // Added for Type4 viewer
+        JournalEntryColumnUI.JORCV, // Added for Type5 viewer
+        JournalEntryColumnUI.JORCVLIB, // Added for Type5 viewer
+        JournalEntryColumnUI.JORCVDEV, // Added for Type5 viewer
+        JournalEntryColumnUI.JORCVASP, // Added for Type5 viewer
+        JournalEntryColumnUI.JOARM, // Added for Type5 viewer
+        JournalEntryColumnUI.JOADF, // Added for Type5 viewer
+        JournalEntryColumnUI.JORPORT, // Added for Type5 viewer
+        JournalEntryColumnUI.JORADR, // Added for Type5 viewer
+        JournalEntryColumnUI.JORCST, // Added for Type4 viewer
+        JournalEntryColumnUI.JOTGR, // Added for Type4 viewer
+        JournalEntryColumnUI.JOIGNAPY, // Added for Type4 viewer
         JournalEntryColumnUI.JOMINESD, 
-        JournalEntryColumnUI.JOINCDAT,
+        JournalEntryColumnUI.JOINCDAT, // Added for Type5 viewer
         JournalEntryColumnUI.JOESD };
     // @formatter:on
 
