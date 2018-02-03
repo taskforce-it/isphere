@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -77,6 +78,10 @@ public final class Preferences implements ColumnsDAO {
     public static final String ENDING_DATE = LOAD_JOURNAL_ENTRIES + "ENDING_DATE"; //$NON-NLS-1$
 
     public static final String RECORD_ENTRIES_ONLY = LOAD_JOURNAL_ENTRIES + "RECORD_ENTRIES_ONLY"; //$NON-NLS-1$
+
+    public static final String EXPORT_JOURNAL_ENTRIES = DOMAIN + "EXPORT_JOURNAL_ENTRIES."; //$NON-NLS-1$
+
+    public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
 
     private SimpleDateFormat dateFormatter;
 
@@ -203,6 +208,11 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getBoolean(RECORD_ENTRIES_ONLY);
     }
 
+    public String getExportPath() {
+
+        return preferenceStore.getString(EXPORT_PATH);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -249,6 +259,11 @@ public final class Preferences implements ColumnsDAO {
     public void setRecordsOnly(boolean recordsOnly) {
 
         preferenceStore.setValue(RECORD_ENTRIES_ONLY, recordsOnly);
+    }
+
+    public void setExportPath(String exportPath) {
+
+        preferenceStore.setValue(EXPORT_PATH, exportPath);
     }
 
     /*
@@ -348,6 +363,8 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate().getTime()));
         preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate().getTime()));
         preferenceStore.setDefault(RECORD_ENTRIES_ONLY, getInitialRecordsOnly());
+
+        preferenceStore.setDefault(EXPORT_PATH, getInitialRecordsOnly());
     }
 
     /*
@@ -454,6 +471,11 @@ public final class Preferences implements ColumnsDAO {
 
     public boolean getInitialRecordsOnly() {
         return true;
+    }
+
+    public String getInitialExportPath() {
+
+        return FileHelper.getDefaultRootDirectory();
     }
 
     public String[] getRetrieveJournalEntriesBufferSizeLabels() {

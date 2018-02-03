@@ -11,9 +11,7 @@
 
 package biz.isphere.journalexplorer.core.ui.labelproviders;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -24,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
@@ -48,6 +47,10 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
         this.preferences = Preferences.getInstance();
         this.fieldIdMapping = fieldIdMapping;
         this.columns = columns;
+    }
+
+    public JournalEntryColumn[] getColumns() {
+        return columns;
     }
 
     public Color getBackground(Object element, int index) {
@@ -83,14 +86,14 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
 
     public SimpleDateFormat getDateFormatter() {
         if (dateFormat == null) {
-            dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
         }
         return dateFormat;
     }
 
     public SimpleDateFormat getTimeFormatter() {
         if (timeFormat == null) {
-            timeFormat = new SimpleDateFormat("HH:mm:ss");
+            timeFormat = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
         }
         return timeFormat;
     }
@@ -106,116 +109,99 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
 
     public String getColumnText(Object object, int index) {
 
-        JournalEntry journal = (JournalEntry)object;
+        JournalEntry journalEntry = (JournalEntry)object;
 
         switch (fieldIdMapping[index]) {
         case ID:
-            return Integer.toString(journal.getId()).trim();
+            return journalEntry.getValueForUi(ColumnsDAO.RRN_OUTPUT_FILE);
         case JOENTL:
-            return Integer.toString(journal.getEntryLength());
+            return journalEntry.getValueForUi(ColumnsDAO.JOENTL);
         case JOSEQN:
-            return Long.toString(journal.getSequenceNumber());
+            return journalEntry.getValueForUi(ColumnsDAO.JOSEQN);
         case JOCODE:
-            return journal.getJournalCode();
+            return journalEntry.getValueForUi(ColumnsDAO.JOCODE);
         case JOENTT:
-            return journal.getEntryType();
+            return journalEntry.getValueForUi(ColumnsDAO.JOENTT);
         case JODATE:
-            Date date = journal.getDate();
-            if (date == null) {
-                return "";
-            }
-            return getDateFormatter().format(date);
+            return journalEntry.getValueForUi(ColumnsDAO.JODATE);
         case JOTIME:
-            Time time = journal.getTime();
-            if (time == null) {
-                return "";
-            }
-            return getTimeFormatter().format(time);
+            return journalEntry.getValueForUi(ColumnsDAO.JOTIME);
         case JOJOB:
-            return journal.getJobName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOJOB);
         case JOUSER:
-            return journal.getJobUserName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOUSER);
         case JONBR:
-            return Integer.toString(journal.getJobNumber());
+            return journalEntry.getValueForUi(ColumnsDAO.JONBR);
         case JOPGM:
-            return journal.getProgramName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGM);
         case JOPGMLIB:
-            return journal.getProgramLibrary();
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMLIB);
         case JOPGMDEV:
-            return journal.getProgramAspDevice();
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMDEV);
         case JOPGMASP:
-            return Integer.toString(journal.getProgramAsp());
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMASP);
         case JOOBJ:
-            return journal.getObjectName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJ);
         case JOLIB:
-            return journal.getObjectLibrary();
+            return journalEntry.getValueForUi(ColumnsDAO.JOLIB);
         case JOMBR:
-            return journal.getMemberName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOMBR);
         case JOCTRR:
-            return Long.toString(journal.getCountRrn());
+            return journalEntry.getValueForUi(ColumnsDAO.JOCTRR);
         case JOFLAG:
-            return journal.getFlag();
+            return journalEntry.getValueForUi(ColumnsDAO.JOFLAG);
         case JOCCID:
-            return Long.toString(journal.getCommitmentCycle());
+            return journalEntry.getValueForUi(ColumnsDAO.JOCCID);
         case JOUSPF:
-            return journal.getUserProfile();
+            return journalEntry.getValueForUi(ColumnsDAO.JOUSPF);
         case JOSYNM:
-            return journal.getSystemName();
+            return journalEntry.getValueForUi(ColumnsDAO.JOSYNM);
         case JOJID:
-            return journal.getJournalID();
+            return journalEntry.getValueForUi(ColumnsDAO.JOJID);
         case JORCST:
-            return journal.getReferentialConstraintText();
+            return journalEntry.getValueForUi(ColumnsDAO.JORCST);
         case JOTGR:
-            return journal.getTriggerText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOTGR);
         case JOINCDAT:
-            return journal.getIncompleteDataText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOINCDAT);
         case JOIGNAPY:
-            return journal.getIgnoredByApyRmvJrnChgText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOIGNAPY);
         case JOMINESD:
-            return journal.getMinimizedSpecificDataText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOMINESD);
         case JOOBJIND:
-            return journal.getObjectIndicatorText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJIND);
         case JOSYSSEQ:
-            return journal.getSystemSequenceNumber();
+            return journalEntry.getValueForUi(ColumnsDAO.JOSYSSEQ);
         case JORCV:
-            return journal.getReceiver();
+            return journalEntry.getValueForUi(ColumnsDAO.JORCV);
         case JORCVLIB:
-            return journal.getReceiverLibrary();
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVLIB);
         case JORCVDEV:
-            return journal.getReceiverAspDevice();
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVDEV);
         case JORCVASP:
-            return Integer.toString(journal.getReceiverAsp());
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVASP);
         case JOARM:
-            return Integer.toString(journal.getArmNumber());
+            return journalEntry.getValueForUi(ColumnsDAO.JOARM);
         case JOTHDX:
-            return journal.getThreadId();
+            return journalEntry.getValueForUi(ColumnsDAO.JOTHDX);
         case JOADF:
-            return journal.getAddressFamilyText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOADF);
         case JORPORT:
-            return Integer.toString(journal.getRemotePort());
+            return journalEntry.getValueForUi(ColumnsDAO.JORPORT);
         case JORADR:
-            return journal.getRemoteAddress();
+            return journalEntry.getValueForUi(ColumnsDAO.JORADR);
         case JOLUW:
-            return journal.getLogicalUnitOfWork();
+            return journalEntry.getValueForUi(ColumnsDAO.JOLUW);
         case JOXID:
-            return journal.getTransactionIdentifier();
+            return journalEntry.getValueForUi(ColumnsDAO.JOXID);
         case JOOBJTYP:
-            return journal.getObjectType();
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJTYP);
         case JOFILTYP:
-            return journal.getFileTypeIndicatorText();
+            return journalEntry.getValueForUi(ColumnsDAO.JOFILTYP);
         case JOCMTLVL:
-            return Long.toString(journal.getCommitmentCycle());
+            return journalEntry.getValueForUi(ColumnsDAO.JOCMTLVL);
         case JOESD:
-            // For displaying purposes, replace 0x00 with blanks.
-            // Otherwise, the string was truncate by JFace
-            String stringSpecificData = journal.getStringSpecificData();
-            if (stringSpecificData == null) {
-                return "";
-            } else if (stringSpecificData.lastIndexOf('\0') >= 0) {
-                return stringSpecificData.replace('\0', ' ').substring(1, Math.min(200, stringSpecificData.length()));
-            } else {
-                return stringSpecificData;
-            }
+            return journalEntry.getValueForUi(ColumnsDAO.JOESD);
         default:
             break;
         }

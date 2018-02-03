@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
+import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 
 public class JournalEntryMenuAdapter extends MenuAdapter {
 
@@ -27,13 +29,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     private Menu menuTableMembers;
     private Shell shell;
     private MenuItem compareSideBySideMenuItem;
-
-    public JournalEntryMenuAdapter(Menu menuTableMembers, Tree tree) {
-        this.tree = tree;
-        this.tableViewer = null;
-        this.shell = tree.getShell();
-        this.menuTableMembers = menuTableMembers;
-    }
+    private MenuItem exportToExcelMenuItem;
 
     public JournalEntryMenuAdapter(Menu menuTableMembers, TableViewer tableViewer) {
         this.tree = null;
@@ -49,6 +45,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
+        dispose(exportToExcelMenuItem);
         dispose(compareSideBySideMenuItem);
     }
 
@@ -85,6 +82,25 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     }
 
     public void createMenuItems() {
+
+        if (selectedItemsCount() > 0) {
+            exportToExcelMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final ExportToExcelAction action = new ExportToExcelAction(shell);
+            exportToExcelMenuItem.setText(action.getText());
+            exportToExcelMenuItem.setImage(action.getImage());
+            exportToExcelMenuItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+
+                    JournalEntryLabelProvider contentProvider = (JournalEntryLabelProvider)tableViewer.getLabelProvider();
+
+                    ExportToExcelAction exportToExcelAction = new ExportToExcelAction(shell);
+                    exportToExcelAction.setSelectedItems(getSelection());
+                    exportToExcelAction.setColumns(contentProvider.getColumns());
+                    exportToExcelAction.run();
+                }
+            });
+        }
 
         if (selectedItemsCount() == 2) {
             compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);

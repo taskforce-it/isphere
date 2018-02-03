@@ -48,9 +48,11 @@ import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
+import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntries;
@@ -61,6 +63,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private EditSqlAction editSqlAction;
     private OpenJournalOutfileAction openJournalOutputFileAction;
+    private ExportToExcelAction exportToExcelAction;
     private CompareSideBySideAction compareSideBySideAction;
     private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
     private ConfigureParsersAction configureParsersAction;
@@ -126,6 +129,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      * Create the actions.
      */
     private void createActions() {
+
+        exportToExcelAction = new ExportToExcelAction(getSite().getShell());
 
         openJournalOutputFileAction = new OpenJournalOutfileAction(getSite().getShell()) {
             @Override
@@ -329,6 +334,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(openJournalOutputFileAction);
         toolBarManager.add(editSqlAction);
+        toolBarManager.add(exportToExcelAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(compareSideBySideAction);
         toolBarManager.add(toggleHighlightUserEntriesAction);
@@ -366,10 +372,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
 
         int numEntries = 0;
+        JournalEntryColumn[] columns = null;
+        JournalEntries journalEntries = null;
         StructuredSelection selection = new StructuredSelection(new JournalEntry[0]);
         if (viewer != null) {
 
-            JournalEntries journalEntries = viewer.getInput();
+            columns = viewer.getColumns();
+            journalEntries = viewer.getInput();
             if (journalEntries != null) {
                 numEntries = journalEntries.size();
             }
@@ -378,9 +387,15 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
 
         if (numEntries == 0) {
+            exportToExcelAction.setColumns(null);
+            exportToExcelAction.setEnabled(false);
+            exportToExcelAction.setSelectedItems(new JournalEntry[0]);
             reloadEntriesAction.setEnabled(false);
             toggleHighlightUserEntriesAction.setEnabled(false);
         } else {
+            exportToExcelAction.setColumns(columns);
+            exportToExcelAction.setEnabled(true);
+            exportToExcelAction.setSelectedItems(journalEntries.getItems().toArray(new JournalEntry[journalEntries.size()]));
             reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(true);
         }
@@ -400,7 +415,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         }
 
-        compareSideBySideAction.setSelectedItems(selectedItems.toArray(new JournalEntry[selectedItems.size()]));
+        JournalEntry[] selectedJournalEntries = selectedItems.toArray(new JournalEntry[selectedItems.size()]);
+        compareSideBySideAction.setSelectedItems(selectedJournalEntries);
     }
 
     /**

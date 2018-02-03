@@ -1,6 +1,7 @@
 
 Changelog: iSphere 3.2.2.r
 --------------------------
+ • Added "Export to Excel" option to Journal Explorer view.
  • Added column JOCTRR (relative record number) to Journal Explorer view.
 
 Changelog: iSphere 3.2.1.r
