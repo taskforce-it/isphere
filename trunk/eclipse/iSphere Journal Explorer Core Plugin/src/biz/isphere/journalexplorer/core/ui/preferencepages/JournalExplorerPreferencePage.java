@@ -14,6 +14,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,14 +41,17 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     private JournalEntryAppearanceAttributes[] columns;
     private int maxNumRowsToFetch;
     private int bufferSize;
+    private boolean exportColumnHeadings;
 
     private Preferences preferences;
 
     private Button checkboxEnableColoring;
     private Group groupColors;
     private Group groupLimitationProperties;
+    private Group groupExcelExport;
     private Text textMaxNumRowsToFetch;
     private Combo comboBufferSize;
+    private Button chkboxEportColumnHeadings;
 
     public JournalExplorerPreferencePage() {
         super();
@@ -69,6 +73,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         createGroupColors(container);
         createGroupSqlAttributes(container);
+        createGroupExcelExport(container);
 
         setScreenToValues();
 
@@ -135,6 +140,26 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         comboBufferSize.setItems(preferences.getRetrieveJournalEntriesBufferSizeLabels());
     }
 
+    private void createGroupExcelExport(Composite container) {
+
+        groupExcelExport = new Group(container, SWT.NONE);
+        groupExcelExport.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupExcelExport.setLayout(new GridLayout(1, false));
+        groupExcelExport.setText(Messages.Excel_Export);
+
+        chkboxEportColumnHeadings = WidgetFactory.createCheckbox(groupExcelExport, Messages.Export_Export_column_headings);
+        chkboxEportColumnHeadings.setToolTipText(Messages.Export_Export_column_headings_tooltip);
+        chkboxEportColumnHeadings.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                exportColumnHeadings = chkboxEportColumnHeadings.getSelection();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+    }
+
     @Override
     protected void performApply() {
         setStoreToValues();
@@ -162,6 +187,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         preferences.setSortedJournalEntryAppearanceAttributes(columns);
         preferences.setMaximumNumberOfRowsToFetch(maxNumRowsToFetch);
         preferences.setRetrieveJournalEntriesBufferSize(bufferSize);
+        preferences.setExportColumnHeadings(exportColumnHeadings);
     }
 
     protected void setScreenToValues() {
@@ -171,6 +197,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         columns = preferences.getSortedJournalEntryAppearancesAttributes();
         maxNumRowsToFetch = preferences.getMaximumNumberOfRowsToFetch();
         bufferSize = preferences.getRetrieveJournalEntriesBufferSize();
+        exportColumnHeadings = preferences.isExportColumnHeadings();
 
         setScreenValues();
     }
@@ -182,6 +209,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         columns = preferences.getInitialSortedJournalEntryAppearanceAttributes();
         maxNumRowsToFetch = preferences.getInitialMaximumNumberOfRowsToFetch();
         bufferSize = preferences.getInitialRetrieveJournalEntriesBufferSize();
+        exportColumnHeadings = preferences.getInitialExportColumnHeadings();
 
         setScreenValues();
     }
@@ -196,6 +224,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
             bufferSizeLabel = Long.toString(bufferSize);
         }
         comboBufferSize.setText(bufferSizeLabel);
+        chkboxEportColumnHeadings.setSelection(exportColumnHeadings);
 
         setControlsEnablement();
     }

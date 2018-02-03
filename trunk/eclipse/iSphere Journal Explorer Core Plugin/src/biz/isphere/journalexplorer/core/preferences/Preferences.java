@@ -83,6 +83,10 @@ public final class Preferences implements ColumnsDAO {
 
     public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
 
+    public static final String EXPORT_FILE = DOMAIN + "EXPORT_FILE"; //$NON-NLS-1$
+
+    public static final String EXPORT_COLUMN_HEADINGS = DOMAIN + "EXPORT_COLUMN_HEADINGS"; //$NON-NLS-1$
+
     private SimpleDateFormat dateFormatter;
 
     /**
@@ -213,6 +217,16 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getString(EXPORT_PATH);
     }
 
+    public String getExportFile() {
+
+        return preferenceStore.getString(EXPORT_FILE);
+    }
+
+    public boolean isExportColumnHeadings() {
+
+        return preferenceStore.getBoolean(EXPORT_COLUMN_HEADINGS);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -264,6 +278,16 @@ public final class Preferences implements ColumnsDAO {
     public void setExportPath(String exportPath) {
 
         preferenceStore.setValue(EXPORT_PATH, exportPath);
+    }
+
+    public void setExportFile(String exportFile) {
+
+        preferenceStore.setValue(EXPORT_FILE, exportFile);
+    }
+
+    public void setExportColumnHeadings(boolean export) {
+
+        preferenceStore.setValue(EXPORT_COLUMN_HEADINGS, export);
     }
 
     /*
@@ -364,7 +388,9 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate().getTime()));
         preferenceStore.setDefault(RECORD_ENTRIES_ONLY, getInitialRecordsOnly());
 
-        preferenceStore.setDefault(EXPORT_PATH, getInitialRecordsOnly());
+        preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
+        preferenceStore.setDefault(EXPORT_FILE, getInitialExportFile());
+        preferenceStore.setDefault(EXPORT_COLUMN_HEADINGS, getInitialExportColumnHeadings());
     }
 
     /*
@@ -474,8 +500,15 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public String getInitialExportPath() {
-
         return FileHelper.getDefaultRootDirectory();
+    }
+
+    public String getInitialExportFile() {
+        return "ExportJournalEntries";
+    }
+
+    public boolean getInitialExportColumnHeadings() {
+        return true;
     }
 
     public String[] getRetrieveJournalEntriesBufferSizeLabels() {

@@ -34,6 +34,7 @@ public class JournalEntry {
     private SimpleDateFormat timeFormatter;
 
     private OutputFile outputFile;
+    private String qualifiedObjectName;
 
     private String connectionName;
     private int id;
@@ -154,6 +155,7 @@ public class JournalEntry {
 
     public JournalEntry(OutputFile outputFile) {
         this.outputFile = outputFile;
+        this.qualifiedObjectName = null;
     }
 
     public OutputFile getOutputFile() {
@@ -189,9 +191,9 @@ public class JournalEntry {
         return Messages.bind(Messages.Journal_RecordNum, new Object[] { getConnectionName(), getOutFileLibrary(), getOutFileName(), getId() });
     }
 
-    public String getQualifiedObjectName() {
-        return String.format("%s/%s", objectLibrary, objectName);
-    }
+    // public String getQualifiedObjectName() {
+    // return String.format("%s/%s", objectLibrary, objectName);
+    // }
 
     public int getId() {
         return id;
@@ -437,6 +439,7 @@ public class JournalEntry {
 
     public void setObjectName(String objectName) {
         this.objectName = objectName.trim();
+        this.qualifiedObjectName = null;
     }
 
     /**
@@ -452,6 +455,7 @@ public class JournalEntry {
 
     public void setObjectLibrary(String objectLibrary) {
         this.objectLibrary = objectLibrary.trim();
+        this.qualifiedObjectName = null;
     }
 
     /**
@@ -467,6 +471,7 @@ public class JournalEntry {
 
     public void setMemberName(String memberName) {
         this.memberName = memberName.trim();
+        this.qualifiedObjectName = null;
     }
 
     /**
@@ -1226,6 +1231,21 @@ public class JournalEntry {
         }
 
         return data;
+    }
+
+    public String getQualifiedObjectName() {
+
+        if (qualifiedObjectName == null) {
+
+            if (!StringHelper.isNullOrEmpty(memberName)) {
+                qualifiedObjectName = String.format("%s/%s(%s)", objectLibrary, objectName, memberName);
+            } else {
+                qualifiedObjectName = String.format("%s/%s", objectLibrary, objectName);
+            }
+
+        }
+
+        return qualifiedObjectName;
     }
 
     private SimpleDateFormat getDateFormatter() {
