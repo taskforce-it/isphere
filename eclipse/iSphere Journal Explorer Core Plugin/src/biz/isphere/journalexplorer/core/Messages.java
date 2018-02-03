@@ -19,6 +19,7 @@ public class Messages extends NLS {
 
     public static String E_R_R_O_R;
     public static String Warning;
+    public static String Information;
     public static String AddJournalDialog_AllDataRequired;
     public static String AddJournalDialog_Conection;
     public static String AddJournalDialog_FileName;
@@ -41,6 +42,8 @@ public class Messages extends NLS {
     public static String JournalEntryViewer_Property;
     public static String JournalEntryViewer_Value;
     public static String JournalExplorerView_OpenJournal;
+    public static String JournalExplorerView_Export_to_Excel;
+    public static String JournalExplorerView_Export_to_Excel_Tooltip;
     public static String JournalExplorerView_HighlightUserEntries;
     public static String JournalProperties_JOCODE;
     public static String JournalProperties_JOENTL;
@@ -77,7 +80,7 @@ public class Messages extends NLS {
     public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
     public static String Error_No_record_level_operation;
     public static String Error_Object_A_B_is_not_journaled;
-    
+
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry;
 
     public static String Exception_No_entries_converted_or_received_from_journal_A_B;
@@ -155,6 +158,11 @@ public class Messages extends NLS {
 
     public static String JournalPropertyValue_null;
     public static String JournalPropertyValue_not_available;
+
+    public static String ExcelExport_Headline;
+    public static String Finished_exporting_data_to_file_A;
+    public static String Exporting_to_Excel;
+    public static String Display_Export_Result;
 
     static {
         // initialize resource bundle

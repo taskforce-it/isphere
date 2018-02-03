@@ -41,6 +41,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 
 /**
@@ -89,16 +90,16 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         return false;
     }
 
-    public boolean hasSqlEditorVisible() {
-        return false;
-    }
-
     public boolean isSqlEditorVisible() {
         return isSqlEditorVisible;
     }
 
     public void setSqlEditorVisibility(boolean visible) {
         this.isSqlEditorVisible = visible;
+    }
+
+    public JournalEntryColumn[] getColumns() {
+        return getLabelProvider().getColumns();
     }
 
     protected abstract TableViewer createTableViewer(Composite container);
@@ -189,8 +190,16 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     public JournalEntries getInput() {
 
-        JournalViewerContentProvider contentProvider = (JournalViewerContentProvider)tableViewer.getContentProvider();
+        JournalViewerContentProvider contentProvider = getContentProvider();
         return contentProvider.getInput();
+    }
+
+    private JournalViewerContentProvider getContentProvider() {
+        return (JournalViewerContentProvider)tableViewer.getContentProvider();
+    }
+
+    private JournalEntryLabelProvider getLabelProvider() {
+        return (JournalEntryLabelProvider)tableViewer.getLabelProvider();
     }
 
     public void addSelectionChangedListener(ISelectionChangedListener listener) {

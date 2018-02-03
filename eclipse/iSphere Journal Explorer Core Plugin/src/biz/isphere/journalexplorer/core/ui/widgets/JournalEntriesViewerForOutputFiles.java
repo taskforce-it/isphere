@@ -157,7 +157,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         }
     }
 
-    public boolean hasSqlEditorVisible() {
+    public boolean hasSqlEditor() {
         return true;
     }
 

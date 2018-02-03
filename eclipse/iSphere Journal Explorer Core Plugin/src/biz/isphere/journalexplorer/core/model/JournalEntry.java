@@ -12,9 +12,8 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.ibm.as400.access.AS400Text;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -25,9 +24,14 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
+import com.ibm.as400.access.AS400Text;
+
 public class JournalEntry {
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
+
+    private SimpleDateFormat dateFormatter;
+    private SimpleDateFormat timeFormatter;
 
     private OutputFile outputFile;
 
@@ -48,6 +52,64 @@ public class JournalEntry {
     private String objectLibrary; // JOLIB
     private String memberName; // JOMBR
     private long countRrn; // JOCTRR
+    /**
+     * Contains an indicator for the operation. The following tables show
+     * specific values for this field, if applicable:
+     * <p>
+     * APYJRNCHG (B AT, D DD, E EQ, F AY, Q QH) and RMVJRNCHG (E EX, F RC)
+     * journal entries. The results of the apply or remove operation:
+     * <ul>
+     * <li>0 = Command completed normally.</li>
+     * <li>1 = Command completed abnormally.</li>
+     * </ul>
+     * COMMIT (C CM) journal entry. Whether the commit operation was initiated
+     * by the system or the user:
+     * <ul>
+     * <li>0 = All record-level changes were committed for a commit operation
+     * initiated by a user.</li>
+     * <li>2 = All record-level changes were committed for a commit operation
+     * initiated by the operating system.</li>
+     * </ul>
+     * INZPFM (F IZ) journal entry. Indicates the type of record initialization
+     * that was done:
+     * <ul>
+     * <li>0 = *DFT (default)</li>
+     * <li>1 = *DLT (delete)</li>
+     * </ul>
+     * IPL (J IA, J IN) and in-use (B OI, C BA, D ID, E EI, F IU, I DA, J JI, Q
+     * QI) journal entries. For in-use entries, indicates whether the object was
+     * synchronized with the journal:
+     * <ul>
+     * <li>0 = Object was synchronized with journal</li>
+     * <li>1 = Object was not synchronized with journal</li>
+     * </ul>
+     * Journal code R, all journal entry types except IL. Whether a before-image
+     * is present:
+     * <ul>
+     * <li>0 = Before-image is not present. If before-images are being
+     * journaled, this indicates that an update operation or delete operation is
+     * being requested for a record that has already been deleted.</li>
+     * <li>1 = 1 = Before-image is present.</li>
+     * </ul>
+     * ROLLBACK (C RB) journal entry. How the rollback operation was initiated
+     * and whether it was successful:
+     * <ul>
+     * <li>0 = All record-level changes were rolled back for a rollback
+     * operation initiated by a user.</li>
+     * <li>1 = Not all record-level changes were successfully rolled back for a
+     * rollback operation initiated by a user.</li>
+     * <li>2 = All record-level changes were rolled back for a rollback
+     * operation initiated by the operating system.</li>
+     * <li>3 = Not all record-level changes were rolled back for a rollback
+     * operation initiated by the operating system.</li>
+     * </ul>
+     * Start journal (B JT, D JF, E EG, F JM, Q QB) journal entries. Indicates
+     * the type of images selected:
+     * <ul>
+     * <li>0 = After images are journaled.</li>
+     * <li>1 = Before and after images are journaled.</li>
+     * </ul>
+     */
     private String flag; // JOFLAG
     private long commitmentCycle; // JOCCID
     private String userProfile; // JOUSPF
@@ -1046,5 +1108,137 @@ public class JournalEntry {
 
     public void setSpecificData(byte[] specificData) {
         this.specificData = specificData;
+    }
+
+    public String getValueForUi(String name) {
+
+        String data = "?"; //$NON-NLS-1$
+
+        if (ColumnsDAO.RRN_OUTPUT_FILE.equals(name)) {
+            return Integer.toString(getId()).trim();
+        } else if (ColumnsDAO.JOENTL.equals(name)) {
+            return Integer.toString(getEntryLength());
+        } else if (ColumnsDAO.JOSEQN.equals(name)) {
+            return Long.toString(getSequenceNumber());
+        } else if (ColumnsDAO.JOCODE.equals(name)) {
+            return getJournalCode();
+        } else if (ColumnsDAO.JOENTT.equals(name)) {
+            return getEntryType();
+        } else if (ColumnsDAO.JOTSTP.equals(name)) {
+
+        } else if (ColumnsDAO.JODATE.equals(name)) {
+            Date date = getDate();
+            if (date == null) {
+                return ""; //$NON-NLS-1$
+            }
+            return getDateFormatter().format(date);
+        } else if (ColumnsDAO.JOTIME.equals(name)) {
+            Time time = getTime();
+            if (time == null) {
+                return ""; //$NON-NLS-1$
+            }
+            return getTimeFormatter().format(time);
+        } else if (ColumnsDAO.JOJOB.equals(name)) {
+            return getJobName();
+        } else if (ColumnsDAO.JOUSER.equals(name)) {
+            return getJobUserName();
+        } else if (ColumnsDAO.JONBR.equals(name)) {
+            return Integer.toString(getJobNumber());
+        } else if (ColumnsDAO.JOPGM.equals(name)) {
+            return getProgramName();
+        } else if (ColumnsDAO.JOPGMLIB.equals(name)) {
+            return getProgramLibrary();
+        } else if (ColumnsDAO.JOPGMDEV.equals(name)) {
+            return getProgramAspDevice();
+        } else if (ColumnsDAO.JOPGMASP.equals(name)) {
+            return Integer.toString(getProgramAsp());
+        } else if (ColumnsDAO.JOOBJ.equals(name)) {
+            return getObjectName();
+        } else if (ColumnsDAO.JOLIB.equals(name)) {
+            return getObjectLibrary();
+        } else if (ColumnsDAO.JOMBR.equals(name)) {
+            return getMemberName();
+        } else if (ColumnsDAO.JOCTRR.equals(name)) {
+            return Long.toString(getCountRrn());
+        } else if (ColumnsDAO.JOFLAG.equals(name)) {
+            return getFlag();
+        } else if (ColumnsDAO.JOCCID.equals(name)) {
+            return Long.toString(getCommitmentCycle());
+        } else if (ColumnsDAO.JOUSPF.equals(name)) {
+            return getUserProfile();
+        } else if (ColumnsDAO.JOSYNM.equals(name)) {
+            return getSystemName();
+        } else if (ColumnsDAO.JOJID.equals(name)) {
+            return getJournalID();
+        } else if (ColumnsDAO.JORCST.equals(name)) {
+            return getReferentialConstraintText();
+        } else if (ColumnsDAO.JOTGR.equals(name)) {
+            return getTriggerText();
+        } else if (ColumnsDAO.JOINCDAT.equals(name)) {
+            return getIncompleteDataText();
+        } else if (ColumnsDAO.JOIGNAPY.equals(name)) {
+            return getIgnoredByApyRmvJrnChgText();
+        } else if (ColumnsDAO.JOMINESD.equals(name)) {
+            return getMinimizedSpecificDataText();
+        } else if (ColumnsDAO.JOOBJIND.equals(name)) {
+            return getObjectIndicatorText();
+        } else if (ColumnsDAO.JOSYSSEQ.equals(name)) {
+            return getSystemSequenceNumber();
+        } else if (ColumnsDAO.JORCV.equals(name)) {
+            return getReceiver();
+        } else if (ColumnsDAO.JORCVLIB.equals(name)) {
+            return getReceiverLibrary();
+        } else if (ColumnsDAO.JORCVDEV.equals(name)) {
+            return getReceiverAspDevice();
+        } else if (ColumnsDAO.JORCVASP.equals(name)) {
+            return Integer.toString(getReceiverAsp());
+        } else if (ColumnsDAO.JOARM.equals(name)) {
+            return Integer.toString(getArmNumber());
+        } else if (ColumnsDAO.JOTHDX.equals(name)) {
+            return getThreadId();
+        } else if (ColumnsDAO.JOADF.equals(name)) {
+            return getAddressFamilyText();
+        } else if (ColumnsDAO.JORPORT.equals(name)) {
+            return Integer.toString(getRemotePort());
+        } else if (ColumnsDAO.JORADR.equals(name)) {
+            return getRemoteAddress();
+        } else if (ColumnsDAO.JOLUW.equals(name)) {
+            return getLogicalUnitOfWork();
+        } else if (ColumnsDAO.JOXID.equals(name)) {
+            return getTransactionIdentifier();
+        } else if (ColumnsDAO.JOOBJTYP.equals(name)) {
+            return getFileTypeIndicatorText();
+        } else if (ColumnsDAO.JOFILTYP.equals(name)) {
+            return getFileTypeIndicatorText();
+        } else if (ColumnsDAO.JOCMTLVL.equals(name)) {
+            return Long.toString(getCommitmentCycle());
+        } else if (ColumnsDAO.JOESD.equals(name)) {
+            // For displaying purposes, replace 0x00 with blanks.
+            // Otherwise, the string was truncate by JFace
+            String stringSpecificData = getStringSpecificData();
+            if (stringSpecificData == null) {
+                return "";
+            } else if (stringSpecificData.lastIndexOf('\0') >= 0) {
+                return stringSpecificData.replace('\0', ' ').substring(1, Math.min(200, stringSpecificData.length()));
+            } else {
+                return stringSpecificData;
+            }
+        }
+
+        return data;
+    }
+
+    private SimpleDateFormat getDateFormatter() {
+        if (dateFormatter == null) {
+            dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+        }
+        return dateFormatter;
+    }
+
+    private SimpleDateFormat getTimeFormatter() {
+        if (timeFormatter == null) {
+            timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        }
+        return timeFormatter;
     }
 }
