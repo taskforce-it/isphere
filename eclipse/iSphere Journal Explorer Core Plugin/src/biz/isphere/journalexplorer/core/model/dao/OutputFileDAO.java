@@ -12,8 +12,6 @@
 package biz.isphere.journalexplorer.core.model.dao;
 
 import biz.isphere.journalexplorer.core.model.JournalEntries;
-import biz.isphere.journalexplorer.core.model.MetaDataCache;
-import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 
 /**
@@ -35,17 +33,17 @@ public class OutputFileDAO extends DAOBase {
     public OutputFileDAO(OutputFile outputFile) throws Exception {
         super(outputFile.getConnectionName());
 
-        switch (getOutfileType(outputFile)) {
-        case JournalOutputType.TYPE5:
+        switch (outputFile.getType()) {
+        case TYPE5:
             typeDAO = new Type5DAO(outputFile);
             break;
-        case JournalOutputType.TYPE4:
+        case TYPE4:
             typeDAO = new Type4DAO(outputFile);
             break;
-        case JournalOutputType.TYPE3:
+        case TYPE3:
             typeDAO = new Type3DAO(outputFile);
             break;
-        case JournalOutputType.TYPE2:
+        case TYPE2:
             typeDAO = new Type2DAO(outputFile);
             break;
         default:
@@ -69,12 +67,5 @@ public class OutputFileDAO extends DAOBase {
     public JournalEntries getJournalData(String whereClause) throws Exception {
         setWhereClause(whereClause);
         return typeDAO.load(getWhereClause());
-    }
-
-    private int getOutfileType(OutputFile outputFile) throws Exception {
-
-        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-
-        return metaTable.getOutfileType();
     }
 }
