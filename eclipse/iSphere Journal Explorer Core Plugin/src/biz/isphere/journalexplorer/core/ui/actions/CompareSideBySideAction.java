@@ -10,7 +10,6 @@ package biz.isphere.journalexplorer.core.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
@@ -58,17 +57,6 @@ public class CompareSideBySideAction extends Action {
         }
 
         this.selectedItems = selectedItems.toArray(new JournalEntry[selectedItems.size()]);
-    }
-
-    public void setSelectedItems(JournalProperties[] selectedItems) {
-
-        List<JournalEntry> journalProperties = new LinkedList<JournalEntry>();
-        for (JournalProperties selectedItem : selectedItems) {
-            JournalEntry journalEntry = selectedItem.getJournalEntry();
-            journalProperties.add(journalEntry);
-        }
-
-        this.selectedItems = journalProperties.toArray(new JournalEntry[journalProperties.size()]);
     }
 
     public void setSelectedItems(JournalEntry[] selectedItems) {
