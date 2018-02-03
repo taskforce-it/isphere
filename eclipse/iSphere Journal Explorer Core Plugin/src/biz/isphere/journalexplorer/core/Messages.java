@@ -152,6 +152,10 @@ public class Messages extends NLS {
     public static String Maximum_number_of_rows_to_fetch;
     public static String Buffer_size;
 
+    public static String Excel_Export;
+    public static String Export_Export_column_headings;
+    public static String Export_Export_column_headings_tooltip;
+
     public static String ColumnHeading_ColumnName;
     public static String ColumnHeading_Description;
     public static String ColumnHeading_Color;

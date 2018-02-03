@@ -30,6 +30,14 @@ public final class FileHelper {
         return getFileExtension(file.getName());
     }
 
+    public static String getFileName(String fileName) {
+        return getFileName(new File(fileName));
+    }
+
+    public static String getFileName(File file) {
+        return file.getName();
+    }
+
     public static boolean ensureDirectory(String path) {
         File directoryPath = new File(path).getAbsoluteFile();
         if (!path.endsWith(File.separator)) {

@@ -28,6 +28,7 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 
 import com.ibm.as400.access.Record;
@@ -64,11 +65,26 @@ public class ExcelExporter {
         int line = 0;
         int col = 0;
 
+        // Read meta data of journaled file for displaying the column headings
+        MetaTable metaData = null;
+        if (Preferences.getInstance().isExportColumnHeadings() && displayColumnHeadings(journalEntries)) {
+            metaData = MetaDataCache.INSTANCE.retrieveMetaData(journalEntries[0]);
+        }
+
         // Add headline
         for (JournalEntryColumn column : columns) {
             sheet.addCell(new jxl.write.Label(col, line, column.getColumnHeading()));
             col++;
         }
+
+        if (metaData != null) {
+            MetaColumn[] journaledObjectColumns = metaData.getColumns();
+            for (MetaColumn metaColumn : journaledObjectColumns) {
+                sheet.addCell(new jxl.write.Label(col, line, metaColumn.getName()));
+                col++;
+            }
+        }
+
         line++;
 
         for (JournalEntry journalEntry : journalEntries) {
@@ -104,5 +120,29 @@ public class ExcelExporter {
         workbook.close();
 
         return file;
+    }
+
+    private boolean displayColumnHeadings(JournalEntry[] journalEntries) {
+
+        boolean allSameFile = false;
+        boolean hasRecordEntries = false;
+
+        String previousObject = null;
+
+        for (JournalEntry journalEntry : journalEntries) {
+            if (journalEntry.isRecordEntryType()) {
+                hasRecordEntries = true;
+                if (previousObject == null) {
+                    allSameFile = true;
+                    previousObject = journalEntry.getQualifiedObjectName();
+                } else {
+                    if (!previousObject.equals(journalEntry.getQualifiedObjectName())) {
+                        allSameFile = false;
+                    }
+                }
+            }
+        }
+
+        return hasRecordEntries && allSameFile;
     }
 }

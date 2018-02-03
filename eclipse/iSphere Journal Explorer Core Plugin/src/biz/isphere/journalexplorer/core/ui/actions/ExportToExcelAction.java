@@ -93,7 +93,7 @@ public class ExportToExcelAction extends Action {
         dialog.setFilterNames(new String[] { "Excel Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setFilterExtensions(new String[] { "*.xls", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setFilterPath(Preferences.getInstance().getExportPath());
-        dialog.setFileName("export.xls"); //$NON-NLS-1$
+        dialog.setFileName(Preferences.getInstance().getExportFile()); //$NON-NLS-1$
         dialog.setOverwrite(true);
         final String exportPath = dialog.open();
         if (exportPath == null) {
@@ -101,6 +101,7 @@ public class ExportToExcelAction extends Action {
         }
 
         Preferences.getInstance().setExportPath(dialog.getFilterPath());
+        Preferences.getInstance().setExportFile(FileHelper.getFileName(exportPath));
 
         if (columns == null) {
             return;
