@@ -12,12 +12,12 @@ public final class ExceptionHelper {
 
     public static String getLocalizedMessage(Throwable throwable) {
 
-        if (StringHelper.isNullOrEmpty(throwable.getLocalizedMessage())) {
+        String exceptionMessage = throwable.getLocalizedMessage();
+        if (StringHelper.isNullOrEmpty(exceptionMessage)) {
             return throwable.getClass().getName();
         } else {
-            return throwable.getLocalizedMessage();
+            return exceptionMessage.replaceAll("\\p{C}", "÷");
         }
 
     }
-
 }
