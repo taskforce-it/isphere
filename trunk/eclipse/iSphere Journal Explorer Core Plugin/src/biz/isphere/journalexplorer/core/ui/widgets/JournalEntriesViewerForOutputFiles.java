@@ -37,7 +37,6 @@ import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
@@ -87,17 +86,17 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         try {
 
             AbstractTypeViewerFactory factory = null;
-            switch (getOutfileType(outputFile)) {
-            case JournalOutputType.TYPE5:
+            switch (outputFile.getType()) {
+            case TYPE5:
                 factory = new Type5ViewerFactory();
                 break;
-            case JournalOutputType.TYPE4:
+            case TYPE4:
                 factory = new Type4ViewerFactory();
                 break;
-            case JournalOutputType.TYPE3:
+            case TYPE3:
                 factory = new Type3ViewerFactory();
                 break;
-            case JournalOutputType.TYPE2:
+            case TYPE2:
                 factory = new Type2ViewerFactory();
                 break;
             default:
@@ -114,14 +113,6 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
             MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return null;
         }
-    }
-
-    private int getOutfileType(OutputFile outputFile) throws Exception {
-
-        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
-        metaTable.setJournalOutputFile(true);
-
-        return metaTable.getOutfileType();
     }
 
     public void openJournal() throws Exception {

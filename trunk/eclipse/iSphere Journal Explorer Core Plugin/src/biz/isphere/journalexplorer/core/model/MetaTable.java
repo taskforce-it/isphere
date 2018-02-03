@@ -50,7 +50,7 @@ public class MetaTable {
     private boolean loaded;
     private int parsingOffset;
     private boolean isJournalOutputFile;
-    private Integer outfileType;
+    private JournalOutputType outfileType;
     private int countNullableFields;
     private int lastNullableFieldIndex;
     private int recordLength;
@@ -199,28 +199,28 @@ public class MetaTable {
         return QualifiedName.getName(getLibrary(), getName());
     }
 
-    public int getOutfileType() {
+    public JournalOutputType getOutfileType() {
 
         if (outfileType == null) {
 
             if (hasColumn("JOPGMLIB")) {
                 // Added with *TYPE5
-                outfileType = new Integer(JournalOutputType.TYPE5);
+                outfileType = JournalOutputType.TYPE5;
             } else if (hasColumn("JOJID")) {
                 // Added with *TYPE4
-                outfileType = new Integer(JournalOutputType.TYPE4);
+                outfileType = JournalOutputType.TYPE4;
             } else if (hasColumn("JOTSTP")) {
                 // Added with *TYPE3
-                outfileType = new Integer(JournalOutputType.TYPE3);
+                outfileType = JournalOutputType.TYPE3;
             } else if (hasColumn("JOUSPF")) {
                 // Added with *TYPE2
-                outfileType = new Integer(JournalOutputType.TYPE2);
+                outfileType = JournalOutputType.TYPE2;
             } else {
-                outfileType = new Integer(JournalOutputType.TYPE1);
+                outfileType = JournalOutputType.TYPE1;
             }
 
         }
 
-        return outfileType.intValue();
+        return outfileType;
     }
 }

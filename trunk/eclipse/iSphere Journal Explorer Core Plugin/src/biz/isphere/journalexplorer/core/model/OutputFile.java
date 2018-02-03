@@ -9,6 +9,7 @@
 package biz.isphere.journalexplorer.core.model;
 
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
+import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 
 public class OutputFile {
 
@@ -20,6 +21,21 @@ public class OutputFile {
         this.connectionName = connectionName;
         this.outFileLibrary = outFileLibrary;
         this.outFileName = outfileName;
+    }
+
+    /**
+     * Returns the type of the output file. The type if one of the constants
+     * declared in {@link JournalOutputType}.
+     * 
+     * @return type of the output file
+     * @throws Exception
+     */
+    public JournalOutputType getType() throws Exception {
+
+        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(this);
+        metaTable.setJournalOutputFile(true);
+
+        return metaTable.getOutfileType();
     }
 
     public String getConnectionName() {

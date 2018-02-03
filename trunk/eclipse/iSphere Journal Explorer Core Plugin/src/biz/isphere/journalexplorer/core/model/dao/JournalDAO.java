@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.Messages;
@@ -28,6 +26,8 @@ import biz.isphere.journalexplorer.core.model.api.QjoRetrieveJournalEntries;
 import biz.isphere.journalexplorer.core.model.api.RJNE0200;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+
+import com.ibm.as400.access.AS400;
 
 /**
  * This class retrieves journal entries from the journal a given object is
@@ -72,6 +72,7 @@ public class JournalDAO {
         AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
 
+        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR2");
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
@@ -82,14 +83,14 @@ public class JournalDAO {
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
                     messages = new LinkedList<IBMiMessage>();
-                    messages.add(
-                        new IBMiMessage("RJE0001", Messages.RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry));
+                    messages.add(new IBMiMessage("RJE0001",
+                        Messages.RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry));
                 } else {
                     while (rjne0200.nextEntry()) {
 
                         id++;
 
-                        JournalEntry journalEntry = new JournalEntry(new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR2")); //$NON-NLS-1$ //$NON-NLS-2$
+                        JournalEntry journalEntry = new JournalEntry(outputFile); //$NON-NLS-1$ //$NON-NLS-2$
 
                         journalEntries.add(populateJournalEntry(journaledObject.getConnectionName(), id, rjne0200, journalEntry));
 
