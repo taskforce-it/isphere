@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.dialogs;
+package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import java.util.Calendar;
 import java.util.Date;

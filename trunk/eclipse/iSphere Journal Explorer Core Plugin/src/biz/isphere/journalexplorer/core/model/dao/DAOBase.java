@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import biz.isphere.journalexplorer.rse.shared.model.dao.AbstractDAOBase;
 
@@ -19,6 +20,14 @@ public class DAOBase extends AbstractDAOBase {
 
     public DAOBase(String connectionName) throws Exception {
         super(connectionName);
+    }
+
+    protected Statement createStatement() throws Exception {
+        return getConnection().createStatement();
+    }
+
+    protected Statement createStatement(String sql) throws SQLException {
+        return getConnection().createStatement();
     }
 
     protected PreparedStatement prepareStatement(String sql) throws SQLException {

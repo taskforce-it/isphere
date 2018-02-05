@@ -14,13 +14,19 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 public class OutputFile {
 
     private String connectionName;
-    private String outFileName;
     private String outFileLibrary;
+    private String outFileName;
+    private String outMemberName;
 
-    public OutputFile(String connectionName, String outFileLibrary, String outfileName) {
+    public OutputFile(String connectionName, String outFileLibrary, String outFileName) {
+        this(connectionName, outFileLibrary, outFileName, "*FIRST");
+    }
+
+    public OutputFile(String connectionName, String outFileLibrary, String outFileName, String outMemberName) {
         this.connectionName = connectionName;
         this.outFileLibrary = outFileLibrary;
-        this.outFileName = outfileName;
+        this.outFileName = outFileName;
+        this.outMemberName = outMemberName;
     }
 
     /**
@@ -46,14 +52,6 @@ public class OutputFile {
         this.connectionName = connetionName;
     }
 
-    public String getOutFileName() {
-        return outFileName;
-    }
-
-    public void setOutFileName(String outFileName) {
-        this.outFileName = outFileName;
-    }
-
     public String getOutFileLibrary() {
         return outFileLibrary;
     }
@@ -62,8 +60,24 @@ public class OutputFile {
         this.outFileLibrary = outFileLibrary;
     }
 
+    public String getOutFileName() {
+        return outFileName;
+    }
+
+    public void setOutFileName(String outFileName) {
+        this.outFileName = outFileName;
+    }
+
+    public String getOutMemberName() {
+        return outMemberName;
+    }
+
+    public void setOutMemberName(String outMemberName) {
+        this.outMemberName = outMemberName;
+    }
+
     public String getQualifiedName() {
-        return QualifiedName.getName(connectionName, outFileLibrary, outFileName);
+        return QualifiedName.getMemberName(connectionName, outFileLibrary, outFileName, outMemberName);
     }
 
     @Override

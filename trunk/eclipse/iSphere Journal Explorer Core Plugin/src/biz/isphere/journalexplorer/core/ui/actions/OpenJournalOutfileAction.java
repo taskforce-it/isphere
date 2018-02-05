@@ -59,7 +59,8 @@ public abstract class OpenJournalOutfileAction extends Action {
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 addJournalDialog.getConnectionName())) {
-                outputFile = new OutputFile(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName());
+                outputFile = new OutputFile(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName(),
+                    addJournalDialog.getMemberName());
             }
         }
     }

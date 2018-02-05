@@ -20,9 +20,9 @@ import com.ibm.as400.access.QSYSObjectPathName;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
+import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
 
