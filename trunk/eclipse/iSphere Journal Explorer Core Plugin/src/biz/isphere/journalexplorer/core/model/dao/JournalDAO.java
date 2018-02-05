@@ -128,7 +128,7 @@ public class JournalDAO {
         journalEntry.setJobNumber(journalEntryData.getJobNumber());
         journalEntry.setJobUserName(journalEntryData.getUserName());
         journalEntry.setCountRrn(journalEntryData.getRelativeRecordNumber());
-        journalEntry.setFlag("???");
+        journalEntry.setFlag(journalEntryData.getIndicatorFlag());
         journalEntry.setJournalCode(journalEntryData.getJournalCode());
         journalEntry.setMemberName(journalEntryData.getFileMember());
         journalEntry.setMinimizedSpecificData(journalEntryData.isMinimizedEntrySpecificData());
