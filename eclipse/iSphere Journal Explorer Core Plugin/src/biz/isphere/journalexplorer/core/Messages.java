@@ -23,6 +23,7 @@ public class Messages extends NLS {
     public static String AddJournalDialog_AllDataRequired;
     public static String AddJournalDialog_Conection;
     public static String AddJournalDialog_FileName;
+    public static String AddJournalDialog_MemberName;
     public static String AddJournalDialog_Library;
     public static String AddJournalDialog_OpenJournal;
     public static String ConfigureParsersDialog_DefinitionLibrary;
@@ -147,6 +148,7 @@ public class Messages extends NLS {
     public static String Enable_coloring_tooltip;
     public static String Clear_Colors;
     public static String File_A_B_does_not_exist;
+    public static String Member_C_does_not_exist_in_file_A_B;
 
     public static String Limitation_Properties;
     public static String Maximum_number_of_rows_to_fetch;

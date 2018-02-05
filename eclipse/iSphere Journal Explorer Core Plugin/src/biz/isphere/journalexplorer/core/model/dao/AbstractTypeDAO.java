@@ -11,6 +11,8 @@ package biz.isphere.journalexplorer.core.model.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DecimalFormat;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -44,6 +46,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
+        Statement statement = null;
+        DecimalFormat formatter = new DecimalFormat("0000000000.00000");
+
         try {
 
             String sqlStatement = String.format(getSqlStatement(), outputFile.getOutFileLibrary(), outputFile.getOutFileName());
@@ -52,6 +57,16 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             }
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+
+            // OVRDBF FILE(OVRFILE) TOFILE(LIBRARY/FILE) MBR(MEMBER)
+            // OVRSCOPE(*JOB)
+
+            String command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
+                outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
+            command = "CALL QSYS.QCMDEXC('" + command + "', " + formatter.format(command.length()) + ")";
+
+            statement = createStatement();
+            statement.execute(command);
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -78,6 +93,15 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             }
 
         } finally {
+
+            // DLTOVR FILE(OVRFILE) LVL(*JOB)
+
+            String command = String.format("DLTOVR FILE(%s) LVL(*JOB)", outputFile.getOutFileName());
+            try {
+                statement.execute("CALL QSYS.QCMDEXC('" + command + "', " + formatter.format(command.length()) + ")");
+            } catch (Exception e) {
+            }
+
             super.destroy(preparedStatement);
             super.destroy(resultSet);
         }

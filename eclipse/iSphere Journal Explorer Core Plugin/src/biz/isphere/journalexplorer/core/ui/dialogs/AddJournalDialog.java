@@ -46,16 +46,16 @@ public class AddJournalDialog extends XDialog {
     private static final String CONNECTION = "CONNECTION";
     private static final String LIBRARY = "LIBRARY";
     private static final String FILE = "FILE";
-
-    private Text txtLibraryName;
-
-    private Text txtFileName;
+    private static final String MEMBER = "MEMBER";
 
     private ComboViewer cmbConnections;
+    private Text txtLibraryName;
+    private Text txtFileName;
+    private Text txtMemberName;
 
     private String libraryName;
-
     private String fileName;
+    private String memberName;
 
     private ConnectionDelegate connection;
 
@@ -99,16 +99,20 @@ public class AddJournalDialog extends XDialog {
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
 
-        txtLibraryName = WidgetFactory.createUpperCaseText(container);
-        txtLibraryName.setTextLimit(10);
+        txtLibraryName = WidgetFactory.createNameText(container);
         txtLibraryName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
 
-        txtFileName = WidgetFactory.createUpperCaseText(container);
-        txtFileName.setTextLimit(10);
+        txtFileName = WidgetFactory.createNameText(container);
         txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        Label lblMemberName = new Label(container, SWT.NONE);
+        lblMemberName.setText(Messages.AddJournalDialog_MemberName);
+
+        txtMemberName = WidgetFactory.createNameText(container);
+        txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         configureControls();
 
@@ -137,7 +141,12 @@ public class AddJournalDialog extends XDialog {
             return;
         }
 
-        txtFileName.setFocus();
+        if (StringHelper.isNullOrEmpty(txtFileName.getText())) {
+            txtFileName.setFocus();
+            return;
+        }
+
+        txtMemberName.setFocus();
     }
 
     private void loadValues() {
@@ -157,28 +166,18 @@ public class AddJournalDialog extends XDialog {
 
         txtLibraryName.setText(loadValue(LIBRARY, ""));
         txtFileName.setText(loadValue(FILE, ""));
+        txtMemberName.setText(loadValue(MEMBER, ""));
     }
 
     private void storeValues() {
 
-        storeValue(FILE, fileName);
-        storeValue(LIBRARY, libraryName);
         storeValue(CONNECTION, connection.getConnectionName());
+        storeValue(LIBRARY, libraryName);
+        storeValue(FILE, fileName);
+        storeValue(MEMBER, memberName);
     }
 
     private void configureControls() {
-
-        txtFileName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                fileName = txtFileName.getText().trim();
-            }
-        });
-
-        txtLibraryName.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                libraryName = txtLibraryName.getText().trim();
-            }
-        });
 
         cmbConnections.setContentProvider(new ArrayContentProvider());
         cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
@@ -189,6 +188,24 @@ public class AddJournalDialog extends XDialog {
                 if (selection.size() > 0) {
                     connection = new ConnectionDelegate(selection.getFirstElement());
                 }
+            }
+        });
+
+        txtLibraryName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                libraryName = txtLibraryName.getText().trim();
+            }
+        });
+
+        txtFileName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                fileName = txtFileName.getText().trim();
+            }
+        });
+
+        txtMemberName.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                memberName = txtMemberName.getText().trim();
             }
         });
     }
@@ -223,6 +240,12 @@ public class AddJournalDialog extends XDialog {
 
     private boolean validated() {
 
+        if (StringHelper.isNullOrEmpty(memberName)) {
+            txtMemberName.setText("*FIRST");
+            txtMemberName.setFocus();
+            return false;
+        }
+
         if (StringHelper.isNullOrEmpty(fileName) || StringHelper.isNullOrEmpty(libraryName) || connection == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
             return false;
@@ -234,12 +257,18 @@ public class AddJournalDialog extends XDialog {
             return false;
         }
 
+        if (!IBMiHostContributionsHandler.checkMember(connection.getConnectionName(), libraryName, fileName, memberName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, memberName }));
+            return false;
+        }
+
         return true;
     }
 
-    public String getFileName() {
+    public String getConnectionName() {
 
-        return fileName.toUpperCase();
+        return connection.getConnectionName();
     }
 
     public String getLibrary() {
@@ -247,9 +276,14 @@ public class AddJournalDialog extends XDialog {
         return libraryName.toUpperCase();
     }
 
-    public String getConnectionName() {
+    public String getFileName() {
 
-        return connection.getConnectionName();
+        return fileName.toUpperCase();
+    }
+
+    public String getMemberName() {
+
+        return memberName.toUpperCase();
     }
 
     /**
@@ -265,7 +299,7 @@ public class AddJournalDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        return getShell().computeSize(410, 220, true);
     }
 
     /**
