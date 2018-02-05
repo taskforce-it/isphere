@@ -41,6 +41,7 @@ public class Type2ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.JOOBJ,
         JournalEntryColumnUI.JOMBR,
         JournalEntryColumnUI.JOCTRR,
+        JournalEntryColumnUI.JOFLAG,
         JournalEntryColumnUI.JOMINESD, 
         JournalEntryColumnUI.JOESD };
     // @formatter:on

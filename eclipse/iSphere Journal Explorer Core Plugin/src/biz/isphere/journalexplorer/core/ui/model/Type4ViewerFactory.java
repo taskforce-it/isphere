@@ -41,6 +41,7 @@ public class Type4ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.JOOBJ,
         JournalEntryColumnUI.JOMBR,
         JournalEntryColumnUI.JOCTRR,
+        JournalEntryColumnUI.JOFLAG,
         JournalEntryColumnUI.JOJID, // Added for Type4 viewer
         JournalEntryColumnUI.JORCST, // Added for Type4 viewer
         JournalEntryColumnUI.JOTGR, // Added for Type4 viewer
