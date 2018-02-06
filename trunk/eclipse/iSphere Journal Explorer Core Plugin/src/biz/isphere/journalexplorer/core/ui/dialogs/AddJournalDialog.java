@@ -99,19 +99,19 @@ public class AddJournalDialog extends XDialog {
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
 
-        txtLibraryName = WidgetFactory.createNameText(container);
+        txtLibraryName = WidgetFactory.createNameText(container, true);
         txtLibraryName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
 
-        txtFileName = WidgetFactory.createNameText(container);
+        txtFileName = WidgetFactory.createNameText(container, true);
         txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Label lblMemberName = new Label(container, SWT.NONE);
         lblMemberName.setText(Messages.AddJournalDialog_MemberName);
 
-        txtMemberName = WidgetFactory.createNameText(container);
+        txtMemberName = WidgetFactory.createNameText(container, true);
         txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         configureControls();
@@ -244,6 +244,13 @@ public class AddJournalDialog extends XDialog {
             txtMemberName.setText("*FIRST");
             txtMemberName.setFocus();
             return false;
+        }
+
+        if (!connection.isConnected()) {
+            String message = connection.connect();
+            if (message != null) {
+                return false;
+            }
         }
 
         if (StringHelper.isNullOrEmpty(fileName) || StringHelper.isNullOrEmpty(libraryName) || connection == null) {

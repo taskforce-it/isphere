@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
+import java.util.Set;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -31,12 +32,16 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
      */
     protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
 
+    private static Set<String> loggedCommand;
+
     private OutputFile outputFile;
+    private DecimalFormat decimalFormatter;
 
     public AbstractTypeDAO(OutputFile outputFile) throws Exception {
         super(outputFile.getConnectionName());
 
         this.outputFile = outputFile;
+        this.decimalFormatter = new DecimalFormat("0000000000.00000");
     }
 
     public JournalEntries load(String whereClause) throws Exception {
@@ -47,7 +52,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         ResultSet resultSet = null;
 
         Statement statement = null;
-        DecimalFormat formatter = new DecimalFormat("0000000000.00000");
 
         try {
 
@@ -58,15 +62,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-            // OVRDBF FILE(OVRFILE) TOFILE(LIBRARY/FILE) MBR(MEMBER)
-            // OVRSCOPE(*JOB)
-
-            String command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
-                outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
-            command = "CALL QSYS.QCMDEXC('" + command + "', " + formatter.format(command.length()) + ")";
-
             statement = createStatement();
-            statement.execute(command);
+            overwriteDatabaseFile(statement, outputFile.getOutFileName(), outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
+                outputFile.getOutMemberName());
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -94,19 +92,65 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         } finally {
 
-            // DLTOVR FILE(OVRFILE) LVL(*JOB)
-
-            String command = String.format("DLTOVR FILE(%s) LVL(*JOB)", outputFile.getOutFileName());
-            try {
-                statement.execute("CALL QSYS.QCMDEXC('" + command + "', " + formatter.format(command.length()) + ")");
-            } catch (Exception e) {
-            }
+            deleteDatabaseOverwrite(statement, outputFile.getOutFileName());
 
             super.destroy(preparedStatement);
             super.destroy(resultSet);
         }
 
         return journalEntries;
+    }
+
+    /**
+     * Executes a OVRDBF statement likes this:
+     * 
+     * <pre>
+     * OVRDBF FILE(OVRFILE) TOFILE(LIBRARY/FILE) MBR(MEMBER) OVRSCOPE(*JOB)
+     * </pre>
+     * 
+     * @param statement - SQL statement for executing the CL command
+     * @param toFile - file that is overwritten
+     * @param library - library the contains the file that is actually used
+     * @param file - file that is actually used
+     * @param member - member that is actually used
+     * @throws Exception
+     */
+    private void overwriteDatabaseFile(Statement statement, String toFile, String library, String file, String member) throws Exception {
+
+        String command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
+            outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
+        command = "CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")";
+
+        statement = createStatement();
+        statement.execute(command);
+
+    }
+
+    /**
+     * Executes a DLTOVR statement likes this:
+     * 
+     * <pre>
+     * DLTOVR FILE(OVRFILE) LVL(*JOB)
+     * </pre>
+     * 
+     * @param statement - SQL statement for executing the CL command
+     * @param toFile - file, whose overwrite is removed
+     */
+    private void deleteDatabaseOverwrite(Statement statement, String toFile) {
+
+        String command = null;
+
+        try {
+
+            command = String.format("DLTOVR FILE(%s) LVL(*JOB)", toFile);
+            statement.execute("CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")");
+
+        } catch (Exception e) {
+            if (!loggedCommand.contains(command)) {
+                loggedCommand.add(command);
+                ISpherePlugin.logError(String.format("*** Could not delete database overwrite %s ***", command), e);
+            }
+        }
     }
 
     private void handleOverflowError(JournalEntries journalEntries) {
