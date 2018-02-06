@@ -28,19 +28,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
-import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
-import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.systems.editor.IRemoteResourceProperties;
-import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
@@ -53,6 +40,19 @@ import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
+import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
+import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.systems.editor.IRemoteResourceProperties;
+import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
 /**
  * This class connects to the
