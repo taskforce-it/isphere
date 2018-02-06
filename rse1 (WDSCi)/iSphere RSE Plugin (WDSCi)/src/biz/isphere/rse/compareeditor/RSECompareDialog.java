@@ -68,6 +68,22 @@ public class RSECompareDialog extends CompareDialog {
     private boolean rememberScreenValues;
 
     /**
+     * Creates the compare dialog, for 2 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option
+     *        "Open for browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     */
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
+        super(parentShell, selectEditable, leftMember, rightMember);
+        initializeLeftMember(leftMember);
+        initializeRightMember(rightMember);
+    }
+
+    /**
      * Creates a three-way compare dialog.<br>
      * This constructor is used by CMOne.
      * 
