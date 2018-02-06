@@ -8,11 +8,30 @@
 
 package biz.isphere.journalexplorer.rse.shared.model;
 
+import biz.isphere.base.internal.ExceptionHelper;
+
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.systems.core.messages.SystemMessageException;
 
 public class ConnectionDelegate {
 
     private ISeriesConnection connection;
+
+    public boolean isConnected() {
+        return connection.isConnected();
+    }
+
+    public String connect() {
+
+        try {
+
+            connection.connect();
+            return null;
+
+        } catch (SystemMessageException e) {
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+    }
 
     public ConnectionDelegate(Object connection) {
         this.connection = (ISeriesConnection)connection;
