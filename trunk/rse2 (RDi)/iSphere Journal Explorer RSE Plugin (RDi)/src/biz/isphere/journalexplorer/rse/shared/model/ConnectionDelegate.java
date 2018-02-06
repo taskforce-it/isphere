@@ -8,11 +8,31 @@
 
 package biz.isphere.journalexplorer.rse.shared.model;
 
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+
+import biz.isphere.base.internal.ExceptionHelper;
+
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class ConnectionDelegate {
 
     private IBMiConnection connection;
+
+    public boolean isConnected() {
+        return connection.isConnected();
+    }
+
+    public String connect() {
+
+        try {
+
+            connection.connect();
+            return null;
+
+        } catch (SystemMessageException e) {
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+    }
 
     public ConnectionDelegate(Object connection) {
         this.connection = (IBMiConnection)connection;
