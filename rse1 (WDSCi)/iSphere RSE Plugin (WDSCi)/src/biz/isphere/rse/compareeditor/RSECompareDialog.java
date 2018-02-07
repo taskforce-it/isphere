@@ -81,6 +81,7 @@ public class RSECompareDialog extends CompareDialog {
         super(parentShell, selectEditable, leftMember, rightMember);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
+        setSwitchMemberAllowed(false);
     }
 
     /**
@@ -100,6 +101,7 @@ public class RSECompareDialog extends CompareDialog {
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
         initializeAncestorMember(ancestorMember);
+        setSwitchMemberAllowed(false);
     }
 
     /**
