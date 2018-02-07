@@ -75,6 +75,7 @@ public abstract class CompareDialog extends XDialog {
     private boolean hasRightMember;
     private boolean hasMultipleRightMembers;
     private boolean hasAncestorMember;
+    private boolean switchMemberAllowed = true;
 
     private Image switchImage;
 
@@ -355,7 +356,9 @@ public abstract class CompareDialog extends XDialog {
             createReadOnlyAncestorArea(rtnGroup);
         } else if (hasRightMember()) {
             if (!hasMultipleRightMembers()) {
-                createSwitchMemberButton(rtnGroup);
+                if (switchMemberAllowed) {
+                    createSwitchMemberButton(rtnGroup);
+                }
                 createReadOnlyRightArea(rtnGroup);
             } else {
                 createEditableRightArea(rtnGroup);
@@ -765,6 +768,10 @@ public abstract class CompareDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
+
+    public void setSwitchMemberAllowed(boolean switchMemberAllowed) {
+        this.switchMemberAllowed = switchMemberAllowed;
     }
 
 }
