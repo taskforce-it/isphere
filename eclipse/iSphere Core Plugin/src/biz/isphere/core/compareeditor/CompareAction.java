@@ -49,13 +49,30 @@ public class CompareAction {
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
-
+        
+        boolean sequenceNumbersAndDateFields = true;
+        if (!leftMember.hasSequenceNumbersAndDateFields()) {
+            sequenceNumbersAndDateFields = false;
+        }
+        else {
+            if (!rightMember.hasSequenceNumbersAndDateFields()) {
+                sequenceNumbersAndDateFields = false;
+            }
+            else {
+                if (threeWay && !ancestorMember.hasSequenceNumbersAndDateFields()) {
+                    sequenceNumbersAndDateFields = false;
+                }
+            }
+        }
+        
         this.cc = new CompareEditorConfiguration();
         cc.setLeftEditable(editable);
         cc.setRightEditable(false);
         cc.setConsiderDate(considerDate);
+        cc.setIgnoreCase(false);
         cc.setThreeWay(threeWay);
-
+        cc.setDropSequenceNumbersAndDateFields(!sequenceNumbersAndDateFields);
+        
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
