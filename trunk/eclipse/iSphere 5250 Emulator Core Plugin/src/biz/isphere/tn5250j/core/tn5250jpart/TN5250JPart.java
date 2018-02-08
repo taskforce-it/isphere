@@ -58,6 +58,7 @@ public class TN5250JPart {
         public void partActivated(IWorkbenchPartReference partReference) {
             if (partReference.getPart(true) == tn5250jPart) {
                 HandleBindingService.getInstance().restoreKeyFilterEnablement();
+                setFocus();
             }
         }
 
@@ -134,8 +135,8 @@ public class TN5250JPart {
 
                     if (arrayListTabItemTN5250J.size() == 1) {
                         dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
-                                IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
+                            new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
                     } else {
                         dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_sessions, null,
                             Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION,
@@ -158,8 +159,7 @@ public class TN5250JPart {
         tabFolderSessions.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent event) {
-                SetSessionFocus.run(tabFolderSessions.getSelectionIndex(), -1, tn5250jPart);
-
+                setFocus();
             }
         });
 
@@ -174,6 +174,7 @@ public class TN5250JPart {
          * 3. Press F5.
          * 4. => you act on the IFS item
          * </pre>
+         * 
          * @see biz.isphere.tn5250j.core.tn5250jpart.ProcessSessionFocus
          */
         tabFolderSessions.addFocusListener(new FocusListener() {
@@ -187,8 +188,8 @@ public class TN5250JPart {
                     // Focus set
                     tabFolderSessions.setData(TabFolderSessionsData.TARGET_FOCUS_CONTROL, null);
                     TN5250JGUI tn5250jGUI = (TN5250JGUI)object;
-                    tn5250jGUI.requestFocus();
                 }
+                setFocus();
             }
         });
 
@@ -252,8 +253,8 @@ public class TN5250JPart {
 
                     if (tn5250jPanel.getSession5250().isSignedOn()) {
                         MessageDialog dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
-                                IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
+                            new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
                         final int dialogResult = dialog.open();
                         if (dialogResult == 1) {
                             return;
@@ -282,6 +283,10 @@ public class TN5250JPart {
     }
 
     private void initializeMenu() {
+    }
+
+    public void setFocus() {
+        SetSessionFocus.run(tabFolderSessions.getSelectionIndex(), -1, tn5250jPart);
     }
 
     public void dispose() {
@@ -364,12 +369,12 @@ public class TN5250JPart {
 
             if (arrayListTN5250JPanel.size() == 1) {
                 dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                    Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
-                        IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                    Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
+                    new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
             } else {
                 dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_sessions, null,
-                    Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION, new String[] {
-                        IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                    Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION,
+                    new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
             }
 
             final int dialogResult = dialog.open();

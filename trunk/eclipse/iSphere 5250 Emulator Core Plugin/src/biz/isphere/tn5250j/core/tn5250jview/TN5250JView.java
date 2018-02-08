@@ -55,11 +55,8 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
 
                 @Override
                 public IStatus runInUIThread(IProgressMonitor arg0) {
-                    if (DoNotAskMeAgainDialog
-                        .openConfirm(
-                            getViewSite().getShell(),
-                            DoNotAskMeAgain.TN5250_FAST_CURSOR_MAPPING_CONFLICT,
-                            "The 'Fast cursor up'/'Fast cursor down' keyboard mappings are in conflict with the 'Next multiple session'/'Previous multiple session' keyboard mappings. Do you want to change the 'multiple session' keyboard mappings from Alt+Up/Alt+Down to Ctrl+Right/Ctrl+Left?")) {
+                    if (DoNotAskMeAgainDialog.openConfirm(getViewSite().getShell(), DoNotAskMeAgain.TN5250_FAST_CURSOR_MAPPING_CONFLICT,
+                        "The 'Fast cursor up'/'Fast cursor down' keyboard mappings are in conflict with the 'Next multiple session'/'Previous multiple session' keyboard mappings. Do you want to change the 'multiple session' keyboard mappings from Alt+Up/Alt+Down to Ctrl+Right/Ctrl+Left?")) {
                         KeyMapper.resolveFastCursorMappingConflicts();
                         return Status.OK_STATUS;
                     }
@@ -72,6 +69,7 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
 
     @Override
     public void setFocus() {
+        tn5250jPart.setFocus();
     }
 
     @Override

@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.2.2.r
 --------------------------
+ • Fixed focus problem when switching forth and back between a view
+   and a 5250 session in the "iSphere 5250 Session View" (Ticket #51).
  • Added "Member" field to the "Open Journal Output File" dialog.
  • Added "Export to Excel" option to Journal Explorer view.
  • Added column JOCTRR (relative record number) to Journal Explorer view.
