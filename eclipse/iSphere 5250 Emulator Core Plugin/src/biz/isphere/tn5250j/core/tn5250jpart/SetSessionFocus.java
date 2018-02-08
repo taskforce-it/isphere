@@ -8,18 +8,21 @@
 
 package biz.isphere.tn5250j.core.tn5250jpart;
 
-import java.awt.EventQueue;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.tn5250j.core.session.Session;
 
 public class SetSessionFocus {
 
-    public static void run(int majorSession, int minorSession, ITN5250JPart tn5250jPart) {
+    public static void run(int majorSession, int minorSession, final ITN5250JPart tn5250jPart) {
         if (majorSession >= 0) {
             if (tn5250jPart instanceof IWorkbenchPart) {
                 IWorkbenchPart part = (IWorkbenchPart)tn5250jPart;
@@ -39,13 +42,20 @@ public class SetSessionFocus {
                 return;
             }
 
-            final TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(newMinorSession);
+            TN5250JPanel tn5250j = (TN5250JPanel)arrayListTabItemTN5250J.get(newMinorSession);
             if (tn5250j != null) {
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        tn5250j.getSessionGUI().grabFocus();
-                    }
-                });
+
+                // MUST be outside the UIJob!
+                tn5250jPart.getTabFolderSessions().getItem(tn5250jPart.getTabFolderSessions().getSelectionIndex());
+
+                // Works fine, but 5250 sessions does not get focus when RDi
+                // starts.
+                // EventQueue.invokeLater(new GrabFocusRunnable(tn5250j));
+
+                // Using a UIJob ensures that the 5250 sessions gets the focus
+                // when RDi is started and the 5250 sessions view is visible.
+                new GrabFocusJob(tn5250j).schedule();
+
                 if (tn5250jPart.isMultiSession()) {
                     Session session = (Session)tabItem.getData(SessionTabData.SESSION);
                     if (!session.getDevice().equals("")) {
@@ -65,6 +75,35 @@ public class SetSessionFocus {
                     }
                 }
             }
+        }
+    }
+
+    private static class GrabFocusRunnable implements Runnable {
+
+        private TN5250JPanel tn5250j;
+
+        public GrabFocusRunnable(TN5250JPanel tn5250j) {
+            this.tn5250j = tn5250j;
+        }
+
+        public void run() {
+            tn5250j.getSessionGUI().grabFocus();
+        }
+    }
+
+    private static class GrabFocusJob extends UIJob { // $NON-NLS-1$
+
+        private TN5250JPanel tn5250j;
+
+        public GrabFocusJob(TN5250JPanel tn5250j) {
+            super("");
+            this.tn5250j = tn5250j;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor arg0) {
+            tn5250j.getSessionGUI().grabFocus();
+            return Status.OK_STATUS;
         }
     }
 }
