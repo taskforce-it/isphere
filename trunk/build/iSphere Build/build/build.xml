@@ -94,11 +94,13 @@
 	</tstamp>
 
 	<!-- Set regular expressions and replacement values -->
+	<!--
 	<property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r))?" />
+	-->
 	<!--
 		Regular expression, that allows a release number followed by a sequence number
-	<property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r[0-9]{0,1}))?" />
 	-->
+	<property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{3}|r[0-9]{0,1}))?" />
 	
 	<property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
 	
@@ -132,18 +134,18 @@
 	<!-- Check for BETA or RELEASE version -->
 	<propertyregex property="release.flag" input="${build.version}" regexp="${release.flag.regex}" select="\1" casesensitive="true" />
 	<if>
-		<equals arg1="${release.flag}" arg2="r" />
+		<equals arg1="${release.flag}" arg2="b" />
 		<then>
-			<echo>Building a RELEASE version.</echo>
-			<property name="is.beta.version" value="false" />
-			<property name="beta.dir" value="." />
-			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
-		</then>
-		<else>
 			<echo>Building a BETA version.</echo>
 			<property name="is.beta.version" value="true" />
 			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
 			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
+		</then>
+		<else>
+			<echo>Building a RELEASE version.</echo>
+			<property name="is.beta.version" value="false" />
+			<property name="beta.dir" value="." />
+			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
 		</else>
 	</if>
 
