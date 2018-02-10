@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.2.1.r
+Bundle-Version: 3.2.2.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Bug fix release of Journal Explorer plug-in.
+X-Bundle-Info: Added new features to "Journal Explorer" and fixed focus problem in TN5250J emulator.
 X-Beta-Version: 0.0.0.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
