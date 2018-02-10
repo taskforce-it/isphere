@@ -10,7 +10,6 @@ package biz.isphere.junit;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -61,7 +60,7 @@ public class CheckNotifier {
         InputStream is = connection.getInputStream();
         Manifest manifest = new Manifest(is);
         is.close();
-        
+
         String xReleaseVersion = getString(manifest, "Bundle-Version");
         new Version(xReleaseVersion);
 
@@ -76,6 +75,20 @@ public class CheckNotifier {
         System.out.println("Release info:           " + xReleaseInfo);
         System.out.println("Release update library: " + xReleaseUpdateLibrary);
 
+        String xBetaVersion = getString(manifest, "X-Beta-Version");
+        new Version(xBetaVersion);
+
+        String xBetaUpdateLibrary = getString(manifest, "X-Beta-Update-Library");
+        assertTrue("true".equals(xBetaUpdateLibrary) || "false".equals(xBetaUpdateLibrary));
+
+        String xBetaInfo = getString(manifest, "X-Beta-Info", true);
+        assertTrue(xBetaInfo == null || xBetaInfo.length() > 0);
+
+        System.out.println();
+        System.out.println("Beta version:           " + xReleaseVersion);
+        System.out.println("Beta info:              " + xReleaseInfo);
+        System.out.println("Beta update library:    " + xReleaseUpdateLibrary);
+
         System.out.println("** Finished testing release properties **");
     }
 
@@ -85,7 +98,7 @@ public class CheckNotifier {
         String fullPath = getClass().getClassLoader().getResource(".").getPath().replaceAll("%20", " ");
 
         if (fullPath.endsWith("/")) {
-            
+
             // Remove trailing slash
             fullPath = fullPath.substring(0, fullPath.length() - 1);
 
@@ -133,7 +146,7 @@ public class CheckNotifier {
         System.out.println("Beta version:        " + xBetaVersion);
         System.out.println("Beta info:           " + xBetaInfo);
         System.out.println("Beta update library: " + xBetaUpdateLibrary);
-        
+
         System.out.println("** Finished testing beta release properties **");
     }
 
