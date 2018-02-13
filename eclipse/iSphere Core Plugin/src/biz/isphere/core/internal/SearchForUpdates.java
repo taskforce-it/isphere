@@ -31,9 +31,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.BooleanHelper;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.exception.InvalidVersionNumberException;
 import biz.isphere.core.preferences.Preferences;
 
 public class SearchForUpdates extends Job {
@@ -73,6 +75,8 @@ public class SearchForUpdates extends Job {
 
         while (numTries > 0) {
 
+            Manifest manifest = null;
+
             try {
 
                 URL url;
@@ -83,7 +87,7 @@ public class SearchForUpdates extends Job {
                 }
 
                 URLConnection connection = followRedirects(url);
-                Manifest manifest = readManifest(connection.getInputStream());
+                manifest = readManifest(connection.getInputStream());
                 availableVersion = getVersion(manifest, "Bundle-Version");
 
                 currentVersion = new Version(ISpherePlugin.getDefault().getVersion());
@@ -107,19 +111,20 @@ public class SearchForUpdates extends Job {
 
                 numTries = 0;
 
+            } catch (InvalidVersionNumberException e) {
+                ISpherePlugin.logError("Could not read properties from manifest file.", e);
+                if (showResultAlways) {
+                    MessageDialogAsync.displayError(Messages.E_R_R_O_R,
+                        "Could not read properties from manifest file:\n" + ExceptionHelper.getLocalizedMessage(e));
+                }
+                return Status.OK_STATUS;
+
             } catch (Exception e) {
                 numTries--;
                 if (numTries == 0) {
                     ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
                     if (showResultAlways) {
-                        new UIJob("ISPHERE_UPDATES") {
-                            @Override
-                            public IStatus runInUIThread(IProgressMonitor monitor) {
-                                Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                                MessageDialog.openError(parent, Messages.E_R_R_O_R, Messages.Failed_to_connect_to_iSphere_update_server);
-                                return Status.OK_STATUS;
-                            }
-                        }.schedule();
+                        MessageDialogAsync.displayError(Messages.E_R_R_O_R, Messages.Failed_to_connect_to_iSphere_update_server);
                     }
                     return Status.OK_STATUS;
                 }
@@ -132,7 +137,7 @@ public class SearchForUpdates extends Job {
                 Version lastVersion;
                 try {
                     lastVersion = new Version(Preferences.getInstance().getLastVersionForUpdates());
-                } catch (IllegalArgumentException e) {
+                } catch (InvalidVersionNumberException e) {
                     lastVersion = null;
                 }
                 if (lastVersion == null || lastVersion.compareTo(availableVersion) != 0) {
@@ -140,9 +145,9 @@ public class SearchForUpdates extends Job {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
-                                availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo), MessageDialog.INFORMATION,
-                                new String[] { Messages.OK }, 0, availableVersion.toString());
+                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null,
+                                getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo),
+                                MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -156,8 +161,8 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo,
-                                updateLibraryInfo));
+                            tMessageBox.setMessage(
+                                getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -179,8 +184,8 @@ public class SearchForUpdates extends Job {
             HttpURLConnection httpConnection = (HttpURLConnection)connection;
             httpConnection.setRequestMethod("GET");
             int respCode;
-            while ((respCode = httpConnection.getResponseCode()) == HttpURLConnection.HTTP_MOVED_TEMP
-                || respCode == HttpURLConnection.HTTP_MOVED_PERM || respCode == HttpURLConnection.HTTP_SEE_OTHER) {
+            while ((respCode = httpConnection.getResponseCode()) == HttpURLConnection.HTTP_MOVED_TEMP || respCode == HttpURLConnection.HTTP_MOVED_PERM
+                || respCode == HttpURLConnection.HTTP_SEE_OTHER) {
                 String newUrl = httpConnection.getHeaderField("Location"); //$NON-NLS-1$
                 url = new URL(newUrl);
                 return followRedirects(url);
@@ -246,7 +251,7 @@ public class SearchForUpdates extends Job {
         return true;
     }
 
-    private Version getVersion(Manifest manifest, String version) {
+    private Version getVersion(Manifest manifest, String version) throws InvalidVersionNumberException {
 
         String[] propertyValues = getPropertyValues(manifest, version);
         if (propertyValues != null && propertyValues.length == 1) {

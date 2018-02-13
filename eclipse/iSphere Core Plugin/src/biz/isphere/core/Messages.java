@@ -1380,6 +1380,8 @@ public class Messages extends NLS {
 
     public static String Tooltip_Use_iSphere_connection_manager;
 
+    public static String Invalid_version_number_A_The_version_number_does_not_match_the_pattern_B;
+
     /*
      * Warning messages
      */
