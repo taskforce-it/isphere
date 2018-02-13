@@ -12,6 +12,7 @@
 package biz.isphere.core.internal;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.internal.exception.InvalidVersionNumberException;
 
 /**
  * This class represents a version number. It is mainly used for comparing
@@ -43,6 +44,8 @@ public class Version implements Comparable<Version> {
     private static final String DELIMITER = ".";
     private static final int LENGTH_OF_QUALIFIER = 3;
 
+    public static final String VERSION_NUMBER_PATTERN = "[0-9]+(\\.[0-9]+)*" + "(\\.(b[0-9]{1," + LENGTH_OF_QUALIFIER + "}|r)){1}";
+
     private String originalVersion;
     private String parsedVersion;
     private boolean isBeta;
@@ -52,18 +55,18 @@ public class Version implements Comparable<Version> {
     private int micro;
     private String qualifier;
 
-    public Version(String version) {
+    public Version(String version) throws InvalidVersionNumberException {
 
         if (version == null) {
-            throw new IllegalArgumentException("Version can not be null");
+            throw new InvalidVersionNumberException(version);
         }
 
         if ("2.4.0".equals(version) || "2.5.0".equals(version) || "2.5.1".equals(version) || "2.5.2".equals(version)) {
             version = version + ".r";
         }
 
-        if (!version.matches("[0-9]+(\\.[0-9]+)*" + "(\\.(b[0-9]{1," + LENGTH_OF_QUALIFIER + "}|r)){1}")) {
-            throw new IllegalArgumentException("Invalid version format");
+        if (!version.matches(VERSION_NUMBER_PATTERN)) {
+            throw new InvalidVersionNumberException(version);
         }
 
         this.originalVersion = version;
