@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.2.3.r
+--------------------------
+ • Added InvalidVersionNumberException to get better diagnostic messages
+   when searching for updates.
+
 Changelog: iSphere 3.2.2.r
 --------------------------
  • Fixed focus problem when switching forth and back between a view
