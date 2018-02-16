@@ -1,6 +1,10 @@
 
-Changelog: iSphere 3.2.3.r
---------------------------
+Changelog: iSphere 3.2.3.b003
+-----------------------------
+ • Fixed NullPointerException in AbstractTypeDAO, when opening an
+   output file.
+ • Added additional log statements to ease debugging of errors in 
+   Journal Explorer plug-in.
  • Added InvalidVersionNumberException to get better diagnostic messages
    when searching for updates.
 
