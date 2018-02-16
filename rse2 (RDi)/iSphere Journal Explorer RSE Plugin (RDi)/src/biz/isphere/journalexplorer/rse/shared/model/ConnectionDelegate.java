@@ -10,9 +10,9 @@ package biz.isphere.journalexplorer.rse.shared.model;
 
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
-import biz.isphere.base.internal.ExceptionHelper;
-
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
+import biz.isphere.base.internal.ExceptionHelper;
 
 public class ConnectionDelegate {
 

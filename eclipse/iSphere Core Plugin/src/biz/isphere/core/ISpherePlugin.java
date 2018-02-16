@@ -11,6 +11,8 @@ package biz.isphere.core;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -27,6 +29,8 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -41,8 +45,6 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-import com.ibm.as400.access.AS400;
-
 public class ISpherePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
@@ -52,6 +54,8 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     private static ISpherePlugin plugin;
     private static URL installURL;
+    private static Set<String> loggedCommand = new HashSet<String>();
+
     public static IEditor editor = null;
     public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
     public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
@@ -359,6 +363,23 @@ public class ISpherePlugin extends AbstractUIPlugin {
         }
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
         showErrorLog(false);
+    }
+
+    /**
+     * Convenience method to log error messages to the application log. Only the
+     * first occurrence of the message is logged.
+     * 
+     * @param message Message
+     * @param e The exception that has produced the error
+     */
+    public static void logErrorOnce(String message, Throwable e) {
+
+        message = message + " (logged only once)"; // $NON-NLS-1$
+
+        if (!loggedCommand.contains(message)) {
+            logError(message, e);
+            loggedCommand.add(message);
+        }
     }
 
     public static void showErrorLog() {
