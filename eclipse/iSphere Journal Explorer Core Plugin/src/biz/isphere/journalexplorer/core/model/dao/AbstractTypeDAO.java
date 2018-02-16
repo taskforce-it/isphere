@@ -32,13 +32,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
     protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
 
     private OutputFile outputFile;
-    private DecimalFormat decimalFormatter;
 
     public AbstractTypeDAO(OutputFile outputFile) throws Exception {
         super(outputFile.getConnectionName());
 
         this.outputFile = outputFile;
-        this.decimalFormatter = new DecimalFormat("0000000000.00000");
     }
 
     public JournalEntries load(String whereClause) throws Exception {
@@ -122,11 +120,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
+            String r = new DecimalFormat("0000000000\\.00000").format(77);
+
             command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
                 outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
-            command = "CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")";
-
-            statement = createStatement();
+            command = "CALL QSYS.QCMDEXC('" + command + "', CAST(" + command.length() + " AS DECIMAL(15, 5)))";
             statement.execute(command);
 
         } catch (Exception e) {
@@ -156,7 +154,8 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         try {
 
             command = String.format("DLTOVR FILE(%s) LVL(*JOB)", toFile);
-            statement.execute("CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")");
+            command = "CALL QSYS.QCMDEXC('" + command + "', CAST(" + command.length() + " AS DECIMAL(15, 5)))";
+            statement.execute(command);
 
         } catch (Exception e) {
             String message = String.format("*** Could not delete database overwrite %s ***", command);
