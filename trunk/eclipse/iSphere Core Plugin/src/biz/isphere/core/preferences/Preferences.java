@@ -1236,7 +1236,7 @@ public final class Preferences {
     }
 
     public boolean getDefaultShowErrorLog() {
-        return true;
+        return false;
     }
 
     public boolean getDefaultObjectDecorationExtension() {
