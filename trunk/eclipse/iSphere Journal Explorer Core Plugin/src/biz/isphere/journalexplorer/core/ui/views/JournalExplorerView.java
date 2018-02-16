@@ -34,6 +34,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.journalexplorer.core.Messages;
@@ -196,6 +197,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             if (e instanceof NoJournalEntriesLoadedException) {
                 MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
             } else {
+                ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(1) ***", e);
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
 
@@ -217,6 +219,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                     try {
                         performLoadJournalEntries(getSelectedViewer());
                     } catch (Exception e) {
+                        ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(2) ***", e);
                         MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
                     }
                 }
@@ -236,6 +239,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         } catch (Throwable e) {
 
+            ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(3) ***", e);
             MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
 
             if (journalEntriesViewer != null) {
@@ -258,6 +262,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             performLoadJournalEntries(viewer);
 
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(4) ***", e);
             MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }

@@ -18,6 +18,7 @@ import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
@@ -58,6 +59,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             }
 
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method DisplayJournalEntriesHandler.handleDisplayFileJournalEntries() ***", e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }

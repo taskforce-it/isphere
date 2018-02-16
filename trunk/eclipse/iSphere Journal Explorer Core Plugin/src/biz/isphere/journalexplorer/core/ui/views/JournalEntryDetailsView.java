@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -223,6 +224,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                 }
 
             } catch (Exception e) {
+                ISpherePlugin.logError("*** Error in method LoadPropertiesRunnable.run() ***", e);
                 MessageDialog.openError(getViewSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }

@@ -21,6 +21,7 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -41,8 +42,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer implements ISelectionChangedListener,
-    ISelectionProvider, IPropertyChangeListener {
+public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer
+    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private String connectionName;
     private JournaledObject journaledObject;
@@ -73,6 +74,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
             return tableViewer;
 
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method JournalEntriesViewerForRetrievedJournalEntries.createTableViewer() ***", e);
             MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return null;
         }

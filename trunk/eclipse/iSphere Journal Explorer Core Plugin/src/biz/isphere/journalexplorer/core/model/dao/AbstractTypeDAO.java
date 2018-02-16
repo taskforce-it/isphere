@@ -13,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
-import java.util.Set;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -31,8 +30,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
      * That is close enough for now.
      */
     protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
-
-    private static Set<String> loggedCommand;
 
     private OutputFile outputFile;
     private DecimalFormat decimalFormatter;
@@ -55,16 +52,16 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
+            statement = createStatement();
+            overwriteDatabaseFile(statement, outputFile.getOutFileName(), outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
+                outputFile.getOutMemberName());
+
             String sqlStatement = String.format(getSqlStatement(), outputFile.getOutFileLibrary(), outputFile.getOutFileName());
             if (!StringHelper.isNullOrEmpty(whereClause)) {
                 sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
             }
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
-
-            statement = createStatement();
-            overwriteDatabaseFile(statement, outputFile.getOutFileName(), outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
-                outputFile.getOutMemberName());
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -92,7 +89,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         } finally {
 
-            deleteDatabaseOverwrite(statement, outputFile.getOutFileName());
+            try {
+                deleteDatabaseOverwrite(statement, outputFile.getOutFileName());
+            } catch (Throwable e) {
+                // Ignore error. It has already been logged.
+            }
 
             super.destroy(preparedStatement);
             super.destroy(resultSet);
@@ -115,15 +116,26 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
      * @param member - member that is actually used
      * @throws Exception
      */
-    private void overwriteDatabaseFile(Statement statement, String toFile, String library, String file, String member) throws Exception {
+    private boolean overwriteDatabaseFile(Statement statement, String toFile, String library, String file, String member) throws Exception {
 
-        String command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
-            outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
-        command = "CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")";
+        String command = null;
 
-        statement = createStatement();
-        statement.execute(command);
+        try {
 
+            command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
+                outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
+            command = "CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")";
+
+            statement = createStatement();
+            statement.execute(command);
+
+        } catch (Exception e) {
+            String message = String.format("*** Could not overwrite database file %s ***", command);
+            ISpherePlugin.logErrorOnce(message, e);
+            throw new Exception(message, e);
+        }
+
+        return true;
     }
 
     /**
@@ -135,8 +147,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
      * 
      * @param statement - SQL statement for executing the CL command
      * @param toFile - file, whose overwrite is removed
+     * @throws Exception
      */
-    private void deleteDatabaseOverwrite(Statement statement, String toFile) {
+    private boolean deleteDatabaseOverwrite(Statement statement, String toFile) throws Exception {
 
         String command = null;
 
@@ -146,11 +159,12 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             statement.execute("CALL QSYS.QCMDEXC('" + command + "', " + decimalFormatter.format(command.length()) + ")");
 
         } catch (Exception e) {
-            if (!loggedCommand.contains(command)) {
-                loggedCommand.add(command);
-                ISpherePlugin.logError(String.format("*** Could not delete database overwrite %s ***", command), e);
-            }
+            String message = String.format("*** Could not delete database overwrite %s ***", command);
+            ISpherePlugin.logErrorOnce(message, e);
+            throw new Exception(message, e);
         }
+
+        return true;
     }
 
     private void handleOverflowError(JournalEntries journalEntries) {

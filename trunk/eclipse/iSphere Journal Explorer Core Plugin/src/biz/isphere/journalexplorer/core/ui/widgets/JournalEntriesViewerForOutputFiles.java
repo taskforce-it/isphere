@@ -57,8 +57,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
-    IPropertyChangeListener {
+public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer
+    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private SelectionListener loadJournalEntriesSelectionListener;
     private OutputFile outputFile;
@@ -110,6 +110,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
             return tableViewer;
 
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method JournalEntriesViewerForOutputFiles.createTableViewer() ***", e);
             MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return null;
         }
