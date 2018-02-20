@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -119,8 +118,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         String command = null;
 
         try {
-
-            String r = new DecimalFormat("0000000000\\.00000").format(77);
 
             command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
                 outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
