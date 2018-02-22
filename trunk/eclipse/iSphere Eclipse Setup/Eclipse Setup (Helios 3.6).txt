@@ -6,6 +6,14 @@ Prerequisites:
 --------------
 
 Installed IBM Rational Developer for Power Systems Software (RDP 8.0).
+For WDSCi 7.0 and RDP 8.0 it is recommended to install the SVN plug-in
+from:
+
+   subclipse-local-update-site-1.10.13.zip 
+
+You need to download the zip from the iSphere project at SourceForge at:
+
+   /trunk/eclipse/iSphere Eclipse Setup/plug-ins/
 
 		
 Repository Location:
