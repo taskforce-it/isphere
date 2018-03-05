@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.search.SearchOptions;
 
 import com.ibm.as400.access.AS400;
@@ -110,9 +112,7 @@ public class SearchExec {
 
                             int _lastCounter = 0;
 
-                            getStatus();
-
-                            boolean _cancel = false;
+                            getStatus(monitor);
 
                             while (_counter != -1) {
 
@@ -121,7 +121,6 @@ public class SearchExec {
                                 _lastCounter = _counter;
 
                                 if (monitor.isCanceled()) {
-                                    _cancel = true;
                                     cancelJob();
                                     _status = Status.CANCEL_STATUS;
                                     break;
@@ -133,7 +132,7 @@ public class SearchExec {
                                     e.printStackTrace();
                                 }
 
-                                getStatus();
+                                getStatus(monitor);
 
                             }
 
@@ -141,7 +140,7 @@ public class SearchExec {
 
                             monitor.done();
 
-                            if (!_cancel) {
+                            if (!monitor.isCanceled()) {
                                 _searchResults = SearchResult.getSearchResults(iSphereLibrary, _jdbcConnection, _handle, _as400, _connectionName,
                                     _hostName);
                             }
@@ -171,14 +170,13 @@ public class SearchExec {
 
         }
 
-        private void getStatus() {
+        private void getStatus(IProgressMonitor monitor) {
 
             String _separator;
             try {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
                 _separator = ".";
-                e.printStackTrace();
             }
 
             PreparedStatement preparedStatementSelect = null;
@@ -192,6 +190,8 @@ public class SearchExec {
                     _counter = resultSet.getInt("XSCNT");
                 }
             } catch (SQLException e) {
+                monitor.setCanceled(true);
+                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(e));
             }
             if (resultSet != null) {
                 try {

@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.2.4.r
+--------------------------
+ • Fixed problem that the iSphere Source File Search and Message File
+   Search did not come to an end, when the connection has broken.
+
 Changelog: iSphere 3.2.3.r
 --------------------------
  • Fixed NullPointerException in AbstractTypeDAO, when opening an
