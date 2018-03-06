@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -435,9 +436,9 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append("MBR("); //$NON-NLS-1$
         command.append(getToMember());
         command.append(") "); //$NON-NLS-1$
-        command.append("TEXT('"); //$NON-NLS-1$
-        command.append(description);
-        command.append("')"); //$NON-NLS-1$
+        command.append("TEXT("); //$NON-NLS-1$
+        command.append(IBMiHelper.quote(description));
+        command.append(")"); //$NON-NLS-1$
         command.append(" SRCTYPE("); //$NON-NLS-1$
         command.append(sourceType);
         command.append(")"); //$NON-NLS-1$
