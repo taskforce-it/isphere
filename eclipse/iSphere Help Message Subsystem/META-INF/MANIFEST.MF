@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Message Subsystem Help (optional)
 Bundle-SymbolicName: biz.isphere.messagesubsystem.help;singleton:=true
-Bundle-Version: 3.2.3.r
+Bundle-Version: 3.2.4.r
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Eclipse-LazyStart: false
