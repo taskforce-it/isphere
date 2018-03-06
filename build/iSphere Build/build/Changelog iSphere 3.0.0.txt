@@ -3,6 +3,8 @@ Changelog: iSphere 3.2.4.r
 --------------------------
  • Fixed problem that the iSphere Source File Search and Message File
    Search did not come to an end, when the connection has broken.
+ • Fixed problem that "Copy Members to" did not copy the member 
+   descriptions containing quotes.
 
 Changelog: iSphere 3.2.3.r
 --------------------------
