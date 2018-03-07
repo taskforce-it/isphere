@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.2.5.r
+--------------------------
+ • Fixed CCSID issue in iSphere Compare Editor.
+
 Changelog: iSphere 3.2.4.r
 --------------------------
  • Fixed problem that the iSphere Source File Search and Message File
