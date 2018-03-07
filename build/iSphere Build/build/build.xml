@@ -531,11 +531,18 @@
 		<mkdir dir="${build.upload.dir.files}/eclipse/${target.ide.sf.dir}" />
 
 		<echo>Copying zip and pdf files ...</echo>
+		
+		<copy file="${project.pdf}" todir="${workspace.home}\${build.updatesite}" overwrite="true"/>
+		
 		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
 			<exclude name="*.log" />
 			<exclude name="${target.ide.exclude.site.xml}" />
 			<exclude name=".project" />
 		</zip>
+
+		<condition property="project.pdf.exists">
+			<available file="${project.pdf}" type="file"/>
+		</condition>
 		
 		<if>
 			<equals arg1="${project.pdf.exists}" arg2="true" />
