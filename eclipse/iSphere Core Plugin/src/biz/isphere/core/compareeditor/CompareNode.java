@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -105,11 +105,11 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             if (tempFile == null) {
                 File file = fResource.getLocation().toFile();
                 tempFile = new File(file.getPath() + "_temp"); //$NON-NLS-1$
-                BufferedReader in = new BufferedReader(new FileReader(file));
+                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), UTF_8));
                 PrintWriter out = new PrintWriter(tempFile, UTF_8);
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
-                    String newString = StringHelper.trimR(new String(oldString.getBytes(), UTF_8)).substring(column); //$NON-NLS-1$
+                    String newString = StringHelper.trimR(oldString).substring(column);
                     if (ignoreCase) {
                         newString = newString.toLowerCase();
                     }
@@ -142,22 +142,27 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             String s;
             int seq = 0;
             while ((s = in.readLine()) != null) {
-                if (seq < 990000)
+
+                if (seq < 990000) {
                     seq = seq + 100;
-                else if (seq < 999999) seq++;
+                } else if (seq < 999999) {
+                    seq++;
+                }
+
                 String sequence = Integer.toString(seq);
+
                 while (sequence.length() < 6) {
                     sequence = "0" + sequence; //$NON-NLS-1$
                 }
-                String newStr = new String(s.getBytes(UTF_8));
+
                 if (hasDate) {
-                    updatedContents.append(sequence + newStr + CRLF);
+                    updatedContents.append(sequence + s + CRLF);
                 } else {
-                    updatedContents.append(sequence + getSourceDate() + newStr + CRLF);
+                    updatedContents.append(sequence + getSourceDate() + s + CRLF);
                 }
             }
             in.close();
-            is = new ByteArrayInputStream(updatedContents.toString().getBytes());
+            is = new ByteArrayInputStream(updatedContents.toString().getBytes(UTF_8));
             if (file.exists())
                 file.setContents(is, false, true, pm);
             else
