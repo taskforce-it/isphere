@@ -39,7 +39,6 @@ import biz.isphere.core.ISpherePlugin;
 
 public class CompareNode extends BufferedContent implements ITypedElement, IEditableContent, IEncodedStreamContentAccessor {
 
-    private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
     private static final String CRLF = "\r\n"; //$NON-NLS-1$
 
     private IResource fResource;
@@ -105,8 +104,8 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
             if (tempFile == null) {
                 File file = fResource.getLocation().toFile();
                 tempFile = new File(file.getPath() + "_temp"); //$NON-NLS-1$
-                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), UTF_8));
-                PrintWriter out = new PrintWriter(tempFile, UTF_8);
+                BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), getCharset()));
+                PrintWriter out = new PrintWriter(tempFile, getCharset());
                 String oldString;
                 while ((oldString = in.readLine()) != null) {
                     String newString = StringHelper.trimR(oldString).substring(column);
@@ -136,7 +135,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
         byte[] bytes = getContent();
         ByteArrayInputStream is = null;
         try {
-            String contents = new String(bytes, UTF_8);
+            String contents = new String(bytes, getCharset());
             StringBuffer updatedContents = new StringBuffer();
             BufferedReader in = new BufferedReader(new StringReader(contents));
             String s;
@@ -162,7 +161,7 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
                 }
             }
             in.close();
-            is = new ByteArrayInputStream(updatedContents.toString().getBytes(UTF_8));
+            is = new ByteArrayInputStream(updatedContents.toString().getBytes(getCharset()));
             if (file.exists())
                 file.setContents(is, false, true, pm);
             else
