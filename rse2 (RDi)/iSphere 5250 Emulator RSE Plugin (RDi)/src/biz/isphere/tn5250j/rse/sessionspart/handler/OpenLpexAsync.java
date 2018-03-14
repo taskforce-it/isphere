@@ -11,11 +11,12 @@ package biz.isphere.tn5250j.rse.sessionspart.handler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.tn5250j.rse.Messages;
-import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
-
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.tn5250j.rse.Messages;
+import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
 
 public class OpenLpexAsync extends AbstractAsyncHandler {
 
@@ -26,8 +27,8 @@ public class OpenLpexAsync extends AbstractAsyncHandler {
     private String currentLibrary;
     private String libraryList;
 
-    public OpenLpexAsync(Shell shell, SessionsInfo sessionsInfo, String library, String sourceFile, String member, String mode,
-        String currentLibrary, String libraryList) {
+    public OpenLpexAsync(Shell shell, SessionsInfo sessionsInfo, String library, String sourceFile, String member, String mode, String currentLibrary,
+        String libraryList) {
         super(shell, sessionsInfo);
 
         this.library = library;
@@ -60,8 +61,8 @@ public class OpenLpexAsync extends AbstractAsyncHandler {
 
                 if (_editor != null) {
                     MessageDialog dialog = new MessageDialog(getShell(), Messages.Choose_Editor, null,
-                        Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION, new String[] { _editor,
-                            "LPEX Editor" }, 0);
+                        Messages.Please_choose_the_editor_for_the_source_member, MessageDialog.INFORMATION, new String[] { _editor, "LPEX Editor" },
+                        0);
 
                     final int dialogResult = dialog.open();
                     if (dialogResult == 0) {
@@ -80,6 +81,8 @@ public class OpenLpexAsync extends AbstractAsyncHandler {
                 } else {
                     editable.open(getShell(), true, editor);
                 }
+            } else {
+                ISpherePlugin.logError("*** Could not load member " + member + " of file " + library + "/" + sourceFile + " ***", null);
             }
         } catch (Throwable e) {
         }

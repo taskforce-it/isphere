@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.tn5250j.Session5250;
+import org.tn5250j.keyboard.HostKey;
 
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.RemoveSessionTab;
@@ -119,7 +120,7 @@ public abstract class CoreDesignerGUI extends TN5250JGUI {
                     && chr[15] == 'E' && chr[16] == 'R') {
                     signOnScreen = true;
                 }
-                getSession5250().getScreen().sendKeys("[pf3]");
+                getSession5250().getScreen().sendKeys(HostKey.PF3.label());
                 if (signOnScreen) {
 
                     new RemoveCurrentTabItemAsync(getTN5250JInfo().getTN5250JPart().getTabFolderSessions(), getTN5250JInfo().getTN5250JPart())

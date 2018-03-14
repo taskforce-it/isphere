@@ -102,30 +102,30 @@ public class KeyMapper {
 
             mappedKeys.put(new KeyStroker(109, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[field-]");
             mappedKeys.put(new KeyStroker(107, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[field+]");
-            mappedKeys.put(new KeyStroker(112, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf1]");
-            mappedKeys.put(new KeyStroker(113, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf2]");
-            mappedKeys.put(new KeyStroker(114, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf3]");
-            mappedKeys.put(new KeyStroker(115, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf4]");
-            mappedKeys.put(new KeyStroker(116, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf5]");
-            mappedKeys.put(new KeyStroker(117, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf6]");
-            mappedKeys.put(new KeyStroker(118, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf7]");
-            mappedKeys.put(new KeyStroker(119, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf8]");
-            mappedKeys.put(new KeyStroker(120, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf9]");
-            mappedKeys.put(new KeyStroker(121, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf10]");
-            mappedKeys.put(new KeyStroker(122, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf11]");
-            mappedKeys.put(new KeyStroker(123, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf12]");
-            mappedKeys.put(new KeyStroker(112, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf13]");
-            mappedKeys.put(new KeyStroker(113, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf14]");
-            mappedKeys.put(new KeyStroker(114, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf15]");
-            mappedKeys.put(new KeyStroker(115, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf16]");
-            mappedKeys.put(new KeyStroker(116, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf17]");
-            mappedKeys.put(new KeyStroker(117, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf18]");
-            mappedKeys.put(new KeyStroker(118, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf19]");
-            mappedKeys.put(new KeyStroker(119, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf20]");
-            mappedKeys.put(new KeyStroker(120, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf21]");
-            mappedKeys.put(new KeyStroker(121, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf22]");
-            mappedKeys.put(new KeyStroker(122, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf23]");
-            mappedKeys.put(new KeyStroker(123, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), "[pf24]");
+            mappedKeys.put(new KeyStroker(112, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF1.label());
+            mappedKeys.put(new KeyStroker(113, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF2.label());
+            mappedKeys.put(new KeyStroker(114, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF3.label());
+            mappedKeys.put(new KeyStroker(115, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF4.label());
+            mappedKeys.put(new KeyStroker(116, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF5.label());
+            mappedKeys.put(new KeyStroker(117, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF6.label());
+            mappedKeys.put(new KeyStroker(118, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF7.label());
+            mappedKeys.put(new KeyStroker(119, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF8.label());
+            mappedKeys.put(new KeyStroker(120, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF9.label());
+            mappedKeys.put(new KeyStroker(121, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF10.label());
+            mappedKeys.put(new KeyStroker(122, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF11.label());
+            mappedKeys.put(new KeyStroker(123, false, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF12.label());
+            mappedKeys.put(new KeyStroker(112, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF13.label());
+            mappedKeys.put(new KeyStroker(113, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF14.label());
+            mappedKeys.put(new KeyStroker(114, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF15.label());
+            mappedKeys.put(new KeyStroker(115, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF16.label());
+            mappedKeys.put(new KeyStroker(116, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF17.label());
+            mappedKeys.put(new KeyStroker(117, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF18.label());
+            mappedKeys.put(new KeyStroker(118, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF19.label());
+            mappedKeys.put(new KeyStroker(119, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF20.label());
+            mappedKeys.put(new KeyStroker(120, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF21.label());
+            mappedKeys.put(new KeyStroker(121, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF22.label());
+            mappedKeys.put(new KeyStroker(122, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF23.label());
+            mappedKeys.put(new KeyStroker(123, true, false, false, false, KeyStroker.KEY_LOCATION_STANDARD), HostKey.PF24.label());
             mappedKeys.put(new KeyStroker(112, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[help]");
 
             mappedKeys.put(new KeyStroker(72, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD), "[hostprint]");
@@ -176,7 +176,7 @@ public class KeyMapper {
             isDirty = true;
         }
 
-        // b) Moving between minor (multiple) sessions ... 
+        // b) Moving between minor (multiple) sessions ...
         if (createNewMapping) {
             // ... using the new mapping: Ctrl+Right and Ctrl+Left
             if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION)) {
@@ -185,8 +185,8 @@ public class KeyMapper {
                 isDirty = true;
             }
             if (!isKeyStrokeDefined(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION)) {
-                setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION, new KeyStroker(37, false, true, false, false,
-                    KeyStroker.KEY_LOCATION_STANDARD));
+                setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION,
+                    new KeyStroker(37, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD));
                 isDirty = true;
             }
         } else {
@@ -634,8 +634,8 @@ public class KeyMapper {
         // Add mappings for: next/previous multiple session
         setKeyStroker(TN5250jConstants.MNEMONIC_NEXT_MULTIPLE_SESSION,
             new KeyStroker(39, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD));
-        setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION, new KeyStroker(37, false, true, false, false,
-            KeyStroker.KEY_LOCATION_STANDARD));
+        setKeyStroker(TN5250jConstants.MNEMONIC_PREVIOUS_MULTIPLE_SESSION,
+            new KeyStroker(37, false, true, false, false, KeyStroker.KEY_LOCATION_STANDARD));
 
         // Add mappings for: fast cursor up/down
         setKeyStroker(TN5250jConstants.MNEMONIC_FAST_CURSOR_UP, new KeyStroker(38, false, false, true, false, KeyStroker.KEY_LOCATION_STANDARD));
