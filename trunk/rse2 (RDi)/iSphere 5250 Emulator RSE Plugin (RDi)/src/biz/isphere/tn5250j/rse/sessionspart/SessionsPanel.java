@@ -12,7 +12,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.tn5250j.Session5250;
 import org.tn5250j.framework.tn5250.ScreenField;
 import org.tn5250j.framework.tn5250.ScreenFields;
+import org.tn5250j.keyboard.HostKey;
 
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.sessionspart.CoreSessionsPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JGUI;
@@ -20,8 +24,6 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.rse.sessionspart.handler.OpenCompareAsync;
 import biz.isphere.tn5250j.rse.sessionspart.handler.OpenLpexAsync;
 import biz.isphere.tn5250j.rse.sessionspart.handler.SetSEPAsync;
-
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SessionsPanel extends CoreSessionsPanel {
 
@@ -36,6 +38,12 @@ public class SessionsPanel extends CoreSessionsPanel {
     private static final String TN5250J_EDITOR = "TN5250J-EDITOR";
     private static final int TN5250J_EDITOR_OFFSET = 2;
 
+    private static final String EDITOR_OPEN = "*OPEN";
+    private static final String EDITOR_BROWSE = "*BROWSE";
+
+    private static final String OBJECT_TYPE_PGM = "*PGM";
+    private static final String OBJECT_TYPE_SRVPGM = "*SRVPGM";
+
     public SessionsPanel(TN5250JInfo tn5250jInfo, Session session, Shell shell) {
         super(tn5250jInfo, session, shell);
     }
@@ -49,6 +57,7 @@ public class SessionsPanel extends CoreSessionsPanel {
             Runnable runnable = null;
 
             if (isRemoteCommandEditor()) {
+
                 String library = "";
                 String sourceFile = "";
                 String member = "";
@@ -57,6 +66,7 @@ public class SessionsPanel extends CoreSessionsPanel {
                 StringBuffer libraryList = new StringBuffer("");
                 ScreenFields screenFields = getSessionGUI().getScreen().getScreenFields();
                 ScreenField[] screenField = screenFields.getFields();
+
                 for (int idx = 0; idx < screenField.length; idx++) {
                     if (idx == 0) {
                         library = screenField[idx].getString().trim();
@@ -72,17 +82,22 @@ public class SessionsPanel extends CoreSessionsPanel {
                         libraryList.append(screenField[idx].getString().trim() + " ");
                     }
                 }
-                if (!library.equals("") && !sourceFile.equals("") && !member.equals("") && !mode.equals("")) {
+
+                if (validateLibrary(library) && validateSourceFile(sourceFile) && validateMember(member) && validateMode(mode)) {
                     runnable = new OpenLpexAsync(getShell(), sessionsInfo, library, sourceFile, member, mode, currentLibrary, libraryList.toString());
                     getShell().getDisplay().asyncExec(runnable);
                 }
-                getSessionGUI().getScreen().sendKeys("[pf3]");
+
+                getSessionGUI().getScreen().sendKeys(HostKey.PF3.label());
+
             } else if (isRemoteCommandCompare()) {
+
                 String library = "";
                 String sourceFile = "";
                 String member = "";
                 ScreenFields screenFields = getSessionGUI().getScreen().getScreenFields();
                 ScreenField[] screenField = screenFields.getFields();
+
                 for (int idx = 0; idx < screenField.length; idx++) {
                     if (idx == 0) {
                         library = screenField[idx].getString().trim();
@@ -92,17 +107,22 @@ public class SessionsPanel extends CoreSessionsPanel {
                         member = screenField[idx].getString().trim();
                     }
                 }
-                if (!library.equals("") && !sourceFile.equals("") && !member.equals("")) {
+
+                if (validateLibrary(library) && validateSourceFile(sourceFile) && validateMember(member)) {
                     runnable = new OpenCompareAsync(getShell(), sessionsInfo, library, sourceFile, member);
                     getShell().getDisplay().asyncExec(runnable);
                 }
-                getSessionGUI().getScreen().sendKeys("[pf3]");
+
+                getSessionGUI().getScreen().sendKeys(HostKey.PF3.label());
+
             } else if (isRemoteCommandSetSEP()) {
+
                 String library = "";
                 String object = "";
                 String type = "";
                 ScreenFields screenFields = getSessionGUI().getScreen().getScreenFields();
                 ScreenField[] screenField = screenFields.getFields();
+
                 for (int idx = 0; idx < screenField.length; idx++) {
                     if (idx == 0) {
                         library = screenField[idx].getString().trim();
@@ -112,15 +132,85 @@ public class SessionsPanel extends CoreSessionsPanel {
                         type = screenField[idx].getString().trim();
                     }
                 }
-                if (!library.equals("") && !object.equals("") && !type.equals("")) {
-                    if ("*PGM".equals(type) || "*SRVPGM".equals(type)) {
-                        runnable = new SetSEPAsync(getShell(), sessionsInfo, library, object, type);
-                        getShell().getDisplay().asyncExec(runnable);
-                    }
+
+                if (validateLibrary(library) && validateObject(object) && validateType(type)) {
+                    runnable = new SetSEPAsync(getShell(), sessionsInfo, library, object, type);
+                    getShell().getDisplay().asyncExec(runnable);
                 }
-                getSessionGUI().getScreen().sendKeys("[pf3]");
+
+                getSessionGUI().getScreen().sendKeys(HostKey.PF3.label());
             }
         }
+    }
+
+    private boolean validateLibrary(String library) {
+
+        if ("".equals(library)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Library is missing ***", null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateSourceFile(String sourceFile) {
+
+        if ("".equals(sourceFile)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Source file is missing ***", null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateMember(String member) {
+
+        if ("".equals(member)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Source member is missing ***", null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateMode(String mode) {
+
+        if ("".equals(mode)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Mode is missing ***", null);
+            return false;
+        }
+
+        if (!EDITOR_OPEN.equals(mode) && !EDITOR_BROWSE.equals(mode)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Mode (" + mode + ") must be one of *OPEN or *BROWSE ***", null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateObject(String object) {
+
+        if ("".equals(object)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Program/service program is missing ***", null);
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateType(String type) {
+
+        if ("".equals(type)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Object type is missing ***", null);
+            return false;
+        }
+
+        if (!OBJECT_TYPE_PGM.equals(type) && !OBJECT_TYPE_SRVPGM.equals(type)) {
+            ISpherePlugin.logError("*** Error starting Lpex editor. Object type (" + type + ") must be one of *PGM or *SRVPGM ***", null);
+            return false;
+        }
+
+        return true;
     }
 
     private boolean isRemoteCommandEditor() {
