@@ -23,6 +23,7 @@
             $manifestFileContents = file_get_contents( $notifier_url );
             $manifest = parseJarManifest($manifestFileContents);
             $current_version = $manifest['Bundle-Version'];
+            $current_version = '@VERSION_NUMBER@';
         ?>
       
         <table width="100%" border="0">
