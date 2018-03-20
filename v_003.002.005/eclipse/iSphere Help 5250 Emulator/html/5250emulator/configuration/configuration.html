@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Configuration</title>
+</head>
+<body>
+	<h1>Configuration</h1>
+	<ul>
+	<li><a href="#key_settings">Key Settings</a></li>
+	<li><a href="#minimal_session_size">Minimal Session Size</a></li>
+	<li><a href="#session_defaults">Session Defaults</a></li>
+	</ul>
+	<p>
+	<a id="key_settings" />
+	<h2>Key Settings</h2>
+	<p>
+	The <i>Key settings</i> page shows the keyboard mappings of the special
+	iSphere keys.
+	<p>
+		<img src="assets/key_settings.png" align="middle">
+	<p>
+	<table>
+		<tr>
+			<td class="info">Starting iSphere 3.0.6.r you can change these key bindings. Open the context menu
+			                 of an TN5250 session and select <i>Map keys...</i> to change or check the actual
+			                 mappings.</td>
+		</tr>
+	</table>
+	<p>
+	You can use the [Map Keys...] button to open the TN5250j key configuration dialog. The key values of
+	the <i>Special Characters</i> section are translated to PC Unicode with the codepage specified on
+	the <i>Session defaults</i> preferences page or at least with CCSID 37.
+	<p>
+	Keyboard mappings of iSphere special keys:
+	<p>
+	<table>
+		<tr>
+			<td valign="top">Scroll Session Down</td>
+		</tr>
+		<tr>
+			<td valign="top">Scroll Session Left</td>
+		</tr>
+		<tr>
+			<td valign="top">Scroll Session Right</td>
+		</tr>
+		<tr>
+			<td valign="top">Scroll Session Up</td>
+		</tr>
+		<tr>
+			<td valign="top">Session Next</td>
+		</tr>
+		<tr>
+			<td valign="top">Session Previous</td>
+		</tr>
+		<tr>
+			<td valign="top">Multiple Session Next</td>
+		</tr>
+		<tr>
+			<td valign="top">Multiple Session Previous</td>
+		</tr>
+	</table>
+	<p>
+	See <a href="./../session/session.html#switching_between_sessions"><i>Switching Between Sessions</i></a> for details.
+	<p>
+	<a id="minimal_session_size" />
+	<h2>Minimal Session Size</h2>
+	<p>
+	This page specifies the minimal session size of a 5250 session.
+	<p>
+		<img src="assets/minimal_session_size.png" align="middle">
+	<p>
+	If the size of the session window falls below the specified minimal size, 
+	scrollbars appear and you can use the mouse or the keyboard to scroll
+	the window:
+	<p>
+	<table>
+		<tr>
+			<td valign="top" nowrap>Ctrl-Alt-Up</td>
+			<td valign="top">-</td>
+			<td valign="top">Scroll up</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Ctrl-Alt-Down</td>
+			<td valign="top">-</td>
+			<td valign="top">Scroll down</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Ctrl-Alt-Left</td>
+			<td valign="top">-</td>
+			<td valign="top">Scroll left</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Ctrl-Alt-Right</td>
+			<td valign="top">-</td>
+			<td valign="top">Scroll right</td>
+		</tr>
+	</table>
+	<p>
+	<a id="session_defaults"></a>
+	<h2>Session Defaults</h2>
+	<p>
+	This page specifies the session defaults that are used, when creating a new 5250 session configuration.
+	<p>
+		<img src="assets/session_defaults.png" align="middle">
+	<p>
+	<table>
+		<tr>
+			<td valign="top" nowrap>SSL type</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the SSL protocol.
+			<table>
+				<tr><td valign="top" nowrap>NONE</td><td valign="top">-</td><td valign="top">Do not use SSL at all.</td></tr>
+				<tr><td valign="top" nowrap>Default</td><td valign="top">-</td><td valign="top">Use the latest available SSL protocol.</td></tr>
+				<tr><td valign="top" nowrap><i>protocol</i></td><td valign="top">-</td><td valign="top">List of available SSL protocols, e.g. TLSv1, TLSv1.1, TLSv1.2, ...</td></tr>
+			</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Port</td>
+			<td valign="top">-</td>
+			<td valign="top">Telnet port number of your host.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Codepage</td>
+			<td valign="top">-</td>
+			<td valign="top">Codepage of your 5250 session.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Screen size</td>
+			<td valign="top">-</td>
+			<td valign="top">Screen size of your 5250 session.</td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>Area</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies where to create the 5250 window. The editor area is in the center of the 
+			                 Eclipse window whereas views are arrange around the editor area.
+            </td>
+		</tr>
+		<tr>
+			<td valign="top" nowrap>View</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies the rules for sessions that are created in a view.</td>
+		</tr>
+       	<tr>
+       		<td valign="top" nowrap>Enable multi sessions</td>
+       		<td valign="top">-</td>
+       		<td valign="top">Specifies whether or not you can open up to 4 sessions in a session tab.<br>
+       		                 (For an example, refer to section <a href="../session/session.html#as_view_sessions">Session</a>)</td>
+       	</tr>
+       	<tr>
+       		<td valign="top" nowrap>Restore pinned views on startup</td>
+       		<td valign="top">-</td>
+       		<td valign="top">Specifies whether or not to restore all pinned 5250 session views on startup. When this option is 
+       		                 checked, all pinned 5250 session views are activated when the IDE starts. The focus is set on the 
+       		                 last activated view.</td>
+       	</tr>
+		<tr>
+			<td valign="top" nowrap>Group sessions by</td>
+			<td valign="top">-</td>
+			<td valign="top">Specifies how to group sessions. You can disable session grouping, which is the default,
+			                 or you can group sessions by <i>Connection</i> or <i>Session</i>. When sessions are grouped by 
+			                 connections, a separate view is created per connection. Likewise separate views are created 
+			                 for each session, when grouping by session has been selected. <b>You need to close all 5250 views
+			                 after having changed the grouping attribute, to let the new value take effect.</b></td>
+		</tr>
+	</table>
+	<p>
+		<iframe src="../../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
