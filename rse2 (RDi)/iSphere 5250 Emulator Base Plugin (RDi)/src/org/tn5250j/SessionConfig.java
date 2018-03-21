@@ -35,6 +35,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.tn5250j.event.SessionConfigEvent;
 import org.tn5250j.event.SessionConfigListener;
@@ -121,14 +122,18 @@ public class SessionConfig {
 
             sesProps.remove("saveme");
 
-            Object[] args = { getConfigurationResource() };
-            String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    Object[] args = { getConfigurationResource() };
+                    String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
 
-            int result = JOptionPane.showConfirmDialog(parent, message);
+                    int result = JOptionPane.showConfirmDialog(null /* parent */, message);
 
-            if (result == JOptionPane.OK_OPTION) {
-                saveSessionProps();
-            }
+                    if (result == JOptionPane.OK_OPTION) {
+                        saveSessionProps();
+                    }
+                }
+            });
 
         }
 
