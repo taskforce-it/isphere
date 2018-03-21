@@ -39,6 +39,7 @@ import javax.swing.JOptionPane;
 import org.tn5250j.event.SessionConfigEvent;
 import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.ConfigureFactory;
+import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.tools.GUIGraphicsUtils;
 import org.tn5250j.tools.LangTool;
 
@@ -164,8 +165,8 @@ public class SessionConfig {
                 sesProps.load(in);
                 if (sesProps.size() == 0) loadDefaults();
             } catch (IOException ioe) {
-                System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
-                    + getConfigurationResource());
+                System.out.println(
+                    "Information Message: Properties file is being " + "created for first time use:  File name " + getConfigurationResource());
                 loadDefaults();
             } catch (SecurityException se) {
                 System.out.println(se.getMessage());
@@ -202,25 +203,25 @@ public class SessionConfig {
 
                 // we will now load the default schema
                 String prefix = schemaProps.getProperty("schemaDefault");
-                sesProps.setProperty("colorBg", schemaProps.getProperty(prefix + ".colorBg"));
-                sesProps.setProperty("colorRed", schemaProps.getProperty(prefix + ".colorRed"));
-                sesProps.setProperty("colorTurq", schemaProps.getProperty(prefix + ".colorTurq"));
-                sesProps.setProperty("colorCursor", schemaProps.getProperty(prefix + ".colorCursor"));
-                sesProps.setProperty("colorGUIField", schemaProps.getProperty(prefix + ".colorGUIField"));
-                sesProps.setProperty("colorWhite", schemaProps.getProperty(prefix + ".colorWhite"));
-                sesProps.setProperty("colorYellow", schemaProps.getProperty(prefix + ".colorYellow"));
-                sesProps.setProperty("colorGreen", schemaProps.getProperty(prefix + ".colorGreen"));
-                sesProps.setProperty("colorPink", schemaProps.getProperty(prefix + ".colorPink"));
-                sesProps.setProperty("colorBlue", schemaProps.getProperty(prefix + ".colorBlue"));
-                sesProps.setProperty("colorSep", schemaProps.getProperty(prefix + ".colorSep"));
-                sesProps.setProperty("colorHexAttr", schemaProps.getProperty(prefix + ".colorHexAttr"));
+                sesProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
+                sesProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
+                sesProps.setProperty(ColorProperty.TURQUISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
+                sesProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
+                sesProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
+                sesProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
+                sesProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
+                sesProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
+                sesProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
+                sesProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
+                sesProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
+                sesProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
                 sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
 
                 ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
             }
         } catch (IOException ioe) {
-            System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
-                + getConfigurationResource());
+            System.out
+                .println("Information Message: Properties file is being " + "created for first time use:  File name " + getConfigurationResource());
         } catch (SecurityException se) {
             System.out.println(se.getMessage());
         }

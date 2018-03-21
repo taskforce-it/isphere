@@ -51,6 +51,7 @@ import org.tn5250j.event.SessionConfigEvent;
 import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.framework.tn5250.Screen5250;
 import org.tn5250j.framework.tn5250.ScreenOIA;
+import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.settings.ColumnSeparator;
 import org.tn5250j.tools.GUIGraphicsUtils;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
@@ -250,69 +251,69 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
 
         colorCursor = Color.white;
 
-        if (!config.isPropertyExists("colorBg"))
-            setProperty("colorBg", Integer.toString(colorBg.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.BACKGROUND.key()))
+            setProperty(ColorProperty.BACKGROUND.key(), Integer.toString(colorBg.getRGB()));
         else {
-            colorBg = getColorProperty("colorBg");
+            colorBg = getColorProperty(ColorProperty.BACKGROUND.key());
         }
         gui.setBackground(colorBg);
 
-        if (!config.isPropertyExists("colorBlue"))
-            setProperty("colorBlue", Integer.toString(colorBlue.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.BLUE.key()))
+            setProperty(ColorProperty.BLUE.key(), Integer.toString(colorBlue.getRGB()));
         else
-            colorBlue = getColorProperty("colorBlue");
+            colorBlue = getColorProperty(ColorProperty.BLUE.key());
 
-        if (!config.isPropertyExists("colorTurq"))
-            setProperty("colorTurq", Integer.toString(colorTurq.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.TURQUISE.key()))
+            setProperty(ColorProperty.TURQUISE.key(), Integer.toString(colorTurq.getRGB()));
         else
-            colorTurq = getColorProperty("colorTurq");
+            colorTurq = getColorProperty(ColorProperty.TURQUISE.key());
 
-        if (!config.isPropertyExists("colorRed"))
-            setProperty("colorRed", Integer.toString(colorRed.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.RED.key()))
+            setProperty(ColorProperty.RED.key(), Integer.toString(colorRed.getRGB()));
         else
-            colorRed = getColorProperty("colorRed");
+            colorRed = getColorProperty(ColorProperty.RED.key());
 
-        if (!config.isPropertyExists("colorWhite"))
-            setProperty("colorWhite", Integer.toString(colorWhite.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.WHITE.key()))
+            setProperty(ColorProperty.WHITE.key(), Integer.toString(colorWhite.getRGB()));
         else
-            colorWhite = getColorProperty("colorWhite");
+            colorWhite = getColorProperty(ColorProperty.WHITE.key());
 
-        if (!config.isPropertyExists("colorYellow"))
-            setProperty("colorYellow", Integer.toString(colorYellow.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.YELLOW.key()))
+            setProperty(ColorProperty.YELLOW.key(), Integer.toString(colorYellow.getRGB()));
         else
-            colorYellow = getColorProperty("colorYellow");
+            colorYellow = getColorProperty(ColorProperty.YELLOW.key());
 
-        if (!config.isPropertyExists("colorGreen"))
-            setProperty("colorGreen", Integer.toString(colorGreen.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.GREEN.key()))
+            setProperty(ColorProperty.GREEN.key(), Integer.toString(colorGreen.getRGB()));
         else
-            colorGreen = getColorProperty("colorGreen");
+            colorGreen = getColorProperty(ColorProperty.GREEN.key());
 
-        if (!config.isPropertyExists("colorPink"))
-            setProperty("colorPink", Integer.toString(colorPink.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.PINK.key()))
+            setProperty(ColorProperty.PINK.key(), Integer.toString(colorPink.getRGB()));
         else
-            colorPink = getColorProperty("colorPink");
+            colorPink = getColorProperty(ColorProperty.PINK.key());
 
-        if (!config.isPropertyExists("colorGUIField"))
-            setProperty("colorGUIField", Integer.toString(colorGUIField.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.GUI_FIELD.key()))
+            setProperty(ColorProperty.GUI_FIELD.key(), Integer.toString(colorGUIField.getRGB()));
         else
-            colorGUIField = getColorProperty("colorGUIField");
+            colorGUIField = getColorProperty(ColorProperty.GUI_FIELD.key());
 
-        if (!config.isPropertyExists("colorCursor"))
-            setProperty("colorCursor", Integer.toString(colorCursor.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.CURSOR.key()))
+            setProperty(ColorProperty.CURSOR.key(), Integer.toString(colorCursor.getRGB()));
         else
-            colorCursor = getColorProperty("colorCursor");
+            colorCursor = getColorProperty(ColorProperty.CURSOR.key());
 
-        if (!config.isPropertyExists("colorSep")) {
+        if (!config.isPropertyExists(ColorProperty.SEPARATOR.key())) {
             colorSep = colorWhite;
-            setProperty("colorSep", Integer.toString(colorSep.getRGB()));
+            setProperty(ColorProperty.SEPARATOR.key(), Integer.toString(colorSep.getRGB()));
         } else
-            colorSep = getColorProperty("colorSep");
+            colorSep = getColorProperty(ColorProperty.SEPARATOR.key());
 
-        if (!config.isPropertyExists("colorHexAttr")) {
+        if (!config.isPropertyExists(ColorProperty.HEX_ATTR.key())) {
             colorHexAttr = colorWhite;
-            setProperty("colorHexAttr", Integer.toString(colorHexAttr.getRGB()));
+            setProperty(ColorProperty.HEX_ATTR.key(), Integer.toString(colorHexAttr.getRGB()));
         } else
-            colorHexAttr = getColorProperty("colorHexAttr");
+            colorHexAttr = getColorProperty(ColorProperty.HEX_ATTR.key());
 
     }
 
@@ -477,63 +478,63 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         String pn = pce.getPropertyName();
         boolean resetAttr = false;
 
-        if (pn.equals("colorBg")) {
+        if (pn.equals(ColorProperty.BACKGROUND.key())) {
             colorBg = (Color)pce.getNewValue();
             resetAttr = true;
 
         }
 
-        if (pn.equals("colorBlue")) {
+        if (pn.equals(ColorProperty.BLUE.key())) {
             colorBlue = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorTurq")) {
+        if (pn.equals(ColorProperty.TURQUISE.key())) {
             colorTurq = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorRed")) {
+        if (pn.equals(ColorProperty.RED.key())) {
             colorRed = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorWhite")) {
+        if (pn.equals(ColorProperty.WHITE.key())) {
             colorWhite = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorYellow")) {
+        if (pn.equals(ColorProperty.YELLOW.key())) {
             colorYellow = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorGreen")) {
+        if (pn.equals(ColorProperty.GREEN.key())) {
             colorGreen = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorPink")) {
+        if (pn.equals(ColorProperty.PINK.key())) {
             colorPink = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorGUIField")) {
+        if (pn.equals(ColorProperty.GUI_FIELD.key())) {
             colorGUIField = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorCursor")) {
+        if (pn.equals(ColorProperty.CURSOR.key())) {
             colorCursor = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorSep")) {
+        if (pn.equals(ColorProperty.SEPARATOR.key())) {
             colorSep = (Color)pce.getNewValue();
             resetAttr = true;
         }
 
-        if (pn.equals("colorHexAttr")) {
+        if (pn.equals(ColorProperty.HEX_ATTR.key())) {
             colorHexAttr = (Color)pce.getNewValue();
             resetAttr = true;
         }
@@ -731,7 +732,8 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
      * 
      * @param x screen x position
      * @param y screen y position
-     * @return screen array position based 0,0 so position row 1 col 3 would be 2
+     * @return screen array position based 0,0 so position row 1 col 3 would be
+     *         2
      */
     public int getRowColFromPoint(int x, int y) {
 
@@ -935,8 +937,8 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         pArea.setRect(bi.getWidth(null) - columnWidth * 6, rowHeight * (numRows + 1), columnWidth * 6, rowHeight);
         mArea.setRect((float)(sArea.getX() + sArea.getWidth()) + columnWidth + columnWidth, rowHeight * (numRows + 1), columnWidth + columnWidth,
             rowHeight);
-        kbArea
-            .setRect((float)(sArea.getX() + sArea.getWidth()) + (20 * columnWidth), rowHeight * (numRows + 1), columnWidth + columnWidth, rowHeight);
+        kbArea.setRect((float)(sArea.getX() + sArea.getWidth()) + (20 * columnWidth), rowHeight * (numRows + 1), columnWidth + columnWidth,
+            rowHeight);
         scriptArea.setRect((float)(sArea.getX() + sArea.getWidth()) + (16 * columnWidth), rowHeight * (numRows + 1), columnWidth + columnWidth,
             rowHeight);
         iArea.setRect((float)(sArea.getX() + sArea.getWidth()) + (25 * columnWidth), rowHeight * (numRows + 1), columnWidth, rowHeight);
