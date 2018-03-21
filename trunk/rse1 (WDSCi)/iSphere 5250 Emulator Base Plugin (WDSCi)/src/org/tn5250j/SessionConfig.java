@@ -132,15 +132,19 @@ public class SessionConfig implements TN5250jConstants {
 
             sesProps.remove("saveme");
 
-            Object[] args = { getConfigurationResource() };
-            String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
 
-            int result = JOptionPane.showConfirmDialog(parent, message);
+                    Object[] args = { getConfigurationResource() };
+                    String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
 
-            if (result == JOptionPane.OK_OPTION) {
-                saveSessionProps();
-            }
+                    int result = JOptionPane.showConfirmDialog(null /* parent */, message);
 
+                    if (result == JOptionPane.OK_OPTION) {
+                        saveSessionProps();
+                    }
+                }
+            });
         }
 
     }
