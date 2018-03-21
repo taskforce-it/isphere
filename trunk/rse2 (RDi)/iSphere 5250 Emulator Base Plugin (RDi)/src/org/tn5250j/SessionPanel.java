@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -361,7 +362,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
                 LangTool.getString("cs.title"), // the title of the dialog
                                                 // window
                 JOptionPane.CANCEL_OPTION // option type
-                );
+            );
 
             if (result == 0) {
                 return true;
@@ -581,6 +582,11 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
     public void closeDown() {
 
+        FocusListener[] listeners = getFocusListeners();
+        for (FocusListener focusListener : listeners) {
+            removeFocusListener(focusListener);
+        }
+
         sesConfig.saveSessionProps(getParent());
         if (session.getVT() != null) session.getVT().disconnect();
         // Added by Luc to fix a memory leak. The keyHandler was still receiving
@@ -672,7 +678,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
         Rectangle r = this.getBounds();
         if (keyPad != null && keyPad.isVisible())
-        // r.height -= (int)(keyPad.getHeight() * 1.25);
+            // r.height -= (int)(keyPad.getHeight() * 1.25);
             r.height -= (keyPad.getHeight());
 
         r.setSize(r.width, r.height);

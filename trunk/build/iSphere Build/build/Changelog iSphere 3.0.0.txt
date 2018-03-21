@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.2.6.b001
+-----------------------------
+ • Fixed dead lock on AWT thread when closing a TN5250J session with
+   unsaved configuration changes.
+
 Changelog: iSphere 3.2.5.r
 --------------------------
  • Fixed CCSID issue in iSphere Compare Editor.
