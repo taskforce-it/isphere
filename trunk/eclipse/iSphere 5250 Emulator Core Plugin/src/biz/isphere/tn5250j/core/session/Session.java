@@ -19,6 +19,9 @@ import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.tn5250j.core.preferences.Preferences;
 
+/**
+ * iSphere TN5250J session configuration.
+ */
 public class Session {
 
     private String sessionDirectory;
