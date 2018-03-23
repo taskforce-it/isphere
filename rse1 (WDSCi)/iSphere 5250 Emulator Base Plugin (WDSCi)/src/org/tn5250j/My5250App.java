@@ -64,7 +64,7 @@ public class My5250App extends JApplet implements TN5250jConstants {
         log.info(" We have loaded a new one");
 
         // Start loading properties - Host must exist
-        sesProps.put(SESSION_HOST, getParameter("host"));
+        sesProps.put(SESSION_HOST, getParameter(ARG_ISPHERE_HOST));
 
         if (isSpecified(ARG_TN_ENHANCED)) {
             sesProps.put(SESSION_TN_ENHANCED, "1");
@@ -115,11 +115,11 @@ public class My5250App extends JApplet implements TN5250jConstants {
             sesProps.put(SESSION_SSL_TYPE, getParameter(ARG_SSL_TYPE));
         }
 
-        loadSystemProperty("SESSION_CONNECT_USER");
-        loadSystemProperty("SESSION_CONNECT_PASSWORD");
-        loadSystemProperty("SESSION_CONNECT_PROGRAM");
-        loadSystemProperty("SESSION_CONNECT_LIBRARY");
-        loadSystemProperty("SESSION_CONNECT_MENU");
+        loadSystemProperty(ARG_ISPHERE_SESSION_CONNECT_USER);
+        loadSystemProperty(ARG_ISPHERE_SESSION_CONNECT_PASSWORD);
+        loadSystemProperty(ARG_ISPHERE_SESSION_CONNECT_PROGRAM);
+        loadSystemProperty(ARG_ISPHERE_SESSION_CONNECT_LIBRARY);
+        loadSystemProperty(ARG_ISPHERE_SESSION_CONNECT_MENU);
 
         manager = SessionManager.instance();
         final Session5250 s = manager.openSession(sesProps, "", "Test Applet");

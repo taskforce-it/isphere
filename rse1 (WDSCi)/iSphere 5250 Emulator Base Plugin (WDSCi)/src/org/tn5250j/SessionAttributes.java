@@ -200,9 +200,9 @@ public class SessionAttributes extends JDialog {
         String[] options = { LangTool.getString("sa.optApply"), LangTool.getString("sa.optCancel"), LangTool.getString("sa.optSave") };
 
         final JOptionPane saOptionPane = new JOptionPane(message, // the
-                                                                    // dialog
-                                                                    // message
-                                                                    // array
+            // dialog
+            // message
+            // array
             JOptionPane.PLAIN_MESSAGE, // message type
             JOptionPane.YES_NO_CANCEL_OPTION, // option type
             null, // optional icon, use null to use the default icon
@@ -303,6 +303,7 @@ public class SessionAttributes extends JDialog {
             child = e.nextElement();
             Object obj = ((DefaultMutableTreeNode)child).getUserObject();
             if (obj instanceof AttributesPanel) {
+                ((AttributesPanel)obj).applyAttributes();
                 ((AttributesPanel)obj).save();
             }
         }

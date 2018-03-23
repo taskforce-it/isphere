@@ -49,6 +49,16 @@ public interface TN5250jConstants {
     public static final String ARG_LOCALE = "-L";
     public static final String ARG_FILENAME = "-f";
 
+    // iSphere specific parameters
+    public static final String ARG_ISPHERE_THEME = "theme";
+    public static final String ARG_ISPHERE_HOST = "host";
+    public static final String ARG_ISPHERE_SESSION_CONNECT_USER = "SESSION_CONNECT_USER";
+    public static final String ARG_ISPHERE_SESSION_CONNECT_PASSWORD = "SESSION_CONNECT_PASSWORD";
+    public static final String ARG_ISPHERE_SESSION_CONNECT_PROGRAM = "SESSION_CONNECT_PROGRAM";
+    public static final String ARG_ISPHERE_SESSION_CONNECT_LIBRARY = "SESSION_CONNECT_LIBRARY";
+    public static final String ARG_ISPHERE_SESSION_CONNECT_MENU = "SESSION_CONNECT_MENU";
+    public static final String ARG_ISPHERE_SESSION_THEME = "ARG_ISPHERE_SESSION_THEME";
+
     // Port numbers
     public static final String PORT_NUMBER = "23";
     public static final String SSL_PORT_NUMBER = "992";
@@ -79,6 +89,9 @@ public interface TN5250jConstants {
     public static final String SESSION_IS_APPLET = "SESSION_IS_APPLET";
     public static final String SESSION_HEART_BEAT = "SESSION_KEEP_ALIVE_ENABLED";
     public static final String SESSION_SSL_TYPE = "SESSION_SSL_TYPE";
+
+    // iSphere specific parameters
+    public static final String SESSION_THEME = "SESSION_THEME";
 
     // public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
     public static final String GUI_FRAME_WIDTH = "GUI_FRAME_WIDTH";

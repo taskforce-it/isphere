@@ -10,6 +10,9 @@ package biz.isphere.tn5250j.core.session;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -17,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,11 +32,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.UIJob;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.tn5250j.SessionConfig;
 import org.tn5250j.TN5250jConstants;
 import org.tn5250j.framework.transport.SocketConnector;
+import org.tn5250j.interfaces.ConfigureFactory;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.tn5250j.core.DialogActionTypes;
@@ -266,11 +272,10 @@ public class SessionDetail {
          * (session.getEnhancedMode().equals("Y")) {
          * buttonEnhancedMode.setSelection(true); } else {
          * buttonEnhancedMode.setSelection(false); } } if (actionType ==
-         * DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY)
-         * { buttonEnhancedMode.setEnabled(false); }
+         * DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+         * buttonEnhancedMode.setEnabled(false); }
          */
         // General : Area
-
         final Label labelArea = new Label(compositeGeneral, SWT.NONE);
         labelArea.setText(Messages.Area_colon);
 
@@ -486,9 +491,20 @@ public class SessionDetail {
 
         if (index >= 0 && index < comboTheme.getItemCount()) {
             comboTheme.select(index);
+        } else {
+            comboTheme.setText(theme);
         }
 
-        comboTheme.select(index);
+        /*
+         * Ugly hack for WDSCi to clear the selection of the text field.
+         */
+        new UIJob("") {
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                comboTheme.clearSelection();
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     protected void setErrorMessage(String errorMessage) {
@@ -544,6 +560,8 @@ public class SessionDetail {
     protected boolean checkData() {
 
         boolean error;
+
+        setErrorMessage(null);
 
         if (actionType == DialogActionTypes.CREATE) {
 
@@ -659,8 +677,8 @@ public class SessionDetail {
         }
 
         if (isNewTheme) {
-            if (!MessageDialog.openQuestion(shell, Messages.Question_Create_New_Theme,
-                NLS.bind(Messages.Question_Create_New_Theme, comboTheme.getText()))) {
+            if (!MessageDialog.openQuestion(shell, Messages.Session, NLS.bind(Messages.Question_Create_New_Theme, comboTheme
+                .getText()))) {
                 return false;
             }
         }

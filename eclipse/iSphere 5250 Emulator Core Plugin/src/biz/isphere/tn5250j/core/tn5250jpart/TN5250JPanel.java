@@ -45,6 +45,7 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         try {
             jbInit();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

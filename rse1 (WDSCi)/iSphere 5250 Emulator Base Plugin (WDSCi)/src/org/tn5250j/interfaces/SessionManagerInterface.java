@@ -39,4 +39,13 @@ public interface SessionManagerInterface {
     // , String sessionName);
     public abstract Session5250 openSession(Properties props, String configurationResource, String sessionName);
 
+    /**
+     * @param props
+     * @param configurationResource
+     * @param sessionName
+     * @param sessionTheme
+     * @return
+     */
+    public abstract Session5250 openSession(Properties props, String configurationResource, String sessionName, String sessionTheme);
+
 }

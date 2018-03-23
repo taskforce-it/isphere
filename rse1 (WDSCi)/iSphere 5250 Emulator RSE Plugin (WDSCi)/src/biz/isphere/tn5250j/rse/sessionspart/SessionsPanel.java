@@ -163,4 +163,9 @@ public class SessionsPanel extends CoreSessionsPanel {
         return "";
     }
 
+    @Override
+    public String getTheme() {
+        return getSession().getTheme();
+    }
+
 }
