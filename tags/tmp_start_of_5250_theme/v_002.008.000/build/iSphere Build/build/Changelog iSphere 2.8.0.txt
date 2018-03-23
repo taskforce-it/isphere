@@ -1,0 +1,89 @@
+
+Changelog: iSphere 2.8.0 beta 12
+--------------------------------
+ • Added option "Copy Member(s) to" to the context menu of IBM i
+   source members.
+ • Added handler to set a service entry point (SEP) from an 
+   iSphere 5250 session.
+
+
+Changelog: iSphere 2.8.0 beta 11
+--------------------------------
+ • Fixed search and replace of user space hex editor.
+ • Added option 'Delete LPEX task tags' to the context menu of the
+   LPEX tasks to remove all tasks associated to the selected resource.
+ • Eventually got the actions of the user space hex editor working.
+
+
+Changelog: iSphere 2.8.0 beta 10
+--------------------------------
+ • Added option to change the suggested file name, when saving a
+   spooled file to the local PC.
+
+
+Changelog: iSphere 2.8.0 beta 9
+-------------------------------
+ • Fixed problem that "ccsid.properties" were not found at runtime.
+ • Added option to display all pending informational messages in a 
+   list, when the message monitor starts.  
+
+
+Changelog: iSphere 2.8.0 beta 8
+-------------------------------
+ • Added "Copy members" option to the iSphere source file search 
+   result view.
+ • STRPREPRC: Fixed problem that error messages were not properly
+   retrieved from the job log.
+
+
+Changelog: iSphere 2.8.0 beta 7
+-------------------------------
+ • Updated the iSphere library save file.
+
+
+Changelog: iSphere 2.8.0 beta 6
+-------------------------------
+ • Added user space editor.
+ • Added options "Page size" and "Adjust font size" for
+   PDF transformation.
+ • Added option for downloading spooled files asynchronously.
+ • Moved status line items of data area and compare message file
+   editors to standard Eclipse status line.
+ • Fixed problem of missing German special characters when
+   transforming spooled files.
+ • Fixed problem of hard-linked service programs for
+   FNDSTR/NBRRNG, SPLF/NBRRNG and XFNDSTR/NBRRNG.
+
+
+Changelog: iSphere 2.7.1 beta 5
+-------------------------------
+ • Added iSphere specific connection properties.
+
+
+Changelog: iSphere 2.7.1 beta 4
+-------------------------------
+ • Added iSphere 5250 emulator (based on TN5250J).
+ • Added "OK to All" button to the message popup window of the
+   message monitor.
+ • Reduced wait time on message queue from 20 to 5 seconds.
+
+
+Changelog: iSphere 2.7.1 beta 3
+-------------------------------
+ • Added warning message that is displayed when the iSphere
+   compare filters are not installed in RDi 9.5.
+
+
+Changelog: iSphere 2.7.1 beta 2
+-------------------------------
+ • Added "iSphere Compare Filters Compile-Dummy (RDi)" to compile
+   iSphere from RDi 8.0.
+
+
+Changelog: iSphere 2.7.1 beta 1
+-------------------------------
+ • Fixed problem of lost change dates of source members saved
+   from the iSphere Compare/Merge editor.
+   (Only for RDi 9.5+, requires installing the iSphere Compare
+    Filters plug-in.)
+ • Added filter properties to the message monitor.
