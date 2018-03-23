@@ -121,7 +121,7 @@ public class SessionConfig {
         return ConfigureFactory.getInstance().loadThemeNames(THEME_CONFIGURATION_FILE_PREFIX, THEME_CONFIGURATION_FILE_SUFFIX);
     }
 
-    public void setSessionThemeEnabled(boolean enabled) {
+    private void setSessionThemeEnabled(boolean enabled) {
 
         if (!hasSessionTheme()) {
             this.sessionThemeEnabled = false;
@@ -272,8 +272,8 @@ public class SessionConfig {
                     loadDefaults();
                 }
             } catch (IOException ioe) {
-                System.out.println(
-                    "Information Message: Properties file is being " + "created for first time use:  File name " + getConfigurationResource());
+                System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
+                    + getConfigurationResource());
                 loadDefaults();
             } catch (SecurityException se) {
                 System.out.println(se.getMessage());
@@ -337,8 +337,8 @@ public class SessionConfig {
             }
 
         } catch (IOException ioe) {
-            System.out
-                .println("Information Message: Properties file is being " + "created for first time use:  File name " + getConfigurationResource());
+            System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
+                + getConfigurationResource());
         } catch (SecurityException se) {
             System.out.println(se.getMessage());
         }

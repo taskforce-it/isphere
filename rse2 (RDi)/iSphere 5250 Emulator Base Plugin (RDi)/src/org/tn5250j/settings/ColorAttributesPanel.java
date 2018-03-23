@@ -210,8 +210,6 @@ public class ColorAttributesPanel extends AttributesPanel {
 
         if (colorSchema != null) {
 
-            changes.setSessionThemeEnabled(false);
-
             if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(colorSchema.getColorBg())) {
                 changes.firePropertyChange(this, ColorProperty.BACKGROUND.key(), getColorProperty(ColorProperty.BACKGROUND.key()),
                     colorSchema.getColorBg());
@@ -292,8 +290,6 @@ public class ColorAttributesPanel extends AttributesPanel {
             }
 
         } else {
-
-            changes.setSessionThemeEnabled(true);
 
             Color nc = jcc.getColor();
             if (newSelection.equals(LangTool.getString("sa.bg"))) {
