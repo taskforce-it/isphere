@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.tn5250j.SessionConfig;
 import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.tn5250j.core.preferences.Preferences;
@@ -35,6 +36,7 @@ public class Session {
     private String proxyHost;
     private String proxyPort;
     private String area;
+    private String theme;
     private String user;
     private String password;
     private String program;
@@ -54,6 +56,7 @@ public class Session {
         proxyHost = "";
         proxyPort = "";
         area = "";
+        theme = "";
         user = "";
         password = "";
         program = "";
@@ -136,6 +139,14 @@ public class Session {
 
     public void setArea(String area) {
         this.area = area;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public String getUser() {
@@ -229,7 +240,7 @@ public class Session {
         return null;
     }
 
-    public static void setSessionProperties(Properties properties, Session session) {
+    private static void setSessionProperties(Properties properties, Session session) {
         Preferences preferences = Preferences.getInstance();
         if (properties.getProperty("Device") != null) {
             session.setDevice(properties.getProperty("Device"));
@@ -254,6 +265,11 @@ public class Session {
         }
         if (properties.getProperty("ProxyPort") != null) {
             session.setProxyPort(properties.getProperty("ProxyPort"));
+        }
+        if (properties.getProperty("Theme") != null) {
+            session.setTheme(properties.getProperty("Theme"));
+        } else {
+            session.setTheme(SessionConfig.THEME_NONE);
         }
         if (properties.getProperty("Area") != null) {
             session.setArea(properties.getProperty("Area"));
@@ -304,6 +320,7 @@ public class Session {
         properties.put("ProxyHost", proxyHost);
         properties.put("ProxyPort", proxyPort);
         properties.put("Area", area);
+        properties.put("Theme", theme);
         properties.put("User", user);
         properties.put("Password", password);
         properties.put("Program", program);

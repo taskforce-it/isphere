@@ -196,15 +196,16 @@ public final class tnvt implements Runnable {
         this.screen52 = screen52;
         dataIncluded = new boolean[24];
 
-        if (System.getProperties().containsKey("SESSION_CONNECT_USER")) {
-            user = System.getProperties().getProperty("SESSION_CONNECT_USER");
-            if (System.getProperties().containsKey("SESSION_CONNECT_PASSWORD"))
-                password = System.getProperties().getProperty("SESSION_CONNECT_PASSWORD");
-            if (System.getProperties().containsKey("SESSION_CONNECT_LIBRARY"))
-                library = System.getProperties().getProperty("SESSION_CONNECT_LIBRARY");
-            if (System.getProperties().containsKey("SESSION_CONNECT_MENU")) initialMenu = System.getProperties().getProperty("SESSION_CONNECT_MENU");
-            if (System.getProperties().containsKey("SESSION_CONNECT_PROGRAM"))
-                program = System.getProperties().getProperty("SESSION_CONNECT_PROGRAM");
+        if (System.getProperties().containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER)) {
+            user = System.getProperties().getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER);
+            if (System.getProperties().containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD))
+                password = System.getProperties().getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD);
+            if (System.getProperties().containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY))
+                library = System.getProperties().getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY);
+            if (System.getProperties().containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU))
+                initialMenu = System.getProperties().getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU);
+            if (System.getProperties().containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM))
+                program = System.getProperties().getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM);
         }
 
         baosp = new ByteArrayOutputStream();
@@ -288,13 +289,17 @@ public final class tnvt implements Runnable {
             // processed. The system properties override these parameters so
             // have precidence if specified.
             Properties props = controller.getConnectionProperties();
-            if (user == null && props.containsKey("SESSION_CONNECT_USER")) {
-                user = props.getProperty("SESSION_CONNECT_USER");
+            if (user == null && props.containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER)) {
+                user = props.getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER);
                 log.info(" user -> " + user + " " + controller.getSessionName());
-                if (props.containsKey("SESSION_CONNECT_PASSWORD")) password = props.getProperty("SESSION_CONNECT_PASSWORD");
-                if (props.containsKey("SESSION_CONNECT_LIBRARY")) library = props.getProperty("SESSION_CONNECT_LIBRARY");
-                if (props.containsKey("SESSION_CONNECT_MENU")) initialMenu = props.getProperty("SESSION_CONNECT_MENU");
-                if (props.containsKey("SESSION_CONNECT_PROGRAM")) program = props.getProperty("SESSION_CONNECT_PROGRAM");
+                if (props.containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD))
+                    password = props.getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD);
+                if (props.containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY))
+                    library = props.getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY);
+                if (props.containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU))
+                    initialMenu = props.getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU);
+                if (props.containsKey(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM))
+                    program = props.getProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM);
             }
 
             try {
@@ -549,7 +554,7 @@ public final class tnvt implements Runnable {
 
         if (dataIncluded(aid))
 
-        screen52.getScreenFields().readFormatTable(baosp, readType, codePage);
+            screen52.getScreenFields().readFormatTable(baosp, readType, codePage);
 
         try {
 

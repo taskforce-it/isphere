@@ -328,6 +328,7 @@ public class SessionAttributes extends JDialog {
             child = e.nextElement();
             Object obj = ((DefaultMutableTreeNode)child).getUserObject();
             if (obj instanceof AttributesPanel) {
+                ((AttributesPanel)obj).applyAttributes();
                 ((AttributesPanel)obj).save();
             }
         }

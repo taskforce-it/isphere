@@ -60,7 +60,7 @@ public abstract class ConfigureFactory {
                 ;
             }
             if (ConfigureFactory.factory == null) { // take the default
-            // ConfigureFactory.factory = new GlobalConfigureFactory();
+                // ConfigureFactory.factory = new GlobalConfigureFactory();
                 ConfigureFactory.factory = new GlobalConfigure();
             }
         }
@@ -93,5 +93,7 @@ public abstract class ConfigureFactory {
     abstract public void saveSettings(String regKey, String header);
 
     abstract public void saveSettings(String regKey, String fileName, String header);
+
+    abstract public String[] loadThemeNames(String fileNamePrefix, String fileNameSuffix);
 
 }
