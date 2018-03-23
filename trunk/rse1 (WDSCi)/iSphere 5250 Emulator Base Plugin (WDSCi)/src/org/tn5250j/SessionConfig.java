@@ -20,26 +20,66 @@
  */
 package org.tn5250j;
 
-import java.util.*;
-import javax.swing.*;
-import java.io.*;
-import java.text.MessageFormat;
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.Map.Entry;
 
-import org.tn5250j.tools.LangTool;
-import org.tn5250j.event.SessionConfigListener;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import org.tn5250j.event.SessionConfigEvent;
+import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.ConfigureFactory;
+import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.tools.GUIGraphicsUtils;
+import org.tn5250j.tools.LangTool;
 
 /**
- * A host session configuration object
+ * A host session configuration object.
+ * <p>
+ * This class covers all service regarding a 5250 session configuration. "Load"
+ * and "Save" operations are delegated to the {@link ConfigureFactory} class.
+ * <p>
+ * The class has been enhanced to support "session themes". A session theme
+ * contains color properties, that override the color properties of the session
+ * configuration.
+ * <p>
+ * Process of loading and overloading session properties with theme properties:
+ * <ol>
+ * <li>Load original session configuration.</li>
+ * <li>Save color properties of session configuration.</li>
+ * <li>Overlay color properties with theme properties.</li>
+ * </ol>
+ * <p>
+ * Process of saving session and theme properties:
+ * <ol>
+ * <li>Save theme color properties.</li>
+ * <li>Restore original session color properties.</li>
+ * <li>Save original session properties.</li>
+ * </ol>
  */
 public class SessionConfig implements TN5250jConstants {
 
+    private static final String THEME_CONFIGURATION_FILE_PREFIX = "ThemeOverlay_";
+    private static final String THEME_CONFIGURATION_FILE_SUFFIX = ".props";
+    private static final String THEME_CONFIGURATION_KEY = "sessionTheme";
+    private static final String THEME_CONFIGURATION_HEADER = "--- Session Theme ---";
+
+    public static final String THEME_NONE = "*NONE";
+
     private String configurationResource;
     private String sessionName;
+    private String sessionTheme;
+    private boolean sessionThemeEnabled;
     private boolean connected;
     private int sessionType;
     private Properties sesProps;
@@ -47,12 +87,45 @@ public class SessionConfig implements TN5250jConstants {
     private String sslType;
     private boolean usingDefaults;
 
+    private Properties savedColorProperties;
+
+    private String themeConfigurationFile;
+    private Properties themeColorProperties;
+
     public SessionConfig(String configurationResource, String sessionName) {
+
+        this(configurationResource, sessionName, "");
+
+    }
+
+    public SessionConfig(String configurationResource, String sessionName, String sessionTheme) {
 
         this.configurationResource = configurationResource;
         this.sessionName = sessionName;
-        loadConfigurationResource();
+        this.sessionTheme = sessionTheme;
 
+        if (hasSessionTheme()) {
+            themeConfigurationFile = THEME_CONFIGURATION_FILE_PREFIX + sessionTheme + THEME_CONFIGURATION_FILE_SUFFIX;
+            setSessionThemeEnabled(true);
+        } else {
+            setSessionThemeEnabled(false);
+        }
+
+        loadConfigurationResource();
+    }
+
+    public static String[] loadThemes() {
+
+        return ConfigureFactory.getInstance().loadThemeNames(THEME_CONFIGURATION_FILE_PREFIX, THEME_CONFIGURATION_FILE_SUFFIX);
+    }
+
+    private void setSessionThemeEnabled(boolean enabled) {
+
+        if (!hasSessionTheme()) {
+            this.sessionThemeEnabled = false;
+        } else {
+            this.sessionThemeEnabled = enabled;
+        }
     }
 
     public String getConfigurationResource() {
@@ -71,19 +144,12 @@ public class SessionConfig implements TN5250jConstants {
     }
 
     /**
-     * Notify all registered listeners of the onSessionChanged event.
+     * Returns the name of the session theme.
      * 
-     * @param state The state change property object.
+     * @return session theme name
      */
-    protected void fireConfigChanged(SessionConfigEvent sce) {
-
-        if (listeners != null) {
-            int size = listeners.size();
-            for (int i = 0; i < size; i++) {
-                SessionConfigListener target = (SessionConfigListener)listeners.elementAt(i);
-                target.onConfigChanged(sce);
-            }
-        }
+    public String getSessionTheme() {
+        return sessionTheme;
     }
 
     public void firePropertyChange(Object source, String propertyName, Object oldValue, Object newValue) {
@@ -99,7 +165,7 @@ public class SessionConfig implements TN5250jConstants {
             }
         }
 
-        SessionConfigEvent sce = new SessionConfigEvent(source, propertyName, oldValue, newValue);
+        SessionConfigEvent sce = new SessionConfigEvent(source, propertyName, oldValue, newValue, sessionTheme);
 
         if (targets != null) {
             int size = targets.size();
@@ -134,7 +200,6 @@ public class SessionConfig implements TN5250jConstants {
 
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-
                     Object[] args = { getConfigurationResource() };
                     String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
 
@@ -145,13 +210,21 @@ public class SessionConfig implements TN5250jConstants {
                     }
                 }
             });
+
         }
 
     }
 
     public void saveSessionProps() {
 
+        if (sessionThemeEnabled) {
+            saveThemeProps();
+            restoreDefaultColorProperties();
+        }
+
         if (usingDefaults) {
+
+            System.out.println("Saving session properties...");
 
             ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
 
@@ -166,6 +239,25 @@ public class SessionConfig implements TN5250jConstants {
         }
     }
 
+    /**
+     * Saves the properties of the session theme.
+     */
+    private void saveThemeProps() {
+
+        System.out.println("Saving theme properties to file: " + themeConfigurationFile);
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            themeColorProperties.put(key, sesProps.getProperty(key));
+        }
+
+        ConfigureFactory.getInstance().saveSettings(getThemeConfigurationKey(), themeConfigurationFile, THEME_CONFIGURATION_HEADER);
+    }
+
+    private String getThemeConfigurationKey() {
+        return THEME_CONFIGURATION_KEY + "_" + themeConfigurationFile;
+    }
+
     private void loadConfigurationResource() {
 
         sesProps = new Properties();
@@ -178,7 +270,9 @@ public class SessionConfig implements TN5250jConstants {
             try {
                 FileInputStream in = new FileInputStream(settingsDirectory() + getConfigurationResource());
                 sesProps.load(in);
-                if (sesProps.size() == 0) loadDefaults();
+                if (sesProps.size() == 0) {
+                    loadDefaults();
+                }
             } catch (IOException ioe) {
                 System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
                     + getConfigurationResource());
@@ -186,6 +280,11 @@ public class SessionConfig implements TN5250jConstants {
             } catch (SecurityException se) {
                 System.out.println(se.getMessage());
             }
+        }
+
+        if (sessionThemeEnabled) {
+            preserveDefaultColorProperties();
+            overlayConfigurationWithTheme();
         }
     }
 
@@ -197,41 +296,156 @@ public class SessionConfig implements TN5250jConstants {
 
         try {
 
+            System.out.println("Loading default session properties...");
+
             sesProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
             if (sesProps.size() == 0) {
 
-                Properties schemaProps = new Properties();
-
-                java.net.URL file = null;
+                System.out.println("Initializing default session properties...");
 
                 ClassLoader cl = this.getClass().getClassLoader();
-                if (cl == null) cl = ClassLoader.getSystemClassLoader();
+                if (cl == null) {
+                    cl = ClassLoader.getSystemClassLoader();
+                }
+
+                // emul defaults
+                java.net.URL file = cl.getResource(getConfigurationResource());
+                Properties emuldefaults = new Properties();
+                emuldefaults.load(file.openStream());
+                sesProps.putAll(emuldefaults);
+
+                // color schema defaults
                 file = cl.getResource("tn5250jSchemas.properties");
+                Properties schemaProps = new Properties();
                 schemaProps.load(file.openStream());
 
                 // we will now load the default schema
                 String prefix = schemaProps.getProperty("schemaDefault");
-                sesProps.setProperty("colorBg", schemaProps.getProperty(prefix + ".colorBg"));
-                sesProps.setProperty("colorRed", schemaProps.getProperty(prefix + ".colorRed"));
-                sesProps.setProperty("colorTurq", schemaProps.getProperty(prefix + ".colorTurq"));
-                sesProps.setProperty("colorCursor", schemaProps.getProperty(prefix + ".colorCursor"));
-                sesProps.setProperty("colorGUIField", schemaProps.getProperty(prefix + ".colorGUIField"));
-                sesProps.setProperty("colorWhite", schemaProps.getProperty(prefix + ".colorWhite"));
-                sesProps.setProperty("colorYellow", schemaProps.getProperty(prefix + ".colorYellow"));
-                sesProps.setProperty("colorGreen", schemaProps.getProperty(prefix + ".colorGreen"));
-                sesProps.setProperty("colorPink", schemaProps.getProperty(prefix + ".colorPink"));
-                sesProps.setProperty("colorBlue", schemaProps.getProperty(prefix + ".colorBlue"));
-                sesProps.setProperty("colorSep", schemaProps.getProperty(prefix + ".colorSep"));
-                sesProps.setProperty("colorHexAttr", schemaProps.getProperty(prefix + ".colorHexAttr"));
+                sesProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
+                sesProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
+                sesProps.setProperty(ColorProperty.TURQUOISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
+                sesProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
+                sesProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
+                sesProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
+                sesProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
+                sesProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
+                sesProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
+                sesProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
+                sesProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
+                sesProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
                 sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
+
                 ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
             }
+
         } catch (IOException ioe) {
             System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
                 + getConfigurationResource());
         } catch (SecurityException se) {
             System.out.println(se.getMessage());
         }
+    }
+
+    /**
+     * Overlays the current session properties with the properties of the
+     * session theme.
+     */
+    private void overlayConfigurationWithTheme() {
+
+        System.out.println("Loading theme properties from file: " + themeConfigurationFile);
+
+        sesProps = cloneProperties(sesProps);
+
+        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, false,
+            THEME_CONFIGURATION_HEADER, false);
+        if (themeColorProperties == null || themeColorProperties.size() == 0) {
+            initializeThemeColorProperties();
+        }
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            setColorProperty(themeColorProperties, key);
+        }
+
+        return;
+    }
+
+    private Properties cloneProperties(Properties properties) {
+
+        Properties newProperties = new Properties();
+
+        Set<Entry<Object, Object>> enties = properties.entrySet();
+        for (Entry<Object, Object> entry : enties) {
+            newProperties.put(entry.getKey(), entry.getValue());
+        }
+
+        return newProperties;
+    }
+
+    /**
+     * Initializes the theme properties with the current session properties.
+     */
+    private void initializeThemeColorProperties() {
+
+        System.out.println("Initializing theme properties...");
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            themeColorProperties.put(key, sesProps.getProperty(key));
+        }
+    }
+
+    /**
+     * Returns <code>true</code> when a session theme has been set.
+     * 
+     * @return true, when a theme has been set
+     */
+    private boolean hasSessionTheme() {
+
+        if (sessionTheme != null && sessionTheme.trim().length() > 0 && !SessionConfig.THEME_NONE.equals(sessionTheme)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Saves the session properties that are also part of the theme properties.
+     */
+    private void preserveDefaultColorProperties() {
+
+        System.out.println("Saving default color properties...");
+
+        savedColorProperties = new Properties();
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            savedColorProperties.put(key, sesProps.getProperty(key));
+        }
+    }
+
+    /**
+     * Restores the session properties that had been saved before.
+     */
+    private void restoreDefaultColorProperties() {
+
+        System.out.println("Restoring session properties...");
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            sesProps.put(key, savedColorProperties.getProperty(key));
+        }
+    }
+
+    private void setColorProperty(Properties colorProperties, String key) {
+
+        if (hasProperty(colorProperties, key)) {
+            sesProps.setProperty(key, colorProperties.getProperty(key));
+        }
+    }
+
+    private boolean hasProperty(Properties colorProperties, String key) {
+        return colorProperties.containsKey(key);
     }
 
     public boolean isPropertyExists(String prop) {

@@ -30,6 +30,8 @@ import java.beans.PropertyChangeEvent;
 
 public class SessionConfigEvent extends PropertyChangeEvent {
 
+    private String sessionTheme;
+
     /**
      * Constructs a new <code>SessionConfigChangeEvent</code>.
      * 
@@ -39,10 +41,15 @@ public class SessionConfigEvent extends PropertyChangeEvent {
      * @param oldValue The old value of the property.
      * @param newValue The new value of the property.
      */
-    public SessionConfigEvent(Object source, String propertyName, Object oldValue, Object newValue) {
+    public SessionConfigEvent(Object source, String propertyName, Object oldValue, Object newValue, String sessionTheme) {
 
         super(source, propertyName, oldValue, newValue);
 
+        this.sessionTheme = sessionTheme;
+    }
+
+    public String getSessionTheme() {
+        return sessionTheme;
     }
 
 }

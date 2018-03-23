@@ -25,13 +25,28 @@
  */
 package org.tn5250j;
 
-import java.util.Properties;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Hashtable;
-import java.io.*;
-import javax.swing.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
 
-import org.tn5250j.tools.logging.*;
+import javax.swing.JOptionPane;
+
 import org.tn5250j.interfaces.ConfigureFactory;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
 
 /**
  * Utility class for referencing global settings and functions of which at most
@@ -44,7 +59,7 @@ public class GlobalConfigure extends ConfigureFactory {
     public static final String TN5250J_FOLDER = ".tn5250j";
 
     /**
-     * A handle to the unitque GlobalConfigure class
+     * A handle to the unique GlobalConfigure class
      */
     static private GlobalConfigure _instance;
 
@@ -63,7 +78,7 @@ public class GlobalConfigure extends ConfigureFactory {
     // static final public String KEYMAP = "keymap";
 
     static final private String settingsFile = "tn5250jstartup.cfg";
-    private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
+    private final TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
 
     /**
      * The constructor is made protected to allow overriding.
@@ -78,7 +93,6 @@ public class GlobalConfigure extends ConfigureFactory {
     }
 
     /**
-     * 
      * @return The unique instance of this class.
      */
     static public GlobalConfigure instance() {
@@ -92,7 +106,6 @@ public class GlobalConfigure extends ConfigureFactory {
 
     /**
      * Initialize the properties registry for use later.
-     * 
      */
     private void initialize() {
 
@@ -147,7 +160,7 @@ public class GlobalConfigure extends ConfigureFactory {
             settings.setProperty("emulator.settingsDirectory", System.getProperty("emulator.settingsDirectory") + File.separator);
             checkDirs();
         } else {
-            settings.setProperty("emulator.settingsDirectory", System.getProperty("user.home") + File.separator + ".tn5250j" + File.separator);
+            settings.setProperty("emulator.settingsDirectory", System.getProperty("user.home") + File.separator + TN5250J_FOLDER + File.separator);
             try {
                 in = new FileInputStream(settingsFile);
                 settings.load(in);
@@ -211,7 +224,7 @@ public class GlobalConfigure extends ConfigureFactory {
     private void copyConfigs(String sesFile) {
         /** Copy the config-files to the user's home-dir */
         String srcFile = System.getProperty("user.dir") + File.separator + sesFile;
-        String dest = System.getProperty("user.home") + File.separator + ".tn5250j" + File.separator + sesFile;
+        String dest = System.getProperty("user.home") + File.separator + TN5250J_FOLDER + File.separator + sesFile;
         File rmvFile = new File(sesFile);
         try {
             FileReader r = new FileReader(srcFile);
@@ -325,7 +338,7 @@ public class GlobalConfigure extends ConfigureFactory {
      */
     @Override
     public void setProperties(String regKey, String fileName, String header) { // LG
-                                                                                // NEW
+        // NEW
         setProperties(regKey, fileName, header, false);
     }
 
@@ -419,7 +432,7 @@ public class GlobalConfigure extends ConfigureFactory {
 
                     registry.put(regKey, props);
 
-                    saveSettings(regKey, header);
+                    saveSettings(regKey, fileName, header);
 
                     return props;
 
@@ -467,6 +480,56 @@ public class GlobalConfigure extends ConfigureFactory {
     @Override
     public String getProperty(String key) {
         return settings.getProperty(key);
+    }
+
+    public String[] loadThemeNames(final String fileNamePrefix, final String fileNameSuffix) {
+
+        File settingsDirectory = new File(settingsDirectory());
+        if (!settingsDirectory.exists() || !settingsDirectory.isDirectory()) {
+            return new String[] { SessionConfig.THEME_NONE };
+        }
+
+        List<String> themes = new LinkedList<String>();
+        themes.add(SessionConfig.THEME_NONE);
+
+        String[] fileNames = settingsDirectory.list(new FilenameFilter() {
+
+            public boolean accept(File dir, String name) {
+
+                if (name.toLowerCase().startsWith(fileNamePrefix.toLowerCase())) {
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        Arrays.sort(fileNames, new Comparator<String>() {
+
+            public int compare(String file1, String file2) {
+
+                String theme1 = getThemeName(fileNamePrefix, fileNameSuffix, file1);
+                String theme2 = getThemeName(fileNamePrefix, fileNameSuffix, file2);
+
+                return theme1.compareTo(theme2);
+            }
+        });
+
+        for (String fileName : fileNames) {
+            themes.add(getThemeName(fileNamePrefix, fileNameSuffix, fileName));
+        }
+
+        return themes.toArray(new String[themes.size()]);
+    }
+
+    private String getThemeName(String namePrefix, String fileNameSuffix, String fileName) {
+
+        String theme = fileName.substring(namePrefix.length());
+        if (theme.endsWith(fileNameSuffix)) {
+            theme = theme.substring(0, theme.length() - fileNameSuffix.length());
+        }
+
+        return theme.trim();
     }
 
     /**

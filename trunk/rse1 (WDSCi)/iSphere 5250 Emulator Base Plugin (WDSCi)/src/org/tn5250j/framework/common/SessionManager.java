@@ -92,7 +92,10 @@ public class SessionManager implements SessionManagerInterface, TN5250jConstants
     }
 
     public Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
-        // throws TN5250jException {
+        return this.openSession(sesProps, configurationResource, sessionName, "");
+    }
+
+    public synchronized Session5250 openSession(Properties sesProps, String configurationResource, String sessionName, String sessionTheme) {
 
         if (sessionName == null)
             sesProps.put(SESSION_TERM_NAME, sesProps.getProperty(SESSION_HOST));
@@ -108,14 +111,14 @@ public class SessionManager implements SessionManagerInterface, TN5250jConstants
 
         while (e.hasMoreElements()) {
             SessionConfig conf = (SessionConfig)e.nextElement();
-            if (conf.getSessionName().equals(sessionName)) {
+            if (conf.getSessionName().equals(sessionName) && conf.getSessionTheme().equals(sessionTheme)) {
                 useConfig = conf;
             }
         }
 
         if (useConfig == null) {
 
-            useConfig = new SessionConfig(configurationResource, sessionName);
+            useConfig = new SessionConfig(configurationResource, sessionName, sessionTheme);
             configs.add(useConfig);
         }
 

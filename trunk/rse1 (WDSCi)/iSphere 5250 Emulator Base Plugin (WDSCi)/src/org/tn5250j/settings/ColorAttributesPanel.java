@@ -96,7 +96,7 @@ public class ColorAttributesPanel extends AttributesPanel {
         jcc = new JColorChooser();
 
         // set the default color for display as that being for back ground
-        jcc.setColor(getColorProperty("colorBg"));
+        jcc.setColor(getColorProperty(ColorProperty.BACKGROUND.key()));
 
         colorList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -106,80 +106,80 @@ public class ColorAttributesPanel extends AttributesPanel {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorBg());
                     else
-                        jcc.setColor(getColorProperty("colorBg"));
+                        jcc.setColor(getColorProperty(ColorProperty.BACKGROUND.key()));
                 }
                 if (newSelection.equals(LangTool.getString("sa.blue"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorBlue());
                     else
-                        jcc.setColor(getColorProperty("colorBlue"));
+                        jcc.setColor(getColorProperty(ColorProperty.BLUE.key()));
                 }
                 if (newSelection.equals(LangTool.getString("sa.red"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorRed());
                     else
-                        jcc.setColor(getColorProperty("colorRed"));
+                        jcc.setColor(getColorProperty(ColorProperty.RED.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.pink"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorPink());
                     else
-                        jcc.setColor(getColorProperty("colorPink"));
+                        jcc.setColor(getColorProperty(ColorProperty.PINK.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.green"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorGreen());
                     else
-                        jcc.setColor(getColorProperty("colorGreen"));
+                        jcc.setColor(getColorProperty(ColorProperty.GREEN.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.turq"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorTurq());
                     else
-                        jcc.setColor(getColorProperty("colorTurq"));
+                        jcc.setColor(getColorProperty(ColorProperty.TURQUOISE.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.yellow"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorYellow());
                     else
-                        jcc.setColor(getColorProperty("colorYellow"));
+                        jcc.setColor(getColorProperty(ColorProperty.YELLOW.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.white"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorWhite());
                     else
-                        jcc.setColor(getColorProperty("colorWhite"));
+                        jcc.setColor(getColorProperty(ColorProperty.WHITE.key()));
                 }
 
                 if (newSelection.equals(LangTool.getString("sa.guiField"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorGuiField());
                     else
-                        jcc.setColor(getColorProperty("colorGUIField", Color.white));
+                        jcc.setColor(getColorProperty(ColorProperty.GUI_FIELD.key(), Color.white));
                 }
                 if (newSelection.equals(LangTool.getString("sa.cursorColor"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorBg());
                     else
-                        jcc.setColor(getColorProperty("colorCursor", getColorProperty("colorBg")));
+                        jcc.setColor(getColorProperty(ColorProperty.CURSOR.key(), getColorProperty(ColorProperty.BACKGROUND.key())));
                 }
                 if (newSelection.equals(LangTool.getString("sa.columnSep"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorSeparator());
                     else
-                        jcc.setColor(getColorProperty("colorSep", getColorProperty("colorWhite")));
+                        jcc.setColor(getColorProperty("colorSep", getColorProperty(ColorProperty.WHITE.key())));
                 }
 
                 if (newSelection.equals(LangTool.getString("sa.hexAttrColor"))) {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorHexAttr());
                     else
-                        jcc.setColor(getColorProperty("colorHexAttr", getColorProperty("colorWhite")));
+                        jcc.setColor(getColorProperty(ColorProperty.HEX_ATTR.key(), getColorProperty(ColorProperty.WHITE.key())));
                 }
             }
         });
@@ -202,61 +202,66 @@ public class ColorAttributesPanel extends AttributesPanel {
 
         if (colorSchema != null) {
 
-            if (!getColorProperty("colorBg").equals(colorSchema.getColorBg())) {
-                changes.firePropertyChange(this, "colorBg", getColorProperty("colorBg"), colorSchema.getColorBg());
+            if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(colorSchema.getColorBg())) {
+                changes.firePropertyChange(this, ColorProperty.BACKGROUND.key(), getColorProperty(ColorProperty.BACKGROUND.key()), colorSchema
+                    .getColorBg());
 
-                setProperty("colorBg", Integer.toString(colorSchema.getColorBg().getRGB()));
-
-            }
-            if (!getColorProperty("colorBlue").equals(colorSchema.getColorBlue())) {
-                changes.firePropertyChange(this, "colorBlue", getColorProperty("colorBlue"), colorSchema.getColorBlue());
-                setProperty("colorBlue", Integer.toString(colorSchema.getColorBlue().getRGB()));
+                setProperty(ColorProperty.BACKGROUND.key(), Integer.toString(colorSchema.getColorBg().getRGB()));
 
             }
-            if (!getColorProperty("colorRed").equals(colorSchema.getColorRed())) {
-                changes.firePropertyChange(this, "colorRed", getColorProperty("colorRed"), colorSchema.getColorRed());
-                setProperty("colorRed", Integer.toString(colorSchema.getColorRed().getRGB()));
+            if (!getColorProperty(ColorProperty.BLUE.key()).equals(colorSchema.getColorBlue())) {
+                changes.firePropertyChange(this, ColorProperty.BLUE.key(), getColorProperty(ColorProperty.BLUE.key()), colorSchema.getColorBlue());
+                setProperty(ColorProperty.BLUE.key(), Integer.toString(colorSchema.getColorBlue().getRGB()));
 
             }
-            if (!getColorProperty("colorPink").equals(colorSchema.getColorPink())) {
-                changes.firePropertyChange(this, "colorPink", getColorProperty("colorPink"), colorSchema.getColorPink());
-                setProperty("colorPink", Integer.toString(colorSchema.getColorPink().getRGB()));
+            if (!getColorProperty(ColorProperty.RED.key()).equals(colorSchema.getColorRed())) {
+                changes.firePropertyChange(this, ColorProperty.RED.key(), getColorProperty(ColorProperty.RED.key()), colorSchema.getColorRed());
+                setProperty(ColorProperty.RED.key(), Integer.toString(colorSchema.getColorRed().getRGB()));
 
             }
-            if (!getColorProperty("colorGreen").equals(colorSchema.getColorGreen())) {
-                changes.firePropertyChange(this, "colorGreen", getColorProperty("colorGreen"), colorSchema.getColorGreen());
-
-                setProperty("colorGreen", Integer.toString(colorSchema.getColorGreen().getRGB()));
-
-            }
-            if (!getColorProperty("colorTurq").equals(colorSchema.getColorTurq())) {
-                changes.firePropertyChange(this, "colorTurq", getColorProperty("colorTurq"), colorSchema.getColorTurq());
-
-                setProperty("colorTurq", Integer.toString(colorSchema.getColorTurq().getRGB()));
+            if (!getColorProperty(ColorProperty.PINK.key()).equals(colorSchema.getColorPink())) {
+                changes.firePropertyChange(this, ColorProperty.PINK.key(), getColorProperty(ColorProperty.PINK.key()), colorSchema.getColorPink());
+                setProperty(ColorProperty.PINK.key(), Integer.toString(colorSchema.getColorPink().getRGB()));
 
             }
+            if (!getColorProperty(ColorProperty.GREEN.key()).equals(colorSchema.getColorGreen())) {
+                changes.firePropertyChange(this, ColorProperty.GREEN.key(), getColorProperty(ColorProperty.GREEN.key()), colorSchema.getColorGreen());
 
-            if (!getColorProperty("colorYellow").equals(colorSchema.getColorYellow())) {
-                changes.firePropertyChange(this, "colorYellow", getColorProperty("colorYellow"), colorSchema.getColorYellow());
-                setProperty("colorYellow", Integer.toString(colorSchema.getColorYellow().getRGB()));
-
-            }
-            if (!getColorProperty("colorWhite").equals(colorSchema.getColorWhite())) {
-                changes.firePropertyChange(this, "colorWhite", getColorProperty("colorWhite"), colorSchema.getColorWhite());
-
-                setProperty("colorWhite", Integer.toString(colorSchema.getColorWhite().getRGB()));
+                setProperty(ColorProperty.GREEN.key(), Integer.toString(colorSchema.getColorGreen().getRGB()));
 
             }
-            if (!getColorProperty("colorGUIField").equals(colorSchema.getColorGuiField())) {
-                changes.firePropertyChange(this, "colorGUIField", getColorProperty("colorGUIField"), colorSchema.getColorGuiField());
+            if (!getColorProperty(ColorProperty.TURQUOISE.key()).equals(colorSchema.getColorTurq())) {
+                changes.firePropertyChange(this, ColorProperty.TURQUOISE.key(), getColorProperty(ColorProperty.TURQUOISE.key()), colorSchema
+                    .getColorTurq());
 
-                setProperty("colorGUIField", Integer.toString(colorSchema.getColorGuiField().getRGB()));
+                setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(colorSchema.getColorTurq().getRGB()));
 
             }
-            if (!getColorProperty("colorCursor").equals(colorSchema.getColorCursor())) {
-                changes.firePropertyChange(this, "colorCursor", getColorProperty("colorCursor"), colorSchema.getColorCursor());
 
-                setProperty("colorCursor", Integer.toString(colorSchema.getColorCursor().getRGB()));
+            if (!getColorProperty(ColorProperty.YELLOW.key()).equals(colorSchema.getColorYellow())) {
+                changes.firePropertyChange(this, ColorProperty.YELLOW.key(), getColorProperty(ColorProperty.YELLOW.key()), colorSchema
+                    .getColorYellow());
+                setProperty(ColorProperty.YELLOW.key(), Integer.toString(colorSchema.getColorYellow().getRGB()));
+
+            }
+            if (!getColorProperty(ColorProperty.WHITE.key()).equals(colorSchema.getColorWhite())) {
+                changes.firePropertyChange(this, ColorProperty.WHITE.key(), getColorProperty(ColorProperty.WHITE.key()), colorSchema.getColorWhite());
+
+                setProperty(ColorProperty.WHITE.key(), Integer.toString(colorSchema.getColorWhite().getRGB()));
+
+            }
+            if (!getColorProperty(ColorProperty.GUI_FIELD.key()).equals(colorSchema.getColorGuiField())) {
+                changes.firePropertyChange(this, ColorProperty.GUI_FIELD.key(), getColorProperty(ColorProperty.GUI_FIELD.key()), colorSchema
+                    .getColorGuiField());
+
+                setProperty(ColorProperty.GUI_FIELD.key(), Integer.toString(colorSchema.getColorGuiField().getRGB()));
+
+            }
+            if (!getColorProperty(ColorProperty.CURSOR.key()).equals(colorSchema.getColorCursor())) {
+                changes.firePropertyChange(this, ColorProperty.CURSOR.key(), getColorProperty(ColorProperty.CURSOR.key()), colorSchema
+                    .getColorCursor());
+
+                setProperty(ColorProperty.CURSOR.key(), Integer.toString(colorSchema.getColorCursor().getRGB()));
 
             }
 
@@ -267,10 +272,11 @@ public class ColorAttributesPanel extends AttributesPanel {
 
             }
 
-            if (!getColorProperty("colorHexAttr").equals(colorSchema.getColorHexAttr())) {
-                changes.firePropertyChange(this, "colorHexAttr", getColorProperty("colorHexAttr"), colorSchema.getColorHexAttr());
+            if (!getColorProperty(ColorProperty.HEX_ATTR.key()).equals(colorSchema.getColorHexAttr())) {
+                changes.firePropertyChange(this, ColorProperty.HEX_ATTR.key(), getColorProperty(ColorProperty.HEX_ATTR.key()), colorSchema
+                    .getColorHexAttr());
 
-                setProperty("colorHexAttr", Integer.toString(colorSchema.getColorHexAttr().getRGB()));
+                setProperty(ColorProperty.HEX_ATTR.key(), Integer.toString(colorSchema.getColorHexAttr().getRGB()));
 
             }
 
@@ -278,81 +284,81 @@ public class ColorAttributesPanel extends AttributesPanel {
 
             Color nc = jcc.getColor();
             if (newSelection.equals(LangTool.getString("sa.bg"))) {
-                if (!getColorProperty("colorBg").equals(nc)) {
-                    changes.firePropertyChange(this, "colorBg", getColorProperty("colorBg"), nc);
+                if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.BACKGROUND.key(), getColorProperty(ColorProperty.BACKGROUND.key()), nc);
 
-                    setProperty("colorBg", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.BACKGROUND.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.blue"))) {
-                if (!getColorProperty("colorBlue").equals(nc)) {
-                    changes.firePropertyChange(this, "colorBlue", getColorProperty("colorBlue"), nc);
-                    setProperty("colorBlue", Integer.toString(nc.getRGB()));
+                if (!getColorProperty(ColorProperty.BLUE.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.BLUE.key(), getColorProperty(ColorProperty.BLUE.key()), nc);
+                    setProperty(ColorProperty.BLUE.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.red"))) {
-                if (!getColorProperty("colorRed").equals(nc)) {
-                    changes.firePropertyChange(this, "colorRed", getColorProperty("colorRed"), nc);
-                    setProperty("colorRed", Integer.toString(nc.getRGB()));
+                if (!getColorProperty(ColorProperty.RED.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.RED.key(), getColorProperty(ColorProperty.RED.key()), nc);
+                    setProperty(ColorProperty.RED.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.pink"))) {
-                if (!getColorProperty("colorPink").equals(nc)) {
-                    changes.firePropertyChange(this, "colorPink", getColorProperty("colorPink"), nc);
-                    setProperty("colorPink", Integer.toString(nc.getRGB()));
+                if (!getColorProperty(ColorProperty.PINK.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.PINK.key(), getColorProperty(ColorProperty.PINK.key()), nc);
+                    setProperty(ColorProperty.PINK.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.green"))) {
-                if (!getColorProperty("colorGreen").equals(nc)) {
-                    changes.firePropertyChange(this, "colorGreen", getColorProperty("colorGreen"), nc);
+                if (!getColorProperty(ColorProperty.GREEN.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.GREEN.key(), getColorProperty(ColorProperty.GREEN.key()), nc);
 
-                    setProperty("colorGreen", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.GREEN.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.turq"))) {
-                if (!getColorProperty("colorTurq").equals(nc)) {
-                    changes.firePropertyChange(this, "colorTurq", getColorProperty("colorTurq"), nc);
+                if (!getColorProperty(ColorProperty.TURQUOISE.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.TURQUOISE.key(), getColorProperty(ColorProperty.TURQUOISE.key()), nc);
 
-                    setProperty("colorTurq", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(nc.getRGB()));
 
                 }
 
             }
             if (newSelection.equals(LangTool.getString("sa.yellow"))) {
-                if (!getColorProperty("colorYellow").equals(nc)) {
-                    changes.firePropertyChange(this, "colorYellow", getColorProperty("colorYellow"), nc);
-                    setProperty("colorYellow", Integer.toString(nc.getRGB()));
+                if (!getColorProperty(ColorProperty.YELLOW.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.YELLOW.key(), getColorProperty(ColorProperty.YELLOW.key()), nc);
+                    setProperty(ColorProperty.YELLOW.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.white"))) {
-                if (!getColorProperty("colorWhite").equals(nc)) {
-                    changes.firePropertyChange(this, "colorWhite", getColorProperty("colorWhite"), nc);
+                if (!getColorProperty(ColorProperty.WHITE.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.WHITE.key(), getColorProperty(ColorProperty.WHITE.key()), nc);
 
-                    setProperty("colorWhite", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.WHITE.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
 
             if (newSelection.equals(LangTool.getString("sa.guiField"))) {
-                if (!getColorProperty("colorGUIField").equals(nc)) {
-                    changes.firePropertyChange(this, "colorGUIField", getColorProperty("colorGUIField"), nc);
+                if (!getColorProperty(ColorProperty.GUI_FIELD.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.GUI_FIELD.key(), getColorProperty(ColorProperty.GUI_FIELD.key()), nc);
 
-                    setProperty("colorGUIField", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.GUI_FIELD.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
 
             if (newSelection.equals(LangTool.getString("sa.cursorColor"))) {
-                if (!getColorProperty("colorCursor").equals(nc)) {
-                    changes.firePropertyChange(this, "colorCursor", getColorProperty("colorCursor"), nc);
+                if (!getColorProperty(ColorProperty.CURSOR.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.CURSOR.key(), getColorProperty(ColorProperty.CURSOR.key()), nc);
 
-                    setProperty("colorCursor", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.CURSOR.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
@@ -365,19 +371,19 @@ public class ColorAttributesPanel extends AttributesPanel {
                 }
             }
             if (newSelection.equals(LangTool.getString("sa.cursorColor"))) {
-                if (!getColorProperty("colorCursor").equals(nc)) {
-                    changes.firePropertyChange(this, "colorCursor", getColorProperty("colorCursor"), nc);
+                if (!getColorProperty(ColorProperty.CURSOR.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.CURSOR.key(), getColorProperty(ColorProperty.CURSOR.key()), nc);
 
-                    setProperty("colorCursor", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.CURSOR.key(), Integer.toString(nc.getRGB()));
 
                 }
             }
 
             if (newSelection.equals(LangTool.getString("sa.hexAttrColor"))) {
-                if (!getColorProperty("colorHexAttr").equals(nc)) {
-                    changes.firePropertyChange(this, "colorHexAttr", getColorProperty("colorHexAttr"), nc);
+                if (!getColorProperty(ColorProperty.HEX_ATTR.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.HEX_ATTR.key(), getColorProperty(ColorProperty.HEX_ATTR.key()), nc);
 
-                    setProperty("colorHexAttr", Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.HEX_ATTR.key(), Integer.toString(nc.getRGB()));
 
                 }
             }

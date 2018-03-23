@@ -25,24 +25,34 @@
  */
 package org.tn5250j;
 
-import java.awt.image.*;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.*;
 import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.font.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import org.tn5250j.event.ScreenOIAListener;
 import org.tn5250j.event.ScreenListener;
-import org.tn5250j.tools.logging.*;
+import org.tn5250j.event.ScreenOIAListener;
+import org.tn5250j.event.SessionConfigEvent;
+import org.tn5250j.event.SessionConfigListener;
+import org.tn5250j.framework.tn5250.Screen5250;
+import org.tn5250j.framework.tn5250.ScreenOIA;
+import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.tools.GUIGraphicsUtils;
-import org.tn5250j.event.*;
-import org.tn5250j.framework.tn5250.*;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
 
 public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, PropertyChangeListener, SessionConfigListener, ActionListener,
     TN5250jConstants {
@@ -106,7 +116,6 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
     protected int cursorBottOffset;
     private boolean defaultPrinter;
     protected boolean rulerFixed;
-    private boolean feError;
     private javax.swing.Timer blinker;
     private int colSepLine = 0;
     private StringBuffer hsMore = new StringBuffer("More...");
@@ -239,69 +248,69 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
 
         colorCursor = Color.white;
 
-        if (!config.isPropertyExists("colorBg"))
-            setProperty("colorBg", Integer.toString(colorBg.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.BACKGROUND.key()))
+            setProperty(ColorProperty.BACKGROUND.key(), Integer.toString(colorBg.getRGB()));
         else {
-            colorBg = getColorProperty("colorBg");
+            colorBg = getColorProperty(ColorProperty.BACKGROUND.key());
         }
         gui.setBackground(colorBg);
 
-        if (!config.isPropertyExists("colorBlue"))
-            setProperty("colorBlue", Integer.toString(colorBlue.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.BLUE.key()))
+            setProperty(ColorProperty.BLUE.key(), Integer.toString(colorBlue.getRGB()));
         else
-            colorBlue = getColorProperty("colorBlue");
+            colorBlue = getColorProperty(ColorProperty.BLUE.key());
 
-        if (!config.isPropertyExists("colorTurq"))
-            setProperty("colorTurq", Integer.toString(colorTurq.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.TURQUOISE.key()))
+            setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(colorTurq.getRGB()));
         else
-            colorTurq = getColorProperty("colorTurq");
+            colorTurq = getColorProperty(ColorProperty.TURQUOISE.key());
 
-        if (!config.isPropertyExists("colorRed"))
-            setProperty("colorRed", Integer.toString(colorRed.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.RED.key()))
+            setProperty(ColorProperty.RED.key(), Integer.toString(colorRed.getRGB()));
         else
-            colorRed = getColorProperty("colorRed");
+            colorRed = getColorProperty(ColorProperty.RED.key());
 
-        if (!config.isPropertyExists("colorWhite"))
-            setProperty("colorWhite", Integer.toString(colorWhite.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.WHITE.key()))
+            setProperty(ColorProperty.WHITE.key(), Integer.toString(colorWhite.getRGB()));
         else
-            colorWhite = getColorProperty("colorWhite");
+            colorWhite = getColorProperty(ColorProperty.WHITE.key());
 
-        if (!config.isPropertyExists("colorYellow"))
-            setProperty("colorYellow", Integer.toString(colorYellow.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.YELLOW.key()))
+            setProperty(ColorProperty.YELLOW.key(), Integer.toString(colorYellow.getRGB()));
         else
-            colorYellow = getColorProperty("colorYellow");
+            colorYellow = getColorProperty(ColorProperty.YELLOW.key());
 
-        if (!config.isPropertyExists("colorGreen"))
-            setProperty("colorGreen", Integer.toString(colorGreen.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.GREEN.key()))
+            setProperty(ColorProperty.GREEN.key(), Integer.toString(colorGreen.getRGB()));
         else
-            colorGreen = getColorProperty("colorGreen");
+            colorGreen = getColorProperty(ColorProperty.GREEN.key());
 
-        if (!config.isPropertyExists("colorPink"))
-            setProperty("colorPink", Integer.toString(colorPink.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.PINK.key()))
+            setProperty(ColorProperty.PINK.key(), Integer.toString(colorPink.getRGB()));
         else
-            colorPink = getColorProperty("colorPink");
+            colorPink = getColorProperty(ColorProperty.PINK.key());
 
-        if (!config.isPropertyExists("colorGUIField"))
-            setProperty("colorGUIField", Integer.toString(colorGUIField.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.GUI_FIELD.key()))
+            setProperty(ColorProperty.GUI_FIELD.key(), Integer.toString(colorGUIField.getRGB()));
         else
-            colorGUIField = getColorProperty("colorGUIField");
+            colorGUIField = getColorProperty(ColorProperty.GUI_FIELD.key());
 
-        if (!config.isPropertyExists("colorCursor"))
-            setProperty("colorCursor", Integer.toString(colorCursor.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.CURSOR.key()))
+            setProperty(ColorProperty.CURSOR.key(), Integer.toString(colorCursor.getRGB()));
         else
-            colorCursor = getColorProperty("colorCursor");
+            colorCursor = getColorProperty(ColorProperty.CURSOR.key());
 
-        if (!config.isPropertyExists("colorSep")) {
+        if (!config.isPropertyExists(ColorProperty.SEPARATOR.key())) {
             colorSep = colorWhite;
-            setProperty("colorSep", Integer.toString(colorSep.getRGB()));
+            setProperty(ColorProperty.SEPARATOR.key(), Integer.toString(colorSep.getRGB()));
         } else
-            colorSep = getColorProperty("colorSep");
+            colorSep = getColorProperty(ColorProperty.SEPARATOR.key());
 
-        if (!config.isPropertyExists("colorHexAttr")) {
+        if (!config.isPropertyExists(ColorProperty.HEX_ATTR.key())) {
             colorHexAttr = colorWhite;
-            setProperty("colorHexAttr", Integer.toString(colorHexAttr.getRGB()));
+            setProperty(ColorProperty.HEX_ATTR.key(), Integer.toString(colorHexAttr.getRGB()));
         } else
-            colorHexAttr = getColorProperty("colorHexAttr");
+            colorHexAttr = getColorProperty(ColorProperty.HEX_ATTR.key());
 
     }
 
@@ -485,66 +494,7 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         String pn = pce.getPropertyName();
         boolean resetAttr = false;
 
-        if (pn.equals("colorBg")) {
-            colorBg = (Color)pce.getNewValue();
-            resetAttr = true;
-
-        }
-
-        if (pn.equals("colorBlue")) {
-            colorBlue = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorTurq")) {
-            colorTurq = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorRed")) {
-            colorRed = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorWhite")) {
-            colorWhite = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorYellow")) {
-            colorYellow = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorGreen")) {
-            colorGreen = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorPink")) {
-            colorPink = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorGUIField")) {
-            colorGUIField = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorCursor")) {
-            colorCursor = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorSep")) {
-            colorSep = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals("colorHexAttr")) {
-            colorHexAttr = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
+        resetAttr = onColorAttributeChanges(pce, pn, resetAttr);
 
         if (pn.equals("cursorSize")) {
             if (pce.getNewValue().equals("Full")) cursorSize = 2;
@@ -718,9 +668,81 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         gui.repaint();
     }
 
+    private boolean onColorAttributeChanges(PropertyChangeEvent pce, String pn, boolean resetAttr) {
+
+        if (pce instanceof SessionConfigEvent) {
+
+            SessionConfigEvent sce = (SessionConfigEvent)pce;
+            if (config.getSessionTheme() != null && !config.getSessionTheme().equalsIgnoreCase(((SessionConfigEvent)pce).getSessionTheme())) {
+                return resetAttr;
+            }
+
+        }
+
+        if (pn.equals(ColorProperty.BACKGROUND.key())) {
+            colorBg = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.BLUE.key())) {
+            colorBlue = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.TURQUOISE.key())) {
+            colorTurq = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.RED.key())) {
+            colorRed = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.WHITE.key())) {
+            colorWhite = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.YELLOW.key())) {
+            colorYellow = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.GREEN.key())) {
+            colorGreen = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.PINK.key())) {
+            colorPink = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.GUI_FIELD.key())) {
+            colorGUIField = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.CURSOR.key())) {
+            colorCursor = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.SEPARATOR.key())) {
+            colorSep = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.HEX_ATTR.key())) {
+            colorHexAttr = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        return resetAttr;
+    }
+
     /**
-     * 
-     * 
      * @param x
      * @param y
      * @return
@@ -798,9 +820,7 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
     }
 
     /**
-     * 
      * RubberBanding start code
-     * 
      */
 
     /**
