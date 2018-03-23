@@ -17,6 +17,7 @@ public class Messages extends NLS {
     public static String Active_colon;
     public static String Add_session;
     public static String Area_colon;
+    public static String Theme_colon;
     public static String Binding_service_off;
     public static String Binding_service_on;
     public static String CHANGEX;
@@ -108,6 +109,8 @@ public class Messages extends NLS {
     public static String The_Group_sessions_by_attribute_has_been_changed_Please_close_all_5250_views_to_let_the_new_value_take_effect;
     public static String Activate_pinned_views_on_startup;
     public static String Map_Keys;
+    public static String Headline_Create_New_Theme;
+    public static String Question_Create_New_Theme;
 
     static {
         // initialize resource bundle

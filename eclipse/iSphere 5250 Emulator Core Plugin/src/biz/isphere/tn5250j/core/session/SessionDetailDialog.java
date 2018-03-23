@@ -39,7 +39,7 @@ public class SessionDetailDialog extends Dialog {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout(SWT.VERTICAL));
 
-        sessionDetail = new SessionDetail(sessionDirectory, actionType, session);
+        sessionDetail = new SessionDetail(getShell(), sessionDirectory, actionType, session);
         sessionDetail.createContents(container);
 
         return container;

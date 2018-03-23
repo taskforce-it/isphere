@@ -147,7 +147,7 @@ public class ColorAttributesPanel extends AttributesPanel {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorTurq());
                     else
-                        jcc.setColor(getColorProperty(ColorProperty.TURQUISE.key()));
+                        jcc.setColor(getColorProperty(ColorProperty.TURQUOISE.key()));
 
                 }
                 if (newSelection.equals(LangTool.getString("sa.yellow"))) {
@@ -210,6 +210,8 @@ public class ColorAttributesPanel extends AttributesPanel {
 
         if (colorSchema != null) {
 
+            changes.setSessionThemeEnabled(false);
+
             if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(colorSchema.getColorBg())) {
                 changes.firePropertyChange(this, ColorProperty.BACKGROUND.key(), getColorProperty(ColorProperty.BACKGROUND.key()),
                     colorSchema.getColorBg());
@@ -238,11 +240,11 @@ public class ColorAttributesPanel extends AttributesPanel {
                 setProperty(ColorProperty.GREEN.key(), Integer.toString(colorSchema.getColorGreen().getRGB()));
 
             }
-            if (!getColorProperty(ColorProperty.TURQUISE.key()).equals(colorSchema.getColorTurq())) {
-                changes.firePropertyChange(this, ColorProperty.TURQUISE.key(), getColorProperty(ColorProperty.TURQUISE.key()),
+            if (!getColorProperty(ColorProperty.TURQUOISE.key()).equals(colorSchema.getColorTurq())) {
+                changes.firePropertyChange(this, ColorProperty.TURQUOISE.key(), getColorProperty(ColorProperty.TURQUOISE.key()),
                     colorSchema.getColorTurq());
 
-                setProperty(ColorProperty.TURQUISE.key(), Integer.toString(colorSchema.getColorTurq().getRGB()));
+                setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(colorSchema.getColorTurq().getRGB()));
 
             }
 
@@ -291,6 +293,8 @@ public class ColorAttributesPanel extends AttributesPanel {
 
         } else {
 
+            changes.setSessionThemeEnabled(true);
+
             Color nc = jcc.getColor();
             if (newSelection.equals(LangTool.getString("sa.bg"))) {
                 if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(nc)) {
@@ -335,10 +339,10 @@ public class ColorAttributesPanel extends AttributesPanel {
             }
 
             if (newSelection.equals(LangTool.getString("sa.turq"))) {
-                if (!getColorProperty(ColorProperty.TURQUISE.key()).equals(nc)) {
-                    changes.firePropertyChange(this, ColorProperty.TURQUISE.key(), getColorProperty(ColorProperty.TURQUISE.key()), nc);
+                if (!getColorProperty(ColorProperty.TURQUOISE.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.TURQUOISE.key(), getColorProperty(ColorProperty.TURQUOISE.key()), nc);
 
-                    setProperty(ColorProperty.TURQUISE.key(), Integer.toString(nc.getRGB()));
+                    setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(nc.getRGB()));
 
                 }
 

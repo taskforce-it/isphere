@@ -1,6 +1,8 @@
 
-Changelog: iSphere 3.2.6.b001
+Changelog: iSphere 3.3.0.b001
 -----------------------------
+ • Added "theme" to TN5250J session configuration for overriding color
+   attributes.
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
 

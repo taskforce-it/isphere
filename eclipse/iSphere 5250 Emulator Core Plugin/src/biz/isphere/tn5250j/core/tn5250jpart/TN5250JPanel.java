@@ -65,9 +65,11 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
 
         Properties sesProps = new Properties();
 
-        sesProps.put(SESSION_HOST, getParameter("host"));
+        sesProps.put(SESSION_THEME, getParameter(TN5250jConstants.ARG_ISPHERE_THEME));
 
-        // if (isSpecified(TN5250jConstants.ARG_TN_ENHANCED))
+        sesProps.put(SESSION_HOST, getParameter(TN5250jConstants.ARG_ISPHERE_HOST));
+
+        // if (isSpecified(ARG_TN_ENHANCED))
         // sesProps.put(SESSION_TN_ENHANCED, "1");
 
         if (isSpecified(TN5250jConstants.ARG_HOST_PORT)) {
@@ -108,14 +110,14 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             sesProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
-        loadSystemProperty("SESSION_CONNECT_USER");
-        loadSystemProperty("SESSION_CONNECT_PASSWORD");
-        loadSystemProperty("SESSION_CONNECT_PROGRAM");
-        loadSystemProperty("SESSION_CONNECT_LIBRARY");
-        loadSystemProperty("SESSION_CONNECT_MENU");
+        loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER);
+        loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD);
+        loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM);
+        loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY);
+        loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU);
 
         manager = SessionManager.instance();
-        s = manager.openSession(sesProps, "", "TN5250J");
+        s = manager.openSession(sesProps, "", "TN5250J", (String)sesProps.get(SESSION_THEME));
 
         gui = getTN5250JGUI(tn5250jInfo, s);
 
@@ -175,15 +177,15 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             } else {
                 return true;
             }
-        } else if (parameter.equals("SESSION_CONNECT_USER")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER)) {
             return true;
-        } else if (parameter.equals("SESSION_CONNECT_PASSWORD")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD)) {
             return true;
-        } else if (parameter.equals("SESSION_CONNECT_PROGRAM")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM)) {
             return true;
-        } else if (parameter.equals("SESSION_CONNECT_LIBRARY")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY)) {
             return true;
-        } else if (parameter.equals("SESSION_CONNECT_MENU")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU)) {
             return true;
         } else {
             return false;
@@ -193,7 +195,9 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
     private String getParameter(String parameter) {
         if (parameter.equals(TN5250jConstants.ARG_LOCALE)) {
             return "";
-        } else if (parameter.equals("host")) {
+        } else if (parameter.equals(ARG_ISPHERE_THEME)) {
+            return getTheme();
+        } else if (parameter.equals(ARG_ISPHERE_HOST)) {
             return getHost();
         } else if (parameter.equals(TN5250jConstants.ARG_HOST_PORT)) {
             return session.getPort();
@@ -207,9 +211,9 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             return "";
         } else if (parameter.equals(TN5250jConstants.ARG_DEVICE_NAME)) {
             return session.getDevice();
-        } else if (parameter.equals("SESSION_CONNECT_USER")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER)) {
             return session.getUser();
-        } else if (parameter.equals("SESSION_CONNECT_PASSWORD")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PASSWORD)) {
             if (session.getPassword().equals("")) {
                 return "";
             } else {
@@ -223,15 +227,15 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
                 }
                 return decryptedPassword;
             }
-        } else if (parameter.equals("SESSION_CONNECT_PROGRAM")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_PROGRAM)) {
             return session.getProgram();
-        } else if (parameter.equals("SESSION_CONNECT_LIBRARY")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_LIBRARY)) {
             String library = session.getLibrary();
             if (library.equals(ISession.ISPHERE_PRODUCT_LIBRARY)) {
                 library = ISpherePlugin.getISphereLibrary(tn5250jInfo.getRSEConnection());
             }
             return library;
-        } else if (parameter.equals("SESSION_CONNECT_MENU")) {
+        } else if (parameter.equals(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU)) {
             return session.getMenu();
         } else {
             return "";
@@ -278,6 +282,10 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
     }
 
     public String getHost() {
+        return "";
+    }
+
+    public String getTheme() {
         return "";
     }
 

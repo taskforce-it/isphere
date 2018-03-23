@@ -11,6 +11,8 @@ package biz.isphere.tn5250j.core.session;
 import java.io.File;
 
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,12 +26,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.tn5250j.SessionConfig;
 import org.tn5250j.TN5250jConstants;
 import org.tn5250j.framework.transport.SocketConnector;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.tn5250j.core.DialogActionTypes;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
@@ -48,19 +53,22 @@ public class SessionDetail {
     // private Button buttonEnhancedMode;
     private Button buttonView;
     private Button buttonEditor;
+    private Combo comboTheme;
     private Text textUser;
     private Text textPassWord;
     private Text textProgram;
     private Combo textLibrary;
     private Text textMenu;
     private StatusLineManager statusLineManager;
+    private Shell shell;
     private String sessionDirectory;
     private int actionType;
     private Session session;
     private String[] codePages = { "37", "37PT", "273", "280", "284", "285", "277-dk", "277-no", "278", "297", "424", "500-ch", "870-pl", "870-sk",
         "871", "875", "1025-r", "1026", "1112", "1141", "1140", "1147", "1148" };
 
-    public SessionDetail(String sessionDirectory, int actionType, Session session) {
+    public SessionDetail(Shell shell, String sessionDirectory, int actionType, Session session) {
+        this.shell = shell;
         this.sessionDirectory = sessionDirectory;
         this.actionType = actionType;
         this.session = session;
@@ -295,6 +303,34 @@ public class SessionDetail {
             buttonEditor.setEnabled(false);
         }
 
+        // Theme combo
+
+        final Label labelTheme = new Label(compositeGeneral, SWT.NONE);
+        labelTheme.setText(Messages.Theme_colon);
+
+        final Composite groupTheme = new Composite(compositeGeneral, SWT.NONE);
+        final GridLayout gridLayoutGroupTheme = new GridLayout();
+        gridLayoutGroupTheme.numColumns = 2;
+        gridLayoutGroupTheme.marginWidth = 0;
+        groupTheme.setLayout(gridLayoutGroupTheme);
+        groupTheme.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        comboTheme = new Combo(groupTheme, SWT.DROP_DOWN);
+        GridData gridDataComboTheme = new GridData(GridData.FILL_HORIZONTAL);
+        // gridDataComboTheme.minimumWidth = 300;
+        comboTheme.setLayoutData(gridDataComboTheme);
+        comboTheme.setItems(SessionConfig.loadThemes());
+
+        if (actionType == DialogActionTypes.CREATE) {
+            selectTheme(SessionConfig.THEME_NONE);
+        } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            selectTheme(session.getTheme());
+        }
+
+        if (actionType == DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
+            comboTheme.setEnabled(false);
+        }
+
         // Signon mask
 
         final Group groupSignOnMask = new Group(container, SWT.NONE);
@@ -430,6 +466,31 @@ public class SessionDetail {
 
     }
 
+    private void selectTheme(String theme) {
+
+        int index = -1;
+
+        if (StringHelper.isNullOrEmpty(theme)) {
+            index = 0;
+        } else {
+
+            String[] themes = comboTheme.getItems();
+            for (int i = 0; i < themes.length; i++) {
+                if (themes[i].equalsIgnoreCase(theme)) {
+                    index = i;
+                    break;
+                }
+            }
+
+        }
+
+        if (index >= 0 && index < comboTheme.getItemCount()) {
+            comboTheme.select(index);
+        }
+
+        comboTheme.select(index);
+    }
+
     protected void setErrorMessage(String errorMessage) {
         if (errorMessage != null) {
             statusLineManager.setErrorMessage(TN5250JCorePlugin.getDefault().getImageRegistry().get(TN5250JCorePlugin.IMAGE_ERROR), errorMessage);
@@ -472,6 +533,7 @@ public class SessionDetail {
         textPort.setText(textPort.getText().toUpperCase().trim());
         comboCodePage.setText(comboCodePage.getText().trim());
         comboSSLType.setText(comboSSLType.getText().trim());
+        comboTheme.setText(comboTheme.getText().trim());
         textUser.setText(textUser.getText().trim());
         textPassWord.setText(textPassWord.getText().trim());
         textProgram.setText(textProgram.getText().toUpperCase().trim());
@@ -584,6 +646,25 @@ public class SessionDetail {
             return false;
         }
 
+        // The value in field 'Theme' is not valid.
+
+        boolean isNewTheme = true;
+
+        String[] themes = comboTheme.getItems();
+        for (String theme : themes) {
+            if (theme.equalsIgnoreCase(comboTheme.getText())) {
+                isNewTheme = false;
+                break;
+            }
+        }
+
+        if (isNewTheme) {
+            if (!MessageDialog.openQuestion(shell, Messages.Question_Create_New_Theme,
+                NLS.bind(Messages.Question_Create_New_Theme, comboTheme.getText()))) {
+                return false;
+            }
+        }
+
         // The value in field 'User' is not valid.
 
         if (textName.getText().equals(ISession.DESIGNER) && textUser.getText().equals("")) {
@@ -659,6 +740,9 @@ public class SessionDetail {
         } else {
             session.setArea(ISession.AREA_EDITOR);
         }
+
+        session.setTheme(comboTheme.getText());
+
         session.setUser(textUser.getText());
 
         if (textPassWord.getText().equals("")) {

@@ -8,13 +8,16 @@
 
 package org.tn5250j.settings;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum ColorProperty {
     BACKGROUND ("colorBg"),
     BLUE ("colorBlue"),
     RED ("colorRed"),
     PINK ("colorPink"),
     GREEN ("colorGreen"),
-    TURQUISE ("colorTurq"),
+    TURQUOISE ("colorTurq"),
     YELLOW ("colorYellow"),
     WHITE ("colorWhite"),
     GUI_FIELD ("colorGUIField"),
@@ -24,11 +27,28 @@ public enum ColorProperty {
 
     private String key;
 
+    private static Map<String, ColorProperty> items;
+
+    static {
+        items = new HashMap<String, ColorProperty>();
+        for (ColorProperty property : ColorProperty.values()) {
+            items.put(property.key, property);
+        }
+    }
+
     private ColorProperty(String key) {
         this.key = key;
     }
 
     public String key() {
         return key;
+    }
+
+    public static String[] keys() {
+        return items.keySet().toArray(new String[items.size()]);
+    }
+
+    public static boolean isColorProperty(String key) {
+        return items.containsKey(key);
     }
 }

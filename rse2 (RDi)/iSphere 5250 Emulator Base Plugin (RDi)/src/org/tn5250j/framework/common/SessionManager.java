@@ -89,7 +89,11 @@ public class SessionManager implements SessionManagerInterface {
 
     }
 
-    public synchronized Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
+    public Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
+        return this.openSession(sesProps, configurationResource, sessionName, "");
+    }
+
+    public synchronized Session5250 openSession(Properties sesProps, String configurationResource, String sessionName, String sessionTheme) {
 
         if (sessionName == null)
             sesProps.put(TN5250jConstants.SESSION_TERM_NAME, sesProps.getProperty(TN5250jConstants.SESSION_HOST));
@@ -102,16 +106,17 @@ public class SessionManager implements SessionManagerInterface {
 
         SessionConfig useConfig = null;
         for (SessionConfig conf : configs) {
-            if (conf.getSessionName().equals(sessionName)) {
+            if (conf.getSessionName().equals(sessionName) && conf.getSessionTheme().equals(sessionTheme)) {
                 useConfig = conf;
             }
         }
 
-        if (useConfig == null) {
+        // TODO: re-enable caching
+        // if (useConfig == null) {
 
-            useConfig = new SessionConfig(configurationResource, sessionName);
-            configs.add(useConfig);
-        }
+        useConfig = new SessionConfig(configurationResource, sessionName, sessionTheme);
+        configs.add(useConfig);
+        // }
 
         Session5250 newSession = new Session5250(sesProps, configurationResource, sessionName, useConfig);
         sessions.addSession(newSession);

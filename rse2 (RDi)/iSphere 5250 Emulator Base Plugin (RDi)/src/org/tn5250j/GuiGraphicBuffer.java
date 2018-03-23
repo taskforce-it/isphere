@@ -263,10 +263,10 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         else
             colorBlue = getColorProperty(ColorProperty.BLUE.key());
 
-        if (!config.isPropertyExists(ColorProperty.TURQUISE.key()))
-            setProperty(ColorProperty.TURQUISE.key(), Integer.toString(colorTurq.getRGB()));
+        if (!config.isPropertyExists(ColorProperty.TURQUOISE.key()))
+            setProperty(ColorProperty.TURQUOISE.key(), Integer.toString(colorTurq.getRGB()));
         else
-            colorTurq = getColorProperty(ColorProperty.TURQUISE.key());
+            colorTurq = getColorProperty(ColorProperty.TURQUOISE.key());
 
         if (!config.isPropertyExists(ColorProperty.RED.key()))
             setProperty(ColorProperty.RED.key(), Integer.toString(colorRed.getRGB()));
@@ -478,66 +478,7 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
         String pn = pce.getPropertyName();
         boolean resetAttr = false;
 
-        if (pn.equals(ColorProperty.BACKGROUND.key())) {
-            colorBg = (Color)pce.getNewValue();
-            resetAttr = true;
-
-        }
-
-        if (pn.equals(ColorProperty.BLUE.key())) {
-            colorBlue = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.TURQUISE.key())) {
-            colorTurq = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.RED.key())) {
-            colorRed = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.WHITE.key())) {
-            colorWhite = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.YELLOW.key())) {
-            colorYellow = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.GREEN.key())) {
-            colorGreen = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.PINK.key())) {
-            colorPink = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.GUI_FIELD.key())) {
-            colorGUIField = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.CURSOR.key())) {
-            colorCursor = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.SEPARATOR.key())) {
-            colorSep = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
-
-        if (pn.equals(ColorProperty.HEX_ATTR.key())) {
-            colorHexAttr = (Color)pce.getNewValue();
-            resetAttr = true;
-        }
+        resetAttr = onColorAttributeChanges(pce, pn, resetAttr);
 
         if (pn.equals("cursorSize")) {
             if (pce.getNewValue().equals("Full")) cursorSize = 2;
@@ -697,6 +638,80 @@ public class GuiGraphicBuffer implements ScreenOIAListener, ScreenListener, Prop
 
         gui.validate();
         gui.repaint();
+    }
+
+    private boolean onColorAttributeChanges(PropertyChangeEvent pce, String pn, boolean resetAttr) {
+
+        if (pce instanceof SessionConfigEvent) {
+
+            SessionConfigEvent sce = (SessionConfigEvent)pce;
+            if (config.getSessionTheme() != null && !config.getSessionTheme().equalsIgnoreCase(((SessionConfigEvent)pce).getSessionTheme())) {
+                return resetAttr;
+            }
+
+        }
+
+        if (pn.equals(ColorProperty.BACKGROUND.key())) {
+            colorBg = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.BLUE.key())) {
+            colorBlue = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.TURQUOISE.key())) {
+            colorTurq = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.RED.key())) {
+            colorRed = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.WHITE.key())) {
+            colorWhite = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.YELLOW.key())) {
+            colorYellow = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.GREEN.key())) {
+            colorGreen = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.PINK.key())) {
+            colorPink = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.GUI_FIELD.key())) {
+            colorGUIField = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.CURSOR.key())) {
+            colorCursor = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.SEPARATOR.key())) {
+            colorSep = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        if (pn.equals(ColorProperty.HEX_ATTR.key())) {
+            colorHexAttr = (Color)pce.getNewValue();
+            resetAttr = true;
+        }
+
+        return resetAttr;
     }
 
     /**
