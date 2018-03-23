@@ -111,12 +111,11 @@ public class SessionManager implements SessionManagerInterface {
             }
         }
 
-        // TODO: re-enable caching
-        // if (useConfig == null) {
+        if (useConfig == null) {
 
-        useConfig = new SessionConfig(configurationResource, sessionName, sessionTheme);
-        configs.add(useConfig);
-        // }
+            useConfig = new SessionConfig(configurationResource, sessionName, sessionTheme);
+            configs.add(useConfig);
+        }
 
         Session5250 newSession = new Session5250(sesProps, configurationResource, sessionName, useConfig);
         sessions.addSession(newSession);
