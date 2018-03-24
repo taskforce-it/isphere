@@ -85,7 +85,7 @@ public class SessionConfig {
     private boolean usingDefaults;
 
     private Vector listeners;
-    
+
     private Properties savedColorProperties;
 
     private String themeConfigurationFile;
@@ -252,6 +252,10 @@ public class SessionConfig {
             } catch (FileNotFoundException fnfe) {
             } catch (IOException ioe) {
             }
+        }
+
+        if (sessionThemeEnabled) {
+            overlayConfigurationWithTheme();
         }
     }
 
