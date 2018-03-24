@@ -22,6 +22,8 @@ import biz.isphere.tn5250j.core.session.Session;
 
 public class SetSessionFocus {
 
+    private static UIJob grabFocusJob;
+
     public static void run(int majorSession, int minorSession, final ITN5250JPart tn5250jPart) {
         if (majorSession >= 0) {
             if (tn5250jPart instanceof IWorkbenchPart) {
@@ -54,7 +56,12 @@ public class SetSessionFocus {
 
                 // Using a UIJob ensures that the 5250 sessions gets the focus
                 // when RDi is started and the 5250 sessions view is visible.
-                new GrabFocusJob(tn5250j).schedule();
+                if (grabFocusJob == null) {
+                    grabFocusJob = new GrabFocusJob(tn5250j);
+                    grabFocusJob.schedule(100);
+                } else {
+                    System.out.println("** Grabbing focus already active ***");
+                }
 
                 if (tn5250jPart.isMultiSession()) {
                     Session session = (Session)tabItem.getData(SessionTabData.SESSION);
@@ -103,6 +110,7 @@ public class SetSessionFocus {
         @Override
         public IStatus runInUIThread(IProgressMonitor arg0) {
             tn5250j.getSessionGUI().grabFocus();
+            grabFocusJob = null;
             return Status.OK_STATUS;
         }
     }
