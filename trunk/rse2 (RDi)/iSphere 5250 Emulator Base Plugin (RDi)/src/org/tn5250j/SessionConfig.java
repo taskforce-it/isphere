@@ -248,6 +248,10 @@ public class SessionConfig {
             } catch (IOException ioe) {
             }
         }
+
+        if (sessionThemeEnabled) {
+            overlayConfigurationWithTheme();
+        }
     }
 
     /**
