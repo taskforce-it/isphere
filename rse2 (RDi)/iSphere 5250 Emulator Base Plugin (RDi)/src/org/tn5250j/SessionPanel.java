@@ -362,7 +362,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
                 LangTool.getString("cs.title"), // the title of the dialog
                                                 // window
                 JOptionPane.CANCEL_OPTION // option type
-            );
+                );
 
             if (result == 0) {
                 return true;
@@ -587,8 +587,13 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
             removeFocusListener(focusListener);
         }
 
-        sesConfig.saveSessionProps(getParent());
-        if (session.getVT() != null) session.getVT().disconnect();
+        // Moved to SessionAttributes.doOptionStuff()
+        // sesConfig.saveSessionProps(getParent());
+
+        if (session.getVT() != null) {
+            session.getVT().disconnect();
+        }
+
         // Added by Luc to fix a memory leak. The keyHandler was still receiving
         // events even though nothing was really attached.
         keyHandler.sessionClosed(this);
@@ -678,7 +683,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
         Rectangle r = this.getBounds();
         if (keyPad != null && keyPad.isVisible())
-            // r.height -= (int)(keyPad.getHeight() * 1.25);
+        // r.height -= (int)(keyPad.getHeight() * 1.25);
             r.height -= (keyPad.getHeight());
 
         r.setSize(r.width, r.height);

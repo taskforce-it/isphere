@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -36,15 +35,11 @@ import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-
 import org.tn5250j.event.SessionConfigEvent;
 import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.tools.GUIGraphicsUtils;
-import org.tn5250j.tools.LangTool;
 
 /**
  * A host session configuration object.
@@ -72,6 +67,7 @@ import org.tn5250j.tools.LangTool;
  */
 public class SessionConfig {
 
+    private static final String IS_DIRTY_FLAG = "saveme";
     private static final String THEME_CONFIGURATION_FILE_PREFIX = "ThemeOverlay_";
     private static final String THEME_CONFIGURATION_FILE_SUFFIX = ".props";
     private static final String THEME_CONFIGURATION_KEY = "sessionTheme";
@@ -185,35 +181,52 @@ public class SessionConfig {
 
     }
 
+    public boolean isModified() {
+
+        return sesProps.containsKey(IS_DIRTY_FLAG);
+    }
+
     public void setModified() {
 
-        sesProps.setProperty("saveme", "");
+        System.out.println("Setting modified flag...");
+
+        sesProps.setProperty(IS_DIRTY_FLAG, "yes");
     }
 
-    public void saveSessionProps(java.awt.Container parent) {
+    public void resetModified() {
 
-        if (sesProps.containsKey("saveme")) {
+        System.out.println("Reseting modified flag...");
 
-            sesProps.remove("saveme");
-
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    Object[] args = { getConfigurationResource() };
-                    String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
-
-                    int result = JOptionPane.showConfirmDialog(null /* parent */, message);
-
-                    if (result == JOptionPane.OK_OPTION) {
-                        saveSessionProps();
-                    }
-                }
-            });
-
-        }
-
+        sesProps.remove(IS_DIRTY_FLAG);
     }
+
+    // public void saveSessionProps(java.awt.Container parent) {
+    //
+    // if (sesProps.containsKey(IS_DIRTY_FLAG)) {
+    //
+    // resetModified();
+    //
+    // SwingUtilities.invokeLater(new Runnable() {
+    // public void run() {
+    // Object[] args = { getConfigurationResource() };
+    // String message =
+    // MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+    //
+    // int result = JOptionPane.showConfirmDialog(null /* parent */, message);
+    //
+    // if (result == JOptionPane.OK_OPTION) {
+    // saveSessionProps();
+    // }
+    // }
+    // });
+    //
+    // }
+    //
+    // }
 
     public void saveSessionProps() {
+
+        resetModified();
 
         if (sessionThemeEnabled) {
             saveThemeProps();
@@ -354,7 +367,7 @@ public class SessionConfig {
 
         sesProps = cloneProperties(sesProps);
 
-        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, false,
+        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, true,
             THEME_CONFIGURATION_HEADER, false);
         if (themeColorProperties == null || themeColorProperties.size() == 0) {
             initializeThemeColorProperties();
