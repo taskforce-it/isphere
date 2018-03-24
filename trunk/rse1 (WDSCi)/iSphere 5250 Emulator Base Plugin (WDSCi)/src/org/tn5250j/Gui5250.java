@@ -362,10 +362,10 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
         String[] options = { LangTool.getString("cs.optThis"), LangTool.getString("cs.optAll"), LangTool.getString("cs.optCancel") };
 
         int result = JOptionPane.showOptionDialog(this.getParent(), // the
-                                                                    // parent
-                                                                    // that the
-                                                                    // dialog
-                                                                    // blocks
+            // parent
+            // that the
+            // dialog
+            // blocks
             message, // the dialog message array
             LangTool.getString("cs.title"), // the title of the dialog window
             JOptionPane.DEFAULT_OPTION, // option type
@@ -405,15 +405,15 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
         if (sesConfig.isPropertyExists("confirmSignoff") && sesConfig.getStringProperty("confirmSignoff").equals("Yes")) {
 
             int result = JOptionPane.showConfirmDialog(this.getParent(), // the
-                                                                            // parent
-                                                                            // that
-                                                                            // the
-                                                                            // dialog
-                                                                            // blocks
+                // parent
+                // that
+                // the
+                // dialog
+                // blocks
                 LangTool.getString("messages.signOff"), // the dialog message
-                                                        // array
+                // array
                 LangTool.getString("cs.title"), // the title of the dialog
-                                                // window
+                // window
                 JOptionPane.CANCEL_OPTION // option type
                 );
 
@@ -636,7 +636,8 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
 
     public void closeDown() {
 
-        sesConfig.saveSessionProps(getParent());
+        // Moved to SessionAttributes.doOptionStuff()
+        // sesConfig.saveSessionProps(getParent());
 
         // Let's stop the cursor blinking as well as it seems to be causing
         // problems

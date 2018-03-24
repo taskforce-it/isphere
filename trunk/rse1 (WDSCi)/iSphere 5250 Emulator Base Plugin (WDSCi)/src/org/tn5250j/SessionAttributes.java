@@ -26,30 +26,55 @@ package org.tn5250j;
  *
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.tree.TreeSelectionModel;
-import java.util.*;
-import java.beans.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
+import java.util.Enumeration;
+import java.util.Properties;
 
-import org.tn5250j.tools.*;
-import org.tn5250j.settings.*;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
+
+import org.tn5250j.settings.AttributesPanel;
+import org.tn5250j.settings.ColorAttributesPanel;
+import org.tn5250j.settings.CursorAttributesPanel;
+import org.tn5250j.settings.DisplayAttributesPanel;
+import org.tn5250j.settings.ErrorResetAttributesPanel;
+import org.tn5250j.settings.FontAttributesPanel;
+import org.tn5250j.settings.HotspotAttributesPanel;
+import org.tn5250j.settings.KeypadAttributesPanel;
+import org.tn5250j.settings.MouseAttributesPanel;
+import org.tn5250j.settings.OnConnectAttributesPanel;
+import org.tn5250j.settings.PrinterAttributesPanel;
+import org.tn5250j.tools.LangTool;
 
 public class SessionAttributes extends JDialog {
 
-    String fileName;
-    Properties props = null;
-    JPanel jpm = new JPanel(new BorderLayout());
+    private static final long serialVersionUID = 1L;
+    private final String fileName;
+    private final Properties props;
+    private JPanel jpm = new JPanel(new BorderLayout());
 
-    private SessionConfig changes = null;
+    private final SessionConfig changes;
 
-    JTree tree = new JTree();
-    CardLayout cardLayout;
-    JPanel jp;
+    private JTree tree = new JTree();
+    private CardLayout cardLayout;
+    private JPanel jp;
 
     public SessionAttributes(Frame parent, SessionConfig config) {
         super(parent);
@@ -77,7 +102,7 @@ public class SessionAttributes extends JDialog {
         jp.setLayout(cardLayout);
 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-        Enumeration e = root.children();
+        Enumeration<?> e = root.children();
         Object child;
         while (e.hasMoreElements()) {
             child = e.nextElement();
@@ -199,10 +224,7 @@ public class SessionAttributes extends JDialog {
         message[0] = jpm;
         String[] options = { LangTool.getString("sa.optApply"), LangTool.getString("sa.optCancel"), LangTool.getString("sa.optSave") };
 
-        final JOptionPane saOptionPane = new JOptionPane(message, // the
-            // dialog
-            // message
-            // array
+        final JOptionPane saOptionPane = new JOptionPane(message, // message
             JOptionPane.PLAIN_MESSAGE, // message type
             JOptionPane.YES_NO_CANCEL_OPTION, // option type
             null, // optional icon, use null to use the default icon
@@ -254,23 +276,40 @@ public class SessionAttributes extends JDialog {
 
     private void doOptionStuff(JOptionPane optionPane) {
 
-        String result = (String)optionPane.getValue();
+        // Warning, do not cast to String, because it also can be Integer!
+        Object result = optionPane.getValue();
 
         if (LangTool.getString("sa.optApply").equals(result)) {
 
             applyAttributes();
             optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-
         }
+
         if (LangTool.getString("sa.optCancel").equals(result)) {
+
+            if (changes.isModified()) {
+
+                Object[] args = { changes.getConfigurationResource() };
+                String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+
+                int option = JOptionPane.showConfirmDialog(null /* parent */, message);
+
+                if (option == JOptionPane.CANCEL_OPTION) {
+                    optionPane.setValue(null);
+                    return;
+                } else if (option == JOptionPane.YES_OPTION) {
+                    changes.saveSessionProps();
+                } else if (option == JOptionPane.NO_OPTION) {
+                    changes.resetModified();
+                }
+            }
+
             setVisible(false);
             dispose();
         }
+
         if (LangTool.getString("sa.optSave").equals(result)) {
 
-            if (props.containsKey("saveme")) {
-                props.remove("saveme");
-            }
             saveProps();
             setVisible(false);
             dispose();
@@ -280,7 +319,7 @@ public class SessionAttributes extends JDialog {
     private void applyAttributes() {
 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-        Enumeration e = root.children();
+        Enumeration<?> e = root.children();
         Object child;
         while (e.hasMoreElements()) {
             child = e.nextElement();
@@ -290,14 +329,14 @@ public class SessionAttributes extends JDialog {
             }
         }
 
-        setProperty("saveme", "yes");
+        changes.setModified();
 
     }
 
     private void saveProps() {
 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-        Enumeration e = root.children();
+        Enumeration<?> e = root.children();
         Object child;
         while (e.hasMoreElements()) {
             child = e.nextElement();
