@@ -67,8 +67,9 @@ import org.tn5250j.tools.LangTool;
  * <li>Save original session properties.</li>
  * </ol>
  */
-public class SessionConfig implements TN5250jConstants {
+public class SessionConfig {
 
+    private static final String IS_DIRTY_FLAG = "saveme";
     private static final String THEME_CONFIGURATION_FILE_PREFIX = "ThemeOverlay_";
     private static final String THEME_CONFIGURATION_FILE_SUFFIX = ".props";
     private static final String THEME_CONFIGURATION_KEY = "sessionTheme";
@@ -80,13 +81,11 @@ public class SessionConfig implements TN5250jConstants {
     private String sessionName;
     private String sessionTheme;
     private boolean sessionThemeEnabled;
-    private boolean connected;
-    private int sessionType;
     private Properties sesProps;
-    private Vector listeners;
-    private String sslType;
     private boolean usingDefaults;
 
+    private Vector listeners;
+    
     private Properties savedColorProperties;
 
     private String themeConfigurationFile;
@@ -187,35 +186,52 @@ public class SessionConfig implements TN5250jConstants {
 
     }
 
+    public boolean isModified() {
+
+        return sesProps.containsKey(IS_DIRTY_FLAG);
+    }
+
     public void setModified() {
 
-        sesProps.setProperty("saveme", "");
+        System.out.println("Setting modified flag...");
+
+        sesProps.setProperty(IS_DIRTY_FLAG, "yes");
     }
 
-    public void saveSessionProps(java.awt.Container parent) {
+    public void resetModified() {
 
-        if (sesProps.containsKey("saveme")) {
+        System.out.println("Reseting modified flag...");
 
-            sesProps.remove("saveme");
-
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    Object[] args = { getConfigurationResource() };
-                    String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
-
-                    int result = JOptionPane.showConfirmDialog(null /* parent */, message);
-
-                    if (result == JOptionPane.OK_OPTION) {
-                        saveSessionProps();
-                    }
-                }
-            });
-
-        }
-
+        sesProps.remove(IS_DIRTY_FLAG);
     }
+
+    // public void saveSessionProps(java.awt.Container parent) {
+    //
+    // if (sesProps.containsKey(IS_DIRTY_FLAG)) {
+    //
+    // resetModified();
+    //
+    // SwingUtilities.invokeLater(new Runnable() {
+    // public void run() {
+    // Object[] args = { getConfigurationResource() };
+    // String message =
+    // MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+    //
+    // int result = JOptionPane.showConfirmDialog(null /* parent */, message);
+    //
+    // if (result == JOptionPane.OK_OPTION) {
+    // saveSessionProps();
+    // }
+    // }
+    // });
+    //
+    // }
+    //
+    // }
 
     public void saveSessionProps() {
+
+        resetModified();
 
         if (sessionThemeEnabled) {
             saveThemeProps();
@@ -356,7 +372,7 @@ public class SessionConfig implements TN5250jConstants {
 
         sesProps = cloneProperties(sesProps);
 
-        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, false,
+        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, true,
             THEME_CONFIGURATION_HEADER, false);
         if (themeColorProperties == null || themeColorProperties.size() == 0) {
             initializeThemeColorProperties();
@@ -454,10 +470,10 @@ public class SessionConfig implements TN5250jConstants {
 
     public String getStringProperty(String prop) {
 
-        if (sesProps.containsKey(prop))
+        if (sesProps.containsKey(prop)) {
             return (String)sesProps.get(prop);
-        else
-            return "";
+        }
+        return "";
 
     }
 
@@ -470,8 +486,8 @@ public class SessionConfig implements TN5250jConstants {
             } catch (NumberFormatException ne) {
                 return 0;
             }
-        } else
-            return 0;
+        }
+        return 0;
 
     }
 
@@ -480,8 +496,8 @@ public class SessionConfig implements TN5250jConstants {
         if (sesProps.containsKey(prop)) {
             Color c = new Color(getIntegerProperty(prop));
             return c;
-        } else
-            return null;
+        }
+        return null;
 
     }
 
@@ -514,8 +530,8 @@ public class SessionConfig implements TN5250jConstants {
         if (sesProps.containsKey(prop)) {
             float f = Float.parseFloat((String)sesProps.get(prop));
             return f;
-        } else
-            return 0.0f;
+        }
+        return 0.0f;
 
     }
 
@@ -527,10 +543,10 @@ public class SessionConfig implements TN5250jConstants {
         return sesProps.remove(key);
     }
 
-    public synchronized Vector getSessionConfigListeners() {
-
-        return listeners;
-    }
+    // public synchronized Vector getSessionConfigListeners() {
+    //
+    // return listeners;
+    // }
 
     /**
      * Add a SessionConfigListener to the listener list.
