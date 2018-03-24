@@ -9,6 +9,8 @@ Changelog: iSphere 3.3.0.b001
  • Fixed NullPointerException, when the user attempts to open the popup
    menu of a 5050 session, before the session had been completely 
    initialized.
+ • Fixed timing problem that SetSessionFocus blocked the UI from time 
+   to time.
 
 Changelog: iSphere 3.2.5.r
 --------------------------
