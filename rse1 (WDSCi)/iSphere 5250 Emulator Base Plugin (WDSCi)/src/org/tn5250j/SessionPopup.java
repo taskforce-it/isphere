@@ -393,25 +393,30 @@ public class SessionPopup implements TN5250jConstants {
         // ISPHERE - OLD - END
         if (OptionAccessFactory.getInstance().isValidOption(MNEMONIC_TOGGLE_CONNECTION)) {
 
-            if (vt.isConnected()) {
-                action = new AbstractAction(LangTool.getString("popup.disconnect")) {
-                    public void actionPerformed(ActionEvent e) {
-                        changeConnection();
-                        session.getFocusForMe();
-                    }
-                };
-            } else {
+            // Sometimes vt has not yet been set when you are too fast with
+            // opening the context menu.
+            if (vt != null) {
 
-                action = new AbstractAction(LangTool.getString("popup.connect")) {
-                    public void actionPerformed(ActionEvent e) {
-                        changeConnection();
-                        session.getFocusForMe();
-                    }
-                };
+                if (vt.isConnected()) {
+                    action = new AbstractAction(LangTool.getString("popup.disconnect")) {
+                        public void actionPerformed(ActionEvent e) {
+                            changeConnection();
+                            session.getFocusForMe();
+                        }
+                    };
+                } else {
 
+                    action = new AbstractAction(LangTool.getString("popup.connect")) {
+                        public void actionPerformed(ActionEvent e) {
+                            changeConnection();
+                            session.getFocusForMe();
+                        }
+                    };
+
+                }
+
+                popup.add(createMenuItem(action, MNEMONIC_TOGGLE_CONNECTION));
             }
-
-            popup.add(createMenuItem(action, MNEMONIC_TOGGLE_CONNECTION));
         }
 
         // ISPHERE - OLD - START
@@ -421,8 +426,7 @@ public class SessionPopup implements TN5250jConstants {
          * action = new AbstractAction(LangTool.getString("popup.close")) {
          * public void actionPerformed(ActionEvent e) { session.closeSession(); } };
          * 
-         * popup.add(createMenuItem(action,MNEMONIC_CLOSE));
-         *  }
+         * popup.add(createMenuItem(action,MNEMONIC_CLOSE)); }
          */
         // ISPHERE - OLD - END
         GUIGraphicsUtils.positionPopup(me.getComponent(), popup, me.getX(), me.getY());
@@ -602,7 +606,7 @@ public class SessionPopup implements TN5250jConstants {
         Frame parent = (Frame)SwingUtilities.getRoot(session);
 
         result = JOptionPane.showOptionDialog(parent, // the parent that the
-                                                        // dialog blocks
+            // dialog blocks
             message, // the dialog message array
             LangTool.getString("hm.title"), // the title of the dialog window
             JOptionPane.DEFAULT_OPTION, // option type
@@ -622,7 +626,7 @@ public class SessionPopup implements TN5250jConstants {
             screen.sendKeys(k);
             break;
         case 1: // Cancel
-        // System.out.println("Cancel");
+            // System.out.println("Cancel");
             break;
         default:
             break;
