@@ -4,9 +4,12 @@
 <toc label="5250 Emulator" link_to="../biz.isphere.base.help/toc/toc.xml#reference"> 
   <topic label="5250 Emulator"  href="html/5250emulator/5250emulator.html"> 
     <topic label="Configuration" href="html/5250emulator/configuration/configuration.html" />
-    <topic label="Session" href="html/5250emulator/session/session.html" />
-    <topic label="SSL Sessions" href="html/5250emulator/ssl_sessions/ssl_sessions.html" />
-    <topic label="Designer Session" href="html/5250emulator/session/designer_session.html" />
+    <topic label="Sessions" >
+	    <topic label="Session" href="html/5250emulator/session/session.html" />
+	    <topic label="SSL Sessions" href="html/5250emulator/ssl_sessions/ssl_sessions.html" />
+	    <topic label="Designer Session" href="html/5250emulator/session/designer_session.html" />
+	    <topic label="Session Theme" href="html/5250emulator/theme/theme.html" />
+    </topic>
     <topic label="PDM Options" >
         <topic label="Start Eclipse Editor" href="html/5250emulator/pdm/start_eclipse_editor.html" />
         <topic label="Start iSphere Compare/Merge Editor" href="html/5250emulator/pdm/start_isphere_compare_merge_editor.html" /> 
