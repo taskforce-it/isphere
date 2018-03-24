@@ -3,8 +3,12 @@ Changelog: iSphere 3.3.0.b001
 -----------------------------
  • Added "theme" to TN5250J session configuration for overriding color
    attributes.
+ • Now checking for changes when the settings dialog is closed.
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
+ • Fixed NullPointerException, when the user attempts to open the popup
+   menu of a 5050 session, before the session had been completely 
+   initialized.
 
 Changelog: iSphere 3.2.5.r
 --------------------------
