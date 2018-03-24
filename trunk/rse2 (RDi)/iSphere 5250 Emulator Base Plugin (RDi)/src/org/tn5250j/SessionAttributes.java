@@ -37,6 +37,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -225,9 +226,7 @@ public class SessionAttributes extends JDialog {
         message[0] = jpm;
         String[] options = { LangTool.getString("sa.optApply"), LangTool.getString("sa.optCancel"), LangTool.getString("sa.optSave") };
 
-        final JOptionPane saOptionPane = new JOptionPane(message, // the dialog
-                                                                  // message
-                                                                  // array
+        final JOptionPane saOptionPane = new JOptionPane(message, // message
             JOptionPane.PLAIN_MESSAGE, // message type
             JOptionPane.YES_NO_CANCEL_OPTION, // option type
             null, // optional icon, use null to use the default icon
@@ -278,6 +277,7 @@ public class SessionAttributes extends JDialog {
     }
 
     private void doOptionStuff(JOptionPane optionPane) {
+
         // Warning, do not cast to String, because it also can be Integer!
         Object result = optionPane.getValue();
 
@@ -285,17 +285,33 @@ public class SessionAttributes extends JDialog {
 
             applyAttributes();
             optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
-
         }
+
         if (LangTool.getString("sa.optCancel").equals(result)) {
+
+            if (changes.isModified()) {
+
+                Object[] args = { changes.getConfigurationResource() };
+                String message = MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
+
+                int option = JOptionPane.showConfirmDialog(null /* parent */, message);
+
+                if (option == JOptionPane.CANCEL_OPTION) {
+                    optionPane.setValue(null);
+                    return;
+                } else if (option == JOptionPane.YES_OPTION) {
+                    changes.saveSessionProps();
+                } else if (option == JOptionPane.NO_OPTION) {
+                    changes.resetModified();
+                }
+            }
+
             setVisible(false);
             dispose();
         }
+
         if (LangTool.getString("sa.optSave").equals(result)) {
 
-            if (props.containsKey("saveme")) {
-                props.remove("saveme");
-            }
             saveProps();
             setVisible(false);
             dispose();
@@ -315,7 +331,7 @@ public class SessionAttributes extends JDialog {
             }
         }
 
-        setProperty("saveme", "yes");
+        changes.setModified();
 
     }
 
