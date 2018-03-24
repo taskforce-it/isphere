@@ -503,29 +503,34 @@ public class SessionPopup {
 
         if (OptionAccessFactory.getInstance().isValidOption(MNEMONIC_TOGGLE_CONNECTION)) {
 
-            if (vt.isConnected()) {
-                action = new AbstractAction(LangTool.getString("popup.disconnect")) {
-                    private static final long serialVersionUID = 1L;
+            // Sometimes vt has not yet been set when you are too fast with
+            // opening the context menu.
+            if (vt != null) {
 
-                    public void actionPerformed(ActionEvent e) {
-                        sessiongui.toggleConnection();
-                        sessiongui.getFocusForMe();
-                    }
-                };
-            } else {
+                if (vt.isConnected()) {
+                    action = new AbstractAction(LangTool.getString("popup.disconnect")) {
+                        private static final long serialVersionUID = 1L;
 
-                action = new AbstractAction(LangTool.getString("popup.connect")) {
-                    private static final long serialVersionUID = 1L;
+                        public void actionPerformed(ActionEvent e) {
+                            sessiongui.toggleConnection();
+                            sessiongui.getFocusForMe();
+                        }
+                    };
+                } else {
 
-                    public void actionPerformed(ActionEvent e) {
-                        sessiongui.toggleConnection();
-                        sessiongui.getFocusForMe();
-                    }
-                };
+                    action = new AbstractAction(LangTool.getString("popup.connect")) {
+                        private static final long serialVersionUID = 1L;
 
+                        public void actionPerformed(ActionEvent e) {
+                            sessiongui.toggleConnection();
+                            sessiongui.getFocusForMe();
+                        }
+                    };
+
+                }
+
+                popup.add(createMenuItem(action, MNEMONIC_TOGGLE_CONNECTION));
             }
-
-            popup.add(createMenuItem(action, MNEMONIC_TOGGLE_CONNECTION));
         }
 
         // ISPHERE - OLD - START
