@@ -36,7 +36,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import org.tn5250j.SessionConfig;
@@ -51,7 +50,6 @@ public class PrinterAttributesPanel extends AttributesPanel {
     JButton setLandAttributes;
     Paper pappyPort;
     Paper pappyLand;
-    JComboBox fontsList;
     TN5250jFontsSelection fs;
 
     public PrinterAttributesPanel(SessionConfig config) {

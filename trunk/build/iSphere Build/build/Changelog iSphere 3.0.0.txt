@@ -3,7 +3,8 @@ Changelog: iSphere 3.3.0.b001
 -----------------------------
  • Added "theme" to TN5250J session configuration for overriding color
    attributes.
- • Now checking for changes when the settings dialog is closed.
+ • Changed 5250 settings dialog to for changes when the dialog is closed.
+ • Added default printer font to default 5250 configuration.
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
  • Fixed NullPointerException, when the user attempts to open the popup
@@ -11,6 +12,7 @@ Changelog: iSphere 3.3.0.b001
    initialized.
  • Fixed timing problem that SetSessionFocus blocked the UI from time 
    to time.
+ • Fixed minor problems in class ColorAttributesPanel.
 
 Changelog: iSphere 3.2.5.r
 --------------------------

@@ -349,6 +349,7 @@ public class SessionConfig {
                 sesProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
                 sesProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
                 sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
+                sesProps.setProperty("print.font", GUIGraphicsUtils.getDefaultPrinterFont());
 
                 ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
             }
