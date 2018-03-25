@@ -25,30 +25,74 @@
  */
 package org.tn5250j.tools;
 
-import org.tn5250j.event.*;
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.table.*;
-import javax.swing.border.*;
-import java.awt.event.*;
-import java.io.*;
-import java.beans.*;
-import java.util.*;
-import java.text.MessageFormat;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Properties;
 
-import org.tn5250j.sql.AS400Xtfr;
-import org.tn5250j.sql.SqlWizard;
-import org.tn5250j.tools.filters.*;
-import org.tn5250j.mailtools.SendEMailDialog;
-import org.tn5250j.SessionGUI;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+
 import org.tn5250j.SessionConfig;
-import org.tn5250j.gui.TN5250jFrame;
+import org.tn5250j.SessionGUI;
+import org.tn5250j.event.FTPStatusEvent;
+import org.tn5250j.event.FTPStatusListener;
+import org.tn5250j.framework.tn5250.tnvt;
 import org.tn5250j.gui.TN5250jFileChooser;
 import org.tn5250j.gui.TN5250jFileFilter;
-import org.tn5250j.framework.tn5250.tnvt;
+import org.tn5250j.gui.TN5250jFrame;
+import org.tn5250j.mailtools.SendEMailDialog;
+import org.tn5250j.sql.AS400Xtfr;
+import org.tn5250j.sql.SqlWizard;
+import org.tn5250j.tools.filters.XTFRFileFilter;
 
 public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusListener, ItemListener {
 
@@ -1274,7 +1318,16 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
 
             contentPane.setLayout(new BorderLayout());
             contentPane.add(this, BorderLayout.CENTER);
-            dialog.pack();
+            // Packing the dialog does not work but throws a
+            // NullPointerException:
+            // Exception in thread "AWT-EventQueue-0"
+            // java.lang.NullPointerException
+            // at java.awt.Dimension.<init>(Dimension.java:122)
+            // at
+            // javax.swing.plaf.basic.BasicProgressBarUI.getPreferredSize(BasicProgressBarUI.java:787)
+            // at
+            // javax.swing.plaf.basic.BasicProgressBarUI.getMinimumSize(BasicProgressBarUI.java:837)
+            // dialog.pack();
             dialog.setLocationRelativeTo(parentComponent);
             dialog.addWindowListener(new WindowAdapter() {
                 boolean gotFocus = false;
