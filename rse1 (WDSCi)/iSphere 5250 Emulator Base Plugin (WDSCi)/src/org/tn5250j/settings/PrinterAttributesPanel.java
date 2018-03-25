@@ -42,7 +42,6 @@ public class PrinterAttributesPanel extends AttributesPanel {
     JButton setLandAttributes;
     Paper pappyPort;
     Paper pappyLand;
-    JComboBox fontsList;
     TN5250jFontsSelection fs;
 
     public PrinterAttributesPanel(SessionConfig config) {
