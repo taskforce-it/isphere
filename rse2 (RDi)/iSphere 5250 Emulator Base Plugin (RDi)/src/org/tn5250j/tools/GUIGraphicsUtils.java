@@ -1240,11 +1240,13 @@ public class GUIGraphicsUtils {
     public final static List<Image> getApplicationIcons() {
 
         if (tnicon == null) {
+            Object object = new GUIGraphicsUtils();
             tnicon = new ArrayList<Image>();
-            tnicon.add(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("tn5250j-16x16.png")).getImage());
-            tnicon.add(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("tn5250j-32x32.png")).getImage());
-            tnicon.add(new ImageIcon(ClassLoader.getSystemClassLoader().getResource("tn5250j-48x48.png")).getImage());
+            tnicon.add(new ImageIcon(object.getClass().getClassLoader().getResource("tn5250j-16x16.png")).getImage());
+            tnicon.add(new ImageIcon(object.getClass().getClassLoader().getResource("tn5250j-32x32.png")).getImage());
+            tnicon.add(new ImageIcon(object.getClass().getClassLoader().getResource("tn5250j-48x48.png")).getImage());
         }
+
         return tnicon;
     }
 
