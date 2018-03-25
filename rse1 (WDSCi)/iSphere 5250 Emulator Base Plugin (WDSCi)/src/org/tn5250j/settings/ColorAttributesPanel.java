@@ -71,13 +71,13 @@ public class ColorAttributesPanel extends AttributesPanel {
                 JComboBox cb = (JComboBox)e.getSource();
                 Object obj = cb.getSelectedItem();
                 if (obj instanceof Schema) {
-
-                    System.out.println(" we got a schema ");
                     colorSchema = (Schema)obj;
                 } else {
                     colorSchema = null;
                 }
 
+                // Update color of preview section
+                colorList.setSelectedItem(colorList.getSelectedItem());
             }
         });
 
@@ -219,6 +219,10 @@ public class ColorAttributesPanel extends AttributesPanel {
 
         if (colorSchema != null) {
 
+            /*
+             * Reset all color attributes to the values provided by the schema.
+             */
+
             if (!getColorProperty(ColorProperty.BACKGROUND.key()).equals(colorSchema.getColorBg())) {
                 changes.firePropertyChange(this, ColorProperty.BACKGROUND.key(), getColorProperty(ColorProperty.BACKGROUND.key()), colorSchema
                     .getColorBg());
@@ -285,7 +289,14 @@ public class ColorAttributesPanel extends AttributesPanel {
                 setProperty(ColorProperty.HEX_ATTR.key(), Integer.toString(colorSchema.getColorHexAttr().getRGB()));
             }
 
+            // Update color of preview section
+            colorList.setSelectedItem(newSelection);
+
         } else {
+
+            /*
+             * Apply new color to selected color of default configuration.
+             */
 
             Color nc = jcc.getColor();
             if (newSelection.equals(LangTool.getString("sa.bg"))) {
