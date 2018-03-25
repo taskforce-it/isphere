@@ -41,7 +41,7 @@ import org.tn5250j.tools.LangTool;
 public abstract class AttributesPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    Properties props;
+
     Properties schemaProps;
     static final String nodePrefix = "sa.node";
     String name;
@@ -60,9 +60,10 @@ public abstract class AttributesPanel extends JPanel {
 
     public AttributesPanel(SessionConfig config, String name, String prefix) {
         super();
-        changes = config;
-        props = config.getProperties();
+
+        this.changes = config;
         this.name = LangTool.getString(prefix + name);
+
         // define layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
