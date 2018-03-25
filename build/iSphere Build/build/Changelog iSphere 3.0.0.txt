@@ -3,16 +3,20 @@ Changelog: iSphere 3.3.0.b001
 -----------------------------
  • Added "theme" to TN5250J session configuration for overriding color
    attributes.
- • Changed 5250 settings dialog to for changes when the dialog is closed.
+ • Changed 5250 settings dialog to check for changes when the dialog is
+   closed.
  • Added default printer font to default 5250 configuration.
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
  • Fixed NullPointerException, when the user attempts to open the popup
    menu of a 5050 session, before the session had been completely 
    initialized.
- • Fixed timing problem that SetSessionFocus blocked the UI from time 
-   to time.
+ • Fixed timing problem that SetSessionFocus occasionally blocked
+   the UI thread. 
  • Fixed minor problems in class ColorAttributesPanel.
+ • Fixed NullPointerException in GUIGraphicsUtils.getApplicationIcons()
+   when loading window title icons.
+ • Fixed NullPointerException when creating a "XTFRFile" dialog in WDSCi.
 
 Changelog: iSphere 3.2.5.r
 --------------------------
