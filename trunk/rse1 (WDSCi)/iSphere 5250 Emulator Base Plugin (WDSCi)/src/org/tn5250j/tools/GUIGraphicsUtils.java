@@ -25,23 +25,24 @@
  */
 package org.tn5250j.tools;
 
-import java.awt.Component;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Insets;
-// import java.awt.Graphics2D;
-import java.awt.font.*;
-import java.awt.geom.AffineTransform;
-import javax.swing.JPopupMenu;
-import java.awt.Point;
-import javax.swing.SwingUtilities;
-import java.awt.Toolkit;
 import java.awt.GraphicsEnvironment;
-import javax.swing.ImageIcon;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.AffineTransform;
 import java.net.URL;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 
 import org.tn5250j.tools.system.OperatingSystem;
 
@@ -54,6 +55,7 @@ public class GUIGraphicsUtils {
     public static final int WINDOW_NORMAL = 3;
     public static final int WINDOW_GRAPHIC = 4;
     private static String defaultFont;
+    private static String defaultPrinterFont;
 
     // Application icons
     private static ImageIcon focused;
@@ -977,8 +979,6 @@ public class GUIGraphicsUtils {
 
         int sw = 0;
         int sh = 0;
-        float scw = 1.0f;
-        float sch = 1.0f;
 
         Font k = null;
         LineMetrics l;
@@ -1104,6 +1104,21 @@ public class GUIGraphicsUtils {
      */
     static final String[] macFonts = { "Monaco", "Courier New Bold", "Courier New", "Courier" };
 
+    /**
+     * Windows fonts to search for in order of precedence
+     */
+    static final String[] windowsPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
+    /**
+     * *nix fonts to search for in order of precedence
+     */
+    static final String[] nixPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
+    /**
+     * Mac fonts to search for in order of precedence
+     */
+    static final String[] macPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
     public static String getDefaultFont() {
 
         if (defaultFont == null) {
@@ -1131,6 +1146,33 @@ public class GUIGraphicsUtils {
         return defaultFont;
     }
 
+    public static String getDefaultPrinterFont() {
+
+        if (defaultPrinterFont == null) {
+            String[] fonts = windowsPrinterFonts;
+            if (OperatingSystem.isMacOS()) {
+                fonts = macPrinterFonts;
+            } else if (OperatingSystem.isUnix()) {
+                fonts = nixPrinterFonts;
+            }
+
+            for (int x = 0; x < fonts.length; x++) {
+                if (isFontNameExists(fonts[x])) {
+                    defaultPrinterFont = fonts[x];
+                    break;
+                }
+            }
+
+            // we will just make if a space at this time until we come up with
+            // a better solution
+            if (defaultPrinterFont == null) {
+                defaultPrinterFont = "";
+            }
+        }
+
+        return defaultPrinterFont;
+    }
+
     /**
      * Checks to see if the font name exists within our environment
      * 
@@ -1142,7 +1184,11 @@ public class GUIGraphicsUtils {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
         for (int x = 0; x < fonts.length; x++) {
-            if (fonts[x].getFontName().indexOf('.') < 0) if (fonts[x].getFontName().equals(fontString)) return true;
+            if (fonts[x].getFontName().indexOf('.') < 0) {
+                if (fonts[x].getFontName().equals(fontString)) {
+                    return true;
+                }
+            }
         }
 
         return false;
