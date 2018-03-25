@@ -58,6 +58,7 @@ public class GUIGraphicsUtils {
     public static final int WINDOW_NORMAL = 3;
     public static final int WINDOW_GRAPHIC = 4;
     private static String defaultFont;
+    private static String defaultPrinterFont;
 
     private static ImageIcon lockImgOpen;
     private static ImageIcon lockImgClose;
@@ -1105,6 +1106,21 @@ public class GUIGraphicsUtils {
      */
     static final String[] macFonts = { "Monaco", "Courier New Bold", "Courier New", "Courier" };
 
+    /**
+     * Windows fonts to search for in order of precedence
+     */
+    static final String[] windowsPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
+    /**
+     * *nix fonts to search for in order of precedence
+     */
+    static final String[] nixPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
+    /**
+     * Mac fonts to search for in order of precedence
+     */
+    static final String[] macPrinterFonts = { "Courier New", "Courier", "Lucida Console" };
+
     public static String getDefaultFont() {
 
         if (defaultFont == null) {
@@ -1132,6 +1148,33 @@ public class GUIGraphicsUtils {
         return defaultFont;
     }
 
+    public static String getDefaultPrinterFont() {
+
+        if (defaultPrinterFont == null) {
+            String[] fonts = windowsPrinterFonts;
+            if (OperatingSystem.isMacOS()) {
+                fonts = macPrinterFonts;
+            } else if (OperatingSystem.isUnix()) {
+                fonts = nixPrinterFonts;
+            }
+
+            for (int x = 0; x < fonts.length; x++) {
+                if (isFontNameExists(fonts[x])) {
+                    defaultPrinterFont = fonts[x];
+                    break;
+                }
+            }
+
+            // we will just make if a space at this time until we come up with
+            // a better solution
+            if (defaultPrinterFont == null) {
+                defaultPrinterFont = "";
+            }
+        }
+
+        return defaultPrinterFont;
+    }
+
     /**
      * Checks to see if the font name exists within our environment
      * 
@@ -1143,7 +1186,11 @@ public class GUIGraphicsUtils {
         Font[] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
         for (int x = 0; x < fonts.length; x++) {
-            if (fonts[x].getFontName().indexOf('.') < 0) if (fonts[x].getFontName().equals(fontString)) return true;
+            if (fonts[x].getFontName().indexOf('.') < 0) {
+                if (fonts[x].getFontName().equals(fontString)) {
+                    return true;
+                }
+            }
         }
 
         return false;
