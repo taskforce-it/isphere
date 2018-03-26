@@ -4,43 +4,69 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" type="text/css" href="../../stylesheet.css">
-<title>Theme</title>
+<title>Session Theme</title>
 </head>
 <body>
-	<h1>Creating a Session Theme</h1>
+	<h1>Session Theme</h1>
+	<p>
+	<ul>
+	<li><a href="#introduction">Introduction</a></li>
+	<li><a href="#creating_a_theme">Creating a Theme</a></li>
+	<li><a href="#assigning_a_theme_to_a_session">Assigning a Theme to a Session</a></li>
+	<li><a href="#changing_colors">Changing Colors</a></li>
+	</ul>
+	<p>
+	<a id="introduction"></a>
+	<h2>Introduction</h2>
 	<p>
 	A session theme is used for overriding the default session colors with the colors of the theme. This way
-	you can use your default 5250 settings, such as the keyboard layout, for all sessions but give some sessions
-	a different color theme.
+	you can use different colors for your sessions, while keeping all other session attributes, such as the 
+	keyboard layout, the same.
 	<p>
-	Right-click on an "iSphere 5020 Session" and select the "Change session" option.
+	<table>
+		<tr>
+			<td class="info">The theme configuration files are stored in folder <i>%USERPROFILE%\.tn5250j</i> and
+			                 named <i>*.theme</i> where the asterisk equals the name of the theme.</td>
+		</tr>
+	</table>
+	<p>
+	<a id="creating_a_theme"></a>
+	<h2>Creating a Theme</h2>
+	<p>
+	Start with opening a 5250 session when you want to create a new theme. Then <a href="#changing_colors">tweak 
+	the color attributes</a> to match your needs. Eventually open the session context menu and select "Save as 
+	Theme..." to save the current color	composition to a theme configuration file:
+	<p>
+	<img src="assets/save_theme.png" align="middle">
+	<p>
+	<a id="assigning_a_theme_to_a_session"></a>
+	<h2>Assigning a Theme to a Session</h2>
+	<p>
+	Themes are assigned to a session on the session configuration dialog.
+	<p>
+	Right-click on an "iSphere 5020 Session" and select the "Change session" option:
 	<p>
 	<img src="assets/session_popup.png" align="middle">
 	<p>
-	Select a theme from the "Theme" combo box or enter a name for creating a new theme.
+	Select a theme from the "Theme" combo box:
 	<p>
 	<img src="assets/select_theme.png" align="middle">
 	<p>
-	Confirm the following question with "Yes" when you want to create a new theme:
+	Select option <i>*NONE</i> if you do not want to use a theme for this session.
 	<p>
-	<img src="assets/question_create_theme.png" align="middle">
+	Eventually click the [OK] button to save the configuration.
 	<p>
-	Please notice that the theme configuration file is not created at this point. Go ahead and open the session to create 
-	it. Then select option "Settings..." from the context menu and tweak the colors to make it look nicely. You may also
-	start with a predefined scheme from the "Scheme" combo box:
+	<a id="changing_colors"></a>
+	<h2>Changing colors</h2>
+	<p>
+	Select option "Settings..." from the context menu of a 5250 session to open the <i>Session Attributes</i> dialog. Select
+	<i>Colors</i> to change the color attributes of the session:
 	<p>
 	<table>
 	<tr><td><img src="assets/open_settings.png" align="middle"></td><td width="10px"></td><td><img src="assets/color_preferences.png" align="middle"></td></tr>
 	</table>
 	<p>
-	Click the "Apply" button for each color that you changed. Save the settings when you are done.
-	<p>
-	<table>
-		<tr>
-			<td class="info">The theme configuration files are stored in folder <i>%USERPROFILE%\.tn5250j</i> and
-			                 named <i>ThemeOverlay_*.props</i> where the asterisk equals the name of the theme.</td>
-		</tr>
-	</table>
+	Click the "Apply" button for each color that you have changed. Save the settings when you are done.
 	<p>
 		<iframe src="../../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
