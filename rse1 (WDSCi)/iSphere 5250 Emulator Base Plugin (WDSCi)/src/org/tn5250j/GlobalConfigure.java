@@ -482,7 +482,7 @@ public class GlobalConfigure extends ConfigureFactory {
         return settings.getProperty(key);
     }
 
-    public String[] loadThemeNames(final String fileNamePrefix, final String fileNameSuffix) {
+    public String[] loadThemeNames(final String fileNameSuffix) {
 
         File settingsDirectory = new File(settingsDirectory());
         if (!settingsDirectory.exists() || !settingsDirectory.isDirectory()) {
@@ -496,7 +496,7 @@ public class GlobalConfigure extends ConfigureFactory {
 
             public boolean accept(File dir, String name) {
 
-                if (name.toLowerCase().startsWith(fileNamePrefix.toLowerCase())) {
+                if (name.toLowerCase().endsWith(fileNameSuffix.toLowerCase())) {
                     return true;
                 }
 
@@ -508,25 +508,27 @@ public class GlobalConfigure extends ConfigureFactory {
 
             public int compare(String file1, String file2) {
 
-                String theme1 = getThemeName(fileNamePrefix, fileNameSuffix, file1);
-                String theme2 = getThemeName(fileNamePrefix, fileNameSuffix, file2);
+                String theme1 = getThemeName(fileNameSuffix, file1);
+                String theme2 = getThemeName(fileNameSuffix, file2);
 
                 return theme1.compareTo(theme2);
             }
         });
 
         for (String fileName : fileNames) {
-            themes.add(getThemeName(fileNamePrefix, fileNameSuffix, fileName));
+            themes.add(getThemeName(fileNameSuffix, fileName));
         }
 
         return themes.toArray(new String[themes.size()]);
     }
 
-    private String getThemeName(String namePrefix, String fileNameSuffix, String fileName) {
+    private String getThemeName(String fileNameSuffix, String fileName) {
 
-        String theme = fileName.substring(namePrefix.length());
-        if (theme.endsWith(fileNameSuffix)) {
-            theme = theme.substring(0, theme.length() - fileNameSuffix.length());
+        String theme;
+        if (fileName.endsWith(fileNameSuffix)) {
+            theme = fileName.substring(0, fileName.length() - fileNameSuffix.length());
+        } else {
+            theme = fileName;
         }
 
         return theme.trim();
@@ -537,10 +539,9 @@ public class GlobalConfigure extends ConfigureFactory {
      * 
      * @return
      */
-    private String settingsDirectory() {
-        // System.out.println(settings.getProperty("emulator.settingsDirectory"));
-        return settings.getProperty("emulator.settingsDirectory");
+    public String settingsDirectory() {
 
+        return settings.getProperty("emulator.settingsDirectory");
     }
 
     /**
