@@ -79,12 +79,11 @@ public class SessionConfig {
     private String sessionTheme;
     private boolean sessionThemeEnabled;
     private Properties sesProps;
+    private Properties dfltSessionProps;
     private boolean usingDefaults;
 
     private List<SessionConfigListener> sessionCfglisteners = null;
     private final ReadWriteLock sessionCfglistenersLock = new ReentrantReadWriteLock();
-
-    private Properties savedColorProperties;
 
     private String themeConfigurationFile;
     private Properties themeColorProperties;
@@ -225,8 +224,9 @@ public class SessionConfig {
 
         if (sessionThemeEnabled) {
             saveThemeProps();
-            restoreDefaultColorProperties();
         }
+
+        updateDfltSessionProperties();
 
         if (usingDefaults) {
 
@@ -241,10 +241,28 @@ public class SessionConfig {
             } catch (IOException ioe) {
             }
         }
+    }
 
-        if (sessionThemeEnabled) {
-            overlayConfigurationWithTheme();
+    /**
+     * Updates the properties that were actually loaded with the current values
+     * of the cloned session properties.
+     * <p>
+     * Ignores color properties when the session has a theme, because in that
+     * case these properties go into the theme configuration file.
+     */
+    private void updateDfltSessionProperties() {
+
+        Set<Entry<Object, Object>> sessionProperties = sesProps.entrySet();
+        for (Entry<Object, Object> entry : sessionProperties) {
+            if (sessionThemeEnabled && ColorProperty.isColorProperty((String)entry.getKey())) {
+                // ignore color properties, because these properties go into the
+                // theme configuration file and must not change the default
+                // configuration.
+            } else {
+                dfltSessionProps.put(entry.getKey(), entry.getValue());
+            }
         }
+
     }
 
     /**
@@ -300,7 +318,6 @@ public class SessionConfig {
         }
 
         if (sessionThemeEnabled) {
-            preserveDefaultColorProperties();
             overlayConfigurationWithTheme();
         }
     }
@@ -313,8 +330,8 @@ public class SessionConfig {
 
         try {
 
-            sesProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
-            if (sesProps.size() == 0) {
+            dfltSessionProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
+            if (dfltSessionProps.size() == 0) {
 
                 ClassLoader cl = this.getClass().getClassLoader();
                 if (cl == null) {
@@ -325,7 +342,7 @@ public class SessionConfig {
                 java.net.URL file = cl.getResource(getConfigurationResource());
                 Properties emuldefaults = new Properties();
                 emuldefaults.load(file.openStream());
-                sesProps.putAll(emuldefaults);
+                dfltSessionProps.putAll(emuldefaults);
 
                 // color schema defaults
                 file = cl.getResource("tn5250jSchemas.properties");
@@ -334,23 +351,27 @@ public class SessionConfig {
 
                 // we will now load the default schema
                 String prefix = schemaProps.getProperty("schemaDefault");
-                sesProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
-                sesProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
-                sesProps.setProperty(ColorProperty.TURQUOISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
-                sesProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
-                sesProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
-                sesProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
-                sesProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
-                sesProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
-                sesProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
-                sesProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
-                sesProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
-                sesProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
-                sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
-                sesProps.setProperty("print.font", GUIGraphicsUtils.getDefaultPrinterFont());
+                dfltSessionProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
+                dfltSessionProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
+                dfltSessionProps.setProperty(ColorProperty.TURQUOISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
+                dfltSessionProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
+                dfltSessionProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
+                dfltSessionProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
+                dfltSessionProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
+                dfltSessionProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
+                dfltSessionProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
+                dfltSessionProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
+                dfltSessionProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
+                dfltSessionProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
+                dfltSessionProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
+                dfltSessionProps.setProperty("print.font", GUIGraphicsUtils.getDefaultPrinterFont());
 
                 ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
             }
+
+            // Clone properties, so that each session has its own copy that can
+            // safely be overlaid with a theme.
+            sesProps = cloneProperties(dfltSessionProps);
 
         } catch (IOException ioe) {
             System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
@@ -365,8 +386,6 @@ public class SessionConfig {
      * session theme.
      */
     private void overlayConfigurationWithTheme() {
-
-        sesProps = cloneProperties(sesProps);
 
         themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(themeConfigurationFile), themeConfigurationFile,
             true, THEME_CONFIGURATION_HEADER, false);
@@ -401,7 +420,7 @@ public class SessionConfig {
 
         String[] keys = ColorProperty.keys();
         for (String key : keys) {
-            themeColorProperties.put(key, sesProps.getProperty(key));
+            themeColorProperties.put(key, dfltSessionProps.getProperty(key));
         }
     }
 
@@ -417,30 +436,6 @@ public class SessionConfig {
         }
 
         return false;
-    }
-
-    /**
-     * Saves the session properties that are also part of the theme properties.
-     */
-    private void preserveDefaultColorProperties() {
-
-        savedColorProperties = new Properties();
-
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            savedColorProperties.put(key, sesProps.getProperty(key));
-        }
-    }
-
-    /**
-     * Restores the session properties that had been saved before.
-     */
-    private void restoreDefaultColorProperties() {
-
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            sesProps.put(key, savedColorProperties.getProperty(key));
-        }
     }
 
     private void setColorProperty(Properties colorProperties, String key) {
