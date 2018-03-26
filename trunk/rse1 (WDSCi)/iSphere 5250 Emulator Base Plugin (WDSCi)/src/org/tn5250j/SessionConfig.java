@@ -70,8 +70,7 @@ import org.tn5250j.tools.LangTool;
 public class SessionConfig {
 
     private static final String IS_DIRTY_FLAG = "saveme";
-    private static final String THEME_CONFIGURATION_FILE_PREFIX = "ThemeOverlay_";
-    private static final String THEME_CONFIGURATION_FILE_SUFFIX = ".props";
+    private static final String THEME_CONFIGURATION_FILE_SUFFIX = ".theme";
     private static final String THEME_CONFIGURATION_KEY = "sessionTheme";
     private static final String THEME_CONFIGURATION_HEADER = "--- Session Theme ---";
 
@@ -104,7 +103,7 @@ public class SessionConfig {
         this.sessionTheme = sessionTheme;
 
         if (hasSessionTheme()) {
-            themeConfigurationFile = THEME_CONFIGURATION_FILE_PREFIX + sessionTheme + THEME_CONFIGURATION_FILE_SUFFIX;
+            themeConfigurationFile = sessionTheme + THEME_CONFIGURATION_FILE_SUFFIX;
             setSessionThemeEnabled(true);
         } else {
             setSessionThemeEnabled(false);
@@ -115,7 +114,7 @@ public class SessionConfig {
 
     public static String[] loadThemes() {
 
-        return ConfigureFactory.getInstance().loadThemeNames(THEME_CONFIGURATION_FILE_PREFIX, THEME_CONFIGURATION_FILE_SUFFIX);
+        return ConfigureFactory.getInstance().loadThemeNames(THEME_CONFIGURATION_FILE_SUFFIX);
     }
 
     private void setSessionThemeEnabled(boolean enabled) {
@@ -258,16 +257,27 @@ public class SessionConfig {
      */
     private void saveThemeProps() {
 
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            themeColorProperties.put(key, sesProps.getProperty(key));
-        }
-
-        ConfigureFactory.getInstance().saveSettings(getThemeConfigurationKey(), themeConfigurationFile, THEME_CONFIGURATION_HEADER);
+        saveThemeProps(themeConfigurationFile);
     }
 
-    private String getThemeConfigurationKey() {
-        return THEME_CONFIGURATION_KEY + "_" + themeConfigurationFile;
+    /**
+     * Saves the properties of the session theme.
+     */
+    public void saveThemeProps(String fileName) {
+
+        Properties tempColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(fileName), fileName, true,
+            THEME_CONFIGURATION_HEADER, false);
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            tempColorProperties.put(key, sesProps.getProperty(key));
+        }
+
+        ConfigureFactory.getInstance().saveSettings(getThemeConfigurationKey(fileName), fileName, THEME_CONFIGURATION_HEADER);
+    }
+
+    private String getThemeConfigurationKey(String fileName) {
+        return THEME_CONFIGURATION_KEY + "_" + fileName;
     }
 
     private void loadConfigurationResource() {
@@ -363,8 +373,8 @@ public class SessionConfig {
 
         sesProps = cloneProperties(sesProps);
 
-        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, true,
-            THEME_CONFIGURATION_HEADER, false);
+        themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(themeConfigurationFile), themeConfigurationFile,
+            true, THEME_CONFIGURATION_HEADER, false);
         if (themeColorProperties == null || themeColorProperties.size() == 0) {
             initializeThemeColorProperties();
         }

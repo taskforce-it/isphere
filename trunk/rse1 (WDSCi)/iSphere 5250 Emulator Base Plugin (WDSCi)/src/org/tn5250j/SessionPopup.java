@@ -262,6 +262,16 @@ public class SessionPopup implements TN5250jConstants {
 
             }
 
+            action = new AbstractAction(LangTool.getString("popup.saveTheme")) {
+                private static final long serialVersionUID = 1L;
+
+                public void actionPerformed(ActionEvent e) {
+                    saveTheme();
+                    session.getFocusForMe();
+                }
+            };
+            popup.add(createMenuItem(action, ""));
+
             popup.addSeparator();
 
             if (session.isMacroRunning()) {
@@ -665,6 +675,13 @@ public class SessionPopup implements TN5250jConstants {
         } else
             kc = new KeyConfigure(parent, null, vt.getCodePage());
 
+    }
+
+    private void saveTheme() {
+
+        SessionConfig config = session.getSession().getConfiguration();
+
+        SaveTheme.showDialog(SwingUtilities.getRoot(session), config);
     }
 
     public void runScript() {
