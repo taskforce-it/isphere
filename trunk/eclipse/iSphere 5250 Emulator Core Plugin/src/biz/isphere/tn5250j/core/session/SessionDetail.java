@@ -14,13 +14,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,7 +35,6 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.tn5250j.SessionConfig;
 import org.tn5250j.TN5250jConstants;
 import org.tn5250j.framework.transport.SocketConnector;
-import org.tn5250j.interfaces.ConfigureFactory;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.tn5250j.core.DialogActionTypes;
@@ -272,8 +268,8 @@ public class SessionDetail {
          * (session.getEnhancedMode().equals("Y")) {
          * buttonEnhancedMode.setSelection(true); } else {
          * buttonEnhancedMode.setSelection(false); } } if (actionType ==
-         * DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY) {
-         * buttonEnhancedMode.setEnabled(false); }
+         * DialogActionTypes.DELETE || actionType == DialogActionTypes.DISPLAY)
+         * { buttonEnhancedMode.setEnabled(false); }
          */
         // General : Area
         final Label labelArea = new Label(compositeGeneral, SWT.NONE);
@@ -320,7 +316,7 @@ public class SessionDetail {
         groupTheme.setLayout(gridLayoutGroupTheme);
         groupTheme.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        comboTheme = new Combo(groupTheme, SWT.DROP_DOWN);
+        comboTheme = new Combo(groupTheme, SWT.DROP_DOWN | SWT.READ_ONLY);
         GridData gridDataComboTheme = new GridData(GridData.FILL_HORIZONTAL);
         // gridDataComboTheme.minimumWidth = 300;
         comboTheme.setLayoutData(gridDataComboTheme);
@@ -665,23 +661,6 @@ public class SessionDetail {
         }
 
         // The value in field 'Theme' is not valid.
-
-        boolean isNewTheme = true;
-
-        String[] themes = comboTheme.getItems();
-        for (String theme : themes) {
-            if (theme.equalsIgnoreCase(comboTheme.getText())) {
-                isNewTheme = false;
-                break;
-            }
-        }
-
-        if (isNewTheme) {
-            if (!MessageDialog.openQuestion(shell, Messages.Session, NLS.bind(Messages.Question_Create_New_Theme, comboTheme
-                .getText()))) {
-                return false;
-            }
-        }
 
         // The value in field 'User' is not valid.
 
