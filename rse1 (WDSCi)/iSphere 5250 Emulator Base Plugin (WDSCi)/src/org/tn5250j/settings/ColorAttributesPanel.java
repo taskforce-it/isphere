@@ -31,6 +31,8 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -44,6 +46,7 @@ import org.tn5250j.tools.LangTool;
 
 public class ColorAttributesPanel extends AttributesPanel {
 
+    private static final long serialVersionUID = 1L;
     JComboBox colorSchemaList;
     JComboBox colorList;
     JColorChooser jcc;
@@ -189,7 +192,7 @@ public class ColorAttributesPanel extends AttributesPanel {
                     if (colorSchema != null)
                         jcc.setColor(colorSchema.getColorSeparator());
                     else
-                        jcc.setColor(getColorProperty("colorSep", getColorProperty(ColorProperty.WHITE.key())));
+                        jcc.setColor(getColorProperty(ColorProperty.SEPARATOR.key(), getColorProperty(ColorProperty.WHITE.key())));
                 }
 
                 if (newSelection.equals(LangTool.getString("sa.hexAttrColor"))) {
@@ -370,16 +373,9 @@ public class ColorAttributesPanel extends AttributesPanel {
             }
 
             if (newSelection.equals(LangTool.getString("sa.columnSep"))) {
-                if (!getColorProperty("colorSep").equals(nc)) {
-                    changes.firePropertyChange(this, "colorSep", getColorProperty("colorSep"), nc);
-                    setProperty("colorSep", Integer.toString(nc.getRGB()));
-                }
-            }
-
-            if (newSelection.equals(LangTool.getString("sa.cursorColor"))) {
-                if (!getColorProperty(ColorProperty.CURSOR.key()).equals(nc)) {
-                    changes.firePropertyChange(this, ColorProperty.CURSOR.key(), getColorProperty(ColorProperty.CURSOR.key()), nc);
-                    setProperty(ColorProperty.CURSOR.key(), Integer.toString(nc.getRGB()));
+                if (!getColorProperty(ColorProperty.SEPARATOR.key()).equals(nc)) {
+                    changes.firePropertyChange(this, ColorProperty.SEPARATOR.key(), getColorProperty(ColorProperty.SEPARATOR.key()), nc);
+                    setProperty(ColorProperty.SEPARATOR.key(), Integer.toString(nc.getRGB()));
                 }
             }
 
@@ -408,10 +404,10 @@ public class ColorAttributesPanel extends AttributesPanel {
             System.err.println(e);
         }
 
-        schemas.addItem(LangTool.getString("sa.colorDefault"));
         int numSchemas = Integer.parseInt((String)schemaProps.get("schemas"));
         Schema s = null;
         String prefix = "";
+        Schema[] schemaArray = new Schema[numSchemas];
         for (int x = 1; x <= numSchemas; x++) {
             s = new Schema();
             prefix = "schema" + x;
@@ -428,10 +424,16 @@ public class ColorAttributesPanel extends AttributesPanel {
             s.setColorBlue(getSchemaProp(prefix + ".colorBlue"));
             s.setColorSeparator(getSchemaProp(prefix + ".colorSep"));
             s.setColorHexAttr(getSchemaProp(prefix + ".colorHexAttr"));
-            schemas.addItem(s);
+            schemaArray[x - 1] = s;
         }
 
-        System.out.println(" loaded schemas " + numSchemas);
+        Arrays.sort(schemaArray, new SchemaComparator());
+
+        schemas.addItem(LangTool.getString("sa.colorDefault"));
+
+        for (int x = 1; x <= numSchemas; x++) {
+            schemas.addItem(schemaArray[x - 1]);
+        }
     }
 
     private int getSchemaProp(String key) {
@@ -446,6 +448,26 @@ public class ColorAttributesPanel extends AttributesPanel {
 
     }
 
+    class SchemaComparator implements Comparator<Schema> {
+
+        public int compare(Schema schema1, Schema schema2) {
+
+            if (schema1 == null && schema2 == null) {
+                return 0;
+            } else if (schema1 == null) {
+                return -1;
+            } else if (schema2 == null) {
+                return 1;
+            } else {
+
+                String name1 = schema1.getDescription();
+                String name2 = schema2.getDescription();
+
+                return name1.compareTo(name2);
+            }
+        }
+    }
+
     class Schema {
 
         public String toString() {
@@ -457,6 +479,15 @@ public class ColorAttributesPanel extends AttributesPanel {
         public void setDescription(String desc) {
 
             description = desc;
+        }
+
+        public String getDescription() {
+
+            if (description == null) {
+                return "";
+            }
+
+            return description;
         }
 
         public void setColorBg(int color) {
