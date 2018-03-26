@@ -85,6 +85,7 @@ import org.tn5250j.tools.GUIGraphicsUtils;
 import org.tn5250j.tools.LangTool;
 import org.tn5250j.tools.LoadMacroMenu;
 import org.tn5250j.tools.Macronizer;
+import org.tn5250j.tools.SaveTheme;
 import org.tn5250j.tools.SendScreenImageToFile;
 import org.tn5250j.tools.SendScreenToFile;
 import org.tn5250j.tools.XTFRFile;
@@ -353,6 +354,16 @@ public class SessionPopup {
                 popup.add(createMenuItem(action, MNEMONIC_DISP_ATTRIBUTES));
 
             }
+
+            action = new AbstractAction(LangTool.getString("popup.saveTheme")) {
+                private static final long serialVersionUID = 1L;
+
+                public void actionPerformed(ActionEvent e) {
+                    saveTheme();
+                    sessiongui.getFocusForMe();
+                }
+            };
+            popup.add(createMenuItem(action, ""));
 
             popup.addSeparator();
 
@@ -688,7 +699,16 @@ public class SessionPopup {
 
     }
 
-    /* *** NEVER USED LOCALLY ************************************************** */
+    private void saveTheme() {
+
+        SessionConfig config = sessiongui.getSession().getConfiguration();
+
+        SaveTheme.showDialog(SwingUtilities.getRoot(sessiongui), config);
+    }
+
+    /*
+     * *** NEVER USED LOCALLY **************************************************
+     */
     // private void runScript () {
     //
     // Macronizer.showRunScriptDialog(session);
