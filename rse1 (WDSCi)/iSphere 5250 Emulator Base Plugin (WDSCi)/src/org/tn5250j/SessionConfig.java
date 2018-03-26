@@ -193,14 +193,10 @@ public class SessionConfig {
 
     public void setModified() {
 
-        System.out.println("Setting modified flag...");
-
         sesProps.setProperty(IS_DIRTY_FLAG, "yes");
     }
 
     public void resetModified() {
-
-        System.out.println("Reseting modified flag...");
 
         sesProps.remove(IS_DIRTY_FLAG);
     }
@@ -240,8 +236,6 @@ public class SessionConfig {
 
         if (usingDefaults) {
 
-            System.out.println("Saving session properties...");
-
             ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
 
         } else {
@@ -263,8 +257,6 @@ public class SessionConfig {
      * Saves the properties of the session theme.
      */
     private void saveThemeProps() {
-
-        System.out.println("Saving theme properties to file: " + themeConfigurationFile);
 
         String[] keys = ColorProperty.keys();
         for (String key : keys) {
@@ -316,12 +308,8 @@ public class SessionConfig {
 
         try {
 
-            System.out.println("Loading default session properties...");
-
             sesProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
             if (sesProps.size() == 0) {
-
-                System.out.println("Initializing default session properties...");
 
                 ClassLoader cl = this.getClass().getClassLoader();
                 if (cl == null) {
@@ -373,8 +361,6 @@ public class SessionConfig {
      */
     private void overlayConfigurationWithTheme() {
 
-        System.out.println("Loading theme properties from file: " + themeConfigurationFile);
-
         sesProps = cloneProperties(sesProps);
 
         themeColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(), themeConfigurationFile, true,
@@ -408,8 +394,6 @@ public class SessionConfig {
      */
     private void initializeThemeColorProperties() {
 
-        System.out.println("Initializing theme properties...");
-
         String[] keys = ColorProperty.keys();
         for (String key : keys) {
             themeColorProperties.put(key, sesProps.getProperty(key));
@@ -435,8 +419,6 @@ public class SessionConfig {
      */
     private void preserveDefaultColorProperties() {
 
-        System.out.println("Saving default color properties...");
-
         savedColorProperties = new Properties();
 
         String[] keys = ColorProperty.keys();
@@ -449,8 +431,6 @@ public class SessionConfig {
      * Restores the session properties that had been saved before.
      */
     private void restoreDefaultColorProperties() {
-
-        System.out.println("Restoring session properties...");
 
         String[] keys = ColorProperty.keys();
         for (String key : keys) {
