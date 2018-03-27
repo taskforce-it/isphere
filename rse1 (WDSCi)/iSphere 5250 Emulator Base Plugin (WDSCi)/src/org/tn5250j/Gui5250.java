@@ -26,25 +26,44 @@
 
 package org.tn5250j;
 
-import java.awt.*;
-import java.awt.event.*;
-// import java.awt.dnd.*;
-// import java.awt.datatransfer.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Vector;
 
-import org.tn5250j.tools.logging.*;
-import org.tn5250j.tools.*;
-import org.tn5250j.mailtools.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import org.tn5250j.event.EmulatorActionEvent;
+import org.tn5250j.event.EmulatorActionListener;
+import org.tn5250j.event.SessionConfigEvent;
+import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.event.SessionJumpEvent;
 import org.tn5250j.event.SessionJumpListener;
-import org.tn5250j.event.SessionConfigListener;
-import org.tn5250j.event.SessionConfigEvent;
+import org.tn5250j.framework.tn5250.Screen5250;
+import org.tn5250j.framework.tn5250.tnvt;
 import org.tn5250j.interfaces.SessionScrollerInterface;
 import org.tn5250j.keyboard.KeyboardHandler;
-import org.tn5250j.event.EmulatorActionListener;
-import org.tn5250j.event.EmulatorActionEvent;
-import org.tn5250j.framework.tn5250.*;
+import org.tn5250j.mailtools.SendEMailDialog;
+import org.tn5250j.tools.LangTool;
+import org.tn5250j.tools.Macronizer;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
 
 public class Gui5250 extends JPanel implements ComponentListener, ActionListener, TN5250jConstants, RubberBandCanvasIF,
 // SessionListener,
@@ -60,7 +79,6 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
     TNRubberBand rubberband;
     JPanel s = new JPanel();
     KeyPad keyPad = new KeyPad();
-    private JPopupMenu popup;
     Macronizer macros;
     String newMacName;
     private Vector listeners = null;
@@ -74,7 +92,6 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
     protected SessionScrollerInterface scroller;
 
     private TN5250jLogger log = TN5250jLogFactory.getLogger(this.getClass());
-    private TN5250jLogger graphics = TN5250jLogFactory.getLogger("GFX");
 
     public Gui5250() {
 
@@ -268,18 +285,6 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
 
     }
 
-    private void actionTransfer(java.io.File file) {
-
-        try {
-            Properties props = new Properties();
-            props.load(new java.io.FileInputStream(file));
-            org.tn5250j.tools.XTFRFile tfr = new org.tn5250j.tools.XTFRFile(null, session.getVT(), (SessionGUI)this, props);
-        } catch (Exception exc) {
-            log.warn("" + exc.getMessage());
-        }
-
-    }
-
     @Override
     public void processKeyEvent(KeyEvent evt) {
 
@@ -288,28 +293,9 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
         if (!evt.isConsumed()) super.processKeyEvent(evt);
     }
 
-    private void dumpStuff(Throwable ex) {
-
-        session.getVT().dumpStuff();
-        if (null == ex) {
-            return;
-        }
-        ex.printStackTrace();
-    }
-
     public void sendScreenEMail() {
 
         new SendEMailDialog((JFrame)SwingUtilities.getRoot(this), (SessionGUI)this);
-    }
-
-    private void sendMeToFile() {
-        // Change sent by LUC - LDC to add a parent frame to be passed
-        new SendScreenToFile((JFrame)SwingUtilities.getRoot(this), screen);
-    }
-
-    private void sendMeToImageFile() {
-        // Change sent by LUC - LDC to add a parent frame to be passed
-        new SendScreenImageToFile((JFrame)SwingUtilities.getRoot(this), (SessionGUI)this);
     }
 
     /**
@@ -881,8 +867,6 @@ public class Gui5250 extends JPanel implements ComponentListener, ActionListener
      * @return vector string of numberic values
      */
     protected final Vector sumThem(boolean which) {
-
-        StringBuffer s = new StringBuffer();
 
         Rectangle workR = new Rectangle();
         getBoundingArea(workR);
