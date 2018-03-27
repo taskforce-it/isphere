@@ -39,7 +39,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -68,7 +67,6 @@ public class SessionAttributes extends JDialog {
 
     private static final long serialVersionUID = 1L;
     private final String fileName;
-    private final Properties props;
     private JPanel jpm = new JPanel(new BorderLayout());
 
     private final SessionConfig changes;
@@ -83,7 +81,6 @@ public class SessionAttributes extends JDialog {
         parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         this.fileName = config.getConfigurationResource();
-        this.props = config.getProperties();
         changes = config;
 
         try {
@@ -183,17 +180,13 @@ public class SessionAttributes extends JDialog {
 
     protected final String getStringProperty(String prop) {
 
-        if (props.containsKey(prop))
-            return (String)props.get(prop);
-        else
-            return "";
-
+        return getStringProperty(prop, "");
     }
 
     protected final String getStringProperty(String prop, String defaultValue) {
 
-        if (props.containsKey(prop)) {
-            String p = (String)props.get(prop);
+        if (changes.hasProperty(prop)) {
+            String p = changes.getStringProperty(prop);
             if (p.length() > 0)
                 return p;
             else
@@ -203,21 +196,10 @@ public class SessionAttributes extends JDialog {
 
     }
 
-    protected final int getIntProperty(String prop) {
-
-        return Integer.parseInt((String)props.get(prop));
-
-    }
-
     protected final void setProperty(String key, String val) {
 
-        props.setProperty(key, val);
+        changes.setProperty(key, val);
 
-    }
-
-    public Properties getProperties() {
-
-        return props;
     }
 
     public void showIt() {
@@ -320,6 +302,8 @@ public class SessionAttributes extends JDialog {
 
     private void applyAttributes() {
 
+        System.out.println("==> SessionAttributes.applyAttributes()");
+
         DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
         Enumeration<?> e = root.children();
         Object child;
@@ -330,25 +314,12 @@ public class SessionAttributes extends JDialog {
                 ((AttributesPanel)obj).applyAttributes();
             }
         }
-
-        changes.setModified();
 
     }
 
     private void saveProps() {
 
-        DefaultMutableTreeNode root = (DefaultMutableTreeNode)tree.getModel().getRoot();
-        Enumeration<?> e = root.children();
-        Object child;
-        while (e.hasMoreElements()) {
-            child = e.nextElement();
-            Object obj = ((DefaultMutableTreeNode)child).getUserObject();
-            if (obj instanceof AttributesPanel) {
-                ((AttributesPanel)obj).applyAttributes();
-                ((AttributesPanel)obj).save();
-            }
-        }
-
+        applyAttributes();
         changes.saveSessionProps();
 
     }

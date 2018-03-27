@@ -154,6 +154,8 @@ public class SessionConfig {
             return;
         }
 
+        System.out.println("SessionConfig.firePropertyChange(): " + source + " (" + propertyName + ")");
+
         sessionCfglistenersLock.readLock().lock();
         try {
             if (this.sessionCfglisteners != null) {
@@ -168,17 +170,6 @@ public class SessionConfig {
 
     }
 
-    public Properties getProperties() {
-
-        return sesProps;
-    }
-
-    public void setSessionProps(Properties props) {
-
-        sesProps.putAll(props);
-
-    }
-
     public boolean isModified() {
 
         return sesProps.containsKey(IS_DIRTY_FLAG);
@@ -186,39 +177,21 @@ public class SessionConfig {
 
     public void setModified() {
 
+        System.out.println("*** Session config changed ***");
+
         sesProps.setProperty(IS_DIRTY_FLAG, "yes");
     }
 
     public void resetModified() {
 
+        System.out.println("### UNCHANGED ###");
+
         sesProps.remove(IS_DIRTY_FLAG);
     }
 
-    // public void saveSessionProps(java.awt.Container parent) {
-    //
-    // if (sesProps.containsKey(IS_DIRTY_FLAG)) {
-    //
-    // resetModified();
-    //
-    // SwingUtilities.invokeLater(new Runnable() {
-    // public void run() {
-    // Object[] args = { getConfigurationResource() };
-    // String message =
-    // MessageFormat.format(LangTool.getString("messages.saveSettings"), args);
-    //
-    // int result = JOptionPane.showConfirmDialog(null /* parent */, message);
-    //
-    // if (result == JOptionPane.OK_OPTION) {
-    // saveSessionProps();
-    // }
-    // }
-    // });
-    //
-    // }
-    //
-    // }
-
     public void saveSessionProps() {
+
+        System.out.println("==> SessionConfig.saveSessionProps()");
 
         resetModified();
 
@@ -440,13 +413,9 @@ public class SessionConfig {
 
     private void setColorProperty(Properties colorProperties, String key) {
 
-        if (hasProperty(colorProperties, key)) {
+        if (colorProperties.containsKey(key)) {
             sesProps.setProperty(key, colorProperties.getProperty(key));
         }
-    }
-
-    private boolean hasProperty(Properties colorProperties, String key) {
-        return colorProperties.containsKey(key);
     }
 
     public boolean isPropertyExists(String prop) {
@@ -520,18 +489,29 @@ public class SessionConfig {
 
     }
 
+    public boolean hasProperty(String key) {
+        return sesProps.containsKey(key);
+    }
+
     public Object setProperty(String key, String value) {
+
+        if (key != null && value != null && value.equals(sesProps.getProperty(key))) {
+            return null;
+        }
+
+        System.out.println("==> SessionConfig.setProperty(): (" + key + "=" + value + ")");
+
+        setModified();
+
         return sesProps.setProperty(key, value);
     }
 
     public Object removeProperty(String key) {
+
+        setModified();
+
         return sesProps.remove(key);
     }
-
-    // public synchronized Vector getSessionConfigListeners () {
-    //
-    // return sessionCfglisteners;
-    // }
 
     /**
      * Add a SessionConfigListener to the listener list.
