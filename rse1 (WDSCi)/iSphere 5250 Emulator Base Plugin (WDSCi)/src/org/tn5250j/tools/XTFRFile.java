@@ -56,6 +56,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -153,33 +154,6 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
 
     public XTFRFile(Frame parent, tnvt pvt, SessionGUI session) {
 
-        this(parent, pvt, session, null);
-        // setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        // this.session = session;
-        // vt = pvt;
-        // ftpProtocol = new FTP5250Prot(vt);
-        // ftpProtocol.addFTPStatusListener(this);
-        // axtfr = new AS400Xtfr(vt);
-        // axtfr.addFTPStatusListener(this);
-        // createProgressMonitor();
-        // initFileFilters();
-        // initXTFRInfo(null);
-        //
-        // addWindowListener(new WindowAdapter() {
-        //
-        // public void windowClosing(WindowEvent we) {
-        // if (ftpProtocol.isConnected())
-        // ftpProtocol.disconnect();
-        // }
-        //
-        // });
-        //
-        // messageProgress = LangTool.getString("xtfr.messageProgress");
-        // setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
-
-    public XTFRFile(Frame parent, tnvt pvt, SessionGUI session, Properties XTFRProps) {
-
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         this.session = session;
         vt = pvt;
@@ -189,7 +163,7 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
         axtfr.addFTPStatusListener(this);
         createProgressMonitor();
         initFileFilters();
-        initXTFRInfo(XTFRProps);
+        initXTFRInfo();
 
         addWindowListener(new WindowAdapter() {
 
@@ -525,7 +499,7 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
      * Creates the dialog components for prompting the user for the information
      * of the transfer
      */
-    private void initXTFRInfo(Properties XTFRProps) {
+    private void initXTFRInfo() {
 
         // create some reusable borders and layouts
         BorderLayout borderLayout = new BorderLayout();
@@ -842,7 +816,7 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
         queryStatement.setLineWrap(true);
         as400QueryP.add(scrollPane, BorderLayout.CENTER);
 
-        initXTFRFields(XTFRProps);
+        initXTFRFields();
 
         // pack it and center it on the screen
         pack();
@@ -863,12 +837,52 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
         }
     }
 
-    private void initXTFRFields(Properties props) {
+    private void initXTFRFields() {
 
-        if (props == null) {
-            SessionConfig config = session.getSession().getConfiguration();
-            props = config.getProperties();
+        Properties props = new Properties();
+
+        SessionConfig config = session.getSession().getConfiguration();
+
+        if (config.hasProperty("xtfr.fileName")) {
+            props.setProperty("xtfr.fileName", config.getStringProperty("xtfr.fileName"));
         }
+
+        if (config.hasProperty("xtfr.user")) {
+            props.setProperty("xtfr.user", config.getStringProperty("xtfr.user"));
+        }
+
+        if (config.hasProperty("xtfr.useQuery")) {
+            props.setProperty("xtfr.useQuery", config.getStringProperty("xtfr.useQuery"));
+        }
+
+        if (config.hasProperty("xtfr.queryStatement")) {
+            props.setProperty("xtfr.queryStatement", config.getStringProperty("xtfr.queryStatement"));
+        }
+
+        if (config.hasProperty("xtfr.allFields")) {
+            props.setProperty("xtfr.allFields", config.getStringProperty("xtfr.allFields"));
+        }
+
+        if (config.hasProperty("xtfr.txtDesc")) {
+            props.setProperty("xtfr.txtDesc", config.getStringProperty("xtfr.txtDesc"));
+        }
+
+        if (config.hasProperty("xtfr.fileFormat")) {
+            props.setProperty("xtfr.fileFormat", config.getStringProperty("xtfr.fileFormat"));
+        }
+
+        if (config.hasProperty("xtfr.localFile")) {
+            props.setProperty("xtfr.localFile", config.getStringProperty("xtfr.localFile"));
+        }
+
+        if (config.hasProperty("xtfr.decimalSeparator")) {
+            props.setProperty("xtfr.decimalSeparator", config.getStringProperty("xtfr.decimalSeparator"));
+        }
+
+        initXTFRFields(props);
+    }
+
+    private void initXTFRFields(Properties props) {
 
         if (props.containsKey("xtfr.fileName")) hostFile.setText(props.getProperty("xtfr.fileName"));
 
@@ -910,55 +924,15 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
     private void saveXTFRFields() {
 
         SessionConfig config = session.getSession().getConfiguration();
-        Properties props = config.getProperties();
+        Properties props = new Properties();
 
         saveXTFRFields(props);
-        // if (hostFile.getText().trim().length() > 0)
-        // props.setProperty("xtfr.fileName", hostFile.getText().trim());
-        // else
-        // props.remove("xtfr.fileName");
-        //
-        // if (user.getText().trim().length() > 0)
-        // props.setProperty("xtfr.user", user.getText().trim());
-        // else
-        // props.remove("xtfr.user");
-        //
-        // if (useQuery.isSelected())
-        // props.setProperty("xtfr.useQuery", "true");
-        // else
-        // props.remove("xtfr.useQuery");
-        //
-        // if (queryStatement.getText().trim().length() > 0)
-        // props.setProperty(
-        // "xtfr.queryStatement",
-        // queryStatement.getText().trim());
-        // else
-        // props.remove("xtfr.queryStatement");
-        //
-        // if (allFields.isSelected())
-        // props.setProperty("xtfr.allFields", "true");
-        // else
-        // props.remove("xtfr.allFields");
-        //
-        // if (txtDesc.isSelected())
-        // props.setProperty("xtfr.txtDesc", "true");
-        // else
-        // props.remove("xtfr.txtDesc");
-        //
-        // props.setProperty(
-        // "xtfr.fileFormat",
-        // (String) fileFormat.getSelectedItem());
-        //
-        // if (localFile.getText().trim().length() > 0)
-        // props.setProperty("xtfr.localFile", localFile.getText().trim());
-        // else
-        // props.remove("xtfr.localFile");
-        //
-        // props.setProperty(
-        // "xtfr.decimalSeparator",
-        // (String) decimalSeparator.getSelectedItem());
 
-        config.setModified();
+        Set<Object> keys = props.keySet();
+        for (Object propKey : keys) {
+            String key = (String)propKey;
+            config.setProperty(key, props.getProperty(key));
+        }
 
     }
 
