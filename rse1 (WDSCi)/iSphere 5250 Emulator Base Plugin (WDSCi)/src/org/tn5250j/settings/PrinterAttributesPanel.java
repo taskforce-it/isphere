@@ -26,14 +26,21 @@ package org.tn5250j.settings;
  *
  */
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.awt.print.*;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterJob;
 
-import org.tn5250j.tools.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+
 import org.tn5250j.SessionConfig;
-import org.tn5250j.gui.*;
+import org.tn5250j.gui.TN5250jFontsSelection;
+import org.tn5250j.tools.LangTool;
 
 public class PrinterAttributesPanel extends AttributesPanel {
 
@@ -192,45 +199,45 @@ public class PrinterAttributesPanel extends AttributesPanel {
         }
 
         // portrait parameters
-        changes.firePropertyChange(this, "print.portWidth", getStringProperty("print.portWidth"), new Double(pappyPort.getWidth()));
+        changes.firePropertyChange(this, "print.portWidth", getStringProperty("print.portWidth"), Double.toString(pappyPort.getWidth()));
         setProperty("print.portWidth", Double.toString(pappyPort.getWidth()));
 
-        changes
-            .firePropertyChange(this, "print.portImageWidth", getStringProperty("print.portImageWidth"), new Double(pappyPort.getImageableWidth()));
+        changes.firePropertyChange(this, "print.portImageWidth", getStringProperty("print.portImageWidth"), Double.toString(pappyPort
+            .getImageableWidth()));
         setProperty("print.portImageWidth", Double.toString(pappyPort.getImageableWidth()));
 
-        changes.firePropertyChange(this, "print.portHeight", getStringProperty("print.portHeight"), new Double(pappyPort.getHeight()));
+        changes.firePropertyChange(this, "print.portHeight", getStringProperty("print.portHeight"), Double.toString(pappyPort.getHeight()));
         setProperty("print.portHeight", Double.toString(pappyPort.getHeight()));
 
-        changes.firePropertyChange(this, "print.portImageHeight", getStringProperty("print.portImageHeight"), new Double(pappyPort
+        changes.firePropertyChange(this, "print.portImageHeight", getStringProperty("print.portImageHeight"), Double.toString(pappyPort
             .getImageableHeight()));
         setProperty("print.portImageHeight", Double.toString(pappyPort.getImageableHeight()));
 
-        changes.firePropertyChange(this, "print.portImage.X", getStringProperty("print.portImage.X"), new Double(pappyPort.getImageableX()));
+        changes.firePropertyChange(this, "print.portImage.X", getStringProperty("print.portImage.X"), Double.toString(pappyPort.getImageableX()));
         setProperty("print.portImage.X", Double.toString(pappyPort.getImageableX()));
 
-        changes.firePropertyChange(this, "print.portImage.Y", getStringProperty("print.portImage.Y"), new Double(pappyPort.getImageableY()));
+        changes.firePropertyChange(this, "print.portImage.Y", getStringProperty("print.portImage.Y"), Double.toString(pappyPort.getImageableY()));
         setProperty("print.portImage.Y", Double.toString(pappyPort.getImageableY()));
 
         // landscape parameters
-        changes.firePropertyChange(this, "print.landWidth", getStringProperty("print.landWidth"), new Double(pappyLand.getWidth()));
+        changes.firePropertyChange(this, "print.landWidth", getStringProperty("print.landWidth"), Double.toString(pappyLand.getWidth()));
         setProperty("print.landWidth", Double.toString(pappyLand.getWidth()));
 
-        changes
-            .firePropertyChange(this, "print.landImageWidth", getStringProperty("print.landImageWidth"), new Double(pappyLand.getImageableWidth()));
+        changes.firePropertyChange(this, "print.landImageWidth", getStringProperty("print.landImageWidth"), Double.toString(pappyLand
+            .getImageableWidth()));
         setProperty("print.landImageWidth", Double.toString(pappyLand.getImageableWidth()));
 
-        changes.firePropertyChange(this, "print.landHeight", getStringProperty("print.landHeight"), new Double(pappyLand.getHeight()));
+        changes.firePropertyChange(this, "print.landHeight", getStringProperty("print.landHeight"), Double.toString(pappyLand.getHeight()));
         setProperty("print.landHeight", Double.toString(pappyLand.getHeight()));
 
-        changes.firePropertyChange(this, "print.landImageHeight", getStringProperty("print.landImageHeight"), new Double(pappyLand
+        changes.firePropertyChange(this, "print.landImageHeight", getStringProperty("print.landImageHeight"), Double.toString(pappyLand
             .getImageableHeight()));
         setProperty("print.landImageHeight", Double.toString(pappyLand.getImageableHeight()));
 
-        changes.firePropertyChange(this, "print.landImage.X", getStringProperty("print.landImage.X"), new Double(pappyLand.getImageableX()));
+        changes.firePropertyChange(this, "print.landImage.X", getStringProperty("print.landImage.X"), Double.toString(pappyLand.getImageableX()));
         setProperty("print.landImage.X", Double.toString(pappyLand.getImageableX()));
 
-        changes.firePropertyChange(this, "print.landImage.Y", getStringProperty("print.landImage.Y"), new Double(pappyLand.getImageableY()));
+        changes.firePropertyChange(this, "print.landImage.Y", getStringProperty("print.landImage.Y"), Double.toString(pappyLand.getImageableY()));
         setProperty("print.landImage.Y", Double.toString(pappyLand.getImageableY()));
 
         if (fs.getSelectedItem() != null) {
