@@ -56,6 +56,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -153,33 +154,6 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
 
     public XTFRFile(Frame parent, tnvt pvt, SessionPanel session) {
 
-        this(parent, pvt, session, null);
-        // setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        // this.session = session;
-        // vt = pvt;
-        // ftpProtocol = new FTP5250Prot(vt);
-        // ftpProtocol.addFTPStatusListener(this);
-        // axtfr = new AS400Xtfr(vt);
-        // axtfr.addFTPStatusListener(this);
-        // createProgressMonitor();
-        // initFileFilters();
-        // initXTFRInfo(null);
-        //
-        // addWindowListener(new WindowAdapter() {
-        //
-        // public void windowClosing(WindowEvent we) {
-        // if (ftpProtocol.isConnected())
-        // ftpProtocol.disconnect();
-        // }
-        //
-        // });
-        //
-        // messageProgress = LangTool.getString("xtfr.messageProgress");
-        // setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
-
-    public XTFRFile(Frame parent, tnvt pvt, SessionPanel session, Properties XTFRProps) {
-
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         this.session = session;
         vt = pvt;
@@ -189,7 +163,7 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
         axtfr.addFTPStatusListener(this);
         createProgressMonitor();
         initFileFilters();
-        initXTFRInfo(XTFRProps);
+        initXTFRInfo();
 
         addWindowListener(new WindowAdapter() {
 
@@ -533,7 +507,7 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
      * Creates the dialog components for prompting the user for the information
      * of the transfer
      */
-    private void initXTFRInfo(Properties XTFRProps) {
+    private void initXTFRInfo() {
 
         // create some reusable borders and layouts
         BorderLayout borderLayout = new BorderLayout();
@@ -849,7 +823,7 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
         queryStatement.setLineWrap(true);
         as400QueryP.add(scrollPane, BorderLayout.CENTER);
 
-        initXTFRFields(XTFRProps);
+        initXTFRFields();
 
         // pack it and center it on the screen
         pack();
@@ -870,12 +844,56 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
         }
     }
 
-    private void initXTFRFields(Properties props) {
+    private void initXTFRFields() {
 
-        if (props == null) {
-            SessionConfig config = session.getSession().getConfiguration();
-            props = config.getProperties();
+        Properties props = new Properties();
+
+        SessionConfig config = session.getSession().getConfiguration();
+
+        if (config.hasProperty("xtfr.fileName")) {
+            props.setProperty("xtfr.fileName", config.getStringProperty("xtfr.fileName"));
         }
+
+        if (config.hasProperty("xtfr.user")) {
+            props.setProperty("xtfr.user", config.getStringProperty("xtfr.user"));
+        }
+
+        if (config.hasProperty("xtfr.useQuery")) {
+            props.setProperty("xtfr.useQuery", config.getStringProperty("xtfr.useQuery"));
+        }
+
+        if (config.hasProperty("xtfr.queryStatement")) {
+            props.setProperty("xtfr.queryStatement", config.getStringProperty("xtfr.queryStatement"));
+        }
+
+        if (config.hasProperty("xtfr.allFields")) {
+            props.setProperty("xtfr.allFields", config.getStringProperty("xtfr.allFields"));
+        }
+
+        if (config.hasProperty("xtfr.txtDesc")) {
+            props.setProperty("xtfr.txtDesc", config.getStringProperty("xtfr.txtDesc"));
+        }
+
+        if (config.hasProperty("xtfr.intDesc")) {
+            props.setProperty("xtfr.intDesc", config.getStringProperty("xtfr.intDesc"));
+        }
+
+        if (config.hasProperty("xtfr.fileFormat")) {
+            props.setProperty("xtfr.fileFormat", config.getStringProperty("xtfr.fileFormat"));
+        }
+
+        if (config.hasProperty("xtfr.localFile")) {
+            props.setProperty("xtfr.localFile", config.getStringProperty("xtfr.localFile"));
+        }
+
+        if (config.hasProperty("xtfr.decimalSeparator")) {
+            props.setProperty("xtfr.decimalSeparator", config.getStringProperty("xtfr.decimalSeparator"));
+        }
+
+        initXTFRFields(props);
+    }
+
+    private void initXTFRFields(Properties props) {
 
         if (props.containsKey("xtfr.fileName")) hostFile.setText(props.getProperty("xtfr.fileName"));
 
@@ -925,11 +943,15 @@ public class XTFRFile extends GenericTn5250JFrame implements ActionListener, FTP
     private void saveXTFRFields() {
 
         SessionConfig config = session.getSession().getConfiguration();
-        Properties props = config.getProperties();
+        Properties props = new Properties();
 
         saveXTFRFields(props);
 
-        config.setModified();
+        Set<Object> keys = props.keySet();
+        for (Object propKey : keys) {
+            String key = (String)propKey;
+            config.setProperty(key, props.getProperty(key));
+        }
 
     }
 
