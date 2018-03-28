@@ -64,51 +64,49 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
             return;
         }
 
-        Properties sesProps = new Properties();
+        Properties sesConnProps = new Properties();
 
-        sesProps.put(SESSION_THEME, getParameter(TN5250jConstants.ARG_ISPHERE_THEME));
-
-        sesProps.put(SESSION_HOST, getParameter(TN5250jConstants.ARG_ISPHERE_HOST));
+        sesConnProps.put(SESSION_HOST, getParameter(TN5250jConstants.ARG_ISPHERE_HOST));
 
         // if (isSpecified(ARG_TN_ENHANCED))
         // sesProps.put(SESSION_TN_ENHANCED, "1");
 
         if (isSpecified(TN5250jConstants.ARG_HOST_PORT)) {
-            sesProps.put(SESSION_HOST_PORT, getParameter(TN5250jConstants.ARG_HOST_PORT));
+            sesConnProps.put(SESSION_HOST_PORT, getParameter(TN5250jConstants.ARG_HOST_PORT));
         }
 
         if (isSpecified(TN5250jConstants.ARG_CODE_PAGE)) {
-            sesProps.put(SESSION_CODE_PAGE, getParameter(TN5250jConstants.ARG_CODE_PAGE));
+            sesConnProps.put(SESSION_CODE_PAGE, getParameter(TN5250jConstants.ARG_CODE_PAGE));
         }
 
         if (isSpecified(TN5250jConstants.ARG_SSL_TYPE)) {
-            sesProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
+            sesConnProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
         if (isSpecified(TN5250jConstants.ARG_USE_GUI)) {
-            sesProps.put(SESSION_USE_GUI, "1");
+            sesConnProps.put(SESSION_USE_GUI, "1");
         }
 
         if (isSpecified(TN5250jConstants.ARG_SCREEN_SIZE_132)) {
-            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
+            sesConnProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_27X132_STR);
         } else {
-            sesProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
+            sesConnProps.put(SESSION_SCREEN_SIZE, SCREEN_SIZE_24X80_STR);
         }
 
         if (isSpecified(TN5250jConstants.ARG_PROXY_HOST)) {
-            sesProps.put(SESSION_PROXY_HOST, getParameter(TN5250jConstants.ARG_PROXY_HOST));
+            sesConnProps.put(SESSION_PROXY_HOST, getParameter(TN5250jConstants.ARG_PROXY_HOST));
         }
 
         if (isSpecified(TN5250jConstants.ARG_PROXY_PORT)) {
-            sesProps.put(SESSION_PROXY_PORT, getParameter(TN5250jConstants.ARG_PROXY_PORT));
+            sesConnProps.put(SESSION_PROXY_PORT, getParameter(TN5250jConstants.ARG_PROXY_PORT));
         }
 
         if (isSpecified(TN5250jConstants.ARG_DEVICE_NAME)) {
-            sesProps.put(SESSION_DEVICE_NAME, getParameter(TN5250jConstants.ARG_DEVICE_NAME));
+            sesConnProps.put(SESSION_DEVICE_NAME, getParameter(TN5250jConstants.ARG_DEVICE_NAME));
         }
 
         if (isSpecified(TN5250jConstants.ARG_SSL_TYPE)) {
-            sesProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
+            sesConnProps.put(SESSION_SSL_TYPE, getParameter(TN5250jConstants.ARG_SSL_TYPE));
         }
 
         loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_USER);
@@ -118,7 +116,7 @@ public abstract class TN5250JPanel implements TN5250jConstants, ScreenListener {
         loadSystemProperty(TN5250jConstants.ARG_ISPHERE_SESSION_CONNECT_MENU);
 
         manager = SessionManager.instance();
-        s = manager.openSession(sesProps, "", "TN5250J", (String)sesProps.get(SESSION_THEME));
+        s = manager.openSession(sesConnProps, "", "TN5250J", getParameter(TN5250jConstants.ARG_ISPHERE_THEME));
 
         gui = getTN5250JGUI(tn5250jInfo, s);
 
