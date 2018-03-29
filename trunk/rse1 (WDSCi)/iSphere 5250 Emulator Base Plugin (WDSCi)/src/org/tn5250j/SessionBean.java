@@ -72,7 +72,7 @@ public class SessionBean extends SessionGUI {
     public SessionBean(Session5250 session) {
 
         super(session);
-        this.sessionProperties = session.sesProps;
+        this.sessionProperties = session.sesConnProps;
         this.sessionProperties.put(SESSION_LOCALE, Locale.getDefault());
         this.getSession().getConfiguration().addSessionConfigListener(this);
     }
