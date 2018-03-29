@@ -82,11 +82,7 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final String getStringProperty(String prop) {
 
-        if (changes.isPropertyExists(prop))
-            return changes.getStringProperty(prop);
-        else
-            return "";
-
+        return getStringProperty(prop, "");
     }
 
     protected final String getStringProperty(String prop, String defaultValue) {
@@ -110,18 +106,13 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final Color getColorProperty(String prop) {
 
-        if (changes.isPropertyExists(prop)) {
-            Color c = new Color(changes.getIntegerProperty(prop));
-            return c;
-        } else
-            return null;
-
+        return getColorProperty(prop, null);
     }
 
     protected Color getColorProperty(String prop, Color defColor) {
 
         if (changes.isPropertyExists(prop)) {
-            Color c = new Color(changes.getIntegerProperty(prop));
+            Color c = changes.getColorProperty(prop);
             return c;
         } else
             return defColor;
@@ -130,15 +121,7 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final boolean getBooleanProperty(String prop) {
 
-        if (changes.isPropertyExists(prop)) {
-            String b = changes.getStringProperty(prop).toLowerCase();
-            if (b.equals("yes") || b.equals("true"))
-                return true;
-            else
-                return false;
-        } else
-            return false;
-
+        return getBooleanProperty(prop, false);
     }
 
     protected final boolean getBooleanProperty(String prop, boolean dflt) {
