@@ -37,9 +37,8 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
     private String configurationResource;
     private String sessionName;
-    private boolean connected;
     private int sessionType;
-    protected Properties sesProps;
+    protected Properties sesConnProps;
     private Vector listeners;
     private SessionChangeEvent sce;
     private boolean heartBeat;
@@ -57,13 +56,13 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
         propFileName = config.getConfigurationResource();
 
-        sesConfig = config;
+        this.sesConfig = config;
         this.configurationResource = configurationResource;
         this.sessionName = sessionName;
-        sesProps = props;
-        sce = new SessionChangeEvent(this);
+        this.sesConnProps = props;
+        this.sce = new SessionChangeEvent(this);
 
-        if (sesProps.containsKey(SESSION_HEART_BEAT)) heartBeat = true;
+        if (sesConnProps.containsKey(SESSION_HEART_BEAT)) heartBeat = true;
 
         screen = new Screen5250();
 
@@ -112,7 +111,7 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
     }
 
     public Properties getConnectionProperties() {
-        return sesProps;
+        return sesConnProps;
     }
 
     public void setGUI(SessionGUI gui) {
@@ -161,27 +160,27 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
         // default telnet port
         int port = Integer.parseInt(PORT_NUMBER);
 
-        enhanced = sesProps.containsKey(SESSION_TN_ENHANCED);
+        enhanced = sesConnProps.containsKey(SESSION_TN_ENHANCED);
 
-        if (sesProps.containsKey(SESSION_SCREEN_SIZE))
-            if ((sesProps.getProperty(SESSION_SCREEN_SIZE)).equals(SCREEN_SIZE_27X132_STR)) support132 = true;
+        if (sesConnProps.containsKey(SESSION_SCREEN_SIZE))
+            if ((sesConnProps.getProperty(SESSION_SCREEN_SIZE)).equals(SCREEN_SIZE_27X132_STR)) support132 = true;
 
         final tnvt vt = new tnvt(this, screen, enhanced, support132);
         setVT(vt);
 
         // vt.setController(this);
 
-        if (sesProps.containsKey(SESSION_PROXY_PORT)) {
-            proxyPort = sesProps.getProperty(SESSION_PROXY_PORT);
+        if (sesConnProps.containsKey(SESSION_PROXY_PORT)) {
+            proxyPort = sesConnProps.getProperty(SESSION_PROXY_PORT);
         }
 
-        if (sesProps.containsKey(SESSION_PROXY_HOST)) {
-            vt.setProxy(sesProps.getProperty(SESSION_PROXY_HOST), proxyPort);
+        if (sesConnProps.containsKey(SESSION_PROXY_HOST)) {
+            vt.setProxy(sesConnProps.getProperty(SESSION_PROXY_HOST), proxyPort);
         }
 
         final String sslType;
-        if (sesProps.containsKey(SESSION_SSL_TYPE)) {
-            sslType = sesProps.getProperty(SESSION_SSL_TYPE);
+        if (sesConnProps.containsKey(SESSION_SSL_TYPE)) {
+            sslType = sesConnProps.getProperty(SESSION_SSL_TYPE);
         } else {
             // set default to none
             sslType = SSL_TYPE_NONE;
@@ -189,22 +188,22 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
         vt.setSSLType(sslType);
 
-        if (sesProps.containsKey(SESSION_CODE_PAGE)) {
-            vt.setCodePage(sesProps.getProperty(SESSION_CODE_PAGE));
+        if (sesConnProps.containsKey(SESSION_CODE_PAGE)) {
+            vt.setCodePage(sesConnProps.getProperty(SESSION_CODE_PAGE));
         }
 
-        if (sesProps.containsKey(SESSION_DEVICE_NAME)) {
-            vt.setDeviceName(sesProps.getProperty(SESSION_DEVICE_NAME));
+        if (sesConnProps.containsKey(SESSION_DEVICE_NAME)) {
+            vt.setDeviceName(sesConnProps.getProperty(SESSION_DEVICE_NAME));
         }
 
-        if (sesProps.containsKey(SESSION_HOST_PORT)) {
-            port = Integer.parseInt(sesProps.getProperty(SESSION_HOST_PORT));
+        if (sesConnProps.containsKey(SESSION_HOST_PORT)) {
+            port = Integer.parseInt(sesConnProps.getProperty(SESSION_HOST_PORT));
         } else {
             // set to default 23 of telnet
             port = Integer.parseInt(PORT_NUMBER);
         }
 
-        final String ses = sesProps.getProperty(SESSION_HOST);
+        final String ses = sesConnProps.getProperty(SESSION_HOST);
         final int portp = port;
 
         // lets set this puppy up to connect within its own thread
@@ -226,10 +225,7 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
     }
 
     public void disconnect() {
-
-        connected = false;
         vt.disconnect();
-
     }
 
     // WVL - LDC : TR.000300 : Callback scenario from 5250
