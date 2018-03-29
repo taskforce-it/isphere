@@ -88,9 +88,6 @@ public interface TN5250jConstants {
     public static final String SESSION_HEART_BEAT = "SESSION_KEEP_ALIVE_ENABLED";
     public static final String SESSION_SSL_TYPE = "SESSION_SSL_TYPE";
 
-    // iSphere specific parameters
-    public static final String SESSION_THEME = "SESSION_THEME";
-
     // public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
     public static final String GUI_FRAME_WIDTH = "GUI_FRAME_WIDTH";
     public static final String GUI_FRAME_HEIGHT = "GUI_FRAME_HEIGHT";
@@ -216,15 +213,15 @@ public interface TN5250jConstants {
 
     public static final String mnemonicData[] = { "[backspace]", "[backtab]", "[up]", "[down]", "[left]", "[right]", "[delete]", "[tab]", "[eof]",
         "[eraseeof]", "[erasefld]", "[insert]", "[home]", "[keypad0]", "[keypad1]", "[keypad2]", "[keypad3]", "[keypad4]", "[keypad5]", "[keypad6]",
-        "[keypad7]", "[keypad8]", "[keypad9]", "[keypad.]", "[keypad,]", "[keypad-]", "[fldext]", "[field+]", "[field-]", "[bof]", "[enter]", "[pf1]",
-        "[pf2]", "[pf3]", "[pf4]", "[pf5]", "[pf6]", "[pf7]", "[pf8]", "[pf9]", "[pf10]", "[pf11]", "[pf12]", "[pf13]", "[pf14]", "[pf15]", "[pf16]",
-        "[pf17]", "[pf18]", "[pf19]", "[pf20]", "[pf21]", "[pf22]", "[pf23]", "[pf24]", "[clear]", "[help]", "[pgup]", "[pgdown]", "[rollleft]",
-        "[rollright]", "[hostprint]", "[pa1]", "[pa2]", "[pa3]", "[sysreq]", "[reset]", "[nextword]", "[prevword]", "[copy]", "[paste]", "[attn]",
-        "[markup]", "[markdown]", "[markleft]", "[markright]", "[dupfield]", "[newline]", "[jumpnext]", "[jumpprev]", "[opennew]", "[togcon]",
-        "[hotspots]", "[gui]", "[dspmsgs]", "[dspattr]", "[print]", "[cursor]", "[debug]", "[close]", "[transfer]", "[e-mail]", "[runscript]",
-        "[spoolfile]", "[quick-mail]", "[open-same]", "[fastcursordown]", "[fastcursorup]", "[fastcursorright]", "[fastcursorleft]", "[nextsession]",
-        "[prevsession]", "[nextmultiplesession]", "[prevmultiplesession]", "[scrollsessionup]", "[scrollsessiondown]", "[scrollsessionleft]",
-        "[scrollsessionright]" };
+        "[keypad7]", "[keypad8]", "[keypad9]", "[keypad.]", "[keypad,]", "[keypad-]", "[fldext]", "[field+]", "[field-]", "[bof]", "[enter]",
+        "[pf1]", "[pf2]", "[pf3]", "[pf4]", "[pf5]", "[pf6]", "[pf7]", "[pf8]", "[pf9]", "[pf10]", "[pf11]", "[pf12]", "[pf13]", "[pf14]", "[pf15]",
+        "[pf16]", "[pf17]", "[pf18]", "[pf19]", "[pf20]", "[pf21]", "[pf22]", "[pf23]", "[pf24]", "[clear]", "[help]", "[pgup]", "[pgdown]",
+        "[rollleft]", "[rollright]", "[hostprint]", "[pa1]", "[pa2]", "[pa3]", "[sysreq]", "[reset]", "[nextword]", "[prevword]", "[copy]",
+        "[paste]", "[attn]", "[markup]", "[markdown]", "[markleft]", "[markright]", "[dupfield]", "[newline]", "[jumpnext]", "[jumpprev]",
+        "[opennew]", "[togcon]", "[hotspots]", "[gui]", "[dspmsgs]", "[dspattr]", "[print]", "[cursor]", "[debug]", "[close]", "[transfer]",
+        "[e-mail]", "[runscript]", "[spoolfile]", "[quick-mail]", "[open-same]", "[fastcursordown]", "[fastcursorup]", "[fastcursorright]",
+        "[fastcursorleft]", "[nextsession]", "[prevsession]", "[nextmultiplesession]", "[prevmultiplesession]", "[scrollsessionup]",
+        "[scrollsessiondown]", "[scrollsessionleft]", "[scrollsessionright]" };
 
     public static final int mnemonicValue[] = { 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017,
         1018, 1019, 1020, 1021, 1022, 1023, 1024, 1025, 1026, 1027, 1028, 1029, 1030, 0xF1, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,

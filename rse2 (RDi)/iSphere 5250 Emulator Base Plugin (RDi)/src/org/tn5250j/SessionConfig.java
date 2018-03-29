@@ -28,9 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -79,7 +77,6 @@ public class SessionConfig {
     private String sessionTheme;
     private boolean sessionThemeEnabled;
     private Properties sesProps;
-    private Properties dfltSessionProps;
     private boolean usingDefaults;
 
     private List<SessionConfigListener> sessionCfglisteners = null;
@@ -87,12 +84,6 @@ public class SessionConfig {
 
     private String themeConfigurationFile;
     private Properties themeColorProperties;
-
-    public SessionConfig(String configurationResource, String sessionName) {
-
-        this(configurationResource, sessionName, "");
-
-    }
 
     public SessionConfig(String configurationResource, String sessionName, String sessionTheme) {
 
@@ -172,76 +163,49 @@ public class SessionConfig {
 
     public boolean isModified() {
 
-        return sesProps.containsKey(IS_DIRTY_FLAG);
-    }
-
-    public void setModified() {
-
-        System.out.println("*** Session config changed ***");
-
-        sesProps.setProperty(IS_DIRTY_FLAG, "yes");
+        return isSessionPropertyDirty() || isThemePropertyDirty();
     }
 
     public void resetModified() {
 
-        System.out.println("### UNCHANGED ###");
-
-        sesProps.remove(IS_DIRTY_FLAG);
+        setSessionPropertiesDirty(false);
+        setThemePropertiesDirty(false);
     }
 
     public void saveSessionProps() {
 
-        System.out.println("==> SessionConfig.saveSessionProps()");
-
-        resetModified();
-
-        if (sessionThemeEnabled) {
+        if (isThemePropertyDirty()) {
             saveThemeProps();
         }
 
-        updateDfltSessionProperties();
+        if (isSessionPropertyDirty()) {
 
-        if (usingDefaults) {
+            System.out.println("==> SessionConfig.saveSessionProps()");
 
-            ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
+            setSessionPropertiesDirty(false);
 
-        } else {
-            try {
-                FileOutputStream out = new FileOutputStream(settingsDirectory() + getConfigurationResource());
-                // save off the width and height to be restored later
-                sesProps.store(out, "------ Defaults --------");
-            } catch (FileNotFoundException fnfe) {
-            } catch (IOException ioe) {
-            }
-        }
-    }
+            if (usingDefaults) {
 
-    /**
-     * Updates the properties that were actually loaded with the current values
-     * of the cloned session properties.
-     * <p>
-     * Ignores color properties when the session has a theme, because in that
-     * case these properties go into the theme configuration file.
-     */
-    private void updateDfltSessionProperties() {
+                ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
 
-        Set<Entry<Object, Object>> sessionProperties = sesProps.entrySet();
-        for (Entry<Object, Object> entry : sessionProperties) {
-            if (sessionThemeEnabled && ColorProperty.isColorProperty((String)entry.getKey())) {
-                // ignore color properties, because these properties go into the
-                // theme configuration file and must not change the default
-                // configuration.
             } else {
-                dfltSessionProps.put(entry.getKey(), entry.getValue());
+                try {
+                    FileOutputStream out = new FileOutputStream(settingsDirectory() + getConfigurationResource());
+                    // save off the width and height to be restored later
+                    sesProps.store(out, "------ Defaults --------");
+                } catch (FileNotFoundException fnfe) {
+                } catch (IOException ioe) {
+                }
             }
         }
-
     }
 
     /**
      * Saves the properties of the session theme.
      */
     private void saveThemeProps() {
+
+        System.out.println("==> SessionConfig.saveThemeProps()");
 
         saveThemeProps(themeConfigurationFile);
     }
@@ -251,13 +215,7 @@ public class SessionConfig {
      */
     public void saveThemeProps(String fileName) {
 
-        Properties tempColorProperties = ConfigureFactory.getInstance().getProperties(getThemeConfigurationKey(fileName), fileName, true,
-            THEME_CONFIGURATION_HEADER, false);
-
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            tempColorProperties.put(key, sesProps.getProperty(key));
-        }
+        setThemePropertiesDirty(false);
 
         ConfigureFactory.getInstance().saveSettings(getThemeConfigurationKey(fileName), fileName, THEME_CONFIGURATION_HEADER);
     }
@@ -303,8 +261,8 @@ public class SessionConfig {
 
         try {
 
-            dfltSessionProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
-            if (dfltSessionProps.size() == 0) {
+            sesProps = ConfigureFactory.getInstance().getProperties("dfltSessionProps", getConfigurationResource(), true, "Default Settings");
+            if (sesProps.size() == 0) {
 
                 ClassLoader cl = this.getClass().getClassLoader();
                 if (cl == null) {
@@ -315,7 +273,7 @@ public class SessionConfig {
                 java.net.URL file = cl.getResource(getConfigurationResource());
                 Properties emuldefaults = new Properties();
                 emuldefaults.load(file.openStream());
-                dfltSessionProps.putAll(emuldefaults);
+                sesProps.putAll(emuldefaults);
 
                 // color schema defaults
                 file = cl.getResource("tn5250jSchemas.properties");
@@ -324,27 +282,23 @@ public class SessionConfig {
 
                 // we will now load the default schema
                 String prefix = schemaProps.getProperty("schemaDefault");
-                dfltSessionProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
-                dfltSessionProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
-                dfltSessionProps.setProperty(ColorProperty.TURQUOISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
-                dfltSessionProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
-                dfltSessionProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
-                dfltSessionProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
-                dfltSessionProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
-                dfltSessionProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
-                dfltSessionProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
-                dfltSessionProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
-                dfltSessionProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
-                dfltSessionProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
-                dfltSessionProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
-                dfltSessionProps.setProperty("print.font", GUIGraphicsUtils.getDefaultPrinterFont());
+                sesProps.setProperty(ColorProperty.BACKGROUND.key(), schemaProps.getProperty(prefix + ".colorBg"));
+                sesProps.setProperty(ColorProperty.RED.key(), schemaProps.getProperty(prefix + ".colorRed"));
+                sesProps.setProperty(ColorProperty.TURQUOISE.key(), schemaProps.getProperty(prefix + ".colorTurq"));
+                sesProps.setProperty(ColorProperty.CURSOR.key(), schemaProps.getProperty(prefix + ".colorCursor"));
+                sesProps.setProperty(ColorProperty.GUI_FIELD.key(), schemaProps.getProperty(prefix + ".colorGUIField"));
+                sesProps.setProperty(ColorProperty.WHITE.key(), schemaProps.getProperty(prefix + ".colorWhite"));
+                sesProps.setProperty(ColorProperty.YELLOW.key(), schemaProps.getProperty(prefix + ".colorYellow"));
+                sesProps.setProperty(ColorProperty.GREEN.key(), schemaProps.getProperty(prefix + ".colorGreen"));
+                sesProps.setProperty(ColorProperty.PINK.key(), schemaProps.getProperty(prefix + ".colorPink"));
+                sesProps.setProperty(ColorProperty.BLUE.key(), schemaProps.getProperty(prefix + ".colorBlue"));
+                sesProps.setProperty(ColorProperty.SEPARATOR.key(), schemaProps.getProperty(prefix + ".colorSep"));
+                sesProps.setProperty(ColorProperty.HEX_ATTR.key(), schemaProps.getProperty(prefix + ".colorHexAttr"));
+                sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
+                sesProps.setProperty("print.font", GUIGraphicsUtils.getDefaultPrinterFont());
 
                 ConfigureFactory.getInstance().saveSettings("dfltSessionProps", getConfigurationResource(), "");
             }
-
-            // Clone properties, so that each session has its own copy that can
-            // safely be overlaid with a theme.
-            sesProps = cloneProperties(dfltSessionProps);
 
         } catch (IOException ioe) {
             System.out.println("Information Message: Properties file is being " + "created for first time use:  File name "
@@ -365,25 +319,6 @@ public class SessionConfig {
         if (themeColorProperties == null || themeColorProperties.size() == 0) {
             initializeThemeColorProperties();
         }
-
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            setColorProperty(themeColorProperties, key);
-        }
-
-        return;
-    }
-
-    private Properties cloneProperties(Properties properties) {
-
-        Properties newProperties = new Properties();
-
-        Set<Entry<Object, Object>> enties = properties.entrySet();
-        for (Entry<Object, Object> entry : enties) {
-            newProperties.put(entry.getKey(), entry.getValue());
-        }
-
-        return newProperties;
     }
 
     /**
@@ -393,7 +328,7 @@ public class SessionConfig {
 
         String[] keys = ColorProperty.keys();
         for (String key : keys) {
-            themeColorProperties.put(key, dfltSessionProps.getProperty(key));
+            themeColorProperties.put(key, sesProps.getProperty(key));
         }
     }
 
@@ -411,106 +346,199 @@ public class SessionConfig {
         return false;
     }
 
-    private void setColorProperty(Properties colorProperties, String key) {
-
-        if (colorProperties.containsKey(key)) {
-            sesProps.setProperty(key, colorProperties.getProperty(key));
-        }
+    private boolean isThemeProperty(String prop) {
+        return sessionThemeEnabled && ColorProperty.isColorProperty(prop);
     }
 
     public boolean isPropertyExists(String prop) {
-        return sesProps.containsKey(prop);
+
+        if (isThemeProperty(prop)) {
+            return themeColorProperties.containsKey(prop);
+        } else {
+            return sesProps.containsKey(prop);
+        }
     }
 
     public String getStringProperty(String prop) {
 
-        if (sesProps.containsKey(prop)) {
-            return (String)sesProps.get(prop);
+        if (isPropertyExists(prop)) {
+            if (isThemeProperty(prop)) {
+                return (String)themeColorProperties.get(prop);
+            } else {
+                return (String)sesProps.get(prop);
+            }
         }
-        return "";
 
+        return "";
+    }
+
+    public void setProperty(String key, String value) {
+
+        if (key != null && value != null && value.equals(sesProps.getProperty(key))) {
+            return;
+        }
+
+        if (isThemeProperty(key)) {
+            System.out.println("==> SessionConfig.setProperty(THEME): (" + key + "=" + value + ")");
+            themeColorProperties.setProperty(key, value);
+            setThemePropertiesDirty(true);
+        } else {
+            System.out.println("==> SessionConfig.setProperty(SESSION): (" + key + "=" + value + ")");
+            sesProps.setProperty(key, value);
+            setSessionPropertiesDirty(true);
+        }
+    }
+
+    private boolean isThemePropertyDirty() {
+
+        if (sessionThemeEnabled && themeColorProperties.containsKey(IS_DIRTY_FLAG)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void setThemePropertiesDirty(boolean dirty) {
+
+        if (sessionThemeEnabled) {
+            if (dirty) {
+                System.out.println("*** Theme properties: DIRTY ***");
+                themeColorProperties.setProperty(IS_DIRTY_FLAG, "yes");
+            } else {
+                System.out.println("### Theme properties: UNCHANGED ###");
+                themeColorProperties.remove(IS_DIRTY_FLAG);
+            }
+        }
+    }
+
+    private boolean isSessionPropertyDirty() {
+
+        if (sesProps.containsKey(IS_DIRTY_FLAG)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void setSessionPropertiesDirty(boolean dirty) {
+
+        if (dirty) {
+            System.out.println("*** Session properties: DIRTY ***");
+            sesProps.setProperty(IS_DIRTY_FLAG, "yes");
+        } else {
+            System.out.println("### Session properties: UNCHANGED ###");
+            sesProps.remove(IS_DIRTY_FLAG);
+        }
     }
 
     public int getIntegerProperty(String prop) {
 
-        if (sesProps.containsKey(prop)) {
+        checkNonThemeProperty(prop);
+
+        return getIntegerPropertyNoChecked(prop);
+    }
+
+    private int getIntegerPropertyNoChecked(String prop) {
+
+        int intProp = 0;
+
+        if (isPropertyExists(prop)) {
+
             try {
-                int i = Integer.parseInt((String)sesProps.get(prop));
-                return i;
+                intProp = Integer.parseInt(getStringProperty(prop));
             } catch (NumberFormatException ne) {
-                return 0;
+                // ignore errors
             }
         }
-        return 0;
 
+        return intProp;
     }
 
-    public Color getColorProperty(String prop) {
+    public Rectangle getRectangleProperty(String prop) {
 
-        if (sesProps.containsKey(prop)) {
-            Color c = new Color(getIntegerProperty(prop));
-            return c;
-        }
-        return null;
-
-    }
-
-    public Rectangle getRectangleProperty(String key) {
+        checkNonThemeProperty(prop);
 
         Rectangle rectProp = new Rectangle();
 
-        if (sesProps.containsKey(key)) {
-            String rect = sesProps.getProperty(key);
-            StringTokenizer stringtokenizer = new StringTokenizer(rect, ",");
-            if (stringtokenizer.hasMoreTokens()) rectProp.x = Integer.parseInt(stringtokenizer.nextToken());
-            if (stringtokenizer.hasMoreTokens()) rectProp.y = Integer.parseInt(stringtokenizer.nextToken());
-            if (stringtokenizer.hasMoreTokens()) rectProp.width = Integer.parseInt(stringtokenizer.nextToken());
-            if (stringtokenizer.hasMoreTokens()) rectProp.height = Integer.parseInt(stringtokenizer.nextToken());
+        if (isPropertyExists(prop)) {
 
+            StringTokenizer stringtokenizer = new StringTokenizer(getStringProperty(prop), ",");
+            if (stringtokenizer.hasMoreTokens()) {
+                rectProp.x = Integer.parseInt(stringtokenizer.nextToken());
+            }
+
+            if (stringtokenizer.hasMoreTokens()) {
+                rectProp.y = Integer.parseInt(stringtokenizer.nextToken());
+            }
+
+            if (stringtokenizer.hasMoreTokens()) {
+                rectProp.width = Integer.parseInt(stringtokenizer.nextToken());
+            }
+
+            if (stringtokenizer.hasMoreTokens()) {
+                rectProp.height = Integer.parseInt(stringtokenizer.nextToken());
+            }
         }
 
         return rectProp;
-
     }
 
-    public void setRectangleProperty(String key, Rectangle rect) {
+    public void setRectangleProperty(String prop, Rectangle rect) {
+
+        checkNonThemeProperty(prop);
 
         String rectStr = rect.x + "," + rect.y + "," + rect.width + "," + rect.height;
-        sesProps.setProperty(key, rectStr);
+
+        setProperty(prop, rectStr);
     }
 
     public float getFloatProperty(String prop) {
 
-        if (sesProps.containsKey(prop)) {
-            float f = Float.parseFloat((String)sesProps.get(prop));
-            return f;
-        }
-        return 0.0f;
+        checkNonThemeProperty(prop);
 
-    }
+        float floatProp = 0.0f;
 
-    public boolean hasProperty(String key) {
-        return sesProps.containsKey(key);
-    }
-
-    public Object setProperty(String key, String value) {
-
-        if (key != null && value != null && value.equals(sesProps.getProperty(key))) {
-            return null;
+        if (isPropertyExists(prop)) {
+            floatProp = Float.parseFloat(getStringProperty(prop));
         }
 
-        System.out.println("==> SessionConfig.setProperty(): (" + key + "=" + value + ")");
-
-        setModified();
-
-        return sesProps.setProperty(key, value);
+        return floatProp;
     }
 
-    public Object removeProperty(String key) {
+    public Color getColorProperty(String prop) {
 
-        setModified();
+        Color colorProp = null;
 
-        return sesProps.remove(key);
+        if (isPropertyExists(prop)) {
+            colorProp = new Color(getIntegerPropertyNoChecked(prop));
+        }
+
+        return colorProp;
+    }
+
+    public Object removeProperty(String prop) {
+
+        checkNonColorProperty(prop);
+
+        if (isThemeProperty(prop)) {
+            return themeColorProperties.remove(prop);
+        } else {
+            return sesProps.remove(prop);
+        }
+    }
+
+    private void checkNonColorProperty(String prop) {
+
+        if (ColorProperty.isColorProperty(prop)) {
+            throw new IllegalArgumentException("Color properties are not allowed: " + prop);
+        }
+    }
+
+    private void checkNonThemeProperty(String prop) {
+
+        if (ColorProperty.isColorProperty(prop)) {
+            throw new IllegalArgumentException("Theme properties are not allowed: " + prop);
+        }
     }
 
     /**
