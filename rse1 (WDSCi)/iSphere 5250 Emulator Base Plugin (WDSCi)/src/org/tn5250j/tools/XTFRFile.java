@@ -843,39 +843,39 @@ public class XTFRFile extends TN5250jFrame implements ActionListener, FTPStatusL
 
         SessionConfig config = session.getSession().getConfiguration();
 
-        if (config.hasProperty("xtfr.fileName")) {
+        if (config.isPropertyExists("xtfr.fileName")) {
             props.setProperty("xtfr.fileName", config.getStringProperty("xtfr.fileName"));
         }
 
-        if (config.hasProperty("xtfr.user")) {
+        if (config.isPropertyExists("xtfr.user")) {
             props.setProperty("xtfr.user", config.getStringProperty("xtfr.user"));
         }
 
-        if (config.hasProperty("xtfr.useQuery")) {
+        if (config.isPropertyExists("xtfr.useQuery")) {
             props.setProperty("xtfr.useQuery", config.getStringProperty("xtfr.useQuery"));
         }
 
-        if (config.hasProperty("xtfr.queryStatement")) {
+        if (config.isPropertyExists("xtfr.queryStatement")) {
             props.setProperty("xtfr.queryStatement", config.getStringProperty("xtfr.queryStatement"));
         }
 
-        if (config.hasProperty("xtfr.allFields")) {
+        if (config.isPropertyExists("xtfr.allFields")) {
             props.setProperty("xtfr.allFields", config.getStringProperty("xtfr.allFields"));
         }
 
-        if (config.hasProperty("xtfr.txtDesc")) {
+        if (config.isPropertyExists("xtfr.txtDesc")) {
             props.setProperty("xtfr.txtDesc", config.getStringProperty("xtfr.txtDesc"));
         }
 
-        if (config.hasProperty("xtfr.fileFormat")) {
+        if (config.isPropertyExists("xtfr.fileFormat")) {
             props.setProperty("xtfr.fileFormat", config.getStringProperty("xtfr.fileFormat"));
         }
 
-        if (config.hasProperty("xtfr.localFile")) {
+        if (config.isPropertyExists("xtfr.localFile")) {
             props.setProperty("xtfr.localFile", config.getStringProperty("xtfr.localFile"));
         }
 
-        if (config.hasProperty("xtfr.decimalSeparator")) {
+        if (config.isPropertyExists("xtfr.decimalSeparator")) {
             props.setProperty("xtfr.decimalSeparator", config.getStringProperty("xtfr.decimalSeparator"));
         }
 

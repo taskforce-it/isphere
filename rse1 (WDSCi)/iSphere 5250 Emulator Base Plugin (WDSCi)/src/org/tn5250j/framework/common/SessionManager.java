@@ -20,17 +20,25 @@
  */
 package org.tn5250j.framework.common;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.Vector;
 
-import org.tn5250j.tools.logging.*;
+import org.tn5250j.Session5250;
+import org.tn5250j.SessionConfig;
+import org.tn5250j.SessionGUI;
+import org.tn5250j.TN5250jConstants;
+import org.tn5250j.event.SessionConfigEvent;
+import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.SessionManagerInterface;
-import org.tn5250j.*;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
 
 /**
  * The SessionManager is the central repository for access to all sessions. The
  * SessionManager contains a list of all Session objects available.
  */
-public class SessionManager implements SessionManagerInterface, TN5250jConstants {
+public class SessionManager implements SessionManagerInterface, SessionConfigListener {
 
     static private Sessions sessions;
     static private Vector configs;
@@ -91,20 +99,20 @@ public class SessionManager implements SessionManagerInterface, TN5250jConstants
 
     }
 
-    public Session5250 openSession(Properties sesProps, String configurationResource, String sessionName) {
-        return this.openSession(sesProps, configurationResource, sessionName, "");
+    public Session5250 openSession(Properties sesConnProps, String configurationResource, String sessionName) {
+        return this.openSession(sesConnProps, configurationResource, sessionName, "");
     }
 
-    public synchronized Session5250 openSession(Properties sesProps, String configurationResource, String sessionName, String sessionTheme) {
+    public synchronized Session5250 openSession(Properties sesConnProps, String configurationResource, String sessionName, String sessionTheme) {
 
         if (sessionName == null)
-            sesProps.put(SESSION_TERM_NAME, sesProps.getProperty(SESSION_HOST));
+            sesConnProps.put(TN5250jConstants.SESSION_TERM_NAME, sesConnProps.getProperty(TN5250jConstants.SESSION_HOST));
         else
-            sesProps.put(SESSION_TERM_NAME, sessionName);
+            sesConnProps.put(TN5250jConstants.SESSION_TERM_NAME, sessionName);
 
         if (configurationResource == null) configurationResource = "";
 
-        sesProps.put(SESSION_CONFIG_RESOURCE, configurationResource);
+        sesConnProps.put(TN5250jConstants.SESSION_CONFIG_RESOURCE, configurationResource);
 
         Enumeration e = configs.elements();
         SessionConfig useConfig = null;
@@ -117,15 +125,49 @@ public class SessionManager implements SessionManagerInterface, TN5250jConstants
         }
 
         if (useConfig == null) {
-
             useConfig = new SessionConfig(configurationResource, sessionName, sessionTheme);
+            useConfig.addSessionConfigListener(this);
             configs.add(useConfig);
         }
 
-        Session5250 newSession = new Session5250(sesProps, configurationResource, sessionName, useConfig);
+        Session5250 newSession = new Session5250(sesConnProps, configurationResource, sessionName, useConfig);
         sessions.addSession(newSession);
         return newSession;
 
+    }
+
+    /**
+     * Propagates the session attributes that have been changed for a session to
+     * all remaining sessions with a different theme. Color attributes are not
+     * propagated, because these properties are theme specific.
+     */
+    public void onConfigChanged(SessionConfigEvent changeEvent) {
+
+        if (this.equals(changeEvent.getSource())) {
+            return;
+        }
+
+        String sessionTheme = changeEvent.getSessionTheme();
+
+        System.out.println("SessionManager.onConfigChanged(): theme=" + sessionTheme);
+
+        String propertyName;
+        Object oldValue;
+        Object newValue;
+
+        Enumeration e = configs.elements();
+        while (e.hasMoreElements()) {
+            SessionConfig conf = (SessionConfig)e.nextElement();
+            if (!conf.getSessionTheme().equals(sessionTheme)) {
+
+                propertyName = changeEvent.getPropertyName();
+                oldValue = changeEvent.getOldValue();
+                newValue = changeEvent.getNewValue();
+
+                changeEvent = new SessionConfigEvent(this, propertyName, oldValue, newValue, sessionTheme);
+                conf.firePropertyChange(this, propertyName, oldValue, newValue);
+            }
+        }
     }
 
     /**
