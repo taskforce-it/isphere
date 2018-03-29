@@ -90,9 +90,6 @@ public interface TN5250jConstants {
     public static final String SESSION_HEART_BEAT = "SESSION_KEEP_ALIVE_ENABLED";
     public static final String SESSION_SSL_TYPE = "SESSION_SSL_TYPE";
 
-    // iSphere specific parameters
-    public static final String SESSION_THEME = "SESSION_THEME";
-
     // public static final String GUI_MDI_TYPE = "GUI_MDI_TYPE";
     public static final String GUI_FRAME_WIDTH = "GUI_FRAME_WIDTH";
     public static final String GUI_FRAME_HEIGHT = "GUI_FRAME_HEIGHT";

@@ -184,7 +184,7 @@ public class SessionAttributes extends JDialog {
 
     protected final String getStringProperty(String prop, String defaultValue) {
 
-        if (changes.hasProperty(prop)) {
+        if (changes.isPropertyExists(prop)) {
             String p = changes.getStringProperty(prop);
             if (p.length() > 0)
                 return p;

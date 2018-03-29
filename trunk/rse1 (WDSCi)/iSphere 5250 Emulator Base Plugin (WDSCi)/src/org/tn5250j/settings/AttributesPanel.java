@@ -25,12 +25,15 @@
  */
 package org.tn5250j.settings;
 
-import java.awt.*;
-import javax.swing.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Rectangle;
+import java.util.Properties;
 
-import org.tn5250j.tools.*;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+
 import org.tn5250j.SessionConfig;
+import org.tn5250j.tools.LangTool;
 
 /**
  * Base class for all attribute panels
@@ -55,10 +58,10 @@ public abstract class AttributesPanel extends JPanel {
 
     public AttributesPanel(SessionConfig config, String name, String prefix) {
         super();
-        
+
         this.changes = config;
         this.name = LangTool.getString(prefix + name);
-        
+
         // define layout
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
@@ -77,11 +80,7 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final String getStringProperty(String prop) {
 
-        if (changes.isPropertyExists(prop))
-            return changes.getStringProperty(prop);
-        else
-            return "";
-
+        return getStringProperty(prop, "");
     }
 
     protected final String getStringProperty(String prop, String defaultValue) {
@@ -105,18 +104,13 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final Color getColorProperty(String prop) {
 
-        if (changes.isPropertyExists(prop)) {
-            Color c = new Color(changes.getIntegerProperty(prop));
-            return c;
-        } else
-            return null;
-
+        return getColorProperty(prop, null);
     }
 
     protected Color getColorProperty(String prop, Color defColor) {
 
         if (changes.isPropertyExists(prop)) {
-            Color c = new Color(changes.getIntegerProperty(prop));
+            Color c = changes.getColorProperty(prop);
             return c;
         } else
             return defColor;
@@ -125,15 +119,7 @@ public abstract class AttributesPanel extends JPanel {
 
     protected final boolean getBooleanProperty(String prop) {
 
-        if (changes.isPropertyExists(prop)) {
-            String b = changes.getStringProperty(prop).toLowerCase();
-            if (b.equals("yes") || b.equals("true"))
-                return true;
-            else
-                return false;
-        } else
-            return false;
-
+        return getBooleanProperty(prop, false);
     }
 
     protected final boolean getBooleanProperty(String prop, boolean dflt) {
