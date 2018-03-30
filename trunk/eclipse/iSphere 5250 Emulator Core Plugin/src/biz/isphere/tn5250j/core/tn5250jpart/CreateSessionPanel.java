@@ -9,7 +9,6 @@
 package biz.isphere.tn5250j.core.tn5250jpart;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -104,14 +103,9 @@ public class CreateSessionPanel {
             protected JComponent createSwingComponent() {
 
                 JPanel panel = new JPanel(new BorderLayout());
-
                 panel.add(tn5250j.getSessionGUI());
 
-                EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        tn5250j.getSessionGUI().grabFocus();
-                    }
-                });
+                SetSessionFocus.run(tn5250j);
 
                 return panel;
 

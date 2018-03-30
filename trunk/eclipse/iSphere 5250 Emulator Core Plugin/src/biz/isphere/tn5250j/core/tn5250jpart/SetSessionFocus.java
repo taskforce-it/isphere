@@ -24,6 +24,16 @@ public class SetSessionFocus {
 
     private static UIJob grabFocusJob;
 
+    public static void run(TN5250JPanel tn5250j) {
+
+        if (grabFocusJob == null) {
+            grabFocusJob = new GrabFocusJob(tn5250j);
+            grabFocusJob.schedule();
+        } else {
+            System.out.println("** Grabbing focus already active (1) ***");
+        }
+    }
+
     public static void run(int majorSession, int minorSession, final ITN5250JPart tn5250jPart) {
         if (majorSession >= 0) {
             if (tn5250jPart instanceof IWorkbenchPart) {
@@ -58,9 +68,9 @@ public class SetSessionFocus {
                 // when RDi is started and the 5250 sessions view is visible.
                 if (grabFocusJob == null) {
                     grabFocusJob = new GrabFocusJob(tn5250j);
-                    grabFocusJob.schedule(100);
+                    grabFocusJob.schedule();
                 } else {
-                    System.out.println("** Grabbing focus already active ***");
+                    System.out.println("** Grabbing focus already active (2) ***");
                 }
 
                 if (tn5250jPart.isMultiSession()) {
@@ -82,19 +92,6 @@ public class SetSessionFocus {
                     }
                 }
             }
-        }
-    }
-
-    private static class GrabFocusRunnable implements Runnable {
-
-        private TN5250JPanel tn5250j;
-
-        public GrabFocusRunnable(TN5250JPanel tn5250j) {
-            this.tn5250j = tn5250j;
-        }
-
-        public void run() {
-            tn5250j.getSessionGUI().grabFocus();
         }
     }
 
