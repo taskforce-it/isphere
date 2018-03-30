@@ -125,7 +125,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
     public void requestFocus() {
 
         if (isRequestingFocus) {
-            System.out.println("Is already requesting focus ... leaving now.");
             return;
         }
 
