@@ -24,16 +24,6 @@ public class SetSessionFocus {
 
     private static UIJob grabFocusJob;
 
-    public static void run(TN5250JPanel tn5250j) {
-
-        if (grabFocusJob == null) {
-            grabFocusJob = new GrabFocusJob(tn5250j);
-            grabFocusJob.schedule();
-        } else {
-            System.out.println("** Grabbing focus already active (1) ***");
-        }
-    }
-
     public static void run(int majorSession, int minorSession, final ITN5250JPart tn5250jPart) {
         if (majorSession >= 0) {
             if (tn5250jPart instanceof IWorkbenchPart) {
