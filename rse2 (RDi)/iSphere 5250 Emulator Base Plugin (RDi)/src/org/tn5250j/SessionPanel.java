@@ -78,6 +78,8 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
     private static final long serialVersionUID = 1L;
 
+    private static Boolean isRequestingFocus = false;
+
     private boolean firstScreen;
     private char[] signonSave;
 
@@ -117,6 +119,29 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
         session.getConfiguration().addSessionConfigListener(this);
         session.addSessionListener(this);
+    }
+
+    @Override
+    public void requestFocus() {
+
+        if (isRequestingFocus) {
+            System.out.println("Is already requesting focus ... leaving now.");
+            return;
+        }
+
+        try {
+            setRequestingFocus(true);
+            super.requestFocus();
+        } finally {
+            setRequestingFocus(false);
+        }
+    }
+
+    private void setRequestingFocus(boolean active) {
+
+        synchronized (isRequestingFocus) {
+            isRequestingFocus = active;
+        }
     }
 
     // Component initialization
