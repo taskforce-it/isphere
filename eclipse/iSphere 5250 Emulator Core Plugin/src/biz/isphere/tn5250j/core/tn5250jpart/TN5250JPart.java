@@ -135,8 +135,8 @@ public class TN5250JPart {
 
                     if (arrayListTabItemTN5250J.size() == 1) {
                         dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
-                            new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
+                                IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
                     } else {
                         dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_sessions, null,
                             Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION,
@@ -253,8 +253,8 @@ public class TN5250JPart {
 
                     if (tn5250jPanel.getSession5250().isSignedOn()) {
                         MessageDialog dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
-                            new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                            Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
+                                IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
                         final int dialogResult = dialog.open();
                         if (dialogResult == 1) {
                             return;
@@ -369,12 +369,12 @@ public class TN5250JPart {
 
             if (arrayListTN5250JPanel.size() == 1) {
                 dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_session, null,
-                    Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION,
-                    new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                    Messages.The_session_is_signed_on_Do_you_really_want_to_close_the_session, MessageDialog.QUESTION, new String[] {
+                        IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
             } else {
                 dialog = new MessageDialog(workbenchPart.getSite().getShell(), Messages.Close_sessions, null,
-                    Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION,
-                    new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+                    Messages.There_s_at_least_one_signed_on_session_Do_you_really_want_to_close_the_sessions, MessageDialog.QUESTION, new String[] {
+                        IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
             }
 
             final int dialogResult = dialog.open();
