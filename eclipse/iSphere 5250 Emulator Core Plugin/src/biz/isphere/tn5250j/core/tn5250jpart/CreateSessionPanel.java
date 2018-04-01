@@ -108,7 +108,7 @@ public class CreateSessionPanel {
 
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
-                        tn5250j.getSessionGUI().grabFocus();
+                        tn5250j.getSessionGUI().getFocusForMe();
                     }
                 });
 
