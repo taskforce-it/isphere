@@ -78,8 +78,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
     private static final long serialVersionUID = 1L;
 
-    private static Boolean isRequestingFocus = false;
-
     private boolean firstScreen;
     private char[] signonSave;
 
@@ -119,28 +117,6 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
 
         session.getConfiguration().addSessionConfigListener(this);
         session.addSessionListener(this);
-    }
-
-    @Override
-    public void requestFocus() {
-
-        if (isRequestingFocus) {
-            return;
-        }
-
-        try {
-            setRequestingFocus(true);
-            super.requestFocus();
-        } finally {
-            setRequestingFocus(false);
-        }
-    }
-
-    private void setRequestingFocus(boolean active) {
-
-        synchronized (isRequestingFocus) {
-            isRequestingFocus = active;
-        }
     }
 
     // Component initialization
@@ -248,7 +224,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
         this.add(keyPad, BorderLayout.SOUTH);
         this.add(s, BorderLayout.CENTER);
 
-        this.requestFocus();
+        this.getFocusForMe();
         jumpEvent = new SessionJumpEvent(this);
 
         // check if double click sends enter
@@ -353,7 +329,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
     private boolean confirmTabClose() {
         boolean result = true;
         if (session.getConfiguration().isPropertyExists("confirmTabClose")) {
-            this.requestFocus();
+            this.getFocusForMe();
             final ConfirmTabCloseDialog tabclsdlg = new ConfirmTabCloseDialog(this);
             if (session.getConfiguration().getStringProperty("confirmTabClose").equals("Yes")) {
                 if (!tabclsdlg.show()) {
@@ -374,7 +350,7 @@ public class SessionPanel extends JPanel implements ComponentListener, ActionLis
     private boolean confirmSignOffClose() {
 
         if (sesConfig.isPropertyExists("confirmSignoff") && sesConfig.getStringProperty("confirmSignoff").equals("Yes")) {
-            this.requestFocus();
+            this.getFocusForMe();
             int result = JOptionPane.showConfirmDialog(this.getParent(), // the
                                                                          // parent
                                                                          // that
