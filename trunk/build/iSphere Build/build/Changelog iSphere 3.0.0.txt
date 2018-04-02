@@ -125,6 +125,9 @@ Changelog: iSphere 3.1.1.r
    views to extend existing filters.
  • Improved error checking of "Improved error checking of "Send 
    IBM i Message" dialog.".
+ • Fixed incorrect dependency between the "iSphere Compare Filters 
+   Feature" and the "org.eclipse.platform" feature that blocked
+   installing the compare filters feature in RDi 9.6.
 
 Changelog: iSphere 3.1.0.b011
 -----------------------------
