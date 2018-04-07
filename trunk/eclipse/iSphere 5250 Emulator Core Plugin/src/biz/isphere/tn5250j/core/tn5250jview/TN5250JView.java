@@ -69,7 +69,9 @@ public abstract class TN5250JView extends ViewPart implements ITN5250JPart, ISav
 
     @Override
     public void setFocus() {
-        tn5250jPart.setFocus();
+        // System.out.println("Setting focus on view: " +
+        // getClass().getSimpleName());
+        // tn5250jPart.setFocus();
     }
 
     @Override

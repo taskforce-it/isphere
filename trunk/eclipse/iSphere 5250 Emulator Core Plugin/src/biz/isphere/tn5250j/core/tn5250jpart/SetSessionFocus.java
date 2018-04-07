@@ -18,7 +18,6 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
-import org.tn5250j.SessionPanel;
 
 import biz.isphere.tn5250j.core.session.Session;
 
@@ -52,13 +51,12 @@ public class SetSessionFocus {
 
                 // Works fine, but 5250 sessions does not get focus when RDi
                 // starts.
-                EventQueue.invokeLater(new GrabFocusRunnable(tn5250j));
+                // EventQueue.invokeLater(new GrabFocusRunnable(tn5250j));
 
                 // Using a UIJob ensures that the 5250 sessions gets the focus
                 // when RDi is started and the 5250 sessions view is visible.
-                // GrabFocusJob grabFocusJob = new
-                // GrabFocusJob(tn5250j.getSessionGUI());
-                // grabFocusJob.schedule();
+                GrabFocusJob grabFocusJob = new GrabFocusJob(tn5250j);
+                grabFocusJob.schedule();
 
                 if (tn5250jPart.isMultiSession()) {
                     Session session = (Session)tabItem.getData(SessionTabData.SESSION);
@@ -91,23 +89,22 @@ public class SetSessionFocus {
         }
 
         public void run() {
-            System.out.println("SetSessionFocus:  running ...");
-            tn5250j.getSessionGUI().getFocusForMe();
+            tn5250j.getSessionGUI().grabFocus();
         }
     }
 
     private static class GrabFocusJob extends UIJob { // $NON-NLS-1$
 
-        private SessionPanel sessionPanel;
+        private TN5250JPanel tn5250j;
 
-        public GrabFocusJob(SessionPanel sessionPanel) {
+        public GrabFocusJob(TN5250JPanel tn5250j) {
             super("");
-            this.sessionPanel = sessionPanel;
+            this.tn5250j = tn5250j;
         }
 
         @Override
         public IStatus runInUIThread(IProgressMonitor arg0) {
-            sessionPanel.grabFocus();
+            EventQueue.invokeLater(new GrabFocusRunnable(tn5250j));
             return Status.OK_STATUS;
         }
     }
