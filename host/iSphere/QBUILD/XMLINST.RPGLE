@@ -366,6 +366,15 @@
       * Set variable &TGTRLS
      C                   callp     setVariable('tgtrls': TgtRls)
       *
+      * Set variable &XMLFILE
+     C                   callp     setVariable('xmlfile': ParseSrcFile)
+      *
+      * Set variable &XMLLIB
+     C                   callp     setVariable('xmllib': ParseSrcFile)
+      *
+      * Set variable &XMLMBR
+     C                   callp     setVariable('xmlmbr': ParseSrcFile)
+      *
       * Override Input file to uploaded text file
      C                   eval      bldexc = 'OVRDBF FILE(XMLINPUT) TOFILE(' +
      C                             %trimr(ParseSrcLib)+'/'+
@@ -1073,7 +1082,7 @@
          string = %replace(tmpKeyword + '(' + %trimR(i_value) + ')'
                            : i_string: x: l);
          Return string;
-      *
+
       /END-FREE
      P                 E
       *---------------------------------------------------------------------------------------------
