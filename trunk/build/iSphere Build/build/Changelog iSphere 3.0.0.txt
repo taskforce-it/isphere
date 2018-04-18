@@ -17,6 +17,8 @@ Changelog: iSphere 3.3.0.b001
  • Fixed NullPointerException in GUIGraphicsUtils.getApplicationIcons()
    when loading window title icons.
  • Fixed NullPointerException when creating a "XTFRFile" dialog in WDSCi.
+ • Updated STRPREPRC to v1.15.3 to fix RNX0100 (Length or start position 
+   is out of range for the string operation) in procedure replaceCmdKeyWord(). 
 
 Changelog: iSphere 3.2.5.r
 --------------------------
