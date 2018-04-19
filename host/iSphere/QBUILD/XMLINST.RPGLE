@@ -1102,9 +1102,9 @@
          endif;
 
          for i = 1 to fld_x;
-            if (uCase('&' + %trim(i_fldName)) = uCase(fld_name(fld_x)));
-               fld_value(fld_x) = i_value;
-               leave;
+            if (uCase('&' + %trim(i_fldName)) = uCase(fld_name(i)));
+               fld_value(i) = i_value;
+               return;
             endif;
          endfor;
 
