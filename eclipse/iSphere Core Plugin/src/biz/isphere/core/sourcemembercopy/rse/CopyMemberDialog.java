@@ -33,6 +33,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Text;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
@@ -147,6 +150,19 @@ public class CopyMemberDialog extends XDialog {
                     isValidated = false;
                     return;
                 }
+
+                AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+                int ccsid = system.getCcsid();
+
+                AS400Text as400Text37 = new AS400Text(3, 37);
+                byte[] bytes = as400Text37.toBytes("$@#");
+                AS400Text as400Text1141 = new AS400Text(3, 1141);
+                String extraNameCharacters = (String)as400Text1141.toObject(bytes);
+
+                if (extraNameCharacters == null) {
+
+                }
+                ;
 
                 if (!IBMiHostContributionsHandler.checkFile(connectionName, libraryName, fileName)) {
                     setErrorMessage(Messages.bind(Messages.File_A_not_found, fileName));
