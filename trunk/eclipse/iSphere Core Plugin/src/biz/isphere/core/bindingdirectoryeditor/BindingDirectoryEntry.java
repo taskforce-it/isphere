@@ -8,6 +8,8 @@
 
 package biz.isphere.core.bindingdirectoryeditor;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+
 public class BindingDirectoryEntry {
 
     private String connectionName;
@@ -30,6 +32,10 @@ public class BindingDirectoryEntry {
 
     public void setConnection(String connectionName) {
         this.connectionName = connectionName;
+    }
+
+    public int getCcsid() {
+        return IBMiHostContributionsHandler.getSystemCcsid(connectionName);
     }
 
     public String getLibrary() {

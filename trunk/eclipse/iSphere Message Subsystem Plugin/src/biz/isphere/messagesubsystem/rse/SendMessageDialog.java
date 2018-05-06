@@ -126,8 +126,8 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
         }
 
         this.sendMessageOptions = null;
-        this.nameValidator = Validator.getNameInstance();
-        this.libraryValidator = Validator.getLibraryNameInstance();
+        this.nameValidator = Validator.getNameInstance(Integer.valueOf(system.getCcsid()));
+        this.libraryValidator = Validator.getLibraryNameInstance(system.getCcsid());
         this.system = system;
 
         this.overWriteMessageType = null;

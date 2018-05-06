@@ -28,6 +28,7 @@ import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
@@ -180,7 +181,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     }
 
     private void debugPrint(String message) {
-        //        System.out.println(message);
+        // System.out.println(message);
     }
 
     /*
@@ -213,7 +214,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             isStarting = true;
 
             synchronized (syncObject) {
-                
+
                 // Start new message monitor
                 debugPrint("Subsystem: Starting message monitor thread ..."); //$NON-NLS-1$
                 pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
@@ -293,11 +294,11 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     }
 
     private SystemMessageObject createErrorMessage(Throwable e) {
-        
+
         SystemMessage msg = RSEUIPlugin.getPluginMessage("RSEO1012"); //$NON-NLS-1$
         msg.makeSubstitution(e.getMessage());
         SystemMessageObject msgObj = new SystemMessageObject(msg, 0, null);
-        
+
         return msgObj;
     }
 
@@ -309,6 +310,10 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
             return null;
         }
+    }
+
+    public int getCcsid() {
+        return IBMiHostContributionsHandler.getSystemCcsid(getHostAliasName());
     }
 
     public String getVendorAttribute(String key) {

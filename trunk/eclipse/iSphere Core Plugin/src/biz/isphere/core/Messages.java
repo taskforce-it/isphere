@@ -250,6 +250,8 @@ public class Messages extends NLS {
 
     public static String iSphere_library_colon;
 
+    public static String System_ccsid_colon;
+
     public static String Transfer_iSphere_library;
 
     public static String Host_colon;
@@ -1381,6 +1383,10 @@ public class Messages extends NLS {
     public static String Tooltip_Use_iSphere_connection_manager;
 
     public static String Invalid_version_number_A_The_version_number_does_not_match_the_pattern_B;
+
+    public static String Could_not_retrieve_field_description_of_field_C_of_file_B_A;
+
+    public static String Canceled_due_to_previous_error;
 
     /*
      * Warning messages

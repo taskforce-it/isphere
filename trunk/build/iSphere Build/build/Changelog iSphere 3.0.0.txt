@@ -6,6 +6,8 @@ Changelog: iSphere 3.3.0.b001
  • Changed 5250 settings dialog to check for changes when the dialog is
    closed.
  • Added default printer font to default 5250 configuration.
+ • Fixed problem that object names were not properly validated. Now
+   the system ccsid is taken into account when validating object names. 
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
  • Fixed NullPointerException, when the user attempts to open the popup

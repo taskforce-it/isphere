@@ -23,9 +23,9 @@ public interface IQueuedMessageSubsystem {
     public void setVendorAttribute(String key, String value);
 
     public boolean hasPendingRequest();
-    
+
     public void restartMessageMonitoring();
-    
+
     public void messageMonitorStarted(MonitoredMessageQueue messageQueue);
 
     public void messageMonitorStopped(MonitoredMessageQueue messageQueue);
@@ -33,4 +33,6 @@ public interface IQueuedMessageSubsystem {
     public boolean isMonitored(MessageQueue messageQueue);
 
     public void removedFromMonitoredMessageQueue(QueuedMessage queuedMessage);
+
+    public int getCcsid();
 }

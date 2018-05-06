@@ -77,7 +77,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         queuedMessageSubSystem = (IQueuedMessageSubsystem)getElement();
         monitoringAttributes = new MonitoringAttributes(queuedMessageSubSystem);
-        delegate = new QueuedMessageFilterStringEditPaneDelegate();
+        delegate = new QueuedMessageFilterStringEditPaneDelegate(queuedMessageSubSystem.getCcsid());
         controlsInError = new HashSet<Object>();
 
         CTabFolder tabFolder = new CTabFolder(parent, SWT.BORDER);
