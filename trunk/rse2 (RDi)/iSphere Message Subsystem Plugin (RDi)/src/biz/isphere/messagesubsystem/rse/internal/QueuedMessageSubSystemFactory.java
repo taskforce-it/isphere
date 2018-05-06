@@ -37,6 +37,11 @@ public class QueuedMessageSubSystemFactory extends SubSystemConfiguration {
     }
 
     public int getCurrentlySelectedSystemCcsid() {
+        /*
+         * Does not work, when Eclipse has been started and the first action is
+         * opening the context menu of a filter pool. In that case
+         * 'currentlySelectedConnection.getAliasName' is [null].
+         */
         return IBMiHostContributionsHandler.getSystemCcsid(currentlySelectedConnection.getAliasName());
     }
 
