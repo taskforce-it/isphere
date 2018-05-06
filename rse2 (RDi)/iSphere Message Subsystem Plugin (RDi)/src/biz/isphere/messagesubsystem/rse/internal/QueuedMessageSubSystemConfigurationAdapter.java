@@ -35,14 +35,12 @@ public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigu
     protected IAction[] getNewFilterPoolFilterActions(SystemMenuManager menu, IStructuredSelection selection, Shell shell, String menuGroup,
         ISubSystemConfiguration config, ISystemFilterPool selectedPool) {
 
-        QueuedMessageSubSystemFactory messageSubsystemFactory = (QueuedMessageSubSystemFactory)config;
-
         SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(config, selectedPool, shell);
         filterAction.setWizardPageTitle(Messages.Message_Filter);
         filterAction.setPage1Description(Messages.Create_a_new_filter_to_list_messages);
         filterAction.setType(Messages.Message_Filter);
         filterAction.setText(Messages.Message_Filter_Dots);
-        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, messageSubsystemFactory.getCurrentlySelectedSystemCcsid()));
+        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
 
         ISystemFilterPoolManager[] filterPoolManager = config.getSystemFilterPoolManagers();
         ISystemFilterPool[] poolsToSelectFrom = null;
@@ -65,12 +63,10 @@ public class QueuedMessageSubSystemConfigurationAdapter extends SubSystemConfigu
     @Override
     protected IAction getChangeFilterAction(ISubSystemConfiguration factory, ISystemFilter selectedFilter, Shell shell) {
 
-        QueuedMessageSubSystemFactory messageSubsystemFactory = (QueuedMessageSubSystemFactory)factory;
-
         SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(factory, selectedFilter, shell);
         selectedFilter.getType();
         action.setDialogTitle(Messages.Change_Message_Filter);
-        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, messageSubsystemFactory.getCurrentlySelectedSystemCcsid()));
+        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
 
         return action;
     }

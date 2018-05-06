@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.internal.Validator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
@@ -37,8 +36,6 @@ public class QueuedMessageFilterStringEditPaneDelegate {
 
     private static final String QUSRSYS = "QUSRSYS"; //$NON-NLS-1$
     private static final String ASTERISK = "*"; //$NON-NLS-1$
-
-    private int ccsid;
 
     private Combo messageQueueText;
     private Text libraryText;
@@ -51,8 +48,7 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     private Text textText;
     private Combo messageTypeCombo;
 
-    public QueuedMessageFilterStringEditPaneDelegate(int ccsid) {
-        this.ccsid = ccsid;
+    public QueuedMessageFilterStringEditPaneDelegate() {
     }
 
     public Control createContents(Composite composite_prompts) {
@@ -308,10 +304,11 @@ public class QueuedMessageFilterStringEditPaneDelegate {
                 return Messages.Message_queue_library_is_invalid_or_missing;
             }
 
-            // TODO: fix library name validator (pass CCSID) - DONE
-            if (!Validator.getLibraryNameInstance(new Integer(ccsid)).validate(library)) {
-                return Messages.Message_queue_library_is_invalid_or_missing;
-            }
+            // TODO: fix library name validator (pass CCSID)
+            // if (!Validator.getLibraryNameInstance(new
+            // Integer(ccsid)).validate(library)) {
+            // return Messages.Message_queue_library_is_invalid_or_missing;
+            // }
         }
 
         String fromUser = userText.getText();

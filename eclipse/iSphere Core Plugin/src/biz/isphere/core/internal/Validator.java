@@ -162,7 +162,7 @@ public class Validator {
     private String getExtraCharacters(Integer ccsid) {
 
         if (ccsid == null) {
-            return null;
+            throw new IllegalArgumentException("Parameter 'ccsid' must not be [null].");
         }
 
         if (ccsid.intValue() == 37) {
