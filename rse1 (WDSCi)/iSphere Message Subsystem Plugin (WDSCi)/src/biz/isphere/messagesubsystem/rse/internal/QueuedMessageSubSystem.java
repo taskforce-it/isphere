@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
 import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
@@ -323,6 +324,10 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
     public ISeriesSystemDataStore getISeriesSystem() {
         ISeriesSystemDataStore iSeriesSystemDataStore = (ISeriesSystemDataStore)getSystem();
         return iSeriesSystemDataStore;
+    }
+
+    public int getCcsid() {
+        return IBMiHostContributionsHandler.getSystemCcsid(getHostName());
     }
 
     public String getVendorAttribute(String key) {
