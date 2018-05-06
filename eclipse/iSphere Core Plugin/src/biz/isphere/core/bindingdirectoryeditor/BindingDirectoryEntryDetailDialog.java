@@ -34,15 +34,18 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
 
     private ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries;
 
+    private int ccsid;
+
     private BindingDirectoryEntryDetail _bindingDirectoryEntryDetail;
 
     public BindingDirectoryEntryDetailDialog(Shell parentShell, String level, int actionType, BindingDirectoryEntry _bindingDirectoryEntry,
-        ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries) {
+        ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries, int ccsid) {
         super(parentShell);
         this.level = level;
         this.actionType = actionType;
         this._bindingDirectoryEntry = _bindingDirectoryEntry;
         this._bindingDirectoryEntries = _bindingDirectoryEntries;
+        this.ccsid = ccsid;
     }
 
     @Override
@@ -50,7 +53,7 @@ public class BindingDirectoryEntryDetailDialog extends XDialog {
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout());
 
-        _bindingDirectoryEntryDetail = new BindingDirectoryEntryDetail(level, actionType, _bindingDirectoryEntry, _bindingDirectoryEntries);
+        _bindingDirectoryEntryDetail = new BindingDirectoryEntryDetail(level, actionType, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
         _bindingDirectoryEntryDetail.createContents(container);
 
         return container;

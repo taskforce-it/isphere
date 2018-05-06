@@ -37,6 +37,9 @@ public class QueuedMessageFilterStringEditPaneDelegate {
 
     private static final String QUSRSYS = "QUSRSYS"; //$NON-NLS-1$
     private static final String ASTERISK = "*"; //$NON-NLS-1$
+
+    private int ccsid;
+
     private Combo messageQueueText;
     private Text libraryText;
     private Text userText;
@@ -48,7 +51,8 @@ public class QueuedMessageFilterStringEditPaneDelegate {
     private Text textText;
     private Combo messageTypeCombo;
 
-    public QueuedMessageFilterStringEditPaneDelegate() {
+    public QueuedMessageFilterStringEditPaneDelegate(int ccsid) {
+        this.ccsid = ccsid;
     }
 
     public Control createContents(Composite composite_prompts) {
@@ -304,7 +308,8 @@ public class QueuedMessageFilterStringEditPaneDelegate {
                 return Messages.Message_queue_library_is_invalid_or_missing;
             }
 
-            if (!Validator.getLibraryNameInstance().validate(library)) {
+            // TODO: fix library name validator (pass CCSID) - DONE
+            if (!Validator.getLibraryNameInstance(new Integer(ccsid)).validate(library)) {
                 return Messages.Message_queue_library_is_invalid_or_missing;
             }
         }

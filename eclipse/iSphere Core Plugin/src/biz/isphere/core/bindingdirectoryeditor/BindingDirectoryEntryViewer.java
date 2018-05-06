@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Size;
@@ -55,6 +56,7 @@ public class BindingDirectoryEntryViewer {
     private String library;
     private String bindingDirectory;
     private String mode;
+    private int ccsid;
     private TableViewer _tableViewer;
     private Table _table;
     private Object[] selectedItems;
@@ -107,6 +109,7 @@ public class BindingDirectoryEntryViewer {
         this.library = library;
         this.bindingDirectory = bindingDirectory;
         this.mode = mode;
+        this.ccsid = IBMiHostContributionsHandler.getSystemCcsid(connectionName);
 
         _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory);
 
@@ -134,7 +137,7 @@ public class BindingDirectoryEntryViewer {
                     if (structuredSelection.getFirstElement() instanceof BindingDirectoryEntry) {
                         BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)structuredSelection.getFirstElement();
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
-                            DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, _bindingDirectoryEntries);
+                            DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                             uploadEntries();
                             _tableViewer.refresh();
@@ -283,7 +286,7 @@ public class BindingDirectoryEntryViewer {
                         BindingDirectoryEntry _bindingDirectoryEntry = new BindingDirectoryEntry();
                         _bindingDirectoryEntry.setConnection(connectionName);
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
-                            DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries);
+                            DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                             _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                             uploadEntries();
@@ -307,7 +310,7 @@ public class BindingDirectoryEntryViewer {
                             if (selectedItems[idx] instanceof BindingDirectoryEntry) {
 
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.CHANGE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries);
+                                    level, DialogActionTypes.CHANGE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                                     uploadEntries();
                                     _tableViewer.refresh();
@@ -340,7 +343,7 @@ public class BindingDirectoryEntryViewer {
                                 }
 
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.COPY, _bindingDirectoryEntry, _bindingDirectoryEntries);
+                                    level, DialogActionTypes.COPY, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                                     _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                                     uploadEntries();
@@ -365,7 +368,7 @@ public class BindingDirectoryEntryViewer {
                             if (selectedItems[idx] instanceof BindingDirectoryEntry) {
 
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.DELETE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries);
+                                    level, DialogActionTypes.DELETE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                                     _bindingDirectoryEntries.remove(selectedItems[idx]);
                                     uploadEntries();
@@ -390,7 +393,7 @@ public class BindingDirectoryEntryViewer {
                             if (selectedItems[idx] instanceof BindingDirectoryEntry) {
 
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.DISPLAY, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries);
+                                    level, DialogActionTypes.DISPLAY, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                                 }
 
@@ -409,7 +412,8 @@ public class BindingDirectoryEntryViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
 
-                        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory);
+                        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library,
+                            bindingDirectory);
 
                         _tableViewer.refresh();
 

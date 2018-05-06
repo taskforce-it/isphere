@@ -14,10 +14,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+
+import com.ibm.as400.access.AS400Text;
 
 public class Validator {
 
@@ -26,6 +30,10 @@ public class Validator {
     private static final String TYPE_CHAR = "*CHAR";
     private static final String TYPE_DATE = "*DATE";
     private static final String TYPE_TIME = "*TIME";
+
+    private static final String EXTRA_CHARACTERS_CCSID_37 = "$@#";
+
+    private Map<Integer, String> extraCharacters;
 
     private String type;
     private int length;
@@ -36,10 +44,12 @@ public class Validator {
     private boolean generic;
     private ArrayList<String> arrayListSpecialValues;
     private char[] charactersName1 = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-        'W', 'X', 'Y', 'Z', '$', '§', '#' };
+        'W', 'X', 'Y', 'Z' };
     private char[] charactersName2 = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-        'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '_', '$', '§', '#' };
+        'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '_' };
     private char[] charactersDec = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+    private AS400Text as400Text37;
+    private String extraCharactersCcsid;
     private SimpleDateFormat dateFormat1;
     private SimpleDateFormat dateFormat2;
     private SimpleDateFormat timeFormat1;
@@ -56,18 +66,20 @@ public class Validator {
         return validator;
     }
 
-    public static Validator getNameInstance() {
-        Validator validator = new Validator(TYPE_NAME);
+    public static Validator getNameInstance(Integer ccsid) {
+        Validator validator = new Validator(TYPE_NAME, ccsid);
         validator.setLength(10);
         return validator;
     }
 
-    public static Validator getLibraryNameInstance(String... specialValues) {
-        Validator validator = new Validator(TYPE_NAME);
+    public static Validator getLibraryNameInstance(Integer ccsid, String... specialValues) {
+        Validator validator = new Validator(TYPE_NAME, ccsid);
         validator.setLength(10);
         validator.setRestricted(false);
-        for (String specialValue : specialValues) {
-            validator.addSpecialValue(specialValue);
+        if (specialValues != null) {
+            for (String specialValue : specialValues) {
+                validator.addSpecialValue(specialValue);
+            }
         }
         return validator;
     }
@@ -104,6 +116,10 @@ public class Validator {
     }
 
     private Validator(String type) {
+        this(type, null);
+    }
+
+    private Validator(String type, Integer ccsid) {
         checkAndSetType(type);
         length = -1;
         precision = -1;
@@ -131,6 +147,45 @@ public class Validator {
         longValue = -1;
         date = null;
         time = null;
+        extraCharactersCcsid = getExtraCharacters(ccsid);
+    }
+
+    private boolean canValidateNameCharacters() {
+
+        if (extraCharactersCcsid != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String getExtraCharacters(Integer ccsid) {
+
+        if (ccsid == null) {
+            return null;
+        }
+
+        if (ccsid.intValue() == 37) {
+            return EXTRA_CHARACTERS_CCSID_37;
+        }
+
+        if (as400Text37 == null || ccsid.intValue() == 37) {
+            as400Text37 = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), 37);
+        }
+
+        if (extraCharacters == null) {
+            extraCharacters = new HashMap<Integer, String>();
+        }
+
+        String extraCharactersCcsid = extraCharacters.get(ccsid);
+        if (extraCharactersCcsid == null) {
+            byte[] bytes = as400Text37.toBytes(EXTRA_CHARACTERS_CCSID_37);
+            AS400Text textCcsid = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), ccsid.intValue());
+            extraCharactersCcsid = (String)textCcsid.toObject(bytes);
+            extraCharacters.put(ccsid, extraCharactersCcsid);
+        }
+
+        return extraCharactersCcsid;
     }
 
     private void checkAndSetType(String type) {
@@ -234,14 +289,17 @@ public class Validator {
                     return false;
                 }
             }
-            char character;
-            for (int idx = 0; idx < argument.length(); idx++) {
-                character = argument.charAt(idx);
-                if (idx == 0 && Arrays.binarySearch(charactersName1, character) < 0) {
-                    return false;
-                }
-                if (idx > 0 && Arrays.binarySearch(charactersName2, character) < 0) {
-                    return false;
+
+            if (canValidateNameCharacters()) {
+                char character;
+                for (int idx = 0; idx < argument.length(); idx++) {
+                    character = argument.charAt(idx);
+                    if (idx == 0 && (Arrays.binarySearch(charactersName1, character) < 0 && !isExtraCharacter(argument.substring(idx, idx + 1)))) {
+                        return false;
+                    }
+                    if (idx > 0 && (Arrays.binarySearch(charactersName2, character) < 0 && !isExtraCharacter(argument.substring(idx, idx + 1)))) {
+                        return false;
+                    }
                 }
             }
         } else if (type.equals(TYPE_DEC)) {
@@ -256,13 +314,12 @@ public class Validator {
             char character;
             for (int idx = 0; idx < argument.length(); idx++) {
                 character = argument.charAt(idx);
-                
                 if (idx == 0 && (character == '+' || character == '-')) {
                     if (character == '-' && !negativeValuesAllowed) {
                         return false;
                     }
                     continue;
-                } 
+                }
                 if (!(Character.isDigit(character) || character == '.')) {
                     return false;
                 }
@@ -333,6 +390,15 @@ public class Validator {
             }
         }
         return true;
+    }
+
+    private boolean isExtraCharacter(String character) {
+
+        if (extraCharactersCcsid.indexOf(character) >= 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public int getIntegerValue() {

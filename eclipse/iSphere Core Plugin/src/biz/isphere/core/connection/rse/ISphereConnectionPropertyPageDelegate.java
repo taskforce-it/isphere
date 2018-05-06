@@ -255,7 +255,8 @@ public class ISphereConnectionPropertyPageDelegate {
         buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
-        validatorLibrary = Validator.getLibraryNameInstance();
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorLibrary = Validator.getLibraryNameInstance(IBMiHostContributionsHandler.getSystemCcsid(connectionName));
 
     }
 

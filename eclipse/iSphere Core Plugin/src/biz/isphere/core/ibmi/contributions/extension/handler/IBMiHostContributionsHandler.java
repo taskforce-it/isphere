@@ -18,12 +18,12 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 
 public class IBMiHostContributionsHandler {
 
@@ -162,6 +162,16 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.getConnectionName(editor);
+    }
+
+    public static int getSystemCcsid(String connectionName) {
+
+        AS400 system = getSystem(connectionName);
+        if (system == null) {
+            return -1;
+        }
+
+        return system.getCcsid();
     }
 
     /**

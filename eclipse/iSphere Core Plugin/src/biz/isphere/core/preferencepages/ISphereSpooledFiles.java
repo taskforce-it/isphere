@@ -294,7 +294,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextLibrary.setLayoutData(createGroupLayoutData());
         textConversionTextLibrary.setTextLimit(10);
 
-        validatorConversionTextLibrary = Validator.getLibraryNameInstance();
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorConversionTextLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionTextCommand = new Label(groupConversionText, SWT.NONE);
         labelConversionTextCommand.setText(Messages.Command_colon);
@@ -397,7 +398,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLLibrary.setLayoutData(createGroupLayoutData());
         textConversionHTMLLibrary.setTextLimit(10);
 
-        validatorConversionHTMLLibrary = Validator.getLibraryNameInstance();
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorConversionHTMLLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionHTMLCommand = new Label(groupConversionHTML, SWT.NONE);
         labelConversionHTMLCommand.setText(Messages.Command_colon);
@@ -492,7 +494,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFLibrary.setLayoutData(createGroupLayoutData());
         textConversionPDFLibrary.setTextLimit(10);
 
-        validatorConversionPDFLibrary = Validator.getLibraryNameInstance();
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorConversionPDFLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionPDFCommand = new Label(groupConversionPDF, SWT.NONE);
         labelConversionPDFCommand.setText(Messages.Command_colon);
@@ -962,6 +965,10 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     }
 
     public void init(IWorkbench workbench) {
+    }
+
+    private int getDefaultSystemCcsid() {
+        return Preferences.getInstance().getSystemCcsid();
     }
 
 }

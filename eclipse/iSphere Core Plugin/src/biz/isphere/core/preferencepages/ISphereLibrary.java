@@ -53,6 +53,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Label textISphereLibraryVersion;
+    private Text textSystemCcsid;
     private Button buttonUpdateISphereLibraryVersion;
     private Button buttonTransfer;
     private Button chkboxUseISphereJdbc;
@@ -122,7 +123,16 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textISphereLibrary.setLayoutData(createTextLayoutData());
         textISphereLibrary.setTextLimit(10);
 
-        validatorLibrary = Validator.getLibraryNameInstance();
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
+
+        Label labelSystemCcsid = new Label(container, SWT.NONE);
+        labelSystemCcsid.setLayoutData(createLabelLayoutData());
+        labelSystemCcsid.setText(Messages.System_ccsid_colon);
+
+        textSystemCcsid = WidgetFactory.createDecimalText(container);
+        textSystemCcsid.setLayoutData(createTextLayoutData());
+        textSystemCcsid.setTextLimit(4);
 
         Label labelIShereLibraryVersion = new Label(container, SWT.NONE);
         labelIShereLibraryVersion.setLayoutData(createLabelLayoutData());
@@ -210,10 +220,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     protected void setStoreToValues() {
 
-        Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setHostName(textHostName.getText());
         Preferences.getInstance().setFtpPortNumber(
             IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance().setISphereLibrary(iSphereLibrary);
+        Preferences.getInstance().setSystemCcsid(IntHelper.tryParseInt(textSystemCcsid.getText(), Preferences.getInstance().getDefaultSystemCcsid()));
         Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
 
     }
@@ -223,7 +234,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         ISpherePlugin.getDefault();
         textHostName.setText(Preferences.getInstance().getHostName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getFtpPortNumber()));
-        iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
+        iSphereLibrary = Preferences.getInstance().getISphereLibrary();
+        textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getSystemCcsid()));
         chkboxUseISphereJdbc.setSelection(Preferences.getInstance().isISphereJdbcConnectionManager());
 
         setScreenValues();
@@ -234,6 +246,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textHostName.setText(Preferences.getInstance().getDefaultHostName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
+        textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getDefaultSystemCcsid()));
         chkboxUseISphereJdbc.setSelection(Preferences.getInstance().getDefaultUseISphereJdbcConnectionManager());
 
         setScreenValues();
@@ -313,5 +326,9 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         } catch (Throwable e) {
             return null;
         }
+    }
+
+    private int getDefaultSystemCcsid() {
+        return Preferences.getInstance().getSystemCcsid();
     }
 }

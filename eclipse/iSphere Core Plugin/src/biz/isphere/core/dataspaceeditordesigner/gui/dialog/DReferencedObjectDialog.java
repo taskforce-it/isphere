@@ -19,6 +19,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.DTemplateReferencedObject;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.preferences.Preferences;
 
 public class DReferencedObjectDialog extends AbstractDialog {
 
@@ -60,7 +61,8 @@ public class DReferencedObjectDialog extends AbstractDialog {
             }
         });
 
-        nameValidator = Validator.getNameInstance();
+        // TODO: fix name validator (pass CCSID) - DONE
+        nameValidator = Validator.getNameInstance(getDefaultSystemCcsid());
 
         // Library
         textLibrary = createNameField(parent, Messages.Library_colon);
@@ -72,7 +74,8 @@ public class DReferencedObjectDialog extends AbstractDialog {
             }
         });
 
-        libraryValidator = Validator.getLibraryNameInstance(ISeries.SPCVAL_LIBL);
+        // TODO: fix library name validator (pass CCSID) - DONE
+        libraryValidator = Validator.getLibraryNameInstance(getDefaultSystemCcsid(), ISeries.SPCVAL_LIBL);
     }
 
     public DTemplateReferencedObject getReferencedObject() {
@@ -123,5 +126,9 @@ public class DReferencedObjectDialog extends AbstractDialog {
         String name = textName.getText();
         String library = textLibrary.getText();
         referencedObject = new DTemplateReferencedObject(name, library, type);
+    }
+
+    private int getDefaultSystemCcsid() {
+        return Preferences.getInstance().getSystemCcsid();
     }
 }

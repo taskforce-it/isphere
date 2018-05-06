@@ -70,6 +70,23 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return copyMemberItem;
     }
 
+    public int getFromConnectionCcsid() {
+        return getSystemCcsid(fromConnectionName);
+    }
+
+    public int getToConnectionCcsid() {
+        return getSystemCcsid(toConnectionName);
+    }
+
+    private int getSystemCcsid(String connectionName) {
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (system != null) {
+            return system.getCcsid();
+        }
+
+        return -1;
+    }
+
     public String getFromConnectionName() {
         return fromConnectionName;
     }
@@ -194,6 +211,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         try {
 
             hasDataLostError = false;
+            boolean isSeriousError = false;
 
             AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
             AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
@@ -205,6 +223,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
 
             for (CopyMemberItem member : members) {
                 if (member.isCopied()) {
+                    continue;
+                }
+
+                if (isSeriousError) {
+                    member.setErrorMessage(Messages.Canceled_due_to_previous_error);
                     continue;
                 }
 
@@ -234,12 +257,27 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
                     RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
 
                     FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
-                    FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
-
-                    if (fromSrcDta.getLength() > toSrcDta.getLength()) {
-                        member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
-                        hasDataLostError = true;
+                    if (fromSrcDta == null) {
+                        member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A, new String[] {
+                            member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
                         isError = true;
+                        isSeriousError = true;
+                    } else {
+
+                        FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
+                        if (toSrcDta == null) {
+                            member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A, new String[] {
+                                member.getToFile(), member.getToLibrary(), "SRCDTA" }));
+                            isError = true;
+                            isSeriousError = true;
+                        } else {
+
+                            if (fromSrcDta.getLength() > toSrcDta.getLength()) {
+                                member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
+                                hasDataLostError = true;
+                                isError = true;
+                            }
+                        }
                     }
                 }
 

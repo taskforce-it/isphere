@@ -36,6 +36,7 @@ public class BindingDirectoryEntryDetail {
     private int actionType;
     private BindingDirectoryEntry _bindingDirectoryEntry;
     private ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries;
+    private int ccsid;
     private Combo comboLibrary;
     private Text textObject;
     private Combo comboObjectType;
@@ -47,11 +48,12 @@ public class BindingDirectoryEntryDetail {
     private StatusLineManager statusLineManager;
 
     public BindingDirectoryEntryDetail(String level, int actionType, BindingDirectoryEntry _bindingDirectoryEntry,
-        ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries) {
+        ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries, int ccsid) {
         this.level = level;
         this.actionType = actionType;
         this._bindingDirectoryEntry = _bindingDirectoryEntry;
         this._bindingDirectoryEntries = _bindingDirectoryEntries;
+        this.ccsid = ccsid;
     }
 
     /**
@@ -101,7 +103,8 @@ public class BindingDirectoryEntryDetail {
             comboLibrary.setEnabled(false);
         }
 
-        validatorLibrary = Validator.getLibraryNameInstance(ISeries.SPCVAL_LIBL);
+        // TODO: fix library name validator (pass CCSID) - DONE
+        validatorLibrary = Validator.getLibraryNameInstance(ccsid, ISeries.SPCVAL_LIBL);
 
         // Object
 
@@ -121,7 +124,8 @@ public class BindingDirectoryEntryDetail {
             textObject.setEnabled(false);
         }
 
-        validatorObject = Validator.getNameInstance();
+        // TODO: fix name validator (pass CCSID) - DONE
+        validatorObject = Validator.getNameInstance(ccsid);
 
         // Object type
 

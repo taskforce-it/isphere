@@ -22,6 +22,7 @@ import org.eclipse.rse.core.subsystems.IConnectorService;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.SubSystemConfiguration;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
@@ -33,6 +34,10 @@ public class QueuedMessageSubSystemFactory extends SubSystemConfiguration {
 
     public QueuedMessageSubSystemFactory() {
         super();
+    }
+
+    public int getCurrentlySelectedSystemCcsid() {
+        return IBMiHostContributionsHandler.getSystemCcsid(currentlySelectedConnection.getAliasName());
     }
 
     @Override

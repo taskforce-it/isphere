@@ -121,6 +121,8 @@ public final class Preferences {
 
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
+    private static final String SYSTEM_CCSID = DOMAIN + "SYSTEM_CCSID"; //$NON-NLS-1$
+
     private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String SEARCH_FOR_BETA_VERSIONS = DOMAIN + "SEARCH_FOR_BETA_VERSIONS"; //$NON-NLS-1$
@@ -261,6 +263,10 @@ public final class Preferences {
 
     public int getFtpPortNumber() {
         return preferenceStore.getInt(FTP_PORT_NUMBER);
+    }
+
+    public int getSystemCcsid() {
+        return preferenceStore.getInt(SYSTEM_CCSID);
     }
 
     public boolean isSearchForUpdates() {
@@ -545,6 +551,10 @@ public final class Preferences {
         preferenceStore.setValue(FTP_PORT_NUMBER, aPortNumber);
     }
 
+    public void setSystemCcsid(int ccsid) {
+        preferenceStore.setValue(SYSTEM_CCSID, ccsid);
+    }
+
     public void setSearchForUpdates(boolean aSearchForUpdates) {
         preferenceStore.setValue(SEARCH_FOR_UPDATES, aSearchForUpdates);
     }
@@ -759,6 +769,7 @@ public final class Preferences {
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
+        preferenceStore.setDefault(SYSTEM_CCSID, getDefaultSystemCcsid());
 
         preferenceStore.setDefault(SEARCH_FOR_UPDATES, getDefaultSearchForUpdates());
         preferenceStore.setDefault(SEARCH_FOR_BETA_VERSIONS, getDefaultSearchForBetaVersions());
@@ -852,6 +863,16 @@ public final class Preferences {
      */
     public int getDefaultFtpPortNumber() {
         return 21;
+    }
+
+    /**
+     * Returns the default system ccsid.
+     * 
+     * @return default system ccsid
+     */
+    public int getDefaultSystemCcsid() {
+        // return com.ibm.as400.access.NLS.localeToCCSID(Locale.getDefault());
+        return 273; // keep backward compatibility to previous releases
     }
 
     /**
@@ -1404,9 +1425,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put("*QUALIFIED",
-            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
-                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

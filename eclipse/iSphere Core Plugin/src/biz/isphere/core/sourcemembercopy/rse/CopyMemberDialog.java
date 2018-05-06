@@ -33,9 +33,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Text;
-
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
@@ -62,8 +59,6 @@ public class CopyMemberDialog extends XDialog {
     private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
 
-    private Validator nameValidator;
-
     private boolean isValidated;
     private boolean isExecuted;
 
@@ -79,8 +74,6 @@ public class CopyMemberDialog extends XDialog {
 
     public CopyMemberDialog(Shell parentShell) {
         super(parentShell);
-
-        nameValidator = Validator.getNameInstance();
     }
 
     public void setContent(CopyMemberService jobDescription) {
@@ -98,17 +91,21 @@ public class CopyMemberDialog extends XDialog {
         setErrorMessage(null);
         mainArea.update();
 
-        setStatusMessage(Messages.Validating_dots);
-        if (!validateUserInput()) {
-            return;
-        }
+        try {
 
-        setStatusMessage(Messages.Copying_dots);
-        if (!executeCopyOperations()) {
-            return;
-        }
+            setStatusMessage(Messages.Validating_dots);
+            if (!validateUserInput()) {
+                return;
+            }
 
-        setStatusMessage(Messages.EMPTY);
+            setStatusMessage(Messages.Copying_dots);
+            if (!executeCopyOperations()) {
+                return;
+            }
+
+        } finally {
+            setStatusMessage(Messages.EMPTY);
+        }
 
         // super.okPressed();
     }
@@ -126,6 +123,9 @@ public class CopyMemberDialog extends XDialog {
         Runnable validator = new Runnable() {
 
             public void run() {
+
+                // TODO: fix library name validator (pass CCSID) - DONE
+                Validator nameValidator = Validator.getNameInstance(jobDescription.getToConnectionCcsid());
 
                 String fileName = getFileName();
                 if (!nameValidator.validate(fileName)) {
@@ -150,19 +150,6 @@ public class CopyMemberDialog extends XDialog {
                     isValidated = false;
                     return;
                 }
-
-                AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-                int ccsid = system.getCcsid();
-
-                AS400Text as400Text37 = new AS400Text(3, 37);
-                byte[] bytes = as400Text37.toBytes("$@#");
-                AS400Text as400Text1141 = new AS400Text(3, 1141);
-                String extraNameCharacters = (String)as400Text1141.toObject(bytes);
-
-                if (extraNameCharacters == null) {
-
-                }
-                ;
 
                 if (!IBMiHostContributionsHandler.checkFile(connectionName, libraryName, fileName)) {
                     setErrorMessage(Messages.bind(Messages.File_A_not_found, fileName));
