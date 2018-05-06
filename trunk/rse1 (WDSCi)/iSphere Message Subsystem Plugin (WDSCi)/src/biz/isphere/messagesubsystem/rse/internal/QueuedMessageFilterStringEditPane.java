@@ -32,10 +32,10 @@ public class QueuedMessageFilterStringEditPane extends SystemFilterStringEditPan
 
     private QueuedMessageFilterStringEditPaneDelegate delegate;
 
-    public QueuedMessageFilterStringEditPane(Shell shell, int ccsid) {
+    public QueuedMessageFilterStringEditPane(Shell shell) {
         super(shell);
 
-        delegate = new QueuedMessageFilterStringEditPaneDelegate(ccsid);
+        delegate = new QueuedMessageFilterStringEditPaneDelegate();
     }
 
     @Override
