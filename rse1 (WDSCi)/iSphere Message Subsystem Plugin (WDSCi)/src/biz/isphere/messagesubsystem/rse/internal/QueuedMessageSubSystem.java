@@ -327,7 +327,7 @@ public class QueuedMessageSubSystem extends DefaultSubSystemImpl implements IISe
     }
 
     public int getCcsid() {
-        return IBMiHostContributionsHandler.getSystemCcsid(getHostName());
+        return IBMiHostContributionsHandler.getSystemCcsid(getSystemConnectionName());
     }
 
     public String getVendorAttribute(String key) {

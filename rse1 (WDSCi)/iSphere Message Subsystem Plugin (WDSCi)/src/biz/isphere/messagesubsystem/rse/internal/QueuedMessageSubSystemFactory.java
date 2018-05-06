@@ -27,10 +27,12 @@ import com.ibm.etools.systems.dftsubsystem.impl.DefaultSubSystemFactoryImpl;
 import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterPool;
 import com.ibm.etools.systems.filters.SystemFilterPoolManager;
+import com.ibm.etools.systems.filters.SystemFilterPoolReference;
 import com.ibm.etools.systems.filters.ui.actions.SystemChangeFilterAction;
 import com.ibm.etools.systems.filters.ui.actions.SystemNewFilterAction;
 import com.ibm.etools.systems.model.SystemConnection;
 import com.ibm.etools.systems.subsystems.SubSystem;
+import com.ibm.etools.systems.subsystems.SubSystemHelpers;
 
 public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
@@ -86,14 +88,17 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     @Override
     protected IAction[] getNewFilterPoolFilterActions(SystemFilterPool selectedPool, Shell shell) {
+
         SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);
         filterAction.setWizardPageTitle(Messages.Message_Filter);
         filterAction.setPage1Description(Messages.Create_a_new_filter_to_list_messages);
         filterAction.setType(Messages.Message_Filter);
         filterAction.setText(Messages.Message_Filter_Dots);
-        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, getCurrentlySelectedSystemCcsid()));
+        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
+        
         IAction[] actions = new IAction[1];
         actions[0] = filterAction;
+        
         return actions;
     }
 
@@ -101,8 +106,13 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
     protected IAction getChangeFilterAction(SystemFilter selectedFilter, Shell shell) {
         SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(selectedFilter, shell);
         action.setDialogTitle(Messages.Change_Message_Filter);
-        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, getCurrentlySelectedSystemCcsid()));
+        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
         return action;
+    }
+    
+    @Override
+    public void setConnection(SystemConnection arg0) {
+        super.setConnection(arg0);
     }
 
     @Override
