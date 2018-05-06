@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin;
 import biz.isphere.messagesubsystem.rse.Messages;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
@@ -37,6 +38,10 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
 
     public QueuedMessageSubSystemFactory() {
         super();
+    }
+
+    public int getCurrentlySelectedSystemCcsid() {
+        return IBMiHostContributionsHandler.getSystemCcsid(currentlySelectedConnection.getAliasName());
     }
 
     @Override
@@ -86,7 +91,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
         filterAction.setPage1Description(Messages.Create_a_new_filter_to_list_messages);
         filterAction.setType(Messages.Message_Filter);
         filterAction.setText(Messages.Message_Filter_Dots);
-        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
+        filterAction.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, getCurrentlySelectedSystemCcsid()));
         IAction[] actions = new IAction[1];
         actions[0] = filterAction;
         return actions;
@@ -96,7 +101,7 @@ public class QueuedMessageSubSystemFactory extends DefaultSubSystemFactoryImpl {
     protected IAction getChangeFilterAction(SystemFilter selectedFilter, Shell shell) {
         SystemChangeFilterAction action = (SystemChangeFilterAction)super.getChangeFilterAction(selectedFilter, shell);
         action.setDialogTitle(Messages.Change_Message_Filter);
-        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell));
+        action.setFilterStringEditPane(new QueuedMessageFilterStringEditPane(shell, getCurrentlySelectedSystemCcsid()));
         return action;
     }
 
