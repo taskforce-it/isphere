@@ -1388,6 +1388,10 @@ public class Messages extends NLS {
 
     public static String Canceled_due_to_previous_error;
 
+    public static String Ignore_changes_left;
+
+    public static String Ignore_changes_right;
+
     /*
      * Warning messages
      */

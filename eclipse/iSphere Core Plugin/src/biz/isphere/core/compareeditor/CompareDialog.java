@@ -61,6 +61,8 @@ public abstract class CompareDialog extends XDialog {
     private Button browseButton;
     private Button dontIgnoreCaseButton;
     private Button ignoreCaseButton;
+    private Button ignoreChangesLeftCheckbox;
+    private Button ignoreChangesRightCheckbox;
     private Button dontConsiderDateButton;
     private Button considerDateButton;
     private Button twoWayButton;
@@ -70,6 +72,8 @@ public abstract class CompareDialog extends XDialog {
     private boolean editable;
     private boolean considerDate;
     private boolean ignoreCase;
+    private boolean ignoreChangesLeft;
+    private boolean ignoreChangesRight;
     private boolean isThreeWay;
     private boolean hasLeftMember;
     private boolean hasRightMember;
@@ -300,6 +304,24 @@ public abstract class CompareDialog extends XDialog {
             }
         });
 
+        if (isThreeWay || !hasRightMember()) {
+            
+            Composite ignoreChangesGroup = new Composite(modeGroup, SWT.NONE);
+            GridLayout ignoreChangesLayout = new GridLayout(2, true);
+            ignoreChangesGroup.setLayout(ignoreChangesLayout);
+            ignoreChangesGroup.setLayoutData(getGridData());
+
+            ignoreChangesLeftCheckbox = WidgetFactory.createCheckbox(ignoreChangesGroup);
+            ignoreChangesLeftCheckbox.setText(Messages.Ignore_changes_left);
+            ignoreChangesLeftCheckbox.setLayoutData(getGridData());
+            ignoreChangesLeftCheckbox.setSelection(false);
+
+            ignoreChangesRightCheckbox = WidgetFactory.createCheckbox(ignoreChangesGroup);
+            ignoreChangesRightCheckbox.setText(Messages.Ignore_changes_right);
+            ignoreChangesRightCheckbox.setLayoutData(getGridData());
+            ignoreChangesRightCheckbox.setSelection(false);
+        }
+        
         if (!hasRightMember()) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
@@ -312,11 +334,19 @@ public abstract class CompareDialog extends XDialog {
             twoWayButton.setLayoutData(getGridData());
             if (!isThreeWay()) {
                 twoWayButton.setSelection(true);
+                ignoreChangesLeftCheckbox.setSelection(false);
+                ignoreChangesLeftCheckbox.setVisible(false);
+                ignoreChangesRightCheckbox.setSelection(false);
+                ignoreChangesRightCheckbox.setVisible(false);
             }
             twoWayButton.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
                     isThreeWay = false;
+                    ignoreChangesLeftCheckbox.setSelection(false);
+                    ignoreChangesLeftCheckbox.setVisible(false);
+                    ignoreChangesRightCheckbox.setSelection(false);
+                    ignoreChangesRightCheckbox.setVisible(false);
                     setAncestorVisible(false);
                     okButton.setEnabled(canFinish());
                 }
@@ -327,11 +357,19 @@ public abstract class CompareDialog extends XDialog {
             threeWayButton.setLayoutData(getGridData());
             if (isThreeWay()) {
                 threeWayButton.setSelection(true);
+                ignoreChangesLeftCheckbox.setSelection(false);
+                ignoreChangesLeftCheckbox.setVisible(true);
+                ignoreChangesRightCheckbox.setSelection(false);
+                ignoreChangesRightCheckbox.setVisible(true);
             }
             threeWayButton.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent event) {
                     isThreeWay = true;
+                    ignoreChangesLeftCheckbox.setSelection(false);
+                    ignoreChangesLeftCheckbox.setVisible(true);
+                    ignoreChangesRightCheckbox.setSelection(false);
+                    ignoreChangesRightCheckbox.setVisible(true);
                     setAncestorVisible(true);
                     okButton.setEnabled(canFinish());
                 }
@@ -435,6 +473,20 @@ public abstract class CompareDialog extends XDialog {
 
         ignoreCase = ignoreCaseButton.getSelection();
 
+        if (ignoreChangesLeftCheckbox == null) {
+            ignoreChangesLeft = false;
+        }
+        else {
+            ignoreChangesLeft = ignoreChangesLeftCheckbox.getSelection();
+        }
+
+        if (ignoreChangesRightCheckbox == null) {
+            ignoreChangesRight = false;
+        }
+        else {
+            ignoreChangesRight = ignoreChangesRightCheckbox.getSelection();
+        }
+        
         if (!hasRightMember()) {
             isThreeWay = threeWayButton.getSelection();
         }
@@ -666,6 +718,14 @@ public abstract class CompareDialog extends XDialog {
         return ignoreCase;
     }
 
+    public boolean isIgnoreChangesLeft() {
+        return ignoreChangesLeft;
+    }
+
+    public boolean isIgnoreChangesRight() {
+        return ignoreChangesRight;
+    }
+
     public boolean isThreeWay() {
         return isThreeWay;
     }
@@ -695,8 +755,13 @@ public abstract class CompareDialog extends XDialog {
         }
 
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
+        
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
 
+        ignoreChangesLeft = false;
+
+        ignoreChangesRight = false;
+        
         if (selectEditable) {
             if (!isEditable() || isIgnoreCase()) {
                 browseButton.setSelection(true);
@@ -728,7 +793,7 @@ public abstract class CompareDialog extends XDialog {
             dontIgnoreCaseButton.setSelection(false);
             ignoreCaseButton.setSelection(true);
         }
-
+        
     }
 
     protected void storeScreenValues() {

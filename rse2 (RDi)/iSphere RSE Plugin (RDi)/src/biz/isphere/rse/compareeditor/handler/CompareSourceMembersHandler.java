@@ -71,6 +71,8 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
             boolean editable = dialog.isEditable();
             boolean considerDate = dialog.isConsiderDate();
             boolean ignoreCase = dialog.isIgnoreCase();
+            boolean ignoreChangesLeft = dialog.isIgnoreChangesLeft();
+            boolean ignoreChangesRight = dialog.isIgnoreChangesRight();
             boolean threeWay = dialog.isThreeWay();
 
             RSEMember rseAncestorMember = null;
@@ -83,6 +85,8 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
             cc.setRightEditable(false);
             cc.setConsiderDate(considerDate);
             cc.setIgnoreCase(ignoreCase);
+            cc.setIgnoreChangesLeft(ignoreChangesLeft);
+            cc.setIgnoreChangesRight(ignoreChangesRight);
             cc.setThreeWay(threeWay);
             cc.setDropSequenceNumbersAndDateFields(!hasSequenceNumbersAndDateFields(selectedMembers));
 

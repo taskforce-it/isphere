@@ -46,7 +46,7 @@ public class CompareAction {
     private String editorTitle;
     private CompareInput fInput;
 
-    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons. With CMOne NG 5.1.8 and higher this constructor will NO LONGER be used. In July 2019 this constructor can be removed.")
     public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
         
@@ -70,6 +70,8 @@ public class CompareAction {
         cc.setRightEditable(false);
         cc.setConsiderDate(considerDate);
         cc.setIgnoreCase(false);
+        cc.setIgnoreChangesLeft(false);
+        cc.setIgnoreChangesRight(false);
         cc.setThreeWay(threeWay);
         cc.setDropSequenceNumbersAndDateFields(!sequenceNumbersAndDateFields);
         
@@ -80,6 +82,7 @@ public class CompareAction {
 
     }
 
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons. With CMOne NG 5.1.8 and higher this constructor will be used.")
     public CompareAction(CompareEditorConfiguration compareConfiguration, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
         this.cc = compareConfiguration;
