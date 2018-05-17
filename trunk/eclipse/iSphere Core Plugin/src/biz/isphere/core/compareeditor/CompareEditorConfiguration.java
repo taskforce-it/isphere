@@ -9,6 +9,7 @@
 package biz.isphere.core.compareeditor;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.rangedifferencer.RangeDifference;
 
 import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
 
@@ -22,6 +23,10 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     private static String IGNORE_CASE = "biz.isphere.core.compareeditor.ignoreCase"; //$NON-NLS-1$
 
+    private static String IGNORE_CHANGES_LEFT = "biz.isphere.core.compareeditor.ignoreChangesLeft"; //$NON-NLS-1$
+
+    private static String IGNORE_CHANGES_RIGHT = "biz.isphere.core.compareeditor.ignoreChangesRight"; //$NON-NLS-1$
+
     private static String THREE_WAY = "biz.isphere.core.compareeditor.threeWay"; //$NON-NLS-1$
 
     private static String SEQUENCE_NUMBERS_AND_DATE_FIELDS = "biz.isphere.core.compareeditor.sequenceNumbersAndDates"; //$NON-NLS-1$
@@ -30,6 +35,8 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     public CompareEditorConfiguration() {
         setIgnoreCase(false);
+        setIgnoreChangesLeft(false);
+        setIgnoreChangesRight(false);
         setConsiderDate(false);
         setThreeWay(false);
         setLeftEditable(false);
@@ -46,6 +53,24 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     public void setIgnoreCase(boolean anIgnoreCase) {
         setProperty(IGNORE_CASE, anIgnoreCase);
+    }
+
+    public boolean isIgnoreChangesLeft() {
+        return ((Boolean)getProperty(IGNORE_CHANGES_LEFT)).booleanValue();
+    }
+
+    public void setIgnoreChangesLeft(boolean anIgnoreChangesLeft) {
+        setChangeIgnored(RangeDifference.LEFT, anIgnoreChangesLeft);
+        setProperty(IGNORE_CHANGES_LEFT, anIgnoreChangesLeft);
+    }
+
+    public boolean isIgnoreChangesRight() {
+        return ((Boolean)getProperty(IGNORE_CHANGES_RIGHT)).booleanValue();
+    }
+
+    public void setIgnoreChangesRight(boolean anIgnoreChangesRight) {
+        setChangeIgnored(RangeDifference.RIGHT, anIgnoreChangesRight);
+        setProperty(IGNORE_CHANGES_RIGHT, anIgnoreChangesRight);
     }
 
     public boolean isConsiderDate() {
