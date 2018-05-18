@@ -8,6 +8,9 @@
 
 package biz.isphere.core.compareeditor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 
@@ -60,7 +63,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
     }
 
     public void setIgnoreChangesLeft(boolean anIgnoreChangesLeft) {
-        setChangeIgnored(RangeDifference.LEFT, anIgnoreChangesLeft);
+        invokeSetChangeIgnored(RangeDifference.LEFT, anIgnoreChangesLeft); 
         setProperty(IGNORE_CHANGES_LEFT, anIgnoreChangesLeft);
     }
 
@@ -69,10 +72,51 @@ public class CompareEditorConfiguration extends CompareConfiguration {
     }
 
     public void setIgnoreChangesRight(boolean anIgnoreChangesRight) {
-        setChangeIgnored(RangeDifference.RIGHT, anIgnoreChangesRight);
+        invokeSetChangeIgnored(RangeDifference.RIGHT, anIgnoreChangesRight); 
         setProperty(IGNORE_CHANGES_RIGHT, anIgnoreChangesRight);
     }
-
+ 
+    public static boolean isMethodSetChangeIgnoredAvailable() {
+        try {
+            if (CompareConfiguration.class.getDeclaredMethod("setChangeIgnored", int.class, boolean.class) != null) {
+                return true;
+            }
+        } 
+        catch (SecurityException e) {
+        } 
+        catch (NoSuchMethodException e) {
+        }
+        return false;
+    }
+    
+    private void invokeSetChangeIgnored(int who, boolean ignore) {
+        if (CompareEditorConfiguration.isMethodSetChangeIgnoredAvailable()) {
+            try {
+                Method _method = this.getClass().getMethod("setChangeIgnored", int.class, boolean.class);
+                if (_method != null) {
+                    try {
+                        _method.invoke(this, new Object[]{who, ignore});
+                    } 
+                    catch (IllegalArgumentException e) {
+                        System.out.println("IllegalArgumentException received while invoked method setChangeIgnored in class CompareConfiguration.");
+                    } 
+                    catch (IllegalAccessException e) {
+                        System.out.println("IllegalAccessException received while invoked method setChangeIgnored in class CompareConfiguration.");
+                    } 
+                    catch (InvocationTargetException e) {
+                        System.out.println("InvocationTargetException received while invoked method setChangeIgnored in class CompareConfiguration.");
+                    }
+                }
+            } 
+            catch (SecurityException e) {
+                System.out.println("Method setChangeIgnored not accessable in class CompareConfiguration.");
+            } 
+            catch (NoSuchMethodException e) {
+                System.out.println("Method setChangeIgnored not available in class CompareConfiguration.");
+            }
+        }
+    }
+    
     public boolean isConsiderDate() {
         return ((Boolean)getProperty(CONSIDER_DATE)).booleanValue();
     }
