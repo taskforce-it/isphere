@@ -1,6 +1,12 @@
 
-Changelog: iSphere 3.3.0.b001
+Changelog: iSphere 3.3.1.r
 -----------------------------
+ • Parameter 'ccsid' must not be [null].
+ • Changed binding directory editor to set activation default to *IMMED 
+   when adding a service program entry.
+
+Changelog: iSphere 3.3.0.r
+--------------------------
  • Added "theme" to TN5250J session configuration for overriding color
    attributes.
  • Changed 5250 settings dialog to check for changes when the dialog is
