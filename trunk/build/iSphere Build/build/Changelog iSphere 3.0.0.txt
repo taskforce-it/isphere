@@ -6,6 +6,8 @@ Changelog: iSphere 3.3.1.r
    when adding a service program entry.
  • Added options "Ignore changes left" and "Ignore changes right" to
    iSphere Compare Editor when using three-way compare.
+ • Changed "activation" and "object type" combo boxes to read-only and 
+   changed input fields "object" and "library" to upper-case.
 
 Changelog: iSphere 3.3.0.r
 --------------------------
