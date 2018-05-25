@@ -33,7 +33,7 @@ public class Validator {
 
     private static final String EXTRA_CHARACTERS_CCSID_37 = "$@#";
 
-    private Map<Integer, String> extraCharacters;
+    private Map<Integer, String> extraCharactersMap;
 
     private String type;
     private int length;
@@ -67,12 +67,19 @@ public class Validator {
     }
 
     public static Validator getNameInstance(Integer ccsid) {
+
+        validateCcsid(ccsid);
+
         Validator validator = new Validator(TYPE_NAME, ccsid);
         validator.setLength(10);
+
         return validator;
     }
 
     public static Validator getLibraryNameInstance(Integer ccsid, String... specialValues) {
+
+        validateCcsid(ccsid);
+
         Validator validator = new Validator(TYPE_NAME, ccsid);
         validator.setLength(10);
         validator.setRestricted(false);
@@ -81,6 +88,7 @@ public class Validator {
                 validator.addSpecialValue(specialValue);
             }
         }
+
         return validator;
     }
 
@@ -113,6 +121,13 @@ public class Validator {
 
     public static Validator getTimeInstance() {
         return new Validator(TYPE_TIME);
+    }
+
+    private static void validateCcsid(Integer ccsid) {
+
+        if (ccsid == null) {
+            throw new IllegalArgumentException("Parameter 'ccsid' must not be [null].");
+        }
     }
 
     private Validator(String type) {
@@ -161,28 +176,32 @@ public class Validator {
 
     private String getExtraCharacters(Integer ccsid) {
 
+        if (extraCharactersMap == null) {
+            extraCharactersMap = new HashMap<Integer, String>();
+        }
+
         if (ccsid == null) {
-            throw new IllegalArgumentException("Parameter 'ccsid' must not be [null].");
+            return null;
         }
 
-        if (ccsid.intValue() == 37) {
-            return EXTRA_CHARACTERS_CCSID_37;
-        }
-
-        if (as400Text37 == null || ccsid.intValue() == 37) {
-            as400Text37 = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), 37);
-        }
-
-        if (extraCharacters == null) {
-            extraCharacters = new HashMap<Integer, String>();
-        }
-
-        String extraCharactersCcsid = extraCharacters.get(ccsid);
+        String extraCharactersCcsid = extraCharactersMap.get(ccsid);
         if (extraCharactersCcsid == null) {
-            byte[] bytes = as400Text37.toBytes(EXTRA_CHARACTERS_CCSID_37);
-            AS400Text textCcsid = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), ccsid.intValue());
-            extraCharactersCcsid = (String)textCcsid.toObject(bytes);
-            extraCharacters.put(ccsid, extraCharactersCcsid);
+
+            if (ccsid.intValue() == 37) {
+                extraCharactersCcsid = EXTRA_CHARACTERS_CCSID_37;
+            } else {
+
+                // Convert extra characters of CCSID 37 to target CCSID
+                if (as400Text37 == null) {
+                    as400Text37 = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), 37);
+                }
+
+                byte[] bytes = as400Text37.toBytes(EXTRA_CHARACTERS_CCSID_37);
+                AS400Text textCcsid = new AS400Text(EXTRA_CHARACTERS_CCSID_37.length(), ccsid.intValue());
+                extraCharactersCcsid = (String)textCcsid.toObject(bytes);
+            }
+
+            extraCharactersMap.put(ccsid, extraCharactersCcsid);
         }
 
         return extraCharactersCcsid;
@@ -394,7 +413,7 @@ public class Validator {
 
     private boolean isExtraCharacter(String character) {
 
-        if (extraCharactersCcsid.indexOf(character) >= 0) {
+        if (extraCharactersCcsid != null && extraCharactersCcsid.indexOf(character) >= 0) {
             return true;
         }
 
