@@ -4,6 +4,8 @@ Changelog: iSphere 3.3.1.r
  • Parameter 'ccsid' must not be [null].
  • Changed binding directory editor to set activation default to *IMMED 
    when adding a service program entry.
+ • Added options "Ignore changes left" and "Ignore changes right" to
+   iSphere Compare Editor when using three-way compare.
 
 Changelog: iSphere 3.3.0.r
 --------------------------
