@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.3.0.r
+Bundle-Version: 3.3.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Added color themes to 5250 emulator. Updated STRPREPRC to v1.15.3 to fix RNX0100. Fixed a couple of bugs.
-X-Beta-Version: 3.3.0.r
+X-Bundle-Info: Bugfix of message file editor and enhancements of compare editor.
+X-Beta-Version: 3.3.1.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
 X-Beta-Info: .
