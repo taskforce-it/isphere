@@ -151,6 +151,9 @@ public class BindingDirectoryEntryDetail {
                 public void modifyText(ModifyEvent event) {
                     if (comboObjectType.getText().toUpperCase().trim().equals("*SRVPGM")) {
                         comboActivation.setEnabled(true);
+                        if (comboActivation.getText().trim().length() == 0) {
+                            comboActivation.setText("*IMMED");
+                        }
                     } else {
                         comboActivation.setText("");
                         comboActivation.setEnabled(false);
@@ -296,7 +299,8 @@ public class BindingDirectoryEntryDetail {
 
         // The value in field 'Activation' is not valid.
 
-        if (level.compareTo("V6R1M0") >= 0 && comboObjectType.getText().equals("*SRVPGM") && !validatorActivation.validate(comboActivation.getText())) {
+        if (level.compareTo("V6R1M0") >= 0 && comboObjectType.getText().equals("*SRVPGM")
+            && !validatorActivation.validate(comboActivation.getText())) {
             setErrorMessage(Messages.The_value_in_field_Activation_is_not_valid);
             comboActivation.setFocus();
             return false;
@@ -304,11 +308,10 @@ public class BindingDirectoryEntryDetail {
 
         // The entry already exists.
 
-        if (actionType == DialogActionTypes.CREATE
-            || actionType == DialogActionTypes.COPY
+        if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY
             || (actionType == DialogActionTypes.CHANGE && (!_bindingDirectoryEntry.getLibrary().equals(comboLibrary.getText())
-                || !_bindingDirectoryEntry.getObject().equals(textObject.getText()) || !_bindingDirectoryEntry.getObjectType().equals(
-                comboObjectType.getText())))) {
+                || !_bindingDirectoryEntry.getObject().equals(textObject.getText())
+                || !_bindingDirectoryEntry.getObjectType().equals(comboObjectType.getText())))) {
             for (int idx = 0; idx < _bindingDirectoryEntries.size(); idx++) {
                 BindingDirectoryEntry entry = _bindingDirectoryEntries.get(idx);
                 if (entry.getLibrary().equals(comboLibrary.getText()) && entry.getObject().equals(textObject.getText())
