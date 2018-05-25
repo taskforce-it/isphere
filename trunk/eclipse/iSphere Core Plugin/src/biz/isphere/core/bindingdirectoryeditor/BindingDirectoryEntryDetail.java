@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -89,7 +89,7 @@ public class BindingDirectoryEntryDetail {
         final Label labelLibrary = new Label(compositeHeader, SWT.NONE);
         labelLibrary.setText(Messages.Library_colon);
 
-        comboLibrary = WidgetFactory.createCombo(compositeHeader);
+        comboLibrary = WidgetFactory.createUpperCaseCombo(compositeHeader);
         comboLibrary.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboLibrary.setTextLimit(10);
         comboLibrary.add("*LIBL");
@@ -111,7 +111,7 @@ public class BindingDirectoryEntryDetail {
         final Label labelObject = new Label(compositeHeader, SWT.NONE);
         labelObject.setText(Messages.Object_colon);
 
-        textObject = WidgetFactory.createText(compositeHeader);
+        textObject = WidgetFactory.createUpperCaseText(compositeHeader);
         textObject.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         textObject.setTextLimit(10);
         if (actionType == DialogActionTypes.CREATE) {
@@ -132,13 +132,13 @@ public class BindingDirectoryEntryDetail {
         final Label labelObjectType = new Label(compositeHeader, SWT.NONE);
         labelObjectType.setText(Messages.Object_type_colon);
 
-        comboObjectType = WidgetFactory.createCombo(compositeHeader);
+        comboObjectType = WidgetFactory.createReadOnlyCombo(compositeHeader);
         comboObjectType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         comboObjectType.setTextLimit(10);
         comboObjectType.add("*SRVPGM");
         comboObjectType.add("*MODULE");
         if (actionType == DialogActionTypes.CREATE) {
-            comboObjectType.setText("");
+            comboObjectType.select(0);
         } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
             || actionType == DialogActionTypes.DISPLAY) {
             comboObjectType.setText(_bindingDirectoryEntry.getObjectType());
@@ -147,8 +147,10 @@ public class BindingDirectoryEntryDetail {
             comboObjectType.setEnabled(false);
         }
         if (level.compareTo("V6R1M0") >= 0) {
-            comboObjectType.addModifyListener(new ModifyListener() {
-                public void modifyText(ModifyEvent event) {
+
+            comboObjectType.addSelectionListener(new SelectionListener() {
+
+                public void widgetSelected(SelectionEvent event) {
                     if (comboObjectType.getText().toUpperCase().trim().equals("*SRVPGM")) {
                         comboActivation.setEnabled(true);
                         if (comboActivation.getText().trim().length() == 0) {
@@ -158,6 +160,10 @@ public class BindingDirectoryEntryDetail {
                         comboActivation.setText("");
                         comboActivation.setEnabled(false);
                     }
+                }
+
+                public void widgetDefaultSelected(SelectionEvent event) {
+                    widgetSelected(event);
                 }
             });
         }
@@ -175,13 +181,13 @@ public class BindingDirectoryEntryDetail {
             final Label labelActivation = new Label(compositeHeader, SWT.NONE);
             labelActivation.setText(Messages.Activation_colon);
 
-            comboActivation = WidgetFactory.createCombo(compositeHeader);
+            comboActivation = WidgetFactory.createReadOnlyCombo(compositeHeader);
             comboActivation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             comboActivation.setTextLimit(10);
             comboActivation.add("*IMMED");
             comboActivation.add("*DEFER");
             if (actionType == DialogActionTypes.CREATE) {
-                comboActivation.setText("*IMMED");
+                comboActivation.select(0);
             } else if (actionType == DialogActionTypes.CHANGE || actionType == DialogActionTypes.COPY || actionType == DialogActionTypes.DELETE
                 || actionType == DialogActionTypes.DISPLAY) {
                 if (comboObjectType.getText().toUpperCase().trim().equals("*SRVPGM")) {
@@ -299,8 +305,7 @@ public class BindingDirectoryEntryDetail {
 
         // The value in field 'Activation' is not valid.
 
-        if (level.compareTo("V6R1M0") >= 0 && comboObjectType.getText().equals("*SRVPGM")
-            && !validatorActivation.validate(comboActivation.getText())) {
+        if (level.compareTo("V6R1M0") >= 0 && comboObjectType.getText().equals("*SRVPGM") && !validatorActivation.validate(comboActivation.getText())) {
             setErrorMessage(Messages.The_value_in_field_Activation_is_not_valid);
             comboActivation.setFocus();
             return false;
@@ -308,10 +313,11 @@ public class BindingDirectoryEntryDetail {
 
         // The entry already exists.
 
-        if (actionType == DialogActionTypes.CREATE || actionType == DialogActionTypes.COPY
+        if (actionType == DialogActionTypes.CREATE
+            || actionType == DialogActionTypes.COPY
             || (actionType == DialogActionTypes.CHANGE && (!_bindingDirectoryEntry.getLibrary().equals(comboLibrary.getText())
-                || !_bindingDirectoryEntry.getObject().equals(textObject.getText())
-                || !_bindingDirectoryEntry.getObjectType().equals(comboObjectType.getText())))) {
+                || !_bindingDirectoryEntry.getObject().equals(textObject.getText()) || !_bindingDirectoryEntry.getObjectType().equals(
+                comboObjectType.getText())))) {
             for (int idx = 0; idx < _bindingDirectoryEntries.size(); idx++) {
                 BindingDirectoryEntry entry = _bindingDirectoryEntries.get(idx);
                 if (entry.getLibrary().equals(comboLibrary.getText()) && entry.getObject().equals(textObject.getText())
