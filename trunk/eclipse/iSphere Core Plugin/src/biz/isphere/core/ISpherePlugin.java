@@ -29,6 +29,8 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -42,8 +44,6 @@ import biz.isphere.core.internal.api.retrieveproductinformation.QSZRTVPR;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-
-import com.ibm.as400.access.AS400;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -146,18 +146,14 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         installURL = context.getBundle().getEntry("/");
 
-        spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator
-            + ISPHERE_SPOOLED_FILES_PROJECT_NAME);
-        if (!spooledFilesDirectory.exists()) {
-            spooledFilesDirectory.mkdirs();
-        }
+        spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString(), ISPHERE_SPOOLED_FILES_PROJECT_NAME);
 
         try {
 
             spooledFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject(ISPHERE_SPOOLED_FILES_PROJECT_NAME);
             if (spooledFilesProject.exists()) {
-                File file = new File(getSpooledFilesDirectory(), ECLIPSE_PROJECT_FILE_NAME);
-                if (!file.exists()) {
+                File projectConfigFile = new File(getSpooledFilesDirectory(), ECLIPSE_PROJECT_FILE_NAME);
+                if (!spooledFilesDirectory.exists() || !projectConfigFile.exists()) {
                     spooledFilesProject.delete(true, true, null);
                 }
             }
@@ -169,6 +165,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         } catch (Throwable e) {
             logError("*** Could not create '" + ISPHERE_SPOOLED_FILES_PROJECT_NAME + "' project ***", e);
+        }
+
+        if (!spooledFilesDirectory.exists()) {
+            spooledFilesDirectory.mkdirs();
         }
 
         if (Preferences.getInstance().isSearchForUpdates()) {
