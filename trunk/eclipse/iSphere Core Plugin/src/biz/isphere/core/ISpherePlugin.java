@@ -29,8 +29,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -44,6 +42,8 @@ import biz.isphere.core.internal.api.retrieveproductinformation.QSZRTVPR;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+
+import com.ibm.as400.access.AS400;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -143,7 +143,9 @@ public class ISpherePlugin extends AbstractUIPlugin {
         installURL = context.getBundle().getEntry("/");
 
         spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
-        if (!spooledFilesDirectory.exists()) spooledFilesDirectory.mkdirs();
+        if (!spooledFilesDirectory.exists()) {
+            spooledFilesDirectory.mkdirs();
+        }
 
         spooledFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject("iSphereSpooledFiles");
         if (!spooledFilesProject.exists()) {
