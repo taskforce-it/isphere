@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.3.2.r
+-----------------------------
+ • Added error logging when opening or saving a spooled file.
+ • Changed ISpherePlugin to check the .project file of the 
+   iSphereSpooledFiles project.
+
 Changelog: iSphere 3.3.1.r
 -----------------------------
  • Parameter 'ccsid' must not be [null].
