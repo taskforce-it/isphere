@@ -59,8 +59,12 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static IEditor editor = null;
     public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
     public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
+    private static String ISPHERE_SPOOLED_FILES_PROJECT_NAME = "iSphereSpooledFiles";
+    private static String ECLIPSE_PROJECT_FILE_NAME = ".project";
+
     private File spooledFilesDirectory;
     private IProject spooledFilesProject;
+
     public static final String IMAGE_ERROR = "error.gif";
     public static final String IMAGE_NEW = "new.gif";
     public static final String IMAGE_CHANGE = "change.gif";
@@ -142,15 +146,29 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         installURL = context.getBundle().getEntry("/");
 
-        spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator + "iSphereSpooledFiles");
+        spooledFilesDirectory = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + File.separator
+            + ISPHERE_SPOOLED_FILES_PROJECT_NAME);
         if (!spooledFilesDirectory.exists()) {
             spooledFilesDirectory.mkdirs();
         }
 
-        spooledFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject("iSphereSpooledFiles");
-        if (!spooledFilesProject.exists()) {
-            IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(spooledFilesProject.getName());
-            spooledFilesProject.create(description, null);
+        try {
+
+            spooledFilesProject = ResourcesPlugin.getWorkspace().getRoot().getProject(ISPHERE_SPOOLED_FILES_PROJECT_NAME);
+            if (spooledFilesProject.exists()) {
+                File file = new File(getSpooledFilesDirectory(), ECLIPSE_PROJECT_FILE_NAME);
+                if (!file.exists()) {
+                    spooledFilesProject.delete(true, true, null);
+                }
+            }
+
+            if (!spooledFilesProject.exists()) {
+                IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(spooledFilesProject.getName());
+                spooledFilesProject.create(description, null);
+            }
+
+        } catch (Throwable e) {
+            logError("*** Could not create '" + ISPHERE_SPOOLED_FILES_PROJECT_NAME + "' project ***", e);
         }
 
         if (Preferences.getInstance().isSearchForUpdates()) {
@@ -167,7 +185,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
         File[] files = getSpooledFilesDirectory().listFiles();
         for (int idx = 0; idx < files.length; idx++) {
-            if (!files[idx].getName().equals(".project")) {
+            if (!files[idx].getName().equals(ECLIPSE_PROJECT_FILE_NAME)) {
                 files[idx].delete();
             }
         }
