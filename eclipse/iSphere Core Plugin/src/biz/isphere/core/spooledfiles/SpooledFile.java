@@ -670,6 +670,7 @@ public class SpooledFile {
             openSpooledFileInEditor(format, file);
 
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not open spooled file ***", e); //$NON-NLS-1$
             return ExceptionHelper.getLocalizedMessage(e);
         } finally {
 
@@ -1065,6 +1066,7 @@ public class SpooledFile {
                 }
 
             } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not save spooled file ***", e); //$NON-NLS-1$
                 return e.getMessage();
             } finally {
 
