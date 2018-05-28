@@ -49,22 +49,20 @@ public class CompareAction {
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons. With CMOne NG 5.1.8 and higher this constructor will NO LONGER be used. In July 2019 this constructor can be removed.")
     public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
-        
+
         boolean sequenceNumbersAndDateFields = true;
         if (!leftMember.hasSequenceNumbersAndDateFields()) {
             sequenceNumbersAndDateFields = false;
-        }
-        else {
+        } else {
             if (!rightMember.hasSequenceNumbersAndDateFields()) {
                 sequenceNumbersAndDateFields = false;
-            }
-            else {
+            } else {
                 if (threeWay && !ancestorMember.hasSequenceNumbersAndDateFields()) {
                     sequenceNumbersAndDateFields = false;
                 }
             }
         }
-        
+
         this.cc = new CompareEditorConfiguration();
         cc.setLeftEditable(editable);
         cc.setRightEditable(false);
@@ -74,7 +72,7 @@ public class CompareAction {
         cc.setIgnoreChangesRight(false);
         cc.setThreeWay(threeWay);
         cc.setDropSequenceNumbersAndDateFields(!sequenceNumbersAndDateFields);
-        
+
         this.ancestorMember = ancestorMember;
         this.leftMember = leftMember;
         this.rightMember = rightMember;
@@ -184,25 +182,11 @@ public class CompareAction {
                 });
 
                 if (cc.isThreeWay()) {
-                    if (ancestorMember.getLabel() != null) {
-                        cc.setAncestorLabel(ancestorMember.getLabel());
-                    } else {
-                        cc.setAncestorLabel(ancestorMember.getLibrary() + "/" + ancestorMember.getSourceFile() + "(" + ancestorMember.getMember()
-                            + ")");
-                    }
+                    cc.setAncestorLabel(createLabel(ancestorMember));
                 }
 
-                if (leftMember.getLabel() != null) {
-                    cc.setLeftLabel(leftMember.getLabel());
-                } else {
-                    cc.setLeftLabel(leftMember.getLibrary() + "/" + leftMember.getSourceFile() + "(" + leftMember.getMember() + ")");
-                }
-
-                if (rightMember.getLabel() != null) {
-                    cc.setRightLabel(rightMember.getLabel());
-                } else {
-                    cc.setRightLabel(rightMember.getLibrary() + "/" + rightMember.getSourceFile() + "(" + rightMember.getMember() + ")");
-                }
+                cc.setLeftLabel(createLabel(leftMember));
+                cc.setRightLabel(createLabel(rightMember));
 
                 if (ISpherePlugin.isSaveNeededHandling()) {
                     // executed when WDSCi is the host application
@@ -245,6 +229,24 @@ public class CompareAction {
                     (cleanupListener.get(index)).cleanup();
                 }
 
+            }
+
+            private String createLabel(Member member) {
+
+                if (member.getLabel() != null) {
+                    return member.getLabel();
+                } else {
+                    StringBuilder buffer = new StringBuilder();
+                    buffer.append(member.getConnection());
+                    buffer.append(": "); //$NON-NLS-1$
+                    buffer.append(member.getLibrary());
+                    buffer.append("/"); //$NON-NLS-1$
+                    buffer.append(member.getSourceFile());
+                    buffer.append("("); //$NON-NLS-1$
+                    buffer.append(member.getMember());
+                    buffer.append(")"); //$NON-NLS-1$
+                    return buffer.toString();
+                }
             }
 
             private Shell getShell() {
