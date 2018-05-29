@@ -8,8 +8,6 @@
 
 package biz.isphere.joblogexplorer.jobs.rse;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -39,7 +37,11 @@ public abstract class AbstractLoadRemoteSpooledFileJob extends Job {
             SpooledFile spooledFile = getSpooledFile();
 
             String format = IPreferences.OUTPUT_FORMAT_TEXT;
-            String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + spooledFile.getTemporaryName(format);
+            // CHANGED: Rz, 29.05.2018
+            // String target =
+            // ISpherePlugin.getDefault().getSpooledFilesDirectory() +
+            // File.separator + spooledFile.getTemporaryName(format);
+            IFile target = ISpherePlugin.getDefault().getSpooledFilesProject().getFile(spooledFile.getTemporaryName(format)); // .getLocation().toOSString();
 
             IFile localSpooledFilePath = spooledFile.downloadSpooledFile(format, target);
             final String filePath = localSpooledFilePath.getLocation().toOSString();

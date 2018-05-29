@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.Date;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -81,7 +80,7 @@ public class SpooledFile {
     public static final String VARIABLE_USRDTA = "&USRDTA";
 
     private static final String IBMI_FILE_SEPARATOR = "/";
-    private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; //$NON-NLS-N$
+    private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; // $NON-NLS-N$
 
     private AS400 as400;
 
@@ -729,7 +728,8 @@ public class SpooledFile {
         }
     }
 
-    public IFile downloadSpooledFile(String format, String target) throws Exception {
+    // CHANGED: Rz, 29.05.2018
+    public IFile downloadSpooledFile(String format, IFile target) throws Exception {
 
         String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
         IFile file = getLocalSpooledFile(format, source, target);
@@ -739,20 +739,24 @@ public class SpooledFile {
 
     private IFile getLocalSpooledFile(String format, String source) throws Exception {
 
-        String target = ISpherePlugin.getDefault().getSpooledFilesDirectory() + File.separator + getTemporaryName(format);
+        // CHANGED: Rz, 29.05.2018
+        IFile target = ISpherePlugin.getDefault().getSpooledFilesProject().getFile(getTemporaryName(format)); // .getLocation().toOSString();
 
         return getLocalSpooledFile(format, source, target);
     }
 
-    private IFile getLocalSpooledFile(String format, String source, String target) throws Exception {
+    // CHANGED: Rz, 29.05.2018
+    private IFile getLocalSpooledFile(String format, String source, IFile target) throws Exception {
 
         boolean hasSpooledFile = false;
 
         if (doTransformSpooledFile(format)) {
-            hasSpooledFile = transformSpooledFile(format, target);
+            // CHANGED: Rz, 29.05.2018
+            hasSpooledFile = transformSpooledFile(format, target.getLocation().toOSString());
         } else {
             if (createStreamFile(format)) {
-                hasSpooledFile = uploadStreamFile(source, target);
+                // CHANGED: Rz, 29.05.2018
+                hasSpooledFile = uploadStreamFile(source, target.getLocation().toOSString());
             }
         }
 
@@ -764,10 +768,17 @@ public class SpooledFile {
             ISpherePlugin.getDefault().getSpooledFilesProject().open(null);
         }
 
-        IFile file = ISpherePlugin.getWorkspace().getRoot().getFileForLocation(new Path(target));
-        file.refreshLocal(1, null);
+        // CHANGED: Rz, 29.05.2018
+        // ISpherePlugin.getDefault().getSpooledFilesProject().refreshLocal(IResource.DEPTH_INFINITE,
+        // null);
+        // IFile file =
+        // ISpherePlugin.getDefault().getSpooledFilesProject().getFile(target.getName());
 
-        return file;
+        // CHANGED: Rz, 29.05.2018
+        target.refreshLocal(1, null);
+
+        // CHANGED: Rz, 29.05.2018
+        return target;
     }
 
     private boolean doTransformSpooledFile(String format) {
@@ -894,7 +905,7 @@ public class SpooledFile {
             mask = replace(mask, VARIABLE_STMFDIR, ISPHERE_IFS_TMP_DIRECTORY);
             mask = replace(mask, VARIABLE_STMF, getTemporaryName(tFormat));
             mask = replace(mask, VARIABLE_CODPAG, "1252"); //$NON-NLS-1$
-            mask = replace(mask, VARIABLE_FMT, tFormat); //$NON-NLS-1$
+            mask = replace(mask, VARIABLE_FMT, tFormat); // $NON-NLS-1$
 
             mask = replace(mask, VARIABLE_STATUS, getStatus());
             mask = replace(mask, VARIABLE_CTIME_STAMP, getCreationTimestampFormatted());
@@ -1066,7 +1077,6 @@ public class SpooledFile {
                 }
 
             } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not save spooled file ***", e); //$NON-NLS-1$
                 return e.getMessage();
             } finally {
 
