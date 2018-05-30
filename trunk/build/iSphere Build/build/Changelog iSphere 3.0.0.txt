@@ -11,7 +11,8 @@ Changelog: iSphere 3.3.2.r
 
 Changelog: iSphere 3.3.1.r
 -----------------------------
- • Parameter 'ccsid' must not be [null].
+ • Fixed error message "Parameter 'ccsid' must not be [null]" when 
+   attempting to display, edit or added a message description.
  • Changed binding directory editor to set activation default to *IMMED 
    when adding a service program entry.
  • Added options "Ignore changes left" and "Ignore changes right" to
