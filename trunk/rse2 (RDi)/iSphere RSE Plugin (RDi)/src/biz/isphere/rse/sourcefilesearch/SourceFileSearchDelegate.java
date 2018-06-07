@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *******************************************************************************/
 
 package biz.isphere.rse.sourcefilesearch;
+
+import java.util.Date;
 
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -17,6 +19,7 @@ import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
@@ -80,4 +83,8 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ((IQSYSMember)resource).getDescription();
     }
 
+    @Override
+    protected Date getMemberLastChangedDate(Object resource) {
+        return ((IQSYSSourceMember)resource).getDateModified();
+    }
 }

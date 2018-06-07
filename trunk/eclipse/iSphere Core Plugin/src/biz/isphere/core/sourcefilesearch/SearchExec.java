@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -189,8 +190,10 @@ public class SearchExec {
 
             try {
 
-                preparedStatementSelect = jdbcConnection.prepareStatement("SELECT * FROM " + iSphereLibrary + _separator //$NON-NLS-1$
-                    + "FNDSTRO WHERE XOHDL = ? ORDER BY XOHDL, XOLIB, XOFILE, XOMBR", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); //$NON-NLS-1$
+                preparedStatementSelect = jdbcConnection
+                    .prepareStatement(
+                        "SELECT * FROM " + iSphereLibrary + _separator //$NON-NLS-1$
+                            + "FNDSTRO WHERE XOHDL = ? ORDER BY XOHDL, XOLIB, XOFILE, XOMBR, XOFLCD", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY); //$NON-NLS-1$
                 preparedStatementSelect.setString(1, Integer.toString(handle));
                 resultSet = preparedStatementSelect.executeQuery();
 
@@ -201,6 +204,7 @@ public class SearchExec {
                 String library;
                 String file;
                 String member;
+                Timestamp lastChangedDate;
 
                 SearchResult _searchResult = null;
                 ArrayList<SearchResultStatement> alStatements = null;
@@ -210,6 +214,7 @@ public class SearchExec {
                     library = resultSet.getString("XOLIB").trim(); //$NON-NLS-1$
                     file = resultSet.getString("XOFILE").trim(); //$NON-NLS-1$
                     member = resultSet.getString("XOMBR").trim(); //$NON-NLS-1$
+                    lastChangedDate = resultSet.getTimestamp("XOFLCD"); //$NON-NLS-1$
 
                     if (!_library.equals(library) || !_file.equals(file) || !_member.equals(member)) {
 
@@ -232,6 +237,7 @@ public class SearchExec {
                         _searchResult.setLibrary(library);
                         _searchResult.setFile(file);
                         _searchResult.setMember(member);
+                        _searchResult.setLastChangedDate(lastChangedDate);
 
                         alStatements = new ArrayList<SearchResultStatement>();
 

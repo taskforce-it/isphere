@@ -12,6 +12,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
+
+import biz.isphere.core.internal.DateTimeHelper;
 
 public class SearchElement {
 
@@ -19,6 +22,7 @@ public class SearchElement {
     private String file;
     private String member;
     private String description;
+    private Date lastChangedDate;
     private Object data;
 
     public SearchElement() {
@@ -26,6 +30,7 @@ public class SearchElement {
         file = "";
         member = "";
         description = "";
+        lastChangedDate = null;
         data = null;
     }
 
@@ -50,6 +55,7 @@ public class SearchElement {
     }
 
     public void setMember(String member) {
+        this.member = "DEMO*";
         this.member = member;
     }
 
@@ -67,6 +73,18 @@ public class SearchElement {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public Date getLastChangedDate() {
+        return lastChangedDate;
+    }
+
+    public String getLastChangedDateSQL() {
+        return DateTimeHelper.getTimestampFormattedISO(lastChangedDate);
+    }
+
+    public void setLastChangedDate(Date lastChangedDate) {
+        this.lastChangedDate = lastChangedDate;
     }
 
     public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
@@ -96,7 +114,7 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR) VALUES");
+                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR, XIFLCD) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {
@@ -109,7 +127,8 @@ public class SearchElement {
                     }
 
                     sqlInsert.append("('" + Integer.toString(handle) + "', " + "'" + _searchElements.get(idx).getLibrary() + "', " + "'"
-                        + _searchElements.get(idx).getFile() + "', " + "'" + _searchElements.get(idx).getMember() + "')");
+                        + _searchElements.get(idx).getFile() + "', " + "'" + _searchElements.get(idx).getMember() + "', " + "'"
+                        + _searchElements.get(idx).getLastChangedDateSQL() + "'" + ")");
 
                 }
 

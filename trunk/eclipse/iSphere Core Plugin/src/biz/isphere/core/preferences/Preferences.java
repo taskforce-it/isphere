@@ -111,6 +111,10 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
+    private static final String SOURCEFILESEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
+
+    private static final String SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
+
     private static final String SOURCEFILESEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
@@ -311,6 +315,14 @@ public final class Preferences {
 
     public String getSpooledFileRSEDescription() {
         return preferenceStore.getString(SPOOLED_FILES_RSE_DESCRIPTION);
+    }
+
+    public int getSourceFileSearchMemberColumnWidth() {
+        return preferenceStore.getInt(SOURCEFILESEARCH_MEMBER_COLUMN_WIDTH);
+    }
+
+    public int getSourceFileSearchLastChangedDateColumnWidth() {
+        return preferenceStore.getInt(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH);
     }
 
     public String getSpooledFileConversionText() {
@@ -599,6 +611,14 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_RSE_DESCRIPTION, description);
     }
 
+    public void setSourceFileSearchMemberColumnWidth(int width) {
+        preferenceStore.setValue(SOURCEFILESEARCH_MEMBER_COLUMN_WIDTH, width);
+    }
+
+    public void setSourceFileSearchLastChangedDateColumnWidth(int width) {
+        preferenceStore.setValue(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, width);
+    }
+
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
@@ -800,6 +820,9 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_PAGE_SIZE, getDefaultSpooledFilePageSize());
         preferenceStore.setDefault(SPOOLED_FILES_ADJUST_FONT_SIZE, getDefaultSpooledFileAdjustFontSize());
 
+        preferenceStore.setDefault(SOURCEFILESEARCH_MEMBER_COLUMN_WIDTH, getDefaultSourceFileSearchMemberColumnWidth());
+        preferenceStore.setDefault(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, getDefaultSourceFileSearchLastChangedDateColumnWidth());
+
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
         preferenceStore.setDefault(MONITOR_DTAQ_DISPLAY_END_OF_DATA, getDefaultDataQueueDisplayEndOfData());
@@ -945,6 +968,26 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileRSEDescription() {
         return SpooledFile.VARIABLE_SPLF + " - " + SpooledFile.VARIABLE_STATUS; //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the default width of the 'member' column of SearchResultViewer of
+     * the iSphere Source File Search.
+     * 
+     * @return default column width
+     */
+    public int getDefaultSourceFileSearchMemberColumnWidth() {
+        return 800;
+    }
+
+    /**
+     * Returns the default width of the 'last changed' column of
+     * SearchResultViewer of the iSphere Source File Search.
+     * 
+     * @return default column width
+     */
+    public int getDefaultSourceFileSearchLastChangedDateColumnWidth() {
+        return 120;
     }
 
     /**

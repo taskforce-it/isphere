@@ -9,6 +9,7 @@
 package biz.isphere.core.sourcefilesearch;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @SuppressWarnings("serial")
 public class SearchResult implements Serializable {
@@ -17,6 +18,7 @@ public class SearchResult implements Serializable {
     private String file;
     private String member;
     private String description;
+    private Timestamp lastChangedDate;
     private SearchResultStatement[] statements;
 
     public SearchResult() {
@@ -65,5 +67,13 @@ public class SearchResult implements Serializable {
 
     public void setStatements(SearchResultStatement[] statements) {
         this.statements = statements;
+    }
+
+    public Timestamp getLastChangedDate() {
+        return lastChangedDate;
+    }
+
+    public void setLastChangedDate(Timestamp lastChangedDate) {
+        this.lastChangedDate = lastChangedDate;
     }
 }

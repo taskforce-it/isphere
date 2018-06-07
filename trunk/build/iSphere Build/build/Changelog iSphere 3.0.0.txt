@@ -1,9 +1,11 @@
 
-Changelog: iSphere 3.3.2.r
+Changelog: iSphere 3.4.0.r
 -----------------------------
  • Fixed problem that spooled files could not be opened, when the 
    workspace is located in the IFS. (NullPointerException)
  • Added error logging when opening or saving a spooled file.
+ • Added column 'Last changed' to the member list of the result view of
+   the iSphere Source File Search.
  • Changed ISpherePlugin to check the .project file of the 
    iSphereSpooledFiles project.
  • Added connection name to member title when comparing source members
