@@ -17,19 +17,19 @@ public final class IBMiHelper {
 
     private static final SimpleDateFormat cyymmddFormatter = new SimpleDateFormat("yyyyMMdd");
     private static final SimpleDateFormat hhmmssFormatter = new SimpleDateFormat("HHmmss");
-    private static final SimpleDateFormat yymmddFormetter = new SimpleDateFormat("yyMMdd");
+    private static final SimpleDateFormat yymmddFormatter = new SimpleDateFormat("yyMMdd");
 
     public static String quote(String text) {
-        
+
         StringBuilder quotedText = new StringBuilder();
-        
+
         quotedText.append("'");
         quotedText.append(text.replaceAll("'", "''"));
         quotedText.append("'");
-        
+
         return quotedText.toString();
     }
-    
+
     public static String dateToCyymmdd(Date date, String defaultValue) {
 
         String cyymmdd;
@@ -38,9 +38,9 @@ public final class IBMiHelper {
             calendar.setTime(date);
 
             if (calendar.get(Calendar.YEAR) >= 2000) {
-                cyymmdd = "1" + yymmddFormetter.format(calendar.getTime());
+                cyymmdd = "1" + yymmddFormatter.format(calendar.getTime());
             } else {
-                cyymmdd = "0" + yymmddFormetter.format(calendar.getTime());
+                cyymmdd = "0" + yymmddFormatter.format(calendar.getTime());
             }
         } catch (Exception e) {
             return defaultValue;
