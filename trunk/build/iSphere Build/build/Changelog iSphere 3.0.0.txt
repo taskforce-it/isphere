@@ -1,5 +1,5 @@
 
-Changelog: iSphere 3.4.0.r
+Changelog: iSphere 3.4.0.b001
 -----------------------------
  • Fixed problem that spooled files could not be opened, when the 
    workspace is located in the IFS. (NullPointerException)
@@ -12,7 +12,7 @@ Changelog: iSphere 3.4.0.r
    in the iSphere Compare Editor.
 
 Changelog: iSphere 3.3.1.r
------------------------------
+--------------------------
  • Fixed error message "Parameter 'ccsid' must not be [null]" when 
    attempting to display, edit or added a message description.
  • Changed binding directory editor to set activation default to *IMMED 
