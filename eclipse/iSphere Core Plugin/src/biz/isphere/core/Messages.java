@@ -136,6 +136,8 @@ public class Messages extends NLS {
 
     public static String Member_2_of_file_1_in_library_0_not_found;
 
+    public static String Last_changed;
+
     public static String Message;
 
     public static String Message_Id;

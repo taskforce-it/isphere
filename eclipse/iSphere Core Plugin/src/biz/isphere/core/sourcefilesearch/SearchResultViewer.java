@@ -8,11 +8,16 @@
 
 package biz.isphere.core.sourcefilesearch;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -28,6 +33,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +43,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -47,8 +56,10 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
@@ -68,6 +79,10 @@ public class SearchResultViewer {
     private String[] statements;
     private boolean isEditMode;
 
+    static ColumnSizeUpdateJob columnSizeUpdateJob;
+    static int columnMemberSize = Preferences.getInstance().getSourceFileSearchMemberColumnWidth();
+    static int columnLastChangedDateSize = Preferences.getInstance().getSourceFileSearchLastChangedDateColumnWidth();
+
     private class LabelProviderTableViewerMembers extends LabelProvider implements ITableLabelProvider {
 
         private static final String UNKNOWN = "*UNKNOWN"; //$NON-NLS-1$
@@ -76,6 +91,9 @@ public class SearchResultViewer {
             if (columnIndex == 0) {
                 return ((SearchResult)element).getLibrary() + "-" + ((SearchResult)element).getFile() + "(" + ((SearchResult)element).getMember() //$NON-NLS-1$ //$NON-NLS-2$
                     + ")" + " - \"" + ((SearchResult)element).getDescription() + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            } else if (columnIndex == 1) {
+                Timestamp lastChangedDate = ((SearchResult)element).getLastChangedDate();
+                return DateTimeHelper.getTimestampFormatted(lastChangedDate);
             }
             return UNKNOWN;
         }
@@ -102,8 +120,56 @@ public class SearchResultViewer {
 
     private class SorterTableViewerMembers extends ViewerSorter {
 
+        public static final int BY_MEMBER = 1;
+        public static final int BY_DATE = 2;
+        public static final int ASCENDING = 1;
+        public static final int DESCENDING = 2;
+
+        private int column = BY_MEMBER;
+        private int order = ASCENDING;
+
+        public void setOrder(int column) {
+
+            if (column == this.column) {
+                if (order == ASCENDING) {
+                    order = DESCENDING;
+                } else {
+                    order = ASCENDING;
+                }
+            } else {
+                order = ASCENDING;
+            }
+
+            this.column = column;
+        }
+
         @Override
         public int compare(Viewer viewer, Object e1, Object e2) {
+
+            int result;
+
+            switch (column) {
+            case BY_MEMBER:
+                result = sortByMember(viewer, e1, e2);
+                break;
+
+            case BY_DATE:
+                result = sortByLastChangedDate(viewer, e1, e2);
+                break;
+
+            default:
+                result = sortByMember(viewer, e1, e2);
+            }
+
+            if (order == DESCENDING) {
+                result = result * -1;
+            }
+
+            return result;
+        }
+
+        private int sortByMember(Viewer viewer, Object e1, Object e2) {
+
             int result = ((SearchResult)e1).getLibrary().compareTo(((SearchResult)e2).getLibrary());
             if (result == 0) {
                 result = ((SearchResult)e1).getFile().compareTo(((SearchResult)e2).getFile());
@@ -111,9 +177,16 @@ public class SearchResultViewer {
                     result = ((SearchResult)e1).getMember().compareTo(((SearchResult)e2).getMember());
                 }
             }
+
             return result;
         }
 
+        private int sortByLastChangedDate(Viewer viewer, Object e1, Object e2) {
+
+            int result = ((SearchResult)e1).getLastChangedDate().compareTo(((SearchResult)e2).getLastChangedDate());
+
+            return result;
+        }
     }
 
     private class LabelProviderStatements extends LabelProvider implements ITableLabelProvider {
@@ -129,6 +202,30 @@ public class SearchResultViewer {
 
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
+        }
+
+    }
+
+    private class ColumnSizeUpdateJob extends Job {
+
+        private int memberColumnWidth = -1;
+        private int lastChangedDateColumnWidth = -1;
+
+        public ColumnSizeUpdateJob(int memberColumnWidth, int lastChangedDateColumnWidth) {
+            super("Update column width");
+            this.memberColumnWidth = memberColumnWidth;
+            this.lastChangedDateColumnWidth = lastChangedDateColumnWidth;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor arg0) {
+
+            System.out.println("Updating column sizes ...");
+
+            Preferences.getInstance().setSourceFileSearchMemberColumnWidth(memberColumnWidth);
+            Preferences.getInstance().setSourceFileSearchLastChangedDateColumnWidth(lastChangedDateColumnWidth);
+
+            return Status.OK_STATUS;
         }
 
     }
@@ -394,7 +491,10 @@ public class SearchResultViewer {
                 }
             }
         });
-        tableViewerMembers.setSorter(new SorterTableViewerMembers());
+
+        final SorterTableViewerMembers sorterTableViewerMembers = new SorterTableViewerMembers();
+
+        tableViewerMembers.setSorter(sorterTableViewerMembers);
         tableViewerMembers.setLabelProvider(new LabelProviderTableViewerMembers());
         tableViewerMembers.setContentProvider(new ContentProviderTableViewerMembers());
 
@@ -404,12 +504,46 @@ public class SearchResultViewer {
         tableMembers.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         final TableColumn tableColumnMember = new TableColumn(tableMembers, SWT.NONE);
-        tableColumnMember.setWidth(800);
+        tableColumnMember.setWidth(columnMemberSize);
         tableColumnMember.setText(Messages.Member);
+        tableColumnMember.addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                columnMemberSize = tableColumnMember.getWidth();
+                saveColumnSizes();
+            }
+        });
+
+        final TableColumn tableColumnLastChangedDate = new TableColumn(tableMembers, SWT.NONE);
+        tableColumnLastChangedDate.setWidth(columnLastChangedDateSize);
+        tableColumnLastChangedDate.setText(Messages.Last_changed);
+        tableColumnLastChangedDate.addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                columnLastChangedDateSize = tableColumnLastChangedDate.getWidth();
+                saveColumnSizes();
+            }
+        });
 
         final Menu menuTableMembers = new Menu(tableMembers);
         menuTableMembers.addMenuListener(new TableMembersMenuAdapter(menuTableMembers));
         tableMembers.setMenu(menuTableMembers);
+
+        Listener sortListener = new Listener() {
+            public void handleEvent(Event e) {
+                TableColumn column = (TableColumn)e.widget;
+                if (Messages.Member.equals(column.getText())) {
+                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_MEMBER);
+                    tableViewerMembers.refresh();
+                }
+                if (Messages.Last_changed.equals(column.getText())) {
+                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_DATE);
+                    tableViewerMembers.refresh();
+                }
+            }
+        };
+        tableColumnMember.addListener(SWT.Selection, sortListener);
+        tableColumnLastChangedDate.addListener(SWT.Selection, sortListener);
 
         tableViewerMembers.setInput(new Object());
 
@@ -472,6 +606,17 @@ public class SearchResultViewer {
 
         sashFormSearchResult.setWeights(new int[] { 1, 1 });
 
+    }
+
+    private void saveColumnSizes() {
+
+        if (columnSizeUpdateJob != null) {
+            columnSizeUpdateJob.cancel();
+            columnSizeUpdateJob = null;
+        }
+
+        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnLastChangedDateSize);
+        columnSizeUpdateJob.schedule(500);
     }
 
     private int getStatementLine() {

@@ -8,6 +8,7 @@
 
 package biz.isphere.core.sourcefilesearch;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.swt.widgets.Shell;
@@ -138,6 +139,8 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract String getMemberResourceDescription(Object resource);
 
+    protected abstract Date getMemberLastChangedDate(Object resource);
+
     private void addElementsFromSourceFile(HashMap<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
 
         ISeriesMemberFilterString memberFilterString = new ISeriesMemberFilterString();
@@ -161,6 +164,8 @@ public abstract class AbstractSourceFileSearchDelegate {
         String library = getMemberResourceLibrary(sourceMember);
         String file = getMemberResourceFile(sourceMember);
         String member = getMemberResourceName(sourceMember);
+        String description = getMemberResourceDescription(sourceMember);
+        Date lastChangedDate = getMemberLastChangedDate(sourceMember);
 
         String tKey = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
         if (!searchElements.containsKey(tKey)) {
@@ -168,7 +173,8 @@ public abstract class AbstractSourceFileSearchDelegate {
             aSearchElement.setLibrary(library);
             aSearchElement.setFile(file);
             aSearchElement.setMember(member);
-            aSearchElement.setDescription(getMemberResourceDescription(sourceMember));
+            aSearchElement.setDescription(description);
+            aSearchElement.setLastChangedDate(lastChangedDate);
             searchElements.put(tKey, aSearchElement);
         }
     }
