@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,14 @@
 
 package biz.isphere.rse.sourcefilesearch;
 
+import java.util.Date;
+
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
@@ -78,6 +81,13 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
     protected String getMemberResourceDescription(Object resource) {
         return ISeriesDataElementHelpers.getDescription((DataElement)resource);
+    }
+
+    @Override
+    protected Date getMemberLastChangedDate(Object resource) {
+        DataElement dataElement = (DataElement)resource;
+        ISeriesMember iSeriesMember = new ISeriesMember(dataElement);
+        return iSeriesMember.getDateModified();
     }
 
 }
