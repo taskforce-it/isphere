@@ -221,9 +221,16 @@ public class SessionConfig {
      */
     public void saveThemeProps(String fileName) {
 
+        ConfigureFactory configureFactory = ConfigureFactory.getInstance();
+
         setThemePropertiesDirty(false);
 
-        ConfigureFactory.getInstance().saveSettings(getThemeConfigurationKey(fileName), fileName, THEME_CONFIGURATION_HEADER);
+        if (!fileName.equals(themeConfigurationFile)) {
+            configureFactory.saveSettingsAs(getThemeConfigurationKey(themeConfigurationFile), getThemeConfigurationKey(fileName), fileName,
+                THEME_CONFIGURATION_HEADER);
+        } else {
+            configureFactory.saveSettings(getThemeConfigurationKey(fileName), fileName, THEME_CONFIGURATION_HEADER);
+        }
     }
 
     private String getThemeConfigurationKey(String fileName) {
