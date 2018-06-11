@@ -50,6 +50,7 @@ public class SaveTheme {
         TN5250jFileChooser fileChooser = new TN5250jFileChooser(workingDir);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileFilter(new TN5250jFileFilter("theme", "Theme files"));
+        fileChooser.setSelectedFile(new File(config.getSessionTheme()));
 
         int ret = fileChooser.showSaveDialog(parent);
 
