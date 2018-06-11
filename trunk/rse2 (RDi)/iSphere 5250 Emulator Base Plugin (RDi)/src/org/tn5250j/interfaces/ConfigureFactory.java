@@ -94,6 +94,8 @@ public abstract class ConfigureFactory {
 
     abstract public void saveSettings(String regKey, String fileName, String header);
 
+    abstract public void saveSettingsAs(String oldRegKey, String newRegKey, String fileName, String header);
+
     abstract public String[] loadThemeNames(String fileNameSuffix);
 
     abstract public String settingsDirectory();
