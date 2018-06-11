@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-20173 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2018 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
+import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
@@ -231,8 +232,8 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(),
-                        new ArrayList<SearchElement>(_searchElements.values()), postRun);
+                    new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
+                        .values()), postRun);
 
                 }
 
@@ -271,11 +272,14 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
         if (!_searchElements.containsKey(key)) {
 
+            ISeriesMember iSeriesMember = new ISeriesMember(element);
+
             SearchElement _searchElement = new SearchElement();
-            _searchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(element));
-            _searchElement.setFile(ISeriesDataElementHelpers.getFile(element));
-            _searchElement.setMember(ISeriesDataElementHelpers.getName(element));
-            _searchElement.setDescription(ISeriesDataElementHelpers.getDescription(element));
+            _searchElement.setLibrary(iSeriesMember.getLibrary());
+            _searchElement.setFile(iSeriesMember.getFile());
+            _searchElement.setMember(iSeriesMember.getName());
+            _searchElement.setDescription(iSeriesMember.getDescription());
+            _searchElement.setLastChangedDate(iSeriesMember.getDateModified());
             _searchElements.put(key, _searchElement);
 
         }
