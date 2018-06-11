@@ -320,7 +320,8 @@ public class GlobalConfigure extends ConfigureFactory {
      * the output.
      * 
      * @param regKey
-     * @param Header
+     * @param fileName
+     * @param header
      */
     @Override
     public void saveSettings(String regKey, String fileName, String header) {
@@ -342,6 +343,26 @@ public class GlobalConfigure extends ConfigureFactory {
 
         }
 
+    }
+
+    /**
+     * Save the settings in the registry using the key passed with a header in
+     * the output.
+     * 
+     * @param oldRegKey
+     * @param newRegKey
+     * @param fileName
+     * @param header
+     */
+    @Override
+    public void saveSettingsAs(String oldRegKey, String newRegKey, String fileName, String header) {
+
+        Properties themeProperties = ConfigureFactory.getInstance().getProperties(oldRegKey);
+        if (themeProperties != null) {
+            ConfigureFactory.getInstance().setProperties(newRegKey, themeProperties);
+        }
+
+        saveSettings(newRegKey, fileName, header);
     }
 
     /**
