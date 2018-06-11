@@ -31,6 +31,7 @@ import org.tn5250j.TN5250jConstants;
 import org.tn5250j.event.SessionConfigEvent;
 import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.SessionManagerInterface;
+import org.tn5250j.settings.ColorProperty;
 import org.tn5250j.tools.logging.TN5250jLogFactory;
 import org.tn5250j.tools.logging.TN5250jLogger;
 
@@ -147,11 +148,14 @@ public class SessionManager implements SessionManagerInterface, SessionConfigLis
             if (!conf.getSessionTheme().equals(sessionTheme)) {
 
                 propertyName = changeEvent.getPropertyName();
-                oldValue = changeEvent.getOldValue();
-                newValue = changeEvent.getNewValue();
+                if (!ColorProperty.isColorProperty(propertyName)) {
 
-                changeEvent = new SessionConfigEvent(this, propertyName, oldValue, newValue, sessionTheme);
-                conf.firePropertyChange(this, propertyName, oldValue, newValue);
+                    oldValue = changeEvent.getOldValue();
+                    newValue = changeEvent.getNewValue();
+
+                    changeEvent = new SessionConfigEvent(this, propertyName, oldValue, newValue, sessionTheme);
+                    conf.firePropertyChange(this, propertyName, oldValue, newValue);
+                }
             }
         }
     }
