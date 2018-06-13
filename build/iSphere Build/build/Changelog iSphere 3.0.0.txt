@@ -1,15 +1,18 @@
 
 Changelog: iSphere 3.4.0.b001
 -----------------------------
- • Fixed problem that spooled files could not be opened, when the 
-   workspace is located in the IFS. (NullPointerException)
  • Added error logging when opening or saving a spooled file.
  • Added column 'Last changed' to the member list of the result view of
    the iSphere Source File Search.
- • Changed ISpherePlugin to check the .project file of the 
-   iSphereSpooledFiles project.
  • Added connection name to member title when comparing source members
    in the iSphere Compare Editor.
+ • Changed ISpherePlugin to check the .project file of the 
+   iSphereSpooledFiles project.
+ • Fixed problem that color attributes were accidentally promoted 
+   between sessions with different themes.
+ • Fixed problem that option "Save as Theme" did not work.
+ • Fixed problem that spooled files could not be opened, when the 
+   workspace is located in the IFS. (NullPointerException)
 
 Changelog: iSphere 3.3.1.r
 --------------------------
