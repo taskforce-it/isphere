@@ -124,7 +124,8 @@ public class SearchForUpdates extends Job {
                 if (numTries == 0) {
                     ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
                     if (showResultAlways) {
-                        MessageDialogAsync.displayError(Messages.E_R_R_O_R, Messages.Failed_to_connect_to_iSphere_update_server);
+                        MessageDialogAsync.displayError(Messages.E_R_R_O_R,
+                            Messages.Failed_to_connect_to_iSphere_update_server + "\n\n" + e.getLocalizedMessage());
                     }
                     return Status.OK_STATUS;
                 }
@@ -145,9 +146,9 @@ public class SearchForUpdates extends Job {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null,
-                                getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo),
-                                MessageDialog.INFORMATION, new String[] { Messages.OK }, 0, availableVersion.toString());
+                            UpdatesNotifierDialog dialog = new UpdatesNotifierDialog(parent, "iSphere", null, getNewVersionText(currentVersion,
+                                availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo), MessageDialog.INFORMATION,
+                                new String[] { Messages.OK }, 0, availableVersion.toString());
                             dialog.open();
                             return Status.OK_STATUS;
                         }
@@ -161,8 +162,8 @@ public class SearchForUpdates extends Job {
                         MessageBox tMessageBox = new MessageBox(parent, SWT.ICON_INFORMATION);
                         tMessageBox.setText("iSphere");
                         if (newVersionAvailable) {
-                            tMessageBox.setMessage(
-                                getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo, updateLibraryInfo));
+                            tMessageBox.setMessage(getNewVersionText(currentVersion, availableVersion, newRequiresUpdateLibrary, newVersionInfo,
+                                updateLibraryInfo));
                         } else {
                             tMessageBox.setMessage(Messages.There_is_no_new_version_available);
                         }
@@ -184,8 +185,8 @@ public class SearchForUpdates extends Job {
             HttpURLConnection httpConnection = (HttpURLConnection)connection;
             httpConnection.setRequestMethod("GET");
             int respCode;
-            while ((respCode = httpConnection.getResponseCode()) == HttpURLConnection.HTTP_MOVED_TEMP || respCode == HttpURLConnection.HTTP_MOVED_PERM
-                || respCode == HttpURLConnection.HTTP_SEE_OTHER) {
+            while ((respCode = httpConnection.getResponseCode()) == HttpURLConnection.HTTP_MOVED_TEMP
+                || respCode == HttpURLConnection.HTTP_MOVED_PERM || respCode == HttpURLConnection.HTTP_SEE_OTHER) {
                 String newUrl = httpConnection.getHeaderField("Location"); //$NON-NLS-1$
                 url = new URL(newUrl);
                 return followRedirects(url);
