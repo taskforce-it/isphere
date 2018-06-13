@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere TN5250J Help (optional)
 Bundle-SymbolicName: biz.isphere.tn5250j.help;singleton:=true
-Bundle-Version: 3.4.0.b001
+Bundle-Version: 3.4.0.b002
 Bundle-Vendor: iSphere Project Team
