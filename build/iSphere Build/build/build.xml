@@ -60,8 +60,8 @@
  *       click "select all" for the "Download Button".
  *     - Set the version number in MANIFEST.MF in the project specified at key
  *       'build.notifier.project' in file 'build.properties'.
- *       and commit the change to the repository to notify the users about
- *       the new version.
+ *       and commit the change to the repository.
+ *     - On the PC run target 'releaseNewVersion'.
  *
  * ===================================================================== -->
 <project basedir="." default="build">
@@ -167,6 +167,7 @@
 	<property name="build.upload.dir.maintenance" location="${build.upload.dir}/sf-maintenance/${beta.dir}/maintenance" />
 	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
 	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.notifier" location="${build.upload.dir}/sf-web" />
 	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
 	<property name="build.upload.dir.web.eclipse" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse" />
 	<property name="build.upload.dir.help" location="${build.upload.dir}/sf-help/${beta.dir}/help" />
@@ -355,7 +356,7 @@
     *   It must be run, after the update site has been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="createSourceForgeFiles" depends="checkBuildTarget,cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance" description="Create SourceForge files and web pages">
+	<target name="createSourceForgeFiles" depends="checkBuildTarget,cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance,prepareNewReleaseNotification" description="Create SourceForge files and web pages">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Check files in '${build.public.project.name} Build/upload/...'</echo>
@@ -414,6 +415,62 @@
 			</then>	
 		</if>
 			
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads MANIFEST.MF to the iSphere update sites to inform
+    *   the users about a new version.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="releaseNewVersion" depends="checkBuildTarget,prepareNewReleaseNotification,ftpCredentialsSourceForge" description="Releases a new version">
+
+		<echo>Releasing version ${build.version} ...</echo>
+
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<property name="manifest.release.version.property.name" value="X-Beta-Version"/>
+			</then>
+			<else>
+				<property name="manifest.release.version.property.name" value="Bundle-Version"/>
+			</else>
+		</if>
+
+		<loadfile property="manifest.version" srcFile="${workspace.home}\${build.notifier.project}\${build.notifier.file}">
+		    <filterchain>
+		        <!-- following filter tokenize input file and return only
+		             the lines that match the pattern. Matched string is 
+		             replaced by an empty string to get only the value of the
+		             manifest property.
+		        -->
+		        <tokenfilter>
+		            <containsregex pattern="${manifest.release.version.property.name}:[ \t]*" replace="" flags="i"/>
+		        </tokenfilter>
+		    	<!-- Eventually remove carriage return and new line characters
+		    	     and trim the remaining value
+	    	    --> 
+	        	<deletecharacters chars="\r\n"/>
+	        	<trim/>
+		    </filterchain>
+		</loadfile>
+		
+		<echo>Manifest version: ${manifest.version}</echo>
+		
+		<if>
+			<not>
+			<equals arg1="${build.version}" arg2="${manifest.version}" />
+			</not>
+			<then>
+				<fail>*** ERROR: Manifest version number '${manifest.version}' does not match build version number '${build.version}' ***</fail>
+			</then>
+		</if>
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			<copydir dir="${build.upload.dir.notifier}" toDir="." subDirs="false" />
+		</SF>
+
 	</target>
 
 	<!--
@@ -776,6 +833,23 @@
 		</copy>
 		
 		<replace file="${build.upload.dir.maintenance}/index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Prepares MANIFEST.MF for releasing a new version.
+    * ===================================================================== -->
+	<target name="prepareNewReleaseNotification" unless="ignore.build.maintenance">
+
+		<echo>Preparing release notification file ...</echo>
+
+		<copy todir="${build.upload.dir.notifier}">
+			<fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
+			</fileset>
+		</copy>
 
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 
