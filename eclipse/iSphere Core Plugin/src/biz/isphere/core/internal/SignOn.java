@@ -11,6 +11,7 @@ package biz.isphere.core.internal;
 import java.io.IOException;
 
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -29,11 +31,15 @@ import com.ibm.as400.access.AS400SecurityException;
 
 public class SignOn {
 
+    private static final String HOST = "HOST";
+    private static final String USER = "USER";
+
     private Text textHost;
     private Text textUser;
     private Text textPassword;
     private StatusLineManager statusLineManager;
     private AS400 as400;
+    private DialogSettingsManager dialogSettingsManager;
 
     public SignOn() {
         as400 = null;
@@ -85,6 +91,20 @@ public class SignOn {
             textPassword.setFocus();
         }
 
+        loadScreenValues();
+
+        positionCursor();
+    }
+
+    private void positionCursor() {
+
+        if (StringHelper.isNullOrEmpty(textHost.getText())) {
+            textHost.setFocus();
+        } else if (StringHelper.isNullOrEmpty(textUser.getText())) {
+            textUser.setFocus();
+        } else {
+            textPassword.setFocus();
+        }
     }
 
     protected void setErrorMessage(String errorMessage) {
@@ -96,6 +116,8 @@ public class SignOn {
     }
 
     public boolean processButtonPressed() {
+
+        storeScreenValues();
 
         textHost.getText().trim();
         textUser.getText().trim();
@@ -131,11 +153,48 @@ public class SignOn {
             textHost.setFocus();
             return false;
         }
+
         return true;
+    }
+
+    private void loadScreenValues() {
+
+        if (StringHelper.isNullOrEmpty(textHost.getText())) {
+            String host = getDialogSettingsManager().loadValue(HOST, "");
+            textHost.setText(host);
+        }
+
+        String user = getDialogSettingsManager().loadValue(USER, "");
+        textUser.setText(user);
+    }
+
+    private void storeScreenValues() {
+
+        getDialogSettingsManager().storeValue(HOST, textHost.getText());
+        getDialogSettingsManager().storeValue(USER, textUser.getText());
     }
 
     public AS400 getAS400() {
         return as400;
+    }
+
+    private DialogSettingsManager getDialogSettingsManager() {
+
+        if (dialogSettingsManager == null) {
+            IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
+            if (workbenchSettings == null) {
+                throw new IllegalArgumentException("Parameter 'workbenchSettings' must not be null.");
+            }
+            String sectionName = getClass().getName();
+            IDialogSettings dialogSettings = workbenchSettings.getSection(sectionName);
+            if (dialogSettings == null) {
+                dialogSettings = workbenchSettings.addNewSection(sectionName);
+            }
+
+            dialogSettingsManager = new DialogSettingsManager(dialogSettings);
+        }
+
+        return dialogSettingsManager;
     }
 
 }
