@@ -1,5 +1,10 @@
 
-Changelog: iSphere 3.4.0.b001
+Changelog: iSphere 3.4.0.b003
+-----------------------------
+ • Added server response to error message when the iSphere update 
+   server could not be reached.
+
+Changelog: iSphere 3.4.0.b002
 -----------------------------
  • Added error logging when opening or saving a spooled file.
  • Added column 'Last changed' to the member list of the result view of
