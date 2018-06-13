@@ -10,6 +10,8 @@ Changelog: iSphere 3.4.0.b001
    iSphereSpooledFiles project.
  • Changed signon dialog to store host and user names, when transferring 
    the iSphere library
+ • Changed "new release notification URL" to 
+   "http://isphere.sourceforge.net/MANIFEST.MF".
  • Fixed problem that color attributes were accidentally promoted 
    between sessions with different themes.
  • Fixed problem that option "Save as Theme" did not work.
