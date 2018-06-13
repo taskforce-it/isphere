@@ -922,7 +922,7 @@ public final class Preferences {
      * @return default URL for updates.
      */
     public String getDefaultURLForUpdates() {
-        return "http://sourceforge.net/p/isphere/code/HEAD/tree/trunk/build/iSphere%20Notifier/MANIFEST.MF?format=raw";
+        return "http://isphere.sourceforge.net/MANIFEST.MF";
     }
 
     /**
