@@ -3,7 +3,7 @@ Bundle-Version: 3.3.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Bugfix of message file editor and enhancements of compare editor.
-X-Beta-Version: 3.3.1.r
-X-Beta-Update-Library: false
+X-Beta-Version: 3.4.0.b001
+X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: .
+X-Beta-Info: Added column 'Last changed' to the member list of the result view of the iSphere Source File Search.\nBug fixes.
