@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="xstream/xpp3_min-1.1.4c.jar"/>
+	<classpathentry exported="true" kind="lib" path="xstream/xstream-1.4.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="jxl.jar"/>
 	<classpathentry exported="true" kind="lib" path="activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="mail.jar"/>
