@@ -23,7 +23,9 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.common.libraries
 Bundle-ClassPath: .,
  lib/jxl.jar,
- lib/itextpdf-5.5.0.jar
+ lib/itextpdf-5.5.0.jar,
+ lib/xstream/xpp3_min-1.1.4c.jar,
+ lib/xstream/xstream-1.4.7.jar
 Export-Package: biz.isphere.core,
  biz.isphere.core.annotations,
  biz.isphere.core.api.qcapcmd,
