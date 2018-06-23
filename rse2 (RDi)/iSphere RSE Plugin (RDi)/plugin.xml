@@ -999,15 +999,15 @@
             <separator name="group1"/> 
          </menu> 
          <action
-            id="biz.isphere.rse.actions.RSEManagementAction" 
+            id="biz.isphere.rse.actions.RSEFilterManagementAction" 
             label="%iSphere_RSE_Filter_Management" 
             menubarPath="biz.isphere.rse.menu/group1" 
             toolbarPath="Normal/additions"
             style="push"
             state="true" 
-            icon="icons/iSphere_RSE_Management.gif" 
+            icon="icons/iSphere_RSE_Filter_Management.gif" 
             tooltip="%iSphere_RSE_Filter_Management" 
-            class="biz.isphere.rse.actions.RSEManagementAction"> 
+            class="biz.isphere.rse.actions.RSEFilterManagementAction"> 
          </action> 
      </viewContribution> 
    </extension>    
@@ -1056,11 +1056,21 @@
          </action>
          
          <action
+               class="biz.isphere.rse.actions.OpenRSECommandManagementAction"
+               id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
+               definitionId="biz.isphere.core.command.RSECommandManagement.open"
+               label="%menu_RSE_Command_Management"
+               icon="icons/iSphere_RSE_Commands_Management.gif"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
+               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Command_Management">
+         </action>
+         
+         <action
                class="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
                id="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
-               definitionId="biz.isphere.core.command.RSEManagement.open"
+               definitionId="biz.isphere.core.command.RSEFilterManagement.open"
                label="%menu_RSE_Filter_Management"
-               icon="icons/iSphere_RSE_Management.gif"
+               icon="icons/iSphere_RSE_Filter_Management.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
          </action>
@@ -1187,10 +1197,17 @@
       </command>
       
       <command
-            defaultHandler="biz.isphere.rse.handler.OpenRSEManagementHandler"
-            id="biz.isphere.core.command.RSEManagement.open"
+            defaultHandler="biz.isphere.rse.handler.OpenRSEFilterManagementHandler"
+            id="biz.isphere.core.command.RSEFilterManagement.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_RSE_Filter_Management">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenRSECommandManagementHandler"
+            id="biz.isphere.core.command.RSECommandManagement.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_RSE_Command_Management">
       </command>
       
       <command
