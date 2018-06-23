@@ -16,22 +16,22 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
+import biz.isphere.rse.handler.OpenRSECommandManagementHandler;
 
-public class OpenRSEFilterManagementAction implements IWorkbenchWindowActionDelegate {
+public class OpenRSECommandManagementAction implements IWorkbenchWindowActionDelegate {
 
-    public static final String ID = "biz.isphere.rse.actions.OpenRSEFilterManagementAction";
+    public static final String ID = "biz.isphere.rse.actions.OpenRSECommandManagementAction";
 
     public void run(IAction action) {
 
         try {
 
-            OpenRSEFilterManagementHandler handler = new OpenRSEFilterManagementHandler();
+            OpenRSECommandManagementHandler handler = new OpenRSECommandManagementHandler();
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
 
         } catch (ExecutionException e) {
-            ISpherePlugin.logError("Failed to open the RSE filter management.", e);
+            ISpherePlugin.logError("Failed to open the RSE command management.", e);
         }
     }
 

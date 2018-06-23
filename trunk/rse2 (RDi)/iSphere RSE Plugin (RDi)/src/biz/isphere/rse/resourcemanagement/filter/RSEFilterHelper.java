@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
@@ -26,38 +25,20 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 @SuppressWarnings("restriction")
-public class RSEFilterHelper {
-
-    public static final String OBJECT_SUBSYSTEM_ID = "com.ibm.etools.iseries.subsystems.qsys.objects"; //$NON-NLS-1$
-
-    public static RSEProfile[] getProfiles() {
-
-        ArrayList<RSEProfile> allProfiles = new ArrayList<RSEProfile>();
-
-        ISystemProfile[] profiles = SystemProfileManager.getDefault().getSystemProfiles();
-        for (int idx = 0; idx < profiles.length; idx++) {
-            RSEProfile rseProfile = new RSEProfile(profiles[idx].getName(), profiles[idx]);
-            allProfiles.add(rseProfile);
-        }
-
-        RSEProfile[] rseProfiles = new RSEProfile[allProfiles.size()];
-        allProfiles.toArray(rseProfiles);
-
-        return rseProfiles;
-
-    }
+public class RSEFilterHelper extends AbstractSystemHelper {
 
     public static ISystemFilterPoolReference[] getConnectionFilterPools(String connectionName) {
 
         List<ISystemFilterPoolReference> filterPools = new LinkedList<ISystemFilterPoolReference>();
 
         IBMiConnection connection = getConnection(connectionName);
-        ISubSystem subSystem = connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
+        ISubSystem subSystem = getObjectSubSystem(connection);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             filterPools.add(systemFilterPoolReference);
@@ -71,7 +52,7 @@ public class RSEFilterHelper {
         List<ISystemFilter> filters = new LinkedList<ISystemFilter>();
 
         IBMiConnection connection = getConnection(connectionName);
-        ISubSystem subSystem = connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
+        ISubSystem subSystem = getObjectSubSystem(connection);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             if (systemFilterPoolName == null || systemFilterPoolName.equals(filterPoolReferences)) {
@@ -94,8 +75,7 @@ public class RSEFilterHelper {
 
         ISystemProfile profile = SystemProfileManager.getDefault().getSystemProfile(rseProfile.getName());
         if (profile != null) {
-            ISystemFilterPool[] filterPools = profile.getFilterPools(RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(
-                OBJECT_SUBSYSTEM_ID));
+            ISystemFilterPool[] filterPools = profile.getFilterPools(getSubSystemConfiguration());
             for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
                 RSEFilterPool rseFilterPool = new RSEFilterPool(rseProfile, filterPools[idx2].getName(), filterPools[idx2].isDefault(),
                     filterPools[idx2]);
@@ -175,7 +155,7 @@ public class RSEFilterHelper {
             if (pool == null) {
                 ISystemProfile profile = SystemProfileManager.getDefault().getSystemProfile(filterPool.getProfile().getName());
                 if (profile != null) {
-                    ISubSystemConfiguration subSystem = RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(OBJECT_SUBSYSTEM_ID);
+                    ISubSystemConfiguration subSystem = getSubSystemConfiguration();
                     ISystemFilterPoolManager manager = subSystem.getFilterPoolManager(profile);
                     try {
                         pool = manager.createSystemFilterPool(filterPool.getName(), true);
