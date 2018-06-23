@@ -1394,6 +1394,30 @@ public class Messages extends NLS {
 
     public static String Ignore_changes_right;
 
+    public static String RSE_Command_Management;
+
+    public static String RSE_Commands;
+
+    public static String Single_compile_type;
+
+    public static String Compile_type;
+
+    public static String Command;
+
+    public static String All_compile_types;
+
+    public static String commands;
+
+    public static String Commands;
+
+    public static String No_compile_types_available;
+
+    public static String No_compile_types_selected;
+
+    public static String Label;
+
+    public static String command_string;
+
     /*
      * Warning messages
      */
