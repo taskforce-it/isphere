@@ -14,22 +14,22 @@ import org.eclipse.emf.common.ui.action.WorkbenchWindowActionDelegate;
 import org.eclipse.jface.action.IAction;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
+import biz.isphere.rse.handler.OpenRSECommandManagementHandler;
 
-public class OpenRSEFilterManagementAction extends WorkbenchWindowActionDelegate {
+public class OpenRSECommandManagementAction extends WorkbenchWindowActionDelegate {
 
-    public static final String ID = "biz.isphere.rse.actions.OpenRSEFilterManagementAction";
+    public static final String ID = "biz.isphere.rse.actions.OpenRSECommandManagementAction";
 
     public void run(IAction action) {
 
         try {
 
-            OpenRSEFilterManagementHandler handler = new OpenRSEFilterManagementHandler();
+            OpenRSECommandManagementHandler handler = new OpenRSECommandManagementHandler();
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
 
         } catch (ExecutionException e) {
-            ISpherePlugin.logError("Failed to open the RSE filter management.", e);
+            ISpherePlugin.logError("Failed to open the RSE command management.", e);
         }
     }
 }

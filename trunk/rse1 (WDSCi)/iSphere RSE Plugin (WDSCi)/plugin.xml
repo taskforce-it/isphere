@@ -62,6 +62,24 @@
     
 	<extension 
 		point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+
+      	<!--
+      	  ==========================================
+      	    Compile Commands
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Import Compile Commands"
+			class="biz.isphere.rse.actions.ImportCompileCommandsAction"
+			id="biz.isphere.rse.actions.ImportCompileCommandsAction">
+	    </dynamicPopupMenuExtension>
+
+		<dynamicPopupMenuExtension
+			name="Export Compile Commands"
+			class="biz.isphere.rse.actions.ExportCompileCommandsAction"
+			id="biz.isphere.rse.actions.ExportCompileCommandsAction">
+	    </dynamicPopupMenuExtension>
       	
       	<!--
       	  ==========================================
@@ -477,15 +495,15 @@
             <separator name="group1"/> 
          </menu> 
          <action
-            id="biz.isphere.rse.actions.RSEManagementAction" 
+            id="biz.isphere.rse.actions.RSEFilterManagementAction" 
             label="%iSphere_RSE_Filter_Management" 
             menubarPath="biz.isphere.rse.menu/group1" 
             toolbarPath="Normal/additions"
             style="push"
             state="true" 
-            icon="icons/iSphere_RSE_Management.gif" 
+            icon="icons/iSphere_RSE_Filter_Management.gif" 
             tooltip="%iSphere_RSE_Filter_Management" 
-            class="biz.isphere.rse.actions.RSEManagementAction"> 
+            class="biz.isphere.rse.actions.RSEFilterManagementAction"> 
          </action> 
      </viewContribution> 
    </extension>    
@@ -531,6 +549,16 @@
                icon="icons/data_space_editor_designer.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
+         </action>
+         
+         <action
+               class="biz.isphere.rse.actions.OpenRSECommandManagementAction"
+               id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
+               definitionId="biz.isphere.core.command.RSEManagement.open"
+               label="%menu_RSE_Command_Management"
+               icon="icons/iSphere_RSE_Management.gif"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
+               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Command_Management">
          </action>
          
          <action
@@ -659,7 +687,7 @@
       </command>
       
       <command
-            defaultHandler="biz.isphere.rse.handler.OpenRSEManagementHandler"
+            defaultHandler="biz.isphere.rse.handler.OpenRSEFilterManagementHandler"
             id="biz.isphere.core.command.RSEManagement.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_RSE_Filter_Management">

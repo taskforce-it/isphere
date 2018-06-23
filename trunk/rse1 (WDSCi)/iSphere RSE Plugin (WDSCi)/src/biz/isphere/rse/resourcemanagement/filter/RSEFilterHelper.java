@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.emf.common.util.EList;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
-import biz.isphere.rse.ibm.helper.ISeriesRSEHelper;
+import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 import com.ibm.etools.iseries.core.IISeriesFilterTypes;
 import com.ibm.etools.iseries.core.ISeriesSubSystemHelpers;
@@ -31,33 +31,16 @@ import com.ibm.etools.systems.model.SystemProfile;
 import com.ibm.etools.systems.model.impl.SystemProfileManagerImpl;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-public class RSEFilterHelper {
+public class RSEFilterHelper extends AbstractSystemHelper {
 
     public static final String OBJECT_SUBSYSTEM_ID = "ibm.files400"; //$NON-NLS-1$
-
-    public static RSEProfile[] getProfiles() {
-
-        ArrayList<RSEProfile> allProfiles = new ArrayList<RSEProfile>();
-
-        SystemProfile[] profiles = SystemProfileManagerImpl.getSystemProfileManager().getSystemProfiles();
-        for (int idx = 0; idx < profiles.length; idx++) {
-            RSEProfile rseProfile = new RSEProfile(profiles[idx].getName(), profiles[idx]);
-            allProfiles.add(rseProfile);
-        }
-
-        RSEProfile[] rseProfiles = new RSEProfile[allProfiles.size()];
-        allProfiles.toArray(rseProfiles);
-
-        return rseProfiles;
-
-    }
 
     public static SystemFilterPoolReference[] getConnectionFilterPools(String connectionName) {
 
         List<SystemFilterPoolReference> filterPools = new LinkedList<SystemFilterPoolReference>();
 
         ISeriesConnection connection = getConnection(connectionName);
-        SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, OBJECT_SUBSYSTEM_ID);
+        SubSystem subSystem = getObjectSubSystem(connection);
         SystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (SystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             filterPools.add(systemFilterPoolReference);
@@ -71,7 +54,7 @@ public class RSEFilterHelper {
         List<SystemFilter> filters = new LinkedList<SystemFilter>();
 
         ISeriesConnection connection = getConnection(connectionName);
-        SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, OBJECT_SUBSYSTEM_ID);
+        SubSystem subSystem = getObjectSubSystem(connection);
         SystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (SystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             if (systemFilterPoolName == null || systemFilterPoolName.equals(filterPoolReferences)) {
@@ -94,7 +77,7 @@ public class RSEFilterHelper {
 
         SystemProfile profile = SystemProfileManagerImpl.getSystemProfileManager().getSystemProfile(rseProfile.getName());
         if (profile != null) {
-            SystemFilterPool[] filterPools = profile.getFilterPools(ISeriesSubSystemHelpers.getISeriesObjectsSubSystemFactory());
+            SystemFilterPool[] filterPools = profile.getFilterPools(getSubSystemConfiguration());
             for (int idx2 = 0; idx2 < filterPools.length; idx2++) {
                 RSEFilterPool rseFilterPool = new RSEFilterPool(rseProfile, filterPools[idx2].getName(), filterPools[idx2].isDefault(),
                     filterPools[idx2]);
