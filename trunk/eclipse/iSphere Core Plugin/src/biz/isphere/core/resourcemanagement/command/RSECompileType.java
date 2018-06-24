@@ -22,7 +22,11 @@ public class RSECompileType {
     private List<RSECommand> commands;
 
     public RSECompileType(RSEProfile profile) {
-        this(profile, null, false, null);
+        this(profile, null, null);
+    }
+
+    public RSECompileType(RSEProfile profile, String type, Object origin) {
+        this(profile, type, false, origin);
     }
 
     private RSECompileType(RSEProfile profile, String type, boolean _default, Object origin) {
