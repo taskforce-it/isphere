@@ -23,32 +23,40 @@ public class RSECommand extends AbstractResource {
     private RSECompileType compileType;
     private String id;
     private String label;
-    private boolean isLabelEditable;
+    // private boolean isLabelEditable --> super.isEditable
     private String commandString;
     private boolean isCommandStringEditable;
     private String nature;
     private String menuOption;
     private Object origin;
 
-    public RSECommand(boolean editable) {
-        super(editable);
+    public RSECommand() {
+        super(false);
         this.compileType = null;
         this.id = null;
         this.label = null;
-        this.isLabelEditable = true;
         this.commandString = null;
-        this.isCommandStringEditable = true;
         this.nature = null;
         this.menuOption = null;
         this.origin = null;
+
+        setLabelEditable(true);
+        setCommandStringEditable(true);
     }
 
-    public RSECommand(RSECompileType compileType, String name, String type, Object origin) {
+    public RSECommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString, boolean isCommandStringEditable,
+        String id, String nature, String menuOption, Object origin) {
         super(true);
         this.compileType = compileType;
-        this.label = name;
-        this.commandString = type;
+        this.id = id;
+        this.label = label;
+        this.commandString = commandString;
+        this.nature = nature;
+        this.menuOption = menuOption;
         this.origin = origin;
+
+        setLabelEditable(isLabelEditable);
+        setCommandStringEditable(isCommandStringEditable);
     }
 
     public RSECompileType getCompileType() {
@@ -76,12 +84,11 @@ public class RSECommand extends AbstractResource {
     }
 
     public boolean isLabelEditable() {
-        return isLabelEditable;
+        return super.isEditable();
     }
 
     public void setLabelEditable(boolean editable) {
-        isLabelEditable = editable;
-        updateEditable();
+        super.setEditable(editable);
     }
 
     public String getCommandString() {
@@ -98,7 +105,6 @@ public class RSECommand extends AbstractResource {
 
     public void setCommandStringEditable(boolean editable) {
         isCommandStringEditable = editable;
-        updateEditable();
     }
 
     public String getNature() {
@@ -123,10 +129,6 @@ public class RSECommand extends AbstractResource {
 
     public void setOrigin(Object origin) {
         this.origin = origin;
-    }
-
-    private void updateEditable() {
-        setEditable(isLabelEditable() && isCommandStringEditable());
     }
 
     @Override

@@ -8,6 +8,9 @@
 
 package biz.isphere.core.resourcemanagement;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -60,7 +63,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         }
 
         public Image getColumnImage(Object element, int columnIndex) {
-            return null;
+            return getTableColumnImage(element, columnIndex);
         }
 
         public Color getBackground(Object element, int columnIndex) {
@@ -129,8 +132,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         tableViewerResources.setSorter(new SorterResources());
         tableViewerResources.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection)tableViewerResources.getSelection();
-                Object[] selectedItems = selection.toArray();
+                AbstractResource[] selectedItems = getSelectedResources();
                 if (selectedItems.length == 0) {
                     setButtonsEnabled(false);
                 } else {
@@ -198,10 +200,9 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     String action = (String)((Button)e.getSource()).getData("Action");
-                    IStructuredSelection selection = (IStructuredSelection)tableViewerResources.getSelection();
-                    Object[] selectedItems = selection.toArray();
+                    AbstractResource[] selectedItems = getSelectedResources();
                     for (int idx = 0; idx < selectedItems.length; idx++) {
-                        ((AbstractResource)selectedItems[idx]).setAction(action);
+                        selectedItems[idx].setAction(action);
                     }
                     tableViewerResources.setSelection(new StructuredSelection(), true);
                     tableViewerResources.refresh();
@@ -217,10 +218,9 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         buttonUndoAction.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                IStructuredSelection selection = (IStructuredSelection)tableViewerResources.getSelection();
-                Object[] selectedItems = selection.toArray();
+                AbstractResource[] selectedItems = getSelectedResources();
                 for (int idx = 0; idx < selectedItems.length; idx++) {
-                    ((AbstractResource)selectedItems[idx]).setAction(null);
+                    selectedItems[idx].setAction(null);
                 }
                 tableViewerResources.setSelection(new StructuredSelection(), true);
                 tableViewerResources.refresh();
@@ -229,12 +229,80 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
     }
 
+    private AbstractResource[] getSelectedResources() {
+
+        List<AbstractResource> selectedResources = new LinkedList<AbstractResource>();
+
+        IStructuredSelection selection = (IStructuredSelection)tableViewerResources.getSelection();
+        Object[] selectedItems = selection.toArray();
+        for (Object item : selectedItems) {
+            if (item instanceof AbstractResource) {
+                selectedResources.add((AbstractResource)item);
+            }
+        }
+
+        return selectedResources.toArray(new AbstractResource[selectedResources.size()]);
+    }
+
     private void setButtonsEnabled(boolean enabled) {
+
         buttonDeselectAll.setEnabled(enabled);
+
         for (int idx = 0; idx < buttonActions.length; idx++) {
             buttonActions[idx].setEnabled(enabled);
         }
+
         buttonUndoAction.setEnabled(enabled);
+
+        // Disabled buttons
+        AbstractResource[] selectedItems = getSelectedResources();
+
+        // Disable "Push to workspace" button
+        Button pushToWorkspaceButton = getActionButton(AbstractResource.PUSH_TO_WORKSPACE);
+        if (pushToWorkspaceButton != null && pushToWorkspaceButton.isEnabled()) {
+            if (!allResourcesEditable(selectedItems)) {
+                pushToWorkspaceButton.setEnabled(false);
+            }
+        }
+
+        // Disable "Delete from workspace" button
+        Button deleteFromWorkspaceButton = getActionButton(AbstractResource.DELETE_FROM_WORKSPACE);
+        if (deleteFromWorkspaceButton != null && deleteFromWorkspaceButton.isEnabled()) {
+            if (!allResourcesEditable(selectedItems)) {
+                deleteFromWorkspaceButton.setEnabled(false);
+            }
+        }
+
+        // Disable "Delete from both" button
+        Button deleteFromBothButton = getActionButton(AbstractResource.DELETE_FROM_BOTH);
+        if (deleteFromBothButton != null && deleteFromBothButton.isEnabled()) {
+            if (!allResourcesEditable(selectedItems)) {
+                deleteFromBothButton.setEnabled(false);
+            }
+        }
+    }
+
+    private boolean allResourcesEditable(AbstractResource[] selectedItems) {
+
+        for (AbstractResource selectedItem : selectedItems) {
+            if (!selectedItem.isEditable()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private Button getActionButton(String action) {
+
+        for (Button button : buttonActions) {
+            String buttonAction = (String)button.getData("Action");
+            if (action.equals(buttonAction)) {
+                return button;
+            }
+        }
+
+        return null;
     }
 
     public String[] getActionsWorkspace(boolean both) {
@@ -304,6 +372,8 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
     protected abstract void addTableColumns(Table tableResources);
 
     protected abstract String getTableColumnText(Object resource, int columnIndex);
+
+    protected abstract Image getTableColumnImage(Object resource, int columnIndex);
 
     protected abstract int compareResources(Object resource1, Object resource2);
 

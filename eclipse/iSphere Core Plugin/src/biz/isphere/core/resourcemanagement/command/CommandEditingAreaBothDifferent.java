@@ -9,10 +9,12 @@
 package biz.isphere.core.resourcemanagement.command;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.resourcemanagement.AbstractEditingArea;
@@ -78,6 +80,27 @@ public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
     }
 
     @Override
+    protected Image getTableColumnImage(Object resource, int columnIndex) {
+
+        RSECommandBoth commandBoth = (RSECommandBoth)resource;
+
+        int counter = 0;
+        if (!singleCompileType) {
+            counter++;
+        }
+
+        if (columnIndex == 0 + counter) {
+            if (commandBoth.isEditable()) {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_UNLOCKED);
+            } else {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_LOCKED);
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public int compareResources(Object resource1, Object resource2) {
 
         RSECommandBoth commandBoth1 = (RSECommandBoth)resource1;
@@ -105,7 +128,7 @@ public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Commands + " " + getTitleBothDifferent() + " " + Messages.type_or_string;
+        return Messages.Commands + " " + getTitleBothDifferent() + " " + Messages.command_parameters;
     }
 
 }
