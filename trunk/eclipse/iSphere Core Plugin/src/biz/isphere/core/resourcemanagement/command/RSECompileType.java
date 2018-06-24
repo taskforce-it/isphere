@@ -16,18 +16,18 @@ import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 public class RSECompileType {
 
     private RSEProfile profile;
-    private String name;
+    private String type;
     private boolean _default;
     private Object origin;
     private List<RSECommand> commands;
 
-    public RSECompileType() {
-        this(null, null, false, null);
+    public RSECompileType(RSEProfile profile) {
+        this(profile, null, false, null);
     }
 
-    public RSECompileType(RSEProfile profile, String name, boolean _default, Object origin) {
+    private RSECompileType(RSEProfile profile, String type, boolean _default, Object origin) {
         this.profile = profile;
-        this.name = name;
+        this.type = type;
         this._default = _default;
         this.origin = origin;
         commands = new ArrayList<RSECommand>();
@@ -41,12 +41,12 @@ public class RSECompileType {
         this.profile = profile;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public boolean isDefault() {
@@ -104,7 +104,7 @@ public class RSECompileType {
 
     @Override
     public String toString() {
-        return getName();
+        return getType();
     }
 
 }
