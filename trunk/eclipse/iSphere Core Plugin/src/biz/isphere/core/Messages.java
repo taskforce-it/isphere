@@ -1416,7 +1416,7 @@ public class Messages extends NLS {
 
     public static String Label;
 
-    public static String command_string;
+    public static String command_parameters;
 
     /*
      * Warning messages

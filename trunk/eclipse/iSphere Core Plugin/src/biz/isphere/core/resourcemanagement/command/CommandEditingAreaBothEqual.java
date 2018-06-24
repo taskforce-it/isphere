@@ -25,7 +25,7 @@ public class CommandEditingAreaBothEqual extends AbstractCommandEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Commands + " " + getTitleBothEqual() + " " + Messages.type_and_string;
+        return Messages.Commands + " " + getTitleBothEqual() + " " + Messages.command_parameters;
     }
 
 }

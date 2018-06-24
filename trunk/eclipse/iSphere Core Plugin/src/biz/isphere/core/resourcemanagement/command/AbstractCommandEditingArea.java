@@ -9,10 +9,12 @@
 package biz.isphere.core.resourcemanagement.command;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.resourcemanagement.AbstractEditingArea;
@@ -69,6 +71,27 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
             return "";
         }
 
+    }
+
+    @Override
+    protected Image getTableColumnImage(Object resource, int columnIndex) {
+
+        RSECommand command = (RSECommand)resource;
+
+        int counter = 0;
+        if (!singleCompileType) {
+            counter++;
+        }
+
+        if (columnIndex == 0 + counter) {
+            if (command.isEditable()) {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_UNLOCKED);
+            } else {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_LOCKED);
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
