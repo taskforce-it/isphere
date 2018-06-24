@@ -63,7 +63,7 @@ public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
         if (!singleCompileType) {
             counter++;
             if (columnIndex == 0) {
-                return ((RSECommand)commandBoth.getResourceWorkspace()).getCompileType().getName();
+                return ((RSECommand)commandBoth.getResourceWorkspace()).getCompileType().getType();
             }
         }
 
@@ -111,7 +111,7 @@ public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
             RSECommand command1 = (RSECommand)commandBoth1.getResourceWorkspace();
             RSECommand command2 = (RSECommand)commandBoth2.getResourceWorkspace();
 
-            int result = command1.getCompileType().getName().compareTo(command2.getCompileType().getName());
+            int result = command1.getCompileType().getType().compareTo(command2.getCompileType().getType());
             if (result != 0) {
                 return result;
             }

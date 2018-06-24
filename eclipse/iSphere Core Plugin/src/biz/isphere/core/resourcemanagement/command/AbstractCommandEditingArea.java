@@ -57,7 +57,7 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
         if (!singleCompileType) {
             counter++;
             if (columnIndex == 0) {
-                return (((RSECommand)resource).getCompileType().getName());
+                return (((RSECommand)resource).getCompileType().getType());
             }
         }
 
@@ -98,7 +98,7 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
     public int compareResources(Object resource1, Object resource2) {
 
         if (!singleCompileType) {
-            int result = (((RSECommand)resource1).getCompileType().getName()).compareTo((((RSECommand)resource2).getCompileType().getName()));
+            int result = (((RSECommand)resource1).getCompileType().getType()).compareTo((((RSECommand)resource2).getCompileType().getType()));
             if (result != 0) {
                 return result;
             }

@@ -133,7 +133,7 @@ public class RSECommand extends AbstractResource {
 
     @Override
     public String getKey() {
-        return compileType.getName() + ":" + label;
+        return compileType.getType() + ":" + label;
     }
 
     @Override
@@ -143,6 +143,6 @@ public class RSECommand extends AbstractResource {
 
     @Override
     public String toString() {
-        return compileType.getName() + ": " + getLabel() + ": " + getCommandString();
+        return compileType.getType() + ": " + getLabel() + ": " + getCommandString();
     }
 }

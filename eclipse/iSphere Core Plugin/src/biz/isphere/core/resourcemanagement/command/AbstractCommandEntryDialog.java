@@ -70,7 +70,7 @@ public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
 
     private class CompileTypeLabelProvider extends LabelProvider {
         public String getText(Object element) {
-            return ((RSECompileType)element).getName();
+            return ((RSECompileType)element).getType();
         }
 
         public Image getImage(Object element) {
@@ -265,7 +265,7 @@ public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
                 if (singleCompileType) {
                     compileType = getCompileType();
                     if (compileType != null) {
-                        workspace = profile.getName() + ":" + compileType.getName();
+                        workspace = profile.getName() + ":" + compileType.getType();
                         commandsWorkspace = getCommands(compileType);
                     }
                 } else {
