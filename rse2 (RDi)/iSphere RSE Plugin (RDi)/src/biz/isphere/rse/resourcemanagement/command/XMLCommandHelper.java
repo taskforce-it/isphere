@@ -67,7 +67,7 @@ public class XMLCommandHelper {
 
             HashMap<String, ArrayList<RSECommand>> _pools = new HashMap<String, ArrayList<RSECommand>>();
             for (int idx = 0; idx < commands.length; idx++) {
-                String _pool = commands[idx].getCompileType().getName();
+                String _pool = commands[idx].getCompileType().getType();
                 ArrayList<RSECommand> _commands = (ArrayList<RSECommand>)_pools.get(_pool);
                 if (_commands == null) {
                     _commands = new ArrayList<RSECommand>();
@@ -173,16 +173,13 @@ public class XMLCommandHelper {
 
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
-                    type = new RSECompileType();
-                    type.setProfile(profile);
+                    type = new RSECompileType(profile);
                 } else if (event.asStartElement().getName().getLocalPart().equals(TYPE)) {
                     event = eventReader.nextEvent();
                     elementData = new StringBuilder(event.asCharacters().getData());
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
-                    command = new RSECommand(true);
+                    command = new RSECommand();
                     command.setCompileType(type);
-                    command.setLabelEditable(true);
-                    command.setCommandStringEditable(true);
                 } else if (event.asStartElement().getName().getLocalPart().equals(ID)) {
                     event = eventReader.nextEvent();
                     elementData = new StringBuilder(event.asCharacters().getData());
@@ -209,7 +206,7 @@ public class XMLCommandHelper {
                 }
             } else if (event.isEndElement()) {
                 if (event.asEndElement().getName().getLocalPart().equals(TYPE)) {
-                    type.setName(elementData.toString());
+                    type.setType(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
                     command.setId(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {

@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import org.eclipse.rse.core.model.ISystemProfile;
-import org.eclipse.rse.internal.core.model.SystemProfileManager;
+import org.eclipse.rse.core.model.SystemStartHere;
+import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
@@ -32,17 +33,14 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
         ArrayList<RSECompileType> rseCompileTypes = new ArrayList<RSECompileType>();
 
-        ISystemProfile profile = SystemProfileManager.getDefault().getSystemProfile(rseProfile.getName());
-
-        SystemCompileManager compileManager = new QSYSCompileManager();
-        SystemCompileProfile compileProfile = compileManager.getCompileProfile(profile);
-        Vector compileTypes = compileProfile.getCompileTypes();
+        SystemCompileManager compileManager = getCompileManager();
+        ISystemProfile systemProfile = getSystemProfile(rseProfile.getName());
+        SystemCompileProfile compileProfile = compileManager.getCompileProfile(systemProfile);
+        Vector<?> compileTypes = compileProfile.getCompileTypes();
         for (Object object : compileTypes) {
             if (object instanceof SystemCompileType) {
                 SystemCompileType systemCompileType = (SystemCompileType)object;
-                RSECompileType rseCompileType = new RSECompileType();
-                rseCompileType.setName(systemCompileType.getType());
-                rseCompileType.setOrigin(systemCompileType);
+                RSECompileType rseCompileType = new RSECompileType(rseProfile, systemCompileType.getType(), systemCompileType);
                 rseCompileTypes.add(rseCompileType);
             }
         }
@@ -74,26 +72,47 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
         ArrayList<RSECommand> rseCommands = new ArrayList<RSECommand>();
 
-        for (int idx = 0; idx < commands.length; idx++) {
-            RSECommand rseCommand = new RSECommand(compileType, commands[idx].getLabel(), commands[idx].getDefaultString(), commands[idx]);
-            rseCommand.setCommandStringEditable(commands[idx].isCommandStringEditable());
-            rseCommand.setLabelEditable(commands[idx].isLabelEditable());
-            rseCommand.setId(commands[idx].getId());
-            rseCommand.setNature(commands[idx].getNature());
-            rseCommand.setMenuOption(commands[idx].getMenuOption());
+        for (SystemCompileCommand command : commands) {
+            RSECommand rseCommand = new RSECommand(compileType, command.getLabel(), command.isLabelEditable(), command.getDefaultString(),
+                command.isCommandStringEditable(), command.getId(), command.getNature(), command.getMenuOption(), command);
             rseCommands.add(rseCommand);
         }
 
         RSECommand[] _rseCommands = new RSECommand[rseCommands.size()];
         rseCommands.toArray(_rseCommands);
-        return _rseCommands;
 
+        return _rseCommands;
     }
 
     public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
         boolean isCommandStringEditable, String id, String nature, String menuOption) {
 
+        SystemCompileManager compileManager = getCompileManager();
+        ISystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
+
         SystemCompileType type = (SystemCompileType)compileType.getOrigin();
+        if (type == null) {
+
+            RSECompileType[] rseTypes = getCompileTypes(compileType.getProfile());
+            for (RSECompileType rseType : rseTypes) {
+                if (rseType.getType().equals(compileType.getType())) {
+                    type = (SystemCompileType)rseType.getOrigin();
+                }
+            }
+
+            if (type == null) {
+                SystemCompileProfile compileProfile = compileManager.getCompileProfile(systemProfile);
+                if (compileProfile != null) {
+
+                    SystemCompileType systemCompileType = new SystemCompileType(compileProfile, compileType.getType());
+                    compileProfile.addCompileType(systemCompileType);
+                    compileProfile.writeToDisk();
+
+                    type = systemCompileType;
+                }
+            }
+        }
+
         if (type != null) {
             SystemCompileCommand compileCommand = new SystemCompileCommand(type);
 
@@ -105,9 +124,12 @@ public class RSECommandHelper extends AbstractSystemHelper {
             compileCommand.setLabelEditable(isLabelEditable);
 
             compileCommand.setDefaultString(commandString);
+            compileCommand.setCurrentString(commandString);
             compileCommand.setCommandStringEditable(isCommandStringEditable);
 
             type.addCompileCommand(compileCommand);
+
+            type.getParentProfile().writeToDisk();
         }
 
     }
@@ -119,11 +141,25 @@ public class RSECommandHelper extends AbstractSystemHelper {
             for (SystemCompileCommand compileCommand : type.getCompileCommandsArray()) {
                 if (compileCommand.getLabel().equals(label)) {
                     type.removeCompileCommand(compileCommand);
+                    type.getParentProfile().writeToDisk();
                     return;
                 }
             }
 
         }
+    }
+
+    private static ISystemProfile getSystemProfile(String name) {
+        return SystemStartHere.getSystemRegistry().getSystemProfile(name);
+    }
+
+    private static SystemCompileManager getCompileManager() {
+
+        ISubSystemConfiguration subSystemConfiguration = getSubSystemConfiguration();
+        SystemCompileManager compileManager = new QSYSCompileManager();
+        compileManager.setSubSystemFactory(subSystemConfiguration);
+
+        return compileManager;
     }
 
 }
