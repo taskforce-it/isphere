@@ -36,6 +36,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
 
+    private static final String FILE_EXT_RSECMD = "rsecmd";
+    private static final String FILE_EXT_RSECMDALL = "rsecmdall";
+
     private ComboViewer comboViewerProfile;
     private Combo comboProfile;
     private RSEProfile[] profiles;
@@ -112,15 +115,15 @@ public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
             return null;
         } else {
             if (singleCompileType) {
-                return "rsecmd";
+                return FILE_EXT_RSECMD;
             } else {
-                return "rsecmdall";
+                return FILE_EXT_RSECMDALL;
             }
         }
     }
 
     protected String[] getFileExtensions() {
-        return new String[] { "rsecmd", "rsecmdall" };
+        return new String[] { FILE_EXT_RSECMD, FILE_EXT_RSECMDALL };
     }
 
     protected boolean needWorkspaceArea() {

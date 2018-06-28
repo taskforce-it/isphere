@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,9 @@ import biz.isphere.core.resourcemanagement.AbstractEntryDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
+
+    private static final String FILE_EXT_RSEFLT = "rseflt";
+    private static final String FILE_EXT_RSEFLTALL = "rsefltall";
 
     private ComboViewer comboViewerProfile;
     private Combo comboProfile;
@@ -111,15 +114,15 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             return null;
         } else {
             if (singleFilterPool) {
-                return "rseflt";
+                return FILE_EXT_RSEFLT;
             } else {
-                return "rsefltall";
+                return FILE_EXT_RSEFLTALL;
             }
         }
     }
 
     protected String[] getFileExtensions() {
-        return new String[] { "rseflt", "rsefltall" };
+        return new String[] { FILE_EXT_RSEFLT, FILE_EXT_RSEFLTALL };
     }
 
     protected boolean needWorkspaceArea() {
