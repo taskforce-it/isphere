@@ -25,7 +25,7 @@ public class FilterEditingAreaWorkspace extends AbstractFilterEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Filters + " " + getTitleWorkspace();
+        return Messages.Filters + " " + getTitleWorkspace() + " (" + getNumberOfItems() + ")";
     }
 
 }

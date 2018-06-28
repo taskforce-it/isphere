@@ -123,7 +123,7 @@ public class FilterEditingAreaBothDifferent extends AbstractEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Filters + " " + getTitleBothDifferent() + " " + Messages.type_or_string;
+        return Messages.Filters + " " + getTitleBothDifferent() + " " + Messages.type_or_string + " (" + getNumberOfItems() + ")";
     }
 
 }

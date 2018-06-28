@@ -25,7 +25,7 @@ public class FilterEditingAreaRepository extends AbstractFilterEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Filters + " " + getTitleRepository();
+        return Messages.Filters + " " + getTitleRepository() + " (" + getNumberOfItems() + ")";
     }
 
 }

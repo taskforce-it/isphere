@@ -25,7 +25,7 @@ public class FilterEditingAreaBothEqual extends AbstractFilterEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Filters + " " + getTitleBothEqual() + " " + Messages.type_and_string;
+        return Messages.Filters + " " + getTitleBothEqual() + " " + Messages.type_and_string + " (" + getNumberOfItems() + ")";
     }
 
 }
