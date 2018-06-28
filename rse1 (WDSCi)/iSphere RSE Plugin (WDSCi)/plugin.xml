@@ -554,7 +554,7 @@
          <action
                class="biz.isphere.rse.actions.OpenRSECommandManagementAction"
                id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
-               definitionId="biz.isphere.core.command.RSEManagement.open"
+               definitionId="biz.isphere.core.command.RSECommandManagement.open"
                label="%menu_RSE_Command_Management"
                icon="icons/iSphere_RSE_Management.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
@@ -564,7 +564,7 @@
          <action
                class="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
                id="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
-               definitionId="biz.isphere.core.command.RSEManagement.open"
+               definitionId="biz.isphere.core.command.RSEFilterManagement.open"
                label="%menu_RSE_Filter_Management"
                icon="icons/iSphere_RSE_Management.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
@@ -688,9 +688,16 @@
       
       <command
             defaultHandler="biz.isphere.rse.handler.OpenRSEFilterManagementHandler"
-            id="biz.isphere.core.command.RSEManagement.open"
+            id="biz.isphere.core.command.RSEFilterManagement.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_RSE_Filter_Management">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenRSECommandManagementHandler"
+            id="biz.isphere.core.command.RSECommandManagement.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_RSE_Command_Management">
       </command>
       
       <command

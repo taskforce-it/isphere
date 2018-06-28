@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,9 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.handler.OpenRSEManagementHandler;
+import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
 
-public class RSEManagementAction implements IViewActionDelegate {
+public class RSEFilterManagementAction implements IViewActionDelegate {
     
 	public void init(IViewPart viewPart) {
 	}
@@ -27,7 +27,7 @@ public class RSEManagementAction implements IViewActionDelegate {
 
         try {
 
-            OpenRSEManagementHandler handler = new OpenRSEManagementHandler();
+            OpenRSEFilterManagementHandler handler = new OpenRSEFilterManagementHandler();
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
 
