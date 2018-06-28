@@ -128,7 +128,7 @@ public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Commands + " " + getTitleBothDifferent() + " " + Messages.command_parameters;
+        return Messages.Commands + " " + getTitleBothDifferent() + " " + Messages.command_parameters + " (" + getNumberOfItems() + ")";
     }
 
 }
