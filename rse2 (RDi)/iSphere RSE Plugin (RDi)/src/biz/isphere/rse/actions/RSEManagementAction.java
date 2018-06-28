@@ -16,7 +16,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.handler.OpenRSEManagementHandler;
+import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
 
 public class RSEManagementAction implements IViewActionDelegate {
     
@@ -27,7 +27,7 @@ public class RSEManagementAction implements IViewActionDelegate {
 
         try {
 
-            OpenRSEManagementHandler handler = new OpenRSEManagementHandler();
+            OpenRSEFilterManagementHandler handler = new OpenRSEFilterManagementHandler();
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
 
