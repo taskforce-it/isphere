@@ -17,7 +17,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.rse.resourcemanagement.filter.FilterEntryDialog;
 
-public class OpenRSEManagementHandler extends AbstractHandler implements IHandler {
+public class OpenRSEFilterManagementHandler extends AbstractHandler implements IHandler {
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
         
