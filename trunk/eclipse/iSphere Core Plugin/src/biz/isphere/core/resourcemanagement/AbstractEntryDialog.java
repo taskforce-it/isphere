@@ -165,6 +165,17 @@ public abstract class AbstractEntryDialog extends XDialog {
 
     }
 
+    protected void setResourcesEditable(AbstractResource[] resources, boolean editable) {
+
+        if (resources == null) {
+            return;
+        }
+
+        for (AbstractResource resource : resources) {
+            resource.setEditable(editable);
+        }
+    }
+
     public void check() {
 
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
