@@ -248,13 +248,13 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
         buttonDeselectAll.setEnabled(enabled);
 
+        buttonUndoAction.setEnabled(enabled);
+
         for (int idx = 0; idx < buttonActions.length; idx++) {
             buttonActions[idx].setEnabled(enabled);
         }
 
-        buttonUndoAction.setEnabled(enabled);
-
-        // Disabled buttons
+        // Override button enablement depending on selected resources
         AbstractResource[] selectedItems = getSelectedResources();
 
         // Disable "Push to workspace" button
@@ -367,6 +367,10 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
     public void setInput() {
         tableViewerResources.setInput(new Object());
+    }
+
+    public int getNumberOfItems() {
+        return resources.length;
     }
 
     protected abstract void addTableColumns(Table tableResources);
