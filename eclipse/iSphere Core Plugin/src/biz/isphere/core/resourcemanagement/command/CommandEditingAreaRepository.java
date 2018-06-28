@@ -25,7 +25,7 @@ public class CommandEditingAreaRepository extends AbstractCommandEditingArea {
     }
 
     public String getTitle() {
-        return Messages.Commands + " " + getTitleRepository();
+        return Messages.Commands + " " + getTitleRepository() + " (" + getNumberOfItems() + ")";
     }
 
 }
