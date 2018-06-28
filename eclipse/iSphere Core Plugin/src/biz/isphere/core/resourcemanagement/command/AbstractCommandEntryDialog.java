@@ -325,6 +325,9 @@ public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
             resourcesRepository = commandsRepository;
         }
 
+        // Resources that are only in the repository are always editable.
+        setResourcesEditable(resourcesRepository, true);
+
         return openEditingDialog(getShell(), isEditWorkspace(), isEditRepository(), isEditBoth(), singleCompileType, workspace, repository,
             resourcesWorkspace, resourcesRepository, resourcesBothDifferent, resourcesBothEqual);
 
