@@ -18,7 +18,7 @@ import org.eclipse.ui.IViewPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
 
-public class RSEManagementAction implements IViewActionDelegate {
+public class RSEFilterManagementAction implements IViewActionDelegate {
     
 	public void init(IViewPart viewPart) {
 	}
