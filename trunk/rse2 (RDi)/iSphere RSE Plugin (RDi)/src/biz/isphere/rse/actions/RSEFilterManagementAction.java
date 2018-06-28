@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.handler.OpenRSEFilterManagementHandler;
 
 public class RSEFilterManagementAction implements IViewActionDelegate {
-    
-	public void init(IViewPart viewPart) {
-	}
 
-	public void run(IAction action) {
+    public void init(IViewPart viewPart) {
+    }
+
+    public void run(IAction action) {
 
         try {
 
@@ -34,8 +34,8 @@ public class RSEFilterManagementAction implements IViewActionDelegate {
         } catch (ExecutionException e) {
             ISpherePlugin.logError("Failed to open the RSE filter management.", e);
         }
-	}
+    }
 
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
+    public void selectionChanged(IAction action, ISelection selection) {
+    }
 }

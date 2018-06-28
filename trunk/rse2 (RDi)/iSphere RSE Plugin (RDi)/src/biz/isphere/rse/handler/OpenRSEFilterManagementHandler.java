@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,10 @@ import biz.isphere.rse.resourcemanagement.filter.FilterEntryDialog;
 public class OpenRSEFilterManagementHandler extends AbstractHandler implements IHandler {
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        
+
         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         new FilterEntryDialog(shell).open();
-        
+
         return null;
     }
 
