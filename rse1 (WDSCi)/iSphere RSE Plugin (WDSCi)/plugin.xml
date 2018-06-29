@@ -556,7 +556,7 @@
                id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
                definitionId="biz.isphere.core.command.RSECommandManagement.open"
                label="%menu_RSE_Command_Management"
-               icon="icons/iSphere_RSE_Commands_Management.gif"
+               icon="icons/iSphere_RSE_Command_Management.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Command_Management">
          </action>
