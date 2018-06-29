@@ -39,6 +39,7 @@ LABEL ON COLUMN FNDSTRI
  XILIB IS 'Library',
  XIFILE IS 'File',
  XIMBR IS 'Member',
+ -- TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file FNDSTRI.
  XIFLCD IS 'File Last Changed'
 );
  

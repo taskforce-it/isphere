@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.4.1.r
+--------------------------
+ • Fixed NullPointerException in java.util.Calendar.setTime() when
+   the iSphere Source File Search is called by CMOne.
+ • Changed service program FNDSTR to call QUSRMBRD for retrieving
+   member attributes such as the 'source last changed' date.
+
 Changelog: iSphere 3.4.0.r
 --------------------------
  • Added server response to error message when the iSphere update 
