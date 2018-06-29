@@ -17,6 +17,7 @@ import java.util.Date;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.DateTimeHelper;
 
+@CMOne(info = "Be careful, when changing this class! Also test CMOne source file search.")
 public class SearchElement {
 
     private String library;
