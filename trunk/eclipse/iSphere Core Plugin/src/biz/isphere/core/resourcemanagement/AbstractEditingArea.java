@@ -41,6 +41,8 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractEditingArea extends Composite implements IEditingArea {
 
+    protected static final String TABLE_RESOURCE_QUALIFIER = "Qualifier";
+
     private AbstractResource[] resources;
     private TableViewer tableViewerResources;
     private Table tableResources;
@@ -147,7 +149,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         tableResources.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         if (qualifier != null) {
-            tableResources.setData("Qualifier", qualifier);
+            tableResources.setData(TABLE_RESOURCE_QUALIFIER, qualifier);
         }
 
         addTableColumns(tableResources);

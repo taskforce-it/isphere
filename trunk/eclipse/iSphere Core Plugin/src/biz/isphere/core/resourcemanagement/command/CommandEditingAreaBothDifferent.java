@@ -17,22 +17,21 @@ import org.eclipse.swt.widgets.TableColumn;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.resourcemanagement.AbstractEditingArea;
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class CommandEditingAreaBothDifferent extends AbstractEditingArea {
+public class CommandEditingAreaBothDifferent extends AbstractCommandEditingArea {
 
     private boolean singleCompileType;
 
     public CommandEditingAreaBothDifferent(Composite parent, AbstractResource[] resources, boolean both, boolean singleCompileType) {
-        super(parent, resources, both, new CommandQualifier(singleCompileType));
+        super(parent, resources, both, singleCompileType);
         this.singleCompileType = singleCompileType;
     }
 
     @Override
     public void addTableColumns(Table tableResources) {
 
-        CommandQualifier qualifier = (CommandQualifier)tableResources.getData("Qualifier");
+        CommandQualifier qualifier = (CommandQualifier)tableResources.getData(TABLE_RESOURCE_QUALIFIER);
 
         if (!qualifier.isSingleCompileType()) {
             TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
