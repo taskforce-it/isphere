@@ -19,12 +19,12 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
 
+import com.ibm.etools.iseries.rse.ui.compile.QSYSCompileManager;
+
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
-
-import com.ibm.etools.iseries.rse.ui.compile.QSYSCompileManager;
 
 @SuppressWarnings("restriction")
 public class RSECommandHelper extends AbstractSystemHelper {
@@ -73,8 +73,7 @@ public class RSECommandHelper extends AbstractSystemHelper {
         ArrayList<RSECommand> rseCommands = new ArrayList<RSECommand>();
 
         for (SystemCompileCommand command : commands) {
-            RSECommand rseCommand = new RSECommand(compileType, command.getLabel(), command.isLabelEditable(), command.getDefaultString(),
-                command.isCommandStringEditable(), command.getId(), command.getNature(), command.getMenuOption(), command);
+            RSECommand rseCommand = produceCommand(compileType, command);
             rseCommands.add(rseCommand);
         }
 
@@ -82,6 +81,33 @@ public class RSECommandHelper extends AbstractSystemHelper {
         rseCommands.toArray(_rseCommands);
 
         return _rseCommands;
+    }
+
+    public static RSECommand getCommand(RSECompileType compileType, String label) {
+
+        SystemCompileManager compileManager = getCompileManager();
+        ISystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
+        SystemCompileProfile systemCompileProfile = compileManager.getCompileProfile(systemProfile);
+        SystemCompileType systemCompileType = systemCompileProfile.getCompileType(compileType.getType());
+
+        SystemCompileCommand systemCompileCommand = systemCompileType.getCompileLabel(label);
+        if (systemCompileCommand != null) {
+
+            RSECommand rseCommand = produceCommand(compileType, systemCompileCommand);
+
+            return rseCommand;
+        }
+
+        return null;
+    }
+
+    private static RSECommand produceCommand(RSECompileType compileType, SystemCompileCommand systemCompileCommand) {
+
+        RSECommand rseCommand = new RSECommand(compileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
+            systemCompileCommand.getDefaultString(), systemCompileCommand.isCommandStringEditable(), systemCompileCommand.getId(),
+            systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand);
+
+        return rseCommand;
     }
 
     public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,

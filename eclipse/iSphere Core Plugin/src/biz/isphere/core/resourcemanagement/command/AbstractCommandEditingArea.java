@@ -30,6 +30,20 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
     }
 
     @Override
+    protected boolean isActionEnabled(String action, AbstractResource[] selectedItems) {
+
+        if (AbstractResource.PUSH_TO_WORKSPACE.equals(action)) {
+            return true;
+        } else if (AbstractResource.DELETE_FROM_WORKSPACE.equals(action)) {
+            return allResourcesEditable(selectedItems);
+        } else if (AbstractResource.DELETE_FROM_BOTH.equals(action)) {
+            return allResourcesEditable(selectedItems);
+        }
+
+        return true;
+    }
+
+    @Override
     public void addTableColumns(Table tableResources) {
 
         CommandQualifier qualifier = (CommandQualifier)tableResources.getData("Qualifier");
