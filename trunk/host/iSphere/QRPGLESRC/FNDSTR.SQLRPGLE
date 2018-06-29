@@ -68,6 +68,10 @@
 
      d/Copy QCPYSRC,QUSPTRUS
 
+      // Procedure prototype for procedure 'QUSRMBRD'
+
+     d/Copy QCPYSRC,QUSRMBRD
+
       // Procedure prototype for procedure 'QUSLMBR'
 
      d/Copy QCPYSRC,QUSLMBR
@@ -133,6 +137,14 @@
       /else
      d  handle                             Like(regex_t) inz(*ALLx'00')
       /endif
+
+      // Caching of member attributes
+
+     d  memberAttrs    DS                  Qualified Inz
+     d   file                        10A
+     d   lib                         10A
+     d   mbr                         10A
+     d   lastChgData                   Z
 
       // Local procedures
 
@@ -930,11 +942,47 @@
      d  i_mbr                        10A   Const
      d  i_stmt                        6S 0 Const
      d  i_srcdta                    228A   Const
+      * TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file FNDSTRI.
      d  i_lastChgDate                  Z   Const
 
+     d mbrd0100        DS                  Likeds(mbrd0100_t) inz
+     d qFile           DS                  Qualified
+     d  name                         10A
+     d  lib                          10A
+
+     d apiTimestamp    DS                  Qualified
+     d  date                          7A
+     d  time                          8A
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+           // Retrieve member attributes
+           If (i_file <> memberAttrs.file or
+               i_lib <> memberAttrs.lib or
+               i_mbr <> memberAttrs.mbr);
+
+             Clear qFile;
+             qFile.name = i_file;
+             qFile.lib = i_lib;
+
+             QUSRMBRD(
+               mbrd0100 :        // --> Receiver variable
+               %size(mbrd0100) : // --> Length of receiver variable
+               'MBRD0100' :      // --> Format of returned data
+               qFile :           // --> Qualified file name
+               i_mbr :           // --> Member name
+               '0'               // --> Override processing
+             );
+
+             apiTimestamp = mbrd0100.srcChgDatTim;
+
+             memberAttrs.file = i_file;
+             memberAttrs.lib = i_lib;
+             memberAttrs.mbr = i_mbr;
+             memberAttrs.lastChgData = %date(apiTimestamp.date: *CYMD0)
+                                       + %time(apiTimestamp.time: *HMS0);
+           EndIf;
 
            // Write file 'Output'
            Exec SQL
@@ -958,7 +1006,7 @@
                   :i_mbr,
                   :i_stmt,
                   :i_srcdta,
-                  :i_lastChgDate
+                  :memberAttrs.lastChgData
                  );
 
       /End-Free
