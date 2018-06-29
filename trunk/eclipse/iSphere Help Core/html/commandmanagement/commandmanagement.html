@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>RSE Command Management</title>
+</head>
+
+<body>
+	<h1>RSE Command Management</h1>
+	<p>With iSphere RSE Command Management you can export some or all
+		commands from your workspace to a repository. A repository is an XML
+		file on your local PC or a network drive. You can then import some or
+		all commands from a repository to your workspace. The repository can
+		act as a backup for your commands.
+	<p>Here are some other scenarios where you might find Command
+		Management useful:
+	<p>
+	<ul>
+		<li>Your workspace is corrupted and you need to create a new one.
+			In this case you can export your commands from the old workspace and
+			import them into the new one.</li>
+		<li>You want to share your commands with your colleagues.</li>
+		<li>You have RDi installed on a computer in your office and at
+			home and want to synchronize your commands.</li>
+	</ul>
+	<p>
+		To open the iSphere RSE Command Management dialog, open the <i>iSphere</i> menu 
+		click on the <i>Sun</i> icon labeled with <i>RSE Command Management</i>.
+	<p>
+		<img src="assets/command_manager_open.png" align="middle">
+	<h2>Choosing what to Manage</h2>
+	<p>You now need to specify what you want to manage, and also the
+		repository name:
+	<p>
+	<p>
+		<img src="assets/rse_command_management_manage_choose.png"
+			align="middle">
+	<h3>Editing Area</h3>
+	<p>The commands in the workspace and in the repository will be
+		displayed in up to four separate horizontal panes.
+	<p>
+	<ul>
+		<li>Edit workspace and repository commands</li>
+		<li>Edit only workspace commands</li>
+		<li>Edit only repository commands</li>
+	</ul>
+
+	Click the appropriate button. The default,
+	<i>Edit workspace and repository commands</i>, is suitable for the first
+	time you want to create a new repository. With this option you can:
+	<ul>
+	<li>Push commands from the workspace to the repository and vice versa.</li>
+	<li>Delete commands from the workspace.</li>
+	<li>Delete commands from the repository.</li>
+	</ul>
+	<p>The next two option, <i>Edit only workspace commands</i> and 
+	<i>Edit only repository commands</i> are suitable for removing commands from
+	the workspace or the repository.
+	<h3>Profile</h3>
+	Select the profile that contains the commands you want to manage.
+	<h3>Single Compile Type</h3>
+	If this is checked, then you will need to select a compile type using
+	the	<i>Compile Type</i> drop down. Only commands of the selected compile type
+	will be considered for action, and the compile type name will not be
+	saved.
+	<P>If this is unchecked, then all commands will be considered for
+		action and the connections between commands and compile types will be
+		saved.
+	<h3>Compile Type</h3>
+	Use this option to specify the compile type you want to manage, when 
+	<i>Single compile type</i> is checked.
+	<h3>Repository</h3>
+	Specify the location and name of the repository. A single compile type
+	repository must have a suffix of
+	<b> .rsecmd</b> and a repository for all commands must have a suffix of
+	<b> .rsecmdall</b>.
+	<p>
+	<h2>Managing Commands</h2>
+	Basically managing commands follows the pattern of managing filters. Therefore
+	you are asked to refer to chapter <a href="../filtermanagement/filtermanagement.html#exporting_all_filters_for_the_first_time">RSE Filter Managing</a>
+	to see how managing RSE resources works.
+	<p>
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
