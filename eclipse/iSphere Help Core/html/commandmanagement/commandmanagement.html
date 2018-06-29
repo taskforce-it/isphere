@@ -82,6 +82,27 @@
 	you are asked to refer to chapter <a href="../filtermanagement/filtermanagement.html#exporting_all_filters_for_the_first_time">RSE Filter Managing</a>
 	to see how managing RSE resources works.
 	<p>
+	<h2>Rules For Editing Commands</h2>
+	Editing commands enforces a few more rules compared to editing filters because of 
+	IBM supplied commands, which intentionally cannot be deleted from the workspace. The
+	command editor uses the following icons for decorating the commands:
+	<p>
+	<table>
+	<tr><td><img src="./assets/locked.png" /></td><td>-</td><td>IBM supplied command</td></tr>
+	<tr><td><img src="./assets/unlocked.png" /></td><td>-</td><td>User defined command</td></tr>
+	</table> 
+	<p>
+	IBM supplied commands cannot ...
+	<ul>
+	<li>... be deleted from the workspace</li>
+	<li>... are updated when pushed to the workspace</li>
+	<li>... are changed to 'user defined' when added to a compile profile</li>
+	</ul>
+	<p>
+	IBM supplied commands are changed to 'user defined' when added to a compile profile in order 
+	to be able to remove them again. For example that is the case when you push commands to a
+	fresh system profile.
+	<p>
 		<iframe src="../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
 </body>
