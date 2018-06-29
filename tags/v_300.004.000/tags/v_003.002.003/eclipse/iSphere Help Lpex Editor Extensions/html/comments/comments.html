@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Comments</title>
+</head>
+
+<body>
+<h1>Comments</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/comments.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The "Comments" plug-in provides keyboard shortcuts for the Lpex editor for commenting and 
+uncommenting source lines. It is also possible to toggle a source line from commented to 
+uncommented and vice versa. The provided keyboard shortcuts are 
+<p>
+<table>
+<tr><td nowrap>Ctrl+Shift+Add</td><td style="padding-left: 40px;">Comment source line</td></tr>
+<tr><td nowrap>Ctrl+Shift+Substract</td><td style="padding-left: 40px;">Uncomment source line</td></tr>
+<tr><td nowrap>Ctrl+Shift+Multiply</td><td style="padding-left: 40px;">Toggle comment</td></tr>
+</table>
+<p>
+You can also select the required function from the context menu:
+<p>
+<img src="assets/LPEX_comments_context_menu.png" align="middle">
+<p>
+The supported source types are:
+<p>
+<ul>
+<li>CLP</li>
+<li>CLLE</li>
+<li>RPG</li>
+<li>RPGLE</li>
+<li>SQLRPG</li>
+<li>SQLRPGLE</li>
+<li>DSPF</li>
+<li>PRTF</li>
+<li>LF</li>
+<li>PF</li>
+<li>PNLGRP</li>
+</ul>
+<table>
+	<tr>
+		<td class="notice">Note: This plug-in is mainly intended to be used with WDSCi 7.0, because 
+		WDSCi lacks the comment/uncomment options of RDi. But you can also install it for RDi.</td>
+	</tr>
+</table>
+<p>
+<h2>Changing A Source Line</h2>
+Put the cursor on the source line that you want to change and press the keyboard shortcut or
+select the requested function from the context menu.
+<p>
+<h2>Changing Multiple Source Lines</h2>
+Select the source lines that you want to change and press the keyboard shortcut or
+select the requested function from the context menu. For example you can select lines
+122-124 like this:
+<p>
+<img src="assets/comment_multiple_lines_selection.png" align="middle">
+<p>
+The result looks like that:
+<p>
+<img src="assets/comment_multiple_lines_commented.png" align="middle">
+<p>
+It is not required to select the complete source lines. Just start somewhere in the first line
+to change and span the selection to the last line. Then select the requested action.
+<p>
+<h2>Changing Parts Of A Source Line</h2>
+<p>
+In CLP and CLLE source members you can comment the selected part of a CL statement.
+<p>
+<img src="assets/comment_cl_selection_selected.png" align="middle">
+<p>
+Commented selection:
+<p>
+<img src="assets/comment_cl_selection_commented.png" align="middle">
+<p>
+If you want to uncomment it again, just put the cursor into the commented area and press the 
+keyboard shortcut or select <i>Uncomment</i> from the context menu.
+<p>
+<img src="assets/comment_cl_selection_uncomment.png" align="middle">
+<p>
+Comment removed:
+<p>
+<img src="assets/comment_cl_selection_uncommented.png" align="middle">
+<p>
+This feature is not available for other source types, since commenting parts of a source statement
+is not possible for RPG or DDS source types. 
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

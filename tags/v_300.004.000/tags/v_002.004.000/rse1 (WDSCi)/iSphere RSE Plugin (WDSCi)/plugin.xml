@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    
+	<extension point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Editor Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Message File Editor"
+			class="biz.isphere.rse.actions.MessageFileEditorAction"
+			id="biz.isphere.rse.actions.MessageFileEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Binding Directory Editor Contributions
+      	  ==========================================
+      	-->
+      	
+		<dynamicPopupMenuExtension
+			name="Binding Directory Editor"
+			class="biz.isphere.rse.actions.BindingDirectoryEditorAction"
+			id="biz.isphere.rse.actions.BindingDirectoryEditorAction">
+	    </dynamicPopupMenuExtension>
+	
+      	<!--
+      	  ==========================================
+      	    Source Member Compare Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Compare Editor"
+			class="biz.isphere.rse.actions.CompareEditorAction"
+			id="biz.isphere.rse.actions.CompareEditorAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Source File/Member Search Contributions
+      	  ==========================================
+      	-->
+	
+		<dynamicPopupMenuExtension
+			name="iSphere Source File Search"
+			class="biz.isphere.rse.actions.SourceFileSearchAction"
+			id="biz.isphere.rse.actions.SourceFileSearchAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Search Contributions
+      	  ==========================================
+      	-->
+      	
+		<dynamicPopupMenuExtension
+			name="iSphere Message File Search"
+			class="biz.isphere.rse.actions.MessageFileSearchAction"
+			id="biz.isphere.rse.actions.MessageFileSearchAction">
+	    </dynamicPopupMenuExtension>
+	</extension>  
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Message File Search Page
+      	  ==========================================
+      	-->
+      
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+      		id="biz.isphere.rse.messagefilesearch.MessageFileSearchPage"
+            label="iSphere Message File Search"
+            enabled="true"
+            icon="icons/message_file_search.png"
+            class="biz.isphere.rse.messagefilesearch.MessageFileSearchPage"
+            sizeHint="250,160"
+            tabPosition="0"
+            >
+      </page>
+	</extension>  
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Source File Search Page
+      	  ==========================================
+      	-->
+      
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+      		id="biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"
+            label="iSphere Source File Search"
+            enabled="true"
+            icon="icons/source_file_search.gif"
+            class="biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"
+            sizeHint="250,160"
+            tabPosition="0"
+            >
+      </page>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Views
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="iSphere"
+            id="biz.isphere.core.views.categories"/>	
+      <view
+            icon="icons/message_file_preview.gif"
+            class="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Message_Description_Preview"
+            id="biz.isphere.rse.messagefileeditor.ViewMessageDescriptionPreview"/>
+   </extension> 
+      	
+      	<!--
+      	  ==========================================
+      	    Others
+      	  ==========================================
+      	-->
+
+   <extension
+         point="com.ibm.etools.systems.core.subsystemfactory">
+      <factory
+            systemtypes="iSeries"
+            name="%SubsystemName"
+            iconlive="icons/spooled_files_connected.gif"
+            icon="icons/spooled_files.gif"
+            category="spooled files"
+            class="biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory"
+            vendor="Task Force IT-Consulting GmbH"
+            id="biz.isphere.core.spooledfiles.subsystems.factory">
+      </factory>
+   </extension>
+
+   <extension
+         point="com.ibm.etools.systems.core.popupMenus">
+      <objectContribution
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*"
+            namefilter="*"
+            id="biz.isphere.rse.spooledfiles.actions">
+         <menu
+               label="%SaveAs"
+               id="biz.isphere.core.menu.save">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <menu
+               label="%OpenAs"
+               id="biz.isphere.core.menu.open">             
+            <separator
+                  name="main">
+            </separator>
+         </menu> 
+         <action
+               label="%Messages"
+               class="biz.isphere.rse.spooledfiles.SpooledFileMessageAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileMessageAction">
+         </action>
+         <action
+               label="%Release"
+               class="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileReleaseAction">
+         </action>
+         <action
+               label="%Hold"
+               class="biz.isphere.rse.spooledfiles.SpooledFileHoldAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileHoldAction">
+         </action>
+         <action
+               label="%Delete"
+               class="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileDeleteAction">
+         </action>
+         <action
+               label="%Change"
+               class="biz.isphere.rse.spooledfiles.SpooledFileChangeAction"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileChangeAction">
+         </action>
+         <action
+               label="%SaveAsPDF"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction">
+         </action>
+         <action
+               label="%SaveAsHTML"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction">
+         </action>
+         <action
+               label="%SaveAsText"
+               class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
+               menubarPath="biz.isphere.core.menu.save/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction">
+         </action>
+         <action
+               label="%OpenAsPDF"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction">
+         </action>
+         <action
+               label="%OpenAsHTML"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction">
+         </action>
+         <action
+               label="%OpenAsText"
+               class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
+               menubarPath="biz.isphere.core.menu.open/main"
+               enablesFor="+"
+               id="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction">
+         </action>
+      </objectContribution>
+   </extension>
+
+   <extension
+         point="com.ibm.etools.systems.core.propertyPages">
+      <page
+            class="biz.isphere.rse.spooledfiles.SpooledFileProperties"
+            id="biz.isphere.rse.spooledfiles.SpooledFileProperties"
+            name="%GeneralInformation"
+            namefilter="*"
+
+            subsystemfactoryid="biz.isphere.core.spooledfiles.subsystems.factory"
+            subtypefilter="*"
+            typecategoryfilter="*"
+            typefilter="*">
+      </page>
+   </extension>
+
+   <extension point="org.eclipse.ui.viewActions"> 
+      <viewContribution 
+         id="biz.isphere.rse.actions" 
+         targetID="com.ibm.etools.systems.core.ui.view.systemView"> 
+         <menu
+            id="biz.isphere.rse.menu" 
+            label="iSphere" 
+            path="additions"> 
+            <separator name="group1"/> 
+         </menu> 
+         <action
+            id="biz.isphere.rse.actions.RSEManagementAction" 
+            label="&amp;%iSphere_RSE_Filter_Management" 
+            menubarPath="biz.isphere.rse.menu/group1" 
+            toolbarPath="Normal/additions"
+            style="push"
+            state="true" 
+            icon="icons/iSphere_RSE_Management.gif" 
+            tooltip="%iSphere_RSE_Filter_Management" 
+            class="biz.isphere.rse.actions.RSEManagementAction"> 
+         </action> 
+     </viewContribution> 
+   </extension>    
+
+</plugin>

@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere TN5250J Core
+Bundle-SymbolicName: biz.isphere.tn5250j.core;singleton:=true
+Bundle-Version: 2.9.3.r
+Bundle-Activator: biz.isphere.tn5250j.core.TN5250JCorePlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eclipse.core.runtime,
+ biz.isphere.tn5250j.base,
+ org.eclipse.albireo.core,
+ biz.isphere.common.libraries,
+ biz.isphere.core,
+ biz.isphere.base
+Eclipse-LazyStart: true
+Bundle-ClassPath: .,
+ lib/icu4j_3_4_5.jar,
+ lib/jasypt-1.5.jar
+Export-Package: biz.isphere.tn5250j.core,
+ biz.isphere.tn5250j.core.designereditor,
+ biz.isphere.tn5250j.core.designerpart,
+ biz.isphere.tn5250j.core.designerview,
+ biz.isphere.tn5250j.core.preferencepages,
+ biz.isphere.tn5250j.core.preferences,
+ biz.isphere.tn5250j.core.session,
+ biz.isphere.tn5250j.core.sessionseditor,
+ biz.isphere.tn5250j.core.sessionspart,
+ biz.isphere.tn5250j.core.sessionsview,
+ biz.isphere.tn5250j.core.tn5250jeditor,
+ biz.isphere.tn5250j.core.tn5250jpart,
+ biz.isphere.tn5250j.core.tn5250jview
+Import-Package: biz.isphere.core

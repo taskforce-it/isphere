@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Data Queue Monitor</title>
+</head>
+
+<body>
+<h1>Data Queue Monitor</h1>
+<img src="assets/dataqueuemonitor.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The <i>Data Queue Monitor</i> is used for monitoring data queues. The data queue entries are read from the queue without removing them 
+from it.
+<p>
+If the data queue is configured to include the sender ID for posted messages, the sender ID is displayed in a separate column. But
+the length column always displays the complete message length, including the sender ID. That is exactly what the <i>Retrieve Data Queue Message (QMHRDQM) API</i>
+returns. A separate key column is added for keyed data queue.  
+<p>
+<img src="assets/monitor.gif" 
+     align="middle">
+<p>
+Please notice the view menu with options to customize retrieving messages: 
+<p>
+<img src="assets/view_menu2.gif" 
+     align="middle">
+<p>
+The available options are:
+<p>
+<table>
+<tr><td valign="top">Refresh</td><td valign="top">-</td><td valign="top">Opens a sub menu with options to specify the time interval the view is automatically refreshed.</td></tr>
+<tr><td valign="top">Message length</td><td valign="top">-</td><td valign="top">Opens a sub menu with options to specify the maximum number of message bytes that are retrieved.</td></tr>
+<tr><td valign="top">Hex mode</td><td valign="top">-</td><td valign="top">Toggles the display mode between <i>Hex</i> and <i>Text</i> mode.</td></tr>
+<tr><td valign="top">Display end of data</td><td valign="top">-</td><td valign="top">Optionally adds an <i>end-of-data</i> indicator to the message data.</td></tr>
+</table>
+<p>
+<h2>Message Entry options</h2>
+<p>
+The following options are available for a selected message queue entry:
+<p>
+<img src="assets/popup_menu.gif" 
+     align="middle">
+<p>
+<table>
+<tr><td valign="top">Display</td><td valign="top">-</td><td valign="top">Displays the selected message(s).</td></tr>
+<tr><td valign="top">Copy message as text</td><td valign="top">-</td><td valign="top">Copies the message text as displayed in the table to the clipboard.</td></tr>
+<tr><td valign="top">Copy message as hex</td><td valign="top">-</td><td valign="top">Copies the message text as a string of hex values to the clipboard.</td></tr>
+<tr><td valign="top">Copy message as hex (formatted)</td><td valign="top">-</td><td valign="top">Copies the message text as a string of hex values to the clipboard. 
+        The text is formatted into packages for easier reading.</td></tr>
+<tr><td valign="top">Save message</td><td valign="top">-</td><td valign="top">Saves the pure message bytes, without key and sender ID, as received from the host to a 
+        file.</td></tr>
+</table>
+<p>
+<h2>Displaying a Message</h2>
+<p>
+The message viewer is started with a double-click on a message or from the context menu of one or more selected messages.
+<p>
+<img src="assets/message_viewer.gif" 
+     align="middle">
+<p>
+The <i>Previous</i> and <i>Next</i> buttons at the bottom of the viewer let you move forth and back in the list of messages. The operation mode of these buttons 
+depends on how the viewer was started: 
+<p>
+<table>
+<tr><td valign="top">Double-click</td><td valign="top">-</td><td valign="top">The buttons operate on all messages of the list.</td></tr>
+<tr><td valign="top">Context menu</td><td valign="top">-</td><td valign="top">The buttons move forth and back within the selected messages.</td></tr>
+</table>
+<p>
+<h2>Data Truncation Warning</h2>
+<p>
+If the actual message size exceeds the maximum message length specified for retrieving messages, 
+a data truncation warning is displayed at the bottom of the view:
+<p>
+<img src="assets/data_truncation_warning.gif" 
+     align="middle">
+
+<p>
+If you see that message, you may consider to increase the <i>'Message length'</i> value and refresh the 
+view, in order to get the complete messages. But keep in mind that you may need to decrease the 
+<i>'Number of messages'</i> being retrieved at the same time, to avoid downloading to much data to your PC.
+<p>
+<h2>Display End of Data Option</h2>
+<p>
+Use the <i>'Display end of data option'</i> to add a '«' character to the end of the message data. This 
+option might be useful for message data with trailing spaces or any other invisible characters:
+<p>
+<img src="assets/display_end_of_data.gif" 
+     align="middle">
+
+<p>
+<h2>Display Mode: Hex</h2>
+<p>
+In hex-mode the message data is displayed as a string of hex values:
+<p>
+<img src="assets/hex_mode.gif" 
+     align="middle">
+
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
