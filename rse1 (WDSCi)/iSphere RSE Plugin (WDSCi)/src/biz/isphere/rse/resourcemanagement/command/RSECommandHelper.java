@@ -86,8 +86,19 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
         SystemCompileManager compileManager = getCompileManager();
         SystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
+        if (systemProfile == null) {
+            return null;
+        }
+
         SystemCompileProfile systemCompileProfile = compileManager.getCompileProfile(systemProfile);
+        if (systemCompileProfile == null) {
+            return null;
+        }
+
         SystemCompileType systemCompileType = systemCompileProfile.getCompileType(compileType.getType());
+        if (systemCompileType == null) {
+            return null;
+        }
 
         SystemCompileCommand systemCompileCommand = systemCompileType.getCompileLabel(label);
         if (systemCompileCommand != null) {

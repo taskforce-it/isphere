@@ -40,14 +40,15 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         RSECommand workspaceCommand = RSECommandHelper.getCommand(command.getCompileType(), command.getLabel());
 
         // Ensure that commands that are not editable are updated.
-        // Usually that are IBM supplied commands.
+        // Usually that are the IBM supplied commands of the default
+        // system profile.
         if (workspaceCommand != null && !workspaceCommand.isEditable()) {
             workspaceCommand.setCommandString(command.getCommandString());
             return;
         }
 
-        RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(), command
-            .isCommandStringEditable(), command.getId(), command.getNature(), command.getMenuOption());
+        RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(),
+            command.isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption());
     }
 
     @Override
