@@ -279,6 +279,8 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
             _searchElement.setFile(iSeriesMember.getFile());
             _searchElement.setMember(iSeriesMember.getName());
             _searchElement.setDescription(iSeriesMember.getDescription());
+            // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from
+            // file FNDSTRI.
             _searchElement.setLastChangedDate(iSeriesMember.getDateModified());
             _searchElements.put(key, _searchElement);
 
