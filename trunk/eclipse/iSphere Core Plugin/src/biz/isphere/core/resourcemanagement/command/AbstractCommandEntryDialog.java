@@ -11,6 +11,7 @@ package biz.isphere.core.resourcemanagement.command;
 import java.io.File;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -325,8 +326,13 @@ public abstract class AbstractCommandEntryDialog extends AbstractEntryDialog {
             resourcesRepository = commandsRepository;
         }
 
-        // Resources that are only in the repository are always editable.
-        // setResourcesEditable(resourcesRepository, true);
+        if (isEmptyResourceCollection(resourcesWorkspace) && isEmptyResourceCollection(resourcesRepository)
+            && isEmptyResourceCollection(resourcesBothDifferent) && isEmptyResourceCollection(resourcesBothEqual)) {
+
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_items_found_that_match_the_selection_criterias);
+
+            return IDialogConstants.BACK_ID;
+        }
 
         return openEditingDialog(getShell(), isEditWorkspace(), isEditRepository(), isEditBoth(), singleCompileType, workspace, repository,
             resourcesWorkspace, resourcesRepository, resourcesBothDifferent, resourcesBothEqual);

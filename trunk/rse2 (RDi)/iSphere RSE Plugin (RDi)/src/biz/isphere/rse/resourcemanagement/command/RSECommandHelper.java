@@ -19,12 +19,12 @@ import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
 
-import com.ibm.etools.iseries.rse.ui.compile.QSYSCompileManager;
-
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
+
+import com.ibm.etools.iseries.rse.ui.compile.QSYSCompileManager;
 
 @SuppressWarnings("restriction")
 public class RSECommandHelper extends AbstractSystemHelper {
@@ -87,8 +87,19 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
         SystemCompileManager compileManager = getCompileManager();
         ISystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
+        if (systemProfile == null) {
+            return null;
+        }
+
         SystemCompileProfile systemCompileProfile = compileManager.getCompileProfile(systemProfile);
+        if (systemCompileProfile == null) {
+            return null;
+        }
+
         SystemCompileType systemCompileType = systemCompileProfile.getCompileType(compileType.getType());
+        if (systemCompileType == null) {
+            return null;
+        }
 
         SystemCompileCommand systemCompileCommand = systemCompileType.getCompileLabel(label);
         if (systemCompileCommand != null) {

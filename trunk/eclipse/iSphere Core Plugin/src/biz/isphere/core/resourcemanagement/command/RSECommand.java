@@ -23,7 +23,7 @@ public class RSECommand extends AbstractResource {
     private RSECompileType compileType;
     private String id;
     private String label;
-    // private boolean isLabelEditable --> super.isEditable
+    private boolean isLabelEditable;
     private String commandString;
     private boolean isCommandStringEditable;
     private String nature;
@@ -59,6 +59,10 @@ public class RSECommand extends AbstractResource {
         setCommandStringEditable(isCommandStringEditable);
     }
 
+    public boolean isUserDefined() {
+        return NATURE_IBM.equals(getNature());
+    }
+
     public RSECompileType getCompileType() {
         return compileType;
     }
@@ -84,11 +88,11 @@ public class RSECommand extends AbstractResource {
     }
 
     public boolean isLabelEditable() {
-        return super.isEditable();
+        return isLabelEditable;
     }
 
     public void setLabelEditable(boolean editable) {
-        super.setEditable(editable);
+        this.isLabelEditable = editable;
     }
 
     public String getCommandString() {
@@ -129,6 +133,16 @@ public class RSECommand extends AbstractResource {
 
     public void setOrigin(Object origin) {
         this.origin = origin;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return NATURE_USER.equals(getNature());
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        throw new RuntimeException("Calling setEditable() for RSECommand is not allowed."); //$NON-NLS-1$
     }
 
     @Override
