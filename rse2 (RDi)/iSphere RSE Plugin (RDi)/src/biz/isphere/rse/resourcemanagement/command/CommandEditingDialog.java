@@ -40,14 +40,15 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         RSECommand workspaceCommand = RSECommandHelper.getCommand(command.getCompileType(), command.getLabel());
 
         // Ensure that commands that are not editable are updated.
-        // Usually that are IBM supplied commands.
+        // Usually that are the IBM supplied commands of the default
+        // system profile.
         if (workspaceCommand != null && !workspaceCommand.isEditable()) {
             workspaceCommand.setCommandString(command.getCommandString());
             return;
         }
 
         RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(),
-            command.isCommandStringEditable(), command.getId(), command.getNature(), command.getMenuOption());
+            command.isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption());
     }
 
     @Override
@@ -73,8 +74,8 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
             return true;
         } catch (Exception e) {
             ISpherePlugin.logError("Failed to save data to file: " + toFile, e); //$NON-NLS-1$
-            ErrorDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Failed_to_save_data_to_file_colon_A, toFile),
-                new Status(IStatus.ERROR, ISphereRSEPlugin.PLUGIN_ID, ExceptionHelper.getLocalizedMessage(e), e));
+            ErrorDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Failed_to_save_data_to_file_colon_A, toFile), new Status(
+                IStatus.ERROR, ISphereRSEPlugin.PLUGIN_ID, ExceptionHelper.getLocalizedMessage(e), e));
             return false;
         }
     }

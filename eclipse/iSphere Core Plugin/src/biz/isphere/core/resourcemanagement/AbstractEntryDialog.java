@@ -165,17 +165,6 @@ public abstract class AbstractEntryDialog extends XDialog {
 
     }
 
-    protected void setResourcesEditable(AbstractResource[] resources, boolean editable) {
-
-        if (resources == null) {
-            return;
-        }
-
-        for (AbstractResource resource : resources) {
-            resource.setEditable(editable);
-        }
-    }
-
     public void check() {
 
         if (needWorkspaceArea() && (buttonBoth.getSelection() || buttonWorkspace.getSelection())) {
@@ -200,6 +189,15 @@ public abstract class AbstractEntryDialog extends XDialog {
         if (okButton != null) okButton.setEnabled(true);
         setErrorMessage(null);
 
+    }
+
+    protected boolean isEmptyResourceCollection(AbstractResource[] abstractResources) {
+
+        if (abstractResources == null || abstractResources.length == 0) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean checkRepositoryName() {

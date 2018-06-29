@@ -1418,6 +1418,8 @@ public class Messages extends NLS {
 
     public static String command_parameters;
 
+    public static String No_items_found_that_match_the_selection_criterias;
+
     /*
      * Warning messages
      */
