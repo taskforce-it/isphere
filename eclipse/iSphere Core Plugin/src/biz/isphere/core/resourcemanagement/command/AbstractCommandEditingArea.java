@@ -46,7 +46,7 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
     @Override
     public void addTableColumns(Table tableResources) {
 
-        CommandQualifier qualifier = (CommandQualifier)tableResources.getData("Qualifier");
+        CommandQualifier qualifier = (CommandQualifier)tableResources.getData(TABLE_RESOURCE_QUALIFIER);
 
         if (!qualifier.isSingleCompileType()) {
             TableColumn columnName = new TableColumn(tableResources, SWT.NONE);

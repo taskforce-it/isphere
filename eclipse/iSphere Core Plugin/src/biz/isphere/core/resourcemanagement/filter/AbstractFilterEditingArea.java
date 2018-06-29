@@ -31,7 +31,7 @@ public abstract class AbstractFilterEditingArea extends AbstractEditingArea {
     @Override
     public void addTableColumns(Table tableResources) {
 
-        FilterQualifier qualifier = (FilterQualifier)tableResources.getData("Qualifier");
+        FilterQualifier qualifier = (FilterQualifier)tableResources.getData(TABLE_RESOURCE_QUALIFIER);
 
         if (!qualifier.isSingleFilterPool()) {
             TableColumn columnName = new TableColumn(tableResources, SWT.NONE);

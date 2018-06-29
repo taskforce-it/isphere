@@ -16,22 +16,21 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
-import biz.isphere.core.resourcemanagement.AbstractEditingArea;
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class FilterEditingAreaBothDifferent extends AbstractEditingArea {
+public class FilterEditingAreaBothDifferent extends AbstractFilterEditingArea {
 
     private boolean singleFilterPool;
 
     public FilterEditingAreaBothDifferent(Composite parent, AbstractResource[] resources, boolean both, boolean singleFilterPool) {
-        super(parent, resources, both, new FilterQualifier(singleFilterPool));
+        super(parent, resources, both, singleFilterPool);
         this.singleFilterPool = singleFilterPool;
     }
 
     @Override
     public void addTableColumns(Table tableResources) {
 
-        FilterQualifier qualifier = (FilterQualifier)tableResources.getData("Qualifier");
+        FilterQualifier qualifier = (FilterQualifier)tableResources.getData(TABLE_RESOURCE_QUALIFIER);
 
         if (!qualifier.isSingleFilterPool()) {
             TableColumn columnName = new TableColumn(tableResources, SWT.NONE);
