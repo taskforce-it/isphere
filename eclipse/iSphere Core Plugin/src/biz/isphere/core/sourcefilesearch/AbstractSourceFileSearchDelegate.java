@@ -174,6 +174,8 @@ public abstract class AbstractSourceFileSearchDelegate {
             aSearchElement.setFile(file);
             aSearchElement.setMember(member);
             aSearchElement.setDescription(description);
+            // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from
+            // file FNDSTRI.
             aSearchElement.setLastChangedDate(lastChangedDate);
             searchElements.put(tKey, aSearchElement);
         }

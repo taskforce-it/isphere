@@ -256,6 +256,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             _searchElement.setFile(((IQSYSMember)element).getFile());
             _searchElement.setMember(element.getName());
             _searchElement.setDescription(((IQSYSMember)element).getDescription());
+            // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from
+            // file FNDSTRI.
             _searchElement.setLastChangedDate(((IQSYSSourceMember)element).getDateModified());
             _searchElements.put(key, _searchElement);
 
