@@ -260,7 +260,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         // Disable "Push to workspace" button
         Button pushToWorkspaceButton = getActionButton(AbstractResource.PUSH_TO_WORKSPACE);
         if (pushToWorkspaceButton != null && pushToWorkspaceButton.isEnabled()) {
-            if (!allResourcesEditable(selectedItems)) {
+            if (!isActionEnabled(AbstractResource.PUSH_TO_WORKSPACE, selectedItems)) {
                 pushToWorkspaceButton.setEnabled(false);
             }
         }
@@ -268,7 +268,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         // Disable "Delete from workspace" button
         Button deleteFromWorkspaceButton = getActionButton(AbstractResource.DELETE_FROM_WORKSPACE);
         if (deleteFromWorkspaceButton != null && deleteFromWorkspaceButton.isEnabled()) {
-            if (!allResourcesEditable(selectedItems)) {
+            if (!isActionEnabled(AbstractResource.DELETE_FROM_WORKSPACE, selectedItems)) {
                 deleteFromWorkspaceButton.setEnabled(false);
             }
         }
@@ -276,13 +276,17 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         // Disable "Delete from both" button
         Button deleteFromBothButton = getActionButton(AbstractResource.DELETE_FROM_BOTH);
         if (deleteFromBothButton != null && deleteFromBothButton.isEnabled()) {
-            if (!allResourcesEditable(selectedItems)) {
+            if (!isActionEnabled(AbstractResource.DELETE_FROM_BOTH, selectedItems)) {
                 deleteFromBothButton.setEnabled(false);
             }
         }
     }
 
-    private boolean allResourcesEditable(AbstractResource[] selectedItems) {
+    protected boolean isActionEnabled(String action, AbstractResource[] selectedItems) {
+        return true;
+    }
+
+    protected boolean allResourcesEditable(AbstractResource[] selectedItems) {
 
         for (AbstractResource selectedItem : selectedItems) {
             if (!selectedItem.isEditable()) {
