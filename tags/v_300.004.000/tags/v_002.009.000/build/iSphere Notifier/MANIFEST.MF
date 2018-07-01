@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Version: 2.8.1.r
-X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: .
-X-Bundle-Info: New Release!
-X-Beta-Version: 2.9.0.b005
-X-Beta-Update-Library: true
-X-Beta-Update-Library-Info: .
-X-Beta-Info: Added option to pin 5250 views. Enhanced spool file filter options. Enabled "Copy Members to" for source files and member filters. Enhanced "Copy Members to" to copy members between connections.\n\n*** Last library for V5R4. See documentation. ***
