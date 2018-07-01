@@ -1,5 +1,0 @@
-<pcml version="4.0">
-   <program name="SPLF_getErrorMessage" path="/QSYS.LIB/%LIBL%.LIB/W003011.PGM">
-      <data name="message" type="char" length="256" usage="output" />
-   </program>
-</pcml>

@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Version: 2.6.0.r
-X-Bundle-Update-Library: true
-X-Bundle-Info: This version requires V5R4 for restoring the library.
-X-Beta-Version: 2.6.0.r
-X-Beta-Update-Library: false
-X-Beta-Info: This version requires V5R4 for restoring the library.
