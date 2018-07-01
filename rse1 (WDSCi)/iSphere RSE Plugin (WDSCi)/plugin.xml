@@ -62,24 +62,6 @@
     
 	<extension 
 		point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
-
-      	<!--
-      	  ==========================================
-      	    Compile Commands
-      	  ==========================================
-      	-->
-
-		<dynamicPopupMenuExtension
-			name="Import Compile Commands"
-			class="biz.isphere.rse.actions.ImportCompileCommandsAction"
-			id="biz.isphere.rse.actions.ImportCompileCommandsAction">
-	    </dynamicPopupMenuExtension>
-
-		<dynamicPopupMenuExtension
-			name="Export Compile Commands"
-			class="biz.isphere.rse.actions.ExportCompileCommandsAction"
-			id="biz.isphere.rse.actions.ExportCompileCommandsAction">
-	    </dynamicPopupMenuExtension>
       	
       	<!--
       	  ==========================================
