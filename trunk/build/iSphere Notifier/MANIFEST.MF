@@ -3,7 +3,7 @@ Bundle-Version: 3.4.0.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Added column 'Last changed' to the member list of the result view of the iSphere Source File Search.\nChanged check for updates URL.\nBug fixes.
-X-Beta-Version: 3.5.0.r
+X-Beta-Version: 3.5.0.b001
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
 X-Beta-Info: Added Feature "iSphere RSE Command Management" to import and export compile commands.
