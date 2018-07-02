@@ -3,10 +3,13 @@ Changelog: iSphere 3.5.0.b001
 -----------------------------
  • Added Feature "iSphere RSE Command Management" to import and 
    export compile commands.
+
+Changelog: iSphere 3.4.1.r
+--------------------------
  • Changed service program FNDSTR to call QUSRMBRD for retrieving
    member attributes such as the 'source last changed' date.
- • Fixed NullPointerException in java.util.Calendar.setTime() when
-   the iSphere Source File Search is called by CMOne.
+ • Fixed NullPointerException in java.util.Calendar.setTime()
+   when the iSphere Source File Search is called by CMOne.
 
 Changelog: iSphere 3.4.0.r
 --------------------------
