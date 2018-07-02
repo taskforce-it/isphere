@@ -14,14 +14,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.DateTimeHelper;
 
+@CMOne(info = "Be careful, when changing this class! Also test CMOne source file search.")
 public class SearchElement {
 
     private String library;
     private String file;
     private String member;
     private String description;
+    // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file
+    // FNDSTRI. (here: lastChangedDate)
     private Date lastChangedDate;
     private Object data;
 
@@ -80,7 +84,12 @@ public class SearchElement {
     }
 
     public String getLastChangedDateSQL() {
-        return DateTimeHelper.getTimestampFormattedISO(lastChangedDate);
+
+        if (lastChangedDate != null) {
+            return DateTimeHelper.getTimestampFormattedISO(lastChangedDate);
+        }
+
+        return null;
     }
 
     public void setLastChangedDate(Date lastChangedDate) {
@@ -127,9 +136,15 @@ public class SearchElement {
                     }
 
                     sqlInsert.append("('" + Integer.toString(handle) + "', " + "'" + _searchElements.get(idx).getLibrary() + "', " + "'"
-                        + _searchElements.get(idx).getFile() + "', " + "'" + _searchElements.get(idx).getMember() + "', " + "'"
-                        + _searchElements.get(idx).getLastChangedDateSQL() + "'" + ")");
+                        + _searchElements.get(idx).getFile() + "', " + "'" + _searchElements.get(idx).getMember() + "'");
 
+                    if (_searchElements.get(idx).getLastChangedDate() != null) {
+                        sqlInsert.append(", " + "'" + _searchElements.get(idx).getLastChangedDateSQL() + "'");
+                    } else {
+                        sqlInsert.append(", " + "'0001-01-01-00.00.00'");
+                    }
+
+                    sqlInsert.append(")");
                 }
 
                 String _sqlInsert = sqlInsert.toString();
