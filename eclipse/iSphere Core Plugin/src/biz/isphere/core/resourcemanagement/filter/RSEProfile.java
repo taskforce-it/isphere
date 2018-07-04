@@ -39,4 +39,8 @@ public class RSEProfile {
         this.origin = origin;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
