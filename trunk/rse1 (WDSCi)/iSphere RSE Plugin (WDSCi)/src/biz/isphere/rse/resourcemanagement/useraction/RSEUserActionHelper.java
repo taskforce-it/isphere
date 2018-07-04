@@ -101,10 +101,10 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
     private static RSEUserAction produceUserAction(RSEDomain domain, SystemUDActionElement systemUserAction) {
 
-        RSEUserAction rseUserAction = new RSEUserAction(domain, systemUserAction.getLabel(), systemUserAction.getCommand(),
-            systemUserAction.getPrompt(), systemUserAction.getRefresh(), systemUserAction.getShow(), systemUserAction.getSingleSelection(),
-            systemUserAction.getCollect(), systemUserAction.getComment(), systemUserAction.getFileTypes(), systemUserAction.isIBM(),
-            systemUserAction.getVendor(), systemUserAction.getOriginalName(), systemUserAction);
+        RSEUserAction rseUserAction = new RSEUserAction(domain, systemUserAction.getLabel(), systemUserAction.getCommand(), systemUserAction
+            .getPrompt(), systemUserAction.getRefresh(), systemUserAction.getShow(), systemUserAction.getSingleSelection(), systemUserAction
+            .getCollect(), systemUserAction.getComment(), systemUserAction.getFileTypes(), systemUserAction.isIBM(), systemUserAction.getVendor(),
+            systemUserAction.getOriginalName(), systemUserAction);
 
         return rseUserAction;
     }
@@ -132,18 +132,19 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
     }
 
-    public static void deleteCommand(RSECompileType compileType, String label) {
+    public static void deleteUserAction(RSEDomain rseDomain, String label) {
 
-        SystemCompileType type = (SystemCompileType)compileType.getOrigin();
-        if (type != null) {
-            for (SystemCompileCommand compileCommand : type.getCompileCommandsArray()) {
-                if (compileCommand.getLabel().equals(label)) {
-                    type.removeCompileCommand(compileCommand);
-                    type.getParentProfile().writeToDisk();
-                    return;
+        SystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+            if (userActionManager != null) {
+                SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
+                for (SystemUDActionElement userAction : userActions) {
+                    if (userAction.getLabel().equals(label)) {
+                        userActionManager.delete(systemProfile, userAction);
+                    }
                 }
             }
-
         }
     }
 
@@ -154,10 +155,12 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
     private static SystemUDActionManager getUserActionManager(SystemProfile systemProfile) {
 
         SubSystemFactory subSystemFactory = getSubSystemConfiguration();
-//        SystemUDActionSubsystem udactionSubSystem = new QSYSUDActionSubsystemAdapter().getSystemUDActionSubsystem(subSystemFactory);
+        // SystemUDActionSubsystem udactionSubSystem = new
+        // QSYSUDActionSubsystemAdapter().getSystemUDActionSubsystem(subSystemFactory);
         // udactionSubSystem.setSubsystem(subsystem);
-//        udactionSubSystem.setSubSystemFactory(subSystemFactory);
-//        SystemUDActionManager userActionManager = udactionSubSystem.getUDActionManager();
+        // udactionSubSystem.setSubSystemFactory(subSystemFactory);
+        // SystemUDActionManager userActionManager =
+        // udactionSubSystem.getUDActionManager();
         UDActionSubsystemNFS actionSubsystemNFS = new UDActionSubsystemNFS();
         actionSubsystemNFS.setSubSystemFactory(subSystemFactory);
         SystemUDActionManager userActionManager = actionSubsystemNFS.getUDActionManager();
