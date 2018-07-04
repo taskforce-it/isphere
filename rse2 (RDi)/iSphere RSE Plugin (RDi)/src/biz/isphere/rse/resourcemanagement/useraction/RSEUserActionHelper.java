@@ -14,13 +14,10 @@ import java.util.Vector;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
-import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
-import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileType;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionElement;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionManager;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 
-import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
@@ -133,18 +130,19 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
     }
 
-    public static void deleteCommand(RSECompileType compileType, String label) {
+    public static void deleteUserAction(RSEDomain rseDomain, String label) {
 
-        SystemCompileType type = (SystemCompileType)compileType.getOrigin();
-        if (type != null) {
-            for (SystemCompileCommand compileCommand : type.getCompileCommandsArray()) {
-                if (compileCommand.getLabel().equals(label)) {
-                    type.removeCompileCommand(compileCommand);
-                    type.getParentProfile().writeToDisk();
-                    return;
+        ISystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+            if (userActionManager != null) {
+                SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
+                for (SystemUDActionElement userAction : userActions) {
+                    if (userAction.getLabel().equals(label)) {
+                        userActionManager.delete(systemProfile, userAction);
+                    }
                 }
             }
-
         }
     }
 
