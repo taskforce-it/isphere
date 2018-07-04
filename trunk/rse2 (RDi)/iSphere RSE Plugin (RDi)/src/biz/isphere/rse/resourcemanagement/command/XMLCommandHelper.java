@@ -33,7 +33,8 @@ public class XMLCommandHelper {
 
     private static final String COMPILE_TYPES = "compiletypes";
     private static final String COMPILE_TYPE = "compiletype";
-    private static final String TYPE = "type";
+    private static final String COMPILE_TYPE_TYPE = "type";
+
     private static final String COMMANDS = "commands";
     private static final String ID = "id";
     private static final String COMMAND = "command";
@@ -81,7 +82,7 @@ public class XMLCommandHelper {
                 eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPE));
                 eventWriter.add(end);
 
-                createNode(eventWriter, eventFactory, end, tab, TYPE, entry.getKey());
+                createNode(eventWriter, eventFactory, end, tab, COMPILE_TYPE_TYPE, entry.getKey());
 
                 RSECommand[] _commands = new RSECommand[entry.getValue().size()];
                 entry.getValue().toArray(_commands);
@@ -174,7 +175,7 @@ public class XMLCommandHelper {
             if (event.isStartElement()) {
                 if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
                     type = new RSECompileType(profile);
-                } else if (event.asStartElement().getName().getLocalPart().equals(TYPE)) {
+                } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                     event = eventReader.nextEvent();
                     elementData = new StringBuilder(event.asCharacters().getData());
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
@@ -205,7 +206,7 @@ public class XMLCommandHelper {
                     elementData = null;
                 }
             } else if (event.isEndElement()) {
-                if (event.asEndElement().getName().getLocalPart().equals(TYPE)) {
+                if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                     type.setType(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
                     command.setId(elementData.toString());
