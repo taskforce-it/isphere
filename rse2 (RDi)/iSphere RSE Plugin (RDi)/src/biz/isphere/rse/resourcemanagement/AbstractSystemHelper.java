@@ -24,6 +24,22 @@ public abstract class AbstractSystemHelper {
 
     private static final String OBJECT_SUBSYSTEM_ID = "com.ibm.etools.iseries.subsystems.qsys.objects"; //$NON-NLS-1$
 
+    public static RSEProfile getProfile(String name) {
+
+        if (name == null) {
+            return null;
+        }
+
+        RSEProfile[] profiles = getProfiles();
+        for (RSEProfile profile : profiles) {
+            if (name.equals(profile.getName())) {
+                return profile;
+            }
+        }
+
+        return null;
+    }
+
     public static RSEProfile[] getProfiles() {
 
         ArrayList<RSEProfile> allProfiles = new ArrayList<RSEProfile>();
