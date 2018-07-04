@@ -1394,6 +1394,8 @@ public class Messages extends NLS {
 
     public static String Ignore_changes_right;
 
+    public static String Label;
+
     public static String RSE_Command_Management;
 
     public static String RSE_Commands;
@@ -1414,9 +1416,29 @@ public class Messages extends NLS {
 
     public static String No_compile_types_selected;
 
-    public static String Label;
-
     public static String command_parameters;
+
+    public static String RSE_UserAction_Management;
+
+    public static String RSE_UserActions;
+
+    public static String Single_domain;
+
+    public static String Domain;
+
+    public static String UserAction;
+
+    public static String All_domains;
+
+    public static String userActions;
+
+    public static String UserActions;
+
+    public static String No_domains_available;
+
+    public static String No_domains_selected;
+
+    public static String userAction_parameters;
 
     public static String No_items_found_that_match_the_selection_criterias;
 
