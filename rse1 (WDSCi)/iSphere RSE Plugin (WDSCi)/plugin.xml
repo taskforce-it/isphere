@@ -534,6 +534,16 @@
          </action>
          
          <action
+               class="biz.isphere.rse.actions.OpenRSEUserActionManagementAction"
+               id="biz.isphere.rse.actions.OpenRSEUserActionManagementAction"
+               definitionId="biz.isphere.core.command.RSEUserActionManagement.open"
+               label="%menu_RSE_UserAction_Management"
+               icon="icons/iSphere_RSE_UserAction_Management.gif"
+               menubarPath="biz.isphere.core.menu.isphere/group0"
+               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_UserAction_Management">
+         </action>
+         
+         <action
                class="biz.isphere.rse.actions.OpenRSECommandManagementAction"
                id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
                definitionId="biz.isphere.core.command.RSECommandManagement.open"
@@ -680,6 +690,13 @@
             id="biz.isphere.core.command.RSECommandManagement.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_RSE_Command_Management">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenRSEUserActionManagementHandler"
+            id="biz.isphere.core.command.RSEUserActionManagement.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_RSE_UserAction_Management">
       </command>
       
       <command
