@@ -11,18 +11,15 @@ package biz.isphere.rse.resourcemanagement.useraction;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 import com.ibm.etools.iseries.core.ui.uda.UDActionSubsystemNFS;
-import com.ibm.etools.systems.core.ui.compile.SystemCompileCommand;
-import com.ibm.etools.systems.core.ui.compile.SystemCompileType;
+import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionElement;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionManager;
-import com.ibm.etools.systems.core.ui.uda.SystemUDActionSubsystem;
 import com.ibm.etools.systems.model.SystemProfile;
 import com.ibm.etools.systems.model.SystemStartHere;
 import com.ibm.etools.systems.subsystems.SubSystemFactory;
@@ -128,8 +125,18 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 // must be called before setVendor()
                 userAction.setIBM(isIBM);
                 userAction.setVendor(vendor);
+
+                saveUserActions(userActionManager, systemProfile, userAction);
             }
         }
+    }
+
+    private static void saveUserActions(SystemUDActionManager userActionManager, SystemProfile systemProfile, SystemUDActionElement userAction) {
+
+        userActionManager.saveUserData(systemProfile);
+        userActionManager.refreshLocal(systemProfile);
+
+        SystemPlugin.getTheSystemRegistry().fireModelChangeEvent(2, -1, userAction, null);
     }
 
     public static void deleteUserAction(RSEDomain rseDomain, String label) {
@@ -141,11 +148,19 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
-                        userActionManager.delete(systemProfile, userAction);
+                        deleteUserAction(userActionManager, systemProfile, userAction);
                     }
                 }
             }
         }
+    }
+
+    private static void deleteUserAction(SystemUDActionManager userActionManager, SystemProfile systemProfile, SystemUDActionElement userAction) {
+
+        userActionManager.saveUserData(systemProfile);
+        userActionManager.refreshLocal(systemProfile);
+
+        SystemPlugin.getTheSystemRegistry().fireModelChangeEvent(2, -1, userAction, null);
     }
 
     private static SystemProfile getSystemProfile(String name) {
