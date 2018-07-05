@@ -204,8 +204,6 @@ public class RSEUserAction extends AbstractResource {
         appendAttribute(buffer, isIBM);
         appendAttribute(buffer, vendor);
 
-        System.out.println(buffer.toString());
-
         return buffer.toString();
     }
 
