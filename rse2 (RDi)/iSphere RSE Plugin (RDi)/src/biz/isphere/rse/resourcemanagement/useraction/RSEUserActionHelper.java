@@ -126,6 +126,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 // must be called before setVendor()
                 userAction.setIBM(isIBM);
                 userAction.setVendor(vendor);
+
+                systemProfile.commit();
             }
         }
     }
