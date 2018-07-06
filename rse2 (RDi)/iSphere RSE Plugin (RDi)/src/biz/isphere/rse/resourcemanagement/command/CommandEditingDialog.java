@@ -73,8 +73,6 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
 
     @Override
     protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
-        // deleteFromWorkspace(resourceWorkspace);
-        // pushToWorkspace(resourceRepository);
 
         RSECommand commandWorkspace = (RSECommand)resourceWorkspace;
         RSECommand commandRepository = (RSECommand)resourceRepository;
