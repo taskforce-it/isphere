@@ -123,13 +123,13 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
         RSECommand rseCommand = new RSECommand(compileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
             systemCompileCommand.getCurrentString(), systemCompileCommand.isCommandStringEditable(), systemCompileCommand.getId(),
-            systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand);
+            systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand.getOrder(), systemCompileCommand);
 
         return rseCommand;
     }
 
     public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
-        boolean isCommandStringEditable, String id, String nature, String menuOption) {
+        boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
 
         SystemCompileManager compileManager = getCompileManager();
         ISystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
@@ -164,6 +164,7 @@ public class RSECommandHelper extends AbstractSystemHelper {
             compileCommand.setNature(nature);
             compileCommand.setMenuOption(menuOption);
 
+            compileCommand.setOrder(order);
             compileCommand.setLabel(label);
             compileCommand.setLabelEditable(isLabelEditable);
 
@@ -193,7 +194,7 @@ public class RSECommandHelper extends AbstractSystemHelper {
     }
 
     public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
-        boolean isCommandStringEditable, String id, String nature, String menuOption) {
+        boolean isCommandStringEditable, String id, String nature, String menuOption, int Order) {
 
         SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
         if (systemCompileCommand != null) {

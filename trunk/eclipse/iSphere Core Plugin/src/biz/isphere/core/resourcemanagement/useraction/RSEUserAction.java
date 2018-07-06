@@ -25,6 +25,7 @@ public class RSEUserAction extends AbstractResource {
     private String[] fileTypes;
     private boolean isIBM;
     private String vendor;
+    private int order;
     private Object origin;
 
     public RSEUserAction() {
@@ -42,12 +43,13 @@ public class RSEUserAction extends AbstractResource {
         this.isIBM = false;
         this.vendor = null;
         this.originalName = null;
+        this.order = -1;
         this.origin = null;
     }
 
     public RSEUserAction(RSEDomain domain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
         boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor, String originalName,
-        Object origin) {
+        int order, Object origin) {
         super(true);
         this.domain = domain;
         this.label = label;
@@ -62,6 +64,7 @@ public class RSEUserAction extends AbstractResource {
         this.isIBM = isIBM;
         this.vendor = vendor;
         this.originalName = originalName;
+        this.order = order;
         this.origin = origin;
     }
 
@@ -171,6 +174,14 @@ public class RSEUserAction extends AbstractResource {
 
     public void setVendor(String vendor) {
         this.vendor = nullOnEmpty(vendor);
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public Object getOrigin() {

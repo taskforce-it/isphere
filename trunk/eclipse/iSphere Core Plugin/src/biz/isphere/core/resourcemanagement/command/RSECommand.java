@@ -28,6 +28,7 @@ public class RSECommand extends AbstractResource {
     private boolean isCommandStringEditable;
     private String nature;
     private String menuOption;
+    int order;
     private Object origin;
 
     public RSECommand() {
@@ -38,6 +39,7 @@ public class RSECommand extends AbstractResource {
         this.commandString = null;
         this.nature = null;
         this.menuOption = null;
+        this.order = 0;
         this.origin = null;
 
         setLabelEditable(true);
@@ -45,7 +47,7 @@ public class RSECommand extends AbstractResource {
     }
 
     public RSECommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString, boolean isCommandStringEditable,
-        String id, String nature, String menuOption, Object origin) {
+        String id, String nature, String menuOption, int order, Object origin) {
         super(true);
         this.compileType = compileType;
         this.id = id;
@@ -53,6 +55,7 @@ public class RSECommand extends AbstractResource {
         this.commandString = commandString;
         this.nature = nature;
         this.menuOption = menuOption;
+        this.order = order;
         this.origin = origin;
 
         setLabelEditable(isLabelEditable);
@@ -125,6 +128,14 @@ public class RSECommand extends AbstractResource {
 
     public void setMenuOption(String menuOption) {
         this.menuOption = menuOption;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
     public Object getOrigin() {
