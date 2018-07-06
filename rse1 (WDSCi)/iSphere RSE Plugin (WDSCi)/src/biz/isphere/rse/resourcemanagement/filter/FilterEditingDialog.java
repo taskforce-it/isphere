@@ -23,8 +23,10 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 import biz.isphere.core.resourcemanagement.filter.AbstractFilterEditingDialog;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterBoth;
+import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.resourcemanagement.useraction.RSEUserActionHelper;
 
 public class FilterEditingDialog extends AbstractFilterEditingDialog {
 
@@ -46,6 +48,12 @@ public class FilterEditingDialog extends AbstractFilterEditingDialog {
     protected void deleteFromWorkspace(AbstractResource resource) {
         RSEFilter filter = (RSEFilter)resource;
         RSEFilterHelper.deleteFilter(filter.getFilterPool(), filter.getName());
+    }
+
+    @Override
+    protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        deleteFromWorkspace(resourceWorkspace);
+        pushToWorkspace(resourceRepository);
     }
 
     @Override

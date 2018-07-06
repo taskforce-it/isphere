@@ -213,8 +213,7 @@ public abstract class AbstractEditingDialog extends Dialog {
                             repositoryAction = true;
                             continue; // Do nothing for delete from repository
                         } else if (resourceBothDifferent[idx].getAction().equals(AbstractResource.PUSH_TO_WORKSPACE)) {
-                            deleteFromWorkspace(resourceBothDifferent[idx].getResourceWorkspace());
-                            pushToWorkspace(resourceBothDifferent[idx].getResourceRepository());
+                            updateWorkspace(resourceBothDifferent[idx].getResourceWorkspace(), resourceBothDifferent[idx].getResourceRepository());
                             pushToRepository(resourceBothDifferent[idx].getResourceRepository());
                         } else if (resourceBothDifferent[idx].getAction().equals(AbstractResource.DELETE_FROM_BOTH)) {
                             repositoryAction = true;
@@ -298,6 +297,8 @@ public abstract class AbstractEditingDialog extends Dialog {
     protected abstract void pushToWorkspace(AbstractResource resource);
 
     protected abstract void deleteFromWorkspace(AbstractResource resource);
+
+    protected abstract void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository);
 
     protected abstract boolean saveRepository(String repository, ArrayList<AbstractResource> newRepository);
 

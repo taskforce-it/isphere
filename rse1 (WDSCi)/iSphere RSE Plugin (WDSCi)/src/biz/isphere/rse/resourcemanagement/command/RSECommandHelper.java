@@ -84,23 +84,7 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
     public static RSECommand getCommand(RSECompileType compileType, String label) {
 
-        SystemCompileManager compileManager = getCompileManager();
-        SystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
-        if (systemProfile == null) {
-            return null;
-        }
-
-        SystemCompileProfile systemCompileProfile = compileManager.getCompileProfile(systemProfile);
-        if (systemCompileProfile == null) {
-            return null;
-        }
-
-        SystemCompileType systemCompileType = systemCompileProfile.getCompileType(compileType.getType());
-        if (systemCompileType == null) {
-            return null;
-        }
-
-        SystemCompileCommand systemCompileCommand = systemCompileType.getCompileLabel(label);
+        SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
         if (systemCompileCommand != null) {
 
             RSECommand rseCommand = produceCommand(compileType, systemCompileCommand);
@@ -111,10 +95,33 @@ public class RSECommandHelper extends AbstractSystemHelper {
         return null;
     }
 
+    private static SystemCompileCommand findCompileCommand(String systemProfileName, String compileTypeType, String label) {
+
+        SystemCompileManager compileManager = getCompileManager();
+        SystemProfile systemProfile = getSystemProfile(systemProfileName);
+        if (systemProfile == null) {
+            return null;
+        }
+
+        SystemCompileProfile systemCompileProfile = compileManager.getCompileProfile(systemProfile);
+        if (systemCompileProfile == null) {
+            return null;
+        }
+
+        SystemCompileType systemCompileType = systemCompileProfile.getCompileType(compileTypeType);
+        if (systemCompileType == null) {
+            return null;
+        }
+
+        SystemCompileCommand systemCompileCommand = systemCompileType.getCompileLabel(label);
+
+        return systemCompileCommand;
+    }
+
     private static RSECommand produceCommand(RSECompileType compileType, SystemCompileCommand systemCompileCommand) {
 
         RSECommand rseCommand = new RSECommand(compileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
-            systemCompileCommand.getDefaultString(), systemCompileCommand.isCommandStringEditable(), systemCompileCommand.getId(),
+            systemCompileCommand.getCurrentString(), systemCompileCommand.isCommandStringEditable(), systemCompileCommand.getId(),
             systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand);
 
         return rseCommand;
@@ -178,10 +185,20 @@ public class RSECommandHelper extends AbstractSystemHelper {
                 if (compileCommand.getLabel().equals(label)) {
                     type.removeCompileCommand(compileCommand);
                     type.getParentProfile().writeToDisk();
-                    return;
                 }
             }
 
+        }
+    }
+
+    public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
+        boolean isCommandStringEditable, String id, String nature, String menuOption) {
+
+        SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
+        if (systemCompileCommand != null) {
+            systemCompileCommand.setCurrentString(commandString);
+            SystemCompileType type = (SystemCompileType)compileType.getOrigin();
+            type.getParentProfile().writeToDisk();
         }
     }
 
