@@ -13,6 +13,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -43,12 +44,14 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         // Usually that are the IBM supplied commands of the default
         // system profile.
         if (workspaceCommand != null && !workspaceCommand.isEditable()) {
-            workspaceCommand.setCommandString(command.getCommandString());
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                "Cannot create command, because command already exists. Inform the developer about the problem."); //$NON-NLS-1$
+            // workspaceCommand.setCommandString(command.getCommandString());
             return;
         }
 
-        RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(),
-            command.isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption());
+        RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(), command
+            .isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption());
     }
 
     @Override
@@ -60,10 +63,25 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         // Ensure that commands that are not editable are not deleted.
         // Usually that are IBM supplied commands.
         if (workspaceCommand != null && !workspaceCommand.isEditable()) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                "Deleting non-editable commands is not supported. Inform the developer about the problem."); //$NON-NLS-1$
             return;
         }
 
         RSECommandHelper.deleteCommand(command.getCompileType(), command.getLabel());
+    }
+
+    @Override
+    protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        // deleteFromWorkspace(resourceWorkspace);
+        // pushToWorkspace(resourceRepository);
+
+        RSECommand commandWorkspace = (RSECommand)resourceWorkspace;
+        RSECommand commandRepository = (RSECommand)resourceRepository;
+
+        RSECommandHelper.updateCommand(commandWorkspace.getCompileType(), commandWorkspace.getLabel(), commandRepository.isLabelEditable(),
+            commandRepository.getCommandString(), commandRepository.isCommandStringEditable(), commandRepository.getId(), commandRepository
+                .getNature(), commandRepository.getMenuOption());
     }
 
     @Override

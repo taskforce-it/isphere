@@ -126,17 +126,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 userAction.setIBM(isIBM);
                 userAction.setVendor(vendor);
 
-                saveUserActions(userActionManager, systemProfile, userAction);
+                saveUserActions(userActionManager, systemProfile);
             }
         }
-    }
-
-    private static void saveUserActions(SystemUDActionManager userActionManager, SystemProfile systemProfile, SystemUDActionElement userAction) {
-
-        userActionManager.saveUserData(systemProfile);
-        userActionManager.refreshLocal(systemProfile);
-
-        SystemPlugin.getTheSystemRegistry().fireModelChangeEvent(2, -1, userAction, null);
     }
 
     public static void deleteUserAction(RSEDomain rseDomain, String label) {
@@ -148,19 +140,35 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
-                        deleteUserAction(userActionManager, systemProfile, userAction);
+                        userActionManager.delete(systemProfile, userAction);
+                        saveUserActions(userActionManager, systemProfile);
                     }
                 }
             }
         }
     }
 
-    private static void deleteUserAction(SystemUDActionManager userActionManager, SystemProfile systemProfile, SystemUDActionElement userAction) {
+    public static void updateUserAction(RSEDomain rseDomain, String label) {
 
+        SystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+            if (userActionManager != null) {
+                SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
+                for (SystemUDActionElement userAction : userActions) {
+                    if (userAction.getLabel().equals(label)) {
+
+                        saveUserActions(userActionManager, systemProfile);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void saveUserActions(SystemUDActionManager userActionManager, SystemProfile systemProfile) {
+
+        userActionManager.setChanged(systemProfile);
         userActionManager.saveUserData(systemProfile);
-        userActionManager.refreshLocal(systemProfile);
-
-        SystemPlugin.getTheSystemRegistry().fireModelChangeEvent(2, -1, userAction, null);
     }
 
     private static SystemProfile getSystemProfile(String name) {
@@ -170,12 +178,6 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
     private static SystemUDActionManager getUserActionManager(SystemProfile systemProfile) {
 
         SubSystemFactory subSystemFactory = getSubSystemConfiguration();
-        // SystemUDActionSubsystem udactionSubSystem = new
-        // QSYSUDActionSubsystemAdapter().getSystemUDActionSubsystem(subSystemFactory);
-        // udactionSubSystem.setSubsystem(subsystem);
-        // udactionSubSystem.setSubSystemFactory(subSystemFactory);
-        // SystemUDActionManager userActionManager =
-        // udactionSubSystem.getUDActionManager();
         UDActionSubsystemNFS actionSubsystemNFS = new UDActionSubsystemNFS();
         actionSubsystemNFS.setSubSystemFactory(subSystemFactory);
         SystemUDActionManager userActionManager = actionSubsystemNFS.getUDActionManager();
