@@ -60,8 +60,9 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         RSEUserAction workspaceUserAction = RSEUserActionHelper.getUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
 
         // Never delete existing user actions.
-        if (workspaceUserAction != null) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Deleting user actions is not allowed. Inform the developer about the problem."); //$NON-NLS-1$
+        if (workspaceUserAction != null && workspaceUserAction.isIBM()) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                "Deleting IBM supplied user actions is not allowed. Inform the developer about the problem."); //$NON-NLS-1$
             return;
         }
 
