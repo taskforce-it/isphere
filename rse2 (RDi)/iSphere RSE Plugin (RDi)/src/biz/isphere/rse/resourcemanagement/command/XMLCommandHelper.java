@@ -150,7 +150,7 @@ public class XMLCommandHelper extends AbstractXmlHelper {
             type = compileType;
         }
         RSECommand command = null;
-        StringBuilder elementData = null;
+        StringBuilder elementData = new StringBuilder();
 
         while (eventReader.hasNext()) {
 
