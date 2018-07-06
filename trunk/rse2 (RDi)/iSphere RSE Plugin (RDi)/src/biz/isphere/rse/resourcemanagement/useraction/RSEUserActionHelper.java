@@ -118,7 +118,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
 
-                userAction.setOrder(order);
+                // Do not set 'order' to avoid duplicate
+                // order numbers
+                // userAction.setOrder(getNextOrderNumber(userActionManager));
                 userAction.setCommand(commandString);
                 userAction.setPrompt(isPromptFirst);
                 userAction.setRefresh(isRefreshAfter);
@@ -165,7 +167,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
 
-                        userAction.setOrder(order);
+                        // Do not update 'order' to avoid duplicate
+                        // order numbers
+                        // userAction.setOrder(order);
                         userAction.setCommand(commandString);
                         userAction.setPrompt(isPromptFirst);
                         userAction.setRefresh(isRefreshAfter);
