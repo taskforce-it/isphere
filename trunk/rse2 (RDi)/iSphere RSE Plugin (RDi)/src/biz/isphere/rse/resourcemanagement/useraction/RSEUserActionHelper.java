@@ -149,7 +149,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
     }
 
-    public static void updateUserAction(RSEDomain rseDomain, String label) {
+    public static void updateUserAction(RSEDomain rseDomain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter,
+        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor) {
 
         ISystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
         if (systemProfile != null) {
