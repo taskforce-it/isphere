@@ -71,9 +71,13 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
     @Override
     protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
 
-        RSEUserAction rseUserAction = (RSEUserAction)resourceWorkspace;
+        RSEUserAction userActionWorkspace = (RSEUserAction)resourceWorkspace;
+        RSEUserAction userActionRepository = (RSEUserAction)resourceRepository;
 
-        RSEUserActionHelper.updateUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
+        RSEUserActionHelper.updateUserAction(userActionWorkspace.getDomain(), userActionWorkspace.getLabel(),
+            userActionRepository.getCommandString(), userActionRepository.isPromptFirst(), userActionRepository.isRefreshAfter(),
+            userActionRepository.isShowAction(), userActionRepository.isSingleSelection(), userActionRepository.isInvokeOnce(), userActionRepository
+                .getComment(), userActionRepository.getFileTypes(), userActionRepository.isIBM(), userActionRepository.getVendor());
     }
 
     @Override
