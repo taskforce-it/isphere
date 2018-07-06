@@ -64,15 +64,16 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
     protected void deleteFromWorkspace(AbstractResource resource) {
 
         RSEUserAction rseUserAction = (RSEUserAction)resource;
-        RSEUserAction workspaceUserAction = RSEUserActionHelper.getUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
-
-        // Ensure that commands that are not editable are not deleted.
-        // Usually that are IBM supplied commands.
-        if (workspaceUserAction != null) {
-            return;
-        }
 
         RSEUserActionHelper.deleteUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
+    }
+
+    @Override
+    protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+
+        RSEUserAction rseUserAction = (RSEUserAction)resourceWorkspace;
+
+        RSEUserActionHelper.updateUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
     }
 
     @Override

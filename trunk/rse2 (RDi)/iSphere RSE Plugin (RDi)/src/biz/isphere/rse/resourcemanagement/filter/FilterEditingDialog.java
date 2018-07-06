@@ -49,6 +49,12 @@ public class FilterEditingDialog extends AbstractFilterEditingDialog {
     }
 
     @Override
+    protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        deleteFromWorkspace(resourceWorkspace);
+        pushToWorkspace(resourceRepository);
+    }
+
+    @Override
     protected boolean saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) {
 
         try {

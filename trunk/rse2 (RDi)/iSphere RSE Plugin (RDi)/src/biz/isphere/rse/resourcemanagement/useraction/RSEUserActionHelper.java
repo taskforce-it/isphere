@@ -127,7 +127,7 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 userAction.setIBM(isIBM);
                 userAction.setVendor(vendor);
 
-                systemProfile.commit();
+                saveUserActions(userActionManager, systemProfile);
             }
         }
     }
@@ -142,10 +142,34 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
                         userActionManager.delete(systemProfile, userAction);
+                        saveUserActions(userActionManager, systemProfile);
                     }
                 }
             }
         }
+    }
+
+    public static void updateUserAction(RSEDomain rseDomain, String label) {
+
+        ISystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+            if (userActionManager != null) {
+                SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
+                for (SystemUDActionElement userAction : userActions) {
+                    if (userAction.getLabel().equals(label)) {
+
+                        saveUserActions(userActionManager, systemProfile);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void saveUserActions(SystemUDActionManager userActionManager, ISystemProfile systemProfile) {
+
+        userActionManager.setChanged(systemProfile);
+        userActionManager.saveUserData(systemProfile);
     }
 
     private static ISystemProfile getSystemProfile(String name) {
@@ -156,7 +180,6 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
         ISubSystemConfiguration subSystemFactory = getSubSystemConfiguration();
         SystemUDActionSubsystem udactionSubSystem = new QSYSUDActionSubsystemAdapter().getSystemUDActionSubsystem(subSystemFactory);
-        // udactionSubSystem.setSubsystem(subsystem);
         udactionSubSystem.setSubSystemFactory(subSystemFactory);
         SystemUDActionManager userActionManager = udactionSubSystem.getUDActionManager();
         userActionManager.setCurrentProfile(systemProfile);
