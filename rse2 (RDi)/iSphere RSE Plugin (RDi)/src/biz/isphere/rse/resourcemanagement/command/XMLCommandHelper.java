@@ -24,12 +24,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 
-public class XMLCommandHelper {
+public class XMLCommandHelper extends AbstractXmlHelper {
 
     private static final String COMPILE_TYPES = "compiletypes";
     private static final String COMPILE_TYPE = "compiletype";
@@ -39,6 +39,7 @@ public class XMLCommandHelper {
     private static final String ID = "id";
     private static final String COMMAND = "command";
     private static final String COMMAND_STRING_EDITABLE = "isCommandEditable";
+    private static final String ORDER = "order";
     private static final String LABEL = "label";
     private static final String LABEL_EDITABLE = "isLabelEditable";
     private static final String COMMAND_STRING = "commandString";
@@ -116,6 +117,7 @@ public class XMLCommandHelper {
             eventWriter.add(end);
 
             createNode(eventWriter, eventFactory, end, tab, ID, commands[idx1].getId());
+            createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(commands[idx1].getOrder()));
             createNode(eventWriter, eventFactory, end, tab, LABEL, commands[idx1].getLabel());
             createNode(eventWriter, eventFactory, end, tab, LABEL_EDITABLE, commands[idx1].isLabelEditable());
             createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, commands[idx1].getCommandString());
@@ -129,24 +131,6 @@ public class XMLCommandHelper {
         }
 
         eventWriter.add(eventFactory.createEndElement("", "", COMMANDS));
-        eventWriter.add(end);
-
-    }
-
-    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, boolean value)
-        throws XMLStreamException {
-        createNode(eventWriter, eventFactory, end, tab, name, Boolean.toString(value));
-    }
-
-    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, String value)
-        throws XMLStreamException {
-
-        eventWriter.add(tab);
-        eventWriter.add(eventFactory.createStartElement("", "", name));
-
-        eventWriter.add(eventFactory.createCharacters(value));
-
-        eventWriter.add(eventFactory.createEndElement("", "", name));
         eventWriter.add(end);
 
     }
@@ -176,40 +160,36 @@ public class XMLCommandHelper {
                 if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
                     type = new RSECompileType(profile);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
                     command = new RSECommand();
                     command.setCompileType(type);
                 } else if (event.asStartElement().getName().getLocalPart().equals(ID)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
+                } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(NATURE)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(MENU_OPTION)) {
-                    event = eventReader.nextEvent();
-                    elementData = new StringBuilder(event.asCharacters().getData());
+                    startElementCharacters(elementData, event);
                 } else {
-                    elementData = null;
+                    clearElementCharacters(elementData);
                 }
             } else if (event.isEndElement()) {
                 if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                     type.setType(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
                     command.setId(elementData.toString());
+                } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
+                    command.setOrder(xmlToInteger(elementData.toString()));
                 } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
                     command.setLabel(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
@@ -225,11 +205,9 @@ public class XMLCommandHelper {
                 } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND)) {
                     items.add(command);
                 }
-                elementData = null;
+                clearElementCharacters(elementData);
             } else if (event.isCharacters()) {
-                if (elementData != null) {
-                    elementData.append(event.asCharacters().getData());
-                }
+                collectElementCharacters(elementData, event);
             }
 
         }
@@ -238,10 +216,6 @@ public class XMLCommandHelper {
         items.toArray(commands);
 
         return commands;
-    }
-
-    private static boolean xmlToBoolean(String value, boolean defaultValue) {
-        return BooleanHelper.tryParseBoolean(value, defaultValue);
     }
 
 }

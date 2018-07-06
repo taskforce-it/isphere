@@ -13,6 +13,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -39,31 +40,30 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         RSEUserAction rseUserAction = (RSEUserAction)resource;
         RSEUserAction workspaceUserAction = RSEUserActionHelper.getUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
 
-        // Update existing user actions.
+        // Never update existing user actions.
         if (workspaceUserAction != null) {
-            workspaceUserAction.setCommandString(workspaceUserAction.getCommandString());
-            workspaceUserAction.setPromptFirst(workspaceUserAction.isPromptFirst());
-            workspaceUserAction.setRefreshAfter(workspaceUserAction.isRefreshAfter());
-            workspaceUserAction.setShowAction(workspaceUserAction.isShowAction());
-            workspaceUserAction.setSingleSelection(workspaceUserAction.isSingleSelection());
-            workspaceUserAction.setInvokeOnce(workspaceUserAction.isInvokeOnce());
-            workspaceUserAction.setComment(workspaceUserAction.getComment());
-            workspaceUserAction.setFileTypes(workspaceUserAction.getFileTypes());
-            // must be called before setVendor()
-            workspaceUserAction.setIBM(workspaceUserAction.isIBM());
-            workspaceUserAction.setVendor(workspaceUserAction.getVendor());
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                "Cannot create user action, because user action already exists. Inform the developer about the problem."); //$NON-NLS-1$
             return;
         }
 
         RSEUserActionHelper.createUserAction(rseUserAction.getDomain(), rseUserAction.getLabel(), rseUserAction.getCommandString(),
             rseUserAction.isPromptFirst(), rseUserAction.isRefreshAfter(), rseUserAction.isShowAction(), rseUserAction.isSingleSelection(),
-            rseUserAction.isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(), rseUserAction.isIBM(), rseUserAction.getVendor());
+            rseUserAction.isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(), rseUserAction.isIBM(), rseUserAction.getVendor(),
+            rseUserAction.getOrder());
     }
 
     @Override
     protected void deleteFromWorkspace(AbstractResource resource) {
 
         RSEUserAction rseUserAction = (RSEUserAction)resource;
+        RSEUserAction workspaceUserAction = RSEUserActionHelper.getUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
+
+        // Never delete existing user actions.
+        if (workspaceUserAction != null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Deleting user actions is not allowed. Inform the developer about the problem."); //$NON-NLS-1$
+            return;
+        }
 
         RSEUserActionHelper.deleteUserAction(rseUserAction.getDomain(), rseUserAction.getLabel());
     }
@@ -77,7 +77,8 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         RSEUserActionHelper.updateUserAction(userActionWorkspace.getDomain(), userActionWorkspace.getLabel(),
             userActionRepository.getCommandString(), userActionRepository.isPromptFirst(), userActionRepository.isRefreshAfter(),
             userActionRepository.isShowAction(), userActionRepository.isSingleSelection(), userActionRepository.isInvokeOnce(),
-            userActionRepository.getComment(), userActionRepository.getFileTypes(), userActionRepository.isIBM(), userActionRepository.getVendor());
+            userActionRepository.getComment(), userActionRepository.getFileTypes(), userActionRepository.isIBM(), userActionRepository.getVendor(),
+            userActionRepository.getOrder());
     }
 
     @Override
