@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -25,16 +24,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import biz.isphere.base.internal.BooleanHelper;
-import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
+import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 
-public class XMLUserActionHelper {
-
-    private static final String ARRAY_DEFAULT_DELIMITER = ";";
-    private static final String ARRAY_DELIMITERS = " ,\t\n\r\f" + ARRAY_DEFAULT_DELIMITER;
+public class XMLUserActionHelper extends AbstractXmlHelper {
 
     private static final String DOMAINS = "domains";
     private static final String DOMAIN = "domain";
@@ -43,6 +38,7 @@ public class XMLUserActionHelper {
 
     private static final String USER_ACTIONS = "userActions";
     private static final String USER_ACTION = "userAction";
+    private static final String ORDER = "order";
     private static final String LABEL = "label";
     private static final String ORIGINAL_NAME = "originalName";
     private static final String COMMAND_STRING = "commandString";
@@ -127,6 +123,7 @@ public class XMLUserActionHelper {
             eventWriter.add(eventFactory.createStartElement("", "", USER_ACTION));
             eventWriter.add(end);
 
+            createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(userActions[idx1].getOrder()));
             createNode(eventWriter, eventFactory, end, tab, LABEL, userActions[idx1].getLabel());
             createNode(eventWriter, eventFactory, end, tab, ORIGINAL_NAME, xmlOptional(userActions[idx1].getOriginalName()));
             createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, userActions[idx1].getCommandString());
@@ -146,68 +143,6 @@ public class XMLUserActionHelper {
         }
 
         eventWriter.add(eventFactory.createEndElement("", "", USER_ACTIONS));
-        eventWriter.add(end);
-
-    }
-
-    private static String xmlOptional(String value) {
-
-        if (value == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return value;
-    }
-
-    private static String arrayToXml(String[] fileTypes) {
-
-        StringBuilder buffer = new StringBuilder();
-
-        for (String fileType : fileTypes) {
-            if (buffer.length() > 0) {
-                buffer.append(ARRAY_DEFAULT_DELIMITER);
-            }
-            buffer.append(fileType);
-        }
-
-        return buffer.toString();
-    }
-
-    private static String integerToXml(int value) {
-        return Integer.toString(value);
-    }
-
-    private static String[] xmlToArray(String xml) {
-
-        StringTokenizer st = new StringTokenizer(xml, ARRAY_DELIMITERS);
-
-        int n = st.countTokens();
-        String[] fileTypes = new String[n];
-        for (int i = 0; i < n; i++) {
-            fileTypes[i] = st.nextToken();
-        }
-
-        return fileTypes;
-    }
-
-    private static int xmlToInteger(String xml) {
-        return IntHelper.tryParseInt(xml, 0);
-    }
-
-    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, boolean value)
-        throws XMLStreamException {
-        createNode(eventWriter, eventFactory, end, tab, name, Boolean.toString(value));
-    }
-
-    private static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, String value)
-        throws XMLStreamException {
-
-        eventWriter.add(tab);
-        eventWriter.add(eventFactory.createStartElement("", "", name));
-
-        eventWriter.add(eventFactory.createCharacters(value));
-
-        eventWriter.add(eventFactory.createEndElement("", "", name));
         eventWriter.add(end);
 
     }
@@ -243,6 +178,8 @@ public class XMLUserActionHelper {
                 } else if (event.asStartElement().getName().getLocalPart().equals(USER_ACTION)) {
                     userAction = new RSEUserAction();
                     userAction.setDomain(_domain);
+                } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
+                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
                     startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
@@ -275,6 +212,8 @@ public class XMLUserActionHelper {
                     _domain.setName(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
                     _domain.setDomainType(xmlToInteger(elementData.toString()));
+                } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
+                    userAction.setOrder(xmlToInteger(elementData.toString()));
                 } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
                     userAction.setLabel(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
@@ -313,25 +252,6 @@ public class XMLUserActionHelper {
         items.toArray(userActions);
 
         return userActions;
-    }
-
-    private static void startElementCharacters(StringBuilder elementData, XMLEvent event) {
-        clearElementCharacters(elementData);
-    }
-
-    private static void collectElementCharacters(StringBuilder elementData, XMLEvent event) {
-
-        if (event.isCharacters()) {
-            elementData.append(event.asCharacters().getData());
-        }
-    }
-
-    private static void clearElementCharacters(StringBuilder elementData) {
-        elementData.replace(0, elementData.length(), ""); //$NON-NLS-1$
-    }
-
-    private static boolean xmlToBoolean(String value, boolean defaultValue) {
-        return BooleanHelper.tryParseBoolean(value, defaultValue);
     }
 
 }

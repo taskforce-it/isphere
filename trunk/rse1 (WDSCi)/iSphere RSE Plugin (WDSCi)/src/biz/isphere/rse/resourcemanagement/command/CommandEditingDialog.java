@@ -40,18 +40,15 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         RSECommand command = (RSECommand)resource;
         RSECommand workspaceCommand = RSECommandHelper.getCommand(command.getCompileType(), command.getLabel());
 
-        // Ensure that commands that are not editable are updated.
-        // Usually that are the IBM supplied commands of the default
-        // system profile.
-        if (workspaceCommand != null && !workspaceCommand.isEditable()) {
+        // Never update existing commands.
+        if (workspaceCommand != null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 "Cannot create command, because command already exists. Inform the developer about the problem."); //$NON-NLS-1$
-            // workspaceCommand.setCommandString(command.getCommandString());
             return;
         }
 
         RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getCommandString(), command
-            .isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption());
+            .isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption(), command.getOrder());
     }
 
     @Override
@@ -60,11 +57,9 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         RSECommand command = (RSECommand)resource;
         RSECommand workspaceCommand = RSECommandHelper.getCommand(command.getCompileType(), command.getLabel());
 
-        // Ensure that commands that are not editable are not deleted.
-        // Usually that are IBM supplied commands.
-        if (workspaceCommand != null && !workspaceCommand.isEditable()) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                "Deleting non-editable commands is not supported. Inform the developer about the problem."); //$NON-NLS-1$
+        // Never delete existing commands.
+        if (workspaceCommand != null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Deleting commands is not allowed. Inform the developer about the problem."); //$NON-NLS-1$
             return;
         }
 
@@ -73,15 +68,13 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
 
     @Override
     protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
-        // deleteFromWorkspace(resourceWorkspace);
-        // pushToWorkspace(resourceRepository);
 
         RSECommand commandWorkspace = (RSECommand)resourceWorkspace;
         RSECommand commandRepository = (RSECommand)resourceRepository;
 
         RSECommandHelper.updateCommand(commandWorkspace.getCompileType(), commandWorkspace.getLabel(), commandRepository.isLabelEditable(),
             commandRepository.getCommandString(), commandRepository.isCommandStringEditable(), commandRepository.getId(), commandRepository
-                .getNature(), commandRepository.getMenuOption());
+                .getNature(), commandRepository.getMenuOption(), commandRepository.getOrder());
     }
 
     @Override
