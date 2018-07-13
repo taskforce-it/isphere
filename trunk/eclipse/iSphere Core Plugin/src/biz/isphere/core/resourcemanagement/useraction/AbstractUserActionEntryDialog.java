@@ -13,6 +13,7 @@ import java.io.File;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -36,6 +37,10 @@ import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog {
+
+    private static final String PROFILE = "PROFILE";
+    private static final String SINGLE_DOMAIN = "SINGLE_DOMAIN";
+    private static final String DOMAIN = "DOMAIN";
 
     private static final String FILE_EXT_RSECMD = "rseuda";
     private static final String FILE_EXT_RSECMDALL = "rseudaall";
@@ -182,12 +187,71 @@ public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog 
             comboDomain = comboViewerDomains.getCombo();
             comboDomain.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-            comboViewerProfile.setSelection(new StructuredSelection(profiles[0]), true);
+            // comboViewerProfile.setSelection(new
+            // StructuredSelection(profiles[0]), true);
 
-            setProfile(profiles[0]);
+            // setProfile(profiles[0]);
 
         }
 
+    }
+
+    protected void loadWorkspaceValues() {
+
+        singleDomain = loadBooleanValue(SINGLE_DOMAIN, true);
+
+        String profileName = loadValue(PROFILE, null);
+        if (profileName != null) {
+            for (RSEProfile profile : profiles) {
+                if (profileName.equals(profile.getName())) {
+                    comboViewerProfile.setSelection(new StructuredSelection(profile), true);
+                    setProfile(profile);
+                }
+            }
+        }
+
+        if (comboViewerProfile.getSelection().isEmpty() && profiles.length > 0) {
+            comboViewerProfile.setSelection(new StructuredSelection(profiles[0]), true);
+            setProfile(profiles[0]);
+        }
+
+        String domainName = loadValue(DOMAIN, null);
+        if (domainName != null) {
+            for (RSEDomain domain : domains) {
+                if (domainName.equals(domain.getName())) {
+                    comboViewerDomains.setSelection(new StructuredSelection(domain), true);
+                }
+            }
+        }
+
+        if (comboViewerDomains.getSelection().isEmpty() && domains.length > 0) {
+            comboViewerDomains.setSelection(new StructuredSelection(domains[0]), true);
+        }
+    }
+
+    protected void storeWorkspaceValues() {
+
+        ISelection selection = comboViewerProfile.getSelection();
+        if (selection instanceof StructuredSelection) {
+            Object element = ((StructuredSelection)selection).getFirstElement();
+            if (element instanceof RSEProfile) {
+                RSEProfile profile = (RSEProfile)element;
+                String profileName = profile.getName();
+                storeValue(PROFILE, profileName);
+            }
+        }
+
+        storeValue(SINGLE_DOMAIN, singleDomain);
+
+        selection = comboViewerDomains.getSelection();
+        if (selection instanceof StructuredSelection) {
+            Object element = ((StructuredSelection)selection).getFirstElement();
+            if (element instanceof RSEDomain) {
+                RSEDomain domain = (RSEDomain)element;
+                String domainName = domain.getName();
+                storeValue(DOMAIN, domainName);
+            }
+        }
     }
 
     private void setProfile(RSEProfile profile) {
