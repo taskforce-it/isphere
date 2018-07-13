@@ -13,6 +13,7 @@ import java.io.File;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -35,6 +36,10 @@ import biz.isphere.core.resourcemanagement.AbstractEntryDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
+
+    private static final String PROFILE = "PROFILE";
+    private static final String SINGLE_FILTER_POOL = "SINGLE_FILTER_POOL";
+    private static final String FILTER_POOL = "FILTER_POOL";
 
     private static final String FILE_EXT_RSEFLT = "rseflt";
     private static final String FILE_EXT_RSEFLTALL = "rsefltall";
@@ -181,15 +186,77 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
             comboFilterPool = comboViewerFilterPool.getCombo();
             comboFilterPool.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-            comboViewerProfile.setSelection(new StructuredSelection(profiles[0]), true);
+            // comboViewerProfile.setSelection(new
+            // StructuredSelection(profiles[0]), true);
 
-            setProfile(profiles[0]);
+            // setProfile(profiles[0]);
 
         }
 
     }
 
+    protected void loadWorkspaceValues() {
+
+        singleFilterPool = loadBooleanValue(SINGLE_FILTER_POOL, true);
+
+        String profileName = loadValue(PROFILE, null);
+        if (profileName != null) {
+            for (RSEProfile profile : profiles) {
+                if (profileName.equals(profile.getName())) {
+                    comboViewerProfile.setSelection(new StructuredSelection(profile), true);
+                    setProfile(profile);
+                }
+            }
+        }
+
+        if (comboViewerProfile.getSelection().isEmpty() && profiles.length > 0) {
+            comboViewerProfile.setSelection(new StructuredSelection(profiles[0]), true);
+            setProfile(profiles[0]);
+        }
+
+        String filterPoolName = loadValue(FILTER_POOL, null);
+        if (filterPoolName != null) {
+            for (RSEFilterPool filterPool : filterPools) {
+                if (filterPoolName.equals(filterPool.getName())) {
+                    comboViewerFilterPool.setSelection(new StructuredSelection(filterPool), true);
+                }
+            }
+        }
+
+        if (comboViewerFilterPool.getSelection().isEmpty() && filterPools.length > 0) {
+            comboViewerFilterPool.setSelection(new StructuredSelection(filterPools[0]), true);
+        }
+    }
+
+    protected void storeWorkspaceValues() {
+
+        ISelection selection;
+
+        selection = comboViewerProfile.getSelection();
+        if (selection instanceof StructuredSelection) {
+            Object element = ((StructuredSelection)selection).getFirstElement();
+            if (element instanceof RSEProfile) {
+                RSEProfile profile = (RSEProfile)element;
+                String profileName = profile.getName();
+                storeValue(PROFILE, profileName);
+            }
+        }
+
+        storeValue(SINGLE_FILTER_POOL, singleFilterPool);
+
+        selection = comboViewerFilterPool.getSelection();
+        if (selection instanceof StructuredSelection) {
+            Object element = ((StructuredSelection)selection).getFirstElement();
+            if (element instanceof RSEFilterPool) {
+                RSEFilterPool filterPool = (RSEFilterPool)element;
+                String filterPoolName = filterPool.getName();
+                storeValue(FILTER_POOL, filterPoolName);
+            }
+        }
+    }
+
     private void setProfile(RSEProfile profile) {
+
         filterPools = getFilterPools(profile);
         if (filterPools.length == 0) {
             singleFilterPool = false;
@@ -197,6 +264,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
         } else {
             checkBoxSingleFilterPool.setEnabled(true);
         }
+
         checkBoxSingleFilterPool.setSelection(singleFilterPool);
         comboViewerFilterPool.setInput(new Object());
         for (int idx = 0; idx < filterPools.length; idx++) {
@@ -205,6 +273,7 @@ public abstract class AbstractFilterEntryDialog extends AbstractEntryDialog {
                 break;
             }
         }
+
         setFilterPool();
     }
 

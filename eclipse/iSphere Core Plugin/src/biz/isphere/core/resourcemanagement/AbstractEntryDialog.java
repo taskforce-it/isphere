@@ -40,6 +40,12 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class AbstractEntryDialog extends XDialog {
 
+    private static final String EDITING_AREA = "EDITING_AREA";
+    private static final String EDITING_AREA_REPOSITORY = "repository";
+    private static final String EDITING_AREA_WORKSPACE = "workspace";
+    private static final String EDITING_AREA_BOTH = "both";
+    private static final String REPOSITORY = "REPOSITORY";
+
     private static final String REPOSITORY_PATH = "repositoryPath";
 
     private Shell shell;
@@ -55,6 +61,17 @@ public abstract class AbstractEntryDialog extends XDialog {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.shell = parentShell;
+    }
+
+    @Override
+    protected Control createContents(Composite parent) {
+
+        Control control = super.createContents(parent);
+
+        loadScreenValues();
+        check();
+
+        return control;
     }
 
     protected Control createDialogArea(Composite parent) {
@@ -109,7 +126,7 @@ public abstract class AbstractEntryDialog extends XDialog {
             compositeWorkspace.setVisible(true);
 
             configureWorkspaceArea(compositeWorkspace);
-
+            loadWorkspaceValues();
         }
 
         compositeRepository = new Composite(container, SWT.NONE);
@@ -158,8 +175,6 @@ public abstract class AbstractEntryDialog extends XDialog {
         });
 
         createStatusLine(container);
-
-        check();
 
         return container;
 
@@ -308,6 +323,8 @@ public abstract class AbstractEntryDialog extends XDialog {
 
         }
 
+        storeScreenValues();
+
         if (run) {
             if (run() == IDialogConstants.BACK_ID) {
                 return;
@@ -315,6 +332,49 @@ public abstract class AbstractEntryDialog extends XDialog {
         }
 
         super.okPressed();
+    }
+
+    private void loadScreenValues() {
+
+        buttonBoth.setSelection(false);
+        buttonWorkspace.setSelection(false);
+        buttonRepository.setSelection(false);
+
+        String editingArea = loadValue(EDITING_AREA, EDITING_AREA_BOTH);
+        if (EDITING_AREA_BOTH.equals(editingArea)) {
+            buttonBoth.setSelection(true);
+        } else if (EDITING_AREA_WORKSPACE.equals(editingArea)) {
+            buttonWorkspace.setSelection(true);
+        } else if (EDITING_AREA_REPOSITORY.equals(editingArea)) {
+            buttonRepository.setSelection(true);
+        } else {
+            buttonBoth.setSelection(true);
+        }
+
+        textRepository.setText(loadValue(REPOSITORY, ""));
+    }
+
+    private void storeScreenValues() {
+
+        if (isEditBoth()) {
+            storeValue(EDITING_AREA, EDITING_AREA_BOTH);
+        } else if (isEditWorkspace()) {
+            storeValue(EDITING_AREA, EDITING_AREA_WORKSPACE);
+        } else if (isEditRepository()) {
+            storeValue(EDITING_AREA, EDITING_AREA_REPOSITORY);
+        }
+
+        storeWorkspaceValues();
+
+        storeValue(REPOSITORY, textRepository.getText());
+    }
+
+    protected void loadWorkspaceValues() {
+
+    }
+
+    protected void storeWorkspaceValues() {
+
     }
 
     protected void createButtonsForButtonBar(Composite parent) {
