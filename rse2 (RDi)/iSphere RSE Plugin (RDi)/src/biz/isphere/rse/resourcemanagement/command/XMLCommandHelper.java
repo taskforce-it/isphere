@@ -13,8 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -48,6 +51,8 @@ public class XMLCommandHelper extends AbstractXmlHelper {
 
     public static void saveCommandsToXML(File toFile, boolean singleCompileType, RSECommand[] commands) throws Exception {
 
+        Arrays.sort(commands);
+
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
         XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
@@ -67,18 +72,18 @@ public class XMLCommandHelper extends AbstractXmlHelper {
             eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPES));
             eventWriter.add(end);
 
-            HashMap<String, ArrayList<RSECommand>> _pools = new HashMap<String, ArrayList<RSECommand>>();
+            Map<String, List<RSECommand>> _pools = new TreeMap<String, List<RSECommand>>();
             for (int idx = 0; idx < commands.length; idx++) {
                 String _pool = commands[idx].getCompileType().getType();
-                ArrayList<RSECommand> _commands = (ArrayList<RSECommand>)_pools.get(_pool);
+                List<RSECommand> _commands = (List<RSECommand>)_pools.get(_pool);
                 if (_commands == null) {
-                    _commands = new ArrayList<RSECommand>();
+                    _commands = new LinkedList<RSECommand>();
                     _pools.put(_pool, _commands);
                 }
                 _commands.add(commands[idx]);
             }
 
-            for (Map.Entry<String, ArrayList<RSECommand>> entry : _pools.entrySet()) {
+            for (Map.Entry<String, List<RSECommand>> entry : _pools.entrySet()) {
 
                 eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPE));
                 eventWriter.add(end);

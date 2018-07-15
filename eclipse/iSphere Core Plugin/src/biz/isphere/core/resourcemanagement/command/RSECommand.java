@@ -10,7 +10,7 @@ package biz.isphere.core.resourcemanagement.command;
 
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class RSECommand extends AbstractResource {
+public class RSECommand extends AbstractResource implements Comparable<RSECommand> {
 
     public static final String MENU_OPTION_BOTH = "Both";
     public static final String MENU_OPTION_PROMPT = "Prompt";
@@ -169,5 +169,14 @@ public class RSECommand extends AbstractResource {
     @Override
     public String toString() {
         return compileType.getType() + ": " + getLabel() + ": " + getCommandString();
+    }
+
+    public int compareTo(RSECommand other) {
+
+        if (other == null || other.getKey() == null) {
+            return 1;
+        } else {
+            return getKey().compareTo(other.getKey());
+        }
     }
 }
