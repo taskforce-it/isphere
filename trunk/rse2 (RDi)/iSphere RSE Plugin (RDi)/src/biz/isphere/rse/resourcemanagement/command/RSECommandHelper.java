@@ -9,11 +9,13 @@
 package biz.isphere.rse.resourcemanagement.command;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.core.model.SystemStartHere;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
+import org.eclipse.rse.internal.useractions.api.files.compile.ISystemCompileManagerAdapter;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileCommand;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileManager;
 import org.eclipse.rse.internal.useractions.ui.compile.SystemCompileProfile;
@@ -25,6 +27,7 @@ import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 import com.ibm.etools.iseries.rse.ui.compile.QSYSCompileManager;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 @SuppressWarnings("restriction")
 public class RSECommandHelper extends AbstractSystemHelper {
@@ -233,6 +236,16 @@ public class RSECommandHelper extends AbstractSystemHelper {
     private static SystemCompileManager getCompileManager() {
 
         ISubSystemConfiguration subSystemConfiguration = getSubSystemConfiguration();
+        List<?> subSystems = subSystemConfiguration.getSubSystemList();
+        for (Object subSystem : subSystems) {
+            if (subSystem instanceof QSYSObjectSubSystem) {
+                QSYSObjectSubSystem qsysObjectSubSystem = (QSYSObjectSubSystem)subSystem;
+                ISystemCompileManagerAdapter adapter = (ISystemCompileManagerAdapter)qsysObjectSubSystem
+                    .getAdapter(ISystemCompileManagerAdapter.class);
+                return adapter.getSystemCompileManager(subSystemConfiguration);
+            }
+        }
+
         SystemCompileManager compileManager = new QSYSCompileManager();
         compileManager.setSubSystemFactory(subSystemConfiguration);
 
