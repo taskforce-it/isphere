@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere TN5250J for RDi 8.0+
 Bundle-SymbolicName: biz.isphere.tn5250j.rse;singleton:=true
-Bundle-Version: 3.5.0.b001
+Bundle-Version: 3.5.0.b002
 Bundle-Activator: biz.isphere.tn5250j.rse.TN5250JRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
