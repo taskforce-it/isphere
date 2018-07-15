@@ -273,6 +273,8 @@ public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog 
         }
 
         setDomain();
+
+        check();
     }
 
     private void setDomain() {
@@ -292,7 +294,7 @@ public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog 
         }
     };
 
-    private RSEProfile getProfile() {
+    protected RSEProfile getProfile() {
         if (profiles.length > 0 && comboViewerProfile.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection structuredSelection = (IStructuredSelection)comboViewerProfile.getSelection();
             return (RSEProfile)structuredSelection.getFirstElement();

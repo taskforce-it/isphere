@@ -88,4 +88,15 @@ public class CommandEntryDialog extends AbstractCommandEntryDialog {
         }
     }
 
+    @Override
+    protected String checkWorkspaceArea() {
+
+        RSEProfile profile = getProfile();
+        if (!RSECommandHelper.hasCompileManager(profile)) {
+            return Messages.No_compile_command_manager_available;
+        }
+
+        return super.checkWorkspaceArea();
+    }
+
 }

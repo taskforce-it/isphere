@@ -16,12 +16,17 @@ import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
+import com.ibm.as400.access.Subsystem;
+import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.uda.UDActionSubsystemNFS;
+import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionElement;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionManager;
+import com.ibm.etools.systems.model.SystemConnection;
 import com.ibm.etools.systems.model.SystemProfile;
 import com.ibm.etools.systems.model.SystemStartHere;
+import com.ibm.etools.systems.subsystems.SubSystem;
 import com.ibm.etools.systems.subsystems.SubSystemFactory;
 
 @SuppressWarnings("restriction")
@@ -32,12 +37,16 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         ArrayList<RSEDomain> rseDomains = new ArrayList<RSEDomain>();
 
         SystemProfile systemProfile = getSystemProfile(rseProfile.getName());
-        SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
 
-        String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
-        for (String domainName : domainNames) {
-            int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
-            rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+            if (userActionManager != null) {
+                String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
+                for (String domainName : domainNames) {
+                    int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
+                    rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+                }
+            }
         }
 
         return rseDomains.toArray(new RSEDomain[rseDomains.size()]);
@@ -117,8 +126,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
 
-                // Attribute 'order' is not available in WDSCi
-                // userAction.setOrder(0);
+                // Do not set 'order' to avoid duplicate
+                // order numbers
+                // userAction.setOrder(getNextOrderNumber(userActionManager));
                 userAction.setCommand(commandString);
                 userAction.setPrompt(isPromptFirst);
                 userAction.setRefresh(isRefreshAfter);
@@ -165,8 +175,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
 
-                        // Attribute 'order' is not available in WDSCi
-                        // userAction.setOrder(0);
+                        // Do not update 'order' to avoid duplicate
+                        // order numbers
                         // userAction.setOrder(order);
                         userAction.setCommand(commandString);
                         userAction.setPrompt(isPromptFirst);
@@ -187,9 +197,19 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
     }
 
+    public static boolean hasUserActionManager(RSEProfile rseProfile) {
+
+        SystemProfile systemProfile = (SystemProfile)rseProfile.getOrigin();
+
+        if (getUserActionManager(systemProfile) != null) {
+            return true;
+        }
+
+        return false;
+    }
+
     private static void saveUserActions(SystemUDActionManager userActionManager, SystemProfile systemProfile) {
 
-        userActionManager.setChanged(systemProfile);
         userActionManager.saveUserData(systemProfile);
     }
 
@@ -198,6 +218,16 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
     }
 
     private static SystemUDActionManager getUserActionManager(SystemProfile systemProfile) {
+
+        for (SystemConnection connection : systemProfile.getConnections()) {
+            if ("iSeries".equals(connection.getSystemType())) {
+                for (SubSystem subSystem : connection.getSubSystems()) {
+                    if (subSystem instanceof FileSubSystem) {
+                        return subSystem.getUDActionSubsystem().getUDActionManager();
+                    }
+                }
+            }
+        }
 
         SubSystemFactory subSystemFactory = getSubSystemConfiguration();
         UDActionSubsystemNFS actionSubsystemNFS = new UDActionSubsystemNFS();
