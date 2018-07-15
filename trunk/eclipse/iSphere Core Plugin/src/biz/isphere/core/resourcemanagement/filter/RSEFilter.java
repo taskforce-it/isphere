@@ -14,7 +14,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ObjectHelper;
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class RSEFilter extends AbstractResource {
+public class RSEFilter extends AbstractResource implements Comparable<RSEFilter> {
 
     public static final String TYPE_LIBRARY = "LIBRARY";
     public static final String TYPE_OBJECT = "OBJECT";
@@ -122,6 +122,15 @@ public class RSEFilter extends AbstractResource {
             return Messages.Unknown;
         } else {
             return "*UNKNOWN";
+        }
+    }
+
+    public int compareTo(RSEFilter other) {
+
+        if (other == null || other.getKey() == null) {
+            return 1;
+        } else {
+            return getKey().compareTo(other.getKey());
         }
     }
 

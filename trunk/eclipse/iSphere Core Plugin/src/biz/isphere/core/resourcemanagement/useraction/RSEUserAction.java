@@ -10,7 +10,7 @@ package biz.isphere.core.resourcemanagement.useraction;
 
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
-public class RSEUserAction extends AbstractResource {
+public class RSEUserAction extends AbstractResource implements Comparable<RSEUserAction> {
 
     private RSEDomain domain;
     private String label;
@@ -265,5 +265,14 @@ public class RSEUserAction extends AbstractResource {
     @Override
     public String toString() {
         return getDomainAsString() + ": " + getLabel() + ": " + getCommandString(); //$NON-NLS-1$  //$NON-NLS-2$
+    }
+
+    public int compareTo(RSEUserAction other) {
+
+        if (other == null || other.getKey() == null) {
+            return 1;
+        } else {
+            return getKey().compareTo(other.getKey());
+        }
     }
 }
