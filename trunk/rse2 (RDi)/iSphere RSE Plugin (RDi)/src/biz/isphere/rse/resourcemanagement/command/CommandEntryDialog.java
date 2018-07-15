@@ -88,4 +88,15 @@ public class CommandEntryDialog extends AbstractCommandEntryDialog {
         }
     }
 
+    @Override
+    protected String checkWorkspaceArea() {
+
+        RSEProfile profile = getProfile();
+        if (!RSECommandHelper.hasCompileManager(profile)) {
+            return "No user action manager available. Probably there are no IBM i connections associated with the selected profile.";
+        }
+
+        return super.checkWorkspaceArea();
+    }
+
 }

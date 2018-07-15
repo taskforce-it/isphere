@@ -88,4 +88,14 @@ public class UserActionEntryDialog extends AbstractUserActionEntryDialog {
         }
     }
 
+    @Override
+    protected String checkWorkspaceArea() {
+
+        RSEProfile profile = getProfile();
+        if (!RSEUserActionHelper.hasUserActionManager(profile)) {
+            return "No user action manager available. Probably there are no IBM i connections associated with the selected profile.";
+        }
+
+        return super.checkWorkspaceArea();
+    }
 }

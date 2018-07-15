@@ -33,12 +33,16 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         ArrayList<RSEDomain> rseDomains = new ArrayList<RSEDomain>();
 
         ISystemProfile systemProfile = getSystemProfile(rseProfile.getName());
-        SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
+        if (systemProfile != null) {
+            SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
 
-        String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
-        for (String domainName : domainNames) {
-            int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
-            rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+            if (userActionManager != null) {
+                String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
+                for (String domainName : domainNames) {
+                    int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
+                    rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+                }
+            }
         }
 
         return rseDomains.toArray(new RSEDomain[rseDomains.size()]);
@@ -189,9 +193,19 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
     }
 
+    public static boolean hasUserActionManager(RSEProfile rseProfile) {
+
+        ISystemProfile systemProfile = (ISystemProfile)rseProfile.getOrigin();
+
+        if (getUserActionManager(systemProfile) != null) {
+            return true;
+        }
+
+        return false;
+    }
+
     private static void saveUserActions(SystemUDActionManager userActionManager, ISystemProfile systemProfile) {
 
-        userActionManager.setChanged(systemProfile);
         userActionManager.saveUserData(systemProfile);
     }
 
