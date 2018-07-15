@@ -88,4 +88,14 @@ public class UserActionEntryDialog extends AbstractUserActionEntryDialog {
         }
     }
 
+    @Override
+    protected String checkWorkspaceArea() {
+
+        RSEProfile profile = getProfile();
+        if (!RSEUserActionHelper.hasUserActionManager(profile)) {
+            return Messages.No_user_action_manager_available;
+        }
+
+        return super.checkWorkspaceArea();
+    }
 }

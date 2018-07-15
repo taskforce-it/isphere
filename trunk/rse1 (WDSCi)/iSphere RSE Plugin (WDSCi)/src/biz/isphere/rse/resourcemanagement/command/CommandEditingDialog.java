@@ -57,8 +57,8 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
         RSECommand command = (RSECommand)resource;
         RSECommand workspaceCommand = RSECommandHelper.getCommand(command.getCompileType(), command.getLabel());
 
-        // Never delete existing commands.
-        if (workspaceCommand != null) {
+        // Never delete IBM supplied commands.
+        if (workspaceCommand != null && !workspaceCommand.isUserDefined()) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Deleting commands is not allowed. Inform the developer about the problem."); //$NON-NLS-1$
             return;
         }

@@ -63,7 +63,7 @@ public class RSECommand extends AbstractResource {
     }
 
     public boolean isUserDefined() {
-        return NATURE_IBM.equals(getNature());
+        return !NATURE_IBM.equals(getNature());
     }
 
     public RSECompileType getCompileType() {
