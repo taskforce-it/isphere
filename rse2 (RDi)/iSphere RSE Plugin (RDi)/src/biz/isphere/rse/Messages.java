@@ -154,6 +154,8 @@ public class Messages extends NLS {
 
     public static String Copy_to_clipboard;
 
+    public static String No_user_action_manager_available;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
