@@ -13,8 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -54,6 +57,8 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
     public static void saveUserActionsToXML(File toFile, boolean singleDomain, RSEUserAction[] userActions) throws Exception {
 
+        Arrays.sort(userActions);
+
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
         XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
@@ -73,18 +78,18 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
             eventWriter.add(eventFactory.createStartElement("", "", DOMAINS));
             eventWriter.add(end);
 
-            HashMap<RSEDomain, ArrayList<RSEUserAction>> _pools = new HashMap<RSEDomain, ArrayList<RSEUserAction>>();
+            Map<RSEDomain, List<RSEUserAction>> _pools = new TreeMap<RSEDomain, List<RSEUserAction>>();
             for (int idx = 0; idx < userActions.length; idx++) {
                 RSEDomain _domain = userActions[idx].getDomain();
-                ArrayList<RSEUserAction> _userActions = (ArrayList<RSEUserAction>)_pools.get(_domain);
+                List<RSEUserAction> _userActions = (List<RSEUserAction>)_pools.get(_domain);
                 if (_userActions == null) {
-                    _userActions = new ArrayList<RSEUserAction>();
+                    _userActions = new LinkedList<RSEUserAction>();
                     _pools.put(_domain, _userActions);
                 }
                 _userActions.add(userActions[idx]);
             }
 
-            for (Map.Entry<RSEDomain, ArrayList<RSEUserAction>> entry : _pools.entrySet()) {
+            for (Map.Entry<RSEDomain, List<RSEUserAction>> entry : _pools.entrySet()) {
 
                 eventWriter.add(eventFactory.createStartElement("", "", DOMAIN));
                 eventWriter.add(end);

@@ -13,8 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -41,6 +44,8 @@ public class XMLFilterHelper {
 
     public static void saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) throws Exception {
 
+        Arrays.sort(filters);
+
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
         XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
@@ -60,18 +65,18 @@ public class XMLFilterHelper {
             eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOLS));
             eventWriter.add(end);
 
-            HashMap<String, ArrayList<RSEFilter>> _pools = new HashMap<String, ArrayList<RSEFilter>>();
+            Map<String, List<RSEFilter>> _pools = new TreeMap<String, List<RSEFilter>>();
             for (int idx = 0; idx < filters.length; idx++) {
                 String _pool = filters[idx].getFilterPool().getName();
-                ArrayList<RSEFilter> _filters = (ArrayList<RSEFilter>)_pools.get(_pool);
+                List<RSEFilter> _filters = (List<RSEFilter>)_pools.get(_pool);
                 if (_filters == null) {
-                    _filters = new ArrayList<RSEFilter>();
+                    _filters = new LinkedList<RSEFilter>();
                     _pools.put(_pool, _filters);
                 }
                 _filters.add(filters[idx]);
             }
 
-            for (Map.Entry<String, ArrayList<RSEFilter>> entry : _pools.entrySet()) {
+            for (Map.Entry<String, List<RSEFilter>> entry : _pools.entrySet()) {
 
                 eventWriter.add(eventFactory.createStartElement("", "", FILTERPOOL));
                 eventWriter.add(end);
