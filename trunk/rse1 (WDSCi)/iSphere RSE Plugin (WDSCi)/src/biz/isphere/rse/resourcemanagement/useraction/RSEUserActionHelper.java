@@ -16,11 +16,8 @@ import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
-import com.ibm.as400.access.Subsystem;
-import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.ui.uda.UDActionSubsystemNFS;
 import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
-import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionElement;
 import com.ibm.etools.systems.core.ui.uda.SystemUDActionManager;
 import com.ibm.etools.systems.model.SystemConnection;
@@ -81,6 +78,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
                 for (SystemUDActionElement userAction : userActions) {
                     RSEUserAction rseUserAction = produceUserAction(rseDomain, userAction);
+                    // Generate order number from list size for WDSCi
+                    rseUserAction.setOrder(rseUserActions.size());
                     rseUserActions.add(rseUserAction);
                 }
             }
