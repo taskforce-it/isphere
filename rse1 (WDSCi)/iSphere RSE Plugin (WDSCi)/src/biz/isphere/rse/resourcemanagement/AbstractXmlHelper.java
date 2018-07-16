@@ -23,15 +23,6 @@ public abstract class AbstractXmlHelper {
     private static final String ARRAY_DEFAULT_DELIMITER = ";";
     private static final String ARRAY_DELIMITERS = " ,\t\n\r\f" + ARRAY_DEFAULT_DELIMITER;
 
-    protected static String xmlOptional(String value) {
-
-        if (value == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return value;
-    }
-
     protected static String arrayToXml(String[] fileTypes) {
 
         StringBuilder buffer = new StringBuilder();

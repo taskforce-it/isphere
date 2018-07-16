@@ -128,7 +128,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
                 // Do not set 'order' to avoid duplicate
                 // order numbers
-                // userAction.setOrder(getNextOrderNumber(userActionManager));
+                // Method setOrder() is not available for WDSCi)
+                // userAction.setOrder(getNextOrderNumber(userActionManager,
+                // rseDomain));
                 userAction.setCommand(commandString);
                 userAction.setPrompt(isPromptFirst);
                 userAction.setRefresh(isRefreshAfter);
