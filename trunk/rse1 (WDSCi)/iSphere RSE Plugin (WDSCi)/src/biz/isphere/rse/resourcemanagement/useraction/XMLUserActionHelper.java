@@ -130,7 +130,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
             createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(userActions[idx1].getOrder()));
             createNode(eventWriter, eventFactory, end, tab, LABEL, userActions[idx1].getLabel());
-            createNode(eventWriter, eventFactory, end, tab, ORIGINAL_NAME, xmlOptional(userActions[idx1].getOriginalName()));
+            createNode(eventWriter, eventFactory, end, tab, ORIGINAL_NAME, userActions[idx1].getOriginalName());
             createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, userActions[idx1].getCommandString());
             createNode(eventWriter, eventFactory, end, tab, PROMPT_FIRST, userActions[idx1].isPromptFirst());
             createNode(eventWriter, eventFactory, end, tab, REFRESH_AFTER, userActions[idx1].isRefreshAfter());

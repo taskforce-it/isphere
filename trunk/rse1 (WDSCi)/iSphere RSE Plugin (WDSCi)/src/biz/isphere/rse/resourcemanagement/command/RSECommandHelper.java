@@ -181,7 +181,11 @@ public class RSECommandHelper extends AbstractSystemHelper {
                 compileCommand.setCurrentString(commandString);
                 compileCommand.setCommandStringEditable(isCommandStringEditable);
 
-                type.addCompileCommand(compileCommand);
+                if (order >= type.getCompileCommands().size()) {
+                    type.addCompileCommand(compileCommand);
+                } else {
+                    type.insertCompileCommand(compileCommand, order);
+                }
 
                 type.getParentProfile().writeToDisk();
             }
