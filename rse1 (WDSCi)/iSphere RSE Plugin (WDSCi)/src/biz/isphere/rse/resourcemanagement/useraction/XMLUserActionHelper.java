@@ -30,6 +30,7 @@ import javax.xml.stream.events.XMLEvent;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
+import biz.isphere.core.resourcemanagement.useraction.UserActionXmlComparator;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 
 public class XMLUserActionHelper extends AbstractXmlHelper {
@@ -57,7 +58,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
     public static void saveUserActionsToXML(File toFile, boolean singleDomain, RSEUserAction[] userActions) throws Exception {
 
-        Arrays.sort(userActions);
+        Arrays.sort(userActions, new UserActionXmlComparator());
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 

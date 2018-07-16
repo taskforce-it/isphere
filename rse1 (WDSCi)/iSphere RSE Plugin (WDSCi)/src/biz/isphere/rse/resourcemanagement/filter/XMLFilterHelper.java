@@ -27,6 +27,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import biz.isphere.core.resourcemanagement.filter.FilterXmlComparator;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
@@ -44,7 +45,7 @@ public class XMLFilterHelper {
 
     public static void saveFiltersToXML(File toFile, boolean singleFilterPool, RSEFilter[] filters) throws Exception {
 
-        Arrays.sort(filters);
+        Arrays.sort(filters, new FilterXmlComparator());
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 

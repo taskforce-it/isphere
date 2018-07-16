@@ -27,6 +27,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import biz.isphere.core.resourcemanagement.command.CommandXmlComparator;
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
@@ -51,7 +52,7 @@ public class XMLCommandHelper extends AbstractXmlHelper {
 
     public static void saveCommandsToXML(File toFile, boolean singleCompileType, RSECommand[] commands) throws Exception {
 
-        Arrays.sort(commands);
+        Arrays.sort(commands, new CommandXmlComparator());
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
