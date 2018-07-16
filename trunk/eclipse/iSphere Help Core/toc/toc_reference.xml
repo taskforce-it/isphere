@@ -38,9 +38,11 @@
   </topic>
   <topic label="Retrieve Binder Source"  href="html/retrievebindersource/retrievebindersource.html"> 
   </topic>
+  <topic label="RSE Filter Management"  href="html/filtermanagement/filtermanagement.html"> 
+  </topic>
   <topic label="RSE Command Management"  href="html/commandmanagement/commandmanagement.html"> 
   </topic>
-  <topic label="RSE Filter Management"  href="html/filtermanagement/filtermanagement.html"> 
+  <topic label="RSE User Action Management"  href="html/useractionmanagement/useractionmanagement.html"> 
   </topic>
   <topic label="Source File Compare/Merge Editor" href="html/comparemergeeditor/comparemergeeditor.html">
     <topic label="RDi 9.5 Extensions" href="html/comparemergeeditor/rdi95extensions/rdi95extensions.html" />
