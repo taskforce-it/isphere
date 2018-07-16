@@ -29,43 +29,30 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     private Object origin;
 
     public RSEUserAction() {
-        super(true);
-        this.domain = null;
-        this.label = null;
-        this.commandString = null;
-        this.promptFirst = false;
-        this.refreshAfter = false;
-        this.showAction = true;
-        this.singleSelection = false;
-        this.invokeOnce = false;
-        this.comment = null;
-        this.fileTypes = new String[0];
-        this.isIBM = false;
-        this.vendor = null;
-        this.originalName = null;
-        this.order = -1;
-        this.origin = null;
+        this(null, null, null, false, false, true, false, false, null, new String[0], false, null, null, 0, null);
     }
 
     public RSEUserAction(RSEDomain domain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
         boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor, String originalName,
         int order, Object origin) {
         super(true);
-        this.domain = domain;
-        this.label = label;
-        this.commandString = commandString;
-        this.promptFirst = isPromptFirst;
-        this.refreshAfter = isRefreshAfter;
-        this.showAction = isShowAction;
-        this.singleSelection = isSingleSelection;
-        this.invokeOnce = isInvokeOnce;
-        this.comment = comment;
-        this.fileTypes = fileTypes;
-        this.isIBM = isIBM;
-        this.vendor = vendor;
-        this.originalName = originalName;
-        this.order = order;
-        this.origin = origin;
+
+        setDomain(domain);
+        setLabel(label);
+        setCommandString(commandString);
+        setPromptFirst(isPromptFirst);
+        setRefreshAfter(isRefreshAfter);
+        setShowAction(isShowAction);
+        setSingleSelection(isSingleSelection);
+        setInvokeOnce(isInvokeOnce);
+        setComment(comment);
+        setFileTypes(fileTypes);
+        setOriginalName(originalName);
+        setOrder(order);
+        setOrigin(origin);
+        // must be called before setVendor()
+        setIBM(isIBM);
+        setVendor(vendor);
     }
 
     private String getDomainAsString() {
@@ -85,7 +72,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     }
 
     public void setLabel(String label) {
-        this.label = nullOnEmpty(label);
+        this.label = ensureNotNull(label);
     }
 
     public void setOriginalName(String originalName) {
@@ -93,7 +80,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     }
 
     public String getOriginalName() {
-        return nullOnEmpty(originalName);
+        return ensureNotNull(originalName);
     }
 
     public String getCommandString() {
@@ -101,7 +88,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     }
 
     public void setCommandString(String commandString) {
-        this.commandString = nullOnEmpty(commandString);
+        this.commandString = ensureNotNull(commandString);
     }
 
     public boolean isPromptFirst() {
@@ -149,7 +136,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     }
 
     public void setComment(String comment) {
-        this.comment = nullOnEmpty(comment);
+        this.comment = ensureNotNull(comment);
     }
 
     public String[] getFileTypes() {
@@ -173,7 +160,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     }
 
     public void setVendor(String vendor) {
-        this.vendor = nullOnEmpty(vendor);
+        this.vendor = ensureNotNull(vendor);
     }
 
     public int getOrder() {
@@ -253,10 +240,10 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         buffer.append(Boolean.toString(value));
     }
 
-    private String nullOnEmpty(String value) {
+    private String ensureNotNull(String value) {
 
-        if (value == null || value.trim().length() == 0) {
-            return null;
+        if (value == null) {
+            return ""; //$NON-NLS-1$
         }
 
         return value;

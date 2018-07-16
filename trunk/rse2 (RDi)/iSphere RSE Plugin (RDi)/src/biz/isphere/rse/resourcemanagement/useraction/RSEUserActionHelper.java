@@ -9,6 +9,8 @@
 package biz.isphere.rse.resourcemanagement.useraction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Vector;
 
 import org.eclipse.rse.core.model.ISystemProfile;
@@ -120,11 +122,13 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             SystemUDActionManager userActionManager = getUserActionManager(systemProfile);
             if (userActionManager != null) {
 
+                int newOrder = getNextOrderNumber(userActionManager, rseDomain);
+
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
 
                 // Do not set 'order' to avoid duplicate
                 // order numbers
-                // userAction.setOrder(getNextOrderNumber(userActionManager));
+                userAction.setOrder(newOrder);
                 userAction.setCommand(commandString);
                 userAction.setPrompt(isPromptFirst);
                 userAction.setRefresh(isRefreshAfter);
@@ -137,9 +141,63 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 userAction.setIBM(isIBM);
                 userAction.setVendor(vendor);
 
+                moveUserActionTo(userActionManager, userAction, order);
+
                 saveUserActions(userActionManager, systemProfile);
             }
         }
+    }
+
+    private static void moveUserActionTo(SystemUDActionManager userActionManager, SystemUDActionElement userAction, int order) {
+
+        SystemUDActionElement[] actions = userActionManager.getActions(new Vector<Object>(), userAction.getProfile(), userAction.getDomain());
+        if (actions == null || actions.length == 0) {
+            return;
+        }
+
+        Arrays.sort(actions, new Comparator<SystemUDActionElement>() {
+            public int compare(SystemUDActionElement arg0, SystemUDActionElement arg1) {
+
+                if (arg0 == null && arg1 == null) {
+                    return 0;
+                } else if (arg0 == null) {
+                    return -1;
+                } else if (arg1 == null) {
+                    return 1;
+                }
+
+                if (arg0.getOrder() > arg1.getOrder()) {
+                    return 1;
+                } else if (arg0.getOrder() < arg1.getOrder()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        int i = actions.length - 1;
+        while (i >= 0 && userAction.getOrder() > order) {
+            userActionManager.moveElementUp(userAction);
+        }
+    }
+
+    private static int getNextOrderNumber(SystemUDActionManager userActionManager, RSEDomain rseDomain) {
+
+        int lastOrderNumber = -1;
+
+        RSEUserAction[] actions = getUserActions(rseDomain);
+        if (actions.length == 0) {
+            return 0;
+        }
+
+        for (RSEUserAction action : actions) {
+            lastOrderNumber = Math.max(lastOrderNumber, action.getOrder());
+        }
+
+        lastOrderNumber++;
+
+        return lastOrderNumber;
     }
 
     public static void deleteUserAction(RSEDomain rseDomain, String label) {
