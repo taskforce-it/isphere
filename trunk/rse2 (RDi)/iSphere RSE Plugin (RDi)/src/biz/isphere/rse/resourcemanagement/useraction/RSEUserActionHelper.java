@@ -122,7 +122,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             if (userActionManager != null) {
 
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
-                userAction.setOrder(getNextOrderNumber(userActionManager, rseDomain));
+                // Not required for RDi
+                // userAction.setOrder(getNextOrderNumber(userActionManager,
+                // rseDomain));
 
                 setUserActionAttributes(commandString, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection, isInvokeOnce, comment,
                     fileTypes, vendor, userAction);
@@ -165,6 +167,7 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         int i = actions.length - 1;
         while (i >= 0 && userAction.getOrder() > order) {
             userActionManager.moveElementUp(userAction);
+            i--;
         }
     }
 
