@@ -8,6 +8,7 @@
 
 package biz.isphere.core.resourcemanagement.command;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class RSECommand extends AbstractResource implements Comparable<RSECommand> {
@@ -96,6 +97,9 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     public void setDefaultCommandString(String commandString) {
         this.defaultCommandString = ensureNotNull(commandString);
+        if (StringHelper.isNullOrEmpty(getCurrentCommandString())) {
+            setCurrentCommandString(commandString);
+        }
     }
 
     public String getCurrentCommandString() {
@@ -104,6 +108,9 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     public void setCurrentCommandString(String commandString) {
         this.currentCommandString = ensureNotNull(commandString);
+        if (StringHelper.isNullOrEmpty(getDefaultCommandString())) {
+            setDefaultCommandString(commandString);
+        }
     }
 
     public boolean isCommandStringEditable() {
