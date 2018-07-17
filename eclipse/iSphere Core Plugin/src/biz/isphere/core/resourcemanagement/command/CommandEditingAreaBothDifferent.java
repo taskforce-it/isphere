@@ -69,9 +69,9 @@ public class CommandEditingAreaBothDifferent extends AbstractCommandEditingArea 
         if (columnIndex == 0 + counter) {
             return commandBoth.getLabel();
         } else if (columnIndex == 1 + counter) {
-            return ((RSECommand)commandBoth.getResourceWorkspace()).getCommandString();
+            return ((RSECommand)commandBoth.getResourceWorkspace()).getCurrentCommandString();
         } else if (columnIndex == 2 + counter) {
-            return ((RSECommand)commandBoth.getResourceRepository()).getCommandString();
+            return ((RSECommand)commandBoth.getResourceRepository()).getCurrentCommandString();
         } else {
             return "";
         }
