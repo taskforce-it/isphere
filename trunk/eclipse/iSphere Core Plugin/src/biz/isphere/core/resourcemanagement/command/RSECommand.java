@@ -53,7 +53,7 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
     }
 
     public boolean isUserDefined() {
-        return !NATURE_IBM.equals(getNature());
+        return NATURE_USER.equals(getNature());
     }
 
     public RSECompileType getCompileType() {
@@ -138,7 +138,7 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     @Override
     public boolean isEditable() {
-        return NATURE_USER.equals(getNature());
+        return isUserDefined();
     }
 
     @Override
