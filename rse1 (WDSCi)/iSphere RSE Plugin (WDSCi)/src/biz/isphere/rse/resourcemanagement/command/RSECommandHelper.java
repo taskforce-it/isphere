@@ -169,17 +169,18 @@ public class RSECommandHelper extends AbstractSystemHelper {
             if (type != null) {
                 SystemCompileCommand compileCommand = new SystemCompileCommand(type);
 
-                compileCommand.setId(id);
+                compileCommand.setLabel(label);
                 compileCommand.setNature(nature);
-                compileCommand.setMenuOption(menuOption);
+                compileCommand.setId(id);
 
                 compileCommand.setOrder(order);
-                compileCommand.setLabel(label);
+                compileCommand.setMenuOption(menuOption);
+
                 compileCommand.setLabelEditable(isLabelEditable);
+                compileCommand.setCommandStringEditable(isCommandStringEditable);
 
                 compileCommand.setDefaultString(commandString);
                 compileCommand.setCurrentString(commandString);
-                compileCommand.setCommandStringEditable(isCommandStringEditable);
 
                 if (order >= type.getCompileCommands().size()) {
                     type.addCompileCommand(compileCommand);
@@ -208,11 +209,33 @@ public class RSECommandHelper extends AbstractSystemHelper {
     }
 
     public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
-        boolean isCommandStringEditable, String id, String nature, String menuOption, int Order) {
+        boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
 
         SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
         if (systemCompileCommand != null) {
-            systemCompileCommand.setCurrentString(commandString);
+
+            if (systemCompileCommand.isLabelEditable()) {
+                systemCompileCommand.setLabel(label);
+            }
+
+            if (systemCompileCommand.isUserSupplied()) {
+                systemCompileCommand.setNature(nature);
+                systemCompileCommand.setId(id);
+            }
+
+            systemCompileCommand.setOrder(order);
+            systemCompileCommand.setMenuOption(menuOption);
+
+            if (systemCompileCommand.isUserSupplied()) {
+                systemCompileCommand.setLabelEditable(isLabelEditable);
+                systemCompileCommand.setCommandStringEditable(isCommandStringEditable);
+            }
+
+            if (systemCompileCommand.isCommandStringEditable()) {
+                // systemCompileCommand.setDefaultString(commandString);
+                systemCompileCommand.setCurrentString(commandString);
+            }
+
             SystemCompileType type = (SystemCompileType)compileType.getOrigin();
             type.getParentProfile().writeToDisk();
         }
