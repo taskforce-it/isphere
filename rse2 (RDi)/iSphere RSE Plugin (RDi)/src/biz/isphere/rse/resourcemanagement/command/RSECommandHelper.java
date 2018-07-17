@@ -239,7 +239,9 @@ public class RSECommandHelper extends AbstractSystemHelper {
             }
 
             if (systemCompileCommand.isCommandStringEditable()) {
-                systemCompileCommand.setDefaultString(defaultCommandString);
+                if (systemCompileCommand.isUserSupplied()) {
+                    systemCompileCommand.setDefaultString(defaultCommandString);
+                }
                 systemCompileCommand.setCurrentString(currentCommandString);
             }
 
