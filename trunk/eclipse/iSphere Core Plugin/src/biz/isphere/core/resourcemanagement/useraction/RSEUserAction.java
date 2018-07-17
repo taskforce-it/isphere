@@ -12,6 +12,8 @@ import biz.isphere.core.resourcemanagement.AbstractResource;
 
 public class RSEUserAction extends AbstractResource implements Comparable<RSEUserAction> {
 
+    private static final String VENDOR_IBM = "IBM";
+
     private RSEDomain domain;
     private String label;
     private String originalName;
@@ -23,18 +25,17 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     private boolean invokeOnce;
     private String comment;
     private String[] fileTypes;
-    private boolean isIBM;
     private String vendor;
     private int order;
     private Object origin;
 
     public RSEUserAction() {
-        this(null, null, null, false, false, true, false, false, null, new String[0], false, null, null, 0, null);
+        this(null, null, null, false, false, true, false, false, null, new String[0], null, null, 0, null);
     }
 
     public RSEUserAction(RSEDomain domain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
-        boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor, String originalName,
-        int order, Object origin) {
+        boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, String originalName, int order,
+        Object origin) {
         super(true);
 
         setDomain(domain);
@@ -48,11 +49,9 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         setComment(comment);
         setFileTypes(fileTypes);
         setOriginalName(originalName);
+        setVendor(vendor);
         setOrder(order);
         setOrigin(origin);
-        // must be called before setVendor()
-        setIBM(isIBM);
-        setVendor(vendor);
     }
 
     private String getDomainAsString() {
@@ -147,14 +146,6 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         this.fileTypes = fileTypes;
     }
 
-    public boolean isIBM() {
-        return isIBM;
-    }
-
-    public void setIBM(boolean isIBM) {
-        this.isIBM = isIBM;
-    }
-
     public String getVendor() {
         return vendor;
     }
@@ -179,6 +170,10 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         this.origin = origin;
     }
 
+    public boolean isIBM() {
+        return VENDOR_IBM.equals(getVendor());
+    }
+
     @Override
     public String getKey() {
         return Integer.toString(domain.getDomainType()) + ":" + getLabel(); //$NON-NLS-1$
@@ -199,7 +194,6 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         appendAttribute(buffer, invokeOnce);
         appendAttribute(buffer, comment);
         appendAttribute(buffer, fileTypes);
-        appendAttribute(buffer, isIBM);
         appendAttribute(buffer, vendor);
 
         return buffer.toString();
