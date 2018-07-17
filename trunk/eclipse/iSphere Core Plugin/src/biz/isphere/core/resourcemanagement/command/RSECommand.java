@@ -24,7 +24,8 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
     private String id;
     private String label;
     private boolean isLabelEditable;
-    private String commandString;
+    private String defaultCommandString;
+    private String currentCommandString;
     private boolean isCommandStringEditable;
     private String nature;
     private String menuOption;
@@ -32,17 +33,18 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
     private Object origin;
 
     public RSECommand() {
-        this(null, null, true, null, true, null, null, null, 0, null);
+        this(null, null, true, null, null, true, null, null, null, 0, null);
     }
 
-    public RSECommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString, boolean isCommandStringEditable,
-        String id, String nature, String menuOption, int order, Object origin) {
+    public RSECommand(RSECompileType compileType, String label, boolean isLabelEditable, String defaultCommandString, String currentCommandString,
+        boolean isCommandStringEditable, String id, String nature, String menuOption, int order, Object origin) {
         super(true);
 
         setCompileType(compileType);
         setId(id);
         setLabel(label);
-        setCommandString(commandString);
+        setDefaultCommandString(defaultCommandString);
+        setCurrentCommandString(currentCommandString);
         setNature(nature);
         setMenuOption(menuOption);
         setOrder(order);
@@ -88,12 +90,20 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
         this.isLabelEditable = editable;
     }
 
-    public String getCommandString() {
-        return commandString;
+    public String getDefaultCommandString() {
+        return defaultCommandString;
     }
 
-    public void setCommandString(String commandString) {
-        this.commandString = ensureNotNull(commandString);
+    public void setDefaultCommandString(String commandString) {
+        this.defaultCommandString = ensureNotNull(commandString);
+    }
+
+    public String getCurrentCommandString() {
+        return currentCommandString;
+    }
+
+    public void setCurrentCommandString(String commandString) {
+        this.currentCommandString = ensureNotNull(commandString);
     }
 
     public boolean isCommandStringEditable() {
@@ -153,7 +163,7 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     @Override
     public String getValue() {
-        return ensureNotNull(commandString);
+        return ensureNotNull(currentCommandString);
     }
 
     private String ensureNotNull(String value) {
@@ -167,7 +177,7 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     @Override
     public String toString() {
-        return compileType.getType() + ": " + getLabel() + ": " + getCommandString();
+        return compileType.getType() + ": " + getLabel() + ": " + getCurrentCommandString();
     }
 
     public int compareTo(RSECommand other) {

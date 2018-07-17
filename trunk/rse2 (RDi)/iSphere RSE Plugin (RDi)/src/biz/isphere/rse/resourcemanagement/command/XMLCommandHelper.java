@@ -46,7 +46,8 @@ public class XMLCommandHelper extends AbstractXmlHelper {
     private static final String ORDER = "order";
     private static final String LABEL = "label";
     private static final String LABEL_EDITABLE = "isLabelEditable";
-    private static final String COMMAND_STRING = "commandString";
+    private static final String DEFAULT_COMMAND_STRING = "defaultCommandString";
+    private static final String CURRENT_COMMAND_STRING = "currentCommandString";
     private static final String NATURE = "nature";
     private static final String MENU_OPTION = "menuOption";
 
@@ -126,7 +127,8 @@ public class XMLCommandHelper extends AbstractXmlHelper {
             createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(commands[idx1].getOrder()));
             createNode(eventWriter, eventFactory, end, tab, LABEL, commands[idx1].getLabel());
             createNode(eventWriter, eventFactory, end, tab, LABEL_EDITABLE, commands[idx1].isLabelEditable());
-            createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, commands[idx1].getCommandString());
+            createNode(eventWriter, eventFactory, end, tab, DEFAULT_COMMAND_STRING, commands[idx1].getDefaultCommandString());
+            createNode(eventWriter, eventFactory, end, tab, CURRENT_COMMAND_STRING, commands[idx1].getCurrentCommandString());
             createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING_EDITABLE, commands[idx1].isCommandStringEditable());
             createNode(eventWriter, eventFactory, end, tab, NATURE, commands[idx1].getNature());
             createNode(eventWriter, eventFactory, end, tab, MENU_OPTION, commands[idx1].getMenuOption());
@@ -178,7 +180,9 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                     startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
                     startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING)) {
+                } else if (event.asStartElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
+                    startElementCharacters(elementData, event);
+                } else if (event.asStartElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
                     startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
                     startElementCharacters(elementData, event);
@@ -200,8 +204,10 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                     command.setLabel(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
                     command.setLabelEditable(xmlToBoolean(elementData.toString(), true));
-                } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING)) {
-                    command.setCommandString(elementData.toString());
+                } else if (event.asEndElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
+                    command.setDefaultCommandString(elementData.toString());
+                } else if (event.asEndElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
+                    command.setCurrentCommandString(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
                     command.setCommandStringEditable(xmlToBoolean(elementData.toString(), true));
                 } else if (event.asEndElement().getName().getLocalPart().equals(NATURE)) {

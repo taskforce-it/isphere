@@ -78,7 +78,7 @@ public abstract class AbstractCommandEditingArea extends AbstractEditingArea {
         if (columnIndex == 0 + counter) {
             return (((RSECommand)resource).getLabel());
         } else if (columnIndex == 1 + counter) {
-            return (((RSECommand)resource).getCommandString());
+            return (((RSECommand)resource).getCurrentCommandString());
         } else if (columnIndex == 2 + counter) {
             return "???";
         } else {
