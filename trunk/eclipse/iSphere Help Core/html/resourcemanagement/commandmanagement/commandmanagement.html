@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
 <title>RSE Command Management</title>
 </head>
 
@@ -96,14 +96,45 @@
 	<ul>
 	<li>... be deleted from the workspace</li>
 	<li>... are updated when pushed to the workspace</li>
-	<li>... are changed to 'user defined' when added to a compile profile</li>
 	</ul>
 	<p>
-	IBM supplied commands are changed to 'user defined' when added to a compile profile in order 
-	to be able to remove them again. For example that is the case when you push commands to a
-	fresh system profile.
+	<h2>Attributes Set When Adding Compile Commands</h2>
+	The following table shows the attributes that are set, when adding compile commands to 
+	a system profile:
 	<p>
-		<iframe src="../copyright.html" width="100%" frameborder="0"
+	<table>
+	<tr><th align="left">Attribute</th><th></th><th align="left">Comments</th></tr>
+	<tr><td valign="top" nowrap="nowrap">Label</td><td valign="top">-</td><td valign="top">Specifies the label of the compile command.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Nature</td><td valign="top">-</td><td valign="top">Specifies the nature of the command.<br>Must be one of <i>'IBM defined'</i>, <i>'User defined'</i> or <i>'ISV defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Id</td><td valign="top">-</td><td valign="top">Specifies the id of the command.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Order of the command.<br>Specifies the order of the command, when selecting option <i>'Compile'</i> from the context menu of a source member.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Menu option</td><td valign="top">-</td><td valign="top">Specifies the compile sub menu the command is associated to.<br>Must be one of <i>'Both'</i>, <i>'Prompt'</i> or <i>'NoPrompt'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Label editable</td><td valign="top">-</td><td valign="top">Specifies whether or not the command label can be edited.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Command editable</td><td valign="top">-</td><td valign="top">Specifies whether or not the command string can be edited.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Default command string</td><td valign="top">-</td><td valign="top">Specifies the defaults command string.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Current command string</td><td valign="top">-</td><td valign="top">Specifies the current command string.</td></tr>
+	</table> 
+	<p>
+	Not all beforehand mentioned properties can be maintained on the GUI.
+	<p>
+	<h2>Attributes Set When Updating Compile Commands</h2>
+	The following table shows the attributes that are updated, when updating compile commands of 
+	a system profile:
+	<p>
+	<table>
+	<tr><th align="left">Attribute</th><th></th><th align="left">Comments</th></tr>
+	<tr><td valign="top" nowrap="nowrap">Label</td><td valign="top">-</td><td valign="top">Only updated when the label is editable.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Nature</td><td valign="top">-</td><td valign="top">Only updated when the command is <i>'User defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Id</td><td valign="top">-</td><td valign="top">Only updated when the command is <i>'User defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Menu option</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Label editable</td><td valign="top">-</td><td valign="top">Only updated when the command is <i>'User defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Command editable</td><td valign="top">-</td><td valign="top">Only updated when the command is <i>'User defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Default command string</td><td valign="top">-</td><td valign="top">Only updated when the command string is editable and the command is <i>'User defined'</i>.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Current command string</td><td valign="top">-</td><td valign="top">Only updated when the command string is editable.</td></tr>
+	</table> 
+	<p>
+		<iframe src="../../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
 </body>
 </html>
