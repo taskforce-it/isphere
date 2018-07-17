@@ -108,15 +108,14 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
 
         RSEUserAction rseUserAction = new RSEUserAction(domain, systemUserAction.getLabel(), systemUserAction.getCommand(), systemUserAction
             .getPrompt(), systemUserAction.getRefresh(), systemUserAction.getShow(), systemUserAction.getSingleSelection(), systemUserAction
-            .getCollect(), systemUserAction.getComment(), systemUserAction.getFileTypes(), systemUserAction.isIBM(), systemUserAction.getVendor(),
-            systemUserAction.getOriginalName(), 0, systemUserAction);
+            .getCollect(), systemUserAction.getComment(), systemUserAction.getFileTypes(), systemUserAction.getVendor(), systemUserAction
+            .getOriginalName(), 0, systemUserAction);
 
         return rseUserAction;
     }
 
     public static void createUserAction(RSEDomain rseDomain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter,
-        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor,
-        int order) {
+        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, int order) {
 
         SystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
         if (systemProfile != null) {
@@ -124,23 +123,13 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             if (userActionManager != null) {
 
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
-
-                // Do not set 'order' to avoid duplicate
-                // order numbers
-                // Method setOrder() is not available for WDSCi)
                 // userAction.setOrder(getNextOrderNumber(userActionManager,
                 // rseDomain));
-                userAction.setCommand(commandString);
-                userAction.setPrompt(isPromptFirst);
-                userAction.setRefresh(isRefreshAfter);
-                userAction.setShow(isShowAction);
-                userAction.setSingleSelection(isSingleSelection);
-                userAction.setCollect(isInvokeOnce);
-                userAction.setComment(comment);
-                userAction.setFileTypes(fileTypes);
-                // must be called before setVendor()
-                userAction.setIBM(isIBM);
-                userAction.setVendor(vendor);
+
+                setUserActionAttributes(commandString, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection, isInvokeOnce, comment,
+                    fileTypes, vendor, userAction);
+
+                // moveUserActionTo(userActionManager, userAction, order);
 
                 saveUserActions(userActionManager, systemProfile);
             }
@@ -165,8 +154,7 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
     }
 
     public static void updateUserAction(RSEDomain rseDomain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter,
-        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, boolean isIBM, String vendor,
-        int order) {
+        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, int order) {
 
         SystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
         if (systemProfile != null) {
@@ -176,20 +164,11 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
 
-                        // Do not update 'order' to avoid duplicate
-                        // order numbers
-                        // userAction.setOrder(order);
-                        userAction.setCommand(commandString);
-                        userAction.setPrompt(isPromptFirst);
-                        userAction.setRefresh(isRefreshAfter);
-                        userAction.setShow(isShowAction);
-                        userAction.setSingleSelection(isSingleSelection);
-                        userAction.setCollect(isInvokeOnce);
-                        userAction.setComment(comment);
-                        userAction.setFileTypes(fileTypes);
-                        // must be called before setVendor()
-                        userAction.setIBM(isIBM);
-                        userAction.setVendor(vendor);
+                        setUserActionAttributes(commandString, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection, isInvokeOnce, comment,
+                            fileTypes, vendor, userAction);
+
+                        // moveUserActionTo(userActionManager, userAction,
+                        // order);
 
                         saveUserActions(userActionManager, systemProfile);
                     }
@@ -207,6 +186,20 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         }
 
         return false;
+    }
+
+    private static void setUserActionAttributes(String commandString, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
+        boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, SystemUDActionElement userAction) {
+
+        userAction.setCommand(commandString);
+        userAction.setPrompt(isPromptFirst);
+        userAction.setRefresh(isRefreshAfter);
+        userAction.setShow(isShowAction);
+        userAction.setSingleSelection(isSingleSelection);
+        userAction.setCollect(isInvokeOnce);
+        userAction.setComment(comment);
+        userAction.setFileTypes(fileTypes);
+        userAction.setVendor(vendor);
     }
 
     private static void saveUserActions(SystemUDActionManager userActionManager, SystemProfile systemProfile) {

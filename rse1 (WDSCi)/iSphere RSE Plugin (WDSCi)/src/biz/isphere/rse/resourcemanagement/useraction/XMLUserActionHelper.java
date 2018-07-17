@@ -51,7 +51,6 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
     private static final String SHOW_ACTION = "showAction";
     private static final String SINGLE_SELECTION = "singleSelection";
     private static final String INVOKE_ONCE = "invokeOnce";
-    private static final String IS_IBM = "isIBM";
     private static final String VENDOR = "vendor";
     private static final String COMMENT = "comment";
     private static final String FILE_TYPES = "fileTypes";
@@ -138,7 +137,6 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
             createNode(eventWriter, eventFactory, end, tab, SHOW_ACTION, userActions[idx1].isShowAction());
             createNode(eventWriter, eventFactory, end, tab, SINGLE_SELECTION, userActions[idx1].isSingleSelection());
             createNode(eventWriter, eventFactory, end, tab, INVOKE_ONCE, userActions[idx1].isInvokeOnce());
-            createNode(eventWriter, eventFactory, end, tab, IS_IBM, userActions[idx1].isIBM());
             createNode(eventWriter, eventFactory, end, tab, VENDOR, userActions[idx1].getVendor());
             createNode(eventWriter, eventFactory, end, tab, COMMENT, userActions[idx1].getComment());
             createNode(eventWriter, eventFactory, end, tab, FILE_TYPES, arrayToXml(userActions[idx1].getFileTypes()));
@@ -202,8 +200,6 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
                     startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(IS_IBM)) {
-                    startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(VENDOR)) {
                     startElementCharacters(elementData, event);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMMENT)) {
@@ -236,8 +232,6 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     userAction.setSingleSelection(xmlToBoolean(elementData.toString(), false));
                 } else if (event.asEndElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
                     userAction.setInvokeOnce(xmlToBoolean(elementData.toString(), false));
-                } else if (event.asEndElement().getName().getLocalPart().equals(IS_IBM)) {
-                    userAction.setIBM(xmlToBoolean(elementData.toString(), false));
                 } else if (event.asEndElement().getName().getLocalPart().equals(VENDOR)) {
                     userAction.setVendor(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(COMMENT)) {
