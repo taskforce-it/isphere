@@ -128,14 +128,15 @@ public class RSECommandHelper extends AbstractSystemHelper {
     private static RSECommand produceCommand(RSECompileType compileType, SystemCompileCommand systemCompileCommand) {
 
         RSECommand rseCommand = new RSECommand(compileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
-            systemCompileCommand.getCurrentString(), systemCompileCommand.isCommandStringEditable(), systemCompileCommand.getId(),
-            systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand.getOrder(), systemCompileCommand);
+            systemCompileCommand.getDefaultString(), systemCompileCommand.getCurrentString(), systemCompileCommand.isCommandStringEditable(),
+            systemCompileCommand.getId(), systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand.getOrder(),
+            systemCompileCommand);
 
         return rseCommand;
     }
 
-    public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
-        boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
+    public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String defaultCommandString,
+        String currentCommandString, boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
 
         SystemCompileManager compileManager = getCompileManager();
         if (compileManager != null) {
@@ -179,8 +180,8 @@ public class RSECommandHelper extends AbstractSystemHelper {
                 compileCommand.setLabelEditable(isLabelEditable);
                 compileCommand.setCommandStringEditable(isCommandStringEditable);
 
-                compileCommand.setDefaultString(commandString);
-                compileCommand.setCurrentString(commandString);
+                compileCommand.setDefaultString(defaultCommandString);
+                compileCommand.setCurrentString(currentCommandString);
 
                 if (order >= type.getCompileCommands().size()) {
                     type.addCompileCommand(compileCommand);
@@ -208,8 +209,8 @@ public class RSECommandHelper extends AbstractSystemHelper {
         }
     }
 
-    public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String commandString,
-        boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
+    public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String defaultCommandString,
+        String currentCommandString, boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
 
         SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
         if (systemCompileCommand != null) {
@@ -232,8 +233,8 @@ public class RSECommandHelper extends AbstractSystemHelper {
             }
 
             if (systemCompileCommand.isCommandStringEditable()) {
-                // systemCompileCommand.setDefaultString(commandString);
-                systemCompileCommand.setCurrentString(commandString);
+                systemCompileCommand.setDefaultString(defaultCommandString);
+                systemCompileCommand.setCurrentString(currentCommandString);
             }
 
             SystemCompileType type = (SystemCompileType)compileType.getOrigin();
