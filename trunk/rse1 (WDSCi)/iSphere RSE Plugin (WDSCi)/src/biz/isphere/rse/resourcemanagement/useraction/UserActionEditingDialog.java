@@ -49,8 +49,7 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
 
         RSEUserActionHelper.createUserAction(rseUserAction.getDomain(), rseUserAction.getLabel(), rseUserAction.getCommandString(), rseUserAction
             .isPromptFirst(), rseUserAction.isRefreshAfter(), rseUserAction.isShowAction(), rseUserAction.isSingleSelection(), rseUserAction
-            .isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(), rseUserAction.isIBM(), rseUserAction.getVendor(),
-            rseUserAction.getOrder());
+            .isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(), rseUserAction.getVendor(), rseUserAction.getOrder());
     }
 
     @Override
@@ -78,8 +77,7 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         RSEUserActionHelper.updateUserAction(userActionWorkspace.getDomain(), userActionWorkspace.getLabel(),
             userActionRepository.getCommandString(), userActionRepository.isPromptFirst(), userActionRepository.isRefreshAfter(),
             userActionRepository.isShowAction(), userActionRepository.isSingleSelection(), userActionRepository.isInvokeOnce(), userActionRepository
-                .getComment(), userActionRepository.getFileTypes(), userActionRepository.isIBM(), userActionRepository.getVendor(),
-            userActionRepository.getOrder());
+                .getComment(), userActionRepository.getFileTypes(), userActionRepository.getVendor(), userActionRepository.getOrder());
     }
 
     @Override
