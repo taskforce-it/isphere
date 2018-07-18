@@ -96,9 +96,12 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
     }
 
     public void setDefaultCommandString(String commandString) {
-        this.defaultCommandString = ensureNotNull(commandString);
-        if (StringHelper.isNullOrEmpty(getCurrentCommandString())) {
-            setCurrentCommandString(commandString);
+        String newCommandString = ensureNotNull(commandString);
+        if (!newCommandString.equals(commandString)) {
+            this.defaultCommandString = newCommandString;
+            if (StringHelper.isNullOrEmpty(getCurrentCommandString())) {
+                setCurrentCommandString(newCommandString);
+            }
         }
     }
 
@@ -107,9 +110,12 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
     }
 
     public void setCurrentCommandString(String commandString) {
-        this.currentCommandString = ensureNotNull(commandString);
-        if (StringHelper.isNullOrEmpty(getDefaultCommandString())) {
-            setDefaultCommandString(commandString);
+        String newCommandString = ensureNotNull(commandString);
+        if (!newCommandString.equals(commandString)) {
+            this.currentCommandString = newCommandString;
+            if (StringHelper.isNullOrEmpty(getDefaultCommandString())) {
+                setDefaultCommandString(newCommandString);
+            }
         }
     }
 
