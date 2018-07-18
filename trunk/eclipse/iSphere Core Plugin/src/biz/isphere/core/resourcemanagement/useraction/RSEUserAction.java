@@ -170,12 +170,18 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         this.origin = origin;
     }
 
-    public boolean isIBM() {
-        return VENDOR_IBM.equals(getVendor());
+    @Override
+    public boolean isEditable() {
+        return isUserDefined();
+    }
+
+    public boolean isUserDefined() {
+        return !VENDOR_IBM.equals(getVendor());
     }
 
     @Override
     public String getKey() {
+        System.out.println("User action key: " + Integer.toString(domain.getDomainType()) + ":" + getLabel());
         return Integer.toString(domain.getDomainType()) + ":" + getLabel(); //$NON-NLS-1$
     }
 

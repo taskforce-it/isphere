@@ -9,10 +9,12 @@
 package biz.isphere.core.resourcemanagement.useraction;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.resourcemanagement.AbstractResource;
@@ -74,6 +76,27 @@ public class UserActionEditingAreaBothDifferent extends AbstractUserActionEditin
             return "";
         }
 
+    }
+
+    @Override
+    protected Image getTableColumnImage(Object resource, int columnIndex) {
+
+        RSEUserActionBoth commandBoth = (RSEUserActionBoth)resource;
+
+        int counter = 0;
+        if (!singleDomain) {
+            counter++;
+        }
+
+        if (columnIndex == 0 + counter) {
+            if (commandBoth.isEditable()) {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_UNLOCKED);
+            } else {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_LOCKED);
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
