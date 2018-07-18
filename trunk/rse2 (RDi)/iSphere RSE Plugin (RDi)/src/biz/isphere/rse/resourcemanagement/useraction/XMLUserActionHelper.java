@@ -31,9 +31,13 @@ import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.core.resourcemanagement.useraction.UserActionXmlComparator;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 
 public class XMLUserActionHelper extends AbstractXmlHelper {
+
+    private static final String CURRENT_VERSION = "1.0.0";
+    private static final String MIN_VERSION = "1.0.0";
 
     private static final String DOMAINS = "domains";
     private static final String DOMAIN = "domain";
@@ -68,12 +72,19 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
         XMLEvent tab = eventFactory.createDTD("\t");
 
         eventWriter.add(eventFactory.createStartDocument());
+        eventWriter.add(end);
 
         if (singleDomain) {
 
+            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
+
             createUserActions(eventWriter, eventFactory, end, tab, userActions);
 
+            endContainer(eventWriter, eventFactory, end);
+
         } else {
+
+            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
 
             eventWriter.add(eventFactory.createStartElement("", "", DOMAINS));
             eventWriter.add(end);
@@ -108,6 +119,8 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
             eventWriter.add(eventFactory.createEndElement("", "", DOMAINS));
             eventWriter.add(end);
+
+            endContainer(eventWriter, eventFactory, end);
 
         }
 
@@ -168,12 +181,18 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
         RSEUserAction userAction = null;
         StringBuilder elementData = new StringBuilder();
 
+        boolean isValidated = false;
+        String versionNumber = null;
+
         while (eventReader.hasNext()) {
 
             XMLEvent event = eventReader.nextEvent();
 
             if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
+                if (isContainerStartElement(event)) {
+                    versionNumber = getVersionNumber(event);
+                    isValidated = validateVersionNumber(event, MIN_VERSION);
+                } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
                     _domain = new RSEDomain(profile);
                 } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
                     startElementCharacters(elementData, event);
@@ -210,6 +229,9 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     clearElementCharacters(elementData);
                 }
             } else if (event.isEndElement()) {
+                if (!isValidated) {
+                    throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository, versionNumber));
+                }
                 if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
                     _domain.setName(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
