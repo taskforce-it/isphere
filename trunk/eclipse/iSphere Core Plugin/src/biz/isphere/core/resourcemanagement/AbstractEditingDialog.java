@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.CustomExpandBar;
@@ -160,6 +162,11 @@ public abstract class AbstractEditingDialog extends Dialog {
 
     protected void okPressed() {
 
+        if (!hasActions(resourceWorkspace, resourceRepository, resourceBothDifferent, resourceBothEqual)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_actions_selected);
+            return;
+        }
+
         MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO | SWT.CANCEL);
         messageBox.setMessage(Messages.Are_you_sure + "?");
         messageBox.setText(Messages.Perform_actions);
@@ -253,6 +260,41 @@ public abstract class AbstractEditingDialog extends Dialog {
         }
 
         super.okPressed();
+    }
+
+    private boolean hasActions(AbstractResource[] resourceWorkspace, AbstractResource[] resourceRepository,
+        AbstractResourceBoth[] resourceBothDifferent, AbstractResource[] resourceBothEqual) {
+
+        if (hasActions(resourceWorkspace)) {
+            return true;
+        }
+
+        if (hasActions(resourceRepository)) {
+            return true;
+        }
+
+        if (hasActions(resourceBothDifferent)) {
+            return true;
+        }
+
+        if (hasActions(resourceBothEqual)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasActions(AbstractResource[] resourceWorkspace) {
+
+        if (resourceWorkspace != null) {
+            for (AbstractResource resource : resourceWorkspace) {
+                if (!StringHelper.isNullOrEmpty(resource.getAction())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void pushToRepository(AbstractResource resource) {

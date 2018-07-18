@@ -1442,6 +1442,8 @@ public class Messages extends NLS {
 
     public static String No_items_found_that_match_the_selection_criterias;
 
+    public static String No_actions_selected;
+
     /*
      * Warning messages
      */
