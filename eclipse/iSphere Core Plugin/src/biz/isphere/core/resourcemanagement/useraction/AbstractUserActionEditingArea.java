@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.resourcemanagement.AbstractEditingArea;
@@ -88,7 +89,23 @@ public abstract class AbstractUserActionEditingArea extends AbstractEditingArea 
 
     @Override
     protected Image getTableColumnImage(Object resource, int columnIndex) {
-        return null;
+
+        RSEUserAction userAction = (RSEUserAction)resource;
+
+        int counter = 0;
+        if (!singleDomain) {
+            counter++;
+        }
+
+        if (columnIndex == 0 + counter) {
+            if (userAction.isEditable()) {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_UNLOCKED);
+            } else {
+                return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_LOCKED);
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
