@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Message Subsystem for WDSCi 7.0
 Bundle-SymbolicName: biz.isphere.messagesubsystem.rse;singleton:=true
-Bundle-Version: 3.5.0.b003
+Bundle-Version: 3.5.0.b004
 Bundle-Activator: biz.isphere.messagesubsystem.rse.ISphereMessageSubsystemRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
