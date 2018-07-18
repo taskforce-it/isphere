@@ -31,9 +31,13 @@ import biz.isphere.core.resourcemanagement.command.CommandXmlComparator;
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 
 public class XMLCommandHelper extends AbstractXmlHelper {
+
+    private static final String CURRENT_VERSION = "1.0.0";
+    private static final String MIN_VERSION = "1.0.0";
 
     private static final String COMPILE_TYPES = "compiletypes";
     private static final String COMPILE_TYPE = "compiletype";
@@ -64,12 +68,19 @@ public class XMLCommandHelper extends AbstractXmlHelper {
         XMLEvent tab = eventFactory.createDTD("\t");
 
         eventWriter.add(eventFactory.createStartDocument());
+        eventWriter.add(end);
 
         if (singleCompileType) {
 
+            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
+
             createCommands(eventWriter, eventFactory, end, tab, commands);
 
+            endContainer(eventWriter, eventFactory, end);
+
         } else {
+
+            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
 
             eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPES));
             eventWriter.add(end);
@@ -104,10 +115,13 @@ public class XMLCommandHelper extends AbstractXmlHelper {
             eventWriter.add(eventFactory.createEndElement("", "", COMPILE_TYPES));
             eventWriter.add(end);
 
+            endContainer(eventWriter, eventFactory, end);
+
         }
 
         eventWriter.add(eventFactory.createEndDocument());
 
+        eventWriter.flush();
         eventWriter.close();
 
     }
@@ -160,12 +174,18 @@ public class XMLCommandHelper extends AbstractXmlHelper {
         RSECommand command = null;
         StringBuilder elementData = new StringBuilder();
 
+        boolean isValidated = false;
+        String versionNumber = null;
+
         while (eventReader.hasNext()) {
 
             XMLEvent event = eventReader.nextEvent();
 
             if (event.isStartElement()) {
-                if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
+                if (isContainerStartElement(event)) {
+                    versionNumber = getVersionNumber(event);
+                    isValidated = validateVersionNumber(event, MIN_VERSION);
+                } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
                     type = new RSECompileType(profile);
                 } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                     startElementCharacters(elementData, event);
@@ -194,6 +214,9 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                     clearElementCharacters(elementData);
                 }
             } else if (event.isEndElement()) {
+                if (!isValidated) {
+                    throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository, versionNumber));
+                }
                 if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                     type.setType(elementData.toString());
                 } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
