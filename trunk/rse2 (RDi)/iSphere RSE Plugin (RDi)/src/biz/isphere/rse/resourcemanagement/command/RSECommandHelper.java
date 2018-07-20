@@ -176,7 +176,6 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
                 compileCommand.setLabel(label);
                 compileCommand.setNature(nature);
-                // compileCommand.setId(id);
 
                 compileCommand.setOrder(order);
                 compileCommand.setMenuOption(menuOption);
@@ -225,7 +224,6 @@ public class RSECommandHelper extends AbstractSystemHelper {
 
             if (systemCompileCommand.isUserSupplied()) {
                 systemCompileCommand.setNature(nature);
-                systemCompileCommand.setId(id);
             }
 
             systemCompileCommand.setOrder(order);
