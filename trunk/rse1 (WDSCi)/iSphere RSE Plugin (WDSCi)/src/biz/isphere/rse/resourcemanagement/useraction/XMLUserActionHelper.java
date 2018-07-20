@@ -14,9 +14,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.stream.XMLEventFactory;
@@ -50,6 +52,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
     private static final String LABEL = "label";
     private static final String ORIGINAL_NAME = "originalName";
     private static final String COMMAND_STRING = "commandString";
+    private static final String RUN_ENVIRONMENT = "runEnvironment";
     private static final String PROMPT_FIRST = "promptFirst";
     private static final String REFRESH_AFTER = "refreshAfter";
     private static final String SHOW_ACTION = "showAction";
@@ -145,6 +148,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
             createNode(eventWriter, eventFactory, end, tab, LABEL, userActions[idx1].getLabel());
             createNode(eventWriter, eventFactory, end, tab, ORIGINAL_NAME, userActions[idx1].getOriginalName());
             createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, userActions[idx1].getCommandString());
+            createNode(eventWriter, eventFactory, end, tab, RUN_ENVIRONMENT, userActions[idx1].getRunEnvironment());
             createNode(eventWriter, eventFactory, end, tab, PROMPT_FIRST, userActions[idx1].isPromptFirst());
             createNode(eventWriter, eventFactory, end, tab, REFRESH_AFTER, userActions[idx1].isRefreshAfter());
             createNode(eventWriter, eventFactory, end, tab, SHOW_ACTION, userActions[idx1].isShowAction());
@@ -167,107 +171,131 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
     public static RSEUserAction[] restoreUserActionsFromXML(File fromFile, boolean singleDomain, RSEProfile profile, RSEDomain domain)
         throws Exception {
 
+        Set<String> keys = new HashSet<String>();
+
         ArrayList<RSEUserAction> items = new ArrayList<RSEUserAction>();
 
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        InputStream in = null;
+        XMLEventReader eventReader = null;
 
-        InputStream in = new FileInputStream(fromFile);
-        XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+        try {
 
-        RSEDomain _domain = null;
-        if (singleDomain) {
-            _domain = domain;
-        }
-        RSEUserAction userAction = null;
-        StringBuilder elementData = new StringBuilder();
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-        boolean isValidated = false;
-        String versionNumber = null;
+            in = new FileInputStream(fromFile);
+            eventReader = inputFactory.createXMLEventReader(in);
 
-        while (eventReader.hasNext()) {
+            RSEDomain _domain = null;
+            if (singleDomain) {
+                _domain = domain;
+            }
+            RSEUserAction userAction = null;
+            StringBuilder elementData = new StringBuilder();
 
-            XMLEvent event = eventReader.nextEvent();
+            boolean isValidated = false;
+            String versionNumber = null;
 
-            if (event.isStartElement()) {
-                if (isContainerStartElement(event)) {
-                    versionNumber = getVersionNumber(event);
-                    isValidated = validateVersionNumber(event, MIN_VERSION);
-                } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
-                    _domain = new RSEDomain(profile);
-                } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(USER_ACTION)) {
-                    userAction = new RSEUserAction();
-                    userAction.setDomain(_domain);
-                } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(PROMPT_FIRST)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(REFRESH_AFTER)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(SHOW_ACTION)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(SINGLE_SELECTION)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(VENDOR)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMMENT)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(FILE_TYPES)) {
-                    startElementCharacters(elementData, event);
-                } else {
+            while (eventReader.hasNext()) {
+
+                XMLEvent event = eventReader.nextEvent();
+
+                if (event.isStartElement()) {
+                    if (isContainerStartElement(event)) {
+                        versionNumber = getVersionNumber(event);
+                        isValidated = validateVersionNumber(event, MIN_VERSION);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
+                        _domain = new RSEDomain(profile);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(USER_ACTION)) {
+                        userAction = new RSEUserAction();
+                        userAction.setDomain(_domain);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(RUN_ENVIRONMENT)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(PROMPT_FIRST)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(REFRESH_AFTER)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(SHOW_ACTION)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(SINGLE_SELECTION)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(VENDOR)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMMENT)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(FILE_TYPES)) {
+                        startElementCharacters(elementData, event);
+                    } else {
+                        clearElementCharacters(elementData);
+                    }
+                } else if (event.isEndElement()) {
+                    if (!isValidated) {
+                        throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Version_number_too_old, versionNumber));
+                    }
+                    if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
+                        _domain.setName(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
+                        _domain.setDomainType(xmlToInteger(elementData.toString()));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
+                        userAction.setOrder(xmlToInteger(elementData.toString()));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
+                        userAction.setLabel(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
+                        userAction.setOriginalName(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING)) {
+                        userAction.setCommandString(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(RUN_ENVIRONMENT)) {
+                        userAction.setRunEnvironment(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(PROMPT_FIRST)) {
+                        userAction.setPromptFirst(xmlToBoolean(elementData.toString(), false));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(REFRESH_AFTER)) {
+                        userAction.setRefreshAfter(xmlToBoolean(elementData.toString(), false));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(SHOW_ACTION)) {
+                        userAction.setShowAction(xmlToBoolean(elementData.toString(), true));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(SINGLE_SELECTION)) {
+                        userAction.setSingleSelection(xmlToBoolean(elementData.toString(), false));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
+                        userAction.setInvokeOnce(xmlToBoolean(elementData.toString(), false));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(VENDOR)) {
+                        userAction.setVendor(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(COMMENT)) {
+                        userAction.setComment(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(FILE_TYPES)) {
+                        userAction.setFileTypes(xmlToArray(elementData.toString()));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(USER_ACTION)) {
+                        String userActionKey = userAction.getKey();
+                        if (keys.contains(userActionKey)) {
+                            throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Duplicate_commands, versionNumber));
+                        }
+                        items.add(userAction);
+                    }
                     clearElementCharacters(elementData);
+                } else {
+                    collectElementCharacters(elementData, event);
                 }
-            } else if (event.isEndElement()) {
-                if (!isValidated) {
-                    throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository, versionNumber));
-                }
-                if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
-                    _domain.setName(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
-                    _domain.setDomainType(xmlToInteger(elementData.toString()));
-                } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
-                    userAction.setOrder(xmlToInteger(elementData.toString()));
-                } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
-                    userAction.setLabel(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(ORIGINAL_NAME)) {
-                    userAction.setOriginalName(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING)) {
-                    userAction.setCommandString(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(PROMPT_FIRST)) {
-                    userAction.setPromptFirst(xmlToBoolean(elementData.toString(), false));
-                } else if (event.asEndElement().getName().getLocalPart().equals(REFRESH_AFTER)) {
-                    userAction.setRefreshAfter(xmlToBoolean(elementData.toString(), false));
-                } else if (event.asEndElement().getName().getLocalPart().equals(SHOW_ACTION)) {
-                    userAction.setShowAction(xmlToBoolean(elementData.toString(), true));
-                } else if (event.asEndElement().getName().getLocalPart().equals(SINGLE_SELECTION)) {
-                    userAction.setSingleSelection(xmlToBoolean(elementData.toString(), false));
-                } else if (event.asEndElement().getName().getLocalPart().equals(INVOKE_ONCE)) {
-                    userAction.setInvokeOnce(xmlToBoolean(elementData.toString(), false));
-                } else if (event.asEndElement().getName().getLocalPart().equals(VENDOR)) {
-                    userAction.setVendor(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(COMMENT)) {
-                    userAction.setComment(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(FILE_TYPES)) {
-                    userAction.setFileTypes(xmlToArray(elementData.toString()));
-                } else if (event.asEndElement().getName().getLocalPart().equals(USER_ACTION)) {
-                    items.add(userAction);
-                }
-                clearElementCharacters(elementData);
-            } else {
-                collectElementCharacters(elementData, event);
+
             }
 
+        } finally {
+            if (in != null) {
+                if (eventReader != null) {
+                    eventReader.close();
+                }
+                in.close();
+            }
         }
 
         RSEUserAction[] userActions = new RSEUserAction[items.size()];

@@ -172,8 +172,10 @@ public class Messages extends NLS {
     
     public static String No_compile_command_manager_available;
 
-    public static String Cannot_load_the_selected_repository;
-    
+    public static String Cannot_load_the_selected_repository_Version_number_too_old;
+
+    public static String Cannot_load_the_selected_repository_Duplicate_commands;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
