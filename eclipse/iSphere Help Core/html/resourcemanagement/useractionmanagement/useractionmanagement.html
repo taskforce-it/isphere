@@ -92,15 +92,23 @@
 	<tr><td><img src="./assets/unlocked.png" /></td><td>-</td><td>User defined user action</td></tr>
 	</table> 
 	<p>
-	<h2>Restrictions</h2>
+	<h2>Attributes Compared Between Workspace And Repository User Actions</h2>
+	The following table shows the attributes that are compared, when comparing
+	workspace with repository user actions:
+	<p>
 	<table>
-		<tr>
-			<td class="notice">Note: User actions do not have an <i>order</i> attribute in
-			                   WDSCi. Therefore user actions pushed to a WDSCi workspace cannot
-			                   be added to the position stored in the XML file, but are added
-			                   to the end of the list.</td>
-		</tr>
-	</table>
+	<tr><th align="left">Attribute</th><th></th><th align="left">Comments</th></tr>
+	<tr><td valign="top" nowrap="nowrap">Comment</td><td valign="top">-</td><td valign="top">Specifies the comment of the user action.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Command</td><td valign="top">-</td><td valign="top">Specifies the command.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Run environment</td><td valign="top">-</td><td valign="top">Specifies the run environment of the command.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Prompt first</td><td valign="top">-</td><td valign="top">Specifies whether the command is prompted when the user action is invoked.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Refresh after</td><td valign="top">-</td><td valign="top">Specifies whether the selected resource is refreshed after the user action is invoked.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Show action</td><td valign="top">-</td><td valign="top">Specifies whether to show the user action when it applies.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Single selection</td><td valign="top">-</td><td valign="top">Specifies whether to show the user action only if a single object is selected.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Invoke once</td><td valign="top">-</td><td valign="top">Specifies whether the user action is invoked once for all selected objects.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">File types</td><td valign="top">-</td><td valign="top">Specifies the file types the user action is assigned to.</td></tr>
+	</table> 
+	<p>
 	<p>
 	<h2>Attributes Set When Adding User Actions</h2>
 	The following table shows the attributes that are set, when adding user actions to 
@@ -109,8 +117,7 @@
 	<table>
 	<tr><th align="left">Attribute</th><th></th><th align="left">Comments</th></tr>
 	<tr><td valign="top" nowrap="nowrap">Label</td><td valign="top">-</td><td valign="top">Specifies the name of the user action.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Domain</td><td valign="top">-</td><td valign="top">Specifies the domain of the user action.<br>Must be one of <i>'IBM defined'</i>, <i>'User defined'</i> or <i>'ISV defined'</i>.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Order of the user action.<br>Specifies the order of the user action, when selecting option <i>'User actions'</i> from the context menu of a source member.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Comment</td><td valign="top">-</td><td valign="top">Specifies the comment of the user action.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Command</td><td valign="top">-</td><td valign="top">Specifies the command.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Run environment</td><td valign="top">-</td><td valign="top">Specifies the run environment of the command.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Prompt first</td><td valign="top">-</td><td valign="top">Specifies whether the command is prompted when the user action is invoked.</td></tr>
@@ -118,8 +125,8 @@
 	<tr><td valign="top" nowrap="nowrap">Show action</td><td valign="top">-</td><td valign="top">Specifies whether to show the user action when it applies.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Single selection</td><td valign="top">-</td><td valign="top">Specifies whether to show the user action only if a single object is selected.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Invoke once</td><td valign="top">-</td><td valign="top">Specifies whether the user action is invoked once for all selected objects.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Comment</td><td valign="top">-</td><td valign="top">Specifies the comment of the user action.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">File types</td><td valign="top">-</td><td valign="top">Specifies the file types the user action is assigned to.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Order of the user action.<br>Specifies the order of the user action, when selecting option <i>'User actions'</i> from the context menu of a source member.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Vendor</td><td valign="top">-</td><td valign="top">Specifies the vendor of the user action. May not be used at all.</td></tr>
 	</table> 
 	<p>
@@ -132,8 +139,7 @@
 	<table>
 	<tr><th align="left">Attribute</th><th></th><th align="left">Comments</th></tr>
 	<tr><td valign="top" nowrap="nowrap">Label</td><td valign="top">-</td><td valign="top">Not changed on updates.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Domain</td><td valign="top">-</td><td valign="top">Not changed on updates.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Comment</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Command</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Run environment</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Prompt first</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
@@ -141,10 +147,20 @@
 	<tr><td valign="top" nowrap="nowrap">Show action</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Single selection</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Invoke once</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
-	<tr><td valign="top" nowrap="nowrap">Comment</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">File types</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
+	<tr><td valign="top" nowrap="nowrap">Order</td><td valign="top">-</td><td valign="top">Always updated.</td></tr>
 	<tr><td valign="top" nowrap="nowrap">Vendor</td><td valign="top">-</td><td valign="top">Not changed on updates.</td></tr>
 	</table> 
+	<p>
+	<h2>Restrictions</h2>
+	<table>
+		<tr>
+			<td class="notice">Note: User actions do not have an <i>order</i> attribute in
+			                   WDSCi. Therefore user actions pushed to a WDSCi workspace cannot
+			                   be added to the position stored in the XML file, but are added
+			                   to the end of the list.</td>
+		</tr>
+	</table>
 	<p>
 		<iframe src="../../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
