@@ -97,10 +97,10 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     public void setDefaultCommandString(String commandString) {
         String newCommandString = ensureNotNull(commandString);
-        if (!newCommandString.equals(commandString)) {
+        if (!newCommandString.equals(this.defaultCommandString)) {
             this.defaultCommandString = newCommandString;
             if (StringHelper.isNullOrEmpty(getCurrentCommandString())) {
-                setCurrentCommandString(newCommandString);
+                setCurrentCommandString(this.defaultCommandString);
             }
         }
     }
@@ -111,10 +111,10 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     public void setCurrentCommandString(String commandString) {
         String newCommandString = ensureNotNull(commandString);
-        if (!newCommandString.equals(commandString)) {
+        if (!newCommandString.equals(this.currentCommandString)) {
             this.currentCommandString = newCommandString;
             if (StringHelper.isNullOrEmpty(getDefaultCommandString())) {
-                setDefaultCommandString(newCommandString);
+                setDefaultCommandString(this.currentCommandString);
             }
         }
     }
@@ -171,12 +171,25 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     @Override
     public String getKey() {
-        return compileType.getType() + ":" + label;
+        return getCompileType().getType() + ":" + getLabel();
     }
 
     @Override
     public String getValue() {
-        return ensureNotNull(currentCommandString);
+
+        StringBuilder buffer = new StringBuilder();
+
+        appendAttribute(buffer, getCurrentCommandString());
+
+        return buffer.toString();
+    }
+
+    private void appendAttribute(StringBuilder buffer, String value) {
+
+        if (buffer.length() > 0) {
+            buffer.append(":"); //$NON-NLS-1$
+        }
+        buffer.append(value);
     }
 
     private String ensureNotNull(String value) {
@@ -190,7 +203,7 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
     @Override
     public String toString() {
-        return compileType.getType() + ": " + getLabel() + ": " + getCurrentCommandString();
+        return getCompileType().getType() + ": " + getLabel() + ": " + getCurrentCommandString();
     }
 
     public int compareTo(RSECommand other) {
