@@ -199,9 +199,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
 
         StringBuilder buffer = new StringBuilder();
 
-        appendAttribute(buffer, getLabel());
         appendAttribute(buffer, getComment());
-
         appendAttribute(buffer, getCommandString());
         appendAttribute(buffer, getRunEnvironment());
         appendAttribute(buffer, isPromptFirst());
