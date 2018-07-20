@@ -14,9 +14,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.stream.XMLEventFactory;
@@ -160,91 +162,112 @@ public class XMLCommandHelper extends AbstractXmlHelper {
     public static RSECommand[] restoreCommandsFromXML(File fromFile, boolean singleCompileType, RSEProfile profile, RSECompileType compileType)
         throws Exception {
 
+        Set<String> keys = new HashSet<String>();
+
         ArrayList<RSECommand> items = new ArrayList<RSECommand>();
 
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        InputStream in = null;
+        XMLEventReader eventReader = null;
 
-        InputStream in = new FileInputStream(fromFile);
-        XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+        try {
 
-        RSECompileType type = null;
-        if (singleCompileType) {
-            type = compileType;
-        }
-        RSECommand command = null;
-        StringBuilder elementData = new StringBuilder();
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
-        boolean isValidated = false;
-        String versionNumber = null;
+            in = new FileInputStream(fromFile);
+            eventReader = inputFactory.createXMLEventReader(in);
 
-        while (eventReader.hasNext()) {
+            RSECompileType type = null;
+            if (singleCompileType) {
+                type = compileType;
+            }
+            RSECommand command = null;
+            StringBuilder elementData = new StringBuilder();
 
-            XMLEvent event = eventReader.nextEvent();
+            boolean isValidated = false;
+            String versionNumber = null;
 
-            if (event.isStartElement()) {
-                if (isContainerStartElement(event)) {
-                    versionNumber = getVersionNumber(event);
-                    isValidated = validateVersionNumber(event, MIN_VERSION);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
-                    type = new RSECompileType(profile);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
-                    command = new RSECommand();
-                    command.setCompileType(type);
-                } else if (event.asStartElement().getName().getLocalPart().equals(ID)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(NATURE)) {
-                    startElementCharacters(elementData, event);
-                } else if (event.asStartElement().getName().getLocalPart().equals(MENU_OPTION)) {
-                    startElementCharacters(elementData, event);
-                } else {
+            while (eventReader.hasNext()) {
+
+                XMLEvent event = eventReader.nextEvent();
+
+                if (event.isStartElement()) {
+                    if (isContainerStartElement(event)) {
+                        versionNumber = getVersionNumber(event);
+                        isValidated = validateVersionNumber(event, MIN_VERSION);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
+                        type = new RSECompileType(profile);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
+                        command = new RSECommand();
+                        command.setCompileType(type);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(ID)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(LABEL)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(NATURE)) {
+                        startElementCharacters(elementData, event);
+                    } else if (event.asStartElement().getName().getLocalPart().equals(MENU_OPTION)) {
+                        startElementCharacters(elementData, event);
+                    } else {
+                        clearElementCharacters(elementData);
+                    }
+                } else if (event.isEndElement()) {
+                    if (!isValidated) {
+                        throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Version_number_too_old, versionNumber));
+                    }
+                    if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
+                        type.setType(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
+                        command.setId(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
+                        command.setOrder(xmlToInteger(elementData.toString()));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
+                        command.setLabel(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
+                        command.setLabelEditable(xmlToBoolean(elementData.toString(), true));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
+                        command.setDefaultCommandString(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
+                        command.setCurrentCommandString(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
+                        command.setCommandStringEditable(xmlToBoolean(elementData.toString(), true));
+                    } else if (event.asEndElement().getName().getLocalPart().equals(NATURE)) {
+                        command.setNature(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(MENU_OPTION)) {
+                        command.setMenuOption(elementData.toString());
+                    } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND)) {
+                        String commandKey = command.getKey();
+                        if (keys.contains(commandKey)) {
+                            throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Duplicate_commands, versionNumber));
+                        }
+                        items.add(command);
+                        keys.add(commandKey);
+                    }
                     clearElementCharacters(elementData);
+                } else if (event.isCharacters()) {
+                    collectElementCharacters(elementData, event);
                 }
-            } else if (event.isEndElement()) {
-                if (!isValidated) {
-                    throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository, versionNumber));
-                }
-                if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
-                    type.setType(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(ID)) {
-                    command.setId(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
-                    command.setOrder(xmlToInteger(elementData.toString()));
-                } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
-                    command.setLabel(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(LABEL_EDITABLE)) {
-                    command.setLabelEditable(xmlToBoolean(elementData.toString(), true));
-                } else if (event.asEndElement().getName().getLocalPart().equals(DEFAULT_COMMAND_STRING)) {
-                    command.setDefaultCommandString(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(CURRENT_COMMAND_STRING)) {
-                    command.setCurrentCommandString(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND_STRING_EDITABLE)) {
-                    command.setCommandStringEditable(xmlToBoolean(elementData.toString(), true));
-                } else if (event.asEndElement().getName().getLocalPart().equals(NATURE)) {
-                    command.setNature(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(MENU_OPTION)) {
-                    command.setMenuOption(elementData.toString());
-                } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND)) {
-                    items.add(command);
-                }
-                clearElementCharacters(elementData);
-            } else if (event.isCharacters()) {
-                collectElementCharacters(elementData, event);
+
             }
 
+        } finally {
+            if (in != null) {
+                if (eventReader != null) {
+                    eventReader.close();
+                }
+                in.close();
+            }
         }
 
         RSECommand[] commands = new RSECommand[items.size()];
