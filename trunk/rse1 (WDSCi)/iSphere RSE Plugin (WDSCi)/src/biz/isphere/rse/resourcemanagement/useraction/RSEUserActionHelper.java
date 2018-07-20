@@ -129,12 +129,12 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             if (userActionManager != null) {
 
                 SystemUDActionElement userAction = userActionManager.addAction(systemProfile, label, rseDomain.getDomainType());
+                userAction.setVendor(vendor);
                 // userAction.setOrder(getNextOrderNumber(userActionManager,
                 // rseDomain));
 
                 setUserActionAttributes(commandString, runEnvironment, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection, isInvokeOnce,
                     comment, fileTypes, vendor, userAction);
-                userAction.setVendor(vendor);
 
                 // moveUserActionTo(userActionManager, userAction, order);
 
