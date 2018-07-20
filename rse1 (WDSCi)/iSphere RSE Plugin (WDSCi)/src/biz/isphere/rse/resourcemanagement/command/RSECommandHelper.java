@@ -125,9 +125,9 @@ public class RSECommandHelper extends AbstractSystemHelper {
         return systemCompileCommand;
     }
 
-    private static RSECommand produceCommand(RSECompileType compileType, SystemCompileCommand systemCompileCommand) {
+    private static RSECommand produceCommand(RSECompileType rseCompileType, SystemCompileCommand systemCompileCommand) {
 
-        RSECommand rseCommand = new RSECommand(compileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
+        RSECommand rseCommand = new RSECommand(rseCompileType, systemCompileCommand.getLabel(), systemCompileCommand.isLabelEditable(),
             systemCompileCommand.getDefaultString(), systemCompileCommand.getCurrentString(), systemCompileCommand.isCommandStringEditable(),
             systemCompileCommand.getId(), systemCompileCommand.getNature(), systemCompileCommand.getMenuOption(), systemCompileCommand.getOrder(),
             systemCompileCommand);
@@ -135,40 +135,38 @@ public class RSECommandHelper extends AbstractSystemHelper {
         return rseCommand;
     }
 
-    public static void createCommand(RSECompileType compileType, String label, boolean isLabelEditable, String defaultCommandString,
+    public static void createCommand(RSECompileType rseCompileType, String label, boolean isLabelEditable, String defaultCommandString,
         String currentCommandString, boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
 
         SystemCompileManager compileManager = getCompileManager();
         if (compileManager != null) {
 
-            SystemCompileType type = (SystemCompileType)compileType.getOrigin();
-            if (type == null) {
+            SystemCompileType systemCompileType = (SystemCompileType)rseCompileType.getOrigin();
+            if (systemCompileType == null) {
 
-                RSECompileType[] rseTypes = getCompileTypes(compileType.getProfile());
+                RSECompileType[] rseTypes = getCompileTypes(rseCompileType.getProfile());
                 for (RSECompileType rseType : rseTypes) {
-                    if (rseType.getType().equals(compileType.getType())) {
-                        type = (SystemCompileType)rseType.getOrigin();
+                    if (rseType.getType().equals(rseCompileType.getType())) {
+                        systemCompileType = (SystemCompileType)rseType.getOrigin();
                     }
                 }
 
-                if (type == null) {
-                    SystemProfile systemProfile = getSystemProfile(compileType.getProfile().getName());
+                if (systemCompileType == null) {
+                    SystemProfile systemProfile = getSystemProfile(rseCompileType.getProfile().getName());
                     if (systemProfile != null) {
                         SystemCompileProfile compileProfile = compileManager.getCompileProfile(systemProfile);
                         if (compileProfile != null) {
 
-                            SystemCompileType systemCompileType = new SystemCompileType(compileProfile, compileType.getType());
+                            systemCompileType = new SystemCompileType(compileProfile, rseCompileType.getType());
                             compileProfile.addCompileType(systemCompileType);
                             compileProfile.writeToDisk();
-
-                            type = systemCompileType;
                         }
                     }
                 }
             }
 
-            if (type != null) {
-                SystemCompileCommand compileCommand = new SystemCompileCommand(type);
+            if (systemCompileType != null) {
+                SystemCompileCommand compileCommand = new SystemCompileCommand(systemCompileType);
 
                 compileCommand.setLabel(label);
                 compileCommand.setNature(nature);
@@ -183,13 +181,13 @@ public class RSECommandHelper extends AbstractSystemHelper {
                 compileCommand.setDefaultString(defaultCommandString);
                 compileCommand.setCurrentString(currentCommandString);
 
-                if (order >= type.getCompileCommands().size()) {
-                    type.addCompileCommand(compileCommand);
+                if (order >= systemCompileType.getCompileCommands().size()) {
+                    systemCompileType.addCompileCommand(compileCommand);
                 } else {
-                    type.insertCompileCommand(compileCommand, order);
+                    systemCompileType.insertCompileCommand(compileCommand, order);
                 }
 
-                type.getParentProfile().writeToDisk();
+                systemCompileType.getParentProfile().writeToDisk();
             }
         }
 
@@ -233,7 +231,9 @@ public class RSECommandHelper extends AbstractSystemHelper {
             }
 
             if (systemCompileCommand.isCommandStringEditable()) {
-                systemCompileCommand.setDefaultString(defaultCommandString);
+                if (systemCompileCommand.isUserSupplied()) {
+                    systemCompileCommand.setDefaultString(defaultCommandString);
+                }
                 systemCompileCommand.setCurrentString(currentCommandString);
             }
 
