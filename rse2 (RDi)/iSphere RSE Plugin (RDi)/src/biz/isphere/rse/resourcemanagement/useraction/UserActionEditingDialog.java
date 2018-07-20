@@ -48,9 +48,9 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         }
 
         RSEUserActionHelper.createUserAction(rseUserAction.getDomain(), rseUserAction.getLabel(), rseUserAction.getCommandString(),
-            rseUserAction.isPromptFirst(), rseUserAction.isRefreshAfter(), rseUserAction.isShowAction(), rseUserAction.isSingleSelection(),
-            rseUserAction.isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(), rseUserAction.getVendor(),
-            rseUserAction.getOrder());
+            rseUserAction.getRunEnvironment(), rseUserAction.isPromptFirst(), rseUserAction.isRefreshAfter(), rseUserAction.isShowAction(),
+            rseUserAction.isSingleSelection(), rseUserAction.isInvokeOnce(), rseUserAction.getComment(), rseUserAction.getFileTypes(),
+            rseUserAction.getVendor(), rseUserAction.getOrder());
     }
 
     @Override
@@ -75,11 +75,11 @@ public class UserActionEditingDialog extends AbstractUserActionEditingDialog {
         RSEUserAction userActionWorkspace = (RSEUserAction)resourceWorkspace;
         RSEUserAction userActionRepository = (RSEUserAction)resourceRepository;
 
-        RSEUserActionHelper
-            .updateUserAction(userActionWorkspace.getDomain(), userActionWorkspace.getLabel(), userActionRepository.getCommandString(),
-                userActionRepository.isPromptFirst(), userActionRepository.isRefreshAfter(), userActionRepository.isShowAction(),
-                userActionRepository.isSingleSelection(), userActionRepository.isInvokeOnce(), userActionRepository.getComment(),
-                userActionRepository.getFileTypes(), userActionRepository.getVendor(), userActionRepository.getOrder());
+        RSEUserActionHelper.updateUserAction(userActionWorkspace.getDomain(), userActionWorkspace.getLabel(),
+            userActionRepository.getCommandString(), userActionRepository.getRunEnvironment(), userActionRepository.isPromptFirst(),
+            userActionRepository.isRefreshAfter(), userActionRepository.isShowAction(), userActionRepository.isSingleSelection(),
+            userActionRepository.isInvokeOnce(), userActionRepository.getComment(), userActionRepository.getFileTypes(),
+            userActionRepository.getVendor(), userActionRepository.getOrder());
     }
 
     @Override

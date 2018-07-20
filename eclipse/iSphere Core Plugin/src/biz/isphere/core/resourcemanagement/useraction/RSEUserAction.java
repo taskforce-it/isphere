@@ -18,6 +18,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     private String label;
     private String originalName;
     private String commandString;
+    private String runEnvironment;
     private boolean promptFirst;
     private boolean refreshAfter;
     private boolean showAction;
@@ -30,17 +31,18 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
     private Object origin;
 
     public RSEUserAction() {
-        this(null, null, null, false, false, true, false, false, null, new String[0], null, null, 0, null);
+        this(null, null, null, null, false, false, true, false, false, null, new String[0], null, null, 0, null);
     }
 
-    public RSEUserAction(RSEDomain domain, String label, String commandString, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
-        boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, String originalName, int order,
-        Object origin) {
+    public RSEUserAction(RSEDomain domain, String label, String commandString, String runEnvironment, boolean isPromptFirst, boolean isRefreshAfter,
+        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor,
+        String originalName, int order, Object origin) {
         super(true);
 
         setDomain(domain);
         setLabel(label);
         setCommandString(commandString);
+        setRunEnvironment(runEnvironment);
         setPromptFirst(isPromptFirst);
         setRefreshAfter(isRefreshAfter);
         setShowAction(isShowAction);
@@ -88,6 +90,14 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
 
     public void setCommandString(String commandString) {
         this.commandString = ensureNotNull(commandString);
+    }
+
+    public String getRunEnvironment() {
+        return runEnvironment;
+    }
+
+    public void setRunEnvironment(String runEnvironment) {
+        this.runEnvironment = ensureNotNull(runEnvironment);
     }
 
     public boolean isPromptFirst() {
@@ -181,8 +191,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
 
     @Override
     public String getKey() {
-        System.out.println("User action key: " + Integer.toString(domain.getDomainType()) + ":" + getLabel());
-        return Integer.toString(domain.getDomainType()) + ":" + getLabel(); //$NON-NLS-1$
+        return Integer.toString(getDomain().getDomainType()) + ":" + getLabel(); //$NON-NLS-1$
     }
 
     @Override
@@ -190,17 +199,17 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
 
         StringBuilder buffer = new StringBuilder();
 
-        appendAttribute(buffer, label);
-        appendAttribute(buffer, originalName);
-        appendAttribute(buffer, commandString);
-        appendAttribute(buffer, promptFirst);
-        appendAttribute(buffer, refreshAfter);
-        appendAttribute(buffer, showAction);
-        appendAttribute(buffer, singleSelection);
-        appendAttribute(buffer, invokeOnce);
-        appendAttribute(buffer, comment);
-        appendAttribute(buffer, fileTypes);
-        appendAttribute(buffer, vendor);
+        appendAttribute(buffer, getLabel());
+        appendAttribute(buffer, getComment());
+
+        appendAttribute(buffer, getCommandString());
+        appendAttribute(buffer, getRunEnvironment());
+        appendAttribute(buffer, isPromptFirst());
+        appendAttribute(buffer, isRefreshAfter());
+        appendAttribute(buffer, isShowAction());
+        appendAttribute(buffer, isSingleSelection());
+        appendAttribute(buffer, isInvokeOnce());
+        appendAttribute(buffer, getFileTypes());
 
         return buffer.toString();
     }
