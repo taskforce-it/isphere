@@ -142,7 +142,7 @@ public class RSECommandHelper extends AbstractSystemHelper {
     }
 
     public static void createCommand(RSECompileType rseCompileType, String label, boolean isLabelEditable, String defaultCommandString,
-        String currentCommandString, boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
+        String currentCommandString, boolean isCommandStringEditable, String nature, String menuOption, int order) {
 
         SystemCompileManager compileManager = getCompileManager();
         if (compileManager != null) {
@@ -213,14 +213,10 @@ public class RSECommandHelper extends AbstractSystemHelper {
     }
 
     public static void updateCommand(RSECompileType compileType, String label, boolean isLabelEditable, String defaultCommandString,
-        String currentCommandString, boolean isCommandStringEditable, String id, String nature, String menuOption, int order) {
+        String currentCommandString, boolean isCommandStringEditable, String nature, String menuOption, int order) {
 
         SystemCompileCommand systemCompileCommand = findCompileCommand(compileType.getProfile().getName(), compileType.getType(), label);
         if (systemCompileCommand != null) {
-
-            if (systemCompileCommand.isLabelEditable()) {
-                systemCompileCommand.setLabel(label);
-            }
 
             if (systemCompileCommand.isUserSupplied()) {
                 systemCompileCommand.setNature(nature);
