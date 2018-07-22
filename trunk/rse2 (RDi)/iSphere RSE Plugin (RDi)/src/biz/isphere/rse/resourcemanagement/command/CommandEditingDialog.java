@@ -47,9 +47,10 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
             return;
         }
 
-        RSECommandHelper.createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getDefaultCommandString(),
-            command.getCurrentCommandString(), command.isCommandStringEditable(), command.getId(), RSECommand.NATURE_USER, command.getMenuOption(),
-            command.getOrder());
+        RSECommandHelper
+            .createCommand(command.getCompileType(), command.getLabel(), command.isLabelEditable(), command.getDefaultCommandString(),
+                command.getCurrentCommandString(), command.isCommandStringEditable(), RSECommand.NATURE_USER, command.getMenuOption(),
+                command.getOrder());
     }
 
     @Override
@@ -75,7 +76,7 @@ public class CommandEditingDialog extends AbstractCommandEditingDialog {
 
         RSECommandHelper.updateCommand(commandWorkspace.getCompileType(), commandWorkspace.getLabel(), commandRepository.isLabelEditable(),
             commandRepository.getDefaultCommandString(), commandRepository.getCurrentCommandString(), commandRepository.isCommandStringEditable(),
-            commandRepository.getId(), commandRepository.getNature(), commandRepository.getMenuOption(), commandRepository.getOrder());
+            commandRepository.getNature(), commandRepository.getMenuOption(), commandRepository.getOrder());
     }
 
     @Override
