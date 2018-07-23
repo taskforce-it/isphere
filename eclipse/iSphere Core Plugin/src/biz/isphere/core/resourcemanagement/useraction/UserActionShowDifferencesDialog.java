@@ -36,14 +36,14 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 
-public class UserActionDifferencesDialog extends XDialog {
+public class UserActionShowDifferencesDialog extends XDialog {
 
     private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
     private RSEUserActionBoth input;
     private TableViewer tableViewer;
 
-    protected UserActionDifferencesDialog(Shell parentShell) {
+    protected UserActionShowDifferencesDialog(Shell parentShell) {
         super(parentShell);
     }
 
