@@ -9,10 +9,15 @@
 package biz.isphere.core.resourcemanagement.useraction;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -51,6 +56,48 @@ public class UserActionEditingAreaBothDifferent extends AbstractUserActionEditin
         columnRepositoryType.setWidth(Size.getSize(300));
         columnRepositoryType.setText("Rep.-" + Messages.Command);
 
+    }
+
+    @Override
+    protected void addTablePopupMenu(Table table) {
+
+        Menu menu = new Menu(table);
+        menu.addMenuListener(new UserActionPopupMenu(menu, table) {
+
+            @Override
+            protected boolean isEnabled(MenuItem menuItem, Table table) {
+
+                if (table.getSelectionCount() == 1) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            protected void performAction(MenuItem menuItem, Table table) {
+                performDisplayDifferences(table);
+            }
+        });
+        table.setMenu(menu);
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                Table table = (Table)e.getSource();
+                performDisplayDifferences(table);
+            }
+        });
+    }
+
+    private void performDisplayDifferences(Table table) {
+
+        TableItem[] tableItems = table.getSelection();
+        RSEUserActionBoth data = (RSEUserActionBoth)tableItems[0].getData();
+
+        UserActionDifferencesDialog dialog = new UserActionDifferencesDialog(getShell());
+        dialog.setInput(data);
+        dialog.open();
     }
 
     @Override

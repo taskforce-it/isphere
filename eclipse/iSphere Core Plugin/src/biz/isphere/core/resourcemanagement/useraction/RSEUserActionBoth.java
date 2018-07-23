@@ -10,7 +10,7 @@ package biz.isphere.core.resourcemanagement.useraction;
 
 import biz.isphere.core.resourcemanagement.AbstractResourceBoth;
 
-public class RSEUserActionBoth extends AbstractResourceBoth {
+public class RSEUserActionBoth extends AbstractResourceBoth<RSEUserAction> {
 
     private String name;
 

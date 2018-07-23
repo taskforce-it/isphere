@@ -8,22 +8,22 @@
 
 package biz.isphere.core.resourcemanagement;
 
-public abstract class AbstractResourceBoth extends AbstractResource {
+public abstract class AbstractResourceBoth<M extends AbstractResource> extends AbstractResource {
 
-    private AbstractResource resourceWorkspace;
-    private AbstractResource resourceRepository;
+    private M resourceWorkspace;
+    private M resourceRepository;
 
-    public AbstractResourceBoth(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+    public AbstractResourceBoth(M resourceWorkspace, M resourceRepository) {
         super(resourceWorkspace.isEditable() && resourceRepository.isEditable());
         this.resourceWorkspace = resourceWorkspace;
         this.resourceRepository = resourceRepository;
     }
 
-    public AbstractResource getResourceWorkspace() {
+    public M getResourceWorkspace() {
         return resourceWorkspace;
     }
 
-    public AbstractResource getResourceRepository() {
+    public M getResourceRepository() {
         return resourceRepository;
     }
 

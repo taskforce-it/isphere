@@ -1,4 +1,16 @@
 
+Changelog: iSphere 3.5.0.b005
+-----------------------------
+ • Added "User Action Compare Result" dialog.
+
+Changelog: iSphere 3.5.0.b004
+-----------------------------
+ • Working on user action and command managers. 
+
+Changelog: iSphere 3.5.0.b003
+-----------------------------
+ • Working on user action and command managers. 
+
 Changelog: iSphere 3.5.0.b002
 -----------------------------
  • Added Feature "iSphere RSE User Action Management" to import and 

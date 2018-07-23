@@ -10,7 +10,7 @@ package biz.isphere.core.resourcemanagement.command;
 
 import biz.isphere.core.resourcemanagement.AbstractResourceBoth;
 
-public class RSECommandBoth extends AbstractResourceBoth {
+public class RSECommandBoth extends AbstractResourceBoth<RSECommand> {
 
     private String name;
 
