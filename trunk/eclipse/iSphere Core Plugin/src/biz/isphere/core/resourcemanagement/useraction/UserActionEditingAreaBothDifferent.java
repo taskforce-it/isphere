@@ -95,7 +95,7 @@ public class UserActionEditingAreaBothDifferent extends AbstractUserActionEditin
         TableItem[] tableItems = table.getSelection();
         RSEUserActionBoth data = (RSEUserActionBoth)tableItems[0].getData();
 
-        UserActionDifferencesDialog dialog = new UserActionDifferencesDialog(getShell());
+        UserActionShowDifferencesDialog dialog = new UserActionShowDifferencesDialog(getShell());
         dialog.setInput(data);
         dialog.open();
     }
