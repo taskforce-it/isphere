@@ -93,6 +93,7 @@ public class UserActionDifferencesDialog extends XDialog {
         // /
         TableColumn columnPropertyName = new TableColumn(table, SWT.NONE);
         columnPropertyName.setWidth(Size.getSize(120));
+        columnPropertyName.setResizable(true);
         columnPropertyName.setText(Messages.Property);
 
         // /
