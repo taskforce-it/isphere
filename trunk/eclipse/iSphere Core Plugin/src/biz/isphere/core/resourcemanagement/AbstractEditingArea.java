@@ -153,6 +153,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         }
 
         addTableColumns(tableResources);
+        addTablePopupMenu(tableResources);
 
         TableColumn columnAction = new TableColumn(tableResources, SWT.NONE);
         columnAction.setWidth(Size.getSize(150));
@@ -229,6 +230,9 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
             }
         });
 
+    }
+
+    protected void addTablePopupMenu(Table tableResources2) {
     }
 
     private AbstractResource[] getSelectedResources() {

@@ -10,7 +10,7 @@ package biz.isphere.core.resourcemanagement.filter;
 
 import biz.isphere.core.resourcemanagement.AbstractResourceBoth;
 
-public class RSEFilterBoth extends AbstractResourceBoth {
+public class RSEFilterBoth extends AbstractResourceBoth<RSEFilter> {
 
     private String name;
 

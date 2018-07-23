@@ -1444,6 +1444,34 @@ public class Messages extends NLS {
 
     public static String No_actions_selected;
 
+    public static String Show_differences;
+
+    public static String User_Action_Compare_Result;
+
+    public static String Property;
+
+    public static String Repository_value;
+
+    public static String Workspace_value;
+
+    public static String Property_Comment;
+
+    public static String Property_Command;
+
+    public static String Property_Run_environment;
+
+    public static String Property_Prompt_first;
+
+    public static String Property_Refresh_after;
+
+    public static String Property_Show_action;
+
+    public static String Property_Single_selection_only;
+
+    public static String Property_Invoke_once;
+
+    public static String Property_File_types;
+
     /*
      * Warning messages
      */
