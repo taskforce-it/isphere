@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Message Subsystem Base Plugin
 Bundle-SymbolicName: biz.isphere.messagesubsystem;singleton:=true
-Bundle-Version: 3.5.0.b004
+Bundle-Version: 3.5.0.b005
 Bundle-Activator: biz.isphere.messagesubsystem.ISphereMessageSubsystemBasePlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
