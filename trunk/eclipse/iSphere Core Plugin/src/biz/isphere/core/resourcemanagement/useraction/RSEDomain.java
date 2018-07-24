@@ -8,9 +8,6 @@
 
 package biz.isphere.core.resourcemanagement.useraction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 
 public class RSEDomain implements Comparable<RSEDomain> {
@@ -21,7 +18,6 @@ public class RSEDomain implements Comparable<RSEDomain> {
     private RSEProfile profile;
     private int domainType;
     private String name;
-    private List<RSEUserAction> userActions;
 
     public RSEDomain(RSEProfile profile) {
         this(profile, -1, null);
@@ -31,7 +27,6 @@ public class RSEDomain implements Comparable<RSEDomain> {
         this.profile = profile;
         this.domainType = domainType;
         this.name = name;
-        this.userActions = new ArrayList<RSEUserAction>();
     }
 
     public RSEProfile getProfile() {
