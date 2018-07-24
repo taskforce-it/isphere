@@ -41,8 +41,8 @@ import biz.isphere.rse.resourcemanagement.namedtype.RSENamedTypeHelper;
 
 public class XMLUserActionHelper extends AbstractXmlHelper {
 
-    private static final String CURRENT_VERSION = "1.0.0";
-    private static final String MIN_VERSION = "1.0.0";
+    private static final String CURRENT_VERSION = "1.1.0";
+    private static final String MIN_VERSION = "1.1.0";
 
     private static final String DOMAINS = "domains";
     private static final String DOMAIN = "domain";
@@ -80,55 +80,43 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
         eventWriter.add(eventFactory.createStartDocument());
         eventWriter.add(end);
 
-        if (singleDomain) {
+        startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
 
-            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
+        eventWriter.add(eventFactory.createStartElement("", "", DOMAINS));
+        eventWriter.add(end);
 
-            createUserActions(eventWriter, eventFactory, end, tab, userActions);
+        Map<RSEDomain, List<RSEUserAction>> _pools = new TreeMap<RSEDomain, List<RSEUserAction>>();
+        for (int idx = 0; idx < userActions.length; idx++) {
+            RSEDomain _domain = userActions[idx].getDomain();
+            List<RSEUserAction> _userActions = (List<RSEUserAction>)_pools.get(_domain);
+            if (_userActions == null) {
+                _userActions = new LinkedList<RSEUserAction>();
+                _pools.put(_domain, _userActions);
+            }
+            _userActions.add(userActions[idx]);
+        }
 
-            endContainer(eventWriter, eventFactory, end);
+        for (Map.Entry<RSEDomain, List<RSEUserAction>> entry : _pools.entrySet()) {
 
-        } else {
-
-            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
-
-            eventWriter.add(eventFactory.createStartElement("", "", DOMAINS));
+            eventWriter.add(eventFactory.createStartElement("", "", DOMAIN));
             eventWriter.add(end);
 
-            Map<RSEDomain, List<RSEUserAction>> _pools = new TreeMap<RSEDomain, List<RSEUserAction>>();
-            for (int idx = 0; idx < userActions.length; idx++) {
-                RSEDomain _domain = userActions[idx].getDomain();
-                List<RSEUserAction> _userActions = (List<RSEUserAction>)_pools.get(_domain);
-                if (_userActions == null) {
-                    _userActions = new LinkedList<RSEUserAction>();
-                    _pools.put(_domain, _userActions);
-                }
-                _userActions.add(userActions[idx]);
-            }
+            createNode(eventWriter, eventFactory, end, tab, DOMAIN_TYPE, integerToXml(entry.getKey().getDomainType()));
+            createNode(eventWriter, eventFactory, end, tab, DOMAIN_NAME, entry.getKey().getName());
 
-            for (Map.Entry<RSEDomain, List<RSEUserAction>> entry : _pools.entrySet()) {
+            RSEUserAction[] _userActions = new RSEUserAction[entry.getValue().size()];
+            entry.getValue().toArray(_userActions);
+            createUserActions(eventWriter, eventFactory, end, tab, _userActions);
 
-                eventWriter.add(eventFactory.createStartElement("", "", DOMAIN));
-                eventWriter.add(end);
-
-                createNode(eventWriter, eventFactory, end, tab, DOMAIN_TYPE, integerToXml(entry.getKey().getDomainType()));
-                createNode(eventWriter, eventFactory, end, tab, DOMAIN_NAME, entry.getKey().getName());
-
-                RSEUserAction[] _userActions = new RSEUserAction[entry.getValue().size()];
-                entry.getValue().toArray(_userActions);
-                createUserActions(eventWriter, eventFactory, end, tab, _userActions);
-
-                eventWriter.add(eventFactory.createEndElement("", "", DOMAIN));
-                eventWriter.add(end);
-
-            }
-
-            eventWriter.add(eventFactory.createEndElement("", "", DOMAINS));
+            eventWriter.add(eventFactory.createEndElement("", "", DOMAIN));
             eventWriter.add(end);
-
-            endContainer(eventWriter, eventFactory, end);
 
         }
+
+        eventWriter.add(eventFactory.createEndElement("", "", DOMAINS));
+        eventWriter.add(end);
+
+        endContainer(eventWriter, eventFactory, end);
 
         eventWriter.add(eventFactory.createEndDocument());
 
@@ -191,9 +179,9 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
             eventReader = inputFactory.createXMLEventReader(in);
 
             RSEDomain _domain = null;
-            if (singleDomain) {
-                _domain = domain;
-            }
+            // if (singleDomain) {
+            // _domain = domain;
+            // }
             RSEUserAction userAction = null;
             StringBuilder elementData = new StringBuilder();
 
@@ -253,7 +241,11 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
                         _domain.setName(elementData.toString());
                     } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
-                        _domain.setDomainType(xmlToInteger(elementData.toString()));
+                        int domainType = xmlToInteger(elementData.toString());
+                        if (singleDomain && domainType != domain.getDomainType()) {
+                            throw new Exception("Invalid domain type.");
+                        }
+                        _domain.setDomainType(domainType);
                     } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
                         userAction.setOrder(xmlToInteger(elementData.toString()));
                     } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
@@ -319,5 +311,4 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
         return userActions;
     }
-
 }
