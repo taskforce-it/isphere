@@ -23,7 +23,7 @@ public class RSENamedType {
 
         setDomain(domain);
         setLabel(label);
-        setLabel(types);
+        setTypes(types);
         setOrigin(origin);
     }
 
