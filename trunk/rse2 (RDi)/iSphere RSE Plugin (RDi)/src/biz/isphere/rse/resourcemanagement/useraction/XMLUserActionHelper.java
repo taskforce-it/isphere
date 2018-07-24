@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.core.resourcemanagement.useraction.MissingNamedTypesException;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.core.resourcemanagement.useraction.UserActionXmlComparator;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
+import biz.isphere.rse.resourcemanagement.namedtype.RSENamedTypeHelper;
 
 public class XMLUserActionHelper extends AbstractXmlHelper {
 
@@ -178,6 +181,8 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
         InputStream in = null;
         XMLEventReader eventReader = null;
 
+        Set<String> missingNamedTypes = new LinkedHashSet<String>();
+
         try {
 
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -280,6 +285,13 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                         if (keys.contains(userActionKey)) {
                             throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Duplicate_commands, versionNumber));
                         }
+
+                        for (String fileType : userAction.getFileTypes()) {
+                            if (!RSENamedTypeHelper.hasNamedType(userAction.getDomain(), fileType)) {
+                                missingNamedTypes.add(fileType);
+                            }
+                        }
+
                         items.add(userAction);
                     }
                     clearElementCharacters(elementData);
@@ -296,6 +308,10 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                 }
                 in.close();
             }
+        }
+
+        if (!missingNamedTypes.isEmpty()) {
+            throw new MissingNamedTypesException(missingNamedTypes.toArray(new String[missingNamedTypes.size()]));
         }
 
         RSEUserAction[] userActions = new RSEUserAction[items.size()];
