@@ -90,7 +90,7 @@ public class RSENamedTypeHelper extends AbstractSystemHelper {
         return rseNamedType;
     }
 
-    public static void createNamedType(RSEDomain rseDomain, String label, String types, String vendor, int order) {
+    public static void createNamedType(RSEDomain rseDomain, String label, String types, String vendor) {
 
         SystemProfile systemProfile = getSystemProfile(rseDomain.getProfile().getName());
         if (systemProfile != null) {
@@ -99,13 +99,7 @@ public class RSENamedTypeHelper extends AbstractSystemHelper {
 
                 SystemUDTypeElement namedType = userActionManager.addType(rseDomain.getDomainType(), label);
                 namedType.setVendor(vendor);
-                // Not required for RDi
-                // userAction.setOrder(getNextOrderNumber(userActionManager,
-                // rseDomain));
-
                 namedType.setTypes(types);
-
-                // moveUserActionTo(userActionManager, userAction, order);
 
                 saveNamedTypes(userActionManager, systemProfile);
             }
