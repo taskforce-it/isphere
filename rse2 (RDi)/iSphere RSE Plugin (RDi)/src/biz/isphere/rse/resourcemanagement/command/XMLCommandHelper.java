@@ -9,9 +9,6 @@
 package biz.isphere.rse.resourcemanagement.command;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,11 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
@@ -35,6 +28,7 @@ import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
+import biz.isphere.rse.resourcemanagement.XMLPrettyPrintWriter;
 
 public class XMLCommandHelper extends AbstractXmlHelper {
 
@@ -61,31 +55,23 @@ public class XMLCommandHelper extends AbstractXmlHelper {
 
         Arrays.sort(commands, new CommandXmlComparator());
 
-        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        XMLPrettyPrintWriter streamWriter = createXMLStreamWriter(toFile);
 
-        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
-
-        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-        XMLEvent end = eventFactory.createDTD("\n");
-        XMLEvent tab = eventFactory.createDTD("\t");
-
-        eventWriter.add(eventFactory.createStartDocument());
-        eventWriter.add(end);
+        streamWriter.writeStartDocument();
 
         if (singleCompileType) {
 
-            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
+            startContainer(streamWriter, CURRENT_VERSION);
 
-            createCommands(eventWriter, eventFactory, end, tab, commands);
+            createCommands(streamWriter, commands);
 
-            endContainer(eventWriter, eventFactory, end);
+            endContainer(streamWriter);
 
         } else {
 
-            startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
+            startContainer(streamWriter, CURRENT_VERSION);
 
-            eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPES));
-            eventWriter.add(end);
+            streamWriter.writeStartElement(COMPILE_TYPES);
 
             Map<String, List<RSECommand>> _pools = new TreeMap<String, List<RSECommand>>();
             for (int idx = 0; idx < commands.length; idx++) {
@@ -100,62 +86,54 @@ public class XMLCommandHelper extends AbstractXmlHelper {
 
             for (Map.Entry<String, List<RSECommand>> entry : _pools.entrySet()) {
 
-                eventWriter.add(eventFactory.createStartElement("", "", COMPILE_TYPE));
-                eventWriter.add(end);
+                streamWriter.writeStartElement(COMPILE_TYPE);
 
-                createNode(eventWriter, eventFactory, end, tab, COMPILE_TYPE_TYPE, entry.getKey());
+                createNode(streamWriter, COMPILE_TYPE_TYPE, entry.getKey());
 
                 RSECommand[] _commands = new RSECommand[entry.getValue().size()];
                 entry.getValue().toArray(_commands);
-                createCommands(eventWriter, eventFactory, end, tab, _commands);
+                createCommands(streamWriter, _commands);
 
-                eventWriter.add(eventFactory.createEndElement("", "", COMPILE_TYPE));
-                eventWriter.add(end);
+                streamWriter.writeEndElement();
 
             }
 
-            eventWriter.add(eventFactory.createEndElement("", "", COMPILE_TYPES));
-            eventWriter.add(end);
+            streamWriter.writeEndElement();
 
-            endContainer(eventWriter, eventFactory, end);
+            endContainer(streamWriter);
 
         }
 
-        eventWriter.add(eventFactory.createEndDocument());
+        streamWriter.writeEndDocument();
 
-        eventWriter.flush();
-        eventWriter.close();
+        streamWriter.flush();
+        streamWriter.close();
 
     }
 
-    private static void createCommands(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, RSECommand[] commands)
-        throws XMLStreamException {
+    private static void createCommands(XMLPrettyPrintWriter streamWriter, RSECommand[] commands) throws XMLStreamException {
 
-        eventWriter.add(eventFactory.createStartElement("", "", COMMANDS));
-        eventWriter.add(end);
+        streamWriter.writeStartElement(COMMANDS);
 
         for (int idx1 = 0; idx1 < commands.length; idx1++) {
 
-            eventWriter.add(eventFactory.createStartElement("", "", COMMAND));
-            eventWriter.add(end);
+            streamWriter.writeStartElement(COMMAND);
 
-            createNode(eventWriter, eventFactory, end, tab, ID, commands[idx1].getId());
-            createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(commands[idx1].getOrder()));
-            createNode(eventWriter, eventFactory, end, tab, LABEL, commands[idx1].getLabel());
-            createNode(eventWriter, eventFactory, end, tab, LABEL_EDITABLE, commands[idx1].isLabelEditable());
-            createNode(eventWriter, eventFactory, end, tab, DEFAULT_COMMAND_STRING, commands[idx1].getDefaultCommandString());
-            createNode(eventWriter, eventFactory, end, tab, CURRENT_COMMAND_STRING, commands[idx1].getCurrentCommandString());
-            createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING_EDITABLE, commands[idx1].isCommandStringEditable());
-            createNode(eventWriter, eventFactory, end, tab, NATURE, commands[idx1].getNature());
-            createNode(eventWriter, eventFactory, end, tab, MENU_OPTION, commands[idx1].getMenuOption());
+            createNode(streamWriter, ID, commands[idx1].getId());
+            createNode(streamWriter, ORDER, integerToXml(commands[idx1].getOrder()));
+            createNode(streamWriter, LABEL, commands[idx1].getLabel());
+            createNode(streamWriter, LABEL_EDITABLE, commands[idx1].isLabelEditable());
+            createNode(streamWriter, DEFAULT_COMMAND_STRING, commands[idx1].getDefaultCommandString());
+            createNode(streamWriter, CURRENT_COMMAND_STRING, commands[idx1].getCurrentCommandString());
+            createNode(streamWriter, COMMAND_STRING_EDITABLE, commands[idx1].isCommandStringEditable());
+            createNode(streamWriter, NATURE, commands[idx1].getNature());
+            createNode(streamWriter, MENU_OPTION, commands[idx1].getMenuOption());
 
-            eventWriter.add(eventFactory.createEndElement("", "", COMMAND));
-            eventWriter.add(end);
+            streamWriter.writeEndElement();
 
         }
 
-        eventWriter.add(eventFactory.createEndElement("", "", COMMANDS));
-        eventWriter.add(end);
+        streamWriter.writeEndElement();
 
     }
 
@@ -166,15 +144,11 @@ public class XMLCommandHelper extends AbstractXmlHelper {
 
         ArrayList<RSECommand> items = new ArrayList<RSECommand>();
 
-        InputStream in = null;
         XMLEventReader eventReader = null;
 
         try {
 
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
-            in = new FileInputStream(fromFile);
-            eventReader = inputFactory.createXMLEventReader(in);
+            eventReader = createXMLEventReader(fromFile);
 
             RSECompileType type = null;
             if (singleCompileType) {
@@ -191,14 +165,19 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                 XMLEvent event = eventReader.nextEvent();
 
                 if (event.isStartElement()) {
+                    // Element: Container
                     if (isContainerStartElement(event)) {
                         versionNumber = getVersionNumber(event);
                         isValidated = validateVersionNumber(event, MIN_VERSION);
-                    } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
+                    } else
+                    // Element: Compile type
+                    if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE)) {
                         type = new RSECompileType(profile);
                     } else if (event.asStartElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                         startElementCharacters(elementData, event);
-                    } else if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
+                    } else
+                    // Element: Command
+                    if (event.asStartElement().getName().getLocalPart().equals(COMMAND)) {
                         command = new RSECommand();
                         command.setCompileType(type);
                     } else if (event.asStartElement().getName().getLocalPart().equals(ID)) {
@@ -262,11 +241,8 @@ public class XMLCommandHelper extends AbstractXmlHelper {
             }
 
         } finally {
-            if (in != null) {
-                if (eventReader != null) {
-                    eventReader.close();
-                }
-                in.close();
+            if (eventReader != null) {
+                eventReader.close();
             }
         }
 

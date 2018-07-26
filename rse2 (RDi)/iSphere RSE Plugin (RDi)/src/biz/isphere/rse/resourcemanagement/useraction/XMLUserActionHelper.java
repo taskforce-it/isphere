@@ -9,9 +9,6 @@
 package biz.isphere.rse.resourcemanagement.useraction;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,11 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
@@ -37,6 +30,7 @@ import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.core.resourcemanagement.useraction.UserActionXmlComparator;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
+import biz.isphere.rse.resourcemanagement.XMLPrettyPrintWriter;
 import biz.isphere.rse.resourcemanagement.namedtype.RSENamedTypeHelper;
 
 public class XMLUserActionHelper extends AbstractXmlHelper {
@@ -69,21 +63,13 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
         Arrays.sort(userActions, new UserActionXmlComparator());
 
-        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        XMLPrettyPrintWriter streamWriter = createXMLStreamWriter(toFile);
 
-        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
+        streamWriter.writeStartDocument();
 
-        XMLEventFactory eventFactory = XMLEventFactory.newInstance();
-        XMLEvent end = eventFactory.createDTD("\n");
-        XMLEvent tab = eventFactory.createDTD("\t");
+        startContainer(streamWriter, CURRENT_VERSION);
 
-        eventWriter.add(eventFactory.createStartDocument());
-        eventWriter.add(end);
-
-        startContainer(eventWriter, eventFactory, CURRENT_VERSION, end);
-
-        eventWriter.add(eventFactory.createStartElement("", "", DOMAINS));
-        eventWriter.add(end);
+        streamWriter.writeStartElement(DOMAINS);
 
         Map<RSEDomain, List<RSEUserAction>> _pools = new TreeMap<RSEDomain, List<RSEUserAction>>();
         for (int idx = 0; idx < userActions.length; idx++) {
@@ -98,64 +84,57 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
         for (Map.Entry<RSEDomain, List<RSEUserAction>> entry : _pools.entrySet()) {
 
-            eventWriter.add(eventFactory.createStartElement("", "", DOMAIN));
-            eventWriter.add(end);
+            streamWriter.writeStartElement(DOMAIN);
 
-            createNode(eventWriter, eventFactory, end, tab, DOMAIN_TYPE, integerToXml(entry.getKey().getDomainType()));
-            createNode(eventWriter, eventFactory, end, tab, DOMAIN_NAME, entry.getKey().getName());
+            createNode(streamWriter, DOMAIN_TYPE, integerToXml(entry.getKey().getDomainType()));
+            createNode(streamWriter, DOMAIN_NAME, entry.getKey().getName());
 
             RSEUserAction[] _userActions = new RSEUserAction[entry.getValue().size()];
             entry.getValue().toArray(_userActions);
-            createUserActions(eventWriter, eventFactory, end, tab, _userActions);
+            createUserActions(streamWriter, _userActions);
 
-            eventWriter.add(eventFactory.createEndElement("", "", DOMAIN));
-            eventWriter.add(end);
+            streamWriter.writeEndElement();
 
         }
 
-        eventWriter.add(eventFactory.createEndElement("", "", DOMAINS));
-        eventWriter.add(end);
+        streamWriter.writeEndElement();
 
-        endContainer(eventWriter, eventFactory, end);
+        endContainer(streamWriter);
 
-        eventWriter.add(eventFactory.createEndDocument());
+        streamWriter.writeEndDocument();
 
-        eventWriter.close();
+        streamWriter.flush();
+        streamWriter.close();
 
     }
 
-    private static void createUserActions(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab,
-        RSEUserAction[] userActions) throws XMLStreamException {
+    private static void createUserActions(XMLPrettyPrintWriter streamWriter, RSEUserAction[] userActions) throws XMLStreamException {
 
-        eventWriter.add(eventFactory.createStartElement("", "", USER_ACTIONS));
-        eventWriter.add(end);
+        streamWriter.writeStartElement(USER_ACTIONS);
 
         for (int idx1 = 0; idx1 < userActions.length; idx1++) {
 
-            eventWriter.add(eventFactory.createStartElement("", "", USER_ACTION));
-            eventWriter.add(end);
+            streamWriter.writeStartElement(USER_ACTION);
 
-            createNode(eventWriter, eventFactory, end, tab, ORDER, integerToXml(userActions[idx1].getOrder()));
-            createNode(eventWriter, eventFactory, end, tab, LABEL, userActions[idx1].getLabel());
-            createNode(eventWriter, eventFactory, end, tab, ORIGINAL_NAME, userActions[idx1].getOriginalName());
-            createNode(eventWriter, eventFactory, end, tab, COMMAND_STRING, userActions[idx1].getCommandString());
-            createNode(eventWriter, eventFactory, end, tab, RUN_ENVIRONMENT, userActions[idx1].getRunEnvironment());
-            createNode(eventWriter, eventFactory, end, tab, PROMPT_FIRST, userActions[idx1].isPromptFirst());
-            createNode(eventWriter, eventFactory, end, tab, REFRESH_AFTER, userActions[idx1].isRefreshAfter());
-            createNode(eventWriter, eventFactory, end, tab, SHOW_ACTION, userActions[idx1].isShowAction());
-            createNode(eventWriter, eventFactory, end, tab, SINGLE_SELECTION, userActions[idx1].isSingleSelection());
-            createNode(eventWriter, eventFactory, end, tab, INVOKE_ONCE, userActions[idx1].isInvokeOnce());
-            createNode(eventWriter, eventFactory, end, tab, VENDOR, userActions[idx1].getVendor());
-            createNode(eventWriter, eventFactory, end, tab, COMMENT, userActions[idx1].getComment());
-            createNode(eventWriter, eventFactory, end, tab, FILE_TYPES, arrayToXml(userActions[idx1].getFileTypes()));
+            createNode(streamWriter, ORDER, integerToXml(userActions[idx1].getOrder()));
+            createNode(streamWriter, LABEL, userActions[idx1].getLabel());
+            createNode(streamWriter, ORIGINAL_NAME, userActions[idx1].getOriginalName());
+            createNode(streamWriter, COMMAND_STRING, userActions[idx1].getCommandString());
+            createNode(streamWriter, RUN_ENVIRONMENT, userActions[idx1].getRunEnvironment());
+            createNode(streamWriter, PROMPT_FIRST, userActions[idx1].isPromptFirst());
+            createNode(streamWriter, REFRESH_AFTER, userActions[idx1].isRefreshAfter());
+            createNode(streamWriter, SHOW_ACTION, userActions[idx1].isShowAction());
+            createNode(streamWriter, SINGLE_SELECTION, userActions[idx1].isSingleSelection());
+            createNode(streamWriter, INVOKE_ONCE, userActions[idx1].isInvokeOnce());
+            createNode(streamWriter, VENDOR, userActions[idx1].getVendor());
+            createNode(streamWriter, COMMENT, userActions[idx1].getComment());
+            createNode(streamWriter, FILE_TYPES, arrayToXml(userActions[idx1].getFileTypes()));
 
-            eventWriter.add(eventFactory.createEndElement("", "", USER_ACTION));
-            eventWriter.add(end);
+            streamWriter.writeEndElement();
 
         }
 
-        eventWriter.add(eventFactory.createEndElement("", "", USER_ACTIONS));
-        eventWriter.add(end);
+        streamWriter.writeEndElement();
 
     }
 
@@ -166,22 +145,15 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
         ArrayList<RSEUserAction> items = new ArrayList<RSEUserAction>();
 
-        InputStream in = null;
         XMLEventReader eventReader = null;
 
         Set<String> missingNamedTypes = new LinkedHashSet<String>();
 
         try {
 
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
-            in = new FileInputStream(fromFile);
-            eventReader = inputFactory.createXMLEventReader(in);
+            eventReader = createXMLEventReader(fromFile);
 
             RSEDomain _domain = null;
-            // if (singleDomain) {
-            // _domain = domain;
-            // }
             RSEUserAction userAction = null;
             StringBuilder elementData = new StringBuilder();
 
@@ -193,16 +165,22 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                 XMLEvent event = eventReader.nextEvent();
 
                 if (event.isStartElement()) {
+                    // Element: Container
                     if (isContainerStartElement(event)) {
                         versionNumber = getVersionNumber(event);
                         isValidated = validateVersionNumber(event, MIN_VERSION);
-                    } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
+                    } else
+                    // Element: Domain
+                    if (event.asStartElement().getName().getLocalPart().equals(DOMAIN)) {
                         _domain = new RSEDomain(profile);
                     } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
                         startElementCharacters(elementData, event);
                     } else if (event.asStartElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
                         startElementCharacters(elementData, event);
-                    } else if (event.asStartElement().getName().getLocalPart().equals(USER_ACTION)) {
+                    } else
+                    // Element: Named type
+                    // Element: User action
+                    if (event.asStartElement().getName().getLocalPart().equals(USER_ACTION)) {
                         userAction = new RSEUserAction();
                         userAction.setDomain(_domain);
                     } else if (event.asStartElement().getName().getLocalPart().equals(ORDER)) {
@@ -294,11 +272,8 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
             }
 
         } finally {
-            if (in != null) {
-                if (eventReader != null) {
-                    eventReader.close();
-                }
-                in.close();
+            if (eventReader != null) {
+                eventReader.close();
             }
         }
 
