@@ -8,14 +8,18 @@
 
 package biz.isphere.rse.resourcemanagement;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -70,23 +74,31 @@ public abstract class AbstractXmlHelper {
         return true;
     }
 
-    protected static void startContainer(XMLEventWriter eventWriter, XMLEventFactory eventFactory, String version, XMLEvent end)
-        throws XMLStreamException {
+    protected static XMLEventReader createXMLEventReader(File file) throws FileNotFoundException, XMLStreamException {
 
-        Attribute versionAttribute = eventFactory.createAttribute("version", version);
-        List<?> attributeList = Arrays.asList(versionAttribute);
-        List<?> nsList = Arrays.asList();
+        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(file));
 
-        StartElement commandsElement = eventFactory.createStartElement("", "", CONTAINER, attributeList.iterator(), nsList.iterator());
-        eventWriter.add(commandsElement);
-        eventWriter.add(end);
-
+        return eventReader;
     }
 
-    protected static void endContainer(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end) throws XMLStreamException {
+    protected static XMLPrettyPrintWriter createXMLStreamWriter(File file) throws FileNotFoundException, XMLStreamException {
 
-        eventWriter.add(eventFactory.createEndElement("", "", CONTAINER));
-        eventWriter.add(end);
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(new FileOutputStream(file));
+
+        return new XMLPrettyPrintWriter(streamWriter);
+    }
+
+    protected static void startContainer(XMLPrettyPrintWriter eventWriter, String version) throws XMLStreamException {
+
+        eventWriter.writeStartElement(CONTAINER);
+        eventWriter.writeAttribute("version", version);
+    }
+
+    protected static void endContainer(XMLPrettyPrintWriter eventWriter) throws XMLStreamException {
+
+        eventWriter.writeEndElement();
     }
 
     protected static String arrayToXml(String[] fileTypes) {
@@ -147,22 +159,14 @@ public abstract class AbstractXmlHelper {
         elementData.replace(0, elementData.length(), ""); //$NON-NLS-1$
     }
 
-    protected static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, boolean value)
-        throws XMLStreamException {
-        createNode(eventWriter, eventFactory, end, tab, name, booleanToXml(value));
+    protected static void createNode(XMLPrettyPrintWriter eventWriter, String name, boolean value) throws XMLStreamException {
+        createNode(eventWriter, name, booleanToXml(value));
     }
 
-    protected static void createNode(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, String name, String value)
-        throws XMLStreamException {
+    protected static void createNode(XMLPrettyPrintWriter eventWriter, String name, String value) throws XMLStreamException {
 
-        eventWriter.add(tab);
-        eventWriter.add(eventFactory.createStartElement("", "", name));
-
-        eventWriter.add(eventFactory.createCharacters(value));
-
-        eventWriter.add(eventFactory.createEndElement("", "", name));
-        eventWriter.add(end);
-
+        eventWriter.writeStartElement(name);
+        eventWriter.writeCharacters(value);
+        eventWriter.writeEndElement();
     }
-
 }
