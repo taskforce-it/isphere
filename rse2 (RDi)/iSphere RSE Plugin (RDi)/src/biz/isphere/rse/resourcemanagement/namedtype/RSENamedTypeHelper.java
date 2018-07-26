@@ -98,13 +98,7 @@ public class RSENamedTypeHelper extends AbstractSystemHelper {
 
                 SystemUDTypeElement namedType = userActionManager.addType(rseDomain.getDomainType(), label);
                 namedType.setVendor(vendor);
-                // Not required for RDi
-                // userAction.setOrder(getNextOrderNumber(userActionManager,
-                // rseDomain));
-
                 namedType.setTypes(types);
-
-                // moveUserActionTo(userActionManager, userAction, order);
 
                 saveNamedTypes(userActionManager, systemProfile);
             }
