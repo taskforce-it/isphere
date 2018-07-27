@@ -215,12 +215,10 @@ public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog 
             setProfile(profiles[0]);
         }
 
-        String domainName = loadValue(DOMAIN, null);
-        if (domainName != null) {
-            for (RSEDomain domain : domains) {
-                if (domainName.equals(domain.getName())) {
-                    comboViewerDomains.setSelection(new StructuredSelection(domain), true);
-                }
+        int domainIndex = loadIntValue(DOMAIN, 0);
+        for (RSEDomain domain : domains) {
+            if (domainIndex == domain.getDomainType()) {
+                comboViewerDomains.setSelection(new StructuredSelection(domain), true);
             }
         }
 
@@ -248,8 +246,8 @@ public abstract class AbstractUserActionEntryDialog extends AbstractEntryDialog 
             Object element = ((StructuredSelection)selection).getFirstElement();
             if (element instanceof RSEDomain) {
                 RSEDomain domain = (RSEDomain)element;
-                String domainName = domain.getName();
-                storeValue(DOMAIN, domainName);
+                int domainIndex = domain.getDomainType();
+                storeValue(DOMAIN, domainIndex);
             }
         }
     }

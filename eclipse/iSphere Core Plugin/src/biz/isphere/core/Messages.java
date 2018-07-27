@@ -1472,6 +1472,16 @@ public class Messages extends NLS {
 
     public static String Property_File_types;
 
+    public static String Cannot_import_user_actions_because_the_following_named_types_are_missing_colon;
+
+    public static String Cannot_import_user_actions_because_the_domain_A_found_in_the_XML_file_does_not_match_the_selected_domain;
+
+    public static String Cannot_load_the_selected_repository_Version_number_too_old;
+
+    public static String Cannot_load_the_selected_repository_Duplicate_commands;
+
+    public static String Cannot_load_the_selected_repository_Duplicate_user_actions;
+
     /*
      * Warning messages
      */
