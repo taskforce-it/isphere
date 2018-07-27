@@ -179,26 +179,9 @@ public class RSECommand extends AbstractResource implements Comparable<RSEComman
 
         StringBuilder buffer = new StringBuilder();
 
-        appendAttribute(buffer, getCurrentCommandString());
+        appendAttribute(buffer, unifyCommandString(getCurrentCommandString()));
 
         return buffer.toString();
-    }
-
-    private void appendAttribute(StringBuilder buffer, String value) {
-
-        if (buffer.length() > 0) {
-            buffer.append(":"); //$NON-NLS-1$
-        }
-        buffer.append(value);
-    }
-
-    private String ensureNotNull(String value) {
-
-        if (value == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return value;
     }
 
     @Override

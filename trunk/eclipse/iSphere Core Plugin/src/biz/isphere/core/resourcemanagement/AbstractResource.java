@@ -9,6 +9,8 @@
 package biz.isphere.core.resourcemanagement;
 
 import biz.isphere.core.Messages;
+import biz.isphere.core.clcommands.CLCommand;
+import biz.isphere.core.clcommands.CLParser;
 
 public abstract class AbstractResource {
 
@@ -61,5 +63,57 @@ public abstract class AbstractResource {
     public abstract String getKey();
 
     public abstract String getValue();
+
+    protected void appendAttribute(StringBuilder buffer, String value) {
+
+        if (buffer.length() > 0) {
+            buffer.append(":"); //$NON-NLS-1$
+        }
+        buffer.append(value);
+    }
+
+    protected void appendAttribute(StringBuilder buffer, String[] values) {
+
+        if (buffer.length() > 0) {
+            buffer.append(":"); //$NON-NLS-1$
+        }
+
+        buffer.append("["); //$NON-NLS-1$
+        boolean isFirstItem = true;
+        for (String value : values) {
+            if (!isFirstItem) {
+                buffer.append(","); //$NON-NLS-1$
+            } else {
+                isFirstItem = false;
+            }
+            buffer.append(value);
+        }
+        buffer.append("]"); //$NON-NLS-1$
+    }
+
+    protected void appendAttribute(StringBuilder buffer, boolean value) {
+
+        if (buffer.length() > 0) {
+            buffer.append(":"); //$NON-NLS-1$
+        }
+        buffer.append(Boolean.toString(value));
+    }
+
+    protected String unifyCommandString(String commandString) {
+
+        CLParser parser = new CLParser();
+        CLCommand clCommand = parser.parseCommand(commandString);
+
+        return clCommand.getUnifiedCommandString();
+    }
+
+    protected String ensureNotNull(String value) {
+
+        if (value == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return value;
+    }
 
 }
