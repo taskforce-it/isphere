@@ -20,6 +20,7 @@ import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionElement;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionManager;
 import org.eclipse.rse.internal.useractions.ui.uda.SystemUDActionSubsystem;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
@@ -46,13 +47,33 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             if (userActionManager != null) {
                 String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
                 for (String domainName : domainNames) {
+                    String profileName = rseProfile.getName();
                     int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
-                    rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+                    String xlatedDomainName = RSEUserActionHelper.mapDomainName(profileName, domainIndex);
+                    rseDomains.add(produceDomain(rseProfile, domainIndex, xlatedDomainName));
                 }
             }
         }
 
         return rseDomains.toArray(new RSEDomain[rseDomains.size()]);
+    }
+
+    public static String mapDomainName(RSEDomain rseDomain) {
+
+        String profileName = rseDomain.getProfile().getName();
+        int domainIndex = rseDomain.getDomainType();
+
+        return mapDomainName(profileName, domainIndex);
+    }
+
+    public static String mapDomainName(String profileName, int domainIndex) {
+
+        try {
+            return getUserActionManager(getSystemProfile(profileName)).getActionSubSystem().mapDomainXlatedName(domainIndex);
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not map domain type to domain name ***", e); //$NON-NLS-1$
+            return Integer.toString(domainIndex);
+        }
     }
 
     public static RSEUserAction[] getUserActions(RSEProfile rseProfile) {
@@ -84,6 +105,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 SystemUDActionElement[] userActions = userActionManager.getActions(new Vector(), systemProfile, rseDomain.getDomainType());
                 for (SystemUDActionElement userAction : userActions) {
                     RSEUserAction rseUserAction = produceUserAction(rseDomain, userAction);
+                    // Not required for RDi
+                    // rseUserAction.setOrder(rseUserActions.size());
                     rseUserActions.add(rseUserAction);
                 }
             }

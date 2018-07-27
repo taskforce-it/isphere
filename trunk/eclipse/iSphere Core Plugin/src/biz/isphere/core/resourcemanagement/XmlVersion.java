@@ -39,7 +39,7 @@ public class XmlVersion implements Comparable<XmlVersion> {
     private int minor;
     private int micro;
 
-    public XmlVersion(String version) throws InvalidVersionNumberException {
+    public XmlVersion(String version) throws InvalidXmlVersionNumberFormatException {
         this.originalVersion = version;
         this.parsedVersion = parseVersion(originalVersion);
     }
@@ -52,7 +52,7 @@ public class XmlVersion implements Comparable<XmlVersion> {
         return parsedVersion;
     }
 
-    private String parseVersion(String version) throws InvalidVersionNumberException {
+    private String parseVersion(String version) throws InvalidXmlVersionNumberFormatException {
 
         validate(version);
 
@@ -77,11 +77,11 @@ public class XmlVersion implements Comparable<XmlVersion> {
                     addSegment(parsedVersion, part);
                     break;
                 default:
-                    throw new InvalidVersionNumberException();
+                    throw new InvalidXmlVersionNumberFormatException();
                 }
 
             } catch (NumberFormatException e) {
-                throw new InvalidVersionNumberException();
+                throw new InvalidXmlVersionNumberFormatException();
             }
 
             count++;
@@ -90,14 +90,14 @@ public class XmlVersion implements Comparable<XmlVersion> {
         return parsedVersion.toString();
     }
 
-    public static void validate(String version) throws InvalidVersionNumberException {
+    public static void validate(String version) throws InvalidXmlVersionNumberFormatException {
 
         if (version == null) {
-            throw new InvalidVersionNumberException();
+            throw new InvalidXmlVersionNumberFormatException();
         }
 
         if (!version.matches(VERSION_NUMBER_PATTERN)) {
-            throw new InvalidVersionNumberException();
+            throw new InvalidXmlVersionNumberFormatException();
         }
     }
 
@@ -119,7 +119,7 @@ public class XmlVersion implements Comparable<XmlVersion> {
         return fixed;
     }
 
-    public int compareTo(String that) throws InvalidVersionNumberException {
+    public int compareTo(String that) throws InvalidXmlVersionNumberFormatException {
 
         if (that == null) {
             return 1;

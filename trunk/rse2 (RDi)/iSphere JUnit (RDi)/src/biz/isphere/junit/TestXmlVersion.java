@@ -16,27 +16,29 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import biz.isphere.core.resourcemanagement.InvalidVersionNumberException;
+import biz.isphere.core.resourcemanagement.InvalidXmlVersionNumberFormatException;
 import biz.isphere.core.resourcemanagement.XmlVersion;
 
 public class TestXmlVersion {
+
+    private static final String INVALID_VERSION_NUMBER_FORMAT = "Invalid version number format";
 
     @Test
     public void testIllegalVersionNumbers() throws Exception {
 
         try {
             new XmlVersion(null);
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         }
 
         try {
             new XmlVersion("2.1.a").get();
             Assert.fail("Version number must not contain characters.");
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         } catch (Throwable e) {
             Assert.assertEquals("Unexpected exception type", e.getMessage());
         }
@@ -44,33 +46,33 @@ public class TestXmlVersion {
         try {
             new XmlVersion(".1.1").get();
             Assert.fail("Version number must not start with a dot.");
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         }
 
         try {
             new XmlVersion("2.1.1.1").get();
             Assert.fail("Version number must not have more than 3 segments.");
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         }
 
         try {
             new XmlVersion("2.1.1.b").get();
             Assert.fail("Version number must not have more than 3 segments.");
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         }
 
         try {
             new XmlVersion("2.b1.1").get();
             Assert.fail("Version number must not contain characters.");
-        } catch (InvalidVersionNumberException e) {
+        } catch (InvalidXmlVersionNumberFormatException e) {
             // exception see ==> OK
-            Assert.assertEquals("Invalid version format", e.getMessage());
+            Assert.assertEquals(INVALID_VERSION_NUMBER_FORMAT, e.getMessage());
         }
 
     }

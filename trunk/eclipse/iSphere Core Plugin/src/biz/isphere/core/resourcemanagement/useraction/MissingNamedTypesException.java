@@ -8,24 +8,25 @@
 
 package biz.isphere.core.resourcemanagement.useraction;
 
+import biz.isphere.core.Messages;
+
 public class MissingNamedTypesException extends Exception {
 
     private static final long serialVersionUID = 930462098100705749L;
 
-    private String[] missingNamedTypes;
-
     public MissingNamedTypesException(String[] missingNamedTypes) {
-        this.missingNamedTypes = missingNamedTypes;
+        super(Messages
+            .bind(Messages.Cannot_import_user_actions_because_the_following_named_types_are_missing_colon, arrayToString(missingNamedTypes)));
     }
 
-    @Override
-    public String getLocalizedMessage() {
+    private static String arrayToString(String[] missingNamedTypes) {
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append("Cannot import user actions, because the following named types are missing:");
         for (String namedType : missingNamedTypes) {
-            buffer.append(" ");
+            if (buffer.length() > 0) {
+                buffer.append(" ");
+            }
             buffer.append(namedType);
         }
 

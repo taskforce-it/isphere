@@ -8,11 +8,13 @@
 
 package biz.isphere.core.resourcemanagement;
 
-public class InvalidVersionNumberException extends Exception {
+import biz.isphere.core.Messages;
 
-    private static final long serialVersionUID = 9126453237954378789L;
+public class InvalidRepositoryVersionException extends Exception {
 
-    public InvalidVersionNumberException() {
-        super("Invalid version format"); //$NON-NLS-1$
+    private static final long serialVersionUID = -4598425311514493441L;
+
+    public InvalidRepositoryVersionException(String versionNumber) {
+        super(Messages.bind(Messages.Cannot_load_the_selected_repository_Version_number_too_old, versionNumber));
     }
 }
