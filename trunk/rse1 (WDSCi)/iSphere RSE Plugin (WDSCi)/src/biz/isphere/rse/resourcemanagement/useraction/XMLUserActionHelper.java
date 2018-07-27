@@ -269,6 +269,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                         }
 
                         items.add(userAction);
+                        keys.add(userActionKey);
                     }
                     clearElementCharacters(elementData);
                 } else {
