@@ -23,12 +23,14 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import biz.isphere.core.resourcemanagement.InvalidRepositoryVersionException;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.core.resourcemanagement.useraction.DuplicateUserActionException;
+import biz.isphere.core.resourcemanagement.useraction.InvalidDomainTypeException;
 import biz.isphere.core.resourcemanagement.useraction.MissingNamedTypesException;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
 import biz.isphere.core.resourcemanagement.useraction.UserActionXmlComparator;
-import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 import biz.isphere.rse.resourcemanagement.XMLPrettyPrintWriter;
 import biz.isphere.rse.resourcemanagement.namedtype.RSENamedTypeHelper;
@@ -214,16 +216,15 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     }
                 } else if (event.isEndElement()) {
                     if (!isValidated) {
-                        throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Version_number_too_old, versionNumber));
+                        throw new InvalidRepositoryVersionException(versionNumber);
                     }
                     if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_NAME)) {
-                        _domain.setName(elementData.toString());
+                        // The domain name in the repository is only for humans.
+                        // It is the translated NLS name.
                     } else if (event.asEndElement().getName().getLocalPart().equals(DOMAIN_TYPE)) {
-                        int domainType = xmlToInteger(elementData.toString());
-                        if (singleDomain && domainType != domain.getDomainType()) {
-                            throw new Exception("Invalid domain type.");
-                        }
-                        _domain.setDomainType(domainType);
+                        int domainIndex = xmlToInteger(elementData.toString());
+                        _domain.setDomainType(domainIndex);
+                        _domain.setName(RSEUserActionHelper.mapDomainName(profile.getName(), domainIndex));
                     } else if (event.asEndElement().getName().getLocalPart().equals(ORDER)) {
                         userAction.setOrder(xmlToInteger(elementData.toString()));
                     } else if (event.asEndElement().getName().getLocalPart().equals(LABEL)) {
@@ -251,9 +252,14 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
                     } else if (event.asEndElement().getName().getLocalPart().equals(FILE_TYPES)) {
                         userAction.setFileTypes(xmlToArray(elementData.toString()));
                     } else if (event.asEndElement().getName().getLocalPart().equals(USER_ACTION)) {
+
+                        if (singleDomain && userAction.getDomain().getDomainType() != domain.getDomainType()) {
+                            throw new InvalidDomainTypeException(RSEUserActionHelper.mapDomainName(userAction.getDomain()));
+                        }
+
                         String userActionKey = userAction.getKey();
                         if (keys.contains(userActionKey)) {
-                            throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Duplicate_commands, versionNumber));
+                            throw new DuplicateUserActionException();
                         }
 
                         for (String fileType : userAction.getFileTypes()) {

@@ -11,6 +11,7 @@ package biz.isphere.rse.resourcemanagement.useraction;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.core.resourcemanagement.useraction.RSEDomain;
 import biz.isphere.core.resourcemanagement.useraction.RSEUserAction;
@@ -45,13 +46,33 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
             if (userActionManager != null) {
                 String[] domainNames = userActionManager.getActionSubSystem().getDomainNames();
                 for (String domainName : domainNames) {
+                    String profileName = rseProfile.getName();
                     int domainIndex = userActionManager.getActionSubSystem().mapDomainName(domainName);
-                    rseDomains.add(produceDomain(rseProfile, domainIndex, domainName));
+                    String xlatedDomainName = RSEUserActionHelper.mapDomainName(profileName, domainIndex);
+                    rseDomains.add(produceDomain(rseProfile, domainIndex, xlatedDomainName));
                 }
             }
         }
 
         return rseDomains.toArray(new RSEDomain[rseDomains.size()]);
+    }
+
+    public static String mapDomainName(RSEDomain rseDomain) {
+
+        String profileName = rseDomain.getProfile().getName();
+        int domainIndex = rseDomain.getDomainType();
+
+        return mapDomainName(profileName, domainIndex);
+    }
+
+    public static String mapDomainName(String profileName, int domainIndex) {
+
+        try {
+            return getUserActionManager(getSystemProfile(profileName)).getActionSubSystem().mapDomainXlatedName(domainIndex);
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not map domain type to domain name ***", e); //$NON-NLS-1$
+            return Integer.toString(domainIndex);
+        }
     }
 
     public static RSEUserAction[] getUserActions(RSEProfile rseProfile) {
@@ -172,8 +193,8 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
                 for (SystemUDActionElement userAction : userActions) {
                     if (userAction.getLabel().equals(label)) {
 
-                        setUserActionAttributes(commandString, runEnvironment, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection, isInvokeOnce, comment,
-                            fileTypes, vendor, userAction);
+                        setUserActionAttributes(commandString, runEnvironment, isPromptFirst, isRefreshAfter, isShowAction, isSingleSelection,
+                            isInvokeOnce, comment, fileTypes, vendor, userAction);
 
                         // moveUserActionTo(userActionManager, userAction,
                         // order);
@@ -196,8 +217,9 @@ public class RSEUserActionHelper extends AbstractSystemHelper {
         return false;
     }
 
-    private static void setUserActionAttributes(String commandString, String runEnvironment, boolean isPromptFirst, boolean isRefreshAfter, boolean isShowAction,
-        boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor, SystemUDActionElement userAction) {
+    private static void setUserActionAttributes(String commandString, String runEnvironment, boolean isPromptFirst, boolean isRefreshAfter,
+        boolean isShowAction, boolean isSingleSelection, boolean isInvokeOnce, String comment, String[] fileTypes, String vendor,
+        SystemUDActionElement userAction) {
 
         userAction.setCommand(commandString);
         userAction.setAttribute(UA_ATTR_RUNENV, runEnvironment);
