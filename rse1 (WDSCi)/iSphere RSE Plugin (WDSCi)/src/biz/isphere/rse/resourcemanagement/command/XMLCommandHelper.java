@@ -22,11 +22,12 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
+import biz.isphere.core.resourcemanagement.InvalidRepositoryVersionException;
 import biz.isphere.core.resourcemanagement.command.CommandXmlComparator;
+import biz.isphere.core.resourcemanagement.command.DuplicateCommandException;
 import biz.isphere.core.resourcemanagement.command.RSECommand;
 import biz.isphere.core.resourcemanagement.command.RSECompileType;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
-import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.AbstractXmlHelper;
 import biz.isphere.rse.resourcemanagement.XMLPrettyPrintWriter;
 
@@ -203,7 +204,7 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                     }
                 } else if (event.isEndElement()) {
                     if (!isValidated) {
-                        throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Version_number_too_old, versionNumber));
+                        throw new InvalidRepositoryVersionException(versionNumber);
                     }
                     if (event.asEndElement().getName().getLocalPart().equals(COMPILE_TYPE_TYPE)) {
                         type.setType(elementData.toString());
@@ -226,10 +227,12 @@ public class XMLCommandHelper extends AbstractXmlHelper {
                     } else if (event.asEndElement().getName().getLocalPart().equals(MENU_OPTION)) {
                         command.setMenuOption(elementData.toString());
                     } else if (event.asEndElement().getName().getLocalPart().equals(COMMAND)) {
+
                         String commandKey = command.getKey();
                         if (keys.contains(commandKey)) {
-                            throw new Exception(Messages.bind(Messages.Cannot_load_the_selected_repository_Duplicate_commands, versionNumber));
+                            throw new DuplicateCommandException();
                         }
+
                         items.add(command);
                         keys.add(commandKey);
                     }
