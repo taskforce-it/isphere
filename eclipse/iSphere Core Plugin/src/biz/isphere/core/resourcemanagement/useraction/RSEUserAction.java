@@ -200,7 +200,7 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         StringBuilder buffer = new StringBuilder();
 
         appendAttribute(buffer, getComment());
-        appendAttribute(buffer, getCommandString());
+        appendAttribute(buffer, unifyCommandString(getCommandString()));
         appendAttribute(buffer, getRunEnvironment());
         appendAttribute(buffer, isPromptFirst());
         appendAttribute(buffer, isRefreshAfter());
@@ -210,50 +210,6 @@ public class RSEUserAction extends AbstractResource implements Comparable<RSEUse
         appendAttribute(buffer, getFileTypes());
 
         return buffer.toString();
-    }
-
-    private void appendAttribute(StringBuilder buffer, String value) {
-
-        if (buffer.length() > 0) {
-            buffer.append(":"); //$NON-NLS-1$
-        }
-        buffer.append(value);
-    }
-
-    private void appendAttribute(StringBuilder buffer, String[] values) {
-
-        if (buffer.length() > 0) {
-            buffer.append(":"); //$NON-NLS-1$
-        }
-
-        buffer.append("["); //$NON-NLS-1$
-        boolean isFirstItem = true;
-        for (String value : values) {
-            if (!isFirstItem) {
-                buffer.append(","); //$NON-NLS-1$
-            } else {
-                isFirstItem = false;
-            }
-            buffer.append(value);
-        }
-        buffer.append("]"); //$NON-NLS-1$
-    }
-
-    private void appendAttribute(StringBuilder buffer, boolean value) {
-
-        if (buffer.length() > 0) {
-            buffer.append(":"); //$NON-NLS-1$
-        }
-        buffer.append(Boolean.toString(value));
-    }
-
-    private String ensureNotNull(String value) {
-
-        if (value == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return value;
     }
 
     @Override
