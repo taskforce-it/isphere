@@ -9,7 +9,8 @@
 package biz.isphere.core.clcommands;
 
 /**
- * This class parses a given CL command and splits it into pieces.
+ * This class parses a given CL command and splits it into pieces. This class
+ * works only on well formatted CL commands.
  * 
  * @author Thomas Raddatz
  */

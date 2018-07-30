@@ -8,9 +8,10 @@
 
 package biz.isphere.core.resourcemanagement;
 
+import java.util.Arrays;
+
 import biz.isphere.core.Messages;
-import biz.isphere.core.clcommands.CLCommand;
-import biz.isphere.core.clcommands.CLParser;
+import biz.isphere.core.clcommands.CLTokenizer;
 
 public abstract class AbstractResource {
 
@@ -101,10 +102,34 @@ public abstract class AbstractResource {
 
     protected String unifyCommandString(String commandString) {
 
-        CLParser parser = new CLParser();
-        CLCommand clCommand = parser.parseCommand(commandString);
+        try {
 
-        return clCommand.getUnifiedCommandString();
+            CLTokenizer parser = new CLTokenizer(true);
+            String[] tokens = parser.tokenizeCommand(commandString);
+
+            StringBuilder cmdBuffer = new StringBuilder();
+
+            if (tokens.length > 1) {
+                // Append command to buffer and sort remaining parameters
+                cmdBuffer.append(tokens[0]);
+                String[] parameters = new String[tokens.length - 1];
+                System.arraycopy(tokens, 1, parameters, 0, parameters.length);
+                Arrays.sort(parameters);
+                tokens = parameters;
+            }
+
+            for (String token : tokens) {
+                if (cmdBuffer.length() > 0) {
+                    cmdBuffer.append(" ");
+                }
+                cmdBuffer.append(token);
+            }
+
+            return cmdBuffer.toString();
+
+        } catch (Exception e) {
+            return commandString;
+        }
     }
 
     protected String ensureNotNull(String value) {
