@@ -246,10 +246,11 @@
      d lclErrCode      ds                  likeds(errCode_t) inz
       /free
 
-       if (i_lenFldInf < HEADER_MIN_SIZE);
+       if (i_lenFldInf < IQDBRTVFD_HEADER_MIN_SIZE);
           kill('Minimum length of field information is not valid: ' +
                %char(i_lenFldInf) +
-               '. The minimum size is ' + %char(HEADER_MIN_SIZE) + ' bytes');
+               '. The minimum size is ' +
+               %char(IQDBRTVFD_HEADER_MIN_SIZE) + ' bytes');
        endif;
 
        if (i_format <> 'RVFD0100');
@@ -277,9 +278,9 @@
                   : io_errCode);
 
           header.bytAvl = 0;
-          header.bytRtn = HEADER_MIN_SIZE;
+          header.bytRtn = IQDBRTVFD_HEADER_MIN_SIZE;
 
-          if (i_lenFldInf >= MIN_SIZE_QFILE_RTN);
+          if (i_lenFldInf >= IQDBRTVFD_MIN_SIZE_QFILE_AND_LIB_RTN);
              header.fileRtn = qFileRet.name;
              header.libRtn = qFileRet.lib;
              header.bytRtn += (%size(header.fileRtn) + %size(header.libRtn));
@@ -385,12 +386,14 @@
 
                    rvfd0100.text = Qdb_Qddfftxt.Qddfftxt;
 
-                   if (i_lenFldInf >= MIN_SIZE_FLD_RTN);
+                   if (i_lenFldInf >= IQDBRTVFD_MIN_SIZE_NUM_FLD_RTN);
                       header.numFldRtn += 1;
                    endif;
 
                    if (header.numFldRtn = 1);
-                      header.offsFirstFldD = offset;
+                      if (i_lenFldInf >= IQDBRTVFD_MIN_SIZE_OFFS_FIRST_FLD);
+                         header.offsFirstFldD = offset;
+                      endif;
                       header.bytRtn += %size(header.numFldRtn);
                       header.bytRtn += %size(header.offsFirstFldD);
                    endif;
