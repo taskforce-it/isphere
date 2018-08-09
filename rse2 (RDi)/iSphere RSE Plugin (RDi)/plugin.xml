@@ -101,6 +101,32 @@
       	
       	<!--
       	  ==========================================
+      	    Modules Contributions
+      	  ==========================================
+      	-->
+         
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="biz.isphere.core.menu.module">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*MODULE"/>
+            	</and>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.DisplayDebugModuleViewAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.DisplayDebugModuleViewAction"
+                label="%Display_Debug_Module_View"
+                icon="icons/debug_module_view.gif"
+                menubarPath="group.generate">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
       	    Service Program Contributions
       	  ==========================================
       	-->

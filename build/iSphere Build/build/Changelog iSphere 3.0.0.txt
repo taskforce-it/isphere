@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.0.b006
+-----------------------------
+ • Added option "Display Module View" to the context menu of *MODULE
+   objects to display the debug view of the module.
+
 Changelog: iSphere 3.5.0.b005
 -----------------------------
  • Added "User Action Compare Result" dialog.
