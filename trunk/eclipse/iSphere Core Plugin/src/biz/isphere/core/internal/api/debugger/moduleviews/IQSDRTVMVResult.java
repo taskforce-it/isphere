@@ -12,9 +12,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.internal.api.APIFormat;
+
+import com.ibm.as400.access.AS400;
 
 /**
  * Class to hold the result of the IQSDRTVMV API.
@@ -29,7 +29,6 @@ public class IQSDRTVMVResult extends APIFormat {
     private static final String LENGTH_OF_VIEW_ENTRY = "lengthOfViewEntry"; //$NON-NLS-1$
     private static final String OFFSET_FIRST_VIEW = "offsetFirstView"; //$NON-NLS-1$
 
-    private String connectionName;
     private String format;
 
     private String object;
@@ -47,10 +46,9 @@ public class IQSDRTVMVResult extends APIFormat {
      * @param format - format of the returned data ({@link IQSDRTVMV#VEWL0100})
      * @throws UnsupportedEncodingException
      */
-    public IQSDRTVMVResult(AS400 system, String connectionName, byte[] bytes, String format) throws UnsupportedEncodingException {
+    public IQSDRTVMVResult(AS400 system, byte[] bytes, String format) throws UnsupportedEncodingException {
         super(system, "IQSDRTVMVHeader");
 
-        this.connectionName = connectionName;
         this.format = format;
 
         createStructure();
@@ -144,7 +142,7 @@ public class IQSDRTVMVResult extends APIFormat {
         for (int i = 0; i < getNumberOfViewsReturned(); i++) {
 
             sdmv0100.setOffset(offset);
-            debuggerViews.add(sdmv0100.createDebuggerView(connectionName, getObject(), getLibrary(), getObjectType()));
+            debuggerViews.add(sdmv0100.createDebuggerView(getObject(), getLibrary(), getObjectType()));
 
             offset += sdmv0100.getLength();
         }

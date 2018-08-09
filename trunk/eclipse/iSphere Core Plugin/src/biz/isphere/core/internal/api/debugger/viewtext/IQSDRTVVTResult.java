@@ -12,10 +12,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
+
+import com.ibm.as400.access.AS400;
 
 /**
  * Class to hold the result of the IQSDRTVMV API.
@@ -34,24 +34,18 @@ public class IQSDRTVVTResult extends APIFormat {
     private static final String LENGTH_OF_LINE_ENTRY = "lenLineE"; //$NON-NLS-1$
     private static final String OFFSET_FIRST_LINE = "offsFirstLine"; //$NON-NLS-1$
 
-    private String connectionName;
     private String format;
 
     /**
      * Constructs a IQSDRTVVTResult object.
      * 
      * @param system - System that executed the retrieve request
-     * @param connectionName - name of the RDi connection
-     * @param messageFile - message file
-     * @param library - message file library
      * @param bytes - returned by the IQSDRTVMV API
      * @param format - format of the returned data ({@link IQSDRTVMV#VEWL0100})
-     * @throws UnsupportedEncodingException
      */
-    public IQSDRTVVTResult(AS400 system, String connectionName, byte[] bytes, String format) throws UnsupportedEncodingException {
+    public IQSDRTVVTResult(AS400 system, byte[] bytes, String format) {
         super(system, "IQSDRTVMVHeader");
 
-        this.connectionName = connectionName;
         this.format = format;
 
         createStructure();
@@ -157,7 +151,7 @@ public class IQSDRTVVTResult extends APIFormat {
         for (int i = 0; i < getNumberOfLinesReturned(); i++) {
 
             sdvt0100.setOffset(offset);
-            lines.add(sdvt0100.createLine(connectionName));
+            lines.add(sdvt0100.getLine());
 
             offset = sdvt0100.getOffsetNextLine();
         }

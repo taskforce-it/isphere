@@ -10,9 +10,9 @@ package biz.isphere.core.internal.api.debugger.viewtext;
 
 import java.io.UnsupportedEncodingException;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.internal.api.APIFormat;
+
+import com.ibm.as400.access.AS400;
 
 public class SDVT0100 extends APIFormat {
 
@@ -27,7 +27,7 @@ public class SDVT0100 extends APIFormat {
      * @param bytes - buffer that contains the retrieved debug views
      * @throws UnsupportedEncodingException
      */
-    public SDVT0100(AS400 system, byte[] bytes) throws UnsupportedEncodingException {
+    public SDVT0100(AS400 system, byte[] bytes) {
         super(system, "SDMV0100");
 
         createStructure();
@@ -39,7 +39,6 @@ public class SDVT0100 extends APIFormat {
      * Returns the offset of the next line.
      * 
      * @return offset next line
-     * @throws UnsupportedEncodingException
      */
     public int getOffsetNextLine() {
         return getInt4Value(OFFSET_NEXT_LINE);
@@ -49,7 +48,6 @@ public class SDVT0100 extends APIFormat {
      * Returns the length of the text.
      * 
      * @return text length
-     * @throws UnsupportedEncodingException
      */
     public int getLineLength() {
         return getInt4Value(LINE_LENGTH);
@@ -59,22 +57,17 @@ public class SDVT0100 extends APIFormat {
      * Returns the offset of the text.
      * 
      * @return offset line text
-     * @throws UnsupportedEncodingException
      */
     public int getOffsetLine() {
         return getInt4Value(OFFSET_LINE);
     }
 
     /**
-     * Factory methods to create a debugger view.
+     * Returns the text line.
      * 
-     * @param connectionName - connection name
-     * @param messageFile - message file
-     * @param library - message file library name
-     * @return message description
      * @throws UnsupportedEncodingException
      */
-    public String createLine(String connectionName) throws UnsupportedEncodingException {
+    public String getLine() throws UnsupportedEncodingException {
 
         String viewText = convertToText(getBytesAt(getLength(), getLineLength()));
 

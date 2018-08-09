@@ -11,10 +11,10 @@ package biz.isphere.core.internal.api.debugger.moduleviews;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.internal.api.APIFormat;
+
+import com.ibm.as400.access.AS400;
 
 public class SDMV0100 extends APIFormat {
 
@@ -118,14 +118,12 @@ public class SDMV0100 extends APIFormat {
     /**
      * Factory methods to create a debugger view.
      * 
-     * @param connectionName - connection name
      * @param messageFile - message file
      * @param library - message file library name
      * @return message description
      * @throws UnsupportedEncodingException
      */
-    public DebuggerView createDebuggerView(String connectionName, String object, String library, String objectType)
-        throws UnsupportedEncodingException {
+    public DebuggerView createDebuggerView(String object, String library, String objectType) throws UnsupportedEncodingException {
 
         DebuggerView debuggerView = new DebuggerView(object, library, objectType, this);
 
