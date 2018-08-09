@@ -37,49 +37,43 @@ public class DisplayDebugModuleViewHandlerDelegate {
         this.connectionName = connectionName;
     }
 
-    public Object execute(String program, String library, String objectType, String module) {
+    public Object execute(String program, String library, String objectType, String module) throws Exception {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
         String iSphereLibrary = ISpherePlugin.getISphereLibrary(connectionName);
 
-        try {
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
 
-            if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
+            String currentLibrary = null;
+            try {
+                currentLibrary = ISphereHelper.getCurrentLibrary(system);
+            } catch (Exception e) {
+                throwException("Could not retrieve current library", e); //$NON-NLS-1$
+            }
 
-                String currentLibrary = null;
+            if (currentLibrary != null) {
+
                 try {
-                    currentLibrary = ISphereHelper.getCurrentLibrary(system);
-                } catch (Exception e) {
-                    throwException("Could not retrieve current library", e); //$NON-NLS-1$
-                }
 
-                if (currentLibrary != null) {
-
+                    boolean ok = false;
                     try {
+                        ok = ISphereHelper.setCurrentLibrary(system, iSphereLibrary);
+                    } catch (Exception e) {
+                        throwException("Could not set current library to: " + iSphereLibrary, e); //$NON-NLS-1$
+                    }
 
-                        boolean ok = false;
-                        try {
-                            ok = ISphereHelper.setCurrentLibrary(system, iSphereLibrary);
-                        } catch (Exception e) {
-                            throwException("Could not set current library to: " + iSphereLibrary, e); //$NON-NLS-1$
-                        }
+                    if (ok) {
+                        startDebuggerAndRetrieveModuleView(system, iSphereLibrary, program, library, objectType, module);
+                    }
 
-                        if (ok) {
-                            startDebuggerAndRetrieveModuleView(system, iSphereLibrary, program, library, objectType, module);
-                        }
-
-                    } finally {
-                        try {
-                            ISphereHelper.setCurrentLibrary(system, currentLibrary);
-                        } catch (Exception e) {
-                            throwException("Could not restore current library to: " + currentLibrary, e); //$NON-NLS-1$
-                        }
+                } finally {
+                    try {
+                        ISphereHelper.setCurrentLibrary(system, currentLibrary);
+                    } catch (Exception e) {
+                        throwException("Could not restore current library to: " + currentLibrary, e); //$NON-NLS-1$
                     }
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return null;
@@ -119,15 +113,11 @@ public class DisplayDebugModuleViewHandlerDelegate {
         } finally {
 
             if (isDebuggerStarted) {
-                try {
-                    message = ISphereHelper.executeCommand(system, "QSYS/ENDDBG"); //$NON-NLS-1$
-                    if (!StringHelper.isNullOrEmpty(message)) {
-                        throw new Exception(message);
-                    } else {
-                        isDebuggerStarted = false;
-                    }
-                } catch (Exception e) {
-                    throwException("Could not end debugger (ENDDBG)", e); //$NON-NLS-1$
+                message = ISphereHelper.executeCommand(system, "QSYS/ENDDBG"); //$NON-NLS-1$
+                if (!StringHelper.isNullOrEmpty(message)) {
+                    throw new Exception(message);
+                } else {
+                    isDebuggerStarted = false;
                 }
             }
 
