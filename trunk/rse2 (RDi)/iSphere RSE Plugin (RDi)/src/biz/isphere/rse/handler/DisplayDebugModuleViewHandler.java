@@ -12,8 +12,12 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.handler.DisplayDebugModuleViewHandlerDelegate;
+import biz.isphere.rse.Messages;
 
 public class DisplayDebugModuleViewHandler extends AbstractHandler implements IHandler {
 
@@ -37,7 +41,8 @@ public class DisplayDebugModuleViewHandler extends AbstractHandler implements IH
             handler.execute(program, library, objectType, module);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Could not retrieve module source ***", e); //$NON-NLS-1$
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
 
         return null;
