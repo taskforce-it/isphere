@@ -65,6 +65,18 @@
       	
       	<!--
       	  ==========================================
+      	    Module Contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Display Module View"
+			class="biz.isphere.rse.actions.DisplayDebugModuleViewAction"
+			id="biz.isphere.rse.actions.DisplayDebugViewAction">
+	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
       	    Service Program Contributions
       	  ==========================================
       	-->
