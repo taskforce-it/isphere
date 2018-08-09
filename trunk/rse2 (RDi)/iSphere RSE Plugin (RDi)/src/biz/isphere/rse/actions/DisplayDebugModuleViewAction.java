@@ -21,6 +21,7 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule;
 
@@ -50,9 +51,11 @@ public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
                         String connectionName = qsysRemoteProgramModule.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem()
                             .getHostAliasName();
 
-                        String programName = qsysRemoteProgramModule.getProgram().getName();
-                        String libraryName = qsysRemoteProgramModule.getProgram().getLibrary();
-                        String objectType = qsysRemoteProgramModule.getProgram().getType();
+                        IQSYSProgramBase program = qsysRemoteProgramModule.getProgram();
+
+                        String programName = program.getName();
+                        String libraryName = program.getLibrary();
+                        String objectType = program.getType();
                         String moduleName = qsysRemoteProgramModule.getName();
 
                         Map<String, String> parameters = new HashMap<String, String>();
