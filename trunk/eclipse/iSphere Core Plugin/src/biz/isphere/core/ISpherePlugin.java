@@ -29,6 +29,8 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -43,14 +45,12 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-import com.ibm.as400.access.AS400;
-
 public class ISpherePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
 
-    private static final String MIN_SERVER_VERSION = "3.4.0"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "3.5.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;

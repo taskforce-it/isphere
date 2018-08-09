@@ -24,7 +24,11 @@ public interface ISeries {
 
     public static final String FILE = "*FILE"; //$NON-NLS-1$
 
+    public static final String PGM = "*PGM"; //$NON-NLS-1$
+
     public static final String SRVPGM = "*SRVPGM"; //$NON-NLS-1$
+
+    public static final String MODULE = "*MODULE"; //$NON-NLS-1$
 
     public static final String SPCVAL_LIBL = "*LIBL"; //$NON-NLS-1$
 
