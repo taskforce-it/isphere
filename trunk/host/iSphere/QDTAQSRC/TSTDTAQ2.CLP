@@ -18,6 +18,7 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<  TEXT('Creates: iSphere Test Data Queue - LIFO');    */
      /*         >>PARM<<  OPTION(*LSTDBG);                                    */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*       >>CMD<<     CALL PGM(QTEMP/&OB) PARM(&LI &OB);                  */
