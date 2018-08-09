@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -117,7 +116,7 @@ public class DisplayDebugModuleViewHandler extends AbstractHandler implements IH
             } else if (ISeries.SRVPGM.equals(objectType)) {
                 strdbgCommand = NLS.bind(strdbgCommand, new Object[] { program, library, "SRVPGM" }); //$NON-NLS-1$
             } else {
-                throw new IllegalAnnotationException("Illegal argument of parameter 'objectType': " + objectType); //$NON-NLS-1$
+                throw new IllegalArgumentException("Illegal argument of parameter 'objectType': " + objectType); //$NON-NLS-1$
             }
 
             message = ISphereHelper.executeCommand(system, strdbgCommand);
