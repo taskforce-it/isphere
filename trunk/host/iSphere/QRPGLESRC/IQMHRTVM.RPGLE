@@ -154,10 +154,11 @@
      d lclErrCode      ds                  likeds(errCode_t) inz
       /free
 
-         if (i_lenMsgInf < HEADER_MIN_SIZE);
+         if (i_lenMsgInf < IQMHRTVM_HEADER_MIN_SIZE);
             kill('Minimum length of message information is not valid: ' +
                  %char(i_lenMsgInf) +
-                 '. The minimum size is ' + %char(HEADER_MIN_SIZE) + ' bytes');
+                 '. The minimum size is ' +
+                 %char(IQMHRTVM_HEADER_MIN_SIZE) + ' bytes');
          endif;
 
          if (i_format <> 'RTVM0300' and i_format <> 'RTVM0400');
@@ -211,19 +212,19 @@
                   // update header information
                   header.bytRtn += rtvmBuffer.bytRtn;
 
-                  if (i_lenMsgInf >= OFFSET_NUM_MSG_RTN);
+                  if (i_lenMsgInf >= IQMHRTVM_MIN_SIZE_NUM_MSG_RTN);
                      header.numMsgRtn += 1;
                   endif;
 
-                  if (i_lenMsgInf >= OFFSET_LAST_MSG_ID);
+                  if (i_lenMsgInf >= IQMHRTVM_MIN_SIZE_LAST_MSG_ID);
                      header.lastMsgId = rtvmBuffer.msgId;
                   endif;
 
                   if (header.numMsgRtn = 1);
-                     if (i_lenMsgInf >= OFFSET_FIRST_MSG_ID);
+                     if (i_lenMsgInf >= IQMHRTVM_MIN_SIZE_FIRST_MSG_ID);
                         header.firstMsgId = rtvmBuffer.msgId;
                      endif;
-                     if (i_lenMsgInf >= OFFSET_FIRST_MSG_DESC);
+                     if (i_lenMsgInf >=IQMHRTVM_MIN_SIZE_OFFSET_FIRST_MSG_DESC);
                         header.offsFirstMsgD = offset;
                      endif;
                   endif;
