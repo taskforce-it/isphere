@@ -42,7 +42,7 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
         setContextMenuGroup("group.generate");
         allowOnMultipleSelection(false);
         setHelp("");
-        setImageDescriptor(ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereRSEPlugin.IMAGE_RETRIEVE_BINDER_SOURCE));
+        setImageDescriptor(ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereRSEPlugin.IMAGE_DISPLAY_MODULE_VIEW));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
