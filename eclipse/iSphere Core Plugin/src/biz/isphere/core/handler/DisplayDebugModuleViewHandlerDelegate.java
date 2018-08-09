@@ -50,7 +50,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
                 try {
                     currentLibrary = ISphereHelper.getCurrentLibrary(system);
                 } catch (Exception e) {
-                    logError("Could not retrieve current library", e); //$NON-NLS-1$
+                    throwException("Could not retrieve current library", e); //$NON-NLS-1$
                 }
 
                 if (currentLibrary != null) {
@@ -61,7 +61,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
                         try {
                             ok = ISphereHelper.setCurrentLibrary(system, iSphereLibrary);
                         } catch (Exception e) {
-                            logError("Could not set current library to: " + iSphereLibrary, e); //$NON-NLS-1$
+                            throwException("Could not set current library to: " + iSphereLibrary, e); //$NON-NLS-1$
                         }
 
                         if (ok) {
@@ -72,7 +72,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
                         try {
                             ISphereHelper.setCurrentLibrary(system, currentLibrary);
                         } catch (Exception e) {
-                            logError("Could not restore current library to: " + currentLibrary, e); //$NON-NLS-1$
+                            throwException("Could not restore current library to: " + currentLibrary, e); //$NON-NLS-1$
                         }
                     }
                 }
@@ -127,7 +127,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
                         isDebuggerStarted = false;
                     }
                 } catch (Exception e) {
-                    logError("Could not end debugger (ENDDBG)", e); //$NON-NLS-1$
+                    throwException("Could not end debugger (ENDDBG)", e); //$NON-NLS-1$
                 }
             }
 
@@ -140,7 +140,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
         IQSDRTVMV iqsdrtvmv = new IQSDRTVMV(system, iSphereLibrary);
         IQSDRTVMVResult iqsdrtvmvResult = new IQSDRTVMVResult(system, new byte[32767], IQSDRTVMV.SDMV0100);
         if (!iqsdrtvmv.execute(iqsdrtvmvResult, program, library, objectType, module)) {
-            logError("Could not retrieve module views: " + iqsdrtvmv.getErrorMessage()); //$NON-NLS-1$
+            throwException("Could not retrieve module views: " + iqsdrtvmv.getErrorMessage()); //$NON-NLS-1$
         } else {
             List<DebuggerView> debuggerViews = iqsdrtvmvResult.getViews();
             for (DebuggerView debuggerView : debuggerViews) {
@@ -153,14 +153,13 @@ public class DisplayDebugModuleViewHandlerDelegate {
         return null;
     }
 
-    private void retrieveDebugView(AS400 system, String iSphereLibrary, DebuggerView debuggerView, int lineLength)
-        throws UnsupportedEncodingException {
+    private void retrieveDebugView(AS400 system, String iSphereLibrary, DebuggerView debuggerView, int lineLength) throws Exception {
 
         List<String> lines = new LinkedList<String>();
 
         IQSDREGDV iqsdregdv = new IQSDREGDV(system, iSphereLibrary);
         if (!iqsdregdv.execute(debuggerView)) {
-            logError("Could not register debug view: " + iqsdregdv.getErrorMessage()); //$NON-NLS-1$
+            throwException("Could not register debug view: " + iqsdregdv.getErrorMessage()); //$NON-NLS-1$
             return;
         }
 
@@ -172,7 +171,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
 
             iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[32767], IQSDRTVVT.SDVT0100);
             if (!iqsdrtvvt.execute(iqsdrtvvtResult, debuggerView.getId(), startLine, IQSDRTVVT.ALL_LINES, lineLength)) {
-                logError("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
+                throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
                 return;
             }
 
@@ -187,11 +186,11 @@ public class DisplayDebugModuleViewHandlerDelegate {
         }
     }
 
-    private void logError(String message) {
-        logError(message, null);
+    private void throwException(String message) throws Exception {
+        throw new Exception(message);
     }
 
-    private void logError(String message, Throwable exception) {
-        ISpherePlugin.logError("*** " + message + " ***", exception); //$NON-NLS-1$ //$NON-NLS-2$
+    private void throwException(String message, Throwable exception) throws Exception {
+        throw new Exception(message, exception);
     }
 }
