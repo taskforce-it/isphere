@@ -8,22 +8,18 @@
 
 package biz.isphere.core.internal.api.debugger.viewtext;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 public class IQSDRTVVT extends APIProgramCallDocument {
 
     public static final String SDVT0100 = "SDVT0100";
     public static final int ALL_LINES = 0;
-
-    public IQSDRTVVT(AS400 system) {
-        super(system, "IQSDRTVVT", "ISPHEREDVP");
-    }
 
     public IQSDRTVVT(AS400 system, String connectionName) {
         super(system, "IQSDRTVVT", IBMiHostContributionsHandler.getISphereLibrary(connectionName));

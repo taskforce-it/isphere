@@ -8,24 +8,19 @@
 
 package biz.isphere.core.internal.api.debugger.moduleviews;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
 
 public class IQSDRTVMV extends APIProgramCallDocument {
 
     public static final String SDMV0100 = "SDMV0100";
 
-    public IQSDRTVMV(AS400 system) {
-        super(system, "IQSDRTVMV", "ISPHEREDVP");
-    }
-
-    public IQSDRTVMV(AS400 system, String connectionName) {
-        super(system, "IQSDRTVMV", IBMiHostContributionsHandler.getISphereLibrary(connectionName));
+    public IQSDRTVMV(AS400 system, String iSphereLibraryName) {
+        super(system, "IQSDRTVMV", iSphereLibraryName);
     }
 
     public boolean execute(IQSDRTVMVResult result, String object, String library, String objectType, String module) {
