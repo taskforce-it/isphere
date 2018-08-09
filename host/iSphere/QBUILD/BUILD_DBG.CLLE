@@ -22,6 +22,7 @@
      /*         >>PARM<<   DFTACTGRP(*NO);                                    */
      /*         >>PARM<<   ACTGRP(*NEW);                                      */
      /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+     /*         >>PARM<<   TGTRLS(&TR);                                       */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
