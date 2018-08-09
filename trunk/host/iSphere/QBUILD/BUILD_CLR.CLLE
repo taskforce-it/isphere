@@ -21,6 +21,7 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
      /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+     /*         >>PARM<<   TGTRLS(&TR);                                       */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */

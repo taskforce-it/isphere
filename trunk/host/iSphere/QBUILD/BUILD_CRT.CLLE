@@ -21,6 +21,7 @@
      /*       >>COMPILE<<                                                     */
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
      /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+     /*         >>PARM<<   TGTRLS(&TR);                                       */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -224,7 +225,7 @@
              /* ----------------------------------------------- */
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_CLR') +
                           LIB(&TMPLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              CALL       PGM(&TMPLIB/BUILD_CLR) PARM(&PRDLIB &DEVLIB &TMPLIB &SAVF)
 
@@ -279,14 +280,14 @@
 
              STRPREPRC  USESRCFILE(&PRDLIB/&BNDSRC) USESRCMBR('ISPHERE') +
                           LIB(&PRDLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Update release date in member COPYRIGHT         */
              /* ----------------------------------------------- */
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_RPLC') +
                           LIB(&TMPLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              CALL       PGM(&TMPLIB/BUILD_RPLC) PARM(&PRDLIB)
 
@@ -297,14 +298,14 @@
              /* Create iSphere version data area */
              STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
                           LIB(&PRDLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Update data area iSphere                        */
              /* ----------------------------------------------- */
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_VER') +
                           LIB(&TMPLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              CALL       PGM(&TMPLIB/BUILD_VER) PARM(&PRDLIB)
 
@@ -484,6 +485,12 @@
             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO7') +
                          LIB(&PRDLIB) OBJ(*DFT) +
                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO8') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO9') +
+                         LIB(&PRDLIB) OBJ(*DFT) +
+                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              /* ----------------------------------------------- */
              /* Create programs: 5250 Emulator                  */
@@ -607,6 +614,26 @@
                           LIB(&PRDLIB) OBJ(*DFT) +
                           SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
+             /* -------------------------------------------------------------- */
+             /* Create programs: Debugger APIs   */
+             /* -------------------------------------------------------------- */
+
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DBGSSNHDLR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DBGSTPHDLR') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDREGDV') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDRTVMV') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDRTVVT') +
+                          LIB(&PRDLIB) OBJ(*DFT) +
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+
              /* ----------------------------------------------- */
              /* Create workstation customization objects        */
              /* ----------------------------------------------- */
@@ -655,7 +682,7 @@
 
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_OWN') +
                           LIB(&TMPLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              IF         COND(&OWNER *NE '*SAME') THEN(DO)
                 CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB &OWNER)
@@ -667,7 +694,7 @@
 
              STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_DBG') +
                           LIB(&TMPLIB) OBJ(*DFT) +
-                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)
+                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
 
              CALL       PGM(&TMPLIB/BUILD_DBG) PARM(&PRDLIB &TMPLIB)
 
@@ -688,30 +715,39 @@
              /* Save library ISPHERE                            */
              /* ----------------------------------------------- */
 
-             CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
+             IF COND(&I_PRDLIB *NE &I_DEVLIB) THEN(DO)
 
-             IF         COND(&OWNER *NE '*SAME') THEN(DO)
-                CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
-                             CUROWNAUT(*REVOKE)
+                SNDPGMMSG  MSGID(CPF9897) MSGF(QCPFMSG) +
+                             MSGDTA('Saving iSphere library ...') +
+                             TOPGMQ(*EXT) TOMSGQ(*TOPGMQ) +
+                             MSGTYPE(*STATUS)
+
+                CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
+
+                IF         COND(&OWNER *NE '*SAME') THEN(DO)
+                   CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
+                                CUROWNAUT(*REVOKE)
+                ENDDO
+
+                RVKOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*ALL)
+
+                GRTOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*PUBLIC) +
+                             AUT(*CHANGE)
+
+                SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
+                             OMITOBJ((&PRDLIB/BUILD    *PGM) +
+                                     (&PRDLIB/XMLINST  *PGM) +
+                                     (&PRDLIB/EVFEVENT *FILE) +
+                                     (&PRDLIB/QPF38SRC *FILE)) +
+                             DTACPR(&DTACPR) TGTRLS(&TGTRLS) OUTPUT(*PRINT)
+
+                MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&PRDLIB)
+
+                SNDPGMMSG  MSG('Created iSphere save file' *BCAT &SAVF *BCAT 'in +
+                             library' *BCAT &PRDLIB *TCAT '.') TOPGMQ(*PRV (*CTLBDY)) +
+                             MSGTYPE(*INFO)
+
              ENDDO
-
-             RVKOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*ALL)
-
-             GRTOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*PUBLIC) +
-                          AUT(*CHANGE)
-
-             SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
-                          OMITOBJ((&PRDLIB/BUILD    *PGM) +
-                                  (&PRDLIB/XMLINST  *PGM) +
-                                  (&PRDLIB/EVFEVENT *FILE) +
-                                  (&PRDLIB/QPF38SRC *FILE)) +
-                          DTACPR(&DTACPR) TGTRLS(&TGTRLS) OUTPUT(*PRINT)
-
-             MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&PRDLIB)
-
-             SNDPGMMSG  MSG('Created iSphere save file' *BCAT &SAVF *BCAT 'in +
-                          library' *BCAT &PRDLIB *TCAT '.') TOPGMQ(*PRV (*CTLBDY)) +
-                          MSGTYPE(*INFO)
 
              /* ----------------------------------------------- */
              /* Restore library list                            */
