@@ -16,6 +16,8 @@ public class Messages extends NLS {
 
     public static String iSphere_Retrieve_Binder_Source;
 
+    public static String iSphere_Display_Debug_Module_View;
+
     public static String iSphere_Message_File_Editor;
 
     public static String iSphere_Compare_Editor;
