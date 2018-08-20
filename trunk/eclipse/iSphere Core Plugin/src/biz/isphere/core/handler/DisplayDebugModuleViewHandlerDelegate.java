@@ -22,7 +22,6 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
-import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDREGDV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
@@ -137,7 +136,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
         ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system.getSystemName(), debuggerView, lines.toArray(new String[lines.size()]));
 
         IWorkbenchPage tPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        ReadOnlyEditor tEditor = tEditorInput.findEditor(tPage);
+        ModuleViewEditor tEditor = tEditorInput.findEditor(tPage);
         if (tEditor != null) {
             tEditor.setInput(tEditorInput);
         }
