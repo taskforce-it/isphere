@@ -48,4 +48,8 @@ public class ModuleViewEditor extends TextEditor {
         return ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DISPLAY_MODULE_VIEW);
     }
 
+    @Override
+    public boolean isSaveAsAllowed() {
+        return false;
+    }
 }
