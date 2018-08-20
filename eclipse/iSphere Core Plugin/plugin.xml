@@ -40,7 +40,14 @@
             name=""
             icon="icons/text_editor.png"
             class="biz.isphere.core.internal.ReadOnlyEditor"
-            id="biz.isphere.core.internal.ReadOnlyEditor"/>
+            id="biz.isphere.core.internal.ReadOnlyEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"/>
+      <editor
+            name=""
+            icon="icons/debug_module_view.gif"
+            class="biz.isphere.core.displaymoduleview.ModuleViewEditor"
+            id="biz.isphere.core.displaymoduleview.ModuleViewEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"/>
    </extension>
       	
       	<!--

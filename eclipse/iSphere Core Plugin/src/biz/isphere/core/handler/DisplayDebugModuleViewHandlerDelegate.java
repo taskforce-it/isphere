@@ -19,6 +19,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.displaymoduleview.ModuleViewEditor;
 import biz.isphere.core.displaymoduleview.ModuleViewEditorInput;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
@@ -143,7 +144,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
 
         if (true) {
             if (tPage != null) {
-                tPage.openEditor(tEditorInput, ReadOnlyEditor.ID);
+                tPage.openEditor(tEditorInput, ModuleViewEditor.ID);
             }
         }
     }
