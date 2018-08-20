@@ -27,7 +27,7 @@
       //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
 
-     hBNDDIR('ISPHERE')
+     hBNDDIR('ISPHERE': 'QC2LE')
 
       /copy qcpysrc,types
       /copy qcpysrc,iqsdrtvmv

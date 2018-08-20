@@ -27,7 +27,7 @@
       //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
 
-     hBNDDIR('ISPHERE')
+     hBNDDIR('ISPHERE': 'QC2LE')
 
      fQSYSPRT   o    f  141        printer usropn oflind(*in70)
 
