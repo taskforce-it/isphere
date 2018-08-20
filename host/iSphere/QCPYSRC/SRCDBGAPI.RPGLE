@@ -14,7 +14,7 @@
       /copy qcpysrc,types
 
        // Receiver variable, used by various APIs
-     d rcvVar_t        s               a   len(16773104) template
+     d rcvVar_t        s          65535a   based(pTemplate)
 
        // Source Debug Handler Exit Program
      d DebugSessionHandler...
@@ -24,11 +24,11 @@
      d  i_pgmListNumE                10i 0 const
 
      d sdh_pgmList_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  pgm                                likeds(sdh_pgmListE_t) dim(50)
 
      d sdh_pgmListE_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  qPgm                               likeds(qObj_t)
      d  type                         10a
 
@@ -51,7 +51,7 @@
      d  i_msgData                 32767a   const  options(*varsize)
 
      d psh_stopReason_t...
-     d                 ds            10    qualified template
+     d                 ds            10    qualified based(pTemplate)
      d  exception...
      d                                1a
      d  break...
@@ -75,7 +75,7 @@
 
        // Format of Message Data
      d psh_msgData_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  lenMsgData                   10i 0
      d  msgId                         7a
      d  qMsgF                              likeds(qObj_t)
@@ -93,7 +93,7 @@
        // Reasons 5, 6:
        //   Watch Receiver Variable Header
      d psh_watchHeader_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  watchNumber                  10i 0
      d  offsStoppedPgmInf...
      d                               10i 0
@@ -102,7 +102,7 @@
 
        //   Watch Stopped Program Information
      d psh_watchPgmInf_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  offsProcName                 10i 0
      d  lenProcName                  10i 0
      d  offsStoppedLocations...
@@ -116,7 +116,7 @@
 
        //   Watch Interrupt Information
      d psh_watchInterruptInf_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  qJob                               likeds(qJob_t)
      d  qPgm                               likeds(qObj_t)
      d  pgmType                      10a
@@ -172,14 +172,14 @@
      d                                            options(*varsize)
 
      d vewl0100_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  bytRet                       10i 0
      d  bytAvl                       10i 0
      d  numE                         10i 0
       // Array of vewl0100_elem_t
 
      d vewl0100_elem_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  module                       10a
      d  viewType                     10a
      d  compilerId                   20a
@@ -238,7 +238,7 @@
      d                                            options(*varsize)
 
      d vewt0100_t...
-     d                 ds                  qualified template
+     d                 ds                  qualified based(pTemplate)
      d  bytRet                       10i 0
      d  bytAvl                       10i 0
      d  numLinesRtn                  10i 0
