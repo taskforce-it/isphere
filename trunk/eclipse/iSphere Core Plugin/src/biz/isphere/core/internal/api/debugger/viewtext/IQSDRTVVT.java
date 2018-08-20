@@ -9,7 +9,6 @@
 package biz.isphere.core.internal.api.debugger.viewtext;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
@@ -21,8 +20,8 @@ public class IQSDRTVVT extends APIProgramCallDocument {
     public static final String SDVT0100 = "SDVT0100";
     public static final int ALL_LINES = 0;
 
-    public IQSDRTVVT(AS400 system, String connectionName) {
-        super(system, "IQSDRTVVT", IBMiHostContributionsHandler.getISphereLibrary(connectionName));
+    public IQSDRTVVT(AS400 system, String iSphereLibraryName) {
+        super(system, "IQSDRTVVT", iSphereLibraryName);
     }
 
     public boolean execute(IQSDRTVVTResult iqsdrtvvtResult, int viewId, int startLine, int numLines, int lineLength) {
