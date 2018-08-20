@@ -7,13 +7,14 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 
-public class ModuleViewEditorInput implements IEditorInput {
+public class ModuleViewEditorInput implements IStorageEditorInput {
 
     private String systemName;
     private String program;
