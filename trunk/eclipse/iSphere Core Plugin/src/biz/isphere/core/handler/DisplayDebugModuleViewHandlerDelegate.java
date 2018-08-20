@@ -13,13 +13,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.displaymoduleview.ModuleViewEditorInput;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDREGDV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
@@ -80,7 +84,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
     }
 
     private void startDebuggerAndRetrieveModuleView(AS400 system, String iSphereLibrary, String program, String library, String objectType,
-        String module) throws Exception, UnsupportedEncodingException {
+        String module) throws Exception {
 
         String message = null;
         boolean isDebuggerStarted = false;
@@ -107,7 +111,10 @@ public class DisplayDebugModuleViewHandlerDelegate {
 
             DebuggerView debuggerView = findDebugView(system, iSphereLibrary, program, library, objectType, module);
             if (debuggerView != null) {
-                retrieveDebugView(system, iSphereLibrary, debuggerView, 133);
+                List<String> lines = retrieveDebugView(system, iSphereLibrary, debuggerView, 133);
+                if (!lines.isEmpty()) {
+                    openModuleViewEditor(system, debuggerView, lines);
+                }
             }
 
         } finally {
@@ -121,6 +128,23 @@ public class DisplayDebugModuleViewHandlerDelegate {
                 }
             }
 
+        }
+    }
+
+    private void openModuleViewEditor(AS400 system, DebuggerView debuggerView, List<String> lines) throws PartInitException {
+
+        ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system.getSystemName(), debuggerView, lines.toArray(new String[lines.size()]));
+
+        IWorkbenchPage tPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        ReadOnlyEditor tEditor = tEditorInput.findEditor(tPage);
+        if (tEditor != null) {
+            tEditor.setInput(tEditorInput);
+        }
+
+        if (true) {
+            if (tPage != null) {
+                tPage.openEditor(tEditorInput, ReadOnlyEditor.ID);
+            }
         }
     }
 
@@ -143,14 +167,13 @@ public class DisplayDebugModuleViewHandlerDelegate {
         return null;
     }
 
-    private void retrieveDebugView(AS400 system, String iSphereLibrary, DebuggerView debuggerView, int lineLength) throws Exception {
+    private List<String> retrieveDebugView(AS400 system, String iSphereLibrary, DebuggerView debuggerView, int lineLength) throws Exception {
 
         List<String> lines = new LinkedList<String>();
 
         IQSDREGDV iqsdregdv = new IQSDREGDV(system, iSphereLibrary);
         if (!iqsdregdv.execute(debuggerView)) {
             throwException("Could not register debug view: " + iqsdregdv.getErrorMessage()); //$NON-NLS-1$
-            return;
         }
 
         IQSDRTVVT iqsdrtvvt = new IQSDRTVVT(system, iSphereLibrary);
@@ -162,7 +185,6 @@ public class DisplayDebugModuleViewHandlerDelegate {
             iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[32767], IQSDRTVVT.SDVT0100);
             if (!iqsdrtvvt.execute(iqsdrtvvtResult, debuggerView.getId(), startLine, IQSDRTVVT.ALL_LINES, lineLength)) {
                 throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
-                return;
             }
 
             lines.addAll(iqsdrtvvtResult.getLines());
@@ -174,6 +196,8 @@ public class DisplayDebugModuleViewHandlerDelegate {
         for (String line : lines) {
             System.out.println(line);
         }
+
+        return lines;
     }
 
     private void throwException(String message) throws Exception {
