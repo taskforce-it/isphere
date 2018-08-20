@@ -3,6 +3,8 @@ Changelog: iSphere 3.5.0.b006
 -----------------------------
  • Added option "Display Module View" to the context menu of *MODULE
    objects to display the debug view of the module.
+ • Removed non-applicable menu option from ReadOnlyEditor, which is used 
+   for displaying spooled files.
 
 Changelog: iSphere 3.5.0.b005
 -----------------------------
