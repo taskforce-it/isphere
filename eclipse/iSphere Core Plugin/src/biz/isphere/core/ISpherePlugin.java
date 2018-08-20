@@ -130,6 +130,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SEND_MESSAGE = "send_message.png";
     public static final String IMAGE_LOCKED = "locked.png";
     public static final String IMAGE_UNLOCKED = "unlocked.png";
+    public static final String IMAGE_DISPLAY_MODULE_VIEW = "debug_module_view.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -308,6 +309,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_SEND_MESSAGE, getImageDescriptor(IMAGE_SEND_MESSAGE));
         reg.put(IMAGE_LOCKED, getImageDescriptor(IMAGE_LOCKED));
         reg.put(IMAGE_UNLOCKED, getImageDescriptor(IMAGE_UNLOCKED));
+        reg.put(IMAGE_DISPLAY_MODULE_VIEW, getImageDescriptor(IMAGE_DISPLAY_MODULE_VIEW));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
