@@ -19,8 +19,6 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.displaymoduleview.ModuleViewEditor;
-import biz.isphere.core.displaymoduleview.ModuleViewEditorInput;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
@@ -31,6 +29,8 @@ import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMVResult;
 import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVT;
 import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVTResult;
+import biz.isphere.core.moduleviewer.ModuleViewEditor;
+import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
 
 import com.ibm.as400.access.AS400;
 

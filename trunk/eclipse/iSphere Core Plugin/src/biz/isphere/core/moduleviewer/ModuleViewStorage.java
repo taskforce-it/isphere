@@ -1,4 +1,12 @@
-package biz.isphere.core.displaymoduleview;
+/*******************************************************************************
+ * Copyright (c) 2012-2018 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
+package biz.isphere.core.moduleviewer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -59,12 +67,12 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         StringBuilder buffer = new StringBuilder();
 
         for (String line : lines) {
-            if (buffer.length()>0){
+            if (buffer.length() > 0) {
                 buffer.append("\n");
             }
             buffer.append(line);
         }
-        
+
         InputStream stream = null;
 
         try {
