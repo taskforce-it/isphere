@@ -704,7 +704,7 @@ public class SpooledFile {
                 // image, file.getLocation().toOSString());
                 // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(browserInput,
                 // BrowserEditor.ID);
-                FileEditorInput editorInput = new FileEditorInput(file);
+                FileEditorInput editorInput = new SpooledFileEditorInput(file);
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, ReadOnlyEditor.ID);
             }
 
