@@ -19,7 +19,6 @@ import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 
 public class ModuleViewEditorInput implements IStorageEditorInput {
@@ -88,7 +87,7 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
         return getName().equals(otherEditorInput.getName());
     }
 
-    public ReadOnlyEditor findEditor(IWorkbenchPage aPage) {
+    public ModuleViewEditor findEditor(IWorkbenchPage aPage) {
         if (aPage == null) {
             return null;
         }
@@ -98,8 +97,8 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
             try {
                 if (isSameModuleView(tEditorReference.getEditorInput())) {
                     IEditorPart tEditor = tEditorReference.getEditor(true);
-                    if (tEditor instanceof ReadOnlyEditor) {
-                        return (ReadOnlyEditor)tEditor;
+                    if (tEditor instanceof ModuleViewEditor) {
+                        return (ModuleViewEditor)tEditor;
                     }
                 }
             } catch (Exception e) {
