@@ -165,7 +165,6 @@ public abstract class AbstractSourceFileSearchDelegate {
         String file = getMemberResourceFile(sourceMember);
         String member = getMemberResourceName(sourceMember);
         String description = getMemberResourceDescription(sourceMember);
-        Date lastChangedDate = getMemberLastChangedDate(sourceMember);
 
         String tKey = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
         if (!searchElements.containsKey(tKey)) {
@@ -174,9 +173,6 @@ public abstract class AbstractSourceFileSearchDelegate {
             aSearchElement.setFile(file);
             aSearchElement.setMember(member);
             aSearchElement.setDescription(description);
-            // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from
-            // file FNDSTRI.
-            aSearchElement.setLastChangedDate(lastChangedDate);
             searchElements.put(tKey, aSearchElement);
         }
     }

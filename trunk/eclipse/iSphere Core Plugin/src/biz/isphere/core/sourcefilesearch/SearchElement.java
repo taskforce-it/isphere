@@ -12,10 +12,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 
 import biz.isphere.core.annotations.CMOne;
-import biz.isphere.core.internal.DateTimeHelper;
 
 @CMOne(info = "Be careful, when changing this class! Also test CMOne source file search.")
 public class SearchElement {
@@ -26,7 +24,6 @@ public class SearchElement {
     private String description;
     // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file
     // FNDSTRI. (here: lastChangedDate)
-    private Date lastChangedDate;
     private Object data;
 
     public SearchElement() {
@@ -34,7 +31,6 @@ public class SearchElement {
         file = "";
         member = "";
         description = "";
-        lastChangedDate = null;
         data = null;
     }
 
@@ -79,23 +75,6 @@ public class SearchElement {
         this.data = data;
     }
 
-    public Date getLastChangedDate() {
-        return lastChangedDate;
-    }
-
-    public String getLastChangedDateSQL() {
-
-        if (lastChangedDate != null) {
-            return DateTimeHelper.getTimestampFormattedISO(lastChangedDate);
-        }
-
-        return null;
-    }
-
-    public void setLastChangedDate(Date lastChangedDate) {
-        this.lastChangedDate = lastChangedDate;
-    }
-
     public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
         String _separator;
@@ -123,7 +102,7 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR, XIFLCD) VALUES");
+                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "FNDSTRI (XIHDL, XILIB, XIFILE, XIMBR) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {
@@ -137,12 +116,6 @@ public class SearchElement {
 
                     sqlInsert.append("('" + Integer.toString(handle) + "', " + "'" + _searchElements.get(idx).getLibrary() + "', " + "'"
                         + _searchElements.get(idx).getFile() + "', " + "'" + _searchElements.get(idx).getMember() + "'");
-
-                    if (_searchElements.get(idx).getLastChangedDate() != null) {
-                        sqlInsert.append(", " + "'" + _searchElements.get(idx).getLastChangedDateSQL() + "'");
-                    } else {
-                        sqlInsert.append(", " + "'0001-01-01-00.00.00'");
-                    }
 
                     sqlInsert.append(")");
                 }

@@ -47,7 +47,6 @@ import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 
@@ -256,9 +255,6 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             _searchElement.setFile(((IQSYSMember)element).getFile());
             _searchElement.setMember(element.getName());
             _searchElement.setDescription(((IQSYSMember)element).getDescription());
-            // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from
-            // file FNDSTRI.
-            _searchElement.setLastChangedDate(((IQSYSSourceMember)element).getDateModified());
             _searchElements.put(key, _searchElement);
 
         }
