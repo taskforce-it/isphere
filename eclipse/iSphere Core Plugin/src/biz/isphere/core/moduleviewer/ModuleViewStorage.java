@@ -27,9 +27,11 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
     private String objectType;
     private String module;
     private int viewId;
+    private String description;
     private String[] lines;
 
-    public ModuleViewStorage(String systemName, String program, String library, String objectType, String module, int viewId, String[] lines) {
+    public ModuleViewStorage(String systemName, String program, String library, String objectType, String module, int viewId, String description,
+        String[] lines) {
 
         this.systemName = systemName;
         this.program = program;
@@ -37,7 +39,12 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         this.objectType = objectType;
         this.module = module;
         this.viewId = viewId;
+        this.description = description;
         this.lines = lines;
+    }
+
+    public String getSystemName() {
+        return systemName;
     }
 
     public String getFullQualifiedName() {
@@ -59,7 +66,20 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
     }
 
     public String getName() {
-        return getFullQualifiedName();
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(library);
+        buffer.append("/");
+        buffer.append(program);
+        buffer.append(".");
+        buffer.append(module);
+
+        return buffer.toString();
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public InputStream getContents() throws CoreException {

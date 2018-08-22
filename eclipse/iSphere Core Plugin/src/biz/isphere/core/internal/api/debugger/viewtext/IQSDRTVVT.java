@@ -15,6 +15,11 @@ import biz.isphere.core.internal.api.APIProgramCallDocument;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ProgramParameter;
 
+/**
+ * This class is a wrapper for the iSphere Retrieve View Text (QSDRTVVT) API.
+ * 
+ * @author Thomas Raddatz
+ */
 public class IQSDRTVVT extends APIProgramCallDocument {
 
     public static final String SDVT0100 = "SDVT0100";

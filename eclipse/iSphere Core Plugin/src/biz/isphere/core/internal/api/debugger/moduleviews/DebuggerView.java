@@ -25,6 +25,7 @@ public class DebuggerView {
 
     private int id;
     private int lines;
+    private boolean isRegistered;
 
     public DebuggerView(String object, String library, String objType, SDMV0100 sdmv0100) throws UnsupportedEncodingException {
 
@@ -46,11 +47,21 @@ public class DebuggerView {
 
         this.id = -1;
         this.lines = -1;
+        this.isRegistered = false;
     }
 
     public boolean isListingView() {
 
         if (SDMV0100.LISTING_VIEW.equals(getType())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isTextView() {
+
+        if (SDMV0100.TEXT_VIEW.equals(getType())) {
             return true;
         }
 
@@ -97,20 +108,36 @@ public class DebuggerView {
         return number;
     }
 
-    public int getId() {
+    public int getId() throws IllegalAccessException {
+
+        if (!isRegistered) {
+            throw new IllegalAccessException("View has not yet been registered.");
+        }
+
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+        this.isRegistered = true;
     }
 
-    public int getLines() {
+    public int getLines() throws IllegalAccessException {
+
+        if (!isRegistered) {
+            throw new IllegalAccessException("View has not yet been registered.");
+        }
+
         return lines;
     }
 
     public void setLines(int lines) {
         this.lines = lines;
+    }
+
+    public boolean isRegistered() {
+
+        return isRegistered;
     }
 
     @Override

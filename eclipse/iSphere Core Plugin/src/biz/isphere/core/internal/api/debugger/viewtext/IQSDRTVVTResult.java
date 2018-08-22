@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
 
@@ -151,7 +152,7 @@ public class IQSDRTVVTResult extends APIFormat {
         for (int i = 0; i < getNumberOfLinesReturned(); i++) {
 
             sdvt0100.setOffset(offset);
-            lines.add(sdvt0100.getLine());
+            lines.add(StringHelper.trimR(sdvt0100.getLine()));
 
             offset = sdvt0100.getOffsetNextLine();
         }
