@@ -5,6 +5,7 @@ Changelog: iSphere 3.5.0.b006
    objects to display the debug view of the module.
  • Removed non-applicable menu option from ReadOnlyEditor, which is used 
    for displaying spooled files.
+ • Removed obsolete field 'XIFLCD' from table 'FNDSTRI'. 
 
 Changelog: iSphere 3.5.0.b005
 -----------------------------
