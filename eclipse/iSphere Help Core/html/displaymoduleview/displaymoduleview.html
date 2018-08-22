@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Display Module View</title>
+</head>
+
+<body>
+	<h1>Display Module View</h1>
+    The <i>Display Module View</i> option is available in the context menu of modules (programs and 
+    service programs). It uses various debugger APIs to retrieve and display a module view.>
+	<p>
+	Menu option:
+	<p>
+	<img src="assets/context_menu.png" align="middle">
+	<p>
+	Today there is no dialog for selecting the view that is retrieved. Behind the scene, iSphere checks 
+	the module for *LISTING and *TEXT module view. When a *LISTING view is found, that view is returned.
+	Otherwise the first *TEXT view is returned.
+	<p>
+	<p>
+	<table>
+		<tr>
+			<td class="notice">Note: You must be authorized to execute the STRDBG and ENDDBG commands
+			                   in oder to use this menu option.</td>
+		</tr>
+	</table>
+	<p>
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
