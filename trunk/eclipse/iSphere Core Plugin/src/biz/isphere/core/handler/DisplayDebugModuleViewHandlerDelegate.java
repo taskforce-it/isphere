@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
@@ -34,6 +33,9 @@ import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
 import com.ibm.as400.access.AS400;
 
 public class DisplayDebugModuleViewHandlerDelegate {
+
+    private static final int RECEIVE_BUFFER_LENGTH = 32767;
+    private static final int LINE_LENGTH = 240;
 
     private String connectionName;
 
@@ -111,7 +113,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
 
             DebuggerView debuggerView = findDebugView(system, iSphereLibrary, program, library, objectType, module);
             if (debuggerView != null) {
-                List<String> lines = retrieveDebugView(system, iSphereLibrary, debuggerView, 133);
+                List<String> lines = retrieveDebugView(system, iSphereLibrary, debuggerView, LINE_LENGTH);
                 if (!lines.isEmpty()) {
                     openModuleViewEditor(system, debuggerView, lines);
                 }
@@ -131,7 +133,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
         }
     }
 
-    private void openModuleViewEditor(AS400 system, DebuggerView debuggerView, List<String> lines) throws PartInitException {
+    private void openModuleViewEditor(AS400 system, DebuggerView debuggerView, List<String> lines) throws Exception {
 
         ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system.getSystemName(), debuggerView, lines.toArray(new String[lines.size()]));
 
@@ -152,15 +154,24 @@ public class DisplayDebugModuleViewHandlerDelegate {
         throws Exception, UnsupportedEncodingException {
 
         IQSDRTVMV iqsdrtvmv = new IQSDRTVMV(system, iSphereLibrary);
-        IQSDRTVMVResult iqsdrtvmvResult = new IQSDRTVMVResult(system, new byte[32767], IQSDRTVMV.SDMV0100);
+        IQSDRTVMVResult iqsdrtvmvResult = new IQSDRTVMVResult(system, new byte[RECEIVE_BUFFER_LENGTH], IQSDRTVMV.SDMV0100);
         if (!iqsdrtvmv.execute(iqsdrtvmvResult, program, library, objectType, module)) {
             throwException("Could not retrieve module views: " + iqsdrtvmv.getErrorMessage()); //$NON-NLS-1$
         } else {
+
+            DebuggerView firstTextView = null;
+
             List<DebuggerView> debuggerViews = iqsdrtvmvResult.getViews();
             for (DebuggerView debuggerView : debuggerViews) {
                 if (debuggerView.isListingView()) {
                     return debuggerView;
+                } else if (debuggerView.isTextView()) {
+                    firstTextView = debuggerView;
                 }
+            }
+
+            if (firstTextView != null) {
+                return firstTextView;
             }
         }
 
@@ -171,18 +182,20 @@ public class DisplayDebugModuleViewHandlerDelegate {
 
         List<String> lines = new LinkedList<String>();
 
+        // Register debugger view
         IQSDREGDV iqsdregdv = new IQSDREGDV(system, iSphereLibrary);
         if (!iqsdregdv.execute(debuggerView)) {
             throwException("Could not register debug view: " + iqsdregdv.getErrorMessage()); //$NON-NLS-1$
         }
 
+        // Retrieve debugger view text
         IQSDRTVVT iqsdrtvvt = new IQSDRTVVT(system, iSphereLibrary);
         IQSDRTVVTResult iqsdrtvvtResult = null;
         int startLine = 1;
 
         do {
 
-            iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[32767], IQSDRTVVT.SDVT0100);
+            iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[RECEIVE_BUFFER_LENGTH], IQSDRTVVT.SDVT0100);
             if (!iqsdrtvvt.execute(iqsdrtvvtResult, debuggerView.getId(), startLine, IQSDRTVVT.ALL_LINES, lineLength)) {
                 throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
             }
@@ -192,10 +205,6 @@ public class DisplayDebugModuleViewHandlerDelegate {
             startLine = iqsdrtvvtResult.getLastLine() + 1;
 
         } while (iqsdrtvvtResult != null && iqsdrtvvtResult.getLastLine() < debuggerView.getLines());
-
-        for (String line : lines) {
-            System.out.println(line);
-        }
 
         return lines;
     }
