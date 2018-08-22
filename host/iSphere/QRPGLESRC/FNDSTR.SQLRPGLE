@@ -163,7 +163,6 @@
      d  i_mbr                        10A   Const
      d  i_stmt                        6S 0 Const
      d  i_srcdta                    228A   Const
-     d  i_lastChgDate                  Z   Const
 
      d updateStatus...
      d                 PR                  Extproc('updateStatus')
@@ -171,10 +170,6 @@
      d  i_status                     10I 0 Const
 
      d freeRegEx       PR                  Extproc('freeRegEx')
-
-     d convertApiDateToTimestamp...
-     d                 PR              Z   Extproc('convertApiDateToTimestamp')
-     d  i_apiDate                    13A   Const
 
      d*cvtCcsid_lc     PR                        like(searchArgument_t.string)
      d*                                    Extproc('cvtCcsid_lc')
@@ -251,9 +246,6 @@
 
      dLIUsrSpc         S               *                                        User space
      dLICnt            S             10I 0                                      Counter
-
-     d lastChangedDate...
-     d                 S               Z
 
       //*------------------------------------------------------------------------------------------*
 
@@ -356,9 +348,6 @@
                  // Set pointer of information area
                  MBRD0300APtr = LIUsrSpc + MBRLOffMbrInf;
 
-                 // Convert field "Last source change date and time"
-                 lastChangedDate = convertApiDateToTimestamp(MBRDChgDate);
-
                  // Write file 'Input'
                  Exec SQL
                     INSERT
@@ -368,16 +357,14 @@
                         XIHDL,
                         XILIB,
                         XIFILE,
-                        XIMBR,
-                        XIFLCD
+                        XIMBR
                        )
                     VALUES
                        (
                         :LPHDL,
                         :XILIB,
                         :XIFILE,
-                        :MBRDMbr,
-                        :lastChangedDate
+                        :MBRDMbr
                        );
 
                EndFor;
@@ -542,8 +529,7 @@
                 XIHDL,
                 XILIB,
                 XIFILE,
-                XIMBR,
-                XIFLCD
+                XIMBR
              FOR READ ONLY;
 
        // Open cursor
@@ -792,7 +778,7 @@
              Iter;
            EndIf;
 
-           addMember(LPHDL: XIFILE: XILIB: XIMBR: LISTMT: SRCDTA: XIFLCD);
+           addMember(LPHDL: XIFILE: XILIB: XIMBR: LISTMT: SRCDTA);
 
          EndDo;
 
@@ -827,8 +813,7 @@
              // Ensure at least a "member record" in case
              // we only had "must not contain" condition.
              addMember(LPHDL: XIFILE: XILIB: XIMBR: 0:
-                       %trim(XILIB) + '/' + %trim(XIFILE) + '.' + %trim(XIMBR):
-                        XIFLCD);
+                       %trim(XILIB) + '/' + %trim(XIFILE) + '.' + %trim(XIMBR));
            EndIf;
          EndIf;
 
@@ -942,8 +927,6 @@
      d  i_mbr                        10A   Const
      d  i_stmt                        6S 0 Const
      d  i_srcdta                    228A   Const
-      * TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file FNDSTRI.
-     d  i_lastChgDate                  Z   Const
 
      d mbrd0100        DS                  Likeds(mbrd0100_t) inz
      d qFile           DS                  Qualified
@@ -1059,34 +1042,6 @@
 
       /end-free
      P                 E
-
-      //*==========================================================================================*
-      //* Converts an API date of format (CYYMMDDHHMMSS) to a RPG timestamp value.
-      //*==========================================================================================*
-
-     p convertApiDateToTimestamp...
-     p                 B                   Export
-     d                 PI              Z
-     d  i_apiDate                    13A   Const
-
-     d apiDate         DS                  Qualified
-     d  cyymmdd                       7A
-     d  hhmmss                        6A
-
-     d timestamp       S               Z
-      //*------------------------------------------------------------------------------------------*
-
-      /Free
-
-         apiDate = i_apiDate;
-
-         timestamp = %date(apiDate.cyymmdd: *CYMD0)
-                   + %time(apiDate.hhmmss: *HMS0);
-
-         Return timestamp;
-
-      /End-Free
-     p                 E
 
       //*==========================================================================================*
       //* Converts a given string to the CCSID of the current locale.                              *
