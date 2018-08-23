@@ -175,3 +175,20 @@ RDi 9.0/9.1:
 
 Name:     WindowBuilder Pro Eclipse Update Site
 Location: http://download.eclipse.org/windowbuilder/WB/integration/4.2/
+
+Eclipse Plug-in Spy:
+
+RDi 8.0:
+--------
+
+Name:     Eclipse RCP Plug-in Developer Resources
+Location: Helios Milestone Repository - http://download.eclipse.org/releases/helios
+
+RDi 9.0/9.1:
+------------
+
+Name:     Eclipse PDE Plug-in Developer Resources
+Location: Eclipse Neon (4.6) Update Site - http://download.eclipse.org/eclipse/updates/4.6
+
+Window Spy: Alt-Shift-F1
+Menu Spy:   Alt-Shift-F2 
