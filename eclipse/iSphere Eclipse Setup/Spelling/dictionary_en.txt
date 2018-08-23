@@ -12,3 +12,4 @@ checkbox
 Lpex
 enablement
 clipboard
+authorized

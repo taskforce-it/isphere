@@ -110,6 +110,9 @@ f) For RDi and WDSCi add classpath variable IBM_SHARED_PLUGINS to the Java build
    
    IBM_SHARED_PLUGINS:   c:/Program Files (x86)/IBM/SDP_Shared/plugins
 
+g) Preferences - General - Editors - Text Editors - Spelling:
+
+   User defined dictionary:  ${workspace_loc}\iSphere Eclipse Setup\Spelling\dictionary_en.txt
 
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
