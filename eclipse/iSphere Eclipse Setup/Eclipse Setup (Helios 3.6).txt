@@ -160,7 +160,7 @@ a) Map the [Enter] key to "splittLine":
 
 
 Usefull plug-ins:
------------------
+=================
 
 WindowBuilder Pro Update Site: 
 
@@ -192,3 +192,17 @@ Location: Eclipse Neon (4.6) Update Site - http://download.eclipse.org/eclipse/u
 
 Window Spy: Alt-Shift-F1
 Menu Spy:   Alt-Shift-F2 
+
+Enhanced Class Decompiler
+
+RDi 8.0:
+--------
+
+Name:     ???
+Location: ???
+
+RDi 9.0/9.1:
+------------
+
+Name:     Enhanced Class Decompiler
+Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
