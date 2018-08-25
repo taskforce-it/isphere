@@ -326,12 +326,14 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
             dialog.setFilterNames(new String[] { "Excel Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$ //$NON-NLS-2$
             dialog.setFilterExtensions(new String[] { "*.xls", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ //$NON-NLS-2$
-            dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
+            dialog.setFilterPath(Preferences.getInstance().getSourceFileSearchExportDirectory());
             dialog.setFileName("export.xls"); //$NON-NLS-1$
             dialog.setOverwrite(true);
             String file = dialog.open();
 
             if (file != null) {
+
+                Preferences.getInstance().setSourceFileSearchExportDirectory(dialog.getFilterPath());
 
                 try {
 
