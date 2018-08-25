@@ -1370,7 +1370,7 @@ public final class Preferences {
 
     public SimpleDateFormat getDateFormatter() {
 
-        String pattern = getDateFormatsMap().get(getDateFormatLabel());
+        String pattern = getDateFormatPattern();
         if (pattern == null) {
             pattern = getDateFormatsMap().get(getDefaultDateFormatLabel());
         }
@@ -1380,6 +1380,10 @@ public final class Preferences {
         }
 
         return new SimpleDateFormat(pattern);
+    }
+
+    public String getDateFormatPattern() {
+        return getDateFormatsMap().get(getDateFormatLabel());
     }
 
     public String[] getSpooledFileAllowEditLabels() {
@@ -1415,7 +1419,7 @@ public final class Preferences {
 
     public SimpleDateFormat getTimeFormatter() {
 
-        String pattern = getTimeFormatsMap().get(getTimeFormatLabel());
+        String pattern = getTimeFormatPattern();
         if (pattern == null) {
             pattern = getTimeFormatsMap().get(getDefaultTimeFormatLabel());
         }
@@ -1425,6 +1429,10 @@ public final class Preferences {
         }
 
         return new SimpleDateFormat(pattern);
+    }
+
+    public String getTimeFormatPattern() {
+        return getTimeFormatsMap().get(getTimeFormatLabel());
     }
 
     public String[] getTimeFormatLabels() {
