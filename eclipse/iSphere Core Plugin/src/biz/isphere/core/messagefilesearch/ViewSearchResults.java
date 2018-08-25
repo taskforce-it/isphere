@@ -339,12 +339,14 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                 dialog.setFilterNames(new String[] { "Excel Files", "All Files" }); //$NON-NLS-1$
                 dialog.setFilterExtensions(new String[] { "*.xls", "*.*" }); //$NON-NLS-1$
-                dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
+                dialog.setFilterPath(Preferences.getInstance().getMessageFileSearchExportDirectory());
                 dialog.setFileName("export.xls"); //$NON-NLS-1$
                 dialog.setOverwrite(true);
                 String file = dialog.open();
 
                 if (file != null) {
+
+                    Preferences.getInstance().setMessageFileSearchExportDirectory(dialog.getFilterPath());
 
                     try {
 
