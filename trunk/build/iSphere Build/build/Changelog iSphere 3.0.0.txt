@@ -10,7 +10,9 @@ Changelog: iSphere 3.5.0.b006
    used export folder.
  • Added column "Count" to Source File Search result view to display the 
    number of statements found.
- • Added "Last chaned date" and "Count" to Excel export of Source File Search.
+ • Added "Last changed date" and "Count" to Excel export of Source File 
+   Search.
+ • Added search options to Excel export.
    
 
 Changelog: iSphere 3.5.0.b005
