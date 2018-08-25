@@ -82,18 +82,22 @@ public class SearchResultViewer {
     static ColumnSizeUpdateJob columnSizeUpdateJob;
     static int columnMemberSize = Preferences.getInstance().getSourceFileSearchMemberColumnWidth();
     static int columnLastChangedDateSize = Preferences.getInstance().getSourceFileSearchLastChangedDateColumnWidth();
+    static int columnStatementsCountSize = Preferences.getInstance().getSourceFileSearchStatementsCountColumnWidth();
 
     private class LabelProviderTableViewerMembers extends LabelProvider implements ITableLabelProvider {
 
         private static final String UNKNOWN = "*UNKNOWN"; //$NON-NLS-1$
 
         public String getColumnText(Object element, int columnIndex) {
+            SearchResult searchResult = (SearchResult)element;
             if (columnIndex == 0) {
-                return ((SearchResult)element).getLibrary() + "-" + ((SearchResult)element).getFile() + "(" + ((SearchResult)element).getMember() //$NON-NLS-1$ //$NON-NLS-2$
-                    + ")" + " - \"" + ((SearchResult)element).getDescription() + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                return searchResult.getLibrary() + "-" + searchResult.getFile() + "(" + searchResult.getMember() + ")" + " - \"" //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$ //$NON-NLS-4$
+                    + searchResult.getDescription() + "\""; //$NON-NLS-1$
             } else if (columnIndex == 1) {
-                Timestamp lastChangedDate = ((SearchResult)element).getLastChangedDate();
+                Timestamp lastChangedDate = searchResult.getLastChangedDate();
                 return DateTimeHelper.getTimestampFormatted(lastChangedDate);
+            } else if (columnIndex == 2) {
+                return Integer.toString(searchResult.getStatementsCount());
             }
             return UNKNOWN;
         }
@@ -122,6 +126,7 @@ public class SearchResultViewer {
 
         public static final int BY_MEMBER = 1;
         public static final int BY_DATE = 2;
+        public static final int BY_COUNT = 3;
         public static final int ASCENDING = 1;
         public static final int DESCENDING = 2;
 
@@ -157,6 +162,10 @@ public class SearchResultViewer {
                 result = sortByLastChangedDate(viewer, e1, e2);
                 break;
 
+            case BY_COUNT:
+                result = sortByStatementsCount(viewer, e1, e2);
+                break;
+
             default:
                 result = sortByMember(viewer, e1, e2);
             }
@@ -187,6 +196,24 @@ public class SearchResultViewer {
 
             return result;
         }
+
+        private int sortByStatementsCount(Viewer viewer, Object e1, Object e2) {
+
+            int count1 = ((SearchResult)e1).getStatementsCount();
+            int count2 = ((SearchResult)e2).getStatementsCount();
+
+            int result;
+
+            if (count1 > count2) {
+                result = 1;
+            } else if (count1 < count2) {
+                result = -1;
+            } else {
+                result = 0;
+            }
+
+            return result;
+        }
     }
 
     private class LabelProviderStatements extends LabelProvider implements ITableLabelProvider {
@@ -210,20 +237,23 @@ public class SearchResultViewer {
 
         private int memberColumnWidth = -1;
         private int lastChangedDateColumnWidth = -1;
+        private int statementsCountColumnWidth = -1;
 
-        public ColumnSizeUpdateJob(int memberColumnWidth, int lastChangedDateColumnWidth) {
+        public ColumnSizeUpdateJob(int memberColumnWidth, int lastChangedDateColumnWidth, int statementsCountColumnWidth) {
             super("Update column width");
             this.memberColumnWidth = memberColumnWidth;
             this.lastChangedDateColumnWidth = lastChangedDateColumnWidth;
+            this.statementsCountColumnWidth = statementsCountColumnWidth;
         }
 
         @Override
         protected IStatus run(IProgressMonitor arg0) {
 
-            System.out.println("Updating column sizes ...");
+            System.out.println("Updating column sizes ..."); //$NON-NLS-1$
 
             Preferences.getInstance().setSourceFileSearchMemberColumnWidth(memberColumnWidth);
             Preferences.getInstance().setSourceFileSearchLastChangedDateColumnWidth(lastChangedDateColumnWidth);
+            Preferences.getInstance().setSourceFileSearchStatementsCountColumnWidth(statementsCountColumnWidth);
 
             return Status.OK_STATUS;
         }
@@ -525,6 +555,17 @@ public class SearchResultViewer {
             }
         });
 
+        final TableColumn tableColumnStatementsCount = new TableColumn(tableMembers, SWT.NONE);
+        tableColumnStatementsCount.setWidth(columnStatementsCountSize);
+        tableColumnStatementsCount.setText(Messages.StatementsCount);
+        tableColumnStatementsCount.addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                columnStatementsCountSize = tableColumnStatementsCount.getWidth();
+                saveColumnSizes();
+            }
+        });
+
         final Menu menuTableMembers = new Menu(tableMembers);
         menuTableMembers.addMenuListener(new TableMembersMenuAdapter(menuTableMembers));
         tableMembers.setMenu(menuTableMembers);
@@ -540,10 +581,15 @@ public class SearchResultViewer {
                     sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_DATE);
                     tableViewerMembers.refresh();
                 }
+                if (Messages.StatementsCount.equals(column.getText())) {
+                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_COUNT);
+                    tableViewerMembers.refresh();
+                }
             }
         };
         tableColumnMember.addListener(SWT.Selection, sortListener);
         tableColumnLastChangedDate.addListener(SWT.Selection, sortListener);
+        tableColumnStatementsCount.addListener(SWT.Selection, sortListener);
 
         tableViewerMembers.setInput(new Object());
 
@@ -615,7 +661,7 @@ public class SearchResultViewer {
             columnSizeUpdateJob = null;
         }
 
-        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnLastChangedDateSize);
+        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnLastChangedDateSize, columnStatementsCountSize);
         columnSizeUpdateJob.schedule(500);
     }
 

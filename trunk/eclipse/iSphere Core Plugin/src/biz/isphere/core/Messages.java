@@ -138,6 +138,8 @@ public class Messages extends NLS {
 
     public static String Last_changed;
 
+    public static String StatementsCount;
+
     public static String Message;
 
     public static String Message_Id;
