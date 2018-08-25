@@ -115,6 +115,8 @@ public final class Preferences {
 
     private static final String SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
 
+    private static final String SOURCEFILESEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
+
     private static final String SOURCEFILESEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
     private static final String MESSAGEFILESEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
@@ -323,6 +325,10 @@ public final class Preferences {
 
     public int getSourceFileSearchLastChangedDateColumnWidth() {
         return preferenceStore.getInt(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH);
+    }
+
+    public int getSourceFileSearchStatementsCountColumnWidth() {
+        return preferenceStore.getInt(SOURCEFILESEARCH_STATEMENTS_COUNT_COLUMN_WIDTH);
     }
 
     public String getSpooledFileConversionText() {
@@ -619,6 +625,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, width);
     }
 
+    public void setSourceFileSearchStatementsCountColumnWidth(int width) {
+        preferenceStore.setValue(SOURCEFILESEARCH_STATEMENTS_COUNT_COLUMN_WIDTH, width);
+    }
+
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
     }
@@ -822,6 +832,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(SOURCEFILESEARCH_MEMBER_COLUMN_WIDTH, getDefaultSourceFileSearchMemberColumnWidth());
         preferenceStore.setDefault(SOURCEFILESEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, getDefaultSourceFileSearchLastChangedDateColumnWidth());
+        preferenceStore.setDefault(SOURCEFILESEARCH_STATEMENTS_COUNT_COLUMN_WIDTH, getDefaultSourceFileSearchStatementsCountColumnWidth());
 
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
@@ -988,6 +999,16 @@ public final class Preferences {
      */
     public int getDefaultSourceFileSearchLastChangedDateColumnWidth() {
         return 120;
+    }
+
+    /**
+     * Returns the default width of the 'statements count' column of
+     * SearchResultViewer of the iSphere Source File Search.
+     * 
+     * @return default column width
+     */
+    public int getDefaultSourceFileSearchStatementsCountColumnWidth() {
+        return 80;
     }
 
     /**

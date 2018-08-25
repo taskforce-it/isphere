@@ -48,6 +48,7 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
@@ -337,9 +338,11 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
                     sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
                     sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
-                    sheet.addCell(new jxl.write.Label(4, 0, Messages.Line));
-                    sheet.addCell(new jxl.write.Label(5, 0, Messages.Statement));
+                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Last_changed));
+                    sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
+                    sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
+                    sheet.addCell(new jxl.write.Label(6, 0, Messages.Line));
+                    sheet.addCell(new jxl.write.Label(7, 0, Messages.Statement));
 
                     int line = 1;
 
@@ -349,12 +352,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                         for (int index2 = 0; index2 < _statements.length; index2++) {
 
+                            String lastChangedDate = DateTimeHelper.getTimestampFormatted(_searchResults[index1].getLastChangedDate());
+
                             sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
                             sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile()));
                             sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember()));
-                            sheet.addCell(new jxl.write.Label(3, line, _searchResults[index1].getDescription()));
-                            sheet.addCell(new jxl.write.Label(4, line, Integer.toString(_statements[index2].getStatement())));
-                            sheet.addCell(new jxl.write.Label(5, line, _statements[index2].getLine()));
+                            sheet.addCell(new jxl.write.Label(3, line, lastChangedDate));
+                            sheet.addCell(new jxl.write.Label(4, line, _searchResults[index1].getDescription()));
+                            sheet.addCell(new jxl.write.Label(5, line, Integer.toString(_searchResults[index1].getStatementsCount())));
+                            sheet.addCell(new jxl.write.Label(6, line, Integer.toString(_statements[index2].getStatement())));
+                            sheet.addCell(new jxl.write.Label(7, line, _statements[index2].getLine()));
 
                             line++;
 
@@ -368,13 +375,20 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
                     sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
                     sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Description));
+                    sheet.addCell(new jxl.write.Label(3, 0, Messages.Last_changed));
+                    sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
+                    sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
 
                     for (int index = 0; index < _searchResults.length; index++) {
+
+                        String lastChangedDate = DateTimeHelper.getTimestampFormatted(_searchResults[index].getLastChangedDate());
+
                         sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
                         sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile()));
                         sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember()));
-                        sheet.addCell(new jxl.write.Label(3, index + 1, _searchResults[index].getDescription()));
+                        sheet.addCell(new jxl.write.Label(3, index + 1, lastChangedDate));
+                        sheet.addCell(new jxl.write.Label(4, index + 1, _searchResults[index].getDescription()));
+                        sheet.addCell(new jxl.write.Label(5, index + 1, Integer.toString(_searchResults[index].getStatementsCount())));
                     }
 
                     workbook.write();

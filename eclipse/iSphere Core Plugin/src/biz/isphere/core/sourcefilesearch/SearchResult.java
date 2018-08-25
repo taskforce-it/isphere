@@ -69,6 +69,10 @@ public class SearchResult implements Serializable {
         this.statements = statements;
     }
 
+    public int getStatementsCount() {
+        return statements.length;
+    }
+
     public Timestamp getLastChangedDate() {
         return lastChangedDate;
     }
