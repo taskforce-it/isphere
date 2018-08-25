@@ -9,12 +9,10 @@
 package biz.isphere.core.sourcefilesearch;
 
 import java.io.File;
-import java.io.IOException;
 
 import jxl.Workbook;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-import jxl.write.WriteException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -50,11 +48,14 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
+import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
@@ -67,6 +68,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final int COLUMN_WIDTH_COUNT = 7;
     private static final int COLUMN_WIDTH_LINE_NUMBER = 7;
     private static final int COLUMN_WIDTH_STATEMENT = 50;
+
+    private static final int COLUMN_SEARCH_ARGUMENTS_0 = 20;
+    private static final int COLUMN_SEARCH_ARGUMENTS_1 = 80;
 
     private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
@@ -319,6 +323,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         SearchResultViewer _searchResultViewer = getSelectedViewer();
         if (_searchResultViewer != null) {
 
+            SearchOptions _searchOptions = _searchResultViewer.getSearchOptions();
             SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
 
             WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
@@ -340,6 +345,34 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
 
                     WritableSheet sheet;
+
+                    // Add search options
+                    sheet = workbook.createSheet("Search arguments", 0);
+
+                    sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
+                    sheet.addCell(new jxl.write.Label(1, 0, _searchOptions.getMatchOption()));
+
+                    sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
+                    sheet.addCell(new jxl.write.Boolean(1, 1, _searchOptions.isShowAllItems()));
+
+                    sheet.addCell(new jxl.write.Label(0, 2, Messages.Search_arguments_colon));
+
+                    int line = sheet.getRows() - 1;
+
+                    for (SearchArgument searchArgument : _searchOptions.getSearchArguments()) {
+                        sheet.addCell(new jxl.write.Label(1, line, searchArgument.toText()));
+                        line++;
+                    }
+
+                    if (_searchOptions.hasGenericOptions()) {
+                        sheet.addCell(new jxl.write.Label(0, line, Messages.Additional_Options_colon));
+                        for (GenericSearchOption genericOption : _searchOptions.getGenericOptions()) {
+                            sheet.addCell(new jxl.write.Label(1, line, genericOption.toText()));
+                        }
+                    }
+
+                    sheet.setColumnView(0, COLUMN_SEARCH_ARGUMENTS_0);
+                    sheet.setColumnView(1, COLUMN_SEARCH_ARGUMENTS_1);
 
                     sheet = workbook.createSheet(Messages.Members_with_statements, 0);
 
@@ -363,7 +396,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
 
                     // Add data
-                    int line = 1;
+                    line = 1;
 
                     for (int index1 = 0; index1 < _searchResults.length; index1++) {
 
@@ -426,10 +459,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     workbook.write();
                     workbook.close();
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (WriteException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    MessageDialogAsync.displayError(getSite().getShell(), e.getLocalizedMessage());
                 }
 
             }
