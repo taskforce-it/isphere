@@ -66,7 +66,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final int COLUMN_WIDTH_NAME = 15;
     private static final int COLUMN_WIDTH_DESCRIPTION = 50;
     private static final int COLUMN_WIDTH_MESSAGE_ID = 12;
-    private static final int COLUMN_WIDTH_MESSAGE_TEXT = 50;
+    private static final int COLUMN_WIDTH_MESSAGE_TEXT = 100;
 
     private static final int COLUMN_SEARCH_ARGUMENTS_0 = 20;
     private static final int COLUMN_SEARCH_ARGUMENTS_1 = 80;
