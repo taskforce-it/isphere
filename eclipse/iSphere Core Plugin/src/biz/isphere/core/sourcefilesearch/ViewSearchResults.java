@@ -48,7 +48,6 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
@@ -61,6 +60,13 @@ import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributions
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class ViewSearchResults extends ViewPart implements ISelectionChangedListener {
+
+    private static final int COLUMN_WIDTH_NAME = 15;
+    private static final int COLUMN_WIDTH_DATE_TIME = 20;
+    private static final int COLUMN_WIDTH_DESCRIPTION = 50;
+    private static final int COLUMN_WIDTH_COUNT = 7;
+    private static final int COLUMN_WIDTH_LINE_NUMBER = 7;
+    private static final int COLUMN_WIDTH_STATEMENT = 50;
 
     private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
@@ -335,6 +341,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                     sheet = workbook.createSheet(Messages.Members_with_statements, 0);
 
+                    // Add headline
                     sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
                     sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
                     sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
@@ -344,6 +351,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(6, 0, Messages.Line));
                     sheet.addCell(new jxl.write.Label(7, 0, Messages.Statement));
 
+                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
+                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
+                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
+                    sheet.setColumnView(6, COLUMN_WIDTH_LINE_NUMBER);
+                    sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
+
+                    // Add data
                     int line = 1;
 
                     for (int index1 = 0; index1 < _searchResults.length; index1++) {
@@ -352,19 +369,21 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                         for (int index2 = 0; index2 < _statements.length; index2++) {
 
-                            String lastChangedDate = DateTimeHelper.getTimestampFormatted(_searchResults[index1].getLastChangedDate());
-
                             sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
                             sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getFile()));
                             sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getMember()));
-                            sheet.addCell(new jxl.write.Label(3, line, lastChangedDate));
+                            sheet.addCell(new jxl.write.DateTime(3, line, _searchResults[index1].getLastChangedDate()));
                             sheet.addCell(new jxl.write.Label(4, line, _searchResults[index1].getDescription()));
-                            sheet.addCell(new jxl.write.Label(5, line, Integer.toString(_searchResults[index1].getStatementsCount())));
-                            sheet.addCell(new jxl.write.Label(6, line, Integer.toString(_statements[index2].getStatement())));
+                            sheet.addCell(new jxl.write.Number(5, line, _searchResults[index1].getStatementsCount()));
+                            sheet.addCell(new jxl.write.Number(6, line, _statements[index2].getStatement()));
                             sheet.addCell(new jxl.write.Label(7, line, _statements[index2].getLine()));
 
                             line++;
 
+                        }
+
+                        for (int i = 0; i <= 7; i++) {
+                            sheet.addCell(new jxl.write.Label(i, line, ""));
                         }
 
                         line++;
@@ -372,6 +391,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                     sheet = workbook.createSheet(Messages.Members, 0);
 
+                    // Add headline
                     sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
                     sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
                     sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
@@ -379,16 +399,26 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
                     sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
 
+                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
+                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
+                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
+
+                    // Add data
+                    line = 1;
+
                     for (int index = 0; index < _searchResults.length; index++) {
 
-                        String lastChangedDate = DateTimeHelper.getTimestampFormatted(_searchResults[index].getLastChangedDate());
+                        sheet.addCell(new jxl.write.Label(0, line, _searchResults[index].getLibrary()));
+                        sheet.addCell(new jxl.write.Label(1, line, _searchResults[index].getFile()));
+                        sheet.addCell(new jxl.write.Label(2, line, _searchResults[index].getMember()));
+                        sheet.addCell(new jxl.write.DateTime(3, line, _searchResults[index].getLastChangedDate()));
+                        sheet.addCell(new jxl.write.Label(4, line, _searchResults[index].getDescription()));
+                        sheet.addCell(new jxl.write.Number(5, line, _searchResults[index].getStatementsCount()));
 
-                        sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
-                        sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getFile()));
-                        sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getMember()));
-                        sheet.addCell(new jxl.write.Label(3, index + 1, lastChangedDate));
-                        sheet.addCell(new jxl.write.Label(4, index + 1, _searchResults[index].getDescription()));
-                        sheet.addCell(new jxl.write.Label(5, index + 1, Integer.toString(_searchResults[index].getStatementsCount())));
+                        line++;
                     }
 
                     workbook.write();
