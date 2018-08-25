@@ -67,7 +67,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final int COLUMN_WIDTH_DESCRIPTION = 50;
     private static final int COLUMN_WIDTH_COUNT = 7;
     private static final int COLUMN_WIDTH_LINE_NUMBER = 7;
-    private static final int COLUMN_WIDTH_STATEMENT = 50;
+    private static final int COLUMN_WIDTH_STATEMENT = 100;
 
     private static final int COLUMN_SEARCH_ARGUMENTS_0 = 20;
     private static final int COLUMN_SEARCH_ARGUMENTS_1 = 80;
@@ -386,15 +386,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(6, 0, Messages.Line));
                     sheet.addCell(new jxl.write.Label(7, 0, Messages.Statement));
 
-                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
-                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
-                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
-                    sheet.setColumnView(6, COLUMN_WIDTH_LINE_NUMBER);
-                    sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
-
                     // Add data
                     line = 1;
 
@@ -424,6 +415,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                         line++;
                     }
 
+                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
+                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
+                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
+                    sheet.setColumnView(6, COLUMN_WIDTH_LINE_NUMBER);
+                    sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
+                    sheet.getColumnView(7);
+
                     sheet = workbook.createSheet(Messages.Members, 0);
 
                     // Add headline
@@ -433,13 +434,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     sheet.addCell(new jxl.write.Label(3, 0, Messages.Last_changed));
                     sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
                     sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
-
-                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
-                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
-                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
-                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
 
                     // Add data
                     line = 1;
@@ -455,6 +449,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
                         line++;
                     }
+
+                    sheet.setColumnView(0, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(1, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(2, COLUMN_WIDTH_NAME);
+                    sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
+                    sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
+                    sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
 
                     workbook.write();
                     workbook.close();
