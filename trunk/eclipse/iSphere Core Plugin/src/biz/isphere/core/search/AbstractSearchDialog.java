@@ -63,7 +63,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private static final String TEXT_STRING = "textString";
     @CMOne(info = "CMOne settings")
     private static final String IGNORE_CASE = "ignoreCase";
-    
+
     public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption) {
         this(parentShell, maxColumns, searchArgumentsListEditor, regularExpressionsOption, null);
     }
@@ -90,20 +90,41 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         container.setLayout(new GridLayout(1, false));
 
         if (_editor) {
-
-            /*
-             * Use iSphere's SearchArgumentsListEditor
-             */
-
-            Composite _searchArguments = new Composite(container, SWT.NONE);
-            _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            _searchArguments.setLayout(new GridLayout());
-
-            _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
-            _listEditor.createControl(_searchArguments);
-            _listEditor.setListener(this);
-
+            createSearchStringEditorGroup(container);
         }
+
+        createColumnsGroup(container);
+        createOptionsGroup(container);
+
+        Group groupArea = new Group(container, SWT.NONE);
+        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        groupArea.setText(Messages.Area);
+        groupArea.setLayout(new GridLayout());
+
+        List listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        listArea.setItems(getItems());
+
+        Label labelNumElem = new Label(groupArea, SWT.NONE);
+        labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
+
+        loadScreenValues();
+
+        return container;
+    }
+
+    private void createSearchStringEditorGroup(Composite container) {
+
+        Composite _searchArguments = new Composite(container, SWT.NONE);
+        _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        _searchArguments.setLayout(new GridLayout());
+
+        _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
+        _listEditor.createControl(_searchArguments);
+        _listEditor.setListener(this);
+    }
+
+    private void createColumnsGroup(Composite container) {
 
         Group groupAttributes = new Group(container, SWT.NONE);
         groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -158,24 +179,6 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
                 setOKButtonEnablement();
             }
         });
-
-        addElements(container);
-
-        Group groupArea = new Group(container, SWT.NONE);
-        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        groupArea.setText(Messages.Area);
-        groupArea.setLayout(new GridLayout());
-
-        List listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        listArea.setItems(getItems());
-
-        Label labelNumElem = new Label(groupArea, SWT.NONE);
-        labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
-
-        loadScreenValues();
-
-        return container;
     }
 
     @CMOne(info = "Create dialog for CMOne")
@@ -251,9 +254,9 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         if (!(anEvent.data instanceof SearchOptionConfig)) {
             return;
         }
-        
+
         SearchOptionConfig config = (SearchOptionConfig)anEvent.data;
-        
+
         labelFromColumn.setEnabled(config.isColumnRangeEnabled());
         textFromColumn.setEnabled(config.isColumnRangeEnabled());
         labelToColumn.setEnabled(config.isColumnRangeEnabled());
@@ -438,7 +441,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
     public abstract void setSearchArgument(String argument);
 
-    public void addElements(Composite container) {
+    public void createOptionsGroup(Composite container) {
     };
 
     public void loadElementValues() {
