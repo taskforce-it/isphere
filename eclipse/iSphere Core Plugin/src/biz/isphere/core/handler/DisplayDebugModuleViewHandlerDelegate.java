@@ -16,8 +16,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
@@ -29,8 +32,6 @@ import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVT;
 import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVTResult;
 import biz.isphere.core.moduleviewer.ModuleViewEditor;
 import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
-
-import com.ibm.as400.access.AS400;
 
 public class DisplayDebugModuleViewHandlerDelegate {
 
@@ -116,7 +117,11 @@ public class DisplayDebugModuleViewHandlerDelegate {
                 List<String> lines = retrieveDebugView(system, iSphereLibrary, debuggerView, LINE_LENGTH);
                 if (!lines.isEmpty()) {
                     openModuleViewEditor(system, debuggerView, lines);
+                } else {
+                    throw new Exception(Messages.bind(Messages.Could_not_retrieve_any_text_lines_from_view, debuggerView.getDescription()));
                 }
+            } else {
+                throw new Exception(Messages.No_TEXT_or_LISTING_views_available);
             }
 
         } finally {
