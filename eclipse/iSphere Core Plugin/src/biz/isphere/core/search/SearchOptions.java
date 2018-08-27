@@ -59,6 +59,10 @@ public class SearchOptions implements Serializable {
         return showAllItems;
     }
 
+    public void setShowAllItems(boolean showAllItems) {
+        this.showAllItems = showAllItems;
+    }
+
     public String getMatchOption() {
         return matchOption;
     }

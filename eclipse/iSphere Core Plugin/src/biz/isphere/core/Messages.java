@@ -1484,6 +1484,10 @@ public class Messages extends NLS {
 
     public static String Cannot_load_the_selected_repository_Duplicate_user_actions;
 
+    public static String ShowAllRecords;
+
+    public static String Specify_whether_all_matching_records_are_returned;
+
     /*
      * Warning messages
      */

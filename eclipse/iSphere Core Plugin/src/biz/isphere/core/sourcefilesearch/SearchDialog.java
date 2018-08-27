@@ -14,16 +14,27 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptions;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class SearchDialog extends AbstractSearchDialog {
 
+    private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
+
     private HashMap<String, SearchElement> searchElements;
+    private Button showAllRecordsButton;
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, false, false);
@@ -65,5 +76,41 @@ public class SearchDialog extends AbstractSearchDialog {
     public void setSearchArgument(String argument) {
         Preferences.getInstance().setSourceFileSearchString(argument);
     }
+
+    private boolean isShowAllRecords() {
+        return showAllRecordsButton.getSelection();
+    }
+
+    @Override
+    public void createOptionsGroup(Composite container) {
+
+        Group groupOptions = new Group(container, SWT.NONE);
+        groupOptions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        groupOptions.setText(Messages.Options);
+        groupOptions.setLayout(new GridLayout(2, false));
+
+        GridData tGridData;
+        showAllRecordsButton = WidgetFactory.createCheckbox(groupOptions);
+        showAllRecordsButton.setText(Messages.ShowAllRecords);
+        showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
+        tGridData = new GridData(SWT.HORIZONTAL);
+        tGridData.grabExcessHorizontalSpace = false;
+        showAllRecordsButton.setLayoutData(tGridData);
+    }
+
+    @Override
+    public void loadElementValues() {
+        showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
+    };
+
+    @Override
+    public void saveElementValues() {
+        storeValue(SHOW_RECORDS, isShowAllRecords());
+    };
+
+    @Override
+    public void setElementsSearchOptions(SearchOptions _searchOptions) {
+        _searchOptions.setShowAllItems(isShowAllRecords());
+    };
 
 }

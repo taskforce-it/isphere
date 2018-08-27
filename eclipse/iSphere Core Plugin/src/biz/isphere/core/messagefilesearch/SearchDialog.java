@@ -98,7 +98,7 @@ public class SearchDialog extends AbstractSearchDialog {
     }
 
     @Override
-    public void addElements(Composite container) {
+    public void createOptionsGroup(Composite container) {
 
         Group groupOptions = new Group(container, SWT.NONE);
         groupOptions.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
