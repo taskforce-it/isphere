@@ -10,14 +10,11 @@ package biz.isphere.core.moduleviewer;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
-
-import biz.isphere.core.ISpherePlugin;
 
 public class ModuleViewStorage extends PlatformObject implements IStorage {
 
@@ -93,15 +90,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
             buffer.append(line);
         }
 
-        InputStream stream = null;
-
-        try {
-            stream = new ByteArrayInputStream(buffer.toString().getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            stream = new ByteArrayInputStream(e.getLocalizedMessage().getBytes());
-        }
-
-        return stream;
+        return new ByteArrayInputStream(buffer.toString().getBytes());
     }
 
     public IPath getFullPath() {
@@ -110,10 +99,5 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
 
     public boolean isReadOnly() {
         return true;
-    }
-
-    private String logException(String text, Exception exception) {
-        ISpherePlugin.logError(text, exception);
-        return text;
     }
 }
