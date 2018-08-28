@@ -3,7 +3,7 @@ Bundle-Version: 3.4.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Fixed NullPointerException in java.util.Calendar.setTime()when the iSphere Source File Search is called by CMOne.
-X-Beta-Version: 3.5.0.b005
-X-Beta-Update-Library: false
+X-Beta-Version: 3.5.0.b006
+X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added Features "iSphere RSE Command Management" and "iSphere RSE User Action Management".\nAdded compare user action dialog.
+X-Beta-Info: Added Features "iSphere RSE Command Management" and "iSphere RSE User Action Management".\nAdded option "Display Module View" to context menu of module objects.
