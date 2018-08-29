@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -57,9 +58,12 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DateTimeHelper;
+import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
@@ -284,9 +288,11 @@ public class SearchResultViewer {
         private MenuItem menuItemInvertSelection;
         private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
-        private MenuItem menuItemSeparator;
+        private MenuItem menuItemSeparator1;
         private MenuItem menuCopySelectedMembers;
         private MenuItem menuCompareSelectedMembers;
+        private MenuItem menuItemSeparator2;
+        private MenuItem menuCreateFilterFromSelectedMembers;
 
         public TableMembersMenuAdapter(Menu menuTableMembers) {
             this.menuTableMembers = menuTableMembers;
@@ -307,9 +313,11 @@ public class SearchResultViewer {
             dispose(menuItemInvertSelection);
             dispose(menuCopySelected);
             dispose(menuItemRemove);
-            dispose(menuItemSeparator);
+            dispose(menuItemSeparator1);
             dispose(menuCopySelectedMembers);
             dispose(menuCompareSelectedMembers);
+            dispose(menuItemSeparator2);
+            dispose(menuCreateFilterFromSelectedMembers);
         }
 
         private void dispose(MenuItem menuItem) {
@@ -397,7 +405,7 @@ public class SearchResultViewer {
 
                 if (IBMiHostContributionsHandler.hasContribution()) {
 
-                    menuItemSeparator = new MenuItem(menuTableMembers, SWT.SEPARATOR);
+                    menuItemSeparator1 = new MenuItem(menuTableMembers, SWT.SEPARATOR);
 
                     menuCopySelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
                     menuCopySelectedMembers.setText(Messages.Menu_Copy_members);
@@ -419,6 +427,18 @@ public class SearchResultViewer {
                         }
                     });
                 }
+
+                menuItemSeparator2 = new MenuItem(menuTableMembers, SWT.SEPARATOR);
+
+                menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
+                menuCreateFilterFromSelectedMembers.setText(Messages.Export_to_Member_Filter);
+                menuCreateFilterFromSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MEMBER_FILTER));
+                menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemCreateFilterFromSelectedMembers();
+                    }
+                });
             }
 
         }
@@ -850,6 +870,33 @@ public class SearchResultViewer {
             }
 
             IBMiHostContributionsHandler.compareSourceMembers(connectionName, members, isEditMode);
+
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
+
+    private void executeMenuItemCreateFilterFromSelectedMembers() {
+
+        try {
+
+            ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
+
+            if (creator != null) {
+
+                SearchResult[] _selectedMembers = new SearchResult[selectedItemsMembers.length];
+                for (int i = 0; i < _selectedMembers.length; i++) {
+                    _selectedMembers[i] = (SearchResult)selectedItemsMembers[i];
+                }
+
+                FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+                dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
+                if (dialog.open() == Dialog.OK) {
+                    if (!creator.createMemberFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
+                        _selectedMembers)) {
+                    }
+                }
+            }
 
         } catch (Exception e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
