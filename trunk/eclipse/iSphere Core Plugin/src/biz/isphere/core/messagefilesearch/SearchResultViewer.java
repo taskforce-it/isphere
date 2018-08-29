@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -45,13 +46,16 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DialogActionTypes;
+import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 
 public class SearchResultViewer {
@@ -214,6 +218,8 @@ public class SearchResultViewer {
             private MenuItem menuItemInvertSelection;
             private MenuItem menuCopySelected;
             private MenuItem menuItemRemove;
+            private MenuItem menuItemSeparator2;
+            private MenuItem menuCreateFilterFromSelectedMembers;
 
             @Override
             public void menuShown(MenuEvent event) {
@@ -240,6 +246,12 @@ public class SearchResultViewer {
                 }
                 if (!((menuItemRemove == null) || (menuItemRemove.isDisposed()))) {
                     menuItemRemove.dispose();
+                }
+                if (!((menuItemSeparator2 == null) || (menuItemSeparator2.isDisposed()))) {
+                    menuItemSeparator2.dispose();
+                }
+                if (!((menuCreateFilterFromSelectedMembers == null) || (menuCreateFilterFromSelectedMembers.isDisposed()))) {
+                    menuCreateFilterFromSelectedMembers.dispose();
                 }
             }
 
@@ -307,6 +319,19 @@ public class SearchResultViewer {
                         @Override
                         public void widgetSelected(SelectionEvent e) {
                             executeMenuItemRemoveSelectedItems();
+                        }
+                    });
+
+                    menuItemSeparator2 = new MenuItem(menuTableMessageFiles, SWT.SEPARATOR);
+
+                    menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                    menuCreateFilterFromSelectedMembers.setText(Messages.Export_to_Object_Filter);
+                    menuCreateFilterFromSelectedMembers
+                        .setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MEMBER_FILTER));
+                    menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            executeMenuItemCreateFilterFromSelectedMembers();
                         }
                     });
                 }
@@ -491,6 +516,27 @@ public class SearchResultViewer {
             searchResult.removeAll(Arrays.asList(selectedItemsMessageFiles));
             _searchResults = searchResult.toArray(new SearchResult[searchResult.size()]);
             tableViewerMessageFiles.remove(selectedItemsMessageFiles);
+        }
+    }
+
+    private void executeMenuItemCreateFilterFromSelectedMembers() {
+
+        IMessageFileSearchObjectFilterCreator creator = ISpherePlugin.getMessageFileSearchObjectFilterCreator();
+
+        if (creator != null) {
+
+            SearchResult[] _selectedMessageFiles = new SearchResult[selectedItemsMessageFiles.length];
+            for (int i = 0; i < _selectedMessageFiles.length; i++) {
+                _selectedMessageFiles[i] = (SearchResult)selectedItemsMessageFiles[i];
+            }
+
+            FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+            dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
+            if (dialog.open() == Dialog.OK) {
+                if (!creator.createObjectFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
+                    _selectedMessageFiles)) {
+                }
+            }
         }
     }
 
