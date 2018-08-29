@@ -504,7 +504,7 @@
 	<target name="cleanUpdateSite">
 
 		<echo>Removing old files from '${build.updatesite}' ...</echo>
-
+<echo>${workspace.home}\${build.updatesite}\${build.project.pdf}</echo>
 		<delete includeemptydirs="true">
 			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
 			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
@@ -512,6 +512,7 @@
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
 			<fileset dir="${workspace.home}\${build.updatesite}" includes="logs.zip" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.pdf" />
 		</delete>
 
 		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
