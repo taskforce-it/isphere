@@ -1,4 +1,17 @@
 
+Changelog: iSphere 3.5.0.b007
+-----------------------------
+ • Added "Last changed date" and "Count" when copying selected members to 
+   the clipboard.
+ • Added menu option "Export to Member Filter" (selected items) to Source 
+   File Search viewer.
+ • Added menu option "Export to Member Excel" (selected items) to Source 
+   File Search viewer.
+ • Added menu option "Export to Object Filter" (selected items) to Message 
+   File Search viewer.
+ • Added menu option "Export to Object Excel" (selected items) to Message 
+   File Search viewer.
+
 Changelog: iSphere 3.5.0.b006
 -----------------------------
  • Added option "Display Module View" to the context menu of *MODULE
@@ -12,7 +25,7 @@ Changelog: iSphere 3.5.0.b006
    number of statements found.
  • Added "Last changed date" and "Count" to Excel export of Source File 
    Search.
- • Added search options sheet to Excel export.
+ • Added search options to Excel export.
  • Added option "Show all statements" to iSphere Source File search, when
    launched from the RSE tree.
    
