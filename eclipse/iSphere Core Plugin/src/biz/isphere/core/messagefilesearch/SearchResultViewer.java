@@ -157,6 +157,7 @@ public class SearchResultViewer {
         private MenuItem menuItemRemove;
         private MenuItem menuItemSeparator2;
         private MenuItem menuCreateFilterFromSelectedMembers;
+        private MenuItem menuExportSelectedMembersToExcel;
 
         public TableMessageFilesMenuAdapter(Menu menuTableMessageFiles) {
             this.menuTableMessageFiles = menuTableMessageFiles;
@@ -178,6 +179,7 @@ public class SearchResultViewer {
             dispose(menuItemRemove);
             dispose(menuItemSeparator2);
             dispose(menuCreateFilterFromSelectedMembers);
+            dispose(menuExportSelectedMembersToExcel);
         }
 
         private void dispose(MenuItem menuItem) {
@@ -262,6 +264,16 @@ public class SearchResultViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         executeMenuItemCreateFilterFromSelectedMembers();
+                    }
+                });
+
+                menuExportSelectedMembersToExcel = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuExportSelectedMembersToExcel.setText(Messages.Export_to_Excel);
+                menuExportSelectedMembersToExcel.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_EXCEL));
+                menuExportSelectedMembersToExcel.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemExportSelectedMembersToExcel();
                     }
                 });
             }
@@ -534,6 +546,20 @@ public class SearchResultViewer {
                 }
             }
         }
+    }
+
+    private void executeMenuItemExportSelectedMembersToExcel() {
+
+        SearchResult[] _selectedMessageFiles = new SearchResult[selectedItemsMessageFiles.length];
+        for (int i = 0; i < _selectedMessageFiles.length; i++) {
+            _selectedMessageFiles[i] = (SearchResult)selectedItemsMessageFiles[i];
+        }
+
+        MessageFilesToExcelExporter exporter = new MessageFilesToExcelExporter(shell, getSearchOptions(), _selectedMessageFiles);
+        if (_selectedMessageFiles.length != getSearchResults().length) {
+            exporter.setPartialExport(true);
+        }
+        exporter.export();
     }
 
     private void setMessageIds() {
