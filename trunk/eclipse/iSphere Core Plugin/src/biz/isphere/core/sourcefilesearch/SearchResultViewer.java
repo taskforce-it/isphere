@@ -878,28 +878,22 @@ public class SearchResultViewer {
 
     private void executeMenuItemCreateFilterFromSelectedMembers() {
 
-        try {
+        ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
 
-            ISourceFileSearchMemberFilterCreator creator = ISpherePlugin.getSourceFileSearchMemberFilterCreator();
+        if (creator != null) {
 
-            if (creator != null) {
-
-                SearchResult[] _selectedMembers = new SearchResult[selectedItemsMembers.length];
-                for (int i = 0; i < _selectedMembers.length; i++) {
-                    _selectedMembers[i] = (SearchResult)selectedItemsMembers[i];
-                }
-
-                FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
-                dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
-                if (dialog.open() == Dialog.OK) {
-                    if (!creator.createMemberFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
-                        _selectedMembers)) {
-                    }
-                }
+            SearchResult[] _selectedMembers = new SearchResult[selectedItemsMembers.length];
+            for (int i = 0; i < _selectedMembers.length; i++) {
+                _selectedMembers[i] = (SearchResult)selectedItemsMembers[i];
             }
 
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+            dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
+            if (dialog.open() == Dialog.OK) {
+                if (!creator.createMemberFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
+                    _selectedMembers)) {
+                }
+            }
         }
     }
 
