@@ -789,6 +789,10 @@ public class SearchResultViewer {
                 list.append(Messages.Member);
                 list.append("\t");
                 list.append(Messages.Description);
+                list.append("\t");
+                list.append(Messages.Last_changed);
+                list.append("\t");
+                list.append(Messages.StatementsCount);
                 list.append("\n");
                 for (Object item : selectedItemsMembers) {
                     SearchResult searchResult = (SearchResult)item;
@@ -799,11 +803,23 @@ public class SearchResultViewer {
                     list.append(searchResult.getMember());
                     list.append("\t");
                     list.append(searchResult.getDescription());
+                    list.append("\t");
+                    list.append(getLastChangedDate(searchResult));
+                    list.append("\t");
+                    list.append(searchResult.getStatementsCount());
                     list.append("\n");
                 }
                 ClipboardHelper.setText(list.toString());
             }
         }
+    }
+
+    private String getLastChangedDate(SearchResult searchResult) {
+
+        String date = Preferences.getInstance().getDateFormatter().format(searchResult.getLastChangedDate());
+        String time = Preferences.getInstance().getTimeFormatter().format(searchResult.getLastChangedDate());
+
+        return date + " " + time;
     }
 
     private void executeMenuItemCopySelectedMembers() {
