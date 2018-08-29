@@ -293,6 +293,7 @@ public class SearchResultViewer {
         private MenuItem menuCompareSelectedMembers;
         private MenuItem menuItemSeparator2;
         private MenuItem menuCreateFilterFromSelectedMembers;
+        private MenuItem menuExportSelectedMembersToExcel;
 
         public TableMembersMenuAdapter(Menu menuTableMembers) {
             this.menuTableMembers = menuTableMembers;
@@ -318,6 +319,7 @@ public class SearchResultViewer {
             dispose(menuCompareSelectedMembers);
             dispose(menuItemSeparator2);
             dispose(menuCreateFilterFromSelectedMembers);
+            dispose(menuExportSelectedMembersToExcel);
         }
 
         private void dispose(MenuItem menuItem) {
@@ -437,6 +439,16 @@ public class SearchResultViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
                         executeMenuItemCreateFilterFromSelectedMembers();
+                    }
+                });
+
+                menuExportSelectedMembersToExcel = new MenuItem(menuTableMembers, SWT.NONE);
+                menuExportSelectedMembersToExcel.setText(Messages.Export_to_Excel);
+                menuExportSelectedMembersToExcel.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_EXCEL));
+                menuExportSelectedMembersToExcel.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemExportSelectedMembersToExcel();
                     }
                 });
             }
@@ -895,6 +907,20 @@ public class SearchResultViewer {
                 }
             }
         }
+    }
+
+    private void executeMenuItemExportSelectedMembersToExcel() {
+
+        SearchResult[] _selectedMembers = new SearchResult[selectedItemsMembers.length];
+        for (int i = 0; i < _selectedMembers.length; i++) {
+            _selectedMembers[i] = (SearchResult)selectedItemsMembers[i];
+        }
+
+        MembersToExcelExporter exporter = new MembersToExcelExporter(shell, getSearchOptions(), _selectedMembers);
+        if (selectedItemsMembers.length != getSearchResults().length) {
+            exporter.setPartialExport(true);
+        }
+        exporter.export();
     }
 
     private void executeMenuItemRemoveSelectedItems() {
