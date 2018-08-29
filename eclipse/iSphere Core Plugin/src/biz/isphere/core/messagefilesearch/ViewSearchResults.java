@@ -10,10 +10,6 @@ package biz.isphere.core.messagefilesearch;
 
 import java.io.File;
 
-import jxl.Workbook;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -49,27 +45,16 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
-import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
-import biz.isphere.core.search.GenericSearchOption;
-import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class ViewSearchResults extends ViewPart implements ISelectionChangedListener {
-
-    private static final int COLUMN_WIDTH_NAME = 15;
-    private static final int COLUMN_WIDTH_DESCRIPTION = 50;
-    private static final int COLUMN_WIDTH_MESSAGE_ID = 12;
-    private static final int COLUMN_WIDTH_MESSAGE_TEXT = 100;
-
-    private static final int COLUMN_SEARCH_ARGUMENTS_0 = 20;
-    private static final int COLUMN_SEARCH_ARGUMENTS_1 = 80;
 
     private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
@@ -333,131 +318,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     public void exportToExcel() {
 
-        int selectedTabItem = tabFolderSearchResults.getSelectionIndex();
-
-        if (selectedTabItem >= 0) {
-
-            SearchResultViewer _searchResultViewer = (SearchResultViewer)tabFolderSearchResults.getItem(selectedTabItem).getData(TAB_DATA_VIEWER);
-
-            if (_searchResultViewer != null) {
-
-                SearchOptions _searchOptions = _searchResultViewer.getSearchOptions();
-                SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
-
-                WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
-                IFileDialog dialog = factory.getFileDialog(shell, SWT.SAVE);
-
-                dialog.setFilterNames(new String[] { "Excel Files", "All Files" }); //$NON-NLS-1$
-                dialog.setFilterExtensions(new String[] { "*.xls", "*.*" }); //$NON-NLS-1$
-                dialog.setFilterPath(Preferences.getInstance().getMessageFileSearchExportDirectory());
-                dialog.setFileName("export.xls"); //$NON-NLS-1$
-                dialog.setOverwrite(true);
-                String file = dialog.open();
-
-                if (file != null) {
-
-                    Preferences.getInstance().setMessageFileSearchExportDirectory(dialog.getFilterPath());
-
-                    try {
-
-                        WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
-
-                        WritableSheet sheet;
-
-                        // Add search options
-                        sheet = workbook.createSheet("Search arguments", 0);
-
-                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
-                        sheet.addCell(new jxl.write.Label(1, 0, _searchOptions.getMatchOption()));
-
-                        sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
-                        sheet.addCell(new jxl.write.Boolean(1, 1, _searchOptions.isShowAllItems()));
-
-                        sheet.addCell(new jxl.write.Label(0, 2, Messages.Search_arguments_colon));
-
-                        int line = sheet.getRows() - 1;
-
-                        for (SearchArgument searchArgument : _searchOptions.getSearchArguments()) {
-                            sheet.addCell(new jxl.write.Label(1, line, searchArgument.toText()));
-                            line++;
-                        }
-
-                        if (_searchOptions.hasGenericOptions()) {
-                            sheet.addCell(new jxl.write.Label(0, line, Messages.Additional_Options_colon));
-                            for (GenericSearchOption genericOption : _searchOptions.getGenericOptions()) {
-                                sheet.addCell(new jxl.write.Label(1, line, genericOption.toText()));
-                            }
-                        }
-
-                        sheet.setColumnView(0, COLUMN_SEARCH_ARGUMENTS_0);
-                        sheet.setColumnView(1, COLUMN_SEARCH_ARGUMENTS_1);
-
-                        // Add message files with id's
-                        sheet = workbook.createSheet(Messages.Files_with_Id_s, 0);
-
-                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file));
-                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Description));
-                        sheet.addCell(new jxl.write.Label(3, 0, Messages.Message_Id));
-                        sheet.addCell(new jxl.write.Label(4, 0, Messages.Message));
-
-                        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-                        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-                        sheet.setColumnView(2, COLUMN_WIDTH_DESCRIPTION);
-                        sheet.setColumnView(3, COLUMN_WIDTH_MESSAGE_ID);
-                        sheet.setColumnView(4, COLUMN_WIDTH_MESSAGE_TEXT);
-
-                        line = 1;
-
-                        for (int index1 = 0; index1 < _searchResults.length; index1++) {
-
-                            SearchResultMessageId[] _messageIds = _searchResults[index1].getMessageIds();
-
-                            for (int index2 = 0; index2 < _messageIds.length; index2++) {
-
-                                sheet.addCell(new jxl.write.Label(0, line, _searchResults[index1].getLibrary()));
-                                sheet.addCell(new jxl.write.Label(1, line, _searchResults[index1].getMessageFile()));
-                                sheet.addCell(new jxl.write.Label(2, line, _searchResults[index1].getDescription()));
-                                sheet.addCell(new jxl.write.Label(3, line, _messageIds[index2].getMessageId()));
-                                sheet.addCell(new jxl.write.Label(4, line, _messageIds[index2].getMessage()));
-
-                                line++;
-
-                            }
-
-                            line++;
-                        }
-
-                        // Add message files
-                        sheet = workbook.createSheet(Messages.Files, 0);
-
-                        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-                        sheet.addCell(new jxl.write.Label(1, 0, Messages.Message_file));
-                        sheet.addCell(new jxl.write.Label(2, 0, Messages.Description));
-
-                        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-                        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-                        sheet.setColumnView(2, COLUMN_WIDTH_DESCRIPTION);
-
-                        for (int index = 0; index < _searchResults.length; index++) {
-                            sheet.addCell(new jxl.write.Label(0, index + 1, _searchResults[index].getLibrary()));
-                            sheet.addCell(new jxl.write.Label(1, index + 1, _searchResults[index].getMessageFile()));
-                            sheet.addCell(new jxl.write.Label(2, index + 1, _searchResults[index].getDescription()));
-                        }
-
-                        workbook.write();
-                        workbook.close();
-
-                    } catch (Exception e) {
-                        MessageDialogAsync.displayError(getSite().getShell(), e.getLocalizedMessage());
-                    }
-
-                }
-
-            }
-
+        SearchResultViewer viewer = getSelectedViewer();
+        if (viewer != null) {
+            SearchOptions _searchOptions = viewer.getSearchOptions();
+            SearchResult[] _searchResults = viewer.getSearchResults();
+            MessageFilesToExcelExporter exporter = new MessageFilesToExcelExporter(getSite().getShell(), _searchOptions, _searchResults);
+            exporter.export();
         }
-
     }
 
     private void removeAllTabItems() {
