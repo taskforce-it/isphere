@@ -11,6 +11,11 @@ package biz.isphere.core.sourcefilesearch;
 import java.io.File;
 
 import jxl.Workbook;
+import jxl.format.Colour;
+import jxl.format.Font;
+import jxl.write.WritableCell;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
@@ -42,16 +47,18 @@ public class MembersToExcelExporter {
     private Shell shell;
     private SearchOptions searchOptions;
     private SearchResult[] searchResults;
-
-    public MembersToExcelExporter(Shell shell, SearchResult[] searchResults) {
-        this(shell, null, searchResults);
-    }
+    private boolean isPartial;
 
     public MembersToExcelExporter(Shell shell, SearchOptions searchOptions, SearchResult[] searchResults) {
 
         this.shell = shell;
         this.searchOptions = searchOptions;
         this.searchResults = searchResults;
+        this.isPartial = false;
+    }
+
+    public void setPartialExport(boolean partial) {
+        this.isPartial = partial;
     }
 
     public void export() {
@@ -74,10 +81,7 @@ public class MembersToExcelExporter {
 
                 WritableWorkbook workbook = Workbook.createWorkbook(new File(file));
 
-                if (searchOptions != null) {
-                    exportSearchOptions(workbook);
-                }
-
+                exportSearchOptions(workbook);
                 exportMembersWithStatements(workbook);
                 exportMembers(workbook);
 
@@ -125,6 +129,8 @@ public class MembersToExcelExporter {
         sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
         sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
         sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
+
+        addPartialNotice(sheet);
     }
 
     private void exportMembersWithStatements(WritableWorkbook workbook) throws Exception {
@@ -179,6 +185,8 @@ public class MembersToExcelExporter {
         sheet.setColumnView(6, COLUMN_WIDTH_LINE_NUMBER);
         sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
         sheet.getColumnView(7);
+
+        addPartialNotice(sheet);
     }
 
     private void exportSearchOptions(WritableWorkbook workbook) throws Exception {
@@ -209,6 +217,41 @@ public class MembersToExcelExporter {
 
         sheet.setColumnView(0, COLUMN_SEARCH_ARGUMENTS_0);
         sheet.setColumnView(1, COLUMN_SEARCH_ARGUMENTS_1);
+
+        addPartialNotice(sheet);
+    }
+
+    private void addPartialNotice(WritableSheet sheet) throws Exception {
+
+        if (!isPartial) {
+            return;
+        }
+
+        int line = sheet.getRows() + 1;
+        sheet.addCell(new jxl.write.Label(0, line, "Not all items exported!"));
+        sheet.mergeCells(0, line, 0 + 1, line);
+
+        setCellBackgroundColor(sheet, 0, line, Colour.LIGHT_ORANGE);
+        setCellFontBold(sheet, 0, line);
+    }
+
+    private void setCellBackgroundColor(WritableSheet sheet, int i, int line, Colour color) throws Exception {
+
+        WritableCell cell = sheet.getWritableCell(0, line);
+        WritableCellFormat newFormat = new WritableCellFormat(cell.getCellFormat());
+        newFormat.setBackground(color);
+        cell.setCellFormat(newFormat);
+    }
+
+    private void setCellFontBold(WritableSheet sheet, int i, int line) throws Exception {
+
+        WritableCell cell = sheet.getWritableCell(0, line);
+        WritableCellFormat newFormat = new WritableCellFormat(cell.getCellFormat());
+        Font font = newFormat.getFont();
+        WritableFont newFont = new WritableFont(font);
+        newFont.setBoldStyle(WritableFont.BOLD);
+        newFormat.setFont(newFont);
+        cell.setCellFormat(newFormat);
     }
 
 }
