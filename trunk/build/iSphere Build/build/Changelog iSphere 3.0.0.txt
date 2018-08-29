@@ -5,11 +5,11 @@ Changelog: iSphere 3.5.0.b007
    the clipboard.
  • Added menu option "Export to Member Filter" (selected items) to Source 
    File Search viewer.
- • Added menu option "Export to Member Excel" (selected items) to Source 
+ • Added menu option "Export to Excel" (selected items) to Source 
    File Search viewer.
  • Added menu option "Export to Object Filter" (selected items) to Message 
    File Search viewer.
- • Added menu option "Export to Object Excel" (selected items) to Message 
+ • Added menu option "Export to Excel" (selected items) to Message 
    File Search viewer.
 
 Changelog: iSphere 3.5.0.b006
