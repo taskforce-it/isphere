@@ -917,7 +917,7 @@ public class SearchResultViewer {
         }
 
         MembersToExcelExporter exporter = new MembersToExcelExporter(shell, getSearchOptions(), _selectedMembers);
-        if (selectedItemsMembers.length != getSearchResults().length) {
+        if (_selectedMembers.length != getSearchResults().length) {
             exporter.setPartialExport(true);
         }
         exporter.export();

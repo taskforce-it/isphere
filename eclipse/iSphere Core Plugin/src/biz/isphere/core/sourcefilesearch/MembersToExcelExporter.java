@@ -253,5 +253,4 @@ public class MembersToExcelExporter {
         newFormat.setFont(newFont);
         cell.setCellFormat(newFormat);
     }
-
 }
