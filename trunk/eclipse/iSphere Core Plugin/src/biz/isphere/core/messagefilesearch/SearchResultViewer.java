@@ -146,6 +146,129 @@ public class SearchResultViewer {
 
     }
 
+    private class TableMessageFilesMenuAdapter extends MenuAdapter {
+
+        private Menu menuTableMessageFiles;
+        private MenuItem menuItemOpenEditor;
+        private MenuItem menuItemSelectAll;
+        private MenuItem menuItemDeselectAll;
+        private MenuItem menuItemInvertSelection;
+        private MenuItem menuCopySelected;
+        private MenuItem menuItemRemove;
+        private MenuItem menuItemSeparator2;
+        private MenuItem menuCreateFilterFromSelectedMembers;
+
+        public TableMessageFilesMenuAdapter(Menu menuTableMessageFiles) {
+            this.menuTableMessageFiles = menuTableMessageFiles;
+        }
+
+        @Override
+        public void menuShown(MenuEvent event) {
+            retrieveSelectedTableItems();
+            destroyMenuItems();
+            createMenuItems();
+        }
+
+        public void destroyMenuItems() {
+            dispose(menuItemOpenEditor);
+            dispose(menuItemSelectAll);
+            dispose(menuItemDeselectAll);
+            dispose(menuItemInvertSelection);
+            dispose(menuCopySelected);
+            dispose(menuItemRemove);
+            dispose(menuItemSeparator2);
+            dispose(menuCreateFilterFromSelectedMembers);
+        }
+
+        private void dispose(MenuItem menuItem) {
+            if (!((menuItem == null) || (menuItem.isDisposed()))) {
+                menuItem.dispose();
+            }
+        }
+
+        public void createMenuItems() {
+
+            if (hasSelectedItems()) {
+                menuItemOpenEditor = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuItemOpenEditor.setText(Messages.Open_editor);
+                menuItemOpenEditor.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN_EDITOR));
+                menuItemOpenEditor.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemOpenEditor();
+                    }
+                });
+            }
+
+            if (hasItems()) {
+                menuItemSelectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuItemSelectAll.setText(Messages.Select_all);
+                menuItemSelectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SELECT_ALL));
+                menuItemSelectAll.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemSelectAll();
+                    }
+                });
+
+                menuItemDeselectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuItemDeselectAll.setText(Messages.Deselect_all);
+                menuItemDeselectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DESELECT_ALL));
+                menuItemDeselectAll.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemDeselectAll();
+                    }
+                });
+            }
+
+            if (hasSelectedItems()) {
+                menuItemInvertSelection = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuItemInvertSelection.setText(Messages.Invert_selection);
+                menuItemInvertSelection.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_INVERT_SELECTION));
+                menuItemInvertSelection.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemInvertSelectedItems();
+                    }
+                });
+
+                menuCopySelected = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuCopySelected.setText(Messages.Copy_selected);
+                menuCopySelected.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_TO_CLIPBOARD));
+                menuCopySelected.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemCopySelectedItems();
+                    }
+                });
+
+                menuItemRemove = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuItemRemove.setText(Messages.Remove);
+                menuItemRemove.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REMOVE));
+                menuItemRemove.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemRemoveSelectedItems();
+                    }
+                });
+
+                menuItemSeparator2 = new MenuItem(menuTableMessageFiles, SWT.SEPARATOR);
+
+                menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMessageFiles, SWT.NONE);
+                menuCreateFilterFromSelectedMembers.setText(Messages.Export_to_Object_Filter);
+                menuCreateFilterFromSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MEMBER_FILTER));
+                menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemCreateFilterFromSelectedMembers();
+                    }
+                });
+            }
+
+        }
+    }
+
     public SearchResultViewer(String connectionName, String searchString, SearchResult[] _searchResults, SearchOptions _searchOptions) {
         this.connectionName = connectionName;
         this.searchString = searchString;
@@ -210,134 +333,7 @@ public class SearchResultViewer {
         tableColumnMessageFile.setText(Messages.Message_file);
 
         final Menu menuTableMessageFiles = new Menu(tableMessageFiles);
-        menuTableMessageFiles.addMenuListener(new MenuAdapter() {
-
-            private MenuItem menuItemOpenEditor;
-            private MenuItem menuItemSelectAll;
-            private MenuItem menuItemDeselectAll;
-            private MenuItem menuItemInvertSelection;
-            private MenuItem menuCopySelected;
-            private MenuItem menuItemRemove;
-            private MenuItem menuItemSeparator2;
-            private MenuItem menuCreateFilterFromSelectedMembers;
-
-            @Override
-            public void menuShown(MenuEvent event) {
-                retrieveSelectedTableItems();
-                destroyMenuItems();
-                createMenuItems();
-            }
-
-            public void destroyMenuItems() {
-                if (!((menuItemOpenEditor == null) || (menuItemOpenEditor.isDisposed()))) {
-                    menuItemOpenEditor.dispose();
-                }
-                if (!((menuItemSelectAll == null) || (menuItemSelectAll.isDisposed()))) {
-                    menuItemSelectAll.dispose();
-                }
-                if (!((menuItemDeselectAll == null) || (menuItemDeselectAll.isDisposed()))) {
-                    menuItemDeselectAll.dispose();
-                }
-                if (!((menuItemInvertSelection == null) || (menuItemInvertSelection.isDisposed()))) {
-                    menuItemInvertSelection.dispose();
-                }
-                if (!((menuCopySelected == null) || (menuCopySelected.isDisposed()))) {
-                    menuCopySelected.dispose();
-                }
-                if (!((menuItemRemove == null) || (menuItemRemove.isDisposed()))) {
-                    menuItemRemove.dispose();
-                }
-                if (!((menuItemSeparator2 == null) || (menuItemSeparator2.isDisposed()))) {
-                    menuItemSeparator2.dispose();
-                }
-                if (!((menuCreateFilterFromSelectedMembers == null) || (menuCreateFilterFromSelectedMembers.isDisposed()))) {
-                    menuCreateFilterFromSelectedMembers.dispose();
-                }
-            }
-
-            public void createMenuItems() {
-
-                if (hasSelectedItems()) {
-                    menuItemOpenEditor = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuItemOpenEditor.setText(Messages.Open_editor);
-                    menuItemOpenEditor.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN_EDITOR));
-                    menuItemOpenEditor.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemOpenEditor();
-                        }
-                    });
-                }
-
-                if (hasItems()) {
-                    menuItemSelectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuItemSelectAll.setText(Messages.Select_all);
-                    menuItemSelectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SELECT_ALL));
-                    menuItemSelectAll.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemSelectAll();
-                        }
-                    });
-
-                    menuItemDeselectAll = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuItemDeselectAll.setText(Messages.Deselect_all);
-                    menuItemDeselectAll.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_DESELECT_ALL));
-                    menuItemDeselectAll.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemDeselectAll();
-                        }
-                    });
-                }
-
-                if (hasSelectedItems()) {
-                    menuItemInvertSelection = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuItemInvertSelection.setText(Messages.Invert_selection);
-                    menuItemInvertSelection.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_INVERT_SELECTION));
-                    menuItemInvertSelection.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemInvertSelectedItems();
-                        }
-                    });
-
-                    menuCopySelected = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuCopySelected.setText(Messages.Copy_selected);
-                    menuCopySelected.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_TO_CLIPBOARD));
-                    menuCopySelected.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemCopySelectedItems();
-                        }
-                    });
-
-                    menuItemRemove = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuItemRemove.setText(Messages.Remove);
-                    menuItemRemove.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REMOVE));
-                    menuItemRemove.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemRemoveSelectedItems();
-                        }
-                    });
-
-                    menuItemSeparator2 = new MenuItem(menuTableMessageFiles, SWT.SEPARATOR);
-
-                    menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMessageFiles, SWT.NONE);
-                    menuCreateFilterFromSelectedMembers.setText(Messages.Export_to_Object_Filter);
-                    menuCreateFilterFromSelectedMembers
-                        .setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MEMBER_FILTER));
-                    menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            executeMenuItemCreateFilterFromSelectedMembers();
-                        }
-                    });
-                }
-
-            }
-        });
+        menuTableMessageFiles.addMenuListener(new TableMessageFilesMenuAdapter(menuTableMessageFiles));
         tableMessageFiles.setMenu(menuTableMessageFiles);
 
         tableViewerMessageFiles.setInput(new Object());
