@@ -9,6 +9,7 @@
 package biz.isphere.rse.actions;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -21,11 +22,11 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
+
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule;
-
-import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
 
 public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
 
@@ -36,9 +37,8 @@ public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            Object object = structuredSelection.getFirstElement();
-
-            if (object instanceof QSYSRemoteObject) {
+            for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
+                Object object = iterator.next();
 
                 QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
 
@@ -83,11 +83,32 @@ public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
-        if (selection instanceof IStructuredSelection) {
-            structuredSelection = ((IStructuredSelection)selection);
-        } else {
-            structuredSelection = null;
+
+        structuredSelection = null;
+
+        if (isValidSelection(selection)) {
+            structuredSelection = (IStructuredSelection)selection;
         }
+    }
+
+    private boolean isValidSelection(ISelection selection) {
+
+        boolean isValid = true;
+
+        IStructuredSelection structuredSelection = (IStructuredSelection)selection;
+        for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
+            Object object = iterator.next();
+            if (!isValidObjectInstance(object)) {
+                isValid = false;
+                break;
+            }
+        }
+
+        return isValid;
+    }
+
+    private boolean isValidObjectInstance(Object object) {
+        return object instanceof QSYSRemoteProgramModule;
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {

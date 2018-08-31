@@ -106,7 +106,7 @@
       	-->
          
       	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule"
             id="biz.isphere.core.menu.module">
             
             <enablement>
@@ -117,7 +117,7 @@
             
 	         <action
                 class="biz.isphere.rse.actions.DisplayDebugModuleViewAction"
-                enablesFor="1"
+                enablesFor="*"
                 id="biz.isphere.rse.actions.DisplayDebugModuleViewAction"
                 label="%Display_Debug_Module_View"
                 icon="icons/debug_module_view.gif"

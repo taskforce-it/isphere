@@ -271,7 +271,20 @@ public class XRDiContributions implements IIBMiHostContributions {
      */
     public AS400 getSystem(String connectionName) {
 
-        return getSystem(null, connectionName);
+        return getSystem(null, connectionName, false);
+    }
+
+    /**
+     * Returns a system for a given connection name.
+     * 
+     * @parm connectionName - Name of the connection a system is returned for
+     * @parm createNew - Pass true if a new copy of the AS400 object should be
+     *       created, false if the original should be returned.
+     * @return AS400
+     */
+    public AS400 getSystem(String connectionName, boolean createNew) {
+
+        return getSystem(null, connectionName, createNew);
     }
 
     /**
@@ -283,13 +296,27 @@ public class XRDiContributions implements IIBMiHostContributions {
      */
     public AS400 getSystem(String profile, String connectionName) {
 
+        return getSystem(profile, connectionName, false);
+    }
+
+    /**
+     * Returns a system for a given profile and connection name.
+     * 
+     * @parm profile - Profile that is searched for the connection
+     * @parm connectionName - Name of the connection a system is returned for
+     * @parm createNew - Pass true if a new copy of the AS400 object should be
+     *       created, false if the original should be returned.
+     * @return AS400
+     */
+    public AS400 getSystem(String profile, String connectionName, boolean createNew) {
+
         IBMiConnection connection = getConnection(profile, connectionName);
         if (connection == null) {
             return null;
         }
 
         try {
-            return connection.getAS400ToolboxObject();
+            return connection.getAS400ToolboxObject(createNew);
         } catch (Throwable e) {
             return null;
         }
