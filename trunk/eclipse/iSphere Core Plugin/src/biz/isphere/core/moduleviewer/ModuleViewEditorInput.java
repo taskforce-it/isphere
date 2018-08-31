@@ -80,7 +80,7 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
     }
 
     public String getContentDescription() {
-        return connectionName + ":" + getSelectedStorage().getName() + " - " + getSelectedStorage().getDescription(); //$NON-NLS-1$ //$NON-NLS-1$
+        return connectionName + ":" + getSelectedStorage().getName() + " - " + getSelectedStorage().getDescription(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public IPersistableElement getPersistable() {
