@@ -340,7 +340,10 @@ public abstract class AbstractEditingDialog extends Dialog {
 
     protected abstract void deleteFromWorkspace(AbstractResource resource);
 
-    protected abstract void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository);
+    protected void updateWorkspace(AbstractResource resourceWorkspace, AbstractResource resourceRepository) {
+        deleteFromWorkspace(resourceWorkspace);
+        pushToWorkspace(resourceRepository);
+    }
 
     protected abstract boolean saveRepository(String repository, ArrayList<AbstractResource> newRepository);
 
