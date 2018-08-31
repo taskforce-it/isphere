@@ -3,6 +3,8 @@ Changelog: iSphere 3.5.0.b008
 -----------------------------
  • Changed debugger view editor and action to select multiple modules and 
    added view selector to editor.
+ • Changed Journal Explorer to display an error, when the IBM i release is 
+   less than V5R4M0, when attempting to retrieve journal entries.
 
 Changelog: iSphere 3.5.0.b007
 -----------------------------

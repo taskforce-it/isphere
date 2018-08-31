@@ -81,6 +81,7 @@ public class Messages extends NLS {
     public static String Error_Output_file_A_B_contains_records_that_are_not_a_result_of_a_record_level_operation;
     public static String Error_No_record_level_operation;
     public static String Error_Object_A_B_is_not_journaled;
+    public static String Cannot_perform_action_OS400_must_be_at_least_at_level_A;
 
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry;
 
