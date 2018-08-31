@@ -62,15 +62,15 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(getSystemName());
-        buffer.append(":");
+        buffer.append(":"); //$NON-NLS-1$
         buffer.append(debuggerView.getLibrary());
-        buffer.append("/");
+        buffer.append("/"); //$NON-NLS-1$
         buffer.append(debuggerView.getObject());
-        buffer.append(".");
+        buffer.append("."); //$NON-NLS-1$
         buffer.append(debuggerView.getModule());
-        buffer.append("[");
+        buffer.append("["); //$NON-NLS-1$
         buffer.append(debuggerView.getNumber());
-        buffer.append("]");
+        buffer.append("]"); //$NON-NLS-1$
 
         return buffer.toString();
     }
@@ -84,9 +84,9 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(debuggerView.getLibrary());
-        buffer.append("/");
+        buffer.append("/"); //$NON-NLS-1$
         buffer.append(debuggerView.getObject());
-        buffer.append(".");
+        buffer.append("."); //$NON-NLS-1$
         buffer.append(debuggerView.getModule());
 
         return buffer.toString();
@@ -108,7 +108,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
 
             for (String line : lines) {
                 if (buffer.length() > 0) {
-                    buffer.append("\n");
+                    buffer.append("\n"); //$NON-NLS-1$
                 }
                 buffer.append(line);
             }
@@ -138,7 +138,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
             }
             currentLibrary = ISphereHelper.getCurrentLibrary(system);
         } catch (Exception e) {
-            throwException("Could not retrieve current library", e); //$NON-NLS-1$
+            throwException("Could not connect to system.", e); //$NON-NLS-1$
         }
 
         if (currentLibrary != null) {
@@ -210,7 +210,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
 
             iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[RECEIVE_BUFFER_LENGTH], IQSDRTVVT.SDVT0100);
             if (!iqsdrtvvt.execute(iqsdrtvvtResult, debuggerView.getId(), startLine, IQSDRTVVT.ALL_LINES, LINE_LENGTH)) {
-                throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
+                throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage()); //$NON-NLS-1$ 
             }
 
             lines.addAll(iqsdrtvvtResult.getLines());
