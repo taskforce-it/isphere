@@ -35,7 +35,8 @@ public class SearchElement {
 
     @CMOne(info = "Deprecated but required for compiling CMOne.")
     public void setLastChangedDate(Date lastChangedDate) {
-        throw new IllegalAccessError("Don't call setLastChangedDate()! This method has become obsolete with rev. 6056.");
+        // throw new
+        // IllegalAccessError("Don't call setLastChangedDate()! This method has become obsolete with rev. 6056.");
     }
 
     public String getLibrary() {
