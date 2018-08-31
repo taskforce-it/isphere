@@ -116,7 +116,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
             return new ByteArrayInputStream(buffer.toString().getBytes());
 
         } catch (Exception e) {
-            throw new CoreException(new Status(IStatus.ERROR, ISpherePlugin.PLUGIN_ID, e.getLocalizedMessage(), e));
+            throw new CoreException(new Status(IStatus.ERROR, ISpherePlugin.PLUGIN_ID, 0, e.getLocalizedMessage(), e));
         }
     }
 
