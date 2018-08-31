@@ -13,10 +13,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ObjectDescription;
-import com.ibm.as400.access.QSYSObjectPathName;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -27,7 +23,13 @@ import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ObjectDescription;
+import com.ibm.as400.access.QSYSObjectPathName;
+
 public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContributions {
+
+    private static final String MIN_OS_RELEASE = "V5R4M0"; //$NON-NLS-1$
 
     public void handleDisplayFileJournalEntries(String connectionName, String libraryName, String fileName, String memberName) {
 
@@ -35,6 +37,12 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         try {
 
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+            String osRelease = ISpherePlugin.getDefault().getIBMiRelease(system);
+            if (MIN_OS_RELEASE.compareTo(osRelease) > 0) {
+                throw new Exception(Messages.bind(Messages.Cannot_perform_action_OS400_must_be_at_least_at_level_A, MIN_OS_RELEASE));
+            }
+
             QSYSObjectPathName pathName = new QSYSObjectPathName(libraryName, fileName, "FILE"); //$NON-NLS-1$
             ObjectDescription objectDescription = new ObjectDescription(system, pathName.getPath());
 
