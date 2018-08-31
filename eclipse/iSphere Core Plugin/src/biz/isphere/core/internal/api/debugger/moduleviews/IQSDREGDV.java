@@ -35,7 +35,7 @@ public class IQSDREGDV extends APIProgramCallDocument {
             }
 
             debuggerView.setId(getIntConverter().toInt(getParameterList()[0].getOutputData()));
-            debuggerView.setLines(getIntConverter().toInt(getParameterList()[1].getOutputData()));
+            debuggerView.setLinesCount(getIntConverter().toInt(getParameterList()[1].getOutputData()));
 
             return true;
 

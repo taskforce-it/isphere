@@ -13,11 +13,11 @@ import java.util.List;
 
 import org.eclipse.ui.IEditorPart;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.internal.Member;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
 
 public interface IIBMiHostContributions {
 
@@ -99,6 +99,16 @@ public interface IIBMiHostContributions {
     public AS400 getSystem(String connectionName);
 
     /**
+     * Returns an AS400 object for a given connection name.
+     * 
+     * @param connectionName - connection name to identify the connection
+     * @parm createNew - Pass true if a new copy of the AS400 object should be
+     *       created, false if the original should be returned.
+     * @return AS400 object that is associated to the connection
+     */
+    public AS400 getSystem(String connectionName, boolean createNew);
+
+    /**
      * Returns an AS400 object for a given profile and connection name.
      * 
      * @param profile - name of the profile, that hosts the connection
@@ -106,6 +116,17 @@ public interface IIBMiHostContributions {
      * @return AS400 object that is associated to the connection
      */
     public AS400 getSystem(String profile, String connectionName);
+
+    /**
+     * Returns an AS400 object for a given profile and connection name.
+     * 
+     * @param profile - name of the profile, that hosts the connection
+     * @param connectionName - connection name to identify the connection
+     * @parm createNew - Pass true if a new copy of the AS400 object should be
+     *       created, false if the original should be returned.
+     * @return AS400 object that is associated to the connection
+     */
+    public AS400 getSystem(String profile, String connectionName, boolean createNew);
 
     /**
      * Returns an AS400 object for a given editor.

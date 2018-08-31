@@ -21,24 +21,47 @@ import org.eclipse.ui.IWorkbenchPage;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 
+import com.ibm.as400.access.AS400;
+
 public class ModuleViewEditorInput implements IStorageEditorInput {
 
-    private ModuleViewStorage storage;
+    private AS400 system;
+    private ModuleViewStorage[] viewStorages;
+    private DebuggerView[] debuggerViews;
+    private ModuleViewStorage selectedViewStorage;
+    private int selectedViewIdx;
 
-    public ModuleViewEditorInput(String systemName, DebuggerView debuggerView, String[] lines) throws Exception {
+    public ModuleViewEditorInput(AS400 system, String iSphereLibrary, DebuggerView[] debuggerViews, int viewNumber) throws Exception {
 
-        String program = debuggerView.getObject();
-        String library = debuggerView.getLibrary();
-        String objectType = debuggerView.getObjectType();
-        String module = debuggerView.getModule();
-        int viewId = debuggerView.getId();
-        String description = debuggerView.getDescription();
+        this.system = new AS400(system);
+        this.debuggerViews = debuggerViews;
+        this.viewStorages = new ModuleViewStorage[debuggerViews.length];
 
-        storage = new ModuleViewStorage(systemName, program, library, objectType, module, viewId, description, lines);
+        this.selectedViewStorage = null;
+        this.selectedViewIdx = -1;
+
+        for (int i = 0; i < debuggerViews.length; i++) {
+            ModuleViewStorage storage = new ModuleViewStorage(this.system, iSphereLibrary, debuggerViews[i]);
+            viewStorages[i] = storage;
+        }
+
+        selectStorage(viewNumber);
+    }
+
+    public DebuggerView[] getDebuggerViews() throws CoreException {
+        return debuggerViews;
+    }
+
+    public int getSelectedView() {
+        return selectedViewIdx;
+    }
+
+    public void setSelectedStorage(int index) {
+        selectStorage(index);
     }
 
     public IStorage getStorage() throws CoreException {
-        return storage;
+        return getSelectedStorage();
     }
 
     public boolean exists() {
@@ -46,15 +69,15 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
     }
 
     public String getName() {
-        return storage.getName();
+        return getSelectedStorage().getName();
     }
 
     public String getToolTipText() {
-        return storage.getFullQualifiedName();
+        return getSelectedStorage().getFullQualifiedName();
     }
 
     public String getContentDescription() {
-        return storage.getSystemName() + ":" + storage.getName() + " - " + storage.getDescription(); //$NON-NLS-1$ //$NON-NLS-1$
+        return getSelectedStorage().getSystemName() + ":" + getSelectedStorage().getName() + " - " + getSelectedStorage().getDescription(); //$NON-NLS-1$ //$NON-NLS-1$
     }
 
     public IPersistableElement getPersistable() {
@@ -103,5 +126,31 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
             }
         }
         return null;
+    }
+
+    public void dispose() {
+
+        if (system != null && system.isConnected()) {
+            system.disconnectAllServices();
+            System.out.println("Disconnected system: " + system.hashCode());
+        }
+    }
+
+    private void selectStorage(int viewNumber) {
+
+        selectedViewStorage = null;
+        selectedViewIdx = -1;
+
+        for (int i = 0; i < viewStorages.length; i++) {
+            if (viewStorages[i].getViewNumber() == viewNumber) {
+                selectedViewStorage = viewStorages[i];
+                selectedViewIdx = i;
+                break;
+            }
+        }
+    }
+
+    private ModuleViewStorage getSelectedStorage() {
+        return selectedViewStorage;
     }
 }

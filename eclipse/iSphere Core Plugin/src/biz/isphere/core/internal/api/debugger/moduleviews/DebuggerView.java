@@ -32,18 +32,21 @@ public class DebuggerView {
         this.object = object;
         this.library = library;
         this.objType = objType;
-        this.module = sdmv0100.getModule();
-        this.type = sdmv0100.getViewType();
 
-        if (SDMV0100.MAIN_VIEW.equals(sdmv0100.getMainIndicator())) {
-            this.isMainView = true;
-        } else {
-            this.isMainView = false;
+        if (sdmv0100 != null) {
+            this.module = sdmv0100.getModule();
+            this.type = sdmv0100.getViewType();
+
+            if (SDMV0100.MAIN_VIEW.equals(sdmv0100.getMainIndicator())) {
+                this.isMainView = true;
+            } else {
+                this.isMainView = false;
+            }
+
+            this.timestamp = sdmv0100.getViewTimestamp();
+            this.description = sdmv0100.getViewDescription();
+            this.number = sdmv0100.getViewNumber();
         }
-
-        this.timestamp = sdmv0100.getViewTimestamp();
-        this.description = sdmv0100.getViewDescription();
-        this.number = sdmv0100.getViewNumber();
 
         this.id = -1;
         this.lines = -1;
@@ -111,7 +114,9 @@ public class DebuggerView {
     public int getId() throws IllegalAccessException {
 
         if (!isRegistered) {
-            throw new IllegalAccessException("View has not yet been registered.");
+            return -1;
+            // throw new
+            // IllegalAccessException("View has not yet been registered.");
         }
 
         return id;
@@ -122,7 +127,7 @@ public class DebuggerView {
         this.isRegistered = true;
     }
 
-    public int getLines() throws IllegalAccessException {
+    public int getLinesCount() throws IllegalAccessException {
 
         if (!isRegistered) {
             throw new IllegalAccessException("View has not yet been registered.");
@@ -131,7 +136,7 @@ public class DebuggerView {
         return lines;
     }
 
-    public void setLines(int lines) {
+    public void setLinesCount(int lines) {
         this.lines = lines;
     }
 
