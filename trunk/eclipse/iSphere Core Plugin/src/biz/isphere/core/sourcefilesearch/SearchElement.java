@@ -33,6 +33,7 @@ public class SearchElement {
         data = null;
     }
 
+    @Deprecated
     @CMOne(info = "Deprecated but required for compiling CMOne.")
     public void setLastChangedDate(Date lastChangedDate) {
         // throw new
