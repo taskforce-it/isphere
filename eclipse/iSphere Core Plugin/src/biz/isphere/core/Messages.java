@@ -1492,6 +1492,8 @@ public class Messages extends NLS {
 
     public static String No_TEXT_or_LISTING_views_available;
 
+    public static String Selected_view_colon;
+
     /*
      * Warning messages
      */

@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.0.b008
+-----------------------------
+ • Changed debugger view editor and action to select multiple modules and 
+   added view selector to editor.
+
 Changelog: iSphere 3.5.0.b007
 -----------------------------
  • Added "Last changed date" and "Count" when copying selected members to 

@@ -53,7 +53,7 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         this.lines = null;
     }
 
-    public String getSystemName() {
+    private String getSystemName() {
         return system.getSystemName();
     }
 

@@ -27,6 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.TextEditor;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -62,7 +63,7 @@ public class ModuleViewEditor extends TextEditor {
         headerComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         Label moduleViewSelectorLabel = new Label(headerComposite, SWT.NONE);
-        moduleViewSelectorLabel.setText("Selected module view:");
+        moduleViewSelectorLabel.setText(Messages.Selected_view_colon);
 
         moduleViewSelector = WidgetFactory.createReadOnlyCombo(headerComposite);
         GridData moduleViewSelectorLayoutData = new GridData();

@@ -22,11 +22,8 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
-import biz.isphere.core.internal.api.debugger.moduleviews.IQSDREGDV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMVResult;
-import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVT;
-import biz.isphere.core.internal.api.debugger.viewtext.IQSDRTVVTResult;
 import biz.isphere.core.moduleviewer.ModuleViewEditor;
 import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
 
@@ -148,7 +145,8 @@ public class DisplayDebugModuleViewHandlerDelegate {
         DebuggerView debuggerView = findDebugView(debuggerViews);
         if (debuggerView != null) {
 
-            ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system, iSphereLibrary, debuggerViews, debuggerView.getNumber());
+            ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system, connectionName, iSphereLibrary, debuggerViews,
+                debuggerView.getNumber());
 
             IWorkbenchPage tPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
             ModuleViewEditor tEditor = tEditorInput.findEditor(tPage);
@@ -204,37 +202,6 @@ public class DisplayDebugModuleViewHandlerDelegate {
         }
 
         return null;
-    }
-
-    private List<String> retrieveDebugViewText(DebuggerView debuggerView, int lineLength) throws Exception {
-
-        List<String> lines = new LinkedList<String>();
-
-        // Register debugger view
-        IQSDREGDV iqsdregdv = new IQSDREGDV(system, iSphereLibrary);
-        if (!iqsdregdv.execute(debuggerView)) {
-            throwException("Could not register debug view: " + iqsdregdv.getErrorMessage()); //$NON-NLS-1$
-        }
-
-        // Retrieve debugger view text
-        IQSDRTVVT iqsdrtvvt = new IQSDRTVVT(system, iSphereLibrary);
-        IQSDRTVVTResult iqsdrtvvtResult = null;
-        int startLine = 1;
-
-        do {
-
-            iqsdrtvvtResult = new IQSDRTVVTResult(system, new byte[RECEIVE_BUFFER_LENGTH], IQSDRTVVT.SDVT0100);
-            if (!iqsdrtvvt.execute(iqsdrtvvtResult, debuggerView.getId(), startLine, IQSDRTVVT.ALL_LINES, lineLength)) {
-                throwException("Could not retrieve view text: " + iqsdrtvvt.getErrorMessage());
-            }
-
-            lines.addAll(iqsdrtvvtResult.getLines());
-
-            startLine = iqsdrtvvtResult.getLastLine() + 1;
-
-        } while (iqsdrtvvtResult != null && iqsdrtvvtResult.getLastLine() < debuggerView.getLinesCount());
-
-        return lines;
     }
 
     private void throwException(String message) throws Exception {

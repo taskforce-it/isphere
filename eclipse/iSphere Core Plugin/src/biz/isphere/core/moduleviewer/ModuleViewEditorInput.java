@@ -26,14 +26,17 @@ import com.ibm.as400.access.AS400;
 public class ModuleViewEditorInput implements IStorageEditorInput {
 
     private AS400 system;
+    private String connectionName;
     private ModuleViewStorage[] viewStorages;
     private DebuggerView[] debuggerViews;
     private ModuleViewStorage selectedViewStorage;
     private int selectedViewIdx;
 
-    public ModuleViewEditorInput(AS400 system, String iSphereLibrary, DebuggerView[] debuggerViews, int viewNumber) throws Exception {
+    public ModuleViewEditorInput(AS400 system, String connectionName, String iSphereLibrary, DebuggerView[] debuggerViews, int viewNumber)
+        throws Exception {
 
         this.system = new AS400(system);
+        this.connectionName = connectionName;
         this.debuggerViews = debuggerViews;
         this.viewStorages = new ModuleViewStorage[debuggerViews.length];
 
@@ -77,7 +80,7 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
     }
 
     public String getContentDescription() {
-        return getSelectedStorage().getSystemName() + ":" + getSelectedStorage().getName() + " - " + getSelectedStorage().getDescription(); //$NON-NLS-1$ //$NON-NLS-1$
+        return connectionName + ":" + getSelectedStorage().getName() + " - " + getSelectedStorage().getDescription(); //$NON-NLS-1$ //$NON-NLS-1$
     }
 
     public IPersistableElement getPersistable() {
