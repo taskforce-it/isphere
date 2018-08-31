@@ -387,7 +387,9 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
     protected abstract String getTableColumnText(Object resource, int columnIndex);
 
-    protected abstract Image getTableColumnImage(Object resource, int columnIndex);
+    protected Image getTableColumnImage(Object resource, int columnIndex) {
+        return null;
+    }
 
     protected abstract int compareResources(Object resource1, Object resource2);
 

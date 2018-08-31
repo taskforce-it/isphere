@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 import biz.isphere.core.annotations.CMOne;
 
@@ -32,6 +33,11 @@ public class SearchElement {
         member = "";
         description = "";
         data = null;
+    }
+
+    @CMOne(info = "Deprecated but required for compiling CMOne.")
+    public void setLastChangedDate(Date lastChangedDate) {
+        throw new IllegalAccessError("Don't call setLastChangedDate()! This method has become obsolete with rev. 6056.");
     }
 
     public String getLibrary() {
