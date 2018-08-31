@@ -21,11 +21,11 @@ import biz.isphere.rse.Messages;
 
 public class DisplayDebugModuleViewHandler extends AbstractHandler implements IHandler {
 
-    public static final String PARAMETER_CONNECTION_NAME = "connectionName";
-    public static final String PARAMETER_PROGRAM_NAME = "programName";
-    public static final String PARAMETER_LIBRARY_NAME = "libraryName";
-    public static final String PARAMETER_OBJECT_TYPE = "objectType";
-    public static final String PARAMETER_MODULE_NAME = "moduleName";
+    public static final String PARAMETER_CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
+    public static final String PARAMETER_PROGRAM_NAME = "programName"; //$NON-NLS-1$
+    public static final String PARAMETER_LIBRARY_NAME = "libraryName"; //$NON-NLS-1$
+    public static final String PARAMETER_OBJECT_TYPE = "objectType"; //$NON-NLS-1$
+    public static final String PARAMETER_MODULE_NAME = "moduleName"; //$NON-NLS-1$
 
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
