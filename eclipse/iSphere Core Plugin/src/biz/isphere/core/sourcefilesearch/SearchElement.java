@@ -23,8 +23,6 @@ public class SearchElement {
     private String file;
     private String member;
     private String description;
-    // TODO: Remove parameter i_lastChgDate, remove field XIFLCD from file
-    // FNDSTRI. (here: lastChangedDate)
     private Object data;
 
     public SearchElement() {
