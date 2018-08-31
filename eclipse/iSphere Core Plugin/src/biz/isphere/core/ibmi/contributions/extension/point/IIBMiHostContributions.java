@@ -56,7 +56,8 @@ public interface IIBMiHostContributions {
      * @param connectionName - connection that is checked for a given library
      * @param libraryName - library that should contain the file
      * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else <code>false</code>.
+     * @return <code>true</code>, when the file exists, else
+     *         <code>false</code>.
      */
     public boolean checkFile(String connectionName, String libraryName, String fileName);
 
@@ -99,16 +100,6 @@ public interface IIBMiHostContributions {
     public AS400 getSystem(String connectionName);
 
     /**
-     * Returns an AS400 object for a given connection name.
-     * 
-     * @param connectionName - connection name to identify the connection
-     * @parm createNew - Pass true if a new copy of the AS400 object should be
-     *       created, false if the original should be returned.
-     * @return AS400 object that is associated to the connection
-     */
-    public AS400 getSystem(String connectionName, boolean createNew);
-
-    /**
      * Returns an AS400 object for a given profile and connection name.
      * 
      * @param profile - name of the profile, that hosts the connection
@@ -116,17 +107,6 @@ public interface IIBMiHostContributions {
      * @return AS400 object that is associated to the connection
      */
     public AS400 getSystem(String profile, String connectionName);
-
-    /**
-     * Returns an AS400 object for a given profile and connection name.
-     * 
-     * @param profile - name of the profile, that hosts the connection
-     * @param connectionName - connection name to identify the connection
-     * @parm createNew - Pass true if a new copy of the AS400 object should be
-     *       created, false if the original should be returned.
-     * @return AS400 object that is associated to the connection
-     */
-    public AS400 getSystem(String profile, String connectionName, boolean createNew);
 
     /**
      * Returns an AS400 object for a given editor.

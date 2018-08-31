@@ -23,7 +23,6 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
 
 import com.ibm.etools.iseries.core.api.ISeriesAbstractProgramObject;
-import com.ibm.etools.iseries.core.api.ISeriesProgram;
 import com.ibm.etools.iseries.core.api.ISeriesProgramModule;
 import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
@@ -40,7 +39,7 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
         super(Messages.iSphere_Display_Debug_Module_View, "", null);
         arrayListSelection = new ArrayList();
         setContextMenuGroup("group.generate");
-        allowOnMultipleSelection(false);
+        allowOnMultipleSelection(true);
         setHelp("");
         setImageDescriptor(ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereRSEPlugin.IMAGE_DISPLAY_MODULE_VIEW));
     }
@@ -75,8 +74,8 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
         }
 
         this.arrayListSelection = arrayListSelection;
+        
         return true;
-
     }
 
     public void run() {

@@ -122,18 +122,10 @@ public class IBMiHostContributionsHandler {
     }
 
     public static AS400 getSystem(String connectionName) {
-        return getSystem(null, connectionName, false);
-    }
-
-    public static AS400 getSystem(String connectionName, boolean createNew) {
-        return getSystem(null, connectionName, createNew);
+        return getSystem(null, connectionName);
     }
 
     public static AS400 getSystem(String profileName, String connectionName) {
-        return getSystem(profileName, connectionName, false);
-    }
-
-    public static AS400 getSystem(String profileName, String connectionName, boolean createNew) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -141,7 +133,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.getSystem(profileName, connectionName, createNew);
+        return factory.getSystem(profileName, connectionName);
     }
 
     public static AS400 getSystem(IEditorPart editor) {
