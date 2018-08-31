@@ -15,6 +15,11 @@ import biz.isphere.core.internal.api.APIProgramCallDocument;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.ProgramParameter;
 
+/**
+ * This class is a wrapper for the iSphere Register Debug View (IQSDREGDV) API.
+ * 
+ * @author Thomas Raddatz
+ */
 public class IQSDREGDV extends APIProgramCallDocument {
 
     public IQSDREGDV(AS400 system, String iSphereLibraryName) {
