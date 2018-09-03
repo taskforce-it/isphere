@@ -15,9 +15,12 @@ import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
@@ -74,7 +77,7 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
         }
 
         this.arrayListSelection = arrayListSelection;
-        
+
         return true;
     }
 
@@ -115,7 +118,9 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
                         handler.execute(event);
 
                     } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        ISpherePlugin.logError("*** Could not retrieve module source ***", e); //$NON-NLS-1$
+                        MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R, e
+                            .getLocalizedMessage());
                     }
                 }
             }
