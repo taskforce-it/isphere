@@ -35,7 +35,7 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
     public ModuleViewEditorInput(AS400 system, String connectionName, String iSphereLibrary, DebuggerView[] debuggerViews, int viewNumber)
         throws Exception {
 
-        this.system = new AS400(system);
+        this.system = new AS400(system); // Lazy connect in ModuleViewStorage
         this.connectionName = connectionName;
         this.debuggerViews = debuggerViews;
         this.viewStorages = new ModuleViewStorage[debuggerViews.length];
@@ -135,7 +135,6 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
 
         if (system != null && system.isConnected()) {
             system.disconnectAllServices();
-            System.out.println("Disconnected system: " + system.hashCode());
         }
     }
 

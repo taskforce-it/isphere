@@ -134,7 +134,6 @@ public class ModuleViewStorage extends PlatformObject implements IStorage {
         try {
             if (!system.isConnected()) {
                 system.connectService(AS400.COMMAND);
-                System.out.println("Connected system: " + system.hashCode());
             }
             currentLibrary = ISphereHelper.getCurrentLibrary(system);
         } catch (Exception e) {
