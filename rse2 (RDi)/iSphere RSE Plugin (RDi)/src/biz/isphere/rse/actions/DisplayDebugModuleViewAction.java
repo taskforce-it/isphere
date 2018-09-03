@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -22,6 +23,8 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
@@ -71,15 +74,13 @@ public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
                         handler.execute(event);
 
                     } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        ISpherePlugin.logError("*** Could not retrieve module source ***", e); //$NON-NLS-1$
+                        MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                            e.getLocalizedMessage());
                     }
                 }
             }
         }
-    }
-
-    private Shell getShell() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
