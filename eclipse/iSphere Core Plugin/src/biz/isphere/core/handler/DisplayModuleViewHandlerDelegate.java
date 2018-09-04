@@ -29,7 +29,7 @@ import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
 
 import com.ibm.as400.access.AS400;
 
-public class DisplayDebugModuleViewHandlerDelegate {
+public class DisplayModuleViewHandlerDelegate {
 
     private static final int RECEIVE_BUFFER_LENGTH = 32767;
 
@@ -38,7 +38,7 @@ public class DisplayDebugModuleViewHandlerDelegate {
     private AS400 system;
     private String iSphereLibrary;
 
-    public DisplayDebugModuleViewHandlerDelegate(String connectionName) {
+    public DisplayModuleViewHandlerDelegate(String connectionName) {
         this.connectionName = connectionName;
     }
 

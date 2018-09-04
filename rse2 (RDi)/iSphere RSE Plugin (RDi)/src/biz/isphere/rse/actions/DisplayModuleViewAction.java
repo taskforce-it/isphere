@@ -25,13 +25,13 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.Messages;
-import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
+import biz.isphere.rse.handler.DisplayModuleViewHandler;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteProgramModule;
 
-public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
+public class DisplayModuleViewAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
     protected Shell shell;
@@ -62,15 +62,15 @@ public class DisplayDebugModuleViewAction implements IObjectActionDelegate {
                         String moduleName = qsysRemoteProgramModule.getName();
 
                         Map<String, String> parameters = new HashMap<String, String>();
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_CONNECTION_NAME, connectionName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_PROGRAM_NAME, programName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_LIBRARY_NAME, libraryName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_OBJECT_TYPE, objectType);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_MODULE_NAME, moduleName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_CONNECTION_NAME, connectionName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_PROGRAM_NAME, programName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_LIBRARY_NAME, libraryName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_OBJECT_TYPE, objectType);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_MODULE_NAME, moduleName);
 
                         ExecutionEvent event = new ExecutionEvent(null, parameters, null, null);
 
-                        DisplayDebugModuleViewHandler handler = new DisplayDebugModuleViewHandler();
+                        DisplayModuleViewHandler handler = new DisplayModuleViewHandler();
                         handler.execute(event);
 
                     } catch (ExecutionException e) {

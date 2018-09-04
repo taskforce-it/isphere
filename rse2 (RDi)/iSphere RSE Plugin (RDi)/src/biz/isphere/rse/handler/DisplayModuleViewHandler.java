@@ -16,10 +16,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.handler.DisplayDebugModuleViewHandlerDelegate;
+import biz.isphere.core.handler.DisplayModuleViewHandlerDelegate;
 import biz.isphere.rse.Messages;
 
-public class DisplayDebugModuleViewHandler extends AbstractHandler implements IHandler {
+public class DisplayModuleViewHandler extends AbstractHandler implements IHandler {
 
     public static final String PARAMETER_CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
     public static final String PARAMETER_PROGRAM_NAME = "programName"; //$NON-NLS-1$
@@ -32,7 +32,7 @@ public class DisplayDebugModuleViewHandler extends AbstractHandler implements IH
         try {
 
             String connectionName = event.getParameter(PARAMETER_CONNECTION_NAME);
-            DisplayDebugModuleViewHandlerDelegate handler = new DisplayDebugModuleViewHandlerDelegate(connectionName);
+            DisplayModuleViewHandlerDelegate handler = new DisplayModuleViewHandlerDelegate(connectionName);
             String program = event.getParameter(PARAMETER_PROGRAM_NAME);
             String library = event.getParameter(PARAMETER_LIBRARY_NAME);
             String objectType = event.getParameter(PARAMETER_OBJECT_TYPE);

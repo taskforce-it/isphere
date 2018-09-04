@@ -44,7 +44,7 @@
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"/>
       <editor
             name=""
-            icon="icons/debug_module_view.gif"
+            icon="icons/module_view.gif"
             class="biz.isphere.core.moduleviewer.ModuleViewEditor"
             id="biz.isphere.core.moduleviewer.ModuleViewEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"/>
