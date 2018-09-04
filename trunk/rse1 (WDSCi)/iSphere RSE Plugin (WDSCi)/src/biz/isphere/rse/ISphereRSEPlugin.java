@@ -56,7 +56,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
     private Map<String, IViewManager> viewManagers;
 
     public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
-    public static final String IMAGE_DISPLAY_MODULE_VIEW = "debug_module_view.gif";
+    public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
 
     public ISphereRSEPlugin() {
         super();
