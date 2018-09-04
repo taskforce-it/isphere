@@ -29,8 +29,6 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -44,6 +42,8 @@ import biz.isphere.core.internal.api.retrieveproductinformation.QSZRTVPR;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+
+import com.ibm.as400.access.AS400;
 
 public class ISpherePlugin extends AbstractUIPlugin {
 
@@ -130,7 +130,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_SEND_MESSAGE = "send_message.png";
     public static final String IMAGE_LOCKED = "locked.png";
     public static final String IMAGE_UNLOCKED = "unlocked.png";
-    public static final String IMAGE_DISPLAY_MODULE_VIEW = "debug_module_view.gif";
+    public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
