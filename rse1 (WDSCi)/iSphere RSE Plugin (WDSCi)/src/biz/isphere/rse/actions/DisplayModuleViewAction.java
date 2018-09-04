@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
-import biz.isphere.rse.handler.DisplayDebugModuleViewHandler;
+import biz.isphere.rse.handler.DisplayModuleViewHandler;
 
 import com.ibm.etools.iseries.core.api.ISeriesAbstractProgramObject;
 import com.ibm.etools.iseries.core.api.ISeriesProgramModule;
@@ -34,12 +34,12 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
+public class DisplayModuleViewAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
     protected ArrayList arrayListSelection;
 
-    public DisplayDebugModuleViewAction() {
-        super(Messages.iSphere_Display_Debug_Module_View, "", null);
+    public DisplayModuleViewAction() {
+        super(Messages.iSphere_Display_Module_View, "", null);
         arrayListSelection = new ArrayList();
         setContextMenuGroup("group.generate");
         allowOnMultipleSelection(true);
@@ -106,15 +106,15 @@ public class DisplayDebugModuleViewAction extends ISeriesSystemBaseAction implem
                         String moduleName = module.getModuleName();
 
                         Map<String, String> parameters = new HashMap<String, String>();
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_CONNECTION_NAME, connectionName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_PROGRAM_NAME, programName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_LIBRARY_NAME, libraryName);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_OBJECT_TYPE, objectType);
-                        parameters.put(DisplayDebugModuleViewHandler.PARAMETER_MODULE_NAME, moduleName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_CONNECTION_NAME, connectionName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_PROGRAM_NAME, programName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_LIBRARY_NAME, libraryName);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_OBJECT_TYPE, objectType);
+                        parameters.put(DisplayModuleViewHandler.PARAMETER_MODULE_NAME, moduleName);
 
                         ExecutionEvent event = new ExecutionEvent(null, parameters, null, null);
 
-                        DisplayDebugModuleViewHandler handler = new DisplayDebugModuleViewHandler();
+                        DisplayModuleViewHandler handler = new DisplayModuleViewHandler();
                         handler.execute(event);
 
                     } catch (ExecutionException e) {
