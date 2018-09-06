@@ -70,6 +70,7 @@ import com.ibm.etools.iseries.core.ui.widgets.ISeriesConnectionCombo;
 import com.ibm.etools.iseries.core.ui.widgets.ISeriesMsgFilePrompt;
 import com.ibm.etools.systems.core.ui.widgets.SystemHistoryCombo;
 import com.ibm.etools.systems.filters.SystemFilter;
+import com.ibm.etools.systems.filters.SystemFilterPool;
 import com.ibm.etools.systems.filters.SystemFilterPoolReference;
 import com.ibm.etools.systems.model.SystemConnection;
 
@@ -324,13 +325,16 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         filtersOfFilterPool.clear();
 
         SystemFilterPoolReference systemFilterPoolReference = filterPoolsOfConnection.get(systemFilterPoolName);
-        if (systemFilterPoolReference != null) {
+        if (systemFilterPoolReference != null && !systemFilterPoolReference.isReferenceBroken()) {
 
-            SystemFilter[] filters = systemFilterPoolReference.getReferencedFilterPool().getSystemFilters();
-            for (SystemFilter filter : filters) {
-                if (!filter.isPromptable()
-                    && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
-                    filtersOfFilterPool.put(filter.getName(), filter);
+            SystemFilterPool referencedFilterPool = systemFilterPoolReference.getReferencedFilterPool();
+            if (referencedFilterPool != null) {
+                SystemFilter[] filters = referencedFilterPool.getSystemFilters();
+                for (SystemFilter filter : filters) {
+                    if (!filter.isPromptable()
+                        && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
+                        filtersOfFilterPool.put(filter.getName(), filter);
+                    }
                 }
             }
         }
@@ -817,7 +821,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
 
             Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
-            
+
             new SearchExec().execute(tConnection.getAS400ToolboxObject(getShell()), tConnection.getHostName(), jdbcConnection, searchOptions,
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
