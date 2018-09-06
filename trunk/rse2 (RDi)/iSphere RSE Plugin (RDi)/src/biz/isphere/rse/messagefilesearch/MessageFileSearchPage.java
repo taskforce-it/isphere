@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
@@ -46,10 +47,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMsgFilePrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -72,6 +69,10 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
+
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMsgFilePrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class MessageFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -324,13 +325,16 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         filtersOfFilterPool.clear();
 
         ISystemFilterPoolReference systemFilterPoolReference = filterPoolsOfConnection.get(systemFilterPoolName);
-        if (systemFilterPoolReference != null) {
+        if (systemFilterPoolReference != null && !systemFilterPoolReference.isReferenceBroken()) {
 
-            ISystemFilter[] filters = systemFilterPoolReference.getReferencedFilterPool().getFilters();
-            for (ISystemFilter filter : filters) {
-                if (!filter.isPromptable()
-                    && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
-                    filtersOfFilterPool.put(filter.getName(), filter);
+            ISystemFilterPool referencedFilterPool = systemFilterPoolReference.getReferencedFilterPool();
+            if (referencedFilterPool != null) {
+                ISystemFilter[] filters = referencedFilterPool.getFilters();
+                for (ISystemFilter filter : filters) {
+                    if (!filter.isPromptable()
+                        && (systemFilterPoolReference == null || filter.getParentFilterPool().getName().equals(filterPoolCombo.getText()))) {
+                        filtersOfFilterPool.put(filter.getName(), filter);
+                    }
                 }
             }
         }
