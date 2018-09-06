@@ -1,21 +1,25 @@
 
 Changelog: iSphere 3.5.0.b008
 -----------------------------
- • Changed debugger view editor and action to select multiple modules and 
-   added view selector to editor.
- • Changed Journal Explorer to display an error, when the IBM i release is 
-   less than V5R4M0, when attempting to retrieve journal entries.
+ • Changed debugger view editor and action to select multiple modules 
+   and added view selector to editor.
+ • Changed Journal Explorer to display an error, when the IBM i 
+   release is less than V5R4M0, when attempting to retrieve journal 
+   entries.
+ • Fixed NullPointerException when loading the filters for the source 
+   and message file search pages, when processing a broken filter 
+   pool reference. (Ticket #64)
 
 Changelog: iSphere 3.5.0.b007
 -----------------------------
- • Added "Last changed date" and "Count" when copying selected members to 
-   the clipboard.
- • Added menu option "Export to Member Filter" (selected items) to Source 
-   File Search viewer.
+ • Added "Last changed date" and "Count" when copying selected 
+   members to the clipboard.
+ • Added menu option "Export to Member Filter" (selected items) to 
+   Source File Search viewer.
  • Added menu option "Export to Excel" (selected items) to Source 
    File Search viewer.
- • Added menu option "Export to Object Filter" (selected items) to Message 
-   File Search viewer.
+ • Added menu option "Export to Object Filter" (selected items) to 
+   Message File Search viewer.
  • Added menu option "Export to Excel" (selected items) to Message 
    File Search viewer.
 
@@ -23,18 +27,18 @@ Changelog: iSphere 3.5.0.b006
 -----------------------------
  • Added option "Display Module View" to the context menu of *MODULE
    objects to display the debug view of the module.
- • Removed non-applicable menu option from ReadOnlyEditor, which is used 
-   for displaying spooled files.
+ • Removed non-applicable menu option from ReadOnlyEditor, which is 
+   used for displaying spooled files.
  • Removed obsolete field 'XIFLCD' from table 'FNDSTRI'. 
- • Changed Source File Search and Message File Search to save the last 
-   used export folder.
- • Added column "Count" to Source File Search result view to display the 
-   number of statements found.
- • Added "Last changed date" and "Count" to Excel export of Source File 
-   Search.
+ • Changed Source File Search and Message File Search to save the 
+   last used export folder.
+ • Added column "Count" to Source File Search result view to display 
+   the number of statements found.
+ • Added "Last changed date" and "Count" to Excel export of Source 
+   File Search.
  • Added search options to Excel export.
- • Added option "Show all statements" to iSphere Source File search, when
-   launched from the RSE tree.
+ • Added option "Show all statements" to iSphere Source File search, 
+   when launched from the RSE tree.
    
 
 Changelog: iSphere 3.5.0.b005
