@@ -23,6 +23,9 @@ DSPJRN command are supported:
 <li>*TYPE5</li>
 </ul>
 <p>
+You can also launch the iSphere Journal Explorer from the context menu of a physical file of an 
+object filter in the <i>Remote System Explorer</i> perspective.
+<p>
 <table>
 	<tr>
 		<td class="notice"><b>Notice: </b>Your IBM i must be at least a release level V5R4M0 to retrieve journal 
@@ -75,6 +78,26 @@ The following actions are available:
 <tr><td valign="middle"><img src="assets/configure_parsers.png" /></td><td valign="middle">Opens a dialog for configuring the parsers.</td></tr>
 <tr><td valign="middle"><img src="assets/refresh.png" /></td><td valign="middle">Reloads the journal entries form the output file.</td></tr>
 </table>
+<p>
+<h2>Opening an Output File</h2>
+<p>
+Click the <i>Open journal output file</i> button at the top of the <i>Journal Explorer</i> view:
+<p>
+<img src="assets/open_output_file.png" align="middle">
+<p>
+Fill in the library, file and member names and click the [OK] button.
+<p>
+<img src="assets/open_output_file_dialog.png" align="middle">
+<p>
+<h2>Loading Journal Entries From a Journal Receiver</h2>
+<p>
+Right-click a journaled physical file of an object filter in the <i>Remote System Explorer</i> perspective
+and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
+and click the [OK] button. 
+<p>
+<img src="assets/loading_journal_entries_of_physical_file_dialog.png" align="middle">
+<p>
+Now iSphere determines the associated journal and retrieves the journal entries created by the file.
 <p>
 <h2>SQL Editor</h2>
 <p>
