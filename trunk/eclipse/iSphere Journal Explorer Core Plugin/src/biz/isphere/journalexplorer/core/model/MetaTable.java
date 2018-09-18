@@ -17,12 +17,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import com.ibm.as400.access.Record;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
-
-import com.ibm.as400.access.Record;
 
 /**
  * This class represents the metatada of a table. It contains the name and
@@ -181,6 +181,15 @@ public class MetaTable {
             lastNullableFieldIndex = columns.size();
         }
 
+    }
+
+    public boolean hasColumns() {
+
+        if (columns.size() > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public MetaColumn[] getColumns() {

@@ -82,8 +82,13 @@ public class MetaDataCache {
         MetaTableDAO metaTableDAO = new MetaTableDAO(connectionName);
 
         try {
+
             metaTableDAO.retrieveColumnsMetaData(metaTable);
-            metaTable.setLoaded(true);
+            if (metaTable.hasColumns()) {
+                metaTable.setLoaded(true);
+            } else {
+                metaTable.setLoaded(false);
+            }
 
         } catch (Exception exception) {
             metaTable.setLoaded(false);
