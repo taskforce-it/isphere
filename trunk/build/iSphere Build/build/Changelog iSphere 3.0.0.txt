@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.5.0.b009
+-----------------------------
+ • Fixed NoClassDefFoundError (class: ProgramParameter) when
+   attempting to display journal entries with the iSphere Journal
+   Explorer. (Ticket #65).
+
 Changelog: iSphere 3.5.0.b008
 -----------------------------
  • Changed debugger view editor and action to select multiple modules 
