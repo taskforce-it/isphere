@@ -1,6 +1,13 @@
 
 Changelog: iSphere 3.5.0.b009
 -----------------------------
+ • Fixed NullPointerException when the meta data of a journal entry
+   could not be retrieved.
+ • Fixed column mismatch between headline and data when exporting
+   journal entries to Excel.
+
+Changelog: iSphere 3.5.0.b009
+-----------------------------
  • Fixed NoClassDefFoundError (class: ProgramParameter) when
    attempting to display journal entries with the iSphere Journal
    Explorer. (Ticket #65).
