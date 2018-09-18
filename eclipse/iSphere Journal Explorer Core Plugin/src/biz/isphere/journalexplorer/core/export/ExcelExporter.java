@@ -113,7 +113,7 @@ public class ExcelExporter {
             }
 
             for (MetaColumn column : metatable.getColumns()) {
-                JOESDProperty property = new JOESDProperty("", "", null, journalEntry);
+                JOESDProperty property = new JOESDProperty(journalEntry);
                 property.executeParsing();
                 property.toPropertyArray();
                 if (journalEntry.isRecordEntryType()) {
