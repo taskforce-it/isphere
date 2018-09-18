@@ -13,6 +13,8 @@ package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
+import com.ibm.as400.access.Record;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
@@ -20,8 +22,6 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-
-import com.ibm.as400.access.Record;
 
 public class JOESDProperty extends JournalProperty {
 
@@ -85,10 +85,16 @@ public class JOESDProperty extends JournalProperty {
 
             parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
 
+            if (!metatable.hasColumns()) {
+                value = Messages.bind(Messages.Error_Meta_data_not_available_Check_file_A_B, metatable.getLibrary(), metatable.getName());
+                setErrorParsing(true);
+                return;
+            }
+
             for (MetaColumn column : metatable.getColumns()) {
                 columnName = column.getName().trim();
                 if (column.getText() != null && column.getText().trim().length() != 0) {
-                    columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$  //$NON-NLS-2$
+                    columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
                 if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificDataLength()) {
@@ -129,7 +135,11 @@ public class JOESDProperty extends JournalProperty {
         if (comparable instanceof JOESDProperty) {
             JOESDProperty joesdSpecificProperty = (JOESDProperty)comparable;
 
-            if (joesdSpecificProperty.parsedJOESD.getNumberOfFields() != parsedJOESD.getNumberOfFields()) {
+            if (joesdSpecificProperty.parsedJOESD == null || parsedJOESD == null) {
+                highlighted = comparable.highlighted = true;
+                return -1;
+
+            } else if (joesdSpecificProperty.parsedJOESD.getNumberOfFields() != parsedJOESD.getNumberOfFields()) {
                 highlighted = comparable.highlighted = true;
                 return -1;
 
