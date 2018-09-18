@@ -11,9 +11,12 @@ package biz.isphere.core.handler;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.as400.access.AS400;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -26,8 +29,6 @@ import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMVResult;
 import biz.isphere.core.moduleviewer.ModuleViewEditor;
 import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
-
-import com.ibm.as400.access.AS400;
 
 public class DisplayModuleViewHandlerDelegate {
 
@@ -161,7 +162,9 @@ public class DisplayModuleViewHandlerDelegate {
             }
 
         } else {
-            throw new Exception(Messages.No_TEXT_or_LISTING_views_available);
+            MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                Messages.No_TEXT_or_LISTING_views_available);
+            // throw new Exception(Messages.No_TEXT_or_LISTING_views_available);
         }
     }
 
