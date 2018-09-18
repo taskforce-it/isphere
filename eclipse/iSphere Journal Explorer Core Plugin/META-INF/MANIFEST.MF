@@ -19,5 +19,4 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.journalexplorer.rse,
  biz.isphere.journalexplorer.base
 Bundle-ActivationPolicy: lazy
-Import-Package: com.ibm.as400.access
 Eclipse-LazyStart: true
