@@ -33,6 +33,10 @@ public class JOESDProperty extends JournalProperty {
 
     private Record parsedJOESD;
 
+    public JOESDProperty(JournalEntry journalEntry) {
+        this("", "", null, journalEntry);
+    }
+
     public JOESDProperty(String name, Object value, Object parent, JournalEntry journalEntry) {
 
         super(name, "", parent); //$NON-NLS-1$
