@@ -22,6 +22,7 @@
      /*         >>PARM<<   DFTACTGRP(*YES);                                   */
      /*         >>PARM<<   DBGVIEW(*LIST);                                    */
      /*         >>PARM<<   TGTRLS(&TR);                                       */
+     /*         >>PARM<<   OPTION(*EVENTF);                                   */
      /*       >>END-COMPILE<<                                                 */
      /*       >>EXECUTE<<                                                     */
      /*   >>END-PRE-COMPILER<<                                                */
@@ -61,6 +62,8 @@
              DCL        VAR(&V_MOD    ) TYPE(*CHAR) LEN( 2)
              DCL        VAR(&VERSION  ) TYPE(*CHAR) LEN( 8)
              DCL        VAR(&PRDTEXT  ) TYPE(*CHAR) LEN(50)
+             DCL        VAR(&DATE     ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&DATE6    ) TYPE(*CHAR) LEN( 6)
 
              DCL        VAR(&TRUE     ) TYPE(*LGL ) VALUE('1')
              DCL        VAR(&FALSE    ) TYPE(*LGL ) VALUE('1')
@@ -316,7 +319,11 @@
              CHGVAR     VAR(&VERSION) +
                         VALUE(&V_VER *TCAT '.' *CAT &V_RLS *TCAT '.' *CAT &V_MOD)
 
-             CHGVAR     VAR(&PRDTEXT) VALUE('The iSphere Project v' *CAT &VERSION)
+             RTVSYSVAL  SYSVAL(QDATE) RTNVAR(&DATE6)
+             CVTDAT     DATE(&DATE6) TOVAR(&DATE) FROMFMT(*JOB) TOFMT(*ISO) +
+                          TOSEP(*NONE)
+             CHGVAR     VAR(&PRDTEXT) VALUE('The iSphere Project v' *CAT &VERSION +
+                          *CAT ' (' *CAT &DATE *CAT ')')
 
              /* ----------------------------------------------- */
              /* Create SQL tables and indexes                   */
