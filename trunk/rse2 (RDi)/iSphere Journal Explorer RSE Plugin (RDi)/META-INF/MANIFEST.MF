@@ -17,8 +17,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base,
  biz.isphere.core,
  biz.isphere.journalexplorer.base
+Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
-Import-Package: com.ibm.as400.access
 Export-Package: biz.isphere.journalexplorer.rse.handlers.contributions.extension.point,
  biz.isphere.journalexplorer.rse.shared.model,
  biz.isphere.journalexplorer.rse.shared.model.dao,
