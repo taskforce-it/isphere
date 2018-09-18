@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.tn5250j.rse"
       label="iSphere TN5250J for WDSCi 7.0"
-      version="3.5.0.b009"
+      version="3.5.0.b010"
       provider-name="iSphere Project Team">
 
    <description url="https://sourceforge.net/projects/isphere/">
