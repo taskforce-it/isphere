@@ -11,11 +11,11 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.core,
  com.ibm.etools.systems.core,
  com.ibm.etools.systems.dstore.core,
+ com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
  biz.isphere.core,
  biz.isphere.journalexplorer.base
 Eclipse-LazyStart: true
-Import-Package: com.ibm.as400.access
 Export-Package: biz.isphere.journalexplorer.rse.handlers.contributions.extension.point,
  biz.isphere.journalexplorer.rse.shared.model,
  biz.isphere.journalexplorer.rse.shared.model.dao,
