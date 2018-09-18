@@ -7,45 +7,44 @@ Changelog: iSphere 3.5.0.b009
 
 Changelog: iSphere 3.5.0.b008
 -----------------------------
- • Changed debugger view editor and action to select multiple modules 
+ • Changed debugger view editor and action to select multiple modules
    and added view selector to editor.
- • Changed Journal Explorer to display an error, when the IBM i 
-   release is less than V5R4M0, when attempting to retrieve journal 
+ • Changed Journal Explorer to display an error, when the IBM i
+   release is less than V5R4M0, when attempting to retrieve journal
    entries.
- • Fixed NullPointerException when loading the filters for the source 
-   and message file search pages, when processing a broken filter 
+ • Fixed NullPointerException when loading the filters for the source
+   and message file search pages, when processing a broken filter
    pool reference. (Ticket #64)
 
 Changelog: iSphere 3.5.0.b007
 -----------------------------
- • Added "Last changed date" and "Count" when copying selected 
+ • Added "Last changed date" and "Count" when copying selected
    members to the clipboard.
- • Added menu option "Export to Member Filter" (selected items) to 
+ • Added menu option "Export to Member Filter" (selected items) to
    Source File Search viewer.
- • Added menu option "Export to Excel" (selected items) to Source 
+ • Added menu option "Export to Excel" (selected items) to Source
    File Search viewer.
- • Added menu option "Export to Object Filter" (selected items) to 
+ • Added menu option "Export to Object Filter" (selected items) to
    Message File Search viewer.
- • Added menu option "Export to Excel" (selected items) to Message 
+ • Added menu option "Export to Excel" (selected items) to Message
    File Search viewer.
 
 Changelog: iSphere 3.5.0.b006
 -----------------------------
  • Added option "Display Module View" to the context menu of *MODULE
    objects to display the debug view of the module.
- • Removed non-applicable menu option from ReadOnlyEditor, which is 
+ • Removed non-applicable menu option from ReadOnlyEditor, which is
    used for displaying spooled files.
- • Removed obsolete field 'XIFLCD' from table 'FNDSTRI'. 
- • Changed Source File Search and Message File Search to save the 
+ • Removed obsolete field 'XIFLCD' from table 'FNDSTRI'.
+ • Changed Source File Search and Message File Search to save the
    last used export folder.
- • Added column "Count" to Source File Search result view to display 
+ • Added column "Count" to Source File Search result view to display
    the number of statements found.
- • Added "Last changed date" and "Count" to Excel export of Source 
+ • Added "Last changed date" and "Count" to Excel export of Source
    File Search.
  • Added search options to Excel export.
- • Added option "Show all statements" to iSphere Source File search, 
+ • Added option "Show all statements" to iSphere Source File search,
    when launched from the RSE tree.
-   
 
 Changelog: iSphere 3.5.0.b005
 -----------------------------
@@ -53,20 +52,20 @@ Changelog: iSphere 3.5.0.b005
 
 Changelog: iSphere 3.5.0.b004
 -----------------------------
- • Working on user action and command managers. 
+ • Working on user action and command managers.
 
 Changelog: iSphere 3.5.0.b003
 -----------------------------
- • Working on user action and command managers. 
+ • Working on user action and command managers.
 
 Changelog: iSphere 3.5.0.b002
 -----------------------------
- • Added Feature "iSphere RSE User Action Management" to import and 
+ • Added Feature "iSphere RSE User Action Management" to import and
    export compile commands.
 
 Changelog: iSphere 3.5.0.b001
 -----------------------------
- • Added Feature "iSphere RSE Command Management" to import and 
+ • Added Feature "iSphere RSE Command Management" to import and
    export compile commands.
 
 Changelog: iSphere 3.4.1.r
@@ -78,34 +77,34 @@ Changelog: iSphere 3.4.1.r
 
 Changelog: iSphere 3.4.0.r
 --------------------------
- • Added server response to error message when the iSphere update 
+ • Added server response to error message when the iSphere update
    server could not be reached.
  • Added error logging when opening or saving a spooled file.
  • Added column 'Last changed' to the member list of the result view of
    the iSphere Source File Search.
  • Added connection name to member title when comparing source members
    in the iSphere Compare Editor.
- • Changed ISpherePlugin to check the .project file of the 
+ • Changed ISpherePlugin to check the .project file of the
    iSphereSpooledFiles project.
- • Changed signon dialog to store host and user names, when transferring 
+ • Changed signon dialog to store host and user names, when transferring
    the iSphere library
- • Changed "new release notification URL" to 
+ • Changed "new release notification URL" to
    "http://isphere.sourceforge.net/MANIFEST.MF".
- • Fixed problem that color attributes were accidentally promoted 
+ • Fixed problem that color attributes were accidentally promoted
    between sessions with different themes.
  • Fixed problem that option "Save as Theme" did not work.
- • Fixed problem that spooled files could not be opened, when the 
+ • Fixed problem that spooled files could not be opened, when the
    workspace is located in the IFS. (NullPointerException)
 
 Changelog: iSphere 3.3.1.r
 --------------------------
- • Fixed error message "Parameter 'ccsid' must not be [null]" when 
+ • Fixed error message "Parameter 'ccsid' must not be [null]" when
    attempting to display, edit or added a message description.
- • Changed binding directory editor to set activation default to *IMMED 
+ • Changed binding directory editor to set activation default to *IMMED
    when adding a service program entry.
  • Added options "Ignore changes left" and "Ignore changes right" to
    iSphere Compare Editor when using three-way compare.
- • Changed "activation" and "object type" combo boxes to read-only and 
+ • Changed "activation" and "object type" combo boxes to read-only and
    changed input fields "object" and "library" to upper-case.
 
 Changelog: iSphere 3.3.0.r
@@ -116,20 +115,20 @@ Changelog: iSphere 3.3.0.r
    closed.
  • Added default printer font to default 5250 configuration.
  • Fixed problem that object names were not properly validated. Now
-   the system ccsid is taken into account when validating object names. 
+   the system ccsid is taken into account when validating object names.
  • Fixed dead lock on AWT thread when closing a TN5250J session with
    unsaved configuration changes.
  • Fixed NullPointerException, when the user attempts to open the popup
-   menu of a 5050 session, before the session had been completely 
+   menu of a 5050 session, before the session had been completely
    initialized.
  • Fixed timing problem that SetSessionFocus occasionally blocked
-   the UI thread. 
+   the UI thread.
  • Fixed minor problems in class ColorAttributesPanel.
  • Fixed NullPointerException in GUIGraphicsUtils.getApplicationIcons()
    when loading window title icons.
  • Fixed NullPointerException when creating a "XTFRFile" dialog in WDSCi.
- • Updated STRPREPRC to v1.15.3 to fix RNX0100 (Length or start position 
-   is out of range for the string operation) in procedure replaceCmdKeyWord(). 
+ • Updated STRPREPRC to v1.15.3 to fix RNX0100 (Length or start position
+   is out of range for the string operation) in procedure replaceCmdKeyWord().
 
 Changelog: iSphere 3.2.5.r
 --------------------------
@@ -139,14 +138,14 @@ Changelog: iSphere 3.2.4.r
 --------------------------
  • Fixed problem that the iSphere Source File Search and Message File
    Search did not come to an end, when the connection has broken.
- • Fixed problem that "Copy Members to" did not copy the member 
+ • Fixed problem that "Copy Members to" did not copy the member
    descriptions containing quotes.
 
 Changelog: iSphere 3.2.3.r
 --------------------------
  • Fixed NullPointerException in AbstractTypeDAO, when opening an
    output file.
- • Added additional log statements to ease debugging of errors in 
+ • Added additional log statements to ease debugging of errors in
    Journal Explorer plug-in.
  • Added InvalidVersionNumberException to get better diagnostic messages
    when searching for updates.
@@ -162,14 +161,14 @@ Changelog: iSphere 3.2.2.r
 
 Changelog: iSphere 3.2.1.r
 --------------------------
- • Fixed incorrect enablement of button "SQL Editor" in class 
+ • Fixed incorrect enablement of button "SQL Editor" in class
    JournalExplorerView.
- • Fixed problem, that loading journal entries did not stop, when the 
+ • Fixed problem, that loading journal entries did not stop, when the
    maximum number of entries had been loaded.
  • Fixed missing column descriptions on Journal Explorer preference page.
  • Fixed NumberFormatException in class ConfigureParserDialog.
- • Fixed method getTimestamp() of class LoadJournalEntriesDialog, which 
-   incorrectly used Calendar.DAY_OF_YEAR to set the day. That worked for 
+ • Fixed method getTimestamp() of class LoadJournalEntriesDialog, which
+   incorrectly used Calendar.DAY_OF_YEAR to set the day. That worked for
    January but no longer with February.
 
 Changelog: iSphere 3.2.0.r
@@ -182,8 +181,8 @@ Changelog: iSphere 3.2.0.b004
  • Added menu option for displaying journal entries of selected files
    or members.
  • Added JDBC connection manager for supporting Kerberos JDBC connections.
-   (Temporary patch for an IBM defect.) 
- • Added preferences value to limit the number of journal entries 
+   (Temporary patch for an IBM defect.)
+ • Added preferences value to limit the number of journal entries
    downloaded to a client PC. The default value is 1000.
 
 Changelog: iSphere 3.1.5.b003
@@ -197,7 +196,7 @@ Changelog: iSphere 3.1.5.b002
    without any meaningful message. (Problem with Kerberos authentication)
  • Change the iSphere error logger to open the Eclipse error log when it
    has to log an error.
- • Added preferences switch "Appearance - Open Eclipse error log on error".      
+ • Added preferences switch "Appearance - Open Eclipse error log on error".
  • Added appearance option "Format resource date and time", which controls,
    whether date and time values of spooled files or messages are formatted
    and displayed as strings. That could be useful in certain cases, but
@@ -212,44 +211,44 @@ Changelog: iSphere 3.1.5.b001
 
 Changelog: iSphere 3.1.4.r
 --------------------------
- • Fixed StringIndexOutOfBoundsException in JournalEntryLabelProvider 
+ • Fixed StringIndexOutOfBoundsException in JournalEntryLabelProvider
    when opening an output file with entry specific data less than 200.
  • Moved character set id for converting journal data to preferences.
- • Caught NullPointerException but could not yet figure out the root 
-   cause. (See discussion 'Journal explorer' at 
+ • Caught NullPointerException but could not yet figure out the root
+   cause. (See discussion 'Journal explorer' at
    https://sourceforge.net/p/isphere/discussion/general/thread/618cf696/)
- • Changed Journal Explorer to only parse journal entries, which are a 
+ • Changed Journal Explorer to only parse journal entries, which are a
    result of a record level operation.
 
 Changelog: iSphere 3.1.3.r
 --------------------------
- • Fixed CCSID issue in iSphere Compare Editor, when saving a 
-   source member to the host. 
+ • Fixed CCSID issue in iSphere Compare Editor, when saving a
+   source member to the host.
 
 Changelog: iSphere 3.1.2.r
 --------------------------
- • Fixed CCSID issue in iSphere Compare Editor. 
+ • Fixed CCSID issue in iSphere Compare Editor.
 
 Changelog: iSphere 3.1.1.r
 --------------------------
- • Fixed problem that the "Save" dialog did not display existing 
+ • Fixed problem that the "Save" dialog did not display existing
    files when saving a spooled file.
  • Enhanced the "export to filter" options of the search result
    views to extend existing filters.
- • Improved error checking of "Improved error checking of "Send 
+ • Improved error checking of "Improved error checking of "Send
    IBM i Message" dialog.".
- • Fixed incorrect dependency between the "iSphere Compare Filters 
+ • Fixed incorrect dependency between the "iSphere Compare Filters
    Feature" and the "org.eclipse.platform" feature that blocked
    installing the compare filters feature in RDi 9.6.
 
 Changelog: iSphere 3.1.0.b011
 -----------------------------
  • Added content assistance to SQL editor.
- • Added simple SQL editor for editing the SQL WHERE clause for 
+ • Added simple SQL editor for editing the SQL WHERE clause for
    fetching data into the journal explorer view.
  • Fixed problem when comparing the user input when
    creating a message filter.
- • Renamed "Add-Remove Comments" plug-ins and feature 
+ • Renamed "Add-Remove Comments" plug-ins and feature
    to "Lpex Editor Extensions".
 
 Changelog: iSphere 3.1.0.b010
@@ -279,36 +278,36 @@ Changelog: iSphere 3.1.0.b004 to b006
 -------------------------------------
  • Added iSphere Journal Explorer plug-in.
  • Changed library dependency to version 3.1.0.
- • Change iSphere compare dialog to load/store member values when called 
+ • Change iSphere compare dialog to load/store member values when called
    from the iSphere main menu (no members passed to compare dialog).
  • Updated STRPREPRC utility to version 1.14.3.
  • Fixed OK button enablement of RSECompareDialog.
 
-Changelog: iSphere 3.1.0.b003 
+Changelog: iSphere 3.1.0.b003
 --------------------------------------------
  • Fixed NullPointerException in LangTool.
 
-Changelog: iSphere 3.1.0.b002 
+Changelog: iSphere 3.1.0.b002
 --------------------------------------------
  • Added button "Map Keys..." to TN5250j preferences page.
- • Fixed bug in BUILD_CRT that cleared the ISPHERE library, when the 
+ • Fixed bug in BUILD_CRT that cleared the ISPHERE library, when the
    production and development library names were equal.
 
-Changelog: iSphere 3.1.0.b001 
+Changelog: iSphere 3.1.0.b001
 --------------------------------------------
  • Added menu option "Compare Source Members" to iSphere main menu.
- • Added menu option "Compare Source Members" to the "members" section 
+ • Added menu option "Compare Source Members" to the "members" section
    of the result view of the "iSphere Source File Search".
- • Added wait time (250ms) between two connections, because some systems 
-   (e.g. PUB400.COM) seem to reject connections coming too close 
+ • Added wait time (250ms) between two connections, because some systems
+   (e.g. PUB400.COM) seem to reject connections coming too close
    after each other.
  • Added tooltip showing the search options to search result tabs.
- • Added context menu with option "Display Search Options" to search  
-   result tabs. 
+ • Added context menu with option "Display Search Options" to search
+   result tabs.
 
 Changelog: iSphere 3.0.6.r
 --------------------------
- • Fixed NullPointerException because of KeyMapper not have 
+ • Fixed NullPointerException because of KeyMapper not have
    been initialized.
 
 Changelog: iSphere 3.0.6.b002
@@ -317,15 +316,15 @@ Changelog: iSphere 3.0.6.b002
 
 Changelog: iSphere 3.0.6.b001
 -----------------------------
- • Added the iSphere specific keys to "KeyMapper" to fix the issue of the 
+ • Added the iSphere specific keys to "KeyMapper" to fix the issue of the
    hidden fast cursor up/down keys.
  • Updated iSphere help with instructions how to enable SSL sessions.
 
 Changelog: iSphere 3.0.5.r
 --------------------------
- • Enabled the "Delete" key to delete spooled files of the iSphere 
+ • Enabled the "Delete" key to delete spooled files of the iSphere
    Spooled Files subsystem.
- • Fixed performance issue that has been introduced with bug fix 
+ • Fixed performance issue that has been introduced with bug fix
    of ticket #42.
  • Updated Dutch translation.
 
@@ -335,7 +334,7 @@ Changelog: iSphere 3.0.4.r
    iSphere Source File Search was started for a member filter.
  • Fixed problem that the iSphere Source Compare editor did not
    check member locks when comparing members in edit mode.
- • Fixed problem that the right source member was always editable 
+ • Fixed problem that the right source member was always editable
    when comparing source members with WDSCi.
  • Added wait time between two connections, because some systems
    (e.g. PUB400.COM) seem to reject connections when they come
@@ -351,27 +350,27 @@ Changelog: iSphere 3.0.2.r
  • Fixed "save" action of WDSCi compare/merge editor.
  • Fixed broken STRPREPRC installer.
 
-Changelog: iSphere 3.0.0.b010 and 3.0.0.b011 
+Changelog: iSphere 3.0.0.b010 and 3.0.0.b011
 --------------------------------------------
- • Added "iSphere Add-Remove Comments" feature mainly intended to be used 
+ • Added "iSphere Add-Remove Comments" feature mainly intended to be used
    with WDSCi 7.0. (See help text for details.)
 
 Changelog: iSphere 3.0.0.b009
 -----------------------------
- • Fixed NullPointerException when closing the workbench with an active 
+ • Fixed NullPointerException when closing the workbench with an active
    5250 session.
- • Added option to use a SSL connection for the 5250 emulator. 
+ • Added option to use a SSL connection for the 5250 emulator.
 
 Changelog: iSphere 3.0.0.b008
 -----------------------------
  • Added text decoration of source files of i Projects.
  • Fixed NullPointerException for sequential data queues.
- • Fixed problem that the "reply" field disappeared, when resizing the 
+ • Fixed problem that the "reply" field disappeared, when resizing the
    "IBM i Message" dialog.
  • Added option to select a RSE filter, when using the global iSphere
    Message File Search.
  • Fixed problem that the Hex Data Space Editor did not properly
-   save the user space data. 
+   save the user space data.
  • Updated STRPREPRC to v1.12.2.
 
 Changelog: iSphere 3.0.0.b007
@@ -396,7 +395,7 @@ Changelog: iSphere 3.0.0.b004
  • Fixed problem that the filter string was not reset, when restoring
    the attributes of the iSphere Message Monitor.
  • Added check for existence of the message queue, when the message
-   monitor starts.   
+   monitor starts.
  • Added scrollbars to the QueuedMessageDialog.
  • Added SendMessageDialog for calling the QEZSNDMG API.
 
@@ -416,7 +415,7 @@ Changelog: iSphere 3.0.0.b001
 
 Changelog: iSphere 2.9.4.r
 --------------------------
- • Fixed CCSID problem when copying members between connections. 
+ • Fixed CCSID problem when copying members between connections.
 
 Changelog: iSphere 2.9.4.b002
 -----------------------------
@@ -427,36 +426,36 @@ Changelog: iSphere 2.9.4.b002
  • Changed STRPREPRC plug-in to properly remove user actions on shutdown.
  • Added option to include the message id to the iSphere message file
    search. (Requires updating the library.)
- • Added special search mode "Search for specific message IDs" to the 
-   iSphere Message File Search. Please refer to the iSphere help for 
+ • Added special search mode "Search for specific message IDs" to the
+   iSphere Message File Search. Please refer to the iSphere help for
    details. (Requires updating the library.)
 
 Changelog: iSphere 2.9.3.b002
 -----------------------------
- • Fixed problem that 5250 key bindings are applied to RSE items with 
+ • Fixed problem that 5250 key bindings are applied to RSE items with
    RDi 9.5.
  • Disabled Eclipse F1 key (Help) for 5250 vies and editors.
  • Updated STRPREPRC utility to report errors in the header tags to RDi.
- • Fixed problem, that certain key strokes followed by the [tab] key 
+ • Fixed problem, that certain key strokes followed by the [tab] key
    made the 5250 view to lose focus.
 
 Changelog: iSphere 2.9.2.b003
 -----------------------------
- • Changed spooled file editor back to an editor instead of being a 
-   browser, because the search option is more comfortable. The editor 
+ • Changed spooled file editor back to an editor instead of being a
+   browser, because the search option is more comfortable. The editor
    is read-only, now.
- • Fixed problem, that messages, retrieved from a data queue, were not 
+ • Fixed problem, that messages, retrieved from a data queue, were not
    correctly copied to the clipboard.
- • Added option to specify the maximum number of messages to retrieve 
+ • Added option to specify the maximum number of messages to retrieve
    from a data queue.
- • Added option to specify a replacement character that is used to 
-   replace non-displayable characters when retrieving messages from 
+ • Added option to specify a replacement character that is used to
+   replace non-displayable characters when retrieving messages from
    a data queue.
- • Added warning message for data queue messages exceeding the 259 
+ • Added warning message for data queue messages exceeding the 259
    table column boundary of MS Windows.
  • Added additional demo/test data queues to the iSphere library.
- • Added option to use the font size of the spooled file viewer 
-   (Colors and Fonts: Basic -> Text Font) to compute the page size 
+ • Added option to use the font size of the spooled file viewer
+   (Colors and Fonts: Basic -> Text Font) to compute the page size
    when converting a spooled file to PDF.
  • Fixed problems when adding a STRPREPRC header to a source member.
 
@@ -515,7 +514,6 @@ Changelog: iSphere 2.9.0.b004
    "check for updates" job is running.
  • Changed object decorator to optionally display the library and file
    name of file members.
-
 
 Changelog: iSphere 2.9.0.b003
 -----------------------------
