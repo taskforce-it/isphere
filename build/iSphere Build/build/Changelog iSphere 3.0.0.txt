@@ -1,5 +1,5 @@
 
-Changelog: iSphere 3.5.0.b009
+Changelog: iSphere 3.5.0.b010
 -----------------------------
  • Fixed NullPointerException when the meta data of a journal entry
    could not be retrieved.
