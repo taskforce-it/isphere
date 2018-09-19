@@ -49,7 +49,7 @@ Changelog: iSphere 3.5.0.b006
    the number of statements found.
  • Added "Last changed date" and "Count" to Excel export of Source
    File Search.
- • Added search options to Excel export.
+ • Added search options tab to Excel export.
  • Added option "Show all statements" to iSphere Source File search,
    when launched from the RSE tree.
 
