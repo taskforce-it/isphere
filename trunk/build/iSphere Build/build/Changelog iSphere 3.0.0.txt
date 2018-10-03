@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.5.0.r
+--------------------------
+ • Nothing changed from 3.5.0.b010.
+
 Changelog: iSphere 3.5.0.b010
 -----------------------------
  • Fixed NullPointerException when the meta data of a journal entry
