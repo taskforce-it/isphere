@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.4.1.r
-X-Bundle-Update-Library: false
+Bundle-Version: 3.5.0.r
+X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Fixed NullPointerException in java.util.Calendar.setTime()when the iSphere Source File Search is called by CMOne.
-X-Beta-Version: 3.5.0.b010
+X-Bundle-Info: New feature "iSphere RSE Command Management".\nNew feature "iSphere RSE User Action Management".\nNew menu option "Display Module View" of module objects.\nNew options for exporting selected items from iSphere search views.\nBugfixs.
+X-Beta-Version: 3.5.0.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
 X-Beta-Info: Added Features "iSphere RSE Command Management" and "iSphere RSE User Action Management".\nAdded option "Display Module View" to context menu of module objects.\nAdded options for exporting selected items from iSphere search views.\nBugfix for tickets 64 and 65.
