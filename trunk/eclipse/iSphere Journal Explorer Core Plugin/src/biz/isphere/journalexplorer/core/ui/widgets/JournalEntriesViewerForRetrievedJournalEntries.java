@@ -31,7 +31,7 @@ import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 
 /**
@@ -42,8 +42,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer implements ISelectionChangedListener,
+    ISelectionProvider, IPropertyChangeListener {
 
     private String connectionName;
     private JournaledObject journaledObject;
@@ -66,7 +66,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
         try {
 
-            AbstractTypeViewerFactory factory = new Type2ViewerFactory();
+            AbstractTypeViewerFactory factory = new Type3ViewerFactory();
 
             TableViewer tableViewer = factory.createTableViewer(container);
             tableViewer.addSelectionChangedListener(this);

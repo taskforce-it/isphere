@@ -142,6 +142,7 @@ public class Messages extends NLS {
     public static String Tooltip_JOOBJTYP;
     public static String Tooltip_JOFILTYP;
     public static String Tooltip_JOCMTLVL;
+    public static String Tooltip_JONVI;
     public static String Tooltip_JOESD;
     public static String Tooltip_SqlEditor_Text;
 

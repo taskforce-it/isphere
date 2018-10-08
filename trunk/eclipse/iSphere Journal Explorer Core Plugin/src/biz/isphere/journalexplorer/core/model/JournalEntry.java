@@ -1063,7 +1063,15 @@ public class JournalEntry {
             return false;
         }
 
+        if (index >= nullIndicators.length) {
+            return false;
+        }
+
         return nullIndicators[index] == '1';
+    }
+
+    public String getNullIndicatorsForUI() throws Exception {
+        return new String(nullIndicators);
     }
 
     public void setNullIndicators(byte[] nullIndicators) {
@@ -1115,7 +1123,7 @@ public class JournalEntry {
         this.specificData = specificData;
     }
 
-    public String getValueForUi(String name) {
+    public String getValueForUi(String name) throws Exception {
 
         String data = "?"; //$NON-NLS-1$
 
@@ -1217,6 +1225,8 @@ public class JournalEntry {
             return getFileTypeIndicatorText();
         } else if (ColumnsDAO.JOCMTLVL.equals(name)) {
             return Long.toString(getCommitmentCycle());
+        } else if (ColumnsDAO.JONVI.equals(name)) {
+            return getNullIndicatorsForUI();
         } else if (ColumnsDAO.JOESD.equals(name)) {
             // For displaying purposes, replace 0x00 with blanks.
             // Otherwise, the string was truncate by JFace

@@ -68,6 +68,7 @@ public class Type5ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.JOIGNAPY, // Added for Type4 viewer
         JournalEntryColumnUI.JOMINESD, 
         JournalEntryColumnUI.JOINCDAT, // Added for Type5 viewer
+        JournalEntryColumnUI.JONVI, // Added for Type3 viewer 
         JournalEntryColumnUI.JOESD };
     // @formatter:on
 

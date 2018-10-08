@@ -171,6 +171,9 @@ public abstract class AbstractTypeViewerFactory {
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOXID, Messages.Tooltip_JOXID, 200));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCMTLVL, Messages.Tooltip_JOCMTLVL, 60));
 
+        // Null value indicators
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JONVI, Messages.Tooltip_JONVI, 60));
+
         // Entry specific data
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOESD, Messages.Tooltip_JOESD, 350));
 

@@ -9,6 +9,7 @@
 package biz.isphere.journalexplorer.core.model.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +39,6 @@ import com.ibm.as400.access.ProgramParameter;
  *    b2. the entry null section
  *    b3. the entry detail section
  * </pre>
- * 
  * <p>
  * This class has been inspired by the RJNE0100 example written by Stanley Vong.
  * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
@@ -59,11 +59,13 @@ public class RJNE0200 {
 
     private AS400Structure headerStructure = null;
     private AS400Structure entryHeaderStructure = null;
+    private AS400Structure nullValueIndicatorsStructure = null;
     private AS400Structure entrySpecificDataStructure = null;
     private List<AS400DataType> entrySpecificDataStructureHeader = null;
 
     private Object[] headerData;
     private Object[] entryHeaderData;
+    private Object[] nullValueIndicatorsData;
     private int entryRRN;
     private int entryHeaderStartPos;
 
@@ -121,7 +123,8 @@ public class RJNE0200 {
     }
 
     /**
-     * Return <i>true</i>, if there are more entries available, else <i>false</i>.
+     * Return <i>true</i>, if there are more entries available, else
+     * <i>false</i>.
      * 
      * @return <i>true</i>, if there are more entries available
      */
@@ -148,6 +151,7 @@ public class RJNE0200 {
                 entryHeaderStartPos += getDspToNxtJrnEntHdr();
             }
             entryHeaderData = null;
+            nullValueIndicatorsData = null;
             return true;
         } else {
             return false;
@@ -195,11 +199,11 @@ public class RJNE0200 {
      * RJNE0200 Format, Header:<br>
      * Get continuation indicator in the journal header.
      * 
-     * @return <code>true</code>, if there are more journal entries available
-     *         in the specified receiver range that match the search criteria,
-     *         but there is no room available in the return structure.
-     *         <code>false</code>All the journal entries that match the
-     *         search criteria are returned to this structure.
+     * @return <code>true</code>, if there are more journal entries available in
+     *         the specified receiver range that match the search criteria, but
+     *         there is no room available in the return structure.
+     *         <code>false</code>All the journal entries that match the search
+     *         criteria are returned to this structure.
      */
     public boolean moreEntriesAvailable() {
         if (getOutputData() == null) {
@@ -607,8 +611,8 @@ public class RJNE0200 {
     }
 
     /**
-     * Returns <code>true</code>, if this journal entry was added for a
-     * database file object.
+     * Returns <code>true</code>, if this journal entry was added for a database
+     * file object.
      * 
      * @return <code>true</code> for database file objects, else
      *         <code>false</code>.
@@ -761,8 +765,8 @@ public class RJNE0200 {
      * Whether this entry has data that must be additionally retrieved using a
      * pointer returned for the missing information.
      * 
-     * @return <code>true</code> if this entry contains incomplete
-     *         information, else <code>false</code>.
+     * @return <code>true</code> if this entry contains incomplete information,
+     *         else <code>false</code>.
      */
     public Boolean isIncompleteData() {
         byte tByte = getJournalEntryFlags();
@@ -850,6 +854,26 @@ public class RJNE0200 {
     public String getObjectType() {
         Object[] result = getEntryHeaderData();
         return (trimmed(result[33]));
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * Get the null-value indicators of this journal entry.
+     * 
+     * @return
+     */
+    public byte[] getNullValueIndicators() {
+
+        Object[] nullValueIndicatorsStructure = getNullValueIndicatorsData();
+        if (nullValueIndicatorsStructure.length > 0) {
+            int count = (Integer)nullValueIndicatorsStructure[0];
+            if (count > 0) {
+                byte[] nullValueIndicators = Arrays.copyOfRange((byte[])nullValueIndicatorsStructure[1], 0, count);
+                return nullValueIndicators;
+            }
+        }
+
+        return new byte[0];
     }
 
     /**
@@ -957,6 +981,14 @@ public class RJNE0200 {
         return entryHeaderData;
     }
 
+    private Object[] getNullValueIndicatorsData() {
+        if (nullValueIndicatorsData == null) {
+            int nullValueIndicatorsStartPos = entryHeaderStartPos + getDspToThsJrnEntNullValInd();
+            nullValueIndicatorsData = (Object[])getNullValueIndicatorsStructure().toObject(getOutputData(), nullValueIndicatorsStartPos);
+        }
+        return nullValueIndicatorsData;
+    }
+
     private byte[] getOutputData() {
         return parameterList[0].getOutputData();
     }
@@ -980,6 +1012,7 @@ public class RJNE0200 {
     private void resetReader() {
         headerData = null;
         entryHeaderData = null;
+        nullValueIndicatorsData = null;
         entryRRN = 0;
         entryHeaderStartPos = -1;
     }
@@ -1055,6 +1088,18 @@ public class RJNE0200 {
         return entryHeaderStructure;
     }
 
+    private AS400Structure getNullValueIndicatorsStructure() {
+        if (this.nullValueIndicatorsStructure == null) {
+            // @formatter:off formatter intentionally disabled
+            AS400DataType[] structure = { new AS400Bin4(), // 0 Length
+                new AS400ByteArray(8000), // 1 Null value indicators
+            };
+            // @formatter:on
+            this.nullValueIndicatorsStructure = new AS400Structure(structure);
+        }
+        return this.nullValueIndicatorsStructure;
+    }
+
     /**
      * Returns this journal entry's entry specific data structure header as
      * returned by the QjoRetrieveJournalEntries API.
@@ -1114,14 +1159,17 @@ public class RJNE0200 {
      * Returns this journal entry's entry specific data structure header.
      * <p>
      * The following fields of the 'This journal entry's entry specific data' of
-     * format 'RJNE0200' are returned: <table>
+     * format 'RJNE0200' are returned:
+     * <table>
      * <tr>
-     * <td> <li/>CHAR(5)</td>
+     * <td>
+     * <li/>CHAR(5)</td>
      * <td>-</td>
      * <td>Length of entry specific data</td>
      * </tr>
      * <tr>
-     * <td> <li/>CHAR(1)</td>
+     * <td>
+     * <li/>CHAR(1)</td>
      * <td>-</td>
      * <td>Reserved</td>
      * </tr>

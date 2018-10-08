@@ -481,6 +481,9 @@ public final class Preferences implements ColumnsDAO {
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOXID.columnName(), JournalEntryColumnUI.JOXID.description()));
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOCMTLVL.columnName(), JournalEntryColumnUI.JOCMTLVL.description()));
 
+        // Null indicators
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JONVI.columnName(), JournalEntryColumnUI.JONVI.description()));
+
         // Entry specific data
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOESD.columnName(), JournalEntryColumnUI.JOESD.description()));
 

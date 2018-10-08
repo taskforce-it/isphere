@@ -72,7 +72,7 @@ public class JournalDAO {
         AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
 
-        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR2");
+        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR3");
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
@@ -115,7 +115,7 @@ public class JournalDAO {
         return journalEntries;
     }
 
-    private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) {
+    private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) throws Exception {
 
         // AbstractTypeDAO
         journalEntry.setConnectionName(connectionName);
@@ -158,8 +158,12 @@ public class JournalDAO {
         journalEntry.setSystemName(journalEntryData.getSystemName());
 
         // Type3DAO (extends the AbstractTypeDAO)
-        // journalEntry.setNullIndicators(journalEntryData.getNbrOfEntriesRetrieved());
+        journalEntry.setNullIndicators(new String(journalEntryData.getNullValueIndicators(), getJournalEntryCcsid()).getBytes());
 
         return journalEntry;
+    }
+
+    protected String getJournalEntryCcsid() {
+        return Preferences.getInstance().getJournalEntryCcsid();
     }
 }

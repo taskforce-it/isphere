@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.1.r
+-----------------------------
+ • Added field JONVI (null value indicators) to journal explorer
+   views.
+
 Changelog: iSphere 3.5.0.r
 --------------------------
  • Nothing changed from 3.5.0.b010.

@@ -8,6 +8,9 @@
 
 package biz.isphere.journalexplorer.core.ui.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
 
 /**
@@ -20,8 +23,34 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutput
  * @see JournalEntriesViewerForOutputFiles
  * @see AbstractTypeViewerFactory
  */
-public class Type3ViewerFactory extends Type2ViewerFactory {
+public class Type3ViewerFactory extends AbstractTypeViewerFactory {
+
+    // @formatter:off
+    private static JournalEntryColumnUI[] columnNames = { 
+        JournalEntryColumnUI.ID, 
+        JournalEntryColumnUI.JOENTT, 
+        JournalEntryColumnUI.JOSEQN, 
+        JournalEntryColumnUI.JOCODE,
+        JournalEntryColumnUI.JOENTL,
+        JournalEntryColumnUI.JODATE, 
+        JournalEntryColumnUI.JOTIME,
+        JournalEntryColumnUI.JOSYNM, // Added for Type2 viewer
+        JournalEntryColumnUI.JOJOB,
+        JournalEntryColumnUI.JOUSER, 
+        JournalEntryColumnUI.JONBR, 
+        JournalEntryColumnUI.JOUSPF, // Added for Type2 viewer
+        JournalEntryColumnUI.JOPGM, 
+        JournalEntryColumnUI.JOLIB,
+        JournalEntryColumnUI.JOOBJ,
+        JournalEntryColumnUI.JOMBR,
+        JournalEntryColumnUI.JOCTRR,
+        JournalEntryColumnUI.JOFLAG,
+        JournalEntryColumnUI.JOMINESD, 
+        JournalEntryColumnUI.JONVI, // Added for Type3 viewer 
+        JournalEntryColumnUI.JOESD };
+    // @formatter:on
 
     public Type3ViewerFactory() {
+        super(new HashSet<JournalEntryColumnUI>(Arrays.asList(columnNames)));
     }
 }
