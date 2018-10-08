@@ -62,6 +62,7 @@ public enum JournalEntryColumnUI {
     JOOBJTYP (ColumnsDAO.JOOBJTYP, Messages.Tooltip_JOOBJTYP),
     JOFILTYP (ColumnsDAO.JOFILTYP, Messages.Tooltip_JOFILTYP),
     JOCMTLVL (ColumnsDAO.JOCMTLVL, Messages.Tooltip_JOCMTLVL),
+    JONVI (ColumnsDAO.JONVI, Messages.Tooltip_JONVI),
     JOESD (ColumnsDAO.JOESD, Messages.Tooltip_JOESD);
 
     private static Map<String, JournalEntryColumnUI> values;
