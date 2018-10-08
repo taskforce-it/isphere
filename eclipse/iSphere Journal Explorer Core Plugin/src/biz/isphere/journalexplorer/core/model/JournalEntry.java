@@ -1070,7 +1070,7 @@ public class JournalEntry {
         return nullIndicators[index] == '1';
     }
 
-    public String getNullIndicatorsForUI() throws Exception {
+    public String getNullIndicators() {
         return new String(nullIndicators);
     }
 
@@ -1123,7 +1123,7 @@ public class JournalEntry {
         this.specificData = specificData;
     }
 
-    public String getValueForUi(String name) throws Exception {
+    public String getValueForUi(String name) {
 
         String data = "?"; //$NON-NLS-1$
 
@@ -1226,7 +1226,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOCMTLVL.equals(name)) {
             return Long.toString(getCommitmentCycle());
         } else if (ColumnsDAO.JONVI.equals(name)) {
-            return getNullIndicatorsForUI();
+            return getNullIndicators();
         } else if (ColumnsDAO.JOESD.equals(name)) {
             // For displaying purposes, replace 0x00 with blanks.
             // Otherwise, the string was truncate by JFace
