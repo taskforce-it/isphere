@@ -864,11 +864,11 @@ public class RJNE0200 {
      */
     public byte[] getNullValueIndicators() {
 
-        Object[] nullValueIndicatorsStructure = getNullValueIndicatorsData();
-        if (nullValueIndicatorsStructure.length > 0) {
-            int count = (Integer)nullValueIndicatorsStructure[0];
+        Object[] tResult = getNullValueIndicatorsData();
+        if (tResult.length >= 2) {
+            int count = (Integer)tResult[0];
             if (count > 0) {
-                byte[] nullValueIndicators = Arrays.copyOfRange((byte[])nullValueIndicatorsStructure[1], 0, count);
+                byte[] nullValueIndicators = Arrays.copyOfRange((byte[])tResult[1], 0, count);
                 return nullValueIndicators;
             }
         }
@@ -982,7 +982,7 @@ public class RJNE0200 {
     }
 
     private Object[] getNullValueIndicatorsData() {
-        if (nullValueIndicatorsData == null) {
+        if (nullValueIndicatorsData == null && getDspToThsJrnEntNullValInd() > 0) {
             int nullValueIndicatorsStartPos = entryHeaderStartPos + getDspToThsJrnEntNullValInd();
             nullValueIndicatorsData = (Object[])getNullValueIndicatorsStructure().toObject(getOutputData(), nullValueIndicatorsStartPos);
         }
