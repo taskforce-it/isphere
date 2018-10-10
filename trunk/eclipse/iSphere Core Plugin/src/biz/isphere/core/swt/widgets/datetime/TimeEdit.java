@@ -139,6 +139,9 @@ public final class TimeEdit extends Composite implements ITimeEdit {
 
     public TimeEdit(Composite parent, int style, SimpleDateFormat format) {
         super(parent, style | SWT.NO_BACKGROUND);
+
+        format = fixHourFormat(format);
+
         initFields(format);
 
         setBackground(ColorHelper.getListBackground());
@@ -173,6 +176,17 @@ public final class TimeEdit extends Composite implements ITimeEdit {
                 }
             }
         });
+    }
+
+    private SimpleDateFormat fixHourFormat(SimpleDateFormat format) {
+
+        String pattern = format.toPattern();
+        if (pattern.indexOf("h") >= 0) {
+            pattern.replaceAll("h", "K");
+            format = new SimpleDateFormat(pattern);
+        }
+
+        return format;
     }
 
     /**
