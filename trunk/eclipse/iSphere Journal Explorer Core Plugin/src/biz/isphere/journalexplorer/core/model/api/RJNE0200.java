@@ -9,12 +9,10 @@
 package biz.isphere.journalexplorer.core.model.api;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
+import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -76,6 +74,7 @@ public class RJNE0200 {
     private Object[] entryHeaderData;
     private Object[] nullValueIndicatorsData;
     private String remoteAddress;
+    private Boolean isRemoteIpv4Address;
 
     public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary) {
         this(aSystem, aJournalName, aJournalLibrary, RECEIVER_LEN);
@@ -155,6 +154,8 @@ public class RJNE0200 {
             }
             entryHeaderData = null;
             nullValueIndicatorsData = null;
+            remoteAddress = null;
+            isRemoteIpv4Address = null;
             return true;
         } else {
             return false;
@@ -891,7 +892,7 @@ public class RJNE0200 {
         if (tResult.length >= 2) {
             int count = (Integer)tResult[0];
             if (count > 0) {
-                byte[] nullValueIndicators = Arrays.copyOfRange((byte[])tResult[1], 0, count);
+                byte[] nullValueIndicators = ByteHelper.copyOfRange((byte[])tResult[1], 0, count);
                 return nullValueIndicators;
             }
         }
@@ -975,9 +976,9 @@ public class RJNE0200 {
     private byte[] getRemoteAddressBytes() {
 
         Object[] tResult = getEntryHeaderData();
-        byte[] remoteAddress = (byte[])tResult[16];
+        byte[] remoteAddressBytes = (byte[])tResult[16];
 
-        return remoteAddress;
+        return remoteAddressBytes;
     }
 
     /**
@@ -997,24 +998,27 @@ public class RJNE0200 {
      */
     private boolean isEmbeddedIPv4Address() {
 
-        byte[] remoteAddressBytes = getRemoteAddressBytes();
+        if (isRemoteIpv4Address == null) {
+            byte[] remoteAddressBytes = getRemoteAddressBytes();
 
-        // Check for leading bytes:
-        // x'00000000000000000000FFFF'
-        boolean isIpv4Address = true;
-        for (int i = 0; i < 12; i++) {
-            byte cmpByte;
-            if (i < 10) {
-                cmpByte = 0;
-            } else {
-                cmpByte = -1;
-            }
-            if (remoteAddressBytes[i] != cmpByte) {
-                isIpv4Address = false;
-                break;
+            // Check for leading bytes:
+            // x'00000000000000000000FFFF'
+            isRemoteIpv4Address = true;
+            for (int i = 0; i < 12; i++) {
+                byte cmpByte;
+                if (i < 10) {
+                    cmpByte = 0;
+                } else {
+                    cmpByte = -1;
+                }
+                if (remoteAddressBytes[i] != cmpByte) {
+                    isRemoteIpv4Address = false;
+                    break;
+                }
             }
         }
-        return isIpv4Address;
+
+        return isRemoteIpv4Address;
     }
 
     private String getIPv4Address(byte[] remoteAddressBytes) {
@@ -1071,25 +1075,25 @@ public class RJNE0200 {
         String ipAddress = null;
 
         if (isEmbeddedIPv4Address()) {
-            ipAddress = getIPv4Address(Arrays.copyOfRange(remoteAddressBytes, 12, remoteAddressBytes.length));
+            ipAddress = getIPv4Address(ByteHelper.copyOfRange(remoteAddressBytes, 12, remoteAddressBytes.length - 12));
         } else {
 
             StringBuilder buffer = new StringBuilder();
 
             int i = 0;
             while (i < remoteAddressBytes.length) {
-                byte[] bytes = Arrays.copyOfRange(remoteAddressBytes, i, i + 2);
+                byte[] bytes = ByteHelper.copyOfRange(remoteAddressBytes, i, 2);
                 if (buffer.length() > 0) {
                     buffer.append(":");
                 }
-                buffer.append(DatatypeConverter.printHexBinary(bytes));
+                buffer.append(ByteHelper.getHexString(bytes));
                 i = i + 2;
             }
 
             ipAddress = buffer.toString();
 
         }
-
+        System.out.println(ipAddress);
         return ipAddress;
     }
 
@@ -1168,6 +1172,7 @@ public class RJNE0200 {
         entryHeaderData = null;
         nullValueIndicatorsData = null;
         remoteAddress = null;
+        isRemoteIpv4Address = null;
     }
 
     private AS400Structure getHeaderStructure() {
@@ -1192,18 +1197,18 @@ public class RJNE0200 {
         if (entryHeaderStructure == null) {
             // @formatter:off formatter intentionally disabled
             AS400DataType[] tStructure = { new AS400Bin4(), // 0 Displacement to
-                                                            // next journal
-                                                            // entry's header
+                // next journal
+                // entry's header
                 new AS400Bin4(), // 1 Displacement to this journal entry's
-                                    // null value indicators
+                // null value indicators
                 new AS400Bin4(), // 2 Displacement to this journal entry's
-                                    // entry specific data
+                // entry specific data
                 new AS400Bin4(), // 3 Displacement to this journal entry's
-                                    // transaction identifier
+                // transaction identifier
                 new AS400Bin4(), // 4 Displacement to this journal entry's
-                                    // logical unit of work
+                // logical unit of work
                 new AS400Bin4(), // 5 Displacement to this journal entry's
-                                    // receiver information
+                // receiver information
                 new AS400Bin8(), // 6 Sequence number
                 new AS400ByteArray(8), // 7 Unformatted Time stamp
                 new AS400Bin8(), // 8 Thread identifier
@@ -1335,9 +1340,9 @@ public class RJNE0200 {
             // @formatter:off formatter intentionally disabled
             entrySpecificDataStructureHeader = new ArrayList<AS400DataType>();
             entrySpecificDataStructureHeader.add(new AS400Text(5)); // Length of
-                                                                    // entry
-                                                                    // specific
-                                                                    // data
+            // entry
+            // specific
+            // data
             entrySpecificDataStructureHeader.add(new AS400Text(11)); // Reserved
             // @formatter:on
         }
