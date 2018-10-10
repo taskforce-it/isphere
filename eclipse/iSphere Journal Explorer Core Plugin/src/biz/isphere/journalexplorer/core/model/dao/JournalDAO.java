@@ -160,6 +160,10 @@ public class JournalDAO {
         // Type3DAO (extends the AbstractTypeDAO)
         journalEntry.setNullIndicators(new String(journalEntryData.getNullValueIndicators(), getJournalEntryCcsid()).getBytes());
 
+        // Type5DAO (extends the AbstractTypeDAO)
+        journalEntry.setAddressFamily(journalEntryData.getAddressFamily());
+        journalEntry.setRemoteAddress(journalEntryData.getRemoteAddress());
+
         return journalEntry;
     }
 

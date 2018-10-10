@@ -13,8 +13,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.DatatypeConverter;
+
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
@@ -46,30 +50,32 @@ import com.ibm.as400.access.ProgramParameter;
  */
 public class RJNE0200 {
 
+    private static final String ADDRESS_FAMILY_IPV4 = "4"; //$NON-NLS-1$
+    private static final String ADDRESS_FAMILY_IPV6 = "6"; //$NON-NLS-1$
+
     private static final int RECEIVER_LEN = 1024 * 32; // 32 KB
-    private static final String FORMAT_NAME = "RJNE0200";
+    private static final String FORMAT_NAME = "RJNE0200"; //$NON-NLS-1$
     private static final int ERROR_CODE = 0;
 
-    private AS400 system;
-    private String journalName;
-    private String journalLibrary;
     private int bufferSize;
     private DateTimeConverter dateTimeConverter;
+    private DynamicRecordFormatsStore store;
     private ProgramParameter[] parameterList;
 
+    // Cached data structures
     private AS400Structure headerStructure = null;
     private AS400Structure entryHeaderStructure = null;
     private AS400Structure nullValueIndicatorsStructure = null;
     private AS400Structure entrySpecificDataStructure = null;
     private List<AS400DataType> entrySpecificDataStructureHeader = null;
 
+    // Cached data. Must be reset in resetReader().
+    private int entryRRN;
+    private int entryHeaderStartPos;
     private Object[] headerData;
     private Object[] entryHeaderData;
     private Object[] nullValueIndicatorsData;
-    private int entryRRN;
-    private int entryHeaderStartPos;
-
-    private DynamicRecordFormatsStore store;
+    private String remoteAddress;
 
     public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary) {
         this(aSystem, aJournalName, aJournalLibrary, RECEIVER_LEN);
@@ -81,12 +87,9 @@ public class RJNE0200 {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
 
-        system = aSystem;
-        journalName = aJournalName;
-        journalLibrary = aJournalLibrary;
         bufferSize = aBufferSize;
-        dateTimeConverter = new DateTimeConverter(system);
-        store = new DynamicRecordFormatsStore(system);
+        dateTimeConverter = new DateTimeConverter(aSystem);
+        store = new DynamicRecordFormatsStore(aSystem);
 
         resetReader();
     }
@@ -103,7 +106,7 @@ public class RJNE0200 {
 
         setReceiverData(new byte[bufferSize]);
         setReceiverLength(bufferSize);
-        setJournal(journalName, journalLibrary);
+        setJournal(aJrneToRtv.getJournal(), aJrneToRtv.getLibrary());
         setFormatName(FORMAT_NAME);
         setJrneToRtv(aJrneToRtv);
         setErrorCode(ERROR_CODE);
@@ -458,8 +461,20 @@ public class RJNE0200 {
      * @return remote address
      */
     public String getRemoteAddress() {
-        Object[] tResult = getEntryHeaderData();
-        return trimmed(tResult[16]);
+
+        if (remoteAddress == null) {
+            String addressFamily = getAddressFamilyIndicator();
+
+            if (ADDRESS_FAMILY_IPV4.equals(addressFamily)) {
+                remoteAddress = getIPv4Address(getRemoteAddressBytes());
+            } else if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
+                remoteAddress = getIPv6Address(getRemoteAddressBytes());
+            } else {
+                remoteAddress = ""; //$NON-NLS-1$
+            }
+        }
+
+        return remoteAddress;
     }
 
     /**
@@ -679,8 +694,16 @@ public class RJNE0200 {
      * @return address family
      */
     public String getAddressFamily() {
-        Object[] tResult = getEntryHeaderData();
-        return trimmed(tResult[28]);
+
+        String addressFamily = getAddressFamilyIndicator();
+
+        if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
+            if (isEmbeddedIPv4Address()) {
+                addressFamily = ADDRESS_FAMILY_IPV4;
+            }
+        }
+
+        return addressFamily;
     }
 
     /**
@@ -941,6 +964,135 @@ public class RJNE0200 {
     // Private methods
     // ----------------------------------------------------
 
+    private String getAddressFamilyIndicator() {
+
+        Object[] tResult = getEntryHeaderData();
+        String addressFamily = trimmed(tResult[28]);
+
+        return addressFamily;
+    }
+
+    private byte[] getRemoteAddressBytes() {
+
+        Object[] tResult = getEntryHeaderData();
+        byte[] remoteAddress = (byte[])tResult[16];
+
+        return remoteAddress;
+    }
+
+    /**
+     * Checks, whether the IPv6 address is actually an embedded IPv4 address.
+     * <p>
+     * The format of embedded IPv4 addresses is:
+     * 
+     * <pre>
+     * ::ffff:127.0.0.1
+     * or
+     * 0000:0000:0000:0000:0000:ffff:127.0.0.1
+     * or
+     * 0:0:0:0:0:ffff:7F00:1
+     * </pre>
+     * 
+     * @return true, for embedded IPv4 addresses, else false.
+     */
+    private boolean isEmbeddedIPv4Address() {
+
+        byte[] remoteAddressBytes = getRemoteAddressBytes();
+
+        // Check for leading bytes:
+        // x'00000000000000000000FFFF'
+        boolean isIpv4Address = true;
+        for (int i = 0; i < 12; i++) {
+            byte cmpByte;
+            if (i < 10) {
+                cmpByte = 0;
+            } else {
+                cmpByte = -1;
+            }
+            if (remoteAddressBytes[i] != cmpByte) {
+                isIpv4Address = false;
+                break;
+            }
+        }
+        return isIpv4Address;
+    }
+
+    private String getIPv4Address(byte[] remoteAddressBytes) {
+
+        String ipAddress = null;
+
+        try {
+
+            // Actually an IPv4 address should be stored as a string of
+            // characters, such as: 127.0.0.1
+            // Due to a bug in the RCVJRNE command, IPv4 addresses are returned
+            // as a 4-byte binary value.
+            // Hack: check for trailing x'00' bytes.
+            // PMR: 33254,031,724 (05.10.2018)
+            boolean isBinaryHack = true;
+            for (int i = 4; i < remoteAddressBytes.length; i++) {
+                if (remoteAddressBytes[i] != 0) {
+                    isBinaryHack = false;
+                    break;
+                }
+            }
+
+            if (!isBinaryHack) {
+                String ccsid = Preferences.getInstance().getJournalEntryCcsid();
+                ipAddress = new String(remoteAddressBytes, ccsid);
+            } else {
+
+                StringBuilder buffer = new StringBuilder();
+
+                for (int i = 0; i < 4; i++) {
+                    if (buffer.length() > 0) {
+                        buffer.append(".");
+                    }
+                    if (remoteAddressBytes[i] < 0) {
+                        buffer.append(remoteAddressBytes[i] + 256);
+                    } else {
+                        buffer.append(remoteAddressBytes[i]);
+                    }
+                }
+
+                ipAddress = buffer.toString();
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not get IPv4 address ***", e);
+            return e.getLocalizedMessage();
+        }
+
+        return ipAddress;
+    }
+
+    private String getIPv6Address(byte[] remoteAddressBytes) {
+
+        String ipAddress = null;
+
+        if (isEmbeddedIPv4Address()) {
+            ipAddress = getIPv4Address(Arrays.copyOfRange(remoteAddressBytes, 12, remoteAddressBytes.length));
+        } else {
+
+            StringBuilder buffer = new StringBuilder();
+
+            int i = 0;
+            while (i < remoteAddressBytes.length) {
+                byte[] bytes = Arrays.copyOfRange(remoteAddressBytes, i, i + 2);
+                if (buffer.length() > 0) {
+                    buffer.append(":");
+                }
+                buffer.append(DatatypeConverter.printHexBinary(bytes));
+                i = i + 2;
+            }
+
+            ipAddress = buffer.toString();
+
+        }
+
+        return ipAddress;
+    }
+
     private void setReceiverData(byte[] aBuffer) {
         parameterList[0] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, aBuffer, aBuffer.length);
     }
@@ -1010,11 +1162,12 @@ public class RJNE0200 {
     }
 
     private void resetReader() {
+        entryRRN = 0;
+        entryHeaderStartPos = -1;
         headerData = null;
         entryHeaderData = null;
         nullValueIndicatorsData = null;
-        entryRRN = 0;
-        entryHeaderStartPos = -1;
+        remoteAddress = null;
     }
 
     private AS400Structure getHeaderStructure() {
@@ -1061,7 +1214,7 @@ public class RJNE0200 {
                 new AS400Bin2(), // 13 Remote port
                 new AS400Bin2(), // 14 Arm number
                 new AS400Bin2(), // 15 Program library ASP number
-                new AS400Text(16), // 16 Remote Address
+                new AS400ByteArray(16), // 16 Remote Address
                 new AS400Text(1), // 17 Journal code
                 new AS400Text(2), // 18 Entry type
                 new AS400Text(10), // 19 Job name

@@ -28,6 +28,10 @@ import com.ibm.as400.access.AS400Text;
 
 public class JournalEntry {
 
+    private static final String ADDRESS_FAMILY_UNKNOWN = "0";
+    private static final String ADDRESS_FAMILY_IPV4 = "4";
+    private static final String ADDRESS_FAMILY_IPV6 = "6";
+
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
 
     private SimpleDateFormat dateFormatter;
@@ -902,11 +906,11 @@ public class JournalEntry {
 
     public String getAddressFamilyText() {
         if (addressFamilyText == null) {
-            if ("0".equals(addressFamily)) {
+            if (ADDRESS_FAMILY_UNKNOWN.equals(addressFamily)) {
                 addressFamilyText = "-/-";
-            } else if ("4".equals(addressFamily)) {
+            } else if (ADDRESS_FAMILY_IPV4.equals(addressFamily)) {
                 addressFamilyText = "IPv4 (" + addressFamily + ")";
-            } else if ("6".equals(addressFamily)) {
+            } else if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
                 addressFamilyText = "IPv6 (" + addressFamily + ")";
             } else {
                 addressFamilyText = addressFamily;
