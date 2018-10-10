@@ -3,6 +3,7 @@ Changelog: iSphere 3.5.1.r
 -----------------------------
  • Added field JONVI (null value indicators) to journal explorer
    views.
+ • Fixed NullPointerException in TimeEdit (WDSCi).
 
 Changelog: iSphere 3.5.0.r
 --------------------------
