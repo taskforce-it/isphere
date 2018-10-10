@@ -13,9 +13,9 @@
 package biz.isphere.core.swt.widgets.datetime;
 
 import java.text.AttributedCharacterIterator;
+import java.text.DateFormat.Field;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.text.DateFormat.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -469,9 +469,20 @@ public final class TimeEdit extends Composite implements ITimeEdit {
     private void onDigitTyped(int digit) {
         if (selectedDateTime != null) {
 
+            int oldValue;
+            
             int field = selectedField.getCalendarField();
-
-            int oldValue = selectedDateTime.get(field);
+            if (field < 0 && selectedField == Field.HOUR1) {
+                // Bugfix, because DateFormat.Field is created with calendar
+                // field set to -1 in java.text.DateFormat:
+                // Field HOUR1 = new Field("hour 1", -1)
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(selectedDateTime.getTime());
+                field = Calendar.HOUR_OF_DAY;
+                oldValue = calendar.get(field);
+            } else {
+                oldValue = selectedDateTime.get(field);
+            }
 
             int newValue = digit;
             if (typing) {
