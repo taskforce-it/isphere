@@ -52,6 +52,18 @@ OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3)<br>
 ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
 </div>
 <p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Please check your journal attributes, if fields are unexpectedly empty. You
+		                      need to specify parameter FIXLENDTA when creating the journal if you want to see fields 
+		                      like <i>Program library name</i>, <i>System sequence number</i>, <i>Remote address</i>,
+		                      <i>Thread identifier</i>, <i>Logical unit of work</i> or <i>Transaction identifier</i>. Use
+		                      to change the journal afterwards:<p>
+		                      CHGJRN ... JRNRCV(*GEN) FIXLENDTA(*JOB *USR *PGM *PGMLIB *SYSSEQ *RMTADR *THD *LUW *XID)
+		                      </td>
+	</tr>
+</table>
+<p>
 You can open the Journal Explorer perspective from <i>'Window -> Open Perspective -> Other...'</i>. The
 perspective looks like that:	 
 <p>
