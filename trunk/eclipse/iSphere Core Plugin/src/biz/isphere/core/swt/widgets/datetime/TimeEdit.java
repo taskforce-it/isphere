@@ -470,7 +470,7 @@ public final class TimeEdit extends Composite implements ITimeEdit {
         if (selectedDateTime != null) {
 
             int oldValue;
-            
+
             int field = selectedField.getCalendarField();
             if (field < 0 && selectedField == Field.HOUR1) {
                 // Bugfix, because DateFormat.Field is created with calendar
