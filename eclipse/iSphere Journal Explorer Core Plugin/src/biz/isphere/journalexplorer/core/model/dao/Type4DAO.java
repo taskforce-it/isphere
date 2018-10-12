@@ -10,8 +10,8 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.ResultSet;
 
-import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 
 public class Type4DAO extends Type3DAO {
 
@@ -35,7 +35,7 @@ public class Type4DAO extends Type3DAO {
         "           result.JOCCID,  " +
         "           result.JOUSPF,  " +
         "           result.JOSYNM,  " +
-        "           result.JOJID,   " +   //  added with TYPE4
+        "           hex(result.JOJID) AS " + JOJID + ", " +   //  added with TYPE4
         "           result.JORCST,  " +   //  added with TYPE4
         "           result.JOTGR,   " +   //  added with TYPE4
         "           result.JOINCDAT," +
