@@ -676,7 +676,12 @@ public class RJNE0200 {
      */
     public String getJournalIdentifier() {
         Object[] tResult = getEntryHeaderData();
-        return trimmed(tResult[27]);
+        // The first byte of the RCVJRNE API differs from the content of field
+        // JOJID of a *TYPE4 output file. For example:
+        // RCVJRNE API: x'59F00025247077BF0002'
+        // DSPJRNE JOJID: x'A1F00025247077BF0002F'
+        // PMR: 33254,031,724 (05.10.2018)
+        return ByteHelper.getHexString((byte[])tResult[27]);
     }
 
     /**
@@ -1230,7 +1235,7 @@ public class RJNE0200 {
                 new AS400Text(10), // 24 Program library ASP device name
                 new AS400Text(30), // 25 Object ()
                 new AS400Text(10), // 26 User profile
-                new AS400Text(10), // 27 Journal identifier
+                new AS400ByteArray(10), // 27 Journal identifier
                 new AS400Text(1), // 28 Address family
                 new AS400Text(8), // 29 System name
                 new AS400Text(1), // 30 Indicator flag
