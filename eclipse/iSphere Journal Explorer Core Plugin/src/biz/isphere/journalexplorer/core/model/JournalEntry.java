@@ -597,6 +597,10 @@ public class JournalEntry {
         return referentialConstraintText;
     }
 
+    public void setReferentialConstraint(boolean isReferentialConstraint) {
+        setReferentialConstraint(toString(isReferentialConstraint));
+    }
+
     public void setReferentialConstraint(String referentialConstraint) {
         this.referentialConstraint = referentialConstraint.trim();
         this.referentialConstraintText = null;
@@ -626,6 +630,10 @@ public class JournalEntry {
         }
 
         return triggerText;
+    }
+
+    public void setTrigger(boolean isTrigger) {
+        setTrigger(toString(isTrigger));
     }
 
     public void setTrigger(String trigger) {
@@ -658,17 +666,13 @@ public class JournalEntry {
         return incompleteDataText;
     }
 
+    public void setIncompleteData(boolean isIncompleteData) {
+        setIncompleteData(toString(isIncompleteData));
+    }
+
     public void setIncompleteData(String incompleteData) {
         this.incompleteData = incompleteData.trim();
         this.incompleteDataText = null;
-    }
-
-    public void setIncompleteData(boolean incompleteData) {
-        if (incompleteData) {
-            setIncompleteData("1");
-        } else {
-            setIncompleteData("0");
-        }
     }
 
     /**
@@ -695,6 +699,10 @@ public class JournalEntry {
         }
 
         return apyRmvJrnChgText;
+    }
+
+    public void setIgnoredByApyRmvJrnChg(boolean isApyRmvJrnChg) {
+        setIgnoredByApyRmvJrnChg(toString(isApyRmvJrnChg));
     }
 
     public void setIgnoredByApyRmvJrnChg(String apyRmvJrnChg) {
@@ -1274,5 +1282,14 @@ public class JournalEntry {
             timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
         }
         return timeFormatter;
+    }
+
+    private String toString(boolean isTrue) {
+
+        if (isTrue) {
+            return "1";
+        } else {
+            return "0";
+        }
     }
 }

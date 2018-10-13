@@ -31,7 +31,7 @@ import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
+import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 
 /**
@@ -66,7 +66,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
         try {
 
-            AbstractTypeViewerFactory factory = new Type3ViewerFactory();
+            AbstractTypeViewerFactory factory = new Type4ViewerFactory();
 
             TableViewer tableViewer = factory.createTableViewer(container);
             tableViewer.addSelectionChangedListener(this);

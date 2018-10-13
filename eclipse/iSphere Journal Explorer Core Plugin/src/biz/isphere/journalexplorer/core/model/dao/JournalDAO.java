@@ -162,6 +162,9 @@ public class JournalDAO {
 
         // Type4DAO (extends the Type3DAO)
         journalEntry.setJournalID(journalEntryData.getJournalIdentifier());
+        journalEntry.setReferentialConstraint(journalEntryData.isReferentialConstraint());
+        journalEntry.setTrigger(journalEntryData.isTrigger());
+        journalEntry.setIgnoredByApyRmvJrnChg(journalEntryData.isIgnoreApyRmvJrnChg());
 
         // Type5DAO (extends the Type4DAO)
         journalEntry.setAddressFamily(journalEntryData.getAddressFamily());
