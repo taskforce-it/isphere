@@ -1098,7 +1098,7 @@ public class RJNE0200 {
             ipAddress = buffer.toString();
 
         }
-        System.out.println(ipAddress);
+
         return ipAddress;
     }
 
