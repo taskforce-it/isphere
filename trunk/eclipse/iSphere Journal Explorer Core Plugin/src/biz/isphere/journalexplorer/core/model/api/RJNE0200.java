@@ -8,6 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.api;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,13 +20,14 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
-import com.ibm.as400.access.AS400Bin8;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
+import com.ibm.as400.access.AS400UnsignedBin2;
+import com.ibm.as400.access.AS400UnsignedBin4;
+import com.ibm.as400.access.AS400UnsignedBin8;
 import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
@@ -271,7 +273,7 @@ public class RJNE0200 {
      */
     public int getDspToNxtJrnEntHdr() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[0];
+        return ((Long)tResult[0]).intValue();
     }
 
     /**
@@ -283,7 +285,7 @@ public class RJNE0200 {
      */
     public int getDspToThsJrnEntNullValInd() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[1];
+        return ((Long)tResult[1]).intValue();
     }
 
     /**
@@ -295,7 +297,7 @@ public class RJNE0200 {
      */
     public int getDspToThsJrnEntData() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[2];
+        return ((Long)tResult[2]).intValue();
     }
 
     /**
@@ -307,7 +309,7 @@ public class RJNE0200 {
      */
     public int getDspToThsJrnEntTransactionIdentifier() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[3];
+        return ((Long)tResult[3]).intValue();
     }
 
     /**
@@ -319,7 +321,7 @@ public class RJNE0200 {
      */
     public int getDspToThsJrnEntLogicalUnitOfWork() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[4];
+        return ((Long)tResult[4]).intValue();
     }
 
     /**
@@ -331,24 +333,29 @@ public class RJNE0200 {
      */
     public int getDspToThsJrnEntReceiver() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[5];
+        return ((Long)tResult[5]).intValue();
     }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Returns the sequence number of the journal entry.
+     * <p>
+     * Date type of field JOSYSSEQ in journal output file: CHAR(20)
      * 
      * @return sequence number
      */
-    public Long getSequenceNumber() {
+    public BigInteger getSequenceNumber() {
         Object[] tResult = getEntryHeaderData();
-        return (Long)tResult[6];
+        return (BigInteger)tResult[6];
     }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the system date and time when the journal entry was added to the
      * journal receiver.
+     * <p>
+     * *TYPE3+: JOTSTP, TIMESTAMP(26)<br>
+     * *TYPE2-: JODATE, CHAR(6) and JOTIME, ZONED(6,0)
      * 
      * @return
      */
@@ -361,12 +368,15 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the thread identifier of the process that added the journal entry.
+     * <p>
+     * JOTHD, HEX(8)<br>
+     * JOTHDX, CHAR(16)
      * 
      * @return thread identifier
      */
-    public Long getThreadIdentifier() {
+    public BigInteger getThreadIdentifier() {
         Object[] tResult = getEntryHeaderData();
-        return (Long)tResult[8];
+        return (BigInteger)tResult[8];
     }
 
     /**
@@ -375,12 +385,14 @@ public class RJNE0200 {
      * journal entry was deposited into the journal. The system sequence number
      * could be used to sequentially order journal entries that are in separate
      * journal receivers.
+     * <p>
+     * JOSYSSEQ, CHAR(20)
      * 
      * @return system sequence number
      */
-    public Long getSystemSequenceNumber() {
+    public BigInteger getSystemSequenceNumber() {
         Object[] tResult = getEntryHeaderData();
-        return (Long)tResult[9];
+        return (BigInteger)tResult[9];
     }
 
     /**
@@ -388,40 +400,48 @@ public class RJNE0200 {
      * Contains either the relative record number (RRN) of the record that
      * caused the journal entry or a count that is pertinent to the specific
      * type of journal entry.
+     * <p>
+     * JOCTRR, CHAR(20)
      * 
      * @return count/relative record number
      */
-    public Long getRelativeRecordNumber() {
+    public BigInteger getRelativeRecordNumber() {
         Object[] tResult = getEntryHeaderData();
-        return (Long)tResult[10];
+        return (BigInteger)tResult[10];
     }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the number that identifies the commit cycle.
+     * <p>
+     * JOCCID, CHAR(20)
      * 
      * @return commit cycle identifier
      */
-    public Long getCommitCycleId() {
+    public BigInteger getCommitCycleId() {
         Object[] tResult = getEntryHeaderData();
-        return (Long)tResult[11];
+        return (BigInteger)tResult[11];
     }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * If the entry specific data returned for this journal entry returned any
      * pointers, this is the handle associated with those pointers.
+     * <p>
+     * ???, ???(?)
      * 
      * @return pointer handle
      */
-    public Integer getPointerHandle() {
+    public int getPointerHandle() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[12];
+        return ((Long)tResult[12]).intValue();
     }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * The port number of the remote address associate with this journal entry.
+     * <p>
+     * JORPORT, ZONED(5,0)
      * 
      * @return remote port
      */
@@ -433,6 +453,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * The number of the disk arm that contains the journal entry.
+     * <p>
+     * JOARM, ZONED(5,0)
      * 
      * @return arm number
      */
@@ -445,12 +467,14 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * The number for the auxiliary storage pool that contains the program that
      * added the journal entry.
+     * <p>
+     * JOPGMASP, ZONED(5,0)
      * 
      * @return program library ASP number
      */
-    public Integer getProgramLibraryASPNumber() {
+    public long getProgramLibraryASPNumber() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[15];
+        return ((Integer)tResult[15]).longValue();
     }
 
     /**
@@ -458,6 +482,8 @@ public class RJNE0200 {
      * The remote address associated with the journal entry. The format of the
      * address is dependent on the value of the address family for this journal
      * entry.
+     * <p>
+     * JORADR, CHAR(46)
      * 
      * @return remote address
      */
@@ -481,6 +507,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the journal code, which is the primary category of the journal entry.
+     * <p>
+     * JOCODE, CHAR(1)
      * 
      * @return journal code
      */
@@ -493,6 +521,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the entry type, which further identifies the type of user-created or
      * system-created entry.
+     * <p>
+     * JOENTT, CHAR(2)
      * 
      * @return entry type
      */
@@ -504,6 +534,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the job that added the entry.
+     * <p>
+     * JOJOB, CHAR(10)
      * 
      * @return job name
      */
@@ -515,6 +547,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the user profile name of the user that started the job.
+     * <p>
+     * JOUSER, CHAR(10)
      * 
      * @return user name
      */
@@ -526,6 +560,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the job number of the job that added the entry.
+     * <p>
+     * JONBR, ZONED(6,0)
      * 
      * @return job number
      */
@@ -537,6 +573,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the program that added the entry.
+     * <p>
+     * JOPGM, CHAR(10)
      * 
      * @return program name
      */
@@ -549,6 +587,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the library that contains the program that added the
      * journal entry.
+     * <p>
+     * JOPGMLIB, CHAR(10)
      * 
      * @return program library name
      */
@@ -560,6 +600,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the ASP device that contains the program.
+     * <p>
+     * JOPGMASP, ZONED(5,0)
      * 
      * @return program library ASP device name
      */
@@ -571,6 +613,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the object for which the journal entry was added.
+     * <p>
+     * JOOBJ, CHAR(10)
      * 
      * @return object name
      */
@@ -586,6 +630,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the library of the object for which the journal entry was
      * added.
+     * <p>
+     * JOLIB, CHAR(10)
      * 
      * @return library name
      */
@@ -600,8 +646,10 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Get the name of the file member for which the journal entry was added.
+     * <p>
+     * JOMBR, CHAR(10)
      * 
-     * @return library name
+     * @return file member name
      */
     public String getFileMember() {
         if (!isFileObject()) {
@@ -658,6 +706,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * The name of the effective user profile under which the job was running
      * when the entry was created. (JOUSPF)
+     * <p>
+     * JOUSPF, CHAR(10)
      * 
      * @return effective user profile
      */
@@ -671,6 +721,8 @@ public class RJNE0200 {
      * Get the journal identifier (JID) for the object. When journaling is
      * started for an object, the system assigns a unique JID to that object.
      * The JID remains constant even if the object is renamed or moved.
+     * <p>
+     * JOJID, CHAR(10)
      * 
      * @return journal identifier
      */
@@ -696,6 +748,8 @@ public class RJNE0200 {
      * remote address is returned as a 16-byte character field.<br>
      * 6 - The format of the remote address is Internet protocol version 6. The
      * remote address is returned as a 128-bit binary number.
+     * <p>
+     * JOADF, CHAR(1)
      * 
      * @return address family
      */
@@ -719,6 +773,8 @@ public class RJNE0200 {
      * If the journal receiver was attached while the system was running V4R2M0
      * or a later release, the system name is the system where the journal entry
      * was actually deposited. (JOSYNM)
+     * <p>
+     * JOSYNM, CHAR(8)
      * 
      * @return system name
      */
@@ -754,6 +810,8 @@ public class RJNE0200 {
      * 2 - The object information in the journal entry header does not
      * necessarily reflect the name of the object at the time the journal entry
      * was deposited into the journal.
+     * <p>
+     * JOOBJIND, CHAR(1)
      * 
      * @return object name indicator
      */
@@ -766,6 +824,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Whether this entry was recorded for actions that occurred on records that
      * are part of a referential constraint.
+     * <p>
+     * JORCST, CHAR(1)
      * 
      * @return <code>true</code> if this entry was added for a record that is
      *         part of a referential constraint, else <code>false</code>.
@@ -779,6 +839,8 @@ public class RJNE0200 {
     /**
      * RJNE0200 Format, Journal entry's header:<br>
      * Whether this entry was created as result of a trigger program.
+     * <p>
+     * JOTGR, CHAR(1)
      * 
      * @return <code>true</code> if this entry was added by a trigger program,
      *         else <code>false</code>.
@@ -793,6 +855,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Whether this entry has data that must be additionally retrieved using a
      * pointer returned for the missing information.
+     * <p>
+     * JOINCDAT, CHAR(1)
      * 
      * @return <code>true</code> if this entry contains incomplete information,
      *         else <code>false</code>.
@@ -807,6 +871,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Whether this entry is ignored during a Apply Journaled Changes
      * (APYJRNCHG) or Remove Journaled Changed (RMVJRNCHG) command.
+     * <p>
+     * JOIGNAPY, CHAR(1)
      * 
      * @return <code>true</code> if this entry is ignored, else
      *         <code>false</code>.
@@ -821,6 +887,8 @@ public class RJNE0200 {
      * RJNE0200 Format, Journal entry's header:<br>
      * Whether this entry has minimized entry specific data as a result of the
      * journal having specified MINENTDTA for the object type of the entry.
+     * <p>
+     * JOMINESD, CHAR(1)
      * 
      * @return <code>true</code> if this entry has minimized data, else
      *         <code>false</code>.
@@ -861,7 +929,31 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
+     * Identifies whether or not this journal entry is associated with a logical
+     * file. The value will be 0 if the value for object type is not *FILE. The
+     * possible values are:
+     * <ul>
+     * <li>0 - This entry is not associated with a logical file.</li>
+     * <li>1 - This entry is associated with a logical file.</li>
+     * </ul>
+     * <p>
+     * JOFILTYP, CHAR(1)
+     * 
+     * @return file type indicator
+     */
+    public String getFileTypeIndicator() {
+        if (isLogicalFile()) {
+            return "1";
+        } else {
+            return "0";
+        }
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
      * Get the type of object in the entry.
+     * <p>
+     * JOOBJTYP, CHAR(7)
      * <p>
      * The possible object types are:
      * 
@@ -887,7 +979,34 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
+     * Indicates the nesting level of the commit cycle that was open when a
+     * journal entry representing an object level change was deposited. The
+     * primary commit cycle is considered the first level of nesting and
+     * subsequent save point entries that were deposited prior to this entry
+     * correspond to additional levels of nesting.<br>
+     * This field will be zero if any of the following are true:<br>
+     * <ul>
+     * <li>This journal entry does not represent an object level change (object
+     * level changes are the result of using commands like: CRTPF, CHGPF,
+     * MOVOBJ, and RNMOBJ).</li>
+     * <li>This journal entry was not deposited under commitment control.</li>
+     * <li>This journal entry was deposited on a release prior to V5R4M0.</li>
+     * </ul>
+     * <p>
+     * JOCMTLVL, CHAR(7)
+     * 
+     * @return nested commit level.
+     */
+    public long getNestedCommitLevel() {
+        Object[] result = getEntryHeaderData();
+        return ((Long)result[35]).longValue();
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
      * Get the null-value indicators of this journal entry.
+     * <p>
+     * JONVI, CHAR(50)
      * 
      * @return
      */
@@ -1201,29 +1320,23 @@ public class RJNE0200 {
     private AS400Structure getEntryHeaderStructure() {
         if (entryHeaderStructure == null) {
             // @formatter:off formatter intentionally disabled
-            AS400DataType[] tStructure = { new AS400Bin4(), // 0 Displacement to
-                // next journal
-                // entry's header
-                new AS400Bin4(), // 1 Displacement to this journal entry's
-                // null value indicators
-                new AS400Bin4(), // 2 Displacement to this journal entry's
-                // entry specific data
-                new AS400Bin4(), // 3 Displacement to this journal entry's
-                // transaction identifier
-                new AS400Bin4(), // 4 Displacement to this journal entry's
-                // logical unit of work
-                new AS400Bin4(), // 5 Displacement to this journal entry's
-                // receiver information
-                new AS400Bin8(), // 6 Sequence number
+            AS400DataType[] tStructure = { 
+                new AS400UnsignedBin4(), // 0 Displacement to next journal entry's header
+                new AS400UnsignedBin4(), // 1 Displacement to this journal entry's null value indicators
+                new AS400UnsignedBin4(), // 2 Displacement to this journal entry's entry specific data
+                new AS400UnsignedBin4(), // 3 Displacement to this journal entry's transaction identifier
+                new AS400UnsignedBin4(), // 4 Displacement to this journal entry's logical unit of work
+                new AS400UnsignedBin4(), // 5 Displacement to this journal entry's receiver information
+                new AS400UnsignedBin8(), // 6 Sequence number
                 new AS400ByteArray(8), // 7 Unformatted Time stamp
-                new AS400Bin8(), // 8 Thread identifier
-                new AS400Bin8(), // 9 System sequence number
-                new AS400Bin8(), // 10 Count/relative record number
-                new AS400Bin8(), // 11 Commit cycle identifier
-                new AS400Bin4(), // 12 Pointer handle
-                new AS400Bin2(), // 13 Remote port
-                new AS400Bin2(), // 14 Arm number
-                new AS400Bin2(), // 15 Program library ASP number
+                new AS400UnsignedBin8(), // 8 Thread identifier
+                new AS400UnsignedBin8(), // 9 System sequence number
+                new AS400UnsignedBin8(), // 10 Count/relative record number
+                new AS400UnsignedBin8(), // 11 Commit cycle identifier
+                new AS400UnsignedBin4(), // 12 Pointer handle
+                new AS400UnsignedBin2(), // 13 Remote port
+                new AS400UnsignedBin2(), // 14 Arm number
+                new AS400UnsignedBin2(), // 15 Program library ASP number
                 new AS400ByteArray(16), // 16 Remote Address
                 new AS400Text(1), // 17 Journal code
                 new AS400Text(2), // 18 Entry type
@@ -1243,7 +1356,7 @@ public class RJNE0200 {
                 new AS400ByteArray(1), // 32 Flags
                 new AS400Text(10), // 33 Object type
                 new AS400Text(3), // 34 Reserved
-                new AS400Bin4() // 35 Nested commit level
+                new AS400UnsignedBin4() // 35 Nested commit level
             };
             // @formatter:on
             entryHeaderStructure = new AS400Structure(tStructure);

@@ -11,7 +11,9 @@
 
 package biz.isphere.journalexplorer.core.model;
 
+import java.math.BigInteger;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -43,7 +45,7 @@ public class JournalEntry {
     private String connectionName;
     private int id;
     private int entryLength; // JOENTL
-    private long sequenceNumber; // JOSEQN
+    private BigInteger sequenceNumber; // JOSEQN
     private String journalCode; // JOCODE
     private String entryType; // JOENTT
     private Date date; // JODATE
@@ -56,7 +58,7 @@ public class JournalEntry {
     private String objectName; // JOOBJ
     private String objectLibrary; // JOLIB
     private String memberName; // JOMBR
-    private long countRrn; // JOCTRR
+    private BigInteger countRrn; // JOCTRR
     /**
      * Contains an indicator for the operation. The following tables show
      * specific values for this field, if applicable:
@@ -116,7 +118,7 @@ public class JournalEntry {
      * </ul>
      */
     private String flag; // JOFLAG
-    private long commitmentCycle; // JOCCID
+    private BigInteger commitmentCycle; // JOCCID
     private String userProfile; // JOUSPF
     private String systemName; // JOSYNM
     private String journalID; // JOJID
@@ -133,7 +135,7 @@ public class JournalEntry {
     private byte[] specificData; // JOESD
     private String stringSpecificData; // JOESD (String)
     private String programAspDevice; // JOPGMDEV
-    private int programAsp; // JOPGMASP
+    private long programAsp; // JOPGMASP
     private String objectIndicator; // JOOBJIND
     private String objectIndicatorText;
     private String systemSequenceNumber; // JOSYSSEQ
@@ -152,14 +154,18 @@ public class JournalEntry {
     private String objectType; // JOOBJTYP
     private String fileTypeIndicator; // JOFILTYP
     private String fileTypeIndicatorText;
-    private String nestedCommitLevel; // JOCMTLVL
+    private long nestedCommitLevel; // JOCMTLVL
     private byte[] nullIndicators; // JONVI
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
+    private DecimalFormat bin8Formatter;
+    private DecimalFormat nestedCommitLevelFormatter;
 
     public JournalEntry(OutputFile outputFile) {
         this.outputFile = outputFile;
         this.qualifiedObjectName = null;
+        this.bin8Formatter = new DecimalFormat("00000000000000000000");
+        this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
     }
 
     public OutputFile getOutputFile() {
@@ -241,11 +247,11 @@ public class JournalEntry {
      * 
      * @return value of field 'JOSEQN'.
      */
-    public long getSequenceNumber() {
+    public BigInteger getSequenceNumber() {
         return sequenceNumber;
     }
 
-    public void setSequenceNumber(long sequenceNumber) {
+    public void setSequenceNumber(BigInteger sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 
@@ -410,7 +416,7 @@ public class JournalEntry {
         return programAspDevice;
     }
 
-    public void setProgramAspDevice(String programAspDevice) {
+    public void setProgramLibraryAspDeviceName(String programAspDevice) {
         this.programAspDevice = programAspDevice.trim();
     }
 
@@ -422,11 +428,11 @@ public class JournalEntry {
      * @return value of field 'JOPGMASP'.
      * @since *TYPE5
      */
-    public int getProgramAsp() {
+    public long getProgramAsp() {
         return programAsp;
     }
 
-    public void setProgramAsp(int programAsp) {
+    public void setProgramLibraryAspNumber(long programAsp) {
         this.programAsp = programAsp;
     }
 
@@ -485,11 +491,11 @@ public class JournalEntry {
      * 
      * @return value of field 'JOCTRR'.
      */
-    public long getCountRrn() {
+    public BigInteger getCountRrn() {
         return countRrn;
     }
 
-    public void setCountRrn(long countRrn) {
+    public void setCountRrn(BigInteger countRrn) {
         this.countRrn = countRrn;
     }
 
@@ -515,11 +521,11 @@ public class JournalEntry {
      * 
      * @return value of field 'JOCCID'.
      */
-    public long getCommitmentCycle() {
+    public BigInteger getCommitmentCycle() {
         return commitmentCycle;
     }
 
-    public void setCommitmentCycle(long commitmentCycle) {
+    public void setCommitmentCycle(BigInteger commitmentCycle) {
         this.commitmentCycle = commitmentCycle;
     }
 
@@ -751,14 +757,21 @@ public class JournalEntry {
     }
 
     /**
-     * Returns the 'Object Indicator'.
+     * Returns the 'Object Name Indicator'.
      * <p>
      * Date type in journal output file: CHAR(1)
+     * <p>
+     * Either the journal entry has no object information or the object
+     * information in the journal entry header does not necessarily reflect the
+     * name of the object at the time the journal entry was deposited into the
+     * journal.<br>
+     * <b>Note:</b> This value is returned only when retrieving journal entries
+     * from a journal receiver that was attached to a journal prior to V4R2M0.
      * 
      * @return value of field 'JOOBJIND'.
      * @since *TYPE5
      */
-    public String getObjectIndicator() {
+    public String getObjectNameIndicator() {
         return objectIndicator;
     }
 
@@ -778,7 +791,7 @@ public class JournalEntry {
         return objectIndicatorText;
     }
 
-    public void setObjectIndicator(String objectIndicator) {
+    public void setObjectNameIndicator(String objectIndicator) {
         this.objectIndicator = objectIndicator.trim();
         this.objectIndicatorText = null;
     }
@@ -793,6 +806,11 @@ public class JournalEntry {
      */
     public String getSystemSequenceNumber() {
         return systemSequenceNumber;
+    }
+
+    public void setSystemSequenceNumber(BigInteger systemSequenceNumber) {
+        String tSystemSequenceNumber = bin8Formatter.format(systemSequenceNumber);
+        this.systemSequenceNumber = tSystemSequenceNumber;
     }
 
     public void setSystemSequenceNumber(String systemSequenceNumber) {
@@ -1017,6 +1035,12 @@ public class JournalEntry {
      * Returns the 'OutputFile Type'.
      * <p>
      * Date type in journal output file: CHAR(1)
+     * <p>
+     * The possible values are:
+     * <ul>
+     * <li>0 - This entry is not associated with a logical file.</li>
+     * <li>1 - This entry is associated with a logical file.</li>
+     * </ul>
      * 
      * @return value of field 'JOFILTYP'.
      * @since *TYPE5
@@ -1052,12 +1076,12 @@ public class JournalEntry {
      * @return value of field 'JOCMTLVL'.
      * @since *TYPE5
      */
-    public String getNestedCommitLevel() {
+    public long getNestedCommitLevel() {
         return nestedCommitLevel;
     }
 
-    public void setNestedCommitLevel(String nestedCommitLevel) {
-        this.nestedCommitLevel = nestedCommitLevel.trim();
+    public void setNestedCommitLevel(long nestedCommitLevel) {
+        this.nestedCommitLevel = nestedCommitLevel;
     }
 
     public int getNullTableLength() {
@@ -1144,7 +1168,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOENTL.equals(name)) {
             return Integer.toString(getEntryLength());
         } else if (ColumnsDAO.JOSEQN.equals(name)) {
-            return Long.toString(getSequenceNumber());
+            return toString(getSequenceNumber());
         } else if (ColumnsDAO.JOCODE.equals(name)) {
             return getJournalCode();
         } else if (ColumnsDAO.JOENTT.equals(name)) {
@@ -1176,7 +1200,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOPGMDEV.equals(name)) {
             return getProgramAspDevice();
         } else if (ColumnsDAO.JOPGMASP.equals(name)) {
-            return Integer.toString(getProgramAsp());
+            return Long.toString(getProgramAsp());
         } else if (ColumnsDAO.JOOBJ.equals(name)) {
             return getObjectName();
         } else if (ColumnsDAO.JOLIB.equals(name)) {
@@ -1184,11 +1208,11 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOMBR.equals(name)) {
             return getMemberName();
         } else if (ColumnsDAO.JOCTRR.equals(name)) {
-            return Long.toString(getCountRrn());
+            return toString(getCountRrn());
         } else if (ColumnsDAO.JOFLAG.equals(name)) {
             return getFlag();
         } else if (ColumnsDAO.JOCCID.equals(name)) {
-            return Long.toString(getCommitmentCycle());
+            return toString(getCommitmentCycle());
         } else if (ColumnsDAO.JOUSPF.equals(name)) {
             return getUserProfile();
         } else if (ColumnsDAO.JOSYNM.equals(name)) {
@@ -1236,7 +1260,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOFILTYP.equals(name)) {
             return getFileTypeIndicatorText();
         } else if (ColumnsDAO.JOCMTLVL.equals(name)) {
-            return Long.toString(getCommitmentCycle());
+            return toStringNestedCommitLevel(getNestedCommitLevel());
         } else if (ColumnsDAO.JONVI.equals(name)) {
             return getNullIndicators();
         } else if (ColumnsDAO.JOESD.equals(name)) {
@@ -1253,6 +1277,18 @@ public class JournalEntry {
         }
 
         return data;
+    }
+
+    private String toString(BigInteger unsignedBin8Value) {
+        return bin8Formatter.format(unsignedBin8Value);
+    }
+
+    private String toString(long longValue) {
+        return Long.toString(longValue);
+    }
+
+    private String toStringNestedCommitLevel(long longValue) {
+        return nestedCommitLevelFormatter.format(longValue);
     }
 
     public String getQualifiedObjectName() {
