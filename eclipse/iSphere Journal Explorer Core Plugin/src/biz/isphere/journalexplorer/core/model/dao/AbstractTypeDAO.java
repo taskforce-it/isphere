@@ -204,14 +204,14 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         journalEntry.setConnectionName(getConnectionName());
         journalEntry.setId(resultSet.getInt(RRN_OUTPUT_FILE));
-        journalEntry.setCommitmentCycle(resultSet.getInt(JOCCID));
+        journalEntry.setCommitmentCycle(resultSet.getBigDecimal(JOCCID).toBigIntegerExact());
         journalEntry.setEntryLength(resultSet.getInt(JOENTL));
         journalEntry.setEntryType(resultSet.getString(JOENTT));
         journalEntry.setIncompleteData(resultSet.getString(JOINCDAT));
         journalEntry.setJobName(resultSet.getString(JOJOB));
         journalEntry.setJobNumber(resultSet.getInt(JONBR));
         journalEntry.setJobUserName(resultSet.getString(JOUSER));
-        journalEntry.setCountRrn(resultSet.getInt(JOCTRR));
+        journalEntry.setCountRrn(resultSet.getBigDecimal(JOCTRR).toBigIntegerExact());
         journalEntry.setFlag(resultSet.getString(JOFLAG));
         journalEntry.setJournalCode(resultSet.getString(JOCODE));
         journalEntry.setMemberName(resultSet.getString(JOMBR));
@@ -219,7 +219,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         journalEntry.setObjectLibrary(resultSet.getString(JOLIB));
         journalEntry.setObjectName(resultSet.getString(JOOBJ));
         journalEntry.setProgramName(resultSet.getString(JOPGM));
-        journalEntry.setSequenceNumber(resultSet.getLong(JOSEQN));
+        journalEntry.setSequenceNumber(resultSet.getBigDecimal(JOSEQN).toBigIntegerExact());
         journalEntry.setSpecificData(resultSet.getBytes(JOESD));
         journalEntry.setStringSpecificData(resultSet.getString(JOESD));
 

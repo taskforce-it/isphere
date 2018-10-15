@@ -167,8 +167,26 @@ public class JournalDAO {
         journalEntry.setIgnoredByApyRmvJrnChg(journalEntryData.isIgnoreApyRmvJrnChg());
 
         // Type5DAO (extends the Type4DAO)
+        journalEntry.setProgramLibrary(journalEntryData.getProgramLibraryName());
+        journalEntry.setProgramLibraryAspDeviceName(journalEntryData.getProgramLibraryASPDeviceName());
+        journalEntry.setProgramLibraryAspNumber(journalEntryData.getProgramLibraryASPNumber());
+        journalEntry.setObjectNameIndicator(journalEntryData.getObjectNameIndicator());
+        journalEntry.setSystemSequenceNumber(journalEntryData.getSystemSequenceNumber());
+        // result.JORCV
+        // result.JORCVLIB
+        // result.JORCVDEV
+        // result.JORCVASP
+        journalEntry.setArmNumber(journalEntryData.getArmNumber());
+        // result.JOTHD
+        // result.JOTHDX
         journalEntry.setAddressFamily(journalEntryData.getAddressFamily());
+        journalEntry.setRemotePort(journalEntryData.getRemotePort());
         journalEntry.setRemoteAddress(journalEntryData.getRemoteAddress());
+        // result.JOLUW
+        // result.JOXID
+        journalEntry.setObjectType(journalEntryData.getObjectType());
+        journalEntry.setFileTypeIndicator(journalEntryData.getFileTypeIndicator());
+        journalEntry.setNestedCommitLevel(journalEntryData.getNestedCommitLevel());
 
         return journalEntry;
     }

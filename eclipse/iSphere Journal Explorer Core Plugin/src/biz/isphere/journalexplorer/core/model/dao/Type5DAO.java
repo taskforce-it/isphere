@@ -82,9 +82,9 @@ public class Type5DAO extends Type4DAO {
 
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
         journalEntry.setProgramLibrary(resultSet.getString(JOPGMLIB));
-        journalEntry.setProgramAspDevice(resultSet.getString(JOPGMDEV));
-        journalEntry.setProgramAsp(resultSet.getInt(JOPGMASP));
-        journalEntry.setObjectIndicator(resultSet.getString(JOOBJIND));
+        journalEntry.setProgramLibraryAspDeviceName(resultSet.getString(JOPGMDEV));
+        journalEntry.setProgramLibraryAspNumber(resultSet.getInt(JOPGMASP));
+        journalEntry.setObjectNameIndicator(resultSet.getString(JOOBJIND));
         journalEntry.setSystemSequenceNumber(resultSet.getString(JOSYSSEQ));
         journalEntry.setReceiver(resultSet.getString(JORCV));
         journalEntry.setReceiverLibrary(resultSet.getString(JORCVLIB));
@@ -99,7 +99,7 @@ public class Type5DAO extends Type4DAO {
         journalEntry.setTransactionIdentifier(resultSet.getString(JOXID));
         journalEntry.setObjectType(resultSet.getString(JOOBJTYP));
         journalEntry.setFileTypeIndicator(resultSet.getString(JOFILTYP));
-        journalEntry.setNestedCommitLevel(resultSet.getString(JOCMTLVL));
+        journalEntry.setNestedCommitLevel(Long.parseLong(resultSet.getString(JOCMTLVL)));
 
         return journalEntry;
     }
