@@ -18,6 +18,7 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.rse.as400.access.AS400UnsignedBin8;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
@@ -27,7 +28,6 @@ import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400UnsignedBin2;
 import com.ibm.as400.access.AS400UnsignedBin4;
-import com.ibm.as400.access.AS400UnsignedBin8;
 import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
