@@ -1264,16 +1264,23 @@ public class JournalEntry {
         } else if (ColumnsDAO.JONVI.equals(name)) {
             return getNullIndicators();
         } else if (ColumnsDAO.JOESD.equals(name)) {
-            // For displaying purposes, replace 0x00 with blanks.
-            // Otherwise, the string was truncate by JFace
             String stringSpecificData = getStringSpecificData();
             if (stringSpecificData == null) {
                 return "";
-            } else if (stringSpecificData.lastIndexOf('\0') >= 0) {
-                return stringSpecificData.replace('\0', ' ').substring(1, Math.min(200, stringSpecificData.length()));
-            } else {
-                return stringSpecificData;
             }
+
+            // For displaying purposes, replace 0x00 with blanks.
+            // Otherwise, the string will be truncate by JFace.
+            if (stringSpecificData.lastIndexOf('\0') >= 0) {
+                stringSpecificData = stringSpecificData.replace('\0', ' ');
+            }
+
+            // Display only the first 250 bytes.
+            if (stringSpecificData.length() > 250) {
+                stringSpecificData = stringSpecificData.substring(0, 250) + "..."; //$NON-NLS-1$
+            }
+
+            return stringSpecificData;
         }
 
         return data;
