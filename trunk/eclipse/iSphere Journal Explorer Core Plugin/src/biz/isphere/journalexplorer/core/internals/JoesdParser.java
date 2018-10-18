@@ -158,19 +158,28 @@ public class JoesdParser {
                  * Date/time field types:
                  */
             case DATE: {
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName(), column.getDateTimeFormat(),
-                    column.getDateTimeSeparator()));
+                // joesdRecordFormat.addFieldDescription(joesdParserDelegate.getDateFieldDescription(column.getName(),
+                // column.getDateTimeFormat(),
+                // column.getDateTimeSeparator()));
+                FieldDescription field = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()), column.getName());
+                joesdRecordFormat.addFieldDescription(field);
                 break;
             }
 
             case TIME: {
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName(), column.getDateTimeFormat(),
-                    column.getDateTimeSeparator()));
+                // joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimeFieldDescription(column.getName(),
+                // column.getDateTimeFormat(),
+                // column.getDateTimeSeparator()));
+                FieldDescription field = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()), column.getName());
+                joesdRecordFormat.addFieldDescription(field);
                 break;
             }
 
             case TIMESTAMP: {
-                joesdRecordFormat.addFieldDescription(joesdParserDelegate.getTimestampFieldDescription(column.getName()));
+                // FieldDescription field =
+                // joesdParserDelegate.getTimestampFieldDescription(column.getName());
+                FieldDescription field = new CharacterFieldDescription(new AS400Text(column.getLength(), column.getCcsid()), column.getName());
+                joesdRecordFormat.addFieldDescription(field);
                 break;
             }
                 /*
