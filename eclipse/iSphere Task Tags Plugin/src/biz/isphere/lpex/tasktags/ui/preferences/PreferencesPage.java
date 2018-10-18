@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.jface.preference.PreferencePage;
@@ -268,10 +269,10 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private void setFileExtensionsArray(String[] aFileExtensions) {
         tblFileExtensions.removeAll();
+        Arrays.sort(aFileExtensions);
         for (String tExtension : aFileExtensions) {
             new TableItem(tblFileExtensions, SWT.NONE).setText(tExtension);
         }
-        // TODO: sort file extensions array
     }
 
     private void updateControlsEnablement() {
@@ -303,7 +304,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     private void performNew(SelectionEvent anEvent) {
         TaskTagEditor tEditor = TaskTagEditor.getEditorForNew(getShell(), tblFileExtensions);
         if (tEditor.open() == SWT.OK) {
-            // TODO: sort file extensions array
+            refreshTableItems();
+            selectTableItem(tEditor.getNewValue());
         }
 
         updateControlsEnablement();
@@ -312,7 +314,32 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     private void performEdit(SelectionEvent anEvent) {
         TaskTagEditor tEditor = TaskTagEditor.getEditorForEdit(getShell(), tblFileExtensions);
         if (tEditor.open() == SWT.OK) {
-            // TODO: sort file extensions array
+            refreshTableItems();
+            selectTableItem(tEditor.getNewValue());
+        }
+    }
+
+    private void refreshTableItems() {
+
+        TableItem[] items = tblFileExtensions.getItems();
+        String[] fileExtensions = new String[items.length];
+        for (int i = 0; i < items.length; i++) {
+            fileExtensions[i] = items[i].getText();
+        }
+        setFileExtensionsArray(fileExtensions);
+    }
+
+    private void selectTableItem(String value) {
+
+        tblFileExtensions.setSelection(-1);
+
+        if (value != null) {
+            for (int i = 0; i < tblFileExtensions.getItemCount(); i++) {
+                if (tblFileExtensions.getItem(i).getText().equals(value)) {
+                    tblFileExtensions.setSelection(i);
+                    return;
+                }
+            }
         }
     }
 

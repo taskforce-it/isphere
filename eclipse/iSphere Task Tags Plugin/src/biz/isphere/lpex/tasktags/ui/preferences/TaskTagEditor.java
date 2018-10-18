@@ -121,6 +121,10 @@ public class TaskTagEditor extends Dialog {
         return result;
     }
 
+    public String getNewValue() {
+        return editedFileExtension;
+    }
+
     /**
      * Create contents of the dialog.
      */
@@ -223,6 +227,7 @@ public class TaskTagEditor extends Dialog {
             getEditedItem().setText(txtFileExtension.getText());
         }
         tblFileExtensions.redraw();
+        editedFileExtension = getEditedItem().getText();
         result = SWT.OK;
         shell.dispose();
     }
@@ -232,6 +237,7 @@ public class TaskTagEditor extends Dialog {
     }
 
     private void performCancel(SelectionEvent anEvent) {
+        editedFileExtension = null;
         result = SWT.CANCEL;
         shell.dispose();
     }
