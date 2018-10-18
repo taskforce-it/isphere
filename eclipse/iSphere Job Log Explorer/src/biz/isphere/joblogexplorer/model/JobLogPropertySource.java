@@ -34,7 +34,6 @@ public class JobLogPropertySource implements IPropertySource {
     }
 
     public Object getEditableValue() {
-        // TODO Auto-generated method stub
         return null;
     }
 
