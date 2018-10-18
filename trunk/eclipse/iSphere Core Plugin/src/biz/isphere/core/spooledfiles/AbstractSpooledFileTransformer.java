@@ -147,7 +147,7 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
         if (cpi != null) {
             return cpi;
         }
-        
+
         try {
             cpi = spooledFile.getFloatAttribute(PrintObject.ATTR_CPI);
         } catch (Exception e) {
@@ -174,16 +174,10 @@ public abstract class AbstractSpooledFileTransformer implements ISpooledFileTran
             PrintParameterList transformParameters = new PrintParameterList();
             transformParameters.setParameter(PrintObject.ATTR_WORKSTATION_CUST_OBJECT, wscst.getPath());
             transformParameters.setParameter(PrintObject.ATTR_MFGTYPE, "*WSCST");
-            // transformParameters.setParameter(PrintObject.ATTR_TGT_CODEPAGE,
-            // getTargetCodePage());
 
             InputStream in = spooledFile.getTransformedInputStream(transformParameters);
 
-            // TODO: remove obsolete code with 2.8
             // TODO: check CcsidUtil and ebcdicAsciiMapping.txt
-            // TODO: remove getTargetCodePage()
-            // TODO: remove getLineChar()
-
             int ccsid = spooledFile.getIntegerAttribute(PrintObject.ATTR_JOBCCSID).intValue();
 
             CcsidUtil util = new CcsidUtil();
