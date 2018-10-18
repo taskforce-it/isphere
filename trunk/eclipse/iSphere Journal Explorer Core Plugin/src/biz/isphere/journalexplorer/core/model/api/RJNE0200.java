@@ -10,6 +10,7 @@ package biz.isphere.journalexplorer.core.model.api;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.rse.as400.access.AS400UnsignedBin8;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
@@ -66,6 +68,7 @@ public class RJNE0200 {
     private AS400Structure headerStructure = null;
     private AS400Structure entryHeaderStructure = null;
     private AS400Structure nullValueIndicatorsStructure = null;
+    private AS400Structure receiverInformationStructure = null;
     private AS400Structure entrySpecificDataStructure = null;
     private List<AS400DataType> entrySpecificDataStructureHeader = null;
 
@@ -75,6 +78,7 @@ public class RJNE0200 {
     private Object[] headerData;
     private Object[] entryHeaderData;
     private Object[] nullValueIndicatorsData;
+    private Object[] receiverInformationData;
     private String remoteAddress;
     private Boolean isRemoteIpv4Address;
 
@@ -154,10 +158,7 @@ public class RJNE0200 {
             } else {
                 entryHeaderStartPos += getDspToNxtJrnEntHdr();
             }
-            entryHeaderData = null;
-            nullValueIndicatorsData = null;
-            remoteAddress = null;
-            isRemoteIpv4Address = null;
+            resetEntryData();
             return true;
         } else {
             return false;
@@ -374,9 +375,14 @@ public class RJNE0200 {
      * 
      * @return thread identifier
      */
-    public BigInteger getThreadIdentifier() {
+    public String getThreadIdentifier() {
         Object[] tResult = getEntryHeaderData();
-        return (BigInteger)tResult[8];
+        byte[] threadId = new byte[8];
+        Arrays.fill(threadId, (byte)0x0);
+        byte[] threadBytes = ((BigInteger)tResult[8]).toByteArray();
+        int offset = threadId.length - threadBytes.length;
+        System.arraycopy(threadBytes, 0, threadId, offset, threadBytes.length);
+        return ByteHelper.getHexString(threadId);
     }
 
     /**
@@ -421,6 +427,31 @@ public class RJNE0200 {
     public BigInteger getCommitCycleId() {
         Object[] tResult = getEntryHeaderData();
         return (BigInteger)tResult[11];
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The logical unit of work identifies entries to be associated with a given
+     * unit of work, usually within a commit cycle.
+     * <p>
+     * JOLUW, CHAR(39)
+     * 
+     * @return logical unit of work
+     */
+    public String getLogicalUnitOfWork() {
+        return "#TODO"; // TODO: add value
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The transaction identifier associated with this journal entry.
+     * <p>
+     * JOXID, CHAR(140)
+     * 
+     * @return logical unit of work
+     */
+    public String getTransactionIdentifier() {
+        return "#TODO"; // TODO: add value
     }
 
     /**
@@ -1025,6 +1056,84 @@ public class RJNE0200 {
     }
 
     /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The name of the receiver holding the journal entry.
+     * <p>
+     * JORCV, CHAR(10)
+     * 
+     * @return receiver name
+     */
+    public String getReceiverName() {
+
+        Object[] tResult = getReceiverInformationData();
+        if (tResult != null) {
+            return trimmed(tResult[0]);
+        } else {
+            // TODO: retrieve from current receiver
+            return "#TODO"; // TODO: add value
+        }
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The name of the library containing the receiver holding the journal
+     * entry.
+     * <p>
+     * JORCVLIB, CHAR(10)
+     * 
+     * @return receiver library name
+     */
+    public String getReceiverLibraryName() {
+
+        Object[] tResult = getReceiverInformationData();
+        if (tResult != null) {
+            return trimmed(tResult[1]);
+        } else {
+            // TODO: retrieve from current receiver
+            return "#TODO"; // TODO: add value
+        }
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The name of the ASP device that contains the receiver.
+     * <p>
+     * JORCVDEV, CHAR(10)
+     * 
+     * @return receiver library ASP device name
+     */
+    public String getReceiverLibraryASPDeviceName() {
+
+        Object[] tResult = getReceiverInformationData();
+        if (tResult != null) {
+            return trimmed(tResult[2]);
+        } else {
+            // TODO: retrieve from current receiver
+            return "#TODO"; // TODO: add value
+        }
+    }
+
+    /**
+     * RJNE0200 Format, Journal entry's header:<br>
+     * The number for the auxiliary storage pool containing the receiver holding
+     * the journal entry.
+     * <p>
+     * JORCVASP, ZONED(5,0)
+     * 
+     * @return receiver library ASP number
+     */
+    public int getReceiverLibraryASPNumber() {
+
+        Object[] tResult = getReceiverInformationData();
+        if (tResult != null) {
+            return (Short)tResult[3];
+        } else {
+            // TODO: retrieve from current receiver
+            return -1; // TODO: add value
+        }
+    }
+
+    /**
      * Returns the entry specific data splitted into an array of objects using
      * the current record format of the journaled file.
      * <p>
@@ -1269,6 +1378,14 @@ public class RJNE0200 {
         return nullValueIndicatorsData;
     }
 
+    private Object[] getReceiverInformationData() {
+        if (receiverInformationData == null && getDspToThsJrnEntReceiver() > 0) {
+            int receiverInformationStartPos = entryHeaderStartPos + getDspToThsJrnEntReceiver();
+            receiverInformationData = (Object[])getReceiverInformationStructure().toObject(getOutputData(), receiverInformationStartPos);
+        }
+        return receiverInformationData;
+    }
+
     private byte[] getOutputData() {
         return parameterList[0].getOutputData();
     }
@@ -1293,8 +1410,14 @@ public class RJNE0200 {
         entryRRN = 0;
         entryHeaderStartPos = -1;
         headerData = null;
+        resetEntryData();
+    }
+
+    private void resetEntryData() {
+
         entryHeaderData = null;
         nullValueIndicatorsData = null;
+        receiverInformationData = null;
         remoteAddress = null;
         isRemoteIpv4Address = null;
     }
@@ -1302,7 +1425,8 @@ public class RJNE0200 {
     private AS400Structure getHeaderStructure() {
         if (this.headerStructure == null) {
             // @formatter:off formatter intentionally disabled
-            AS400DataType[] structure = { new AS400Bin4(), // 0 Bytes returned
+            AS400DataType[] structure = { 
+                new AS400Bin4(), // 0 Bytes returned
                 new AS400Bin4(), // 1 Offset to first journal entry header
                 new AS400Bin4(), // 2 Number of entries retrieved
                 new AS400Text(1), // 3 Continuation indicator
@@ -1367,13 +1491,29 @@ public class RJNE0200 {
     private AS400Structure getNullValueIndicatorsStructure() {
         if (this.nullValueIndicatorsStructure == null) {
             // @formatter:off formatter intentionally disabled
-            AS400DataType[] structure = { new AS400Bin4(), // 0 Length
-                new AS400ByteArray(8000), // 1 Null value indicators
+            AS400DataType[] structure = { 
+                new AS400Bin4(), // 0 Length
+                new AS400ByteArray(8000) // 1 Null value indicators
             };
             // @formatter:on
             this.nullValueIndicatorsStructure = new AS400Structure(structure);
         }
         return this.nullValueIndicatorsStructure;
+    }
+
+    private AS400Structure getReceiverInformationStructure() {
+        if (this.receiverInformationStructure == null) {
+            // @formatter:off formatter intentionally disabled
+            AS400DataType[] structure = { 
+                new AS400Text(10), // 0 Receiver name
+                new AS400Text(10), // 1 Receiver library name
+                new AS400Text(10), // 2 Receiver library ASP device name
+                new AS400Bin2()    // 3 Receiver library ASP number
+            };
+            // @formatter:on
+            this.receiverInformationStructure = new AS400Structure(structure);
+        }
+        return this.receiverInformationStructure;
     }
 
     /**

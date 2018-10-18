@@ -172,18 +172,17 @@ public class JournalDAO {
         journalEntry.setProgramLibraryAspNumber(journalEntryData.getProgramLibraryASPNumber());
         journalEntry.setObjectNameIndicator(journalEntryData.getObjectNameIndicator());
         journalEntry.setSystemSequenceNumber(journalEntryData.getSystemSequenceNumber());
-        // result.JORCV
-        // result.JORCVLIB
-        // result.JORCVDEV
-        // result.JORCVASP
+        journalEntry.setReceiverName(journalEntryData.getReceiverName());
+        journalEntry.setReceiverLibraryName(journalEntryData.getReceiverLibraryName());
+        journalEntry.setReceiverLibraryASPDeviceName(journalEntryData.getReceiverLibraryASPDeviceName());
+        journalEntry.setReceiverLibraryASPNumber(journalEntryData.getReceiverLibraryASPNumber());
         journalEntry.setArmNumber(journalEntryData.getArmNumber());
-        // result.JOTHD
-        // result.JOTHDX
+        journalEntry.setThreadId(journalEntryData.getThreadIdentifier());
         journalEntry.setAddressFamily(journalEntryData.getAddressFamily());
         journalEntry.setRemotePort(journalEntryData.getRemotePort());
         journalEntry.setRemoteAddress(journalEntryData.getRemoteAddress());
-        // result.JOLUW
-        // result.JOXID
+        journalEntry.setLogicalUnitOfWork(journalEntryData.getLogicalUnitOfWork());
+        journalEntry.setTransactionIdentifier(journalEntryData.getTransactionIdentifier());
         journalEntry.setObjectType(journalEntryData.getObjectType());
         journalEntry.setFileTypeIndicator(journalEntryData.getFileTypeIndicator());
         journalEntry.setNestedCommitLevel(journalEntryData.getNestedCommitLevel());
