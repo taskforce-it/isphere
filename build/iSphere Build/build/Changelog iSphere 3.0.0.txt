@@ -1,12 +1,16 @@
 
 Changelog: iSphere 3.5.1.r
 -----------------------------
- • Added field JONVI (null value indicators) to all journal explorer
-   views.
+ • Added fields JOPGMLIB, JOPGMDEV, JOPGMASP, 
  • Added fields JOJID, JORCST, JOTGR and JOIGNAPY to journal explorer
    view when retrieving journal entries directly from a journal.
+ • Added field JONVI (null value indicators) to all journal explorer
+   views.
  • Changed journal explorer to display JOJID as hex string.
  • Fixed NullPointerException in TimeEdit (WDSCi).
+ • Changed JoesdParser to return Date, Time and Timestamp fields as
+   raw character fields to avoid timezone and DST adjustments, which
+   occur when using Date-, Time- or TimestampFieldDescription classes.
 
 Changelog: iSphere 3.5.0.r
 --------------------------
