@@ -829,7 +829,7 @@ public class JournalEntry {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
+    public void setReceiverName(String receiver) {
         this.receiver = receiver.trim();
     }
 
@@ -845,7 +845,7 @@ public class JournalEntry {
         return receiverLibrary;
     }
 
-    public void setReceiverLibrary(String receiverLibrary) {
+    public void setReceiverLibraryName(String receiverLibrary) {
         this.receiverLibrary = receiverLibrary.trim();
     }
 
@@ -861,7 +861,7 @@ public class JournalEntry {
         return receiverAspDevice;
     }
 
-    public void setReceiverAspDevice(String receiverAspDevice) {
+    public void setReceiverLibraryASPDeviceName(String receiverAspDevice) {
         this.receiverAspDevice = receiverAspDevice.trim();
     }
 
@@ -877,7 +877,7 @@ public class JournalEntry {
         return receiverAsp;
     }
 
-    public void setReceiverAsp(int receiverAsp) {
+    public void setReceiverLibraryASPNumber(int receiverAsp) {
         this.receiverAsp = receiverAsp;
     }
 
@@ -1256,7 +1256,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOXID.equals(name)) {
             return getTransactionIdentifier();
         } else if (ColumnsDAO.JOOBJTYP.equals(name)) {
-            return getFileTypeIndicatorText();
+            return getObjectType();
         } else if (ColumnsDAO.JOFILTYP.equals(name)) {
             return getFileTypeIndicatorText();
         } else if (ColumnsDAO.JOCMTLVL.equals(name)) {

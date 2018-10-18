@@ -86,10 +86,10 @@ public class Type5DAO extends Type4DAO {
         journalEntry.setProgramLibraryAspNumber(resultSet.getInt(JOPGMASP));
         journalEntry.setObjectNameIndicator(resultSet.getString(JOOBJIND));
         journalEntry.setSystemSequenceNumber(resultSet.getString(JOSYSSEQ));
-        journalEntry.setReceiver(resultSet.getString(JORCV));
-        journalEntry.setReceiverLibrary(resultSet.getString(JORCVLIB));
-        journalEntry.setReceiverAspDevice(resultSet.getString(JORCVDEV));
-        journalEntry.setReceiverAsp(resultSet.getInt(JORCVASP));
+        journalEntry.setReceiverName(resultSet.getString(JORCV));
+        journalEntry.setReceiverLibraryName(resultSet.getString(JORCVLIB));
+        journalEntry.setReceiverLibraryASPDeviceName(resultSet.getString(JORCVDEV));
+        journalEntry.setReceiverLibraryASPNumber(resultSet.getInt(JORCVASP));
         journalEntry.setArmNumber(resultSet.getInt(JOARM));
         journalEntry.setThreadId(resultSet.getString(JOTHDX));
         journalEntry.setAddressFamily(resultSet.getString(JOADF));
