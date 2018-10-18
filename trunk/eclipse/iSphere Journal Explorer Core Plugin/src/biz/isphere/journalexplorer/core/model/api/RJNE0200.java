@@ -1457,10 +1457,7 @@ public class RJNE0200 {
         if (entrySpecificDataStructureHeader == null) {
             // @formatter:off formatter intentionally disabled
             entrySpecificDataStructureHeader = new ArrayList<AS400DataType>();
-            entrySpecificDataStructureHeader.add(new AS400Text(5)); // Length of
-            // entry
-            // specific
-            // data
+            entrySpecificDataStructureHeader.add(new AS400Text(5)); // Length of entry specific data
             entrySpecificDataStructureHeader.add(new AS400Text(11)); // Reserved
             // @formatter:on
         }
