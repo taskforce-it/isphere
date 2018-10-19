@@ -66,6 +66,7 @@ public class JournalDAO {
             tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_ALL);
         }
 
+        tJrneToRtv.setNullIndLen(JrneToRtv.NULLINDLEN_VARLEN);
         tJrneToRtv.setNbrEnt(maxNumRows);
         tJrneToRtv.setFile(journaledObject.getLibraryName(), journaledObject.getObjectName(), "*FIRST"); //$NON-NLS-1$
 

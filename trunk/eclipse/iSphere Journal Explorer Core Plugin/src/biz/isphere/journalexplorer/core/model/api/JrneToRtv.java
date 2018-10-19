@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
@@ -61,6 +62,7 @@ public class JrneToRtv {
     public static final String FRMENT_FIRST = "*FIRST";
     public static final String RCVRNG_CURRENT = "*CURRENT";
     public static final String RCVRNG_CURCHAIN = "*CURCHAIN";
+    public static final String NULLINDLEN_VARLEN = "*VARLEN";
 
     private String journal;
     private String library;
@@ -81,6 +83,21 @@ public class JrneToRtv {
 
         setRcvRng(RCVRNG_CURCHAIN);
         setFormatMinimzedData(FMTMINDTA_YES);
+    }
+
+    public int getNullValueIndicatorsLength() {
+
+        Object value = getSelectionValue(RetrieveKey.NULLINDLEN);
+        if (value instanceof String) {
+            String length = ((String)value).trim();
+            if (NULLINDLEN_VARLEN.equals(length)) {
+                return -1;
+            } else {
+                return Integer.parseInt(length);
+            }
+        }
+
+        return -1; // default: *VARLEN
     }
 
     public String getJournal() {
@@ -406,6 +423,25 @@ public class JrneToRtv {
     }
 
     /**
+     * Add retrieval criterion 15: Null value indicators length.
+     * 
+     * @param aJournalEntryTypes
+     */
+    public void setNullIndLen(String nullIndLen) {
+        RetrieveKey rtvKey = RetrieveKey.NULLINDLEN;
+        if (!NULLINDLEN_VARLEN.equals(nullIndLen) && !isPositiveNumericValue(nullIndLen)) {
+            throw new IllegalArgumentException(String.format("Value for '%s' must be either '" + NULLINDLEN_VARLEN + " or a positive integer value.",
+                rtvKey.getDescription()));
+        }
+
+        if (NULLINDLEN_VARLEN.equals(nullIndLen)) {
+            addSelectionCriterion(rtvKey, new AS400Text(10), padRight(nullIndLen, 10));
+        } else {
+            addSelectionCriterion(rtvKey, new AS400Text(10), padLeftZero(nullIndLen, 10));
+        }
+    }
+
+    /**
      * Set retrieval criterion 16: FileCriterion.
      * 
      * @param file - Specifies the name of the file that contains the member.
@@ -626,12 +662,23 @@ public class JrneToRtv {
         data.set(0, (Integer)data.get(0) + 1);
     }
 
+    private boolean isPositiveNumericValue(String value) {
+        if (IntHelper.tryParseInt(value, -1) >= 0) {
+            return true;
+        }
+        return false;
+    }
+
     private String padRight(String aFormatMinimizedData, int byteLength) {
         return StringHelper.getFixLength(aFormatMinimizedData, byteLength);
     }
 
     private String padLeft(String aFormatMinimizedData, int byteLength) {
         return StringHelper.getFixLengthLeading(aFormatMinimizedData, byteLength);
+    }
+
+    private String padLeftZero(String aFormatMinimizedData, int byteLength) {
+        return StringHelper.getFixLengthLeading(aFormatMinimizedData, byteLength).replaceAll(" ", "0");
     }
 
     private Calendar getTime(String aTimestamp) throws ParseException {

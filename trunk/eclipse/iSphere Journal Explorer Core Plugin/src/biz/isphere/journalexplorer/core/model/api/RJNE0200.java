@@ -55,6 +55,10 @@ public class RJNE0200 {
     private static final String ADDRESS_FAMILY_IPV4 = "4"; //$NON-NLS-1$
     private static final String ADDRESS_FAMILY_IPV6 = "6"; //$NON-NLS-1$
 
+    private static final String OMITTED_STRING = "*OMITTED"; //$NON-NLS-1$
+    private static final Integer OMITTED_INTEGER = new Integer("0"); //$NON-NLS-1$
+    private static final BigInteger OMITTED_BIG_INTEGER = BigInteger.ZERO; //$NON-NLS-1$
+
     private static final int RECEIVER_LEN = 1024 * 32; // 32 KB
     private static final String FORMAT_NAME = "RJNE0200"; //$NON-NLS-1$
     private static final int ERROR_CODE = 0;
@@ -64,11 +68,16 @@ public class RJNE0200 {
     private DynamicRecordFormatsStore store;
     private ProgramParameter[] parameterList;
 
+    // Cached journal information
+    RJRN0100 rjrn0100 = null;
+
     // Cached data structures
     private AS400Structure headerStructure = null;
     private AS400Structure entryHeaderStructure = null;
     private AS400Structure nullValueIndicatorsStructure = null;
     private AS400Structure receiverInformationStructure = null;
+    private AS400Structure logicalUnitOfWork = null;
+    private AS400Structure transactionIdentifierStructure = null;
     private AS400Structure entrySpecificDataStructure = null;
     private List<AS400DataType> entrySpecificDataStructureHeader = null;
 
@@ -79,19 +88,38 @@ public class RJNE0200 {
     private Object[] entryHeaderData;
     private Object[] nullValueIndicatorsData;
     private Object[] receiverInformationData;
+    private Object[] logicalUnitOfWorkData;
+    private Object[] transactionIdentifierData;
     private String remoteAddress;
     private Boolean isRemoteIpv4Address;
 
-    public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary) {
-        this(aSystem, aJournalName, aJournalLibrary, RECEIVER_LEN);
+    // Null value indicators length
+    private int nullValueIndicatorsLength = -1; // *VARLEN
+
+    // Current receiver information
+    /*
+     * Journal receiver information is returned only for the first entry in a
+     * buffer and when the receiver information changes from one journal entry
+     * to the next. If no journal receiver information is returned, it can be
+     * assumed that the receiver information from the previous entry will apply
+     * to the current journal entry.
+     */
+    private String currentReceiverName;
+    private String currentReceiverLibraryName;
+    private String currentReceiverLibraryASPDeviceName;
+    private int currentReceiverLibraryASPNumber;
+
+    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100) {
+        this(aSystem, aRJRN0100, RECEIVER_LEN);
     }
 
-    public RJNE0200(AS400 aSystem, String aJournalName, String aJournalLibrary, int aBufferSize) {
+    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100, int aBufferSize) {
 
         if ((aBufferSize % 16) != 0) {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
 
+        rjrn0100 = aRJRN0100;
         bufferSize = aBufferSize;
         dateTimeConverter = new DateTimeConverter(aSystem);
         store = new DynamicRecordFormatsStore(aSystem);
@@ -106,6 +134,8 @@ public class RJNE0200 {
      * @return parameter list of the QjoRetrieveJournalEntries API.
      */
     public ProgramParameter[] getProgramParameters(JrneToRtv aJrneToRtv) {
+
+        nullValueIndicatorsLength = aJrneToRtv.getNullValueIndicatorsLength();
 
         parameterList = new ProgramParameter[6];
 
@@ -158,7 +188,17 @@ public class RJNE0200 {
             } else {
                 entryHeaderStartPos += getDspToNxtJrnEntHdr();
             }
+
             resetEntryData();
+
+            Object[] receiverInformation = getReceiverInformationData();
+            if (receiverInformation != null) {
+                currentReceiverName = trimmed(receiverInformation[0]);
+                currentReceiverLibraryName = trimmed(receiverInformation[1]);
+                currentReceiverLibraryASPDeviceName = trimmed(receiverInformation[2]);
+                currentReceiverLibraryASPNumber = (Short)receiverInformation[3];
+            }
+
             return true;
         } else {
             return false;
@@ -372,6 +412,14 @@ public class RJNE0200 {
      * <p>
      * JOTHD, HEX(8)<br>
      * JOTHDX, CHAR(16)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*THD) was not in
+     * effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then hex 0 will be returned for the thread
+     * identifier.</li>
+     * </ol>
      * 
      * @return thread identifier
      */
@@ -379,10 +427,15 @@ public class RJNE0200 {
         Object[] tResult = getEntryHeaderData();
         byte[] threadId = new byte[8];
         Arrays.fill(threadId, (byte)0x0);
-        byte[] threadBytes = ((BigInteger)tResult[8]).toByteArray();
-        int offset = threadId.length - threadBytes.length;
-        System.arraycopy(threadBytes, 0, threadId, offset, threadBytes.length);
-        return ByteHelper.getHexString(threadId);
+        BigInteger threadIdentifier = (BigInteger)tResult[8];
+        if (!threadIdentifier.equals(BigInteger.ZERO)) {
+            byte[] threadBytes = threadIdentifier.toByteArray();
+            int offset = threadId.length - threadBytes.length;
+            System.arraycopy(threadBytes, 0, threadId, offset, threadBytes.length);
+            return ByteHelper.getHexString(threadId);
+        } else {
+            return OMITTED_STRING;
+        }
     }
 
     /**
@@ -393,12 +446,25 @@ public class RJNE0200 {
      * journal receivers.
      * <p>
      * JOSYSSEQ, CHAR(20)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*SYSSEQ) was not
+     * in effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then Hex 0 will be returned for the system
+     * sequence number.</li>
+     * </ol>
      * 
      * @return system sequence number
      */
     public BigInteger getSystemSequenceNumber() {
         Object[] tResult = getEntryHeaderData();
-        return (BigInteger)tResult[9];
+        BigInteger systemSequenceNumber = (BigInteger)tResult[9];
+        if (!systemSequenceNumber.equals(BigInteger.ZERO)) {
+            return (BigInteger)tResult[9];
+        } else {
+            return OMITTED_BIG_INTEGER;
+        }
     }
 
     /**
@@ -439,7 +505,12 @@ public class RJNE0200 {
      * @return logical unit of work
      */
     public String getLogicalUnitOfWork() {
-        return "#TODO"; // TODO: add value
+        Object[] tResult = getLogicalUnitOfWorkData();
+        if (tResult != null) {
+            return trimmed(tResult[0]);
+        } else {
+            return OMITTED_STRING;
+        }
     }
 
     /**
@@ -447,11 +518,32 @@ public class RJNE0200 {
      * The transaction identifier associated with this journal entry.
      * <p>
      * JOXID, CHAR(140)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*XID) was not in
+     * effect for the journal when the journal receiver that contains the
+     * journal entry was attached, then the displacement to transaction
+     * identifier will be 0 and no transaction identifier will be returned.</li>
+     * </ol>
      * 
      * @return logical unit of work
      */
     public String getTransactionIdentifier() {
-        return "#TODO"; // TODO: add value
+        Object[] tResult = getTransactionIdentifierData();
+        if (tResult != null) {
+            // 0 = formatID
+            // 1 = gtrid_length
+            // 2 = bqual_length
+            // 3 = data
+            StringBuilder buffer = new StringBuilder();
+            for (Object object : tResult) {
+                buffer.append(ByteHelper.getHexString((byte[])object));
+            }
+            return buffer.toString();
+        } else {
+            return OMITTED_STRING;
+        }
     }
 
     /**
@@ -473,12 +565,24 @@ public class RJNE0200 {
      * The port number of the remote address associate with this journal entry.
      * <p>
      * JORPORT, ZONED(5,0)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*RMTADR) was not
+     * in effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then Hex 0 will be returned for remote port.</li>
+     * </ol>
      * 
      * @return remote port
      */
     public Integer getRemotePort() {
         Object[] tResult = getEntryHeaderData();
-        return (Integer)tResult[13];
+        Integer remotePort = (Integer)tResult[13];
+        if (remotePort > 0) {
+            return remotePort;
+        } else {
+            return OMITTED_INTEGER;
+        }
     }
 
     /**
@@ -500,12 +604,25 @@ public class RJNE0200 {
      * added the journal entry.
      * <p>
      * JOPGMASP, ZONED(5,0)
+     * <p>
+     * <b>Notes:</b>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*PGMLIB) was not
+     * in effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then Hex 0 will be returned for program ASP
+     * number.</li>
+     * </ol>
      * 
      * @return program library ASP number
      */
     public long getProgramLibraryASPNumber() {
         Object[] tResult = getEntryHeaderData();
-        return ((Integer)tResult[15]).longValue();
+        Integer remotePort = (Integer)tResult[15];
+        if (remotePort > 0) {
+            return remotePort.longValue();
+        } else {
+            return OMITTED_INTEGER.longValue();
+        }
     }
 
     /**
@@ -515,6 +632,14 @@ public class RJNE0200 {
      * entry.
      * <p>
      * JORADR, CHAR(46)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*RMTADR) was not
+     * in effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then Hex 0 will be returned for remote
+     * address.</li>
+     * </ol>
      * 
      * @return remote address
      */
@@ -528,7 +653,7 @@ public class RJNE0200 {
             } else if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
                 remoteAddress = getIPv6Address(getRemoteAddressBytes());
             } else {
-                remoteAddress = ""; //$NON-NLS-1$
+                remoteAddress = OMITTED_STRING; //$NON-NLS-1$
             }
         }
 
@@ -564,9 +689,22 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
-     * Get the name of the job that added the entry.
+     * The name of the job that added the entry.
      * <p>
      * JOJOB, CHAR(10)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*JOB) was not in
+     * effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then <b>*OMITTED</b> is returned for the job
+     * name.</li>
+     * <li>If the journal entry was deposited by a system task that was not
+     * associated with a job, then <b>*TDE</b> will be returned for the job
+     * name.</li>
+     * <li>If the job name was not available when the journal entry was
+     * deposited, then <b>*NONE</b> is returned for the job name.</li>
+     * </ol>
      * 
      * @return job name
      */
@@ -577,9 +715,18 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
-     * Get the user profile name of the user that started the job.
+     * The user profile name of the user that started the job.
      * <p>
      * JOUSER, CHAR(10)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*JOB) was not in
+     * effect for the journal when the journal receiver that contains the
+     * journal entry was attached, then blanks are returned for the user name.</li>
+     * <li>If the job name was not available when the journal entry was
+     * deposited, then blanks are returned for the user name.</li>
+     * </ol>
      * 
      * @return user name
      */
@@ -590,9 +737,22 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
-     * Get the job number of the job that added the entry.
+     * The job number of the job that added the entry.
      * <p>
      * JONBR, ZONED(6,0)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If the RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*JOB) was not
+     * was in effect for the journal when the journal receiver that contains the
+     * journal entry was attached, then <b>zeros</b> are returned for the job
+     * number.</li>
+     * <li>If the journal entry was deposited by a system task that was not
+     * associated with a job, then <b>zeros</b> will be returned for the job
+     * number.</li>
+     * <li>If the job name was not available when the journal entry was
+     * deposited, then <b>zeros</b> are returned for the job number.</li>
+     * </ol>
      * 
      * @return job number
      */
@@ -603,9 +763,18 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
-     * Get the name of the program that added the entry.
+     * The name of the program that added the entry. If an application or CL
+     * program did not add the entry, the field contains the name of a
+     * system-supplied program such as QCMD or QPGMMENU.
      * <p>
      * JOPGM, CHAR(10)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*PGM) was not in
+     * effect for the journal when the journal receiver that contains this
+     * journal entry was attached, *OMITTED is returned as the program name.</li>
+     * </ol>
      * 
      * @return program name
      */
@@ -616,10 +785,18 @@ public class RJNE0200 {
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
-     * Get the name of the library that contains the program that added the
-     * journal entry.
+     * The name of the library that contains the program that added the journal
+     * entry. journal entry.
      * <p>
      * JOPGMLIB, CHAR(10)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*PGMLIB) was not
+     * in effect for the journal when the journal receiver that contains this
+     * journal entry was attached, then *OMITTED will be returned for the
+     * program library name.</li>
+     * </ol>
      * 
      * @return program library name
      */
@@ -739,6 +916,17 @@ public class RJNE0200 {
      * when the entry was created. (JOUSPF)
      * <p>
      * JOUSPF, CHAR(10)
+     * <p>
+     * <b>Notes:</b><br>
+     * <ol>
+     * <li>If RCVSIZOPT(*MINFIXLEN) was in effect or FIXLENDTA(*JOB) was not in
+     * effect for the journal when the journal receiver that contains this
+     * journal entry was attached, *OMITTED is returned for the effective user
+     * profile.</li>
+     * <li>If the journal entry was deposited by a system task that was not
+     * associated with a job, then a character representation of the task
+     * description entry number will be returned for the user profile.</li>
+     * </ol>
      * 
      * @return effective user profile
      */
@@ -1044,12 +1232,15 @@ public class RJNE0200 {
     public byte[] getNullValueIndicators() {
 
         Object[] tResult = getNullValueIndicatorsData();
-        if (tResult.length >= 2) {
+        if (nullValueIndicatorsLength < 0) {
             int count = (Integer)tResult[0];
             if (count > 0) {
                 byte[] nullValueIndicators = ByteHelper.copyOfRange((byte[])tResult[1], 0, count);
                 return nullValueIndicators;
             }
+        } else {
+            byte[] nullValueIndicators = ByteHelper.copyOfRange((byte[])tResult[0], 0, nullValueIndicatorsLength);
+            return nullValueIndicators;
         }
 
         return new byte[0];
@@ -1064,14 +1255,7 @@ public class RJNE0200 {
      * @return receiver name
      */
     public String getReceiverName() {
-
-        Object[] tResult = getReceiverInformationData();
-        if (tResult != null) {
-            return trimmed(tResult[0]);
-        } else {
-            // TODO: retrieve from current receiver
-            return "#TODO"; // TODO: add value
-        }
+        return currentReceiverName;
     }
 
     /**
@@ -1084,14 +1268,7 @@ public class RJNE0200 {
      * @return receiver library name
      */
     public String getReceiverLibraryName() {
-
-        Object[] tResult = getReceiverInformationData();
-        if (tResult != null) {
-            return trimmed(tResult[1]);
-        } else {
-            // TODO: retrieve from current receiver
-            return "#TODO"; // TODO: add value
-        }
+        return currentReceiverLibraryName;
     }
 
     /**
@@ -1103,14 +1280,7 @@ public class RJNE0200 {
      * @return receiver library ASP device name
      */
     public String getReceiverLibraryASPDeviceName() {
-
-        Object[] tResult = getReceiverInformationData();
-        if (tResult != null) {
-            return trimmed(tResult[2]);
-        } else {
-            // TODO: retrieve from current receiver
-            return "#TODO"; // TODO: add value
-        }
+        return currentReceiverLibraryASPDeviceName;
     }
 
     /**
@@ -1123,14 +1293,7 @@ public class RJNE0200 {
      * @return receiver library ASP number
      */
     public int getReceiverLibraryASPNumber() {
-
-        Object[] tResult = getReceiverInformationData();
-        if (tResult != null) {
-            return (Short)tResult[3];
-        } else {
-            // TODO: retrieve from current receiver
-            return -1; // TODO: add value
-        }
+        return currentReceiverLibraryASPNumber;
     }
 
     /**
@@ -1386,6 +1549,22 @@ public class RJNE0200 {
         return receiverInformationData;
     }
 
+    private Object[] getLogicalUnitOfWorkData() {
+        if (logicalUnitOfWorkData == null && getDspToThsJrnEntLogicalUnitOfWork() > 0) {
+            int logicalUnitOfWorkStartPos = entryHeaderStartPos + getDspToThsJrnEntLogicalUnitOfWork();
+            logicalUnitOfWorkData = (Object[])getLogicalUnitOfWorkStructure().toObject(getOutputData(), logicalUnitOfWorkStartPos);
+        }
+        return logicalUnitOfWorkData;
+    }
+
+    private Object[] getTransactionIdentifierData() {
+        if (transactionIdentifierData == null && getDspToThsJrnEntTransactionIdentifier() > 0) {
+            int transactionIdentifierStartPos = entryHeaderStartPos + getDspToThsJrnEntTransactionIdentifier();
+            transactionIdentifierData = (Object[])getTransactionIdentifierStructure().toObject(getOutputData(), transactionIdentifierStartPos);
+        }
+        return transactionIdentifierData;
+    }
+
     private byte[] getOutputData() {
         return parameterList[0].getOutputData();
     }
@@ -1418,6 +1597,8 @@ public class RJNE0200 {
         entryHeaderData = null;
         nullValueIndicatorsData = null;
         receiverInformationData = null;
+        logicalUnitOfWorkData = null;
+        transactionIdentifierData = null;
         remoteAddress = null;
         isRemoteIpv4Address = null;
     }
@@ -1490,12 +1671,21 @@ public class RJNE0200 {
 
     private AS400Structure getNullValueIndicatorsStructure() {
         if (this.nullValueIndicatorsStructure == null) {
-            // @formatter:off formatter intentionally disabled
-            AS400DataType[] structure = { 
-                new AS400Bin4(), // 0 Length
-                new AS400ByteArray(8000) // 1 Null value indicators
-            };
-            // @formatter:on
+            AS400DataType[] structure;
+            if (nullValueIndicatorsLength < 0) {
+                // @formatter:off formatter intentionally disabled
+                structure = new AS400DataType[] { 
+                    new AS400Bin4(), // 0 Length
+                    new AS400ByteArray(8000) // 1 Null value indicators
+                };
+                // @formatter:on
+            } else {
+                // @formatter:off formatter intentionally disabled
+                structure = new AS400DataType[] { 
+                    new AS400ByteArray(nullValueIndicatorsLength) // 0 Null value indicators
+                };
+                // @formatter:on
+            }
             this.nullValueIndicatorsStructure = new AS400Structure(structure);
         }
         return this.nullValueIndicatorsStructure;
@@ -1514,6 +1704,34 @@ public class RJNE0200 {
             this.receiverInformationStructure = new AS400Structure(structure);
         }
         return this.receiverInformationStructure;
+    }
+
+    private AS400Structure getLogicalUnitOfWorkStructure() {
+        if (this.logicalUnitOfWork == null) {
+            // @formatter:off formatter intentionally disabled
+            AS400DataType[] structure = { 
+                new AS400Text(39)  // 0 Logical unit of work
+            };
+            // @formatter:on
+            this.logicalUnitOfWork = new AS400Structure(structure);
+        }
+        return this.logicalUnitOfWork;
+    }
+
+    // Transaction identifier (QSYSINC/H.XA: xid_t)
+    private AS400Structure getTransactionIdentifierStructure() {
+        if (this.transactionIdentifierStructure == null) {
+            // @formatter:off formatter intentionally disabled
+            AS400DataType[] structure = { 
+                new AS400Bin4(),        // 0 formatID
+                new AS400Bin4(),        // 1 gtrid_length
+                new AS400Bin4(),        // 2 bqual_length
+                new AS400ByteArray(128) // 3 data
+            };
+            // @formatter:on
+            this.transactionIdentifierStructure = new AS400Structure(structure);
+        }
+        return this.transactionIdentifierStructure;
     }
 
     /**

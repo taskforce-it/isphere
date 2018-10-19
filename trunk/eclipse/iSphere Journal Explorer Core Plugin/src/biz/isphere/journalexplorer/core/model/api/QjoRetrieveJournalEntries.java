@@ -46,7 +46,7 @@ public class QjoRetrieveJournalEntries {
 
     private List<AS400Message> messages;
 
-    public QjoRetrieveJournalEntries(AS400 aSystem, JrneToRtv aJrneToRtv) throws Exception {
+    public QjoRetrieveJournalEntries(AS400 aSystem, JrneToRtv aJrneToRtv) {
         system = aSystem;
         jrneToRtv = aJrneToRtv;
         maxNumEntries = aJrneToRtv.getNbrEnt();
@@ -64,9 +64,10 @@ public class QjoRetrieveJournalEntries {
      */
     public RJNE0200 execute() throws Exception {
 
-        int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
+        RJRN0100 rjrn0100 = retrieveJournalInformation(jrneToRtv.getJournal(), jrneToRtv.getLibrary());
 
-        RJNE0200 tJournalEntries = new RJNE0200(system, jrneToRtv.getJournal(), jrneToRtv.getLibrary(), bufferSize);
+        int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
+        RJNE0200 tJournalEntries = new RJNE0200(system, rjrn0100, bufferSize);
 
         if (retrieveJournalEntries(tJournalEntries.getProgramParameters(jrneToRtv))) {
             if (tJournalEntries.moreEntriesAvailable()) {
@@ -86,6 +87,15 @@ public class QjoRetrieveJournalEntries {
         }
 
         return tJournalEntries;
+    }
+
+    private RJRN0100 retrieveJournalInformation(String journal, String library) throws Exception {
+
+        JrnInfToRtv jrnInfToRtv = new JrnInfToRtv(library, journal);
+        QjoRetrieveJournalInformation qjoRetrieveJournalInformation = new QjoRetrieveJournalInformation(system, jrnInfToRtv);
+        RJRN0100 rjrn0100 = qjoRetrieveJournalInformation.execute();
+
+        return rjrn0100;
     }
 
     /**
