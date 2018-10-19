@@ -157,6 +157,9 @@ public class JournalEntry {
     private long nestedCommitLevel; // JOCMTLVL
     private byte[] nullIndicators; // JONVI
 
+    // Cached values
+    private String stringSpecificDataForUI;
+
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
     private DecimalFormat bin8Formatter;
     private DecimalFormat nestedCommitLevelFormatter;
@@ -906,11 +909,6 @@ public class JournalEntry {
      * @since *TYPE5
      */
     public String getThreadId() {
-
-        if (threadId.replaceAll("0", "").trim().length() == 0) {
-            return "-/-"; //$NON-NLS-1$
-        }
-
         return threadId;
     }
 
@@ -1264,23 +1262,24 @@ public class JournalEntry {
         } else if (ColumnsDAO.JONVI.equals(name)) {
             return getNullIndicators();
         } else if (ColumnsDAO.JOESD.equals(name)) {
-            String stringSpecificData = getStringSpecificData();
-            if (stringSpecificData == null) {
-                return "";
-            }
+            if (stringSpecificDataForUI == null) {
+                stringSpecificDataForUI = getStringSpecificData();
+                if (stringSpecificDataForUI == null) {
+                    return "";
+                }
 
-            // For displaying purposes, replace 0x00 with blanks.
-            // Otherwise, the string will be truncate by JFace.
-            if (stringSpecificData.lastIndexOf('\0') >= 0) {
-                stringSpecificData = stringSpecificData.replace('\0', ' ');
-            }
+                // For displaying purposes, replace 0x00 with blanks.
+                // Otherwise, the string will be truncate by JFace.
+                if (stringSpecificDataForUI.lastIndexOf('\0') >= 0) {
+                    stringSpecificDataForUI = stringSpecificDataForUI.replace('\0', ' ');
+                }
 
-            // Display only the first 250 bytes.
-            if (stringSpecificData.length() > 250) {
-                stringSpecificData = stringSpecificData.substring(0, 250) + "..."; //$NON-NLS-1$
+                // Display only the first 250 bytes.
+                if (stringSpecificDataForUI.length() > 250) {
+                    stringSpecificDataForUI = stringSpecificDataForUI.substring(0, 250) + "..."; //$NON-NLS-1$
+                }
             }
-
-            return stringSpecificData;
+            return stringSpecificDataForUI;
         }
 
         return data;
