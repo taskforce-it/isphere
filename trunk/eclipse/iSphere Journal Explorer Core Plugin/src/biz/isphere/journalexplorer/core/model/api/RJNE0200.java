@@ -11,8 +11,11 @@ package biz.isphere.journalexplorer.core.model.api;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.IntHelper;
@@ -66,6 +69,7 @@ public class RJNE0200 {
     private int bufferSize;
     private DateTimeConverter dateTimeConverter;
     private DynamicRecordFormatsStore store;
+    private TimeZone timeZone;
     private ProgramParameter[] parameterList;
 
     // Cached journal information
@@ -109,11 +113,11 @@ public class RJNE0200 {
     private String currentReceiverLibraryASPDeviceName;
     private int currentReceiverLibraryASPNumber;
 
-    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100) {
+    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100) throws Exception {
         this(aSystem, aRJRN0100, RECEIVER_LEN);
     }
 
-    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100, int aBufferSize) {
+    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100, int aBufferSize) throws Exception {
 
         if ((aBufferSize % 16) != 0) {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
@@ -122,6 +126,7 @@ public class RJNE0200 {
         rjrn0100 = aRJRN0100;
         bufferSize = aBufferSize;
         dateTimeConverter = new DateTimeConverter(aSystem);
+        timeZone = DateTimeConverter.timeZoneForSystem(aSystem);
         store = new DynamicRecordFormatsStore(aSystem);
 
         resetReader();
@@ -403,6 +408,13 @@ public class RJNE0200 {
     public Date getTimestamp() throws Exception {
         Object[] tResult = getEntryHeaderData();
         Date tTimestamp = dateTimeConverter.convert((byte[])tResult[7], "*DTS");
+
+        Calendar calendar = GregorianCalendar.getInstance(timeZone);
+        calendar.setTime(tTimestamp);
+        int offsetToGMT = (calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+        calendar.add(Calendar.MINUTE, offsetToGMT * -1);
+        tTimestamp = calendar.getTime();
+
         return tTimestamp;
     }
 
