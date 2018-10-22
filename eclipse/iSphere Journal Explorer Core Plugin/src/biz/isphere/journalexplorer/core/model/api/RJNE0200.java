@@ -409,11 +409,15 @@ public class RJNE0200 {
         Object[] tResult = getEntryHeaderData();
         Date tTimestamp = dateTimeConverter.convert((byte[])tResult[7], "*DTS");
 
-        Calendar calendar = GregorianCalendar.getInstance(timeZone);
-        calendar.setTime(tTimestamp);
-        int offsetToGMT = (calendar.get(Calendar.ZONE_OFFSET) + calendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
-        calendar.add(Calendar.MINUTE, offsetToGMT * -1);
-        tTimestamp = calendar.getTime();
+        Calendar remoteCalendar = GregorianCalendar.getInstance(timeZone);
+        Calendar localCalendar = GregorianCalendar.getInstance();
+        int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+        int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+        int offsetMinutes = localOffset2GMT - remoteOffset2GMT;
+
+        remoteCalendar.setTime(tTimestamp);
+        remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
+        tTimestamp = remoteCalendar.getTime();
 
         return tTimestamp;
     }
