@@ -73,7 +73,7 @@ public class JournalDAO {
         AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
 
-        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR3");
+        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR5");
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;

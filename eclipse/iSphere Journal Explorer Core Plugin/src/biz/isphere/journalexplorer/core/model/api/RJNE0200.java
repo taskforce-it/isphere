@@ -444,14 +444,14 @@ public class RJNE0200 {
         byte[] threadId = new byte[8];
         Arrays.fill(threadId, (byte)0x0);
         BigInteger threadIdentifier = (BigInteger)tResult[8];
-        if (!threadIdentifier.equals(BigInteger.ZERO)) {
-            byte[] threadBytes = threadIdentifier.toByteArray();
-            int offset = threadId.length - threadBytes.length;
-            System.arraycopy(threadBytes, 0, threadId, offset, threadBytes.length);
-            return ByteHelper.getHexString(threadId);
-        } else {
-            return OMITTED_STRING;
-        }
+        // if (!threadIdentifier.equals(BigInteger.ZERO)) {
+        byte[] threadBytes = threadIdentifier.toByteArray();
+        int offset = threadId.length - threadBytes.length;
+        System.arraycopy(threadBytes, 0, threadId, offset, threadBytes.length);
+        return ByteHelper.getHexString(threadId);
+        // } else {
+        // return OMITTED_STRING;
+        // }
     }
 
     /**
@@ -525,7 +525,8 @@ public class RJNE0200 {
         if (tResult != null) {
             return trimmed(tResult[0]);
         } else {
-            return OMITTED_STRING;
+            // return OMITTED_STRING;
+            return "";
         }
     }
 
@@ -558,7 +559,8 @@ public class RJNE0200 {
             }
             return buffer.toString();
         } else {
-            return OMITTED_STRING;
+            // return OMITTED_STRING;
+            return "";
         }
     }
 
@@ -669,7 +671,8 @@ public class RJNE0200 {
             } else if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
                 remoteAddress = getIPv6Address(getRemoteAddressBytes());
             } else {
-                remoteAddress = OMITTED_STRING; //$NON-NLS-1$
+                // remoteAddress = OMITTED_STRING;
+                remoteAddress = "";
             }
         }
 
@@ -1180,7 +1183,8 @@ public class RJNE0200 {
         if (isLogicalFile()) {
             return "1";
         } else {
-            return "0";
+            // return "0";
+            return "";
         }
     }
 
