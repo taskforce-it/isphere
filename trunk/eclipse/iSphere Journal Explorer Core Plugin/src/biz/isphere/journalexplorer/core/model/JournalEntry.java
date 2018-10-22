@@ -931,11 +931,11 @@ public class JournalEntry {
     public String getAddressFamilyText() {
         if (addressFamilyText == null) {
             if (ADDRESS_FAMILY_UNKNOWN.equals(addressFamily)) {
-                addressFamilyText = "-/-";
+                addressFamilyText = "";
             } else if (ADDRESS_FAMILY_IPV4.equals(addressFamily)) {
-                addressFamilyText = "IPv4 (" + addressFamily + ")";
+                addressFamilyText = "IPv4";
             } else if (ADDRESS_FAMILY_IPV6.equals(addressFamily)) {
-                addressFamilyText = "IPv6 (" + addressFamily + ")";
+                addressFamilyText = "IPv6";
             } else {
                 addressFamilyText = addressFamily;
             }
@@ -959,6 +959,14 @@ public class JournalEntry {
      */
     public int getRemotePort() {
         return remotePort;
+    }
+
+    public String getRemotePortText() {
+        if (remotePort > 0) {
+            return Integer.toString(remotePort);
+        } else {
+            return "";
+        }
     }
 
     public void setRemotePort(int remotePort) {
@@ -1030,7 +1038,8 @@ public class JournalEntry {
     }
 
     /**
-     * Returns the 'OutputFile Type'.
+     * Returns the 'File type indicator' that indicates the type of object
+     * associated with this entry. ('0' is physical, '1' is logical)
      * <p>
      * Date type in journal output file: CHAR(1)
      * <p>
@@ -1050,9 +1059,9 @@ public class JournalEntry {
     public String getFileTypeIndicatorText() {
         if (fileTypeIndicatorText == null) {
             if ("0".equals(fileTypeIndicator)) {
-                fileTypeIndicatorText = "PF (" + fileTypeIndicator + ")";
+                fileTypeIndicatorText = "PF";
             } else if ("1".equals(fileTypeIndicator)) {
-                fileTypeIndicatorText = "LF (" + fileTypeIndicator + ")";
+                fileTypeIndicatorText = "LF";
             } else {
                 fileTypeIndicatorText = fileTypeIndicator;
             }
@@ -1246,7 +1255,7 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOADF.equals(name)) {
             return getAddressFamilyText();
         } else if (ColumnsDAO.JORPORT.equals(name)) {
-            return Integer.toString(getRemotePort());
+            return getRemotePortText();
         } else if (ColumnsDAO.JORADR.equals(name)) {
             return getRemoteAddress();
         } else if (ColumnsDAO.JOLUW.equals(name)) {
