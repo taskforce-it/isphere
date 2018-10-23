@@ -18,12 +18,9 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 public abstract class EditSqlAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_EDIT_SQL;
-    private Shell shell;
 
     public EditSqlAction(Shell shell) {
         super("Edit SQL", SWT.TOGGLE);
-
-        this.shell = shell;
 
         setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }

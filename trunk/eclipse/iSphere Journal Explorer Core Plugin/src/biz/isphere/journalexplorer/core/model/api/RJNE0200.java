@@ -58,10 +58,6 @@ public class RJNE0200 {
     private static final String ADDRESS_FAMILY_IPV4 = "4"; //$NON-NLS-1$
     private static final String ADDRESS_FAMILY_IPV6 = "6"; //$NON-NLS-1$
 
-    private static final String OMITTED_STRING = "*OMITTED"; //$NON-NLS-1$
-    private static final Integer OMITTED_INTEGER = new Integer("0"); //$NON-NLS-1$
-    private static final BigInteger OMITTED_BIG_INTEGER = BigInteger.ZERO; //$NON-NLS-1$
-
     private static final int RECEIVER_LEN = 1024 * 32; // 32 KB
     private static final String FORMAT_NAME = "RJNE0200"; //$NON-NLS-1$
     private static final int ERROR_CODE = 0;
@@ -480,12 +476,7 @@ public class RJNE0200 {
      */
     public BigInteger getSystemSequenceNumber() {
         Object[] tResult = getEntryHeaderData();
-        BigInteger systemSequenceNumber = (BigInteger)tResult[9];
-        if (!systemSequenceNumber.equals(BigInteger.ZERO)) {
-            return (BigInteger)tResult[9];
-        } else {
-            return OMITTED_BIG_INTEGER;
-        }
+        return (BigInteger)tResult[9];
     }
 
     /**
@@ -601,11 +592,7 @@ public class RJNE0200 {
     public Integer getRemotePort() {
         Object[] tResult = getEntryHeaderData();
         Integer remotePort = (Integer)tResult[13];
-        if (remotePort > 0) {
-            return remotePort;
-        } else {
-            return OMITTED_INTEGER;
-        }
+        return remotePort;
     }
 
     /**
@@ -640,12 +627,8 @@ public class RJNE0200 {
      */
     public long getProgramLibraryASPNumber() {
         Object[] tResult = getEntryHeaderData();
-        Integer remotePort = (Integer)tResult[15];
-        if (remotePort > 0) {
-            return remotePort.longValue();
-        } else {
-            return OMITTED_INTEGER.longValue();
-        }
+        Integer programLibraryASP = (Integer)tResult[15];
+        return programLibraryASP.longValue();
     }
 
     /**
