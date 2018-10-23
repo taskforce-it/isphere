@@ -61,8 +61,7 @@ public class QjoRetrieveJournalInformation {
         RJRN0100 rjrn0100 = new RJRN0100(system, bufferSize);
 
         if (retrieveJournalEntries(rjrn0100.getProgramParameters(jJrnInfToRtv))) {
-            System.out.println("Got it!");
-            System.out.println("Attached receiver: " + rjrn0100.getAttachedReceiverLibraryName() + "/" + rjrn0100.getAttachedReceiverName());
+            // just fine.
         } else {
             rjrn0100 = null;
         }
