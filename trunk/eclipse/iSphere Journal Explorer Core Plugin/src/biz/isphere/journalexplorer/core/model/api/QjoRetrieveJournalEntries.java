@@ -64,10 +64,8 @@ public class QjoRetrieveJournalEntries {
      */
     public RJNE0200 execute() throws Exception {
 
-        RJRN0100 rjrn0100 = retrieveJournalInformation(jrneToRtv.getJournal(), jrneToRtv.getLibrary());
-
         int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
-        RJNE0200 tJournalEntries = new RJNE0200(system, rjrn0100, bufferSize);
+        RJNE0200 tJournalEntries = new RJNE0200(system, bufferSize);
 
         if (retrieveJournalEntries(tJournalEntries.getProgramParameters(jrneToRtv))) {
             if (tJournalEntries.moreEntriesAvailable()) {

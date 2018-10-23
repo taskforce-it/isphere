@@ -69,11 +69,9 @@ public class RJNE0200 {
     private int bufferSize;
     private DateTimeConverter dateTimeConverter;
     private DynamicRecordFormatsStore store;
-    private TimeZone timeZone;
+    private Calendar remoteCalendar;
+    private int offsetMinutes;
     private ProgramParameter[] parameterList;
-
-    // Cached journal information
-    RJRN0100 rjrn0100 = null;
 
     // Cached data structures
     private AS400Structure headerStructure = null;
@@ -113,21 +111,26 @@ public class RJNE0200 {
     private String currentReceiverLibraryASPDeviceName;
     private int currentReceiverLibraryASPNumber;
 
-    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100) throws Exception {
-        this(aSystem, aRJRN0100, RECEIVER_LEN);
+    public RJNE0200(AS400 aSystem) throws Exception {
+        this(aSystem, RECEIVER_LEN);
     }
 
-    public RJNE0200(AS400 aSystem, RJRN0100 aRJRN0100, int aBufferSize) throws Exception {
+    public RJNE0200(AS400 aSystem, int aBufferSize) throws Exception {
 
         if ((aBufferSize % 16) != 0) {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
 
-        rjrn0100 = aRJRN0100;
         bufferSize = aBufferSize;
         dateTimeConverter = new DateTimeConverter(aSystem);
-        timeZone = DateTimeConverter.timeZoneForSystem(aSystem);
         store = new DynamicRecordFormatsStore(aSystem);
+
+        TimeZone timeZone = DateTimeConverter.timeZoneForSystem(aSystem);
+        remoteCalendar = GregorianCalendar.getInstance(timeZone);
+        Calendar localCalendar = GregorianCalendar.getInstance();
+        int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+        int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+        offsetMinutes = localOffset2GMT - remoteOffset2GMT;
 
         resetReader();
     }
@@ -403,23 +406,25 @@ public class RJNE0200 {
      * *TYPE3+: JOTSTP, TIMESTAMP(26)<br>
      * *TYPE2-: JODATE, CHAR(6) and JOTIME, ZONED(6,0)
      * 
-     * @return
+     * @return date and time the journal entry was added to the receiver
      */
     public Date getTimestamp() throws Exception {
+
         Object[] tResult = getEntryHeaderData();
         Date tTimestamp = dateTimeConverter.convert((byte[])tResult[7], "*DTS");
 
-        Calendar remoteCalendar = GregorianCalendar.getInstance(timeZone);
-        Calendar localCalendar = GregorianCalendar.getInstance();
-        int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
-        int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
-        int offsetMinutes = localOffset2GMT - remoteOffset2GMT;
-
-        remoteCalendar.setTime(tTimestamp);
-        remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
-        tTimestamp = remoteCalendar.getTime();
+        tTimestamp = convertToLocalTimeZone(tTimestamp);
 
         return tTimestamp;
+    }
+
+    private Date convertToLocalTimeZone(Date timestamp) {
+
+        remoteCalendar.setTime(timestamp);
+        remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
+        timestamp = remoteCalendar.getTime();
+
+        return timestamp;
     }
 
     /**
