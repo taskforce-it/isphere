@@ -694,8 +694,8 @@ public class JrneToRtv {
         StringBuilder buffer = new StringBuilder();
 
         Collection<RetrieveCriterion> values = selectionCriteria.values();
-        for (Iterator iterator = values.iterator(); iterator.hasNext();) {
-            RetrieveCriterion retrieveCriterion = (RetrieveCriterion)iterator.next();
+        for (Iterator<RetrieveCriterion> iterator = values.iterator(); iterator.hasNext();) {
+            RetrieveCriterion retrieveCriterion = iterator.next();
 
             if (buffer.length() != 0) {
                 buffer.append(", ");
