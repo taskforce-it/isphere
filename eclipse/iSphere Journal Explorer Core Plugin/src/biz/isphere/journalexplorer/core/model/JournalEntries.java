@@ -13,8 +13,6 @@ import java.util.List;
 
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
-import com.ibm.as400.access.AS400Message;
-
 public class JournalEntries {
 
     private List<JournalEntry> journalEntries;

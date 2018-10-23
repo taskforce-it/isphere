@@ -45,7 +45,6 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer implements ISelectionChangedListener,
     ISelectionProvider, IPropertyChangeListener {
 
-    private String connectionName;
     private JournaledObject journaledObject;
     private Exception dataLoadException;
 
@@ -53,7 +52,6 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         super(parent, journaledObject.getQualifiedName());
 
         this.journaledObject = journaledObject;
-        this.connectionName = journaledObject.getConnectionName();
 
         Preferences.getInstance().addPropertyChangeListener(this);
 

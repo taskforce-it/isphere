@@ -87,15 +87,6 @@ public class QjoRetrieveJournalEntries {
         return tJournalEntries;
     }
 
-    private RJRN0100 retrieveJournalInformation(String journal, String library) throws Exception {
-
-        JrnInfToRtv jrnInfToRtv = new JrnInfToRtv(library, journal);
-        QjoRetrieveJournalInformation qjoRetrieveJournalInformation = new QjoRetrieveJournalInformation(system, jrnInfToRtv);
-        RJRN0100 rjrn0100 = qjoRetrieveJournalInformation.execute();
-
-        return rjrn0100;
-    }
-
     /**
      * Returns the error messages on an API error.
      * 

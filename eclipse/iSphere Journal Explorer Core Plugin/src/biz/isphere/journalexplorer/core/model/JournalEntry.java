@@ -1298,10 +1298,6 @@ public class JournalEntry {
         return bin8Formatter.format(unsignedBin8Value);
     }
 
-    private String toString(long longValue) {
-        return Long.toString(longValue);
-    }
-
     private String toStringNestedCommitLevel(long longValue) {
         return nestedCommitLevelFormatter.format(longValue);
     }
