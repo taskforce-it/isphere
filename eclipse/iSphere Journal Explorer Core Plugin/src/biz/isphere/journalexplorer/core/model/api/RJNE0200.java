@@ -59,6 +59,17 @@ public class RJNE0200 {
     private static final String ADDRESS_FAMILY_IPV4 = "4"; //$NON-NLS-1$
     private static final String ADDRESS_FAMILY_IPV6 = "6"; //$NON-NLS-1$
 
+    public static final String OBJECT_TYPE_DIRECTORY = "*DIR"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_DATA_AREA = "*DTAARA"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_DATA_QUEUE = "*DTAQ"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_FILE = "*FILE"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_JOURNAL_RECEIVER = "*JRNRCV"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_LIBRARY = "*LIB"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_MEMBER = "*QDDS"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_MEMBER_ACCESS_PATH = "*QDDSI"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_STREAM_FILE = "*STMF"; //$NON-NLS-1$
+    public static final String OBJECT_TYPE_SYMBOLIC_LINK = "*SYMLNK"; //$NON-NLS-1$
+
     private static final int RECEIVER_LEN = 1024 * 32; // 32 KB
     private static final String FORMAT_NAME = "RJNE0200"; //$NON-NLS-1$
     private static final int ERROR_CODE = 0;
@@ -1172,10 +1183,13 @@ public class RJNE0200 {
      * @return file type indicator
      */
     public String getFileTypeIndicator() {
-        if (isLogicalFile()) {
-            return "1";
+        if (OBJECT_TYPE_FILE.equals(getObjectType())) {
+            if (isLogicalFile()) {
+                return "L";
+            } else {
+                return "P";
+            }
         } else {
-            // return "0";
             return "";
         }
     }
