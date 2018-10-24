@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import biz.isphere.base.internal.ByteHelper;
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -121,7 +122,7 @@ public class RJNE0200 {
         dateTimeConverter = new DateTimeConverter(aSystem);
         store = new DynamicRecordFormatsStore(aSystem);
 
-        TimeZone timeZone = DateTimeConverter.timeZoneForSystem(aSystem);
+        TimeZone timeZone = IBMiHelper.timeZoneForSystem(aSystem);
         remoteCalendar = GregorianCalendar.getInstance(timeZone);
         Calendar localCalendar = GregorianCalendar.getInstance();
         int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
@@ -416,9 +417,12 @@ public class RJNE0200 {
 
     private Date convertToLocalTimeZone(Date timestamp) {
 
-        remoteCalendar.setTime(timestamp);
-        remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
-        timestamp = remoteCalendar.getTime();
+        if (offsetMinutes >= 0) {
+            remoteCalendar.clear();
+            remoteCalendar.setTime(timestamp);
+            remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
+            timestamp = remoteCalendar.getTime();
+        }
 
         return timestamp;
     }
