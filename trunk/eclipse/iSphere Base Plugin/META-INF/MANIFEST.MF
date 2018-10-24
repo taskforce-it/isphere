@@ -8,7 +8,8 @@ Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ com.ibm.etools.iseries.toolbox
 Export-Package: biz.isphere.base.comparators,
  biz.isphere.base.internal,
  biz.isphere.base.jface.dialogs,
