@@ -28,7 +28,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 
+import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -49,6 +51,9 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.core"; //$NON-NLS-1$
+
+    // WDSCi 7.0 = Eclipse 3.2
+    private static final Version WDSCI70 = new Version(3, 2, 0);
 
     private static final String MIN_SERVER_VERSION = "3.5.0"; //$NON-NLS-1$
 
@@ -461,6 +466,18 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     public static void setSearchArgumentsListEditorProvider(ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider) {
         ISpherePlugin.searchArgumentsListEditorProvider = searchArgumentsListEditorProvider;
+    }
+
+    public boolean isWDSCiDevelomentEnvironment() {
+
+        Version platformVersion = PluginCheck.getPlatformVersion();
+        if (platformVersion.getMajor() <= WDSCI70.getMajor()) {
+            if (platformVersion.getMinor() <= WDSCI70.getMinor()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public String getIBMiRelease(AS400 system) {
