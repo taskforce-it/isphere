@@ -483,7 +483,7 @@ public class JournalEntry {
     }
 
     public void setMemberName(String memberName) {
-        this.memberName = memberName.trim();
+        this.memberName = getValueChecked(memberName);
         this.qualifiedObjectName = null;
     }
 
@@ -1329,6 +1329,13 @@ public class JournalEntry {
             timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
         }
         return timeFormatter;
+    }
+
+    private String getValueChecked(String value) {
+        if (value != null) {
+            return value.trim();
+        }
+        return "";
     }
 
     private String toString(boolean isTrue) {
