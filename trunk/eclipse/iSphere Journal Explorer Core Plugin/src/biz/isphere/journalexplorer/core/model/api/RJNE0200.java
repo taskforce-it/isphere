@@ -79,6 +79,7 @@ public class RJNE0200 {
     private DynamicRecordFormatsStore store;
     private Calendar remoteCalendar;
     private int offsetMinutes;
+    private boolean isWDSCi;
     private ProgramParameter[] parameterList;
 
     // Cached data structures
@@ -139,6 +140,8 @@ public class RJNE0200 {
         int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
         int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
         offsetMinutes = localOffset2GMT - remoteOffset2GMT;
+
+        isWDSCi = ISpherePlugin.getDefault().isWDSCiDevelomentEnvironment();
 
         resetReader();
     }
@@ -427,6 +430,16 @@ public class RJNE0200 {
     }
 
     private Date convertToLocalTimeZone(Date timestamp) {
+
+        /*
+         * Do not convert when the IDE is WDSCi 7.0. In this case the IBM
+         * DateTimeConverter did not return the timestamp with the timezone of
+         * the IBM i, but with the local timezone of the PC client.
+         */
+
+        if (isWDSCi) {
+            return timestamp;
+        }
 
         if (offsetMinutes >= 0) {
             remoteCalendar.clear();
