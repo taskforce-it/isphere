@@ -598,6 +598,10 @@ public class JrneToRtv {
 
     private void addFileCriterions() {
 
+        if (fileCriterions.size() == 0) {
+            return;
+        }
+
         RetrieveKey rtvKey = RetrieveKey.FILE;
 
         int arraySize = fileCriterions.size() * 3 + 1;
