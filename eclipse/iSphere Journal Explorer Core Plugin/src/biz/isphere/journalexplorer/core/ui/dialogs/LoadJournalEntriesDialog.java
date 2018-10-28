@@ -41,15 +41,13 @@ public class LoadJournalEntriesDialog extends XDialog {
     private IDateEdit endingDateDateTime;
     private ITimeEdit endingTimeDateTime;
 
-    private Date startDate;
-    private Date endDate;
-    private boolean recordsOnly;
-
     private Preferences preferences;
     private Button radioBtnDefault;
     private Button radioBtnToday;
     private Button radioBtnYesterday;
     private Button chkboxRecordsOnly;
+
+    private SelectionCriterias selectionCriterias;
 
     public LoadJournalEntriesDialog(Shell parentShell) {
         super(parentShell);
@@ -142,34 +140,27 @@ public class LoadJournalEntriesDialog extends XDialog {
     @Override
     protected void okPressed() {
 
+        selectionCriterias = new SelectionCriterias();
+
         Calendar calendar;
 
         calendar = getTimestamp(startingDateDateTime, startingTimeDateTime);
         preferences.setStartingDate(calendar);
-        startDate = calendar.getTime();
+        selectionCriterias.setStartDate(calendar.getTime());
 
         calendar = getTimestamp(endingDateDateTime, endingTimeDateTime);
         preferences.setEndingDate(calendar);
-        endDate = calendar.getTime();
+        selectionCriterias.setEndDate(calendar.getTime());
 
-        recordsOnly = chkboxRecordsOnly.getSelection();
+        boolean recordsOnly = chkboxRecordsOnly.getSelection();
         preferences.setRecordsOnly(recordsOnly);
+        selectionCriterias.setRecordsOnly(recordsOnly);
 
         super.okPressed();
     }
 
-    public Date getStartDate() {
-
-        return startDate;
-    }
-
-    public Date getEndDate() {
-
-        return endDate;
-    }
-
-    public boolean isRecordsOnly() {
-        return recordsOnly;
+    public SelectionCriterias getSelectionCriterias() {
+        return selectionCriterias;
     }
 
     private Calendar getTimestamp(IDateEdit startingDateDate, ITimeEdit startingDateTime) {
@@ -328,5 +319,56 @@ public class LoadJournalEntriesDialog extends XDialog {
             }
         }
 
+    }
+
+    public class SelectionCriterias {
+
+        private Date startDate;
+        private Date endDate;
+        private boolean recordsOnly;
+        int maxItemsToRetrieve;
+
+        public SelectionCriterias() {
+            this(null, null, false, Preferences.getInstance().getMaximumNumberOfRowsToFetch());
+        }
+
+        public SelectionCriterias(Date startDate, Date endDate, boolean recordsOnly, int maxItemsToRetrieve) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.recordsOnly = recordsOnly;
+            this.maxItemsToRetrieve = maxItemsToRetrieve;
+        }
+
+        public Date getStartDate() {
+            return startDate;
+        }
+
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
+        }
+
+        public Date getEndDate() {
+            return endDate;
+        }
+
+        public void setEndDate(Date endDate) {
+            this.endDate = endDate;
+        }
+
+        public boolean isRecordsOnly() {
+            return recordsOnly;
+        }
+
+        public void setRecordsOnly(boolean recordsOnly) {
+            this.recordsOnly = recordsOnly;
+        }
+
+        public int getMaxItemsToRetrieve() {
+            return maxItemsToRetrieve;
+        }
+
+        public void setMaxItemsToRetrieve(int maxItemsToRetrieve) {
+            this.maxItemsToRetrieve = maxItemsToRetrieve;
+        }
     }
 }

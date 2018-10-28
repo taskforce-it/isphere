@@ -46,8 +46,8 @@ public class QjoRetrieveJournalEntries {
 
     private List<AS400Message> messages;
 
-    public QjoRetrieveJournalEntries(AS400 aSystem, JrneToRtv aJrneToRtv) {
-        system = aSystem;
+    public QjoRetrieveJournalEntries(JrneToRtv aJrneToRtv) {
+        system = aJrneToRtv.getSystem();
         jrneToRtv = aJrneToRtv;
         maxNumEntries = aJrneToRtv.getNbrEnt();
 

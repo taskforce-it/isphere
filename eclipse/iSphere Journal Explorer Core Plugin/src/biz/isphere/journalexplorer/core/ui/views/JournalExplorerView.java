@@ -45,7 +45,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
+import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
@@ -175,13 +175,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     }
 
-    public void createJournalTab(JournaledObject journaledObject) {
+    public void createJournalTab(JrneToRtv jrneToRtv) {
 
         JournalEntriesViewerForRetrievedJournalEntries journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntries(tabs, journaledObject);
+            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntries(tabs, jrneToRtv);
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);

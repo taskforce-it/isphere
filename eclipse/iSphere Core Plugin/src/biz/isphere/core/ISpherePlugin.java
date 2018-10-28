@@ -480,6 +480,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
         return false;
     }
 
+    public String getIBMiRelease(String connectionName) {
+        return getIBMiRelease(IBMiHostContributionsHandler.getSystem(connectionName));
+    }
+
     public String getIBMiRelease(AS400 system) {
 
         try {

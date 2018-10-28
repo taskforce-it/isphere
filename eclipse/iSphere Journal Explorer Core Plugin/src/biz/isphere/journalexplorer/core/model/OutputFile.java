@@ -77,7 +77,7 @@ public class OutputFile {
     }
 
     public String getQualifiedName() {
-        return QualifiedName.getMemberName(connectionName, outFileLibrary, outFileName, outMemberName);
+        return QualifiedName.getMemberName(outFileLibrary, outFileName, outMemberName);
     }
 
     @Override

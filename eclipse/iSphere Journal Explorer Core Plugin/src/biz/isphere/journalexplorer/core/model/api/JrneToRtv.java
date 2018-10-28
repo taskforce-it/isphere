@@ -11,10 +11,8 @@ package biz.isphere.journalexplorer.core.model.api;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,9 +21,13 @@ import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
+import biz.isphere.journalexplorer.core.model.shared.Journal;
 
+import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Structure;
@@ -64,8 +66,7 @@ public class JrneToRtv {
     public static final String RCVRNG_CURCHAIN = "*CURCHAIN";
     public static final String NULLINDLEN_VARLEN = "*VARLEN";
 
-    private String journal;
-    private String library;
+    private Journal journal;
     private Map<RetrieveKey, RetrieveCriterion> selectionCriteria;
     private ArrayList<AS400DataType> structure = null;
     private ArrayList<Object> data = null;
@@ -74,9 +75,8 @@ public class JrneToRtv {
 
     private List<FileCriterion> fileCriterions;
 
-    public JrneToRtv(String aLibrary, String aJournal) {
+    public JrneToRtv(Journal aJournal) {
         journal = aJournal;
-        library = aLibrary;
         selectionCriteria = new HashMap<RetrieveKey, RetrieveCriterion>();
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
         fileCriterions = new LinkedList<FileCriterion>();
@@ -100,12 +100,24 @@ public class JrneToRtv {
         return -1; // default: *VARLEN
     }
 
-    public String getJournal() {
-        return journal;
+    public String getJournalName() {
+        return journal.getName();
     }
 
-    public String getLibrary() {
-        return library;
+    public String getJournalLibraryName() {
+        return journal.getLibrary();
+    }
+
+    public String getConnectionName() {
+        return journal.getConnectionName();
+    }
+
+    public String getQualifiedJournalName() {
+        return QualifiedName.getName(journal.getLibrary(), journal.getName());
+    }
+
+    public AS400 getSystem() {
+        return IBMiHostContributionsHandler.getSystem(journal.getConnectionName());
     }
 
     public AS400DataType[] getStructure() {
@@ -220,11 +232,11 @@ public class JrneToRtv {
      * @param aStartingTimestamp - The time stamp of the first journal entry
      *        considered for retrieval
      */
-    public void setFromTime(Calendar aStartingTimestamp) {
+    public void setFromTime(Date aStartingTimestamp) {
         // TimeZone temp = aStartingTimestamp.getTimeZone();
         // Timestamp temp2 = new
         // Timestamp(aStartingTimestamp.getTime().getTime());
-        addSelectionCriterion(RetrieveKey.FROMTIME, new AS400Text(26), dateFormatter.format(aStartingTimestamp.getTime()) + ".000000");
+        addSelectionCriterion(RetrieveKey.FROMTIME, new AS400Text(26), dateFormatter.format(aStartingTimestamp) + ".000000");
         rmvSelectionCriterion(RetrieveKey.FROMENT);
     }
 
@@ -268,11 +280,11 @@ public class JrneToRtv {
      * @param anEndingTimestamp - The time stamp of the last journal entry
      *        considered for retrieval
      */
-    public void setToTime(Calendar anEndingTimestamp) {
+    public void setToTime(Date anEndingTimestamp) {
         // TimeZone temp = anEndingTimestamp.getTimeZone();
         // Timestamp temp2 = new
         // Timestamp(anEndingTimestamp.getTime().getTime());
-        addSelectionCriterion(RetrieveKey.TOTIME, new AS400Text(26), dateFormatter.format(anEndingTimestamp.getTime()) + ".000000");
+        addSelectionCriterion(RetrieveKey.TOTIME, new AS400Text(26), dateFormatter.format(anEndingTimestamp) + ".000000");
         rmvSelectionCriterion(RetrieveKey.TOENT);
     }
 
@@ -468,6 +480,17 @@ public class JrneToRtv {
         FileCriterion fileCriterion = new FileCriterion(file, library, member);
 
         fileCriterions.add(fileCriterion);
+    }
+
+    public String[] getFiles() {
+
+        List<String> files = new LinkedList<String>();
+
+        for (FileCriterion fileCriterion : fileCriterions) {
+            files.add(fileCriterion.getQualifiedName());
+        }
+
+        return files.toArray(new String[files.size()]);
     }
 
     /**
@@ -685,11 +708,9 @@ public class JrneToRtv {
         return StringHelper.getFixLengthLeading(aFormatMinimizedData, byteLength).replaceAll(" ", "0");
     }
 
-    private Calendar getTime(String aTimestamp) throws ParseException {
+    private Date getTime(String aTimestamp) throws ParseException {
         Date date = dateFormatter.parse(aTimestamp);
-        Calendar calendar = GregorianCalendar.getInstance();
-        calendar.setTime(date);
-        return calendar;
+        return date;
     }
 
     @Override

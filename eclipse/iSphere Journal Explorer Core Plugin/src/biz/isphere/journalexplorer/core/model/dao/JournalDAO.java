@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -24,10 +22,7 @@ import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.api.QjoRetrieveJournalEntries;
 import biz.isphere.journalexplorer.core.model.api.RJNE0200;
-import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * This class retrieves journal entries from the journal a given object is
@@ -35,15 +30,11 @@ import com.ibm.as400.access.AS400;
  */
 public class JournalDAO {
 
-    private JournaledObject journaledObject;
+    private JrneToRtv jrneToRtv;
 
-    public JournalDAO(JournaledObject journaledObject) throws Exception {
+    public JournalDAO(JrneToRtv jrneToRtv) throws Exception {
 
-        this.journaledObject = journaledObject;
-    }
-
-    public JournalEntries getJournalData() throws Exception {
-        return load();
+        this.jrneToRtv = jrneToRtv;
     }
 
     public JournalEntries load() throws Exception {
@@ -52,28 +43,9 @@ public class JournalDAO {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-        JrneToRtv tJrneToRtv = new JrneToRtv(journaledObject.getJournalLibraryName(), journaledObject.getJournalName());
+        QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(jrneToRtv);
 
-        String startingDate = DateTimeHelper.getTimestampFormattedISO(journaledObject.getStartingDate());
-        String endingDate = DateTimeHelper.getTimestampFormattedISO(journaledObject.getEndingDate());
-
-        tJrneToRtv.setFromTime(startingDate);
-        tJrneToRtv.setToTime(endingDate);
-
-        if (journaledObject.isRecordsOnly()) {
-            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_RCD);
-        } else {
-            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_ALL);
-        }
-
-        tJrneToRtv.setNullIndLen(JrneToRtv.NULLINDLEN_VARLEN);
-        tJrneToRtv.setNbrEnt(maxNumRows);
-        tJrneToRtv.setFile(journaledObject.getLibraryName(), journaledObject.getObjectName(), "*FIRST"); //$NON-NLS-1$
-
-        AS400 system = IBMiHostContributionsHandler.getSystem(journaledObject.getConnectionName());
-        QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(system, tJrneToRtv);
-
-        OutputFile outputFile = new OutputFile(journaledObject.getConnectionName(), "QSYS", "QADSPJR5");
+        OutputFile outputFile = new OutputFile(jrneToRtv.getConnectionName(), "QSYS", "QADSPJR5");
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
@@ -91,9 +63,9 @@ public class JournalDAO {
 
                         id++;
 
-                        JournalEntry journalEntry = new JournalEntry(outputFile); //$NON-NLS-1$ //$NON-NLS-2$
+                        JournalEntry journalEntry = new JournalEntry(outputFile);
 
-                        journalEntries.add(populateJournalEntry(journaledObject.getConnectionName(), id, rjne0200, journalEntry));
+                        journalEntries.add(populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry));
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.INSTANCE.prepareMetaData(journalEntry);

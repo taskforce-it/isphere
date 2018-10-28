@@ -27,8 +27,8 @@ import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedExcepti
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
+import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
-import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
@@ -45,19 +45,49 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJournalEntriesViewer implements ISelectionChangedListener,
     ISelectionProvider, IPropertyChangeListener {
 
-    private JournaledObject journaledObject;
+    private JrneToRtv jrneToRtv;
+
     private Exception dataLoadException;
 
-    public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JournaledObject journaledObject) {
-        super(parent, journaledObject.getQualifiedName());
+    public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JrneToRtv jrneToRtv) {
+        super(parent);
 
-        this.journaledObject = journaledObject;
+        this.jrneToRtv = jrneToRtv;
 
         Preferences.getInstance().addPropertyChangeListener(this);
 
         initializeComponents();
+    }
 
-        super.setText(journaledObject.getQualifiedName());
+    protected String getLabel() {
+
+        String[] files = jrneToRtv.getFiles();
+        if (files.length == 1) {
+            return jrneToRtv.getConnectionName() + ": " + files[0];
+        }
+
+        return jrneToRtv.getConnectionName() + ": " + jrneToRtv.getQualifiedJournalName();
+    }
+
+    protected String getTooltip() {
+
+        String[] files = jrneToRtv.getFiles();
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(Messages.bind(Messages.Title_Connection_A, jrneToRtv.getConnectionName()));
+        buffer.append("\n");
+
+        buffer.append(Messages.bind(Messages.Title_Journal_A, jrneToRtv.getQualifiedJournalName()));
+        buffer.append("\n");
+
+        if (files.length == 1) {
+            buffer.append(Messages.bind(Messages.Title_File_A, files[0]));
+        } else {
+            buffer.append(Messages.bind(Messages.Title_Files_A, "*SELECTION"));
+        }
+
+        return buffer.toString();
     }
 
     protected TableViewer createTableViewer(Composite container) {
@@ -88,13 +118,13 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
                 try {
 
-                    JournalDAO journalDAO = new JournalDAO(journaledObject);
-                    JournalEntries data = journalDAO.getJournalData();
+                    JournalDAO journalDAO = new JournalDAO(jrneToRtv);
+                    JournalEntries data = journalDAO.load();
 
                     IBMiMessage[] messages = data.getMessages();
                     if (messages.length != 0) {
                         if (isNoDataLoadedException(messages)) {
-                            throw new NoJournalEntriesLoadedException(journaledObject.getJournalLibraryName(), journaledObject.getJournalName());
+                            throw new NoJournalEntriesLoadedException(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName());
                         } else {
                             throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                         }

@@ -8,14 +8,16 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
-import com.ibm.as400.access.ObjectDescription;
+import biz.isphere.core.internal.ISeries;
+
+import com.ibm.as400.access.QSYSObjectPathName;
 
 public class JournaledFile extends JournaledObject {
 
     private String memberName;
 
-    public JournaledFile(String connectionName, ObjectDescription objectDescription, String memberName) {
-        super(connectionName, objectDescription);
+    public JournaledFile(String connectionName, String libraryName, String fileName, String memberName) {
+        super(connectionName, new QSYSObjectPathName(libraryName, fileName, getObjectType(ISeries.FILE)));
 
         this.memberName = memberName;
     }
@@ -24,15 +26,14 @@ public class JournaledFile extends JournaledObject {
         return memberName;
     }
 
-    @Override
-    public String toString() {
+    public String getQualifiedName() {
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(super.toString());
-        buffer.append(" ("); //$NON-NLS-1$
+        buffer.append(super.getQualifiedName());
+        buffer.append(" (");
         buffer.append(memberName);
-        buffer.append(")"); //$NON-NLS-1$
+        buffer.append(")");
 
         return buffer.toString();
     }

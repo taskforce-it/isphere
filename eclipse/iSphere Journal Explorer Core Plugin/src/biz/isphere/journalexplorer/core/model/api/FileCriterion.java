@@ -9,6 +9,7 @@
 package biz.isphere.journalexplorer.core.model.api;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 public class FileCriterion {
 
@@ -53,6 +54,10 @@ public class FileCriterion {
         buffer.append(padRight(member));
 
         return buffer.toString();
+    }
+
+    public String getQualifiedName() {
+        return QualifiedName.getMemberName(library, file, member);
     }
 
     private String padRight(String value) {

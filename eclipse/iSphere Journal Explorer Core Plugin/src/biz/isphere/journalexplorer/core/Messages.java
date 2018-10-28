@@ -83,6 +83,7 @@ public class Messages extends NLS {
     public static String Error_Object_A_B_is_not_journaled;
     public static String Error_Cannot_perform_action_OS400_must_be_at_least_at_level_A;
     public static String Error_Meta_data_not_available_Check_file_A_B;
+    public static String Error_The_following_objects_are_not_journaled_Continue_anyway;
 
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry;
 
@@ -145,6 +146,11 @@ public class Messages extends NLS {
     public static String Tooltip_JONVI;
     public static String Tooltip_JOESD;
     public static String Tooltip_SqlEditor_Text;
+
+    public static String Title_Connection_A;
+    public static String Title_Journal_A;
+    public static String Title_File_A;
+    public static String Title_Files_A;
 
     public static String Colors;
     public static String Enable_coloring;

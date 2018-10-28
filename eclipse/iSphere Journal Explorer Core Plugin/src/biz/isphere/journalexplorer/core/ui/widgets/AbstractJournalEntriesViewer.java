@@ -61,10 +61,9 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private Set<ISelectionChangedListener> selectionChangedListeners;
     boolean isSqlEditorVisible;
 
-    public AbstractJournalEntriesViewer(CTabFolder parent, String label) {
+    public AbstractJournalEntriesViewer(CTabFolder parent) {
         super(parent, SWT.NONE);
 
-        setText(label);
         setSqlEditorVisibility(false);
 
         this.container = new Composite(parent, SWT.NONE);
@@ -73,7 +72,14 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         Preferences.getInstance().addPropertyChangeListener(this);
     }
 
+    protected abstract String getLabel();
+
+    protected abstract String getTooltip();
+
     protected void initializeComponents() {
+
+        setText(getLabel());
+        setToolTipText(getTooltip());
 
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
