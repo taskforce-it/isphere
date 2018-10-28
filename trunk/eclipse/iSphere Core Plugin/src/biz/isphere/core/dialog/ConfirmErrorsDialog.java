@@ -10,7 +10,6 @@ package biz.isphere.core.dialog;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -33,6 +32,13 @@ import biz.isphere.base.swt.events.TableAutoSizeAdapter;
 import biz.isphere.core.ISpherePlugin;
 
 public class ConfirmErrorsDialog extends XDialog {
+
+    public static final int ERROR = 1;
+    public static final int INFORMATION = 2;
+    public static final int QUESTION = 3;
+    public static final int WARNING = 4;
+    public static final int CONFIRM = 5;
+    public static final int QUESTION_WITH_CANCEL = 6;
 
     private String dialogTitle;
     private Image dialogTitleImage;
@@ -60,11 +66,11 @@ public class ConfirmErrorsDialog extends XDialog {
     }
 
     public static boolean openQuestion(Shell parent, String title, String message, String... messageItems) {
-        return open(MessageDialog.QUESTION, parent, title, message, messageItems, SWT.NONE);
+        return open(QUESTION, parent, title, message, messageItems, SWT.NONE);
     }
 
     public static boolean openConfirm(Shell parent, String title, String message, String... messageItems) {
-        return open(MessageDialog.CONFIRM, parent, title, message, messageItems, SWT.NONE);
+        return open(CONFIRM, parent, title, message, messageItems, SWT.NONE);
     }
 
     private static boolean open(int kind, Shell parent, String title, String message, String[] messageItems, int style) {
@@ -82,21 +88,21 @@ public class ConfirmErrorsDialog extends XDialog {
         String[] dialogButtonLabels;
 
         switch (kind) {
-        case MessageDialog.ERROR:
-        case MessageDialog.INFORMATION:
-        case MessageDialog.WARNING:
+        case ERROR:
+        case INFORMATION:
+        case WARNING:
             dialogButtonLabels = new String[] { IDialogConstants.OK_LABEL };
             break;
 
-        case MessageDialog.CONFIRM:
+        case CONFIRM:
             dialogButtonLabels = new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL };
             break;
 
-        case MessageDialog.QUESTION:
+        case QUESTION:
             dialogButtonLabels = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL };
             break;
 
-        case MessageDialog.QUESTION_WITH_CANCEL:
+        case QUESTION_WITH_CANCEL:
             dialogButtonLabels = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
             break;
 
@@ -191,19 +197,19 @@ public class ConfirmErrorsDialog extends XDialog {
         Display display = getShell().getDisplay();
 
         switch (kind) {
-        case MessageDialog.ERROR:
+        case ERROR:
             image = display.getSystemImage(SWT.ICON_ERROR);
             break;
-        case MessageDialog.INFORMATION:
+        case INFORMATION:
             image = display.getSystemImage(SWT.ICON_INFORMATION);
             break;
-        case MessageDialog.WARNING:
+        case WARNING:
             image = display.getSystemImage(SWT.ICON_WARNING);
             break;
 
-        case MessageDialog.QUESTION:
-        case MessageDialog.CONFIRM:
-        case MessageDialog.QUESTION_WITH_CANCEL:
+        case QUESTION:
+        case CONFIRM:
+        case QUESTION_WITH_CANCEL:
             image = display.getSystemImage(SWT.ICON_QUESTION);
             break;
 
