@@ -6,6 +6,8 @@ Changelog: iSphere 3.5.1.r
  • Changed journal explorer to display all *TYPE5 fields when 
    retrieving journal entries directly from a journal.
  • Changed journal explorer to display JOJID as hex string.
+ • Changed journal to allow selecting multiple files when retrieving
+   journal entries.
  • Changed LPEX Task Tags preference page to sort the table of file
    extensions by name. 
  • Fixed NullPointerException in TimeEdit (WDSCi).
