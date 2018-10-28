@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
 
 package biz.isphere.journalexplorer.rse.handlers.contributions.extension.point;
 
-public interface IDisplayJournalEntriesContributions {
+public interface ISelectedFile {
 
-    /**
-     * Handles displaying of file journal entries.
-     * 
-     * @param selectedFile - List of selected files.
-     */
-    public void handleDisplayFileJournalEntries(ISelectedFile... selectedFile);
+    public String getConnectionName();
+
+    public String getLibrary();
+
+    public String getName();
+
+    public String getMember();
+
 }
