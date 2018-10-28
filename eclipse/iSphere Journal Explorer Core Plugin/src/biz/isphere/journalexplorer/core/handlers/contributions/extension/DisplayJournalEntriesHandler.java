@@ -36,9 +36,11 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
     private static final String MIN_OS_RELEASE = "V5R4M0"; //$NON-NLS-1$
 
-    LoadJournalEntriesDialog.SelectionCriterias selectionCriterias = null;
+    private LoadJournalEntriesDialog.SelectionCriterias selectionCriterias;
 
     public void handleDisplayFileJournalEntries(ISelectedFile... selectedFiles) {
+
+        selectionCriterias = null;
 
         if (selectedFiles.length == 0) {
             return;
