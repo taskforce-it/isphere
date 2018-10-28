@@ -57,8 +57,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
+    IPropertyChangeListener {
 
     private SelectionListener loadJournalEntriesSelectionListener;
     private OutputFile outputFile;
@@ -69,7 +69,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
     private SqlEditor sqlEditor;
 
     public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, outputFile.getQualifiedName());
+        super(parent);
 
         this.outputFile = outputFile;
         this.loadJournalEntriesSelectionListener = loadJournalEntriesSelectionListener;
@@ -79,6 +79,28 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         Preferences.getInstance().addPropertyChangeListener(this);
 
         initializeComponents();
+    }
+
+    protected String getLabel() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(outputFile.getConnectionName());
+        buffer.append(": ");
+        buffer.append(outputFile.getQualifiedName());
+
+        return buffer.toString();
+    }
+
+    protected String getTooltip() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(Messages.bind(Messages.Title_Connection_A, outputFile.getConnectionName()));
+        buffer.append("\n");
+        buffer.append(Messages.bind(Messages.Title_File_A, outputFile.getQualifiedName()));
+
+        return buffer.toString();
     }
 
     protected TableViewer createTableViewer(Composite container) {

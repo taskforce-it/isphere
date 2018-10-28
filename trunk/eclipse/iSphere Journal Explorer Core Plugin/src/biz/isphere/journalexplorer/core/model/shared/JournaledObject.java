@@ -8,13 +8,11 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
-import java.util.Date;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
-
-import biz.isphere.core.internal.DateTimeHelper;
-import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 public class JournaledObject {
 
@@ -22,35 +20,41 @@ public class JournaledObject {
     private ObjectDescription objectDescription;
 
     private boolean isJournaled;
-    private String journalName;
-    private String journalLibraryName;
-    private Date startingDate;
-    private Date endingDate;
-    private boolean recordsOnly;
+    private Journal journal;
 
-    public JournaledObject(String connectionName, ObjectDescription objectDescription) {
-
-        this.connectionName = connectionName;
-        this.objectDescription = objectDescription;
-
-        setJournalAttributes(objectDescription);
-        setStartingDate(DateTimeHelper.getStartOfDay().getTime());
-        setEndingDate(DateTimeHelper.getEndOfDay().getTime());
-        setRecordsOnly(true);
+    public JournaledObject(String connectionName, String libraryName, String objectName, String objectType) {
+        this(connectionName, new QSYSObjectPathName(libraryName, objectName, getObjectType(objectType)));
     }
 
-    private void setJournalAttributes(ObjectDescription objectDescription) {
+    protected JournaledObject(String connectionName, QSYSObjectPathName objectPathName) {
+
+        this.connectionName = connectionName;
+        this.objectDescription = new ObjectDescription(IBMiHostContributionsHandler.getSystem(connectionName), objectPathName.getPath());
+
+        setJournalAttributes(connectionName, objectDescription);
+    }
+
+    protected static String getObjectType(String objectType) {
+
+        if (objectType.startsWith("*")) {
+            return objectType.substring(1);
+        }
+
+        return objectType;
+    }
+
+    private void setJournalAttributes(String connectionName, ObjectDescription objectDescription) {
 
         try {
 
-            this.journalName = null;
-            this.journalLibraryName = null;
+            this.journal = null;
 
-            QSYSObjectPathName journal = new QSYSObjectPathName(objectDescription.getValueAsString(ObjectDescription.JOURNAL));
+            QSYSObjectPathName journalPathName = new QSYSObjectPathName(objectDescription.getValueAsString(ObjectDescription.JOURNAL));
             this.isJournaled = (Boolean)objectDescription.getValue(ObjectDescription.JOURNAL_STATUS);
             if (isJournaled) {
-                this.journalName = journal.getObjectName();
-                this.journalLibraryName = journal.getLibraryName();
+                String journalName = journalPathName.getObjectName();
+                String libraryName = journalPathName.getLibraryName();
+                journal = new Journal(connectionName, libraryName, journalName);
             }
 
         } catch (Throwable e) {
@@ -79,40 +83,16 @@ public class JournaledObject {
         }
     }
 
-    public String getJournalName() {
-        return journalName;
+    public Journal getJournal() {
+        return journal;
     }
 
-    public String getJournalLibraryName() {
-        return journalLibraryName;
+    public String getQualifiedJournalName() {
+        return QualifiedName.getName(connectionName, getJournal().getLibrary(), getJournal().getName());
     }
 
     public String getQualifiedName() {
         return QualifiedName.getName(connectionName, objectDescription.getLibrary(), objectDescription.getName());
-    }
-
-    public Date getStartingDate() {
-        return startingDate;
-    }
-
-    public void setStartingDate(Date startingDate) {
-        this.startingDate = startingDate;
-    }
-
-    public Date getEndingDate() {
-        return endingDate;
-    }
-
-    public void setEndingDate(Date endingDate) {
-        this.endingDate = endingDate;
-    }
-
-    public boolean isRecordsOnly() {
-        return recordsOnly;
-    }
-
-    public void setRecordsOnly(boolean recordsOnly) {
-        this.recordsOnly = recordsOnly;
     }
 
     @Override

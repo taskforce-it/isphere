@@ -160,7 +160,7 @@ public class RJNE0200 {
 
         setReceiverData(new byte[bufferSize]);
         setReceiverLength(bufferSize);
-        setJournal(aJrneToRtv.getJournal(), aJrneToRtv.getLibrary());
+        setJournal(aJrneToRtv.getJournalName(), aJrneToRtv.getJournalLibraryName());
         setFormatName(FORMAT_NAME);
         setJrneToRtv(aJrneToRtv);
         setErrorCode(ERROR_CODE);
