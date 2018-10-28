@@ -88,6 +88,8 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell());
             if (dialog.open() == LoadJournalEntriesDialog.OK) {
                 selectionCriterias = dialog.getSelectionCriterias();
+            } else {
+                return;
             }
         }
 
