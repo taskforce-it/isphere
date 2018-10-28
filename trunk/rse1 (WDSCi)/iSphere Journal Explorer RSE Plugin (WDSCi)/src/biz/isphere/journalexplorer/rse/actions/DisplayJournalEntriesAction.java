@@ -18,6 +18,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.rse.ISphereJournalExplorerRSEPlugin;
 import biz.isphere.journalexplorer.rse.Messages;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
 
 import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
@@ -49,7 +51,11 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
     @Override
     public void run() {
 
+        List<ISelectedFile> selectedFiles = new ArrayList<ISelectedFile>();
+
         for (DataElement dataElement : selectedObjectsList) {
+
+            ISelectedFile selectedFile = null;
 
             if (isMember(dataElement)) {
 
@@ -57,7 +63,8 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
                 String libraryName = ISeriesDataElementHelpers.getLibrary(dataElement);
                 String fileName = ISeriesDataElementHelpers.getFile(dataElement);
                 String memberName = ISeriesDataElementHelpers.getFile(dataElement);
-                DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
+
+                selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
 
             } else if (isFile(dataElement)) {
 
@@ -65,15 +72,23 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction impleme
                 String libraryName = ISeriesDataElementHelpers.getLibrary(dataElement);
                 String fileName = ISeriesDataElementHelpers.getName(dataElement);
                 String memberName = "*FIRST"; //$NON-NLS-1$
-                DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
 
+                selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
             }
+
+            if (selectedFile != null) {
+                selectedFiles.add(selectedFile);
+            }
+        }
+
+        if (!selectedFiles.isEmpty()) {
+            DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
         }
     }
 
     public boolean supportsSelection(IStructuredSelection structuredSelection) {
 
-        if (getObjectsFromSelection(structuredSelection) == 1) {
+        if (getObjectsFromSelection(structuredSelection) > 0) {
             return true;
         } else {
             return false;
