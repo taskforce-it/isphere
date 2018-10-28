@@ -8,7 +8,9 @@
 
 package biz.isphere.journalexplorer.rse.actions;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -18,6 +20,8 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile;
@@ -36,11 +40,15 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
+            List<ISelectedFile> selectedFiles = new ArrayList<ISelectedFile>();
+
             Iterator<?> iterator = structuredSelection.iterator();
 
             while (iterator.hasNext()) {
 
                 Object _object = iterator.next();
+
+                ISelectedFile selectedFile = null;
 
                 if (_object instanceof QSYSRemoteMember) {
 
@@ -49,7 +57,8 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String libraryName = member.getLibrary();
                     String fileName = member.getFile();
                     String memberName = member.getName();
-                    DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
+
+                    selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
 
                 } else if (_object instanceof QSYSRemotePhysicalFile) {
 
@@ -58,9 +67,17 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String libraryName = file.getLibrary();
                     String fileName = file.getName();
                     String memberName = "*FIRST"; //$NON-NLS-1$
-                    DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
 
+                    selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
                 }
+
+                if (selectedFile != null) {
+                    selectedFiles.add(selectedFile);
+                }
+            }
+
+            if (!selectedFiles.isEmpty()) {
+                DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
             }
         }
     }
