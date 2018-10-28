@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
 
 public class DisplayJournalEntriesHandler {
 
@@ -30,7 +31,7 @@ public class DisplayJournalEntriesHandler {
         return true;
     }
 
-    public static void handleDisplayFileJournalEntries(String connectionName, String libraryName, String fileName, String memberName) {
+    public static void handleDisplayFileJournalEntries(ISelectedFile... selectedFiles) {
 
         IDisplayJournalEntriesContributions factory = getContributionsFactory();
 
@@ -38,7 +39,7 @@ public class DisplayJournalEntriesHandler {
             return;
         }
 
-        factory.handleDisplayFileJournalEntries(connectionName, libraryName, fileName, memberName);
+        factory.handleDisplayFileJournalEntries(selectedFiles);
     }
 
     /**
