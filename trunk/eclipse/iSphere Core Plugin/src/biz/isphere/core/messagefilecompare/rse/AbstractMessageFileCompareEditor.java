@@ -458,7 +458,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
         tableAutoSizeAdapter.addResizableColumn(tblClmnLeftMessageText, 1);
         tableAutoSizeAdapter.addResizableColumn(tblClmnRightMessageText, 1);
-        compareArea.addControlListener(tableAutoSizeAdapter);
+        tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
     }
 
     private void createrFooterArea(Composite parent) {
