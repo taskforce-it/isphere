@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.base.swt.events.TableAutoSizeAdapter;
+import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.ISpherePlugin;
 
 public class ConfirmErrorsDialog extends XDialog {
@@ -167,7 +167,7 @@ public class ConfirmErrorsDialog extends XDialog {
         tableViewer.getTable().setLinesVisible(true);
 
         final TableColumn tblMessageItemText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-        TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
         tableAutoSizeAdapter.addResizableColumn(tblMessageItemText, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
     }

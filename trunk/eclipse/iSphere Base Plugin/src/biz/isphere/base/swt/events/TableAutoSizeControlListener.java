@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * 
  * @author Thomas Raddatz
  */
-public class TableAutoSizeAdapter extends ControlAdapter {
+public class TableAutoSizeControlListener extends ControlAdapter {
 
     /**
      * Reserves the space for a vertical scroll bar, keeping the column sizes
@@ -43,18 +43,18 @@ public class TableAutoSizeAdapter extends ControlAdapter {
 
     private boolean isResizing;
 
-    private final String WEIGHT = TableAutoSizeAdapter.class.getName() + "_WEIGHT";
+    private final String WEIGHT = TableAutoSizeControlListener.class.getName() + "_WEIGHT";
     private TableViewer tableViewer;
     private int vBarMode;
 
     private List<TableColumn> resizableTableColumns;
     private int totalColumnsWeight;
 
-    public TableAutoSizeAdapter(TableViewer tableParent) {
+    public TableAutoSizeControlListener(TableViewer tableParent) {
         this(tableParent, RESERVE_VBAR_SPACE);
     }
 
-    public TableAutoSizeAdapter(TableViewer tableParent, int vBarMode) {
+    public TableAutoSizeControlListener(TableViewer tableParent, int vBarMode) {
 
         this.isResizing = false;
 
