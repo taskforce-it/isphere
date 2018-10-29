@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import biz.isphere.base.swt.events.TableAutoSizeAdapter;
+import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
@@ -114,7 +114,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         table.getVerticalBar().setEnabled(true);
         table.getHorizontalBar().setEnabled(true);
 
-        TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
         tableAutoSizeAdapter.addResizableColumn(columnDescription.getColumn(), 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
 

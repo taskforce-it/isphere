@@ -56,7 +56,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.base.swt.events.TableAutoSizeAdapter;
+import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -455,7 +455,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
-        TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
         tableAutoSizeAdapter.addResizableColumn(tblClmnLeftMessageText, 1);
         tableAutoSizeAdapter.addResizableColumn(tblClmnRightMessageText, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
