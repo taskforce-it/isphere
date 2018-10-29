@@ -84,6 +84,11 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             objectsByJournal.remove(null);
         }
 
+        if (objectsByJournal.isEmpty()) {
+            MessageDialog.openInformation(getShell(), Messages.bind(Messages.Title_Connection_A, connectionName), Messages.Error_No_object_selected);
+            return;
+        }
+
         if (selectionCriterias == null) {
             LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell());
             if (dialog.open() == LoadJournalEntriesDialog.OK) {
