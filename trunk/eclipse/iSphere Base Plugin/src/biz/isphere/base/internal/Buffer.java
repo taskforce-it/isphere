@@ -13,6 +13,19 @@ import java.util.regex.Pattern;
 
 public final class Buffer {
 
+    /**
+     * Converts a size expression, such as "8kB" to an integer value.
+     * 
+     * @param expression - Size expression of a number and a size:
+     *        <p>
+     *        The possible size expressions are:
+     *        <ul>
+     *        <li>byte: 'b' or 'byte'</li>
+     *        <li>kilobyte: 'k', 'kb' or 'kByte'</li>
+     *        <li>megabyte: 'mb'</li>
+     *        </ul>
+     * @return integer value
+     */
     public static int size(String sizeExpression) {
 
         int value = -1;
