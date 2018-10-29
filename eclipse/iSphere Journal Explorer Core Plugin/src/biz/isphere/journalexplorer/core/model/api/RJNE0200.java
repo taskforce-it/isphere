@@ -224,6 +224,15 @@ public class RJNE0200 {
         }
     }
 
+    /**
+     * Returns the size of the receiver buffer.
+     * 
+     * @return size
+     */
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
     // ----------------------------------------------------
     // Header Information
     // ----------------------------------------------------
@@ -1712,13 +1721,15 @@ public class RJNE0200 {
         if (this.nullValueIndicatorsStructure == null) {
             AS400DataType[] structure;
             if (nullValueIndicatorsLength < 0) {
+                // Null indicators length specified as: *VARLEN
                 // @formatter:off formatter intentionally disabled
                 structure = new AS400DataType[] { 
                     new AS400Bin4(), // 0 Length
-                    new AS400ByteArray(8000) // 1 Null value indicators
+                    new AS400ByteArray(getNullValueIndicatorsLength()) // 1 Null value indicators
                 };
                 // @formatter:on
             } else {
+                // Null indicators length specified as: integer value
                 // @formatter:off formatter intentionally disabled
                 structure = new AS400DataType[] { 
                     new AS400ByteArray(nullValueIndicatorsLength) // 0 Null value indicators
@@ -1728,6 +1739,21 @@ public class RJNE0200 {
             this.nullValueIndicatorsStructure = new AS400Structure(structure);
         }
         return this.nullValueIndicatorsStructure;
+    }
+
+    private int getNullValueIndicatorsLength() {
+
+        int length = 0;
+
+        AS400Structure structure = new AS400Structure(new AS400DataType[] { new AS400Bin4() });
+
+        int nullValueIndicatorsStartPos = entryHeaderStartPos + getDspToThsJrnEntNullValInd();
+        Object[] data = (Object[])structure.toObject(getOutputData(), nullValueIndicatorsStartPos);
+        if (data != null && data.length >= 1) {
+            length = ((Integer)data[0]).intValue();
+        }
+
+        return length;
     }
 
     private AS400Structure getReceiverInformationStructure() {

@@ -11,18 +11,22 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -33,6 +37,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
+import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 /**
  * This widget is a viewer for the journal entries retrieved by the
@@ -47,7 +52,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
     private JrneToRtv jrneToRtv;
 
-    private Exception dataLoadException;
+    private TableViewer tableViewer;
 
     public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JrneToRtv jrneToRtv) {
         super(parent);
@@ -96,8 +101,9 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
             AbstractTypeViewerFactory factory = new Type5ViewerFactory();
 
-            TableViewer tableViewer = factory.createTableViewer(container);
+            tableViewer = factory.createTableViewer(container);
             tableViewer.addSelectionChangedListener(this);
+            tableViewer.getTable().setEnabled(false);
 
             return tableViewer;
 
@@ -108,33 +114,67 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         }
     }
 
-    public void openJournal() throws Exception {
+    public boolean isLoading() {
 
-        dataLoadException = null;
+        if (tableViewer.getTable().isEnabled()) {
+            return false;
+        }
 
-        Runnable loadJournalDataJob = new Runnable() {
+        return true;
+    }
 
-            public void run() {
+    public void openJournal(final JournalExplorerView view) throws Exception {
+
+        Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
+
+            public IStatus run(IProgressMonitor monitor) {
 
                 try {
 
                     JournalDAO journalDAO = new JournalDAO(jrneToRtv);
-                    JournalEntries data = journalDAO.load();
+                    final JournalEntries data = journalDAO.load();
+
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                        }
+                    });
 
                     IBMiMessage[] messages = data.getMessages();
                     if (messages.length != 0) {
-                        if (isNoDataLoadedException(messages)) {
+                        if (isBufferTooSmallException(messages)) {
+                            throw new BufferTooSmallException();
+                        } else if (isNoDataLoadedException(messages)) {
                             throw new NoJournalEntriesLoadedException(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName());
                         } else {
                             throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                         }
                     }
 
-                    setInputData(data);
-
                 } catch (Exception e) {
-                    dataLoadException = e;
+
+                    final Exception e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
+                        }
+                    });
+
                 }
+
+                return Status.OK_STATUS;
+            }
+
+            private boolean isBufferTooSmallException(IBMiMessage[] messages) {
+
+                for (IBMiMessage ibmiMessage : messages) {
+                    if (BufferTooSmallException.ID.equals(ibmiMessage.getID())) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             private boolean isNoDataLoadedException(IBMiMessage[] messages) {
@@ -150,10 +190,6 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
         };
 
-        BusyIndicator.showWhile(getDisplay(), loadJournalDataJob);
-
-        if (dataLoadException != null) {
-            throw dataLoadException;
-        }
+        loadJournalDataJob.schedule();
     }
 }
