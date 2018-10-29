@@ -195,12 +195,21 @@ public class JrneToRtv {
      *        considered for retrieval
      */
     public void setFromEnt(String aFromSequenceNumberSpecialValue) {
-        if (!FRMENT_FIRST.equals(aFromSequenceNumberSpecialValue)) {
-            throw new IllegalArgumentException(String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.",
-                RetrieveKey.FROMENT.getDescription()));
+        if (FRMENT_FIRST.equals(aFromSequenceNumberSpecialValue)) {
+            String temp = padRight(aFromSequenceNumberSpecialValue, 20);
+            addSelectionCriterion(RetrieveKey.FROMENT, new AS400Text(20), temp.replace(' ', '0'));
+            rmvSelectionCriterion(RetrieveKey.FROMTIME);
+        } else {
+            int fromSequenceNumber = IntHelper.tryParseInt(aFromSequenceNumberSpecialValue, -1);
+            if (fromSequenceNumber < 0) {
+                throw new IllegalArgumentException(String.format("Value for '%s' must be either '*FIRST' or an instance of Integer.",
+                    RetrieveKey.FROMENT.getDescription()));
+            } else {
+                String temp = padLeft(Integer.toString(fromSequenceNumber), 20);
+                addSelectionCriterion(RetrieveKey.FROMENT, new AS400Text(20), temp.replace(' ', '0'));
+                rmvSelectionCriterion(RetrieveKey.FROMTIME);
+            }
         }
-        String temp = padRight(aFromSequenceNumberSpecialValue, 20);
-        addSelectionCriterion(RetrieveKey.FROMENT, new AS400Text(20), temp.replace(' ', '0'));
     }
 
     /**
@@ -305,8 +314,7 @@ public class JrneToRtv {
     /**
      * Add retrieval criterion 06: Number of entries to retrieve.
      * <p>
-     * This indicates the 'max' number of entries to retrieve, not number of
-     * entries retrieved in this call.
+     * This indicates the 'max' number of entries to retrieve.
      * 
      * @param aNumberOfJournalEntries - The maximum number of journal entries
      *        that are requested to be retrieved
@@ -437,7 +445,7 @@ public class JrneToRtv {
     /**
      * Add retrieval criterion 15: Null value indicators length.
      * 
-     * @param aJournalEntryTypes
+     * @param nullIndLen - null indicators length
      */
     public void setNullIndLen(String nullIndLen) {
         RetrieveKey rtvKey = RetrieveKey.NULLINDLEN;
@@ -451,6 +459,15 @@ public class JrneToRtv {
         } else {
             addSelectionCriterion(rtvKey, new AS400Text(10), padLeftZero(nullIndLen, 10));
         }
+    }
+
+    /**
+     * Add retrieval criterion 15: Null value indicators length.
+     * 
+     * @param nullIndLen - null indicators length
+     */
+    public void setNullIndLen(int nullIndLen) {
+        setNullIndLen(Integer.toString(nullIndLen));
     }
 
     /**
