@@ -170,7 +170,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         Button btnSelectLeftMessageFile = WidgetFactory.createPushButton(leftHeaderArea);
         btnSelectLeftMessageFile.setToolTipText(Messages.Tooltip_Select_object);
-        btnSelectLeftMessageFile.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN));
+        btnSelectLeftMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectLeftMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -178,8 +178,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 String messageFileName = null;
                 if (getEditorInput().getLeftMessageFile() != null) {
                     connectionName = getEditorInput().getLeftMessageFile().getConnectionName();
-                    libraryName=getEditorInput().getLeftMessageFile().getLibrary();
-                    messageFileName=getEditorInput().getLeftMessageFile().getName();
+                    libraryName = getEditorInput().getLeftMessageFile().getLibrary();
+                    messageFileName = getEditorInput().getLeftMessageFile().getName();
                 }
                 RemoteObject messageFile = performSelectRemoteObject(connectionName, libraryName, messageFileName);
                 if (messageFile != null) {
@@ -203,7 +203,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         Button btnSelectRightMessageFile = WidgetFactory.createPushButton(rightHeaderArea);
         btnSelectRightMessageFile.setToolTipText(Messages.Tooltip_Select_object);
-        btnSelectRightMessageFile.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OPEN));
+        btnSelectRightMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectRightMessageFile.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
                 String connectionName = null;
@@ -211,8 +211,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 String messageFileName = null;
                 if (getEditorInput().getRightMessageFile() != null) {
                     connectionName = getEditorInput().getRightMessageFile().getConnectionName();
-                    libraryName=getEditorInput().getRightMessageFile().getLibrary();
-                    messageFileName=getEditorInput().getRightMessageFile().getName();
+                    libraryName = getEditorInput().getRightMessageFile().getLibrary();
+                    messageFileName = getEditorInput().getRightMessageFile().getName();
                 }
                 RemoteObject messageFile = performSelectRemoteObject(connectionName, libraryName, messageFileName);
                 if (messageFile != null) {
@@ -300,7 +300,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         filterData = new TableFilterData();
 
         btnCopyRight = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnCopyRight.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_RIGHT));
+        btnCopyRight.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage());
         btnCopyRight.setToolTipText(Messages.Tooltip_display_copy_from_left_to_right);
         btnCopyRight.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -312,7 +312,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         btnEqual = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnEqual.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_EQUAL));
+        btnEqual.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage());
         btnEqual.setToolTipText(Messages.Tooltip_display_equal_items);
         btnEqual.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -324,7 +324,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         btnNoCopy = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnNoCopy.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_NOT_EQUAL));
+        btnNoCopy.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage());
         btnNoCopy.setToolTipText(Messages.Tooltip_display_unequal_items);
         btnNoCopy.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -336,7 +336,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         });
 
         btnCopyLeft = WidgetFactory.createToggleButton(filterOptionsGroup, SWT.FLAT);
-        btnCopyLeft.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_LEFT));
+        btnCopyLeft.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage());
         btnCopyLeft.setToolTipText(Messages.Tooltip_display_copy_from_right_to_left);
         btnCopyLeft.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -466,12 +466,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         Composite footerArea = new Composite(parent, SWT.NONE);
         footerArea.setLayout(new GridLayout(1, false));
         footerArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-        // StatusBar statusBar = new StatusBar(footerArea, false);
-        //        statusMessage = statusBar.createStatusBarLabel(""); //$NON-NLS-1$
-        // statusBar.createStatusBarImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_FILTERED_ITEMS));
-        //        numFilteredItems = statusBar.createStatusBarLabel("", 50, SWT.CENTER); //$NON-NLS-1$
-
     }
 
     private GridLayout createGridLayoutNoBorder(int numColumns, boolean makeColumnsEqualWidth) {
@@ -721,7 +715,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             statusMessage = tableStatistics.toString();
             numFilteredItems = tableStatistics.getFilteredElements();
         }
-        
+
         updateStatusLine();
     }
 

@@ -14,6 +14,7 @@ Changelog: iSphere 3.5.1.r
  • Fixed Journal Explorer to handle and display date, time and
    timestamp fields as text fields to avoid timezone and daylight
    saving time adjustments.
+ • Fixed exception due to disposed images in message file compare editor.
 
 Changelog: iSphere 3.5.0.r
 --------------------------
