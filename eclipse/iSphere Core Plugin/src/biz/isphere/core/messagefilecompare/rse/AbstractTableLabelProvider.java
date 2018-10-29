@@ -38,10 +38,10 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
     public AbstractTableLabelProvider(TableViewer tableViewer, int columnIndex) {
 
-        this.copyToLeft = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_LEFT);
-        this.copyToRight = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_RIGHT);
-        this.copyNotEqual = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_NOT_EQUAL);
-        this.copyEqual = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COPY_EQUAL);
+        this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
+        this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
+        this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
+        this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
 
         if (useCompareStatusImagePainter()) {
             tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
