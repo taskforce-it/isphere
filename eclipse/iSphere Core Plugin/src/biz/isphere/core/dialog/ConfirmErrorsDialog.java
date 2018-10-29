@@ -169,7 +169,7 @@ public class ConfirmErrorsDialog extends XDialog {
         final TableColumn tblMessageItemText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
         tableAutoSizeAdapter.addResizableColumn(tblMessageItemText, 1);
-        viewerArea.addControlListener(tableAutoSizeAdapter);
+        tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
     }
 
     private void createMessageArea(Composite parent) {

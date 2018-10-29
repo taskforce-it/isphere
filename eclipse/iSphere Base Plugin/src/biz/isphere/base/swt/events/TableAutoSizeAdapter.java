@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.TableColumn;
 
@@ -23,24 +22,41 @@ import org.eclipse.swt.widgets.TableColumn;
  * This class automatically resizes the columns of a {@link TableViewer} object
  * according to the specified column weights. The columns that shall be resized
  * must be register to the TableAutoSizeAdapter by calling
- * {@link #addResizableColumn(TableColumn, Integer)}.
+ * {@link #addResizableColumn(TableColumn, Integer)}. The TableAutoSizeAdapter
+ * must added as a <i>Control Listener</i> to the table of a <i>TableViewer</i>.
  * 
  * @author Thomas Raddatz
  */
 public class TableAutoSizeAdapter extends ControlAdapter {
 
+    /**
+     * Reserves the space for a vertical scroll bar, keeping the column sizes
+     * stable, when the scroll bar is displayed.
+     */
+    public static final int RESERVE_VBAR_SPACE = 0;
+
+    /**
+     * Always uses all available space for the columns. The columns get smaller,
+     * when the scroll bar is displayed.
+     */
+    public static final int USE_FULL_WIDTH = 1;
+
+    private boolean isResizing;
+
     private final String WEIGHT = TableAutoSizeAdapter.class.getName() + "_WEIGHT";
     private TableViewer tableViewer;
-    private int vBarMode = 1;
+    private int vBarMode;
 
     private List<TableColumn> resizableTableColumns;
     private int totalColumnsWeight;
 
     public TableAutoSizeAdapter(TableViewer tableParent) {
-        this(tableParent, 0);
+        this(tableParent, RESERVE_VBAR_SPACE);
     }
 
     public TableAutoSizeAdapter(TableViewer tableParent, int vBarMode) {
+
+        this.isResizing = false;
 
         this.tableViewer = tableParent;
         this.vBarMode = vBarMode;
@@ -68,20 +84,32 @@ public class TableAutoSizeAdapter extends ControlAdapter {
     @Override
     public void controlResized(ControlEvent e) {
 
-        Rectangle area = getClientArea();
-        Point oldSize = tableViewer.getTable().getSize();
-        if (oldSize.x > area.width) {
-            // table is getting smaller so make the columns
-            // smaller first and then resize the table to
-            // match the client area width
-            resizeTableColumns();
-            tableViewer.getTable().setSize(area.width, area.height);
-        } else {
-            // table is getting bigger so make the table
-            // bigger first and then make the columns wider
-            // to match the client area width
-            tableViewer.getTable().setSize(area.width, area.height);
-            resizeTableColumns();
+        if (isResizing) {
+            return;
+        }
+
+        try {
+
+            isResizing = true;
+
+            Point area = getClientArea();
+            Point oldSize = tableViewer.getTable().getSize();
+            if (oldSize.x > area.x) {
+                // table is getting smaller so make the columns
+                // smaller first and then resize the table to
+                // match the client area width
+                resizeTableColumns();
+                tableViewer.getTable().setSize(area.x, area.y);
+            } else {
+                // table is getting bigger so make the table
+                // bigger first and then make the columns wider
+                // to match the client area width
+                tableViewer.getTable().setSize(area.x, area.y);
+                resizeTableColumns();
+            }
+
+        } finally {
+            isResizing = false;
         }
     }
 
@@ -142,20 +170,27 @@ public class TableAutoSizeAdapter extends ControlAdapter {
      */
     private int getTableWidth() {
 
-        Rectangle area = getClientArea();
+        Point area = getClientArea();
+
         ScrollBar vBar = tableViewer.getTable().getVerticalBar();
 
-        int width;
-        if (vBarMode == 0) {
-            width = area.width - tableViewer.getTable().computeTrim(0, 0, 0, 0).width - vBar.getSize().x;
+        int vBarSize;
+        boolean isVisible;
+        if (vBar == null) {
+            vBarSize = 0;
+            isVisible = false;
         } else {
-            width = area.width - tableViewer.getTable().computeTrim(0, 0, 0, 0).width;
-            if (vBar.isVisible()) {
-                // Subtract the scrollbar width from the total column
-                // width
-                // if a vertical scrollbar will be required
-                Point vBarSize = vBar.getSize();
-                width -= vBarSize.x;
+            vBarSize = vBar.getSize().x;
+            isVisible = vBar.isVisible();
+        }
+
+        int width = tableViewer.getTable().getClientArea().width;
+        if (vBarMode == RESERVE_VBAR_SPACE) {
+            width = area.x - tableViewer.getTable().computeTrim(0, 0, 0, 0).width;
+        } else {
+            width = area.x - tableViewer.getTable().computeTrim(0, 0, 0, 0).width;
+            if (!isVisible) {
+                width += vBarSize;
             }
         }
 
@@ -167,7 +202,7 @@ public class TableAutoSizeAdapter extends ControlAdapter {
      * 
      * @return client area
      */
-    private Rectangle getClientArea() {
-        return tableViewer.getTable().getParent().getClientArea();
+    private Point getClientArea() {
+        return tableViewer.getTable().getSize();
     }
 }

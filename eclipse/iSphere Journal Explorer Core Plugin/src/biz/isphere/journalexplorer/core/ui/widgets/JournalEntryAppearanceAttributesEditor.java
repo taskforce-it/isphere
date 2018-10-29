@@ -93,7 +93,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         columnName.getColumn().setText(Messages.ColumnHeading_ColumnName);
         columnName.getColumn().setWidth(100);
 
-        TableViewerColumn columnDescription = new TableViewerColumn(tableViewer, SWT.NONE);
+        TableViewerColumn columnDescription = new TableViewerColumn(tableViewer, SWT.BORDER);
         columnDescription.getColumn().setText(Messages.ColumnHeading_Description);
         columnDescription.getColumn().setWidth(100);
 
@@ -114,11 +114,9 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         table.getVerticalBar().setEnabled(true);
         table.getHorizontalBar().setEnabled(true);
 
-        // TableAutoSizeAdapter tableAutoSizeAdapter = new
-        // TableAutoSizeAdapter(tableViewer);
-        // tableAutoSizeAdapter.addResizableColumn(columnDescription.getColumn(),
-        // 1);
-        // container.addControlListener(tableAutoSizeAdapter);
+        TableAutoSizeAdapter tableAutoSizeAdapter = new TableAutoSizeAdapter(tableViewer);
+        tableAutoSizeAdapter.addResizableColumn(columnDescription.getColumn(), 1);
+        tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
 
         Composite groupButtons = new Composite(container, SWT.NONE);
         groupButtons.setLayout(new GridLayout());
