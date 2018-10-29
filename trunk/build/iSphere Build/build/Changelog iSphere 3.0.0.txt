@@ -15,6 +15,7 @@ Changelog: iSphere 3.5.1.r
    timestamp fields as text fields to avoid timezone and daylight
    saving time adjustments.
  • Fixed exception due to disposed images in message file compare editor.
+ • Fixed resize-problems when using the TableAutoSizeAdapter.
 
 Changelog: iSphere 3.5.0.r
 --------------------------
