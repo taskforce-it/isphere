@@ -14,13 +14,16 @@ package biz.isphere.journalexplorer.core.ui.widgets;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -47,6 +50,7 @@ import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
+import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 /**
  * This widget is a viewer for the journal entries of an output file of the
@@ -62,11 +66,11 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
     private SelectionListener loadJournalEntriesSelectionListener;
     private OutputFile outputFile;
-    private Exception dataLoadException;
     private String whereClause;
 
     private boolean showSqlEditor;
     private SqlEditor sqlEditor;
+    private TableViewer tableViewer;
 
     public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent);
@@ -126,8 +130,9 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                 break;
             }
 
-            TableViewer tableViewer = factory.createTableViewer(container);
+            tableViewer = factory.createTableViewer(container);
             tableViewer.addSelectionChangedListener(this);
+            tableViewer.getTable().setEnabled(false);
 
             return tableViewer;
 
@@ -138,37 +143,55 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         }
     }
 
-    public void openJournal() throws Exception {
+    public boolean isLoading() {
 
-        dataLoadException = null;
+        if (tableViewer.getTable().isEnabled()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void openJournal(final JournalExplorerView view) throws Exception {
+
         if (isAvailable(sqlEditor)) {
             whereClause = sqlEditor.getWhereClause().trim();
             sqlEditor.setFocus();
         }
 
-        Runnable loadJournalDataJob = new Runnable() {
+        Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
 
-            public void run() {
+            public IStatus run(IProgressMonitor monitor) {
 
                 try {
 
                     OutputFileDAO journalDAO = new OutputFileDAO(outputFile);
-                    JournalEntries data = journalDAO.getJournalData(whereClause);
+                    final JournalEntries data = journalDAO.getJournalData(whereClause);
 
-                    setInputData(data);
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                        }
+                    });
 
                 } catch (Exception e) {
-                    dataLoadException = e;
+
+                    final Exception e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                        }
+                    });
+
                 }
+
+                return Status.OK_STATUS;
             }
 
         };
 
-        BusyIndicator.showWhile(getDisplay(), loadJournalDataJob);
-
-        if (dataLoadException != null) {
-            throw dataLoadException;
-        }
+        loadJournalDataJob.schedule();
     }
 
     public boolean hasSqlEditor() {

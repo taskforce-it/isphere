@@ -65,26 +65,31 @@ public class QjoRetrieveJournalEntries {
     public RJNE0200 execute() throws Exception {
 
         int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
-        RJNE0200 tJournalEntries = new RJNE0200(system, bufferSize);
 
-        if (retrieveJournalEntries(tJournalEntries.getProgramParameters(jrneToRtv))) {
-            if (tJournalEntries.moreEntriesAvailable()) {
-                Long tFromSequenceNumber = tJournalEntries.getContinuatingSequenceNumber();
-                String tStartReceiver = tJournalEntries.getContinuatingReceiver();
-                String tStartReceiverLibrary = tJournalEntries.getContinuatingReceiverLibrary();
+        return execute(bufferSize);
+    }
 
+    public RJNE0200 execute(int bufferSize) throws Exception {
+
+        RJNE0200 rjne0200 = new RJNE0200(system, bufferSize);
+
+        if (retrieveJournalEntries(rjne0200.getProgramParameters(jrneToRtv))) {
+
+            if (rjne0200.moreEntriesAvailable()) {
+
+                Long tFromSequenceNumber = rjne0200.getContinuatingSequenceNumber();
                 jrneToRtv.setFromEnt(tFromSequenceNumber);
-                jrneToRtv.setRcvRng(tStartReceiver, tStartReceiverLibrary);
 
                 if (maxNumEntries != -1) {
-                    jrneToRtv.setNbrEnt(maxNumEntries - tJournalEntries.getNbrOfEntriesRetrieved());
+                    jrneToRtv.setNbrEnt(maxNumEntries - rjne0200.getNbrOfEntriesRetrieved());
                 }
             }
+
         } else {
-            tJournalEntries = null;
+            rjne0200 = null;
         }
 
-        return tJournalEntries;
+        return rjne0200;
     }
 
     /**

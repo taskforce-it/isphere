@@ -84,10 +84,12 @@ public class Messages extends NLS {
     public static String Error_Cannot_perform_action_OS400_must_be_at_least_at_level_A;
     public static String Error_Meta_data_not_available_Check_file_A_B;
     public static String Error_The_following_objects_are_not_journaled_Continue_anyway;
+    public static String Error_No_object_selected;
 
-    public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry;
+    public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
     public static String Exception_No_entries_converted_or_received_from_journal_A_B;
+    public static String Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences;
 
     public static String Warning_Not_all_journal_entries_loaded;
     public static String Warning_Not_all_journal_entries_loaded_unknown_size;
@@ -178,6 +180,8 @@ public class Messages extends NLS {
     public static String Finished_exporting_data_to_file_A;
     public static String Exporting_to_Excel;
     public static String Display_Export_Result;
+
+    public static String Status_Loading_journal_entries;
 
     static {
         // initialize resource bundle

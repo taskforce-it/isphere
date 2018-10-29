@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.internal.DateTimeHelper;
@@ -78,6 +79,8 @@ public final class Preferences implements ColumnsDAO {
     public static final String MAX_NUM_ROWS_TO_FETCH = LIMITATIONS + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
 
     public static final String BUFFER_SIZE = LIMITATIONS + "BUFFER_SIZE"; //$NON-NLS-1$
+
+    public static final String DYNAMIC_BUFFER_SIZE = LIMITATIONS + "DYNAMIC_BUFFER_SIZE"; //$NON-NLS-1$
 
     public static final String LOAD_JOURNAL_ENTRIES = DOMAIN + "LOAD_JOURNAL_ENTRIES."; //$NON-NLS-1$
 
@@ -189,6 +192,11 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getInt(BUFFER_SIZE);
     }
 
+    public boolean isRetrieveJournalEntriesDynamicBufferSize() {
+
+        return preferenceStore.getBoolean(DYNAMIC_BUFFER_SIZE);
+    }
+
     public Calendar getStartingDate() {
 
         String date = preferenceStore.getString(STARTING_DATE);
@@ -262,6 +270,10 @@ public final class Preferences implements ColumnsDAO {
 
     public void setRetrieveJournalEntriesBufferSize(int bufferSize) {
         preferenceStore.setValue(BUFFER_SIZE, bufferSize);
+    }
+
+    public void setRetrieveJournalEntriesEnableDynamicBufferSize(boolean enabled) {
+        preferenceStore.setValue(DYNAMIC_BUFFER_SIZE, enabled);
     }
 
     public void setStartingDate(Calendar calendar) {
@@ -391,6 +403,7 @@ public final class Preferences implements ColumnsDAO {
 
         preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
         preferenceStore.setDefault(BUFFER_SIZE, getInitialRetrieveJournalEntriesBufferSize());
+        preferenceStore.setDefault(DYNAMIC_BUFFER_SIZE, getInitialRetrieveJournalEntriesIsDynamicBufferSize());
 
         preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate().getTime()));
         preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate().getTime()));
@@ -495,7 +508,11 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public int getInitialRetrieveJournalEntriesBufferSize() {
-        return 128 * 1024; // 128 KB
+        return Buffer.size("128 KB");
+    }
+
+    public boolean getInitialRetrieveJournalEntriesIsDynamicBufferSize() {
+        return false;
     }
 
     public Calendar getInitialStartingDate() {

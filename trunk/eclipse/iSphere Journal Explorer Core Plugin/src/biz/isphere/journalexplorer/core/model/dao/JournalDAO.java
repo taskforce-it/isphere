@@ -13,7 +13,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import biz.isphere.base.internal.Buffer;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -29,6 +32,9 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
  * associated to.
  */
 public class JournalDAO {
+
+    private static final int BUFFER_INCREMENT_SIZE = Buffer.size("64k");
+    private static final int BUFFER_MAXIMUM_SIZE = Buffer.size("16MB");
 
     private JrneToRtv jrneToRtv;
 
@@ -52,12 +58,21 @@ public class JournalDAO {
 
         do {
 
-            rjne0200 = tRetriever.execute();
+            boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
+            int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
+
+            do {
+                rjne0200 = tRetriever.execute(bufferSize);
+                if (isBufferTooSmall(rjne0200)) {
+                    bufferSize = BUFFER_INCREMENT_SIZE;
+                }
+            } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(rjne0200));
+
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
                     messages = new LinkedList<IBMiMessage>();
-                    messages.add(new IBMiMessage("RJE0001",
-                        Messages.RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_at_least_one_journal_entry));
+                    messages.add(new IBMiMessage(BufferTooSmallException.ID,
+                        Messages.Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences));
                 } else {
                     while (rjne0200.nextEntry()) {
 
@@ -86,6 +101,24 @@ public class JournalDAO {
         journalEntries.setMessages(messages);
 
         return journalEntries;
+    }
+
+    private boolean isBufferTooSmall(RJNE0200 rjne0200) {
+
+        if (rjne0200 != null && rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isBufferTooBig(RJNE0200 rjne0200) {
+
+        if (rjne0200 != null && rjne0200.getBufferSize() >= BUFFER_MAXIMUM_SIZE) {
+            return true;
+        }
+
+        return false;
     }
 
     private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) throws Exception {

@@ -43,6 +43,7 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvi
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
+import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 /**
  * This widget is a viewer for the journal entries of an output file of the
@@ -110,13 +111,16 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     protected abstract TableViewer createTableViewer(Composite container);
 
-    public abstract void openJournal() throws Exception;
+    public abstract void openJournal(JournalExplorerView view) throws Exception;
+
+    public abstract boolean isLoading();
 
     protected void setInputData(JournalEntries data) {
 
         this.data = data;
 
         container.layout(true);
+        tableViewer.getTable().setEnabled(true);
         tableViewer.setInput(null);
         tableViewer.setUseHashlookup(true);
         tableViewer.setItemCount(data.size());
@@ -142,10 +146,6 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         Preferences.getInstance().addPropertyChangeListener(this);
 
         super.dispose();
-    }
-
-    public TableViewer getTableViewer() {
-        return tableViewer;
     }
 
     public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {

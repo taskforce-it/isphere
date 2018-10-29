@@ -38,6 +38,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -105,8 +106,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
 
             public void close(CTabFolderEvent event) {
-                if (event.item instanceof JournalEntriesViewerForOutputFiles) {
-                    cleanupClosedTab((JournalEntriesViewerForOutputFiles)event.item);
+                if (event.item instanceof AbstractJournalEntriesViewer) {
+                    cleanupClosedTab((AbstractJournalEntriesViewer)event.item);
                     setActionEnablement(null);
                     clearStatusLine();
                 }
@@ -193,18 +194,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             setActionEnablement(journalEntriesViewer);
 
         } catch (Throwable e) {
-
-            if (e instanceof NoJournalEntriesLoadedException) {
-                MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
-            } else {
-                ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(1) ***", e);
-                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-            }
-
-            if (journalEntriesViewer != null) {
-                journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);
-                journalEntriesViewer.dispose();
-            }
+            handleDataLoadException(journalEntriesViewer, e);
         }
     }
 
@@ -249,7 +239,27 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    private void cleanupClosedTab(JournalEntriesViewerForOutputFiles viewer) {
+    public void handleDataLoadException(AbstractJournalEntriesViewer journalEntriesViewer, Throwable e) {
+
+        updateStatusLine();
+
+        if (e instanceof BufferTooSmallException) {
+            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            return;
+        } else if (e instanceof NoJournalEntriesLoadedException) {
+            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+        } else {
+            ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(1) ***", e);
+            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+
+        if (journalEntriesViewer != null) {
+            journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);
+            journalEntriesViewer.dispose();
+        }
+    }
+
+    private void cleanupClosedTab(AbstractJournalEntriesViewer viewer) {
 
         viewer.removeAsSelectionProvider(selectionProviderIntermediate);
     }
@@ -272,17 +282,19 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     }
 
     private void performLoadJournalEntries(AbstractJournalEntriesViewer viewer) throws Exception {
-
-        viewer.openJournal();
         updateStatusLine();
+        viewer.openJournal(this);
+    }
+
+    public void finishDataLoading(AbstractJournalEntriesViewer viewer) {
 
         if (viewer != null) {
             JournalEntries journalEntries = viewer.getInput();
             if (journalEntries != null) {
                 int numItems = journalEntries.size();
-                int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
                 if (journalEntries.isOverflow()) {
                     String messageText;
+                    int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
                     if (numItemsAvailable < 0) {
                         messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable, numItems);
                     } else {
@@ -303,28 +315,29 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private void updateStatusLine() {
 
-        int numItems = -1;
-        int numItemsAvailable = -1;
+        String message = null;
 
+        IActionBars bars = getViewSite().getActionBars();
         AbstractJournalEntriesViewer viewer = getSelectedViewer();
         if (viewer != null) {
-            JournalEntries journalEntries = viewer.getInput();
-            if (journalEntries != null) {
-                numItems = journalEntries.size();
-                if (journalEntries.isOverflow()) {
-                    numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
+
+            if (viewer.isLoading()) {
+                message = Messages.Status_Loading_journal_entries;
+            } else {
+                JournalEntries journalEntries = viewer.getInput();
+                if (journalEntries != null) {
+                    int numItems = journalEntries.size();
+                    if (journalEntries.isOverflow()) {
+                        int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
+                        message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
+                    } else {
+                        message = Messages.bind(Messages.Number_of_journal_entries_A, numItems);
+                    }
                 }
             }
         }
 
-        IActionBars bars = getViewSite().getActionBars();
-        if (numItems >= 0) {
-            String message;
-            if (numItems < numItemsAvailable) {
-                message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
-            } else {
-                message = Messages.bind(Messages.Number_of_journal_entries_A, numItems);
-            }
+        if (message != null) {
             bars.getStatusLineManager().setMessage(message);
         } else {
             clearStatusLine();
