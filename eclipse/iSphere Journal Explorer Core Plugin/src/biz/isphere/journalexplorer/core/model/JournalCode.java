@@ -9,7 +9,9 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class defines the IBM i journal codes.
@@ -37,25 +39,40 @@ public enum JournalCode {
     U ("User-Generated Entry"),
     Y ("Library Entry");
 
-    private static Map<String, JournalEntryType> values;
+    private static Map<String, JournalCode> values;
 
     private String label;
     private String description;
+    private Set<JournalEntryType> journalEntryTypes;
 
     static {
-        values = new HashMap<String, JournalEntryType>();
-        for (JournalEntryType journalEntryType : JournalEntryType.values()) {
-            values.put(journalEntryType.name(), journalEntryType);
+        values = new HashMap<String, JournalCode>();
+        for (JournalCode journalCode : JournalCode.values()) {
+            values.put(journalCode.name(), journalCode);
         }
     }
 
-    public static JournalEntryType find(String value) {
+    public static JournalCode find(String value) {
         return values.get(value);
     }
 
     private JournalCode(String description) {
         this.label = this.name();
         this.description = description;
+        this.journalEntryTypes = new HashSet<JournalEntryType>();
+    }
+
+    // intentionally package visibility
+    void addJournalEntryType(JournalEntryType journalEntryType) {
+        journalEntryTypes.add(journalEntryType);
+    }
+
+    public boolean isParentOf(JournalEntryType journalEntryType) {
+        return journalEntryTypes.contains(journalEntryType);
+    }
+
+    public JournalEntryType[] getJournalEntryTypes() {
+        return journalEntryTypes.toArray(new JournalEntryType[journalEntryTypes.size()]);
     }
 
     public String label() {
