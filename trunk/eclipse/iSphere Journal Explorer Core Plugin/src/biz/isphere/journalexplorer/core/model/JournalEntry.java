@@ -181,7 +181,8 @@ public class JournalEntry {
 
     public boolean isRecordEntryType() {
 
-        if (JournalEntryType.find(entryType) != null) {
+        JournalEntryType journalEntryType = JournalEntryType.find(entryType);
+        if (journalEntryType != null && journalEntryType.isChildOf(JournalCode.R)) {
             return true;
         }
 

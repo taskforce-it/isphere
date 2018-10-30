@@ -19,18 +19,19 @@ import java.util.Map;
  * February 19, 2013.
  */
 public enum JournalEntryType {
-    BR ("Before-image of record updated for rollback operation"),
-    DL ("Record deleted in the physical file member"),
-    DR ("Record deleted for rollback operation"),
-    IL ("Increment record limit"),
-    PT ("Record added to a physical file member"),
-    PX ("Record added directly by RRN (relative record number) to a physical file member"),
-    UB ("Before-image of a record that is updated in the physical file member"),
-    UP ("After-image of a record that is updated in the physical file member"),
-    UR ("After-image of a record that is updated for rollback information");
+    BR (JournalCode.R, "Before-image of record updated for rollback operation"),
+    DL (JournalCode.R, "Record deleted in the physical file member"),
+    DR (JournalCode.R, "Record deleted for rollback operation"),
+    IL (JournalCode.R, "Increment record limit"),
+    PT (JournalCode.R, "Record added to a physical file member"),
+    PX (JournalCode.R, "Record added directly by RRN (relative record number) to a physical file member"),
+    UB (JournalCode.R, "Before-image of a record that is updated in the physical file member"),
+    UP (JournalCode.R, "After-image of a record that is updated in the physical file member"),
+    UR (JournalCode.R, "After-image of a record that is updated for rollback information");
 
     private static Map<String, JournalEntryType> values;
 
+    private JournalCode journalCode;
     private String label;
     private String description;
 
@@ -45,9 +46,21 @@ public enum JournalEntryType {
         return values.get(value);
     }
 
-    private JournalEntryType(String description) {
+    private JournalEntryType(JournalCode journalCode, String description) {
+        this.journalCode = journalCode;
         this.label = this.name();
         this.description = description;
+
+        journalCode.addJournalEntryType(this);
+    }
+
+    public boolean isChildOf(JournalCode journalCode) {
+
+        if (this.journalCode.equals(journalCode)) {
+            return true;
+        }
+
+        return false;
     }
 
     public String label() {
