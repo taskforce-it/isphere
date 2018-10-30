@@ -72,7 +72,7 @@ public class IQDBRTVFDResult extends APIFormat {
     /**
      * Returns the number of field descriptions returned by the IQDBRTVFD API.
      * 
-     * @return number of messages returned
+     * @return number of field descriptions returned
      */
     public int getNumberOfFieldsReturned() {
         return getInt4Value(NUMBER_OF_FIELDS_RETURNED);
@@ -106,7 +106,7 @@ public class IQDBRTVFDResult extends APIFormat {
      */
     public List<MetaColumn> getFieldDescriptions() throws Exception {
 
-        ArrayList<MetaColumn> messages = new ArrayList<MetaColumn>();
+        List<MetaColumn> metaColumns = new ArrayList<MetaColumn>();
 
         RVFD0100 rtvm0100 = null;
         if (IQDBRTVFD.RVFD0100.equals(format)) {
@@ -120,12 +120,12 @@ public class IQDBRTVFDResult extends APIFormat {
         for (int i = 0; i < getNumberOfFieldsReturned(); i++) {
 
             rtvm0100.setOffset(offset);
-            messages.add(new MetaColumn(i, rtvm0100));
+            metaColumns.add(new MetaColumn(i, rtvm0100));
 
             offset += rtvm0100.getLength();
         }
 
-        return messages;
+        return metaColumns;
     }
 
     /**
