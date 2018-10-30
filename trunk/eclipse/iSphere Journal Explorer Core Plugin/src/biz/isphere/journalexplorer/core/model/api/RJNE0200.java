@@ -85,7 +85,6 @@ public class RJNE0200 {
     // Cached data structures
     private AS400Structure headerStructure = null;
     private AS400Structure entryHeaderStructure = null;
-    private AS400Structure nullValueIndicatorsStructure = null;
     private AS400Structure receiverInformationStructure = null;
     private AS400Structure logicalUnitOfWork = null;
     private AS400Structure transactionIdentifierStructure = null;
@@ -1718,27 +1717,26 @@ public class RJNE0200 {
     }
 
     private AS400Structure getNullValueIndicatorsStructure() {
-        if (this.nullValueIndicatorsStructure == null) {
-            AS400DataType[] structure;
-            if (nullValueIndicatorsLength < 0) {
-                // Null indicators length specified as: *VARLEN
-                // @formatter:off formatter intentionally disabled
-                structure = new AS400DataType[] { 
-                    new AS400Bin4(), // 0 Length
-                    new AS400ByteArray(getNullValueIndicatorsLength()) // 1 Null value indicators
-                };
-                // @formatter:on
-            } else {
-                // Null indicators length specified as: integer value
-                // @formatter:off formatter intentionally disabled
-                structure = new AS400DataType[] { 
-                    new AS400ByteArray(nullValueIndicatorsLength) // 0 Null value indicators
-                };
-                // @formatter:on
-            }
-            this.nullValueIndicatorsStructure = new AS400Structure(structure);
+
+        AS400DataType[] structure;
+        if (nullValueIndicatorsLength < 0) {
+            // Null indicators length specified as: *VARLEN
+            // @formatter:off formatter intentionally disabled
+            structure = new AS400DataType[] { 
+                new AS400Bin4(), // 0 Length
+                new AS400ByteArray(getNullValueIndicatorsLength()) // 1 Null value indicators
+            };
+            // @formatter:on
+        } else {
+            // Null indicators length specified as: integer value
+            // @formatter:off formatter intentionally disabled
+            structure = new AS400DataType[] { 
+                new AS400ByteArray(nullValueIndicatorsLength) // 0 Null value indicators
+            };
+            // @formatter:on
         }
-        return this.nullValueIndicatorsStructure;
+
+        return new AS400Structure(structure);
     }
 
     private int getNullValueIndicatorsLength() {
