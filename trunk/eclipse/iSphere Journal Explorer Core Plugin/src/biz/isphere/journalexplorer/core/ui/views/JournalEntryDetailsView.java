@@ -180,6 +180,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
                 List<String> messages = new LinkedList<String>();
 
+                // Get specific data
                 if (journalEntry.isRecordEntryType()) {
                     MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
 
@@ -194,8 +195,8 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                     int joesdLength = journalEntry.getSpecificDataLength();
                     int recordLength = metatable.getRecordLength();
                     if (joesdLength < recordLength) {
-                        messages.add(
-                            Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength, recordLength));
+                        messages.add(Messages.bind(Messages.Error_Field_JOESD_is_too_short_A_to_hold_the_complete_record_data_B, joesdLength,
+                            recordLength));
                     }
                 } else {
 
@@ -204,6 +205,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
                 }
 
+                // Get journal entry data
                 MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
 
                 if (messages.size() > 0) {

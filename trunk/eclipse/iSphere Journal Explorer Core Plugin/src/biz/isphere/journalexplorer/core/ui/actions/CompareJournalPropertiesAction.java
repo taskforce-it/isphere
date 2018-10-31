@@ -41,6 +41,10 @@ public class CompareJournalPropertiesAction extends Action {
         return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
+    /**
+     * Called by the JournalPropertiesMenuAdapter when the "Compare entries"
+     * option was selected.
+     */
     public void setSelectedItems(StructuredSelection selection) {
 
         List<JournalProperties> selectedItems = new ArrayList<JournalProperties>();
