@@ -2,6 +2,7 @@
 Changelog: iSphere 3.5.1.r
 -----------------------------
  • Added journal column JOCTRR to Journal Entries Details view.
+ • Changed Journal Explorer to store column sizes.
  • Added field JONVI (null value indicators) to all journal explorer
    views.
  • Changed journal explorer to display all *TYPE5 fields when 
