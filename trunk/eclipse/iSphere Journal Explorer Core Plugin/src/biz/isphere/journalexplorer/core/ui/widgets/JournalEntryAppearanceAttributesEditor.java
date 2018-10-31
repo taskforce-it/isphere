@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -34,6 +33,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.swt.events.TableAutoSizeControlListener;
@@ -89,17 +89,17 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
-        TableViewerColumn columnName = new TableViewerColumn(tableViewer, SWT.NONE);
-        columnName.getColumn().setText(Messages.ColumnHeading_ColumnName);
-        columnName.getColumn().setWidth(100);
+        TableColumn columnName = new TableColumn(table, SWT.NONE);
+        columnName.setText(Messages.ColumnHeading_ColumnName);
+        columnName.setWidth(100);
 
-        TableViewerColumn columnDescription = new TableViewerColumn(tableViewer, SWT.BORDER);
-        columnDescription.getColumn().setText(Messages.ColumnHeading_Description);
-        columnDescription.getColumn().setWidth(100);
+        TableColumn columnDescription = new TableColumn(table, SWT.BORDER);
+        columnDescription.setText(Messages.ColumnHeading_Description);
+        columnDescription.setWidth(100);
 
-        TableViewerColumn columnColor = new TableViewerColumn(tableViewer, SWT.NONE);
-        columnColor.getColumn().setText(Messages.ColumnHeading_Color);
-        columnColor.getColumn().setWidth(100);
+        TableColumn columnColor = new TableColumn(table, SWT.NONE);
+        columnColor.setText(Messages.ColumnHeading_Color);
+        columnColor.setWidth(100);
 
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
@@ -115,7 +115,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         table.getHorizontalBar().setEnabled(true);
 
         TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
-        tableAutoSizeAdapter.addResizableColumn(columnDescription.getColumn(), 1);
+        tableAutoSizeAdapter.addResizableColumn(columnDescription, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
 
         Composite groupButtons = new Composite(container, SWT.NONE);
