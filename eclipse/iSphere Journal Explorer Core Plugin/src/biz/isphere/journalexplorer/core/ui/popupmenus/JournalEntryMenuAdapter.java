@@ -93,18 +93,15 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
 
         if (selectedItemsCount() > 0) {
             exportToExcelMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final ExportToExcelAction action = new ExportToExcelAction(shell);
-            exportToExcelMenuItem.setText(action.getText());
-            exportToExcelMenuItem.setImage(action.getImage());
+            final ExportToExcelAction exportToExcelAction = new ExportToExcelAction(shell);
+            exportToExcelMenuItem.setText(exportToExcelAction.getText());
+            exportToExcelMenuItem.setImage(exportToExcelAction.getImage());
             exportToExcelMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-
-                    JournalEntryLabelProvider contentProvider = (JournalEntryLabelProvider)tableViewer.getLabelProvider();
-
-                    ExportToExcelAction exportToExcelAction = new ExportToExcelAction(shell);
+                    JournalEntryLabelProvider labelProvider = (JournalEntryLabelProvider)tableViewer.getLabelProvider();
                     exportToExcelAction.setSelectedItems(getSelection());
-                    exportToExcelAction.setColumns(contentProvider.getColumns());
+                    exportToExcelAction.setColumns(labelProvider.getColumns());
                     exportToExcelAction.run();
                 }
             });
@@ -112,13 +109,12 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
 
         if (selectedItemsCount() == 2) {
             compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final CompareSideBySideAction action = new CompareSideBySideAction(shell);
-            compareSideBySideMenuItem.setText(action.getText());
-            compareSideBySideMenuItem.setImage(action.getImage());
+            final CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
+            compareSideBySideMenuItem.setText(compareSideBySideAction.getText());
+            compareSideBySideMenuItem.setImage(compareSideBySideAction.getImage());
             compareSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
                     compareSideBySideAction.setSelectedItems(getSelection());
                     compareSideBySideAction.run();
                 }
