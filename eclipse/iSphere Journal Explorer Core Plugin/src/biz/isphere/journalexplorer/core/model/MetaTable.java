@@ -17,12 +17,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import com.ibm.as400.access.Record;
-
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
+
+import com.ibm.as400.access.Record;
 
 /**
  * This class represents the metatada of a table. It contains the name and
@@ -231,5 +231,20 @@ public class MetaTable {
         }
 
         return outfileType;
+    }
+
+    @Override
+    public String toString() {
+
+        String qualifiedName = QualifiedName.getName(getLibrary(), getName());
+        String qualifiedDefinitionName = QualifiedName.getName(getLibrary(), getName());
+
+        StringBuilder buffer = new StringBuilder(qualifiedName);
+        if (!qualifiedName.equals(qualifiedDefinitionName)) {
+            buffer.append(" ==> ");
+            buffer.append(qualifiedDefinitionName);
+        }
+
+        return buffer.toString();
     }
 }
