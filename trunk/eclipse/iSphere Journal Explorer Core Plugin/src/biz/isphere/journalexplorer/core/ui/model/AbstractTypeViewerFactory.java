@@ -35,6 +35,9 @@ import biz.isphere.journalexplorer.core.ui.popupmenus.JournalEntryMenuAdapter;
  */
 public abstract class AbstractTypeViewerFactory {
 
+    private static final String NAME = "NAME";
+    private static final String DEFAULT_WIDTH = "DEFAULT_WIDTH";
+
     private Set<String> columnNames;
     private JournalEntryColumnUI[] fieldIdMapping;
 
@@ -50,6 +53,34 @@ public abstract class AbstractTypeViewerFactory {
             this.columnNames = null;
             this.fieldIdMapping = null;
         }
+    }
+
+    public static String getColumnName(TableColumn column) {
+
+        if (column == null) {
+            return null;
+        }
+
+        String name = (String)column.getData(NAME);
+        if (name == null) {
+            return null;
+        }
+
+        return name;
+    }
+
+    public static int getDefaultColumnSize(TableColumn column) {
+
+        if (column == null) {
+            return -1;
+        }
+
+        Integer width = (Integer)column.getData(DEFAULT_WIDTH);
+        if (width == null) {
+            return -1;
+        }
+
+        return width.intValue();
     }
 
     private Set<String> getColumnNames(Set<JournalEntryColumnUI> columnNamesEnum) {
@@ -86,6 +117,8 @@ public abstract class AbstractTypeViewerFactory {
                 newColumn.setWidth(column.getWidth());
                 newColumn.setResizable(column.isResizable());
                 newColumn.setMoveable(column.isMovebale());
+                newColumn.setData(NAME, column.getName());
+                newColumn.setData(DEFAULT_WIDTH, column.getWidth());
                 usedColumns.add(column);
                 i++;
             }
@@ -110,7 +143,7 @@ public abstract class AbstractTypeViewerFactory {
 
         // Entry seq#, code, type, ...
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOENTL, Messages.Tooltip_JOENTL, 60));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOSEQN, Messages.Tooltip_JOSEQN, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOSEQN, Messages.Tooltip_JOSEQN, 140));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCODE, Messages.Tooltip_JOCODE, 60));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOENTT, Messages.Tooltip_JOENTT, 60));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JODATE, Messages.Tooltip_JODATE, 80));
@@ -135,17 +168,17 @@ public abstract class AbstractTypeViewerFactory {
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOLIB, Messages.Tooltip_JOLIB, 90));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOOBJ, Messages.Tooltip_JOOBJ, 90));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOMBR, Messages.Tooltip_JOMBR, 90));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOOBJTYP, Messages.Tooltip_JOOBJTYP, 60));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOFILTYP, Messages.Tooltip_JOFILTYP, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOOBJTYP, Messages.Tooltip_JOOBJTYP, 70));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOFILTYP, Messages.Tooltip_JOFILTYP, 70));
 
         // System that the object resides on
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOSYNM, Messages.Tooltip_JOSYNM, 90));
 
         // Journal entry flags
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCTRR, Messages.Tooltip_JOCTRR, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCTRR, Messages.Tooltip_JOCTRR, 140));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOFLAG, Messages.Tooltip_JOFLAG, 60));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCCID, Messages.Tooltip_JOCCID, 60));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOJID, Messages.Tooltip_JOJID, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCCID, Messages.Tooltip_JOCCID, 140));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOJID, Messages.Tooltip_JOJID, 150));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCST, Messages.Tooltip_JORCST, 60));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOTGR, Messages.Tooltip_JOTGR, 60));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOINCDAT, Messages.Tooltip_JOINCDAT, 60));
@@ -158,18 +191,18 @@ public abstract class AbstractTypeViewerFactory {
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCV, Messages.Tooltip_JORCV, 90));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCVLIB, Messages.Tooltip_JORCVLIB, 90));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCVDEV, Messages.Tooltip_JORCVDEV, 90));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCVASP, Messages.Tooltip_JORCVASP, 50));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORCVASP, Messages.Tooltip_JORCVASP, 70));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOARM, Messages.Tooltip_JOARM, 60));
 
         // Remote address
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOADF, Messages.Tooltip_JOADF, 60));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORPORT, Messages.Tooltip_JORPORT, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORPORT, Messages.Tooltip_JORPORT, 70));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JORADR, Messages.Tooltip_JORADR, 90));
 
         // Logical unit of work
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOLUW, Messages.Tooltip_JOLUW, 200));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOXID, Messages.Tooltip_JOXID, 200));
-        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCMTLVL, Messages.Tooltip_JOCMTLVL, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOLUW, Messages.Tooltip_JOLUW, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOXID, Messages.Tooltip_JOXID, 60));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOCMTLVL, Messages.Tooltip_JOCMTLVL, 70));
 
         // Null value indicators
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JONVI, Messages.Tooltip_JONVI, 60));

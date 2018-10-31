@@ -12,6 +12,7 @@
 package biz.isphere.journalexplorer.core;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -37,15 +38,17 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
     public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_outfile.png";
+    public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
+    public static final String IMAGE_EDIT_SQL = "edit_sql.png";
+    public static final String IMAGE_EXCEL = "excel.png";
+    public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png";
+
     public static final String IMAGE_WARNING_OV = "warning_ov.gif";
     public static final String IMAGE_ERROR_OV = "error_ov.gif";
     public static final String IMAGE_LOADED_OV = "loaded_ov.gif";
     public static final String IMAGE_CHECKED_OV = "checked_ov.gif";
     public static final String IMAGE_DIRTY_OV = "dirty_ov.gif";
     public static final String IMAGE_NULL_OV = "null_ov.gif";
-    public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
-    public static final String IMAGE_EDIT_SQL = "edit_sql.png";
-    public static final String IMAGE_EXCEL = "excel.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.journalexplorer.core"; //$NON-NLS-1$
@@ -88,6 +91,31 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
      */
     public static ISphereJournalExplorerCorePlugin getDefault() {
         return plugin;
+    }
+
+    @Override
+    protected void initializeImageRegistry(ImageRegistry reg) {
+        super.initializeImageRegistry(reg);
+        reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_DETAILS, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_HIGHLIGHT, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_HORIZONTAL_RESULTS_VIEW, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_JOURNAL_EXPLORER, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_CONFIGURE_PARSERS, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_SEGMENT_EDIT, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_OPEN_JOURNAL_OUTFILE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+
+        reg.put(IMAGE_WARNING_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_ERROR_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_LOADED_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_CHECKED_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_DIRTY_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_NULL_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
     }
 
     /**
