@@ -21,7 +21,7 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
-import biz.isphere.journalexplorer.core.ui.dialogs.SideBySideCompareDialog;
+import biz.isphere.journalexplorer.core.ui.dialogs.CompareSideBySideDialog;
 
 public class CompareSideBySideAction extends Action {
 
@@ -82,7 +82,7 @@ public class CompareSideBySideAction extends Action {
             return;
         }
 
-        SideBySideCompareDialog sideBySideCompareDialog = new SideBySideCompareDialog(shell);
+        CompareSideBySideDialog sideBySideCompareDialog = new CompareSideBySideDialog(shell);
         sideBySideCompareDialog.create();
 
         sideBySideCompareDialog.setInput(new JournalProperties(selectedItems[0]), new JournalProperties(selectedItems[1]));

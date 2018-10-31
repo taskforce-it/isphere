@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
+import biz.isphere.base.swt.events.TreeAutoSizeControlListener;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
@@ -31,8 +32,12 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabel
 public class JournalEntryDetailsViewer extends TreeViewer {
 
     public JournalEntryDetailsViewer(Composite parent) {
+        this(parent, 240);
+    }
+
+    public JournalEntryDetailsViewer(Composite parent, int minValueColumnWidth) {
         super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        this.initializeComponents();
+        this.initializeComponents(minValueColumnWidth);
     }
 
     @Override
@@ -40,7 +45,7 @@ public class JournalEntryDetailsViewer extends TreeViewer {
         super.refresh(updateLabels);
     }
 
-    private void initializeComponents() {
+    private void initializeComponents(int minValueColumnWidth) {
 
         setAutoExpandLevel(1);
         Tree tree = getTree();
@@ -58,6 +63,11 @@ public class JournalEntryDetailsViewer extends TreeViewer {
         value.setAlignment(SWT.LEFT);
         value.setWidth(240);
         value.setText(Messages.JournalEntryViewer_Value);
+
+        TreeAutoSizeControlListener treeAutoSizeListener = new TreeAutoSizeControlListener(tree, TreeAutoSizeControlListener.USE_FULL_WIDTH);
+        treeAutoSizeListener.addResizableColumn(property, 1, 120, 240);
+        treeAutoSizeListener.addResizableColumn(value, 1, minValueColumnWidth);
+        tree.addControlListener(treeAutoSizeListener);
     }
 
     public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {

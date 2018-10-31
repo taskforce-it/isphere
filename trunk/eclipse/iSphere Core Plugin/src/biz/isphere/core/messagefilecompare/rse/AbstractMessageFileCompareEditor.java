@@ -390,40 +390,28 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         /* First column is always RIGHT aligned, see bug 151342 */
-        // TableViewerColumn tableViewerColumnDummy = new
-        // TableViewerColumn(tableViewer, SWT.NONE);
         TableColumn tblClmnDummy = new TableColumn(tableViewer.getTable(), SWT.NONE);
         tblClmnDummy.setResizable(true);
         tblClmnDummy.setWidth(Size.getSize(0));
 
-        // TableViewerColumn tableViewerColumnLeftMsgId = new
-        // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnLeftMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageId.setText(Messages.ID);
         tblClmnLeftMessageId.setResizable(true);
         tblClmnLeftMessageId.setWidth(Size.getSize(60));
 
-        // TableViewerColumn tableViewerColumnLeftMsgText = new
-        // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnLeftMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnLeftMessageText.setText(Messages.Message_text);
         tblClmnLeftMessageText.setWidth(Size.getSize(200));
 
-        // TableViewerColumn tableViewerColumnSyncAction = new
-        // TableViewerColumn(tableViewer, SWT.CENTER);
         final TableColumn tblClmnCompareResult = new TableColumn(tableViewer.getTable(), SWT.CENTER);
         tblClmnCompareResult.setResizable(true);
         tblClmnCompareResult.setWidth(Size.getSize(25));
 
-        // TableViewerColumn tableViewerColumnRightMsgId = new
-        // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnRightMessageId = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnRightMessageId.setText(Messages.ID);
         tblClmnRightMessageId.setResizable(tblClmnLeftMessageId.getResizable());
         tblClmnRightMessageId.setWidth(tblClmnLeftMessageId.getWidth());
 
-        // TableViewerColumn tableViewerColumnRightMsgText = new
-        // TableViewerColumn(tableViewer, SWT.LEFT);
         final TableColumn tblClmnRightMessageText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
         tblClmnRightMessageText.setText(Messages.Message_text);
         tblClmnRightMessageText.setResizable(tblClmnLeftMessageText.getResizable());
@@ -455,7 +443,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
-        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
         tableAutoSizeAdapter.addResizableColumn(tblClmnLeftMessageText, 1);
         tableAutoSizeAdapter.addResizableColumn(tblClmnRightMessageText, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
