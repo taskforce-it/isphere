@@ -42,6 +42,10 @@ public class CompareSideBySideAction extends Action {
         return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
+    /**
+     * Called by the JournalEntryMenuAdapter and JournalPropertiesMenuAdapter
+     * when the "Compare side by side" or "Compare entries" option was selected.
+     */
     public void setSelectedItems(StructuredSelection selection) {
 
         List<JournalEntry> selectedItems = new ArrayList<JournalEntry>();
@@ -59,6 +63,10 @@ public class CompareSideBySideAction extends Action {
         this.selectedItems = selectedItems.toArray(new JournalEntry[selectedItems.size()]);
     }
 
+    /**
+     * Called by the JournalEntryViewerView, when the selected items has been
+     * changed.
+     */
     public void setSelectedItems(JournalEntry[] selectedItems) {
         this.selectedItems = selectedItems;
     }
