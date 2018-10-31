@@ -16,20 +16,20 @@ import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * This class automatically resizes the columns of a {@link Table} object
+ * This class automatically resizes the columns of a {@link Tree} object
  * according to the specified column weights. The columns that shall be resized
- * must be register to the TableAutoSizeControlListener by calling
- * {@link #addResizableColumn(TableColumn, int)}. The
- * TableAutoSizeControlListener must added as a {@link ControlListener} to the
- * table of a {@link Table} object.
+ * must be register to the TreeAutoSizeControlListener by calling
+ * {@link #addResizableColumn(TreeColumn, int)}. The TreeAutoSizeControlListener
+ * must added as a {@link ControlListener} to the table of a {@link Tree}
+ * object.
  * 
  * @author Thomas Raddatz
  */
-public class TableAutoSizeControlListener extends ControlAdapter {
+public class TreeAutoSizeControlListener extends ControlAdapter {
 
     /**
      * Reserves the space for a vertical scroll bar, keeping the column sizes
@@ -51,17 +51,17 @@ public class TableAutoSizeControlListener extends ControlAdapter {
     private boolean isResizing;
     private Point oldSize;
 
-    private Table tableParent;
+    private Tree tableParent;
     private int vBarMode;
 
-    private List<TableColumn> resizableTableColumns;
+    private List<TreeColumn> resizableTableColumns;
     private int initialTotalColumnsWeight;
 
-    public TableAutoSizeControlListener(Table tableParent) {
+    public TreeAutoSizeControlListener(Tree tableParent) {
         this(tableParent, RESERVE_VBAR_SPACE);
     }
 
-    public TableAutoSizeControlListener(Table tableParent, int vBarMode) {
+    public TreeAutoSizeControlListener(Tree tableParent, int vBarMode) {
 
         this.isResizing = false;
         this.oldSize = new Point(0, 0);
@@ -69,7 +69,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
         this.initialTotalColumnsWeight = 0;
 
         this.tableParent = tableParent;
-        this.resizableTableColumns = new ArrayList<TableColumn>();
+        this.resizableTableColumns = new ArrayList<TreeColumn>();
     }
 
     /**
@@ -78,7 +78,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param column - column that is resized
      * @param weight - weight of the column width
      */
-    public void addResizableColumn(TableColumn column, int weight) {
+    public void addResizableColumn(TreeColumn column, int weight) {
         addResizableColumn(column, weight, MIN_COLUMN_WIDTH);
     }
 
@@ -89,7 +89,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param weight - weight of the column width
      * @param minWidth - minimum width of the column. Defaults to 20.
      */
-    public void addResizableColumn(TableColumn column, int weight, int minWidth) {
+    public void addResizableColumn(TreeColumn column, int weight, int minWidth) {
         addResizableColumn(column, weight, minWidth, -1);
     }
 
@@ -100,7 +100,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param weight - weight of the column width
      * @param minWidth - minimum width of the column. Defaults to 20.
      */
-    public void addResizableColumn(TableColumn column, int weight, int minWidth, int maxWidth) {
+    public void addResizableColumn(TreeColumn column, int weight, int minWidth, int maxWidth) {
 
         if (!column.getResizable()) {
             return;
@@ -164,7 +164,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
 
         // Resize columns with a maximum size restriction
         int i = 0;
-        for (TableColumn column : resizableTableColumns) {
+        for (TreeColumn column : resizableTableColumns) {
             if (column.getResizable() && hasMaxSizeRestriction(column)) {
                 int minColumnWidth = getMinColumnWidth(column);
                 int maxColumnWidth = getMaxColumnWidth(column);
@@ -185,7 +185,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
 
         // Resize columns without a maximum size restriction
         i = 0;
-        for (TableColumn column : resizableTableColumns) {
+        for (TreeColumn column : resizableTableColumns) {
             if (column.getResizable() && !hasMaxSizeRestriction(column)) {
                 int minColumnWidth = getMinColumnWidth(column);
                 int newColumnWidth = (clientWidth - fixedColumnsWidth) / totalColumnsWeight * getColumnWeight(column);
@@ -198,7 +198,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
         }
     }
 
-    private boolean hasMaxSizeRestriction(TableColumn column) {
+    private boolean hasMaxSizeRestriction(TreeColumn column) {
 
         int maxColumnWidth = getMaxColumnWidth(column);
         if (maxColumnWidth > 0) {
@@ -214,7 +214,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param column - table column whose weight is returned
      * @return column weight
      */
-    private int getColumnWeight(TableColumn column) {
+    private int getColumnWeight(TreeColumn column) {
 
         if (column.getData(WEIGHT) == null) {
             return 0;
@@ -229,7 +229,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param column - table column whose minimum width is returned
      * @return column weight
      */
-    private int getMinColumnWidth(TableColumn column) {
+    private int getMinColumnWidth(TreeColumn column) {
 
         if (column.getData(MIN_WIDTH) == null) {
             return MIN_COLUMN_WIDTH;
@@ -244,7 +244,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
      * @param column - table column whose maximum width is returned
      * @return column weight
      */
-    private int getMaxColumnWidth(TableColumn column) {
+    private int getMaxColumnWidth(TreeColumn column) {
 
         if (column.getData(MAX_WIDTH) == null) {
             return -1;
@@ -262,7 +262,7 @@ public class TableAutoSizeControlListener extends ControlAdapter {
     private int getTotalWidthOfRemainingColumns() {
 
         int fixedWidth = 0;
-        for (TableColumn column : tableParent.getColumns()) {
+        for (TreeColumn column : tableParent.getColumns()) {
             if (column.getData(WEIGHT) == null) {
                 fixedWidth += column.getWidth();
             }

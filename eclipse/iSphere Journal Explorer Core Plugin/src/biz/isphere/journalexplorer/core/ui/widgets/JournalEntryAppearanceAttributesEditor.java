@@ -114,7 +114,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         table.getVerticalBar().setEnabled(true);
         table.getHorizontalBar().setEnabled(true);
 
-        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(table);
         tableAutoSizeAdapter.addResizableColumn(columnDescription, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
 

@@ -167,7 +167,7 @@ public class ConfirmErrorsDialog extends XDialog {
         tableViewer.getTable().setLinesVisible(true);
 
         final TableColumn tblMessageItemText = new TableColumn(tableViewer.getTable(), SWT.LEFT);
-        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer);
+        TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
         tableAutoSizeAdapter.addResizableColumn(tblMessageItemText, 1);
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
     }
