@@ -18,10 +18,8 @@ import java.util.List;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -52,7 +50,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
  * @see JournalExplorerView
  * @see JournalEntriesViewerForOutputFiles
  */
-public class JournalEntryViewerView extends ViewPart implements ISelectionListener, ISelectionChangedListener {
+public class JournalEntryViewerView extends ViewPart implements ISelectionListener {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"; //$NON-NLS-1$
 
@@ -73,7 +71,6 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
     public void createPartControl(Composite parent) {
 
         viewer = new JournalEntryDetailsViewer(parent);
-        viewer.addSelectionChangedListener(this);
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
         createActions();
         createToolBar();
@@ -153,9 +150,10 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         viewer.getControl().setFocus();
     }
 
-    // /
-    // / ISelectionListener methods
-    // /
+    /**
+     * Called when the selected items has been changed. Updates the input of the
+     * JournalEntryViewerView.
+     */
     public void selectionChanged(IWorkbenchPart viewPart, ISelection selection) {
 
         @SuppressWarnings("rawtypes")
@@ -199,31 +197,6 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         }
 
         setActionEnablement(getSelection());
-    }
-
-    public void selectionChanged(SelectionChangedEvent event) {
-
-        ITreeSelection selection = getSelection(event);
-        setActionEnablement(selection);
-
-        List<JournalEntry> journalEntriesList = new ArrayList<JournalEntry>();
-        List<JournalProperties> journalPropertiesList = new ArrayList<JournalProperties>();
-        for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
-            Object object = iterator.next();
-            if (object instanceof JournalProperties) {
-                JournalProperties journalProperties = (JournalProperties)object;
-                JournalEntry journalEntry = journalProperties.getJournalEntry();
-                journalPropertiesList.add(journalProperties);
-                journalEntriesList.add(journalEntry);
-                if (journalEntriesList.size() > 2) {
-                    journalEntriesList.clear();
-                    break;
-                }
-            }
-        }
-
-        compareSideBySideAction.setSelectedItems(journalEntriesList.toArray(new JournalEntry[journalEntriesList.size()]));
-        compareJournalPropertiesAction.setSelectedItems(journalPropertiesList.toArray(new JournalProperties[journalPropertiesList.size()]));
     }
 
     private void setActionEnablement(ITreeSelection selection) {
@@ -270,16 +243,6 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
     private ITreeSelection getSelection() {
 
         ISelection selection = viewer.getSelection();
-        if (selection instanceof ITreeSelection) {
-            return (ITreeSelection)selection;
-        }
-
-        return null;
-    }
-
-    private ITreeSelection getSelection(SelectionChangedEvent event) {
-
-        ISelection selection = event.getSelection();
         if (selection instanceof ITreeSelection) {
             return (ITreeSelection)selection;
         }
