@@ -23,6 +23,7 @@ public class JournalProperties {
     private static final String JOSEQN = Messages.JournalProperties_JOSEQN;
     private static final String JOCODE = Messages.JournalProperties_JOCODE;
     private static final String JOENTT = Messages.JournalProperties_JOENTT;
+    private static final String JOCTRR = Messages.JournalProperties_JOCTRR;
     private static final String STRING_SPECIFIC_DATA = Messages.JournalProperties_JOESD;
 
     private final JournalEntry journal;
@@ -42,6 +43,7 @@ public class JournalProperties {
         properties.add(new JournalProperty(JOSEQN, journal.getSequenceNumber(), journal));
         properties.add(new JournalProperty(JOCODE, journal.getJournalCode(), journal));
         properties.add(new JournalProperty(JOENTT, journal.getEntryType(), journal));
+        properties.add(new JournalProperty(JOCTRR, journal.getCountRrn(), journal));
         properties.add(new JOESDProperty(STRING_SPECIFIC_DATA, "", journal, journal)); //$NON-NLS-1$
     }
 
