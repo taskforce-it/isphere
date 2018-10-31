@@ -45,6 +45,8 @@ public class Messages extends NLS {
     public static String JournalExplorerView_OpenJournal;
     public static String JournalExplorerView_Export_to_Excel;
     public static String JournalExplorerView_Export_to_Excel_Tooltip;
+    public static String JournalExplorerView_ResetColumnSize;
+    public static String JournalExplorerView_ResetColumnSize_Tooltip;
     public static String JournalExplorerView_HighlightUserEntries;
     public static String JournalProperties_JOCODE;
     public static String JournalProperties_JOENTL;

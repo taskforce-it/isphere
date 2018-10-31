@@ -53,6 +53,7 @@ import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
+import biz.isphere.journalexplorer.core.ui.actions.ResetColumnSizeAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
@@ -65,6 +66,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private EditSqlAction editSqlAction;
     private OpenJournalOutfileAction openJournalOutputFileAction;
+    private ResetColumnSizeAction resetColumnSizeAction;
     private ExportToExcelAction exportToExcelAction;
     private CompareSideBySideAction compareSideBySideAction;
     private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
@@ -131,6 +133,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      * Create the actions.
      */
     private void createActions() {
+
+        resetColumnSizeAction = new ResetColumnSizeAction(getSite().getShell());
 
         exportToExcelAction = new ExportToExcelAction(getSite().getShell());
 
@@ -358,6 +362,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         toolBarManager.add(toggleHighlightUserEntriesAction);
         toolBarManager.add(configureParsersAction);
         toolBarManager.add(new Separator());
+        toolBarManager.add(resetColumnSizeAction);
+        toolBarManager.add(new Separator());
         toolBarManager.add(reloadEntriesAction);
     }
 
@@ -381,6 +387,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             editSqlAction.setEnabled(viewer.hasSqlEditor());
             editSqlAction.setChecked(viewer.isSqlEditorVisible());
         }
+
+        openJournalOutputFileAction.setEnabled(true);
 
         Collection<MetaTable> joesdParser = MetaDataCache.INSTANCE.getCachedParsers();
         if (joesdParser == null || joesdParser.isEmpty()) {
@@ -410,12 +418,16 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             exportToExcelAction.setSelectedItems(new JournalEntry[0]);
             reloadEntriesAction.setEnabled(false);
             toggleHighlightUserEntriesAction.setEnabled(false);
+            resetColumnSizeAction.setEnabled(false);
+            resetColumnSizeAction.setViewer(null);
         } else {
             exportToExcelAction.setColumns(columns);
             exportToExcelAction.setEnabled(true);
             exportToExcelAction.setSelectedItems(journalEntries.getItems().toArray(new JournalEntry[journalEntries.size()]));
             reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(true);
+            resetColumnSizeAction.setEnabled(true);
+            resetColumnSizeAction.setViewer(getSelectedViewer());
         }
 
         if (selection != null && selection.size() == 2) {

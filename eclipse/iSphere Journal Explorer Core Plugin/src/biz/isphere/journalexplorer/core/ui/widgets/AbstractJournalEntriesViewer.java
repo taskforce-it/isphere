@@ -28,11 +28,15 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -42,6 +46,7 @@ import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContent
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
+import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
@@ -55,6 +60,10 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntryViewerView
  */
 public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+
+    private IDialogSettingsManager dialogSettingsManager = null;
+
+    private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
     private Composite container;
     private TableViewer tableViewer;
@@ -85,12 +94,59 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tableViewer = createTableViewer(container);
+        setColumnSizes(tableViewer);
         container.layout(true);
         setControl(container);
     }
 
+    private void setColumnSizes(TableViewer tableViewer) {
+
+        ControlAdapter columnResizeListener = new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent event) {
+                TableColumn column = (TableColumn)event.getSource();
+                getDialogSettingsManager().storeValue(produceColumnWidthKey(column), column.getWidth());
+            }
+        };
+
+        for (int i = 0; i < tableViewer.getTable().getColumnCount(); i++) {
+            TableColumn column = tableViewer.getTable().getColumn(i);
+            int width = getDialogSettingsManager().loadIntValue(produceColumnWidthKey(column), getDefaultColumnSize(column));
+            column.setWidth(width);
+            column.addControlListener(columnResizeListener);
+        }
+    }
+
+    private String produceColumnWidthKey(TableColumn column) {
+        return COLUMN_WIDTH + Type5ViewerFactory.getColumnName(column);
+    }
+
+    private IDialogSettingsManager getDialogSettingsManager() {
+
+        if (dialogSettingsManager == null) {
+            dialogSettingsManager = new IDialogSettingsManager(AbstractJournalEntriesViewer.class);
+        }
+        return dialogSettingsManager;
+    }
+
     protected Composite getContainer() {
         return container;
+    }
+
+    public void resetColumnSizes() {
+
+        tableViewer.getTable().setVisible(false);
+
+        for (int i = 0; i < tableViewer.getTable().getColumnCount(); i++) {
+            TableColumn column = tableViewer.getTable().getColumn(i);
+            column.setWidth(getDefaultColumnSize(column));
+        }
+
+        tableViewer.getTable().setVisible(true);
+    }
+
+    private int getDefaultColumnSize(TableColumn column) {
+        return Type5ViewerFactory.getDefaultColumnSize(column);
     }
 
     public boolean hasSqlEditor() {
