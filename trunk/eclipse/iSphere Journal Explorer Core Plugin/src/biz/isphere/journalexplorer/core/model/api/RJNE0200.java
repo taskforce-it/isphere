@@ -1205,6 +1205,9 @@ public class RJNE0200 {
      */
     public String getFileTypeIndicator() {
         if (OBJECT_TYPE_FILE.equals(getObjectType())) {
+            // Returning 'L' and 'P', because that is what DSPJRN writes to an
+            // output file.
+            // PMR: 33254,031,724 (05.10.2018)
             if (isLogicalFile()) {
                 return "L";
             } else {
