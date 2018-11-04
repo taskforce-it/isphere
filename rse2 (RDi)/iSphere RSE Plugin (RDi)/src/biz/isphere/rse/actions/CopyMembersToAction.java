@@ -1,28 +1,26 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.handler;
+package biz.isphere.rse.actions;
 
 import java.util.Iterator;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
@@ -37,58 +35,48 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
-public class CopyToCommandHandler extends AbstractHandler implements IHandler {
+public class CopyMembersToAction implements IObjectActionDelegate {
 
-    public static final String ID = "biz.isphere.rse.handler.CopyToCommandHandler";
-
-    private Shell shell;
+    protected IStructuredSelection structuredSelection;
+    protected Shell shell;
     private CopyMemberService jobDescription;
 
-    public Object execute(ExecutionEvent event) throws ExecutionException {
+    public void run(IAction action) {
 
-        jobDescription = null;
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-        setShell(event);
+            for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
+                Object selectedObject = iterator.next();
 
-        ISelection selection = HandlerUtil.getCurrentSelection(event);
-        if (!(selection instanceof StructuredSelection)) {
-            return null;
-        }
-
-        StructuredSelection selectedMembers = (StructuredSelection)selection;
-        for (Iterator<?> iterator = selectedMembers.iterator(); iterator.hasNext();) {
-            Object selectedObject = iterator.next();
-
-            if (selectedObject instanceof QSYSRemoteSourceMember) {
-                QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)selectedObject;
-                if (!addElement(object)) {
-                    return false;
-                }
-            } else if (selectedObject instanceof QSYSRemoteSourceFile) {
-                QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
-                String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
-                if (!addElementsFromSourceFile(connectionName, object.getLibrary(), object.getName())) {
-                    return false;
-                }
-            } else if ((selectedObject instanceof SystemFilterReference)) {
-                SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
-                String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
-                if (!addElementsFromFilterString(connectionName, filterStrings)) {
-                    return false;
+                if (selectedObject instanceof QSYSRemoteSourceMember) {
+                    QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)selectedObject;
+                    if (!addElement(object)) {
+                        return;
+                    }
+                } else if (selectedObject instanceof QSYSRemoteSourceFile) {
+                    QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
+                    String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
+                    if (!addElementsFromSourceFile(connectionName, object.getLibrary(), object.getName())) {
+                        return;
+                    }
+                } else if ((selectedObject instanceof SystemFilterReference)) {
+                    SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
+                    String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
+                    if (!addElementsFromFilterString(connectionName, filterStrings)) {
+                        return;
+                    }
                 }
             }
+
+            if (jobDescription.getItems().length > 0) {
+                CopyMemberDialog dialog = new CopyMemberDialog(shell);
+                dialog.setContent(jobDescription);
+                dialog.open();
+            }
+
+            jobDescription = null;
         }
-
-        if (jobDescription.getItems().length > 0) {
-            CopyMemberDialog dialog = new CopyMemberDialog(shell);
-            dialog.setContent(jobDescription);
-            dialog.open();
-        }
-
-        jobDescription = null;
-
-        return null;
     }
 
     private boolean addElement(QSYSRemoteSourceMember object) {
@@ -173,7 +161,20 @@ public class CopyToCommandHandler extends AbstractHandler implements IHandler {
         return addElementsFromFilterString(connectionName, _filterStrings);
     }
 
-    private void setShell(ExecutionEvent event) {
-        shell = HandlerUtil.getActivePart(event).getSite().getShell();
+    public void selectionChanged(IAction action, ISelection selection) {
+
+        if (selection instanceof IStructuredSelection) {
+            structuredSelection = ((IStructuredSelection)selection);
+        } else {
+            structuredSelection = null;
+        }
+
     }
+
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+
+        shell = workbenchPart.getSite().getShell();
+
+    }
+
 }
