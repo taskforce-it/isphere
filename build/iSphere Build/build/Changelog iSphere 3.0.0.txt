@@ -11,7 +11,9 @@ Changelog: iSphere 3.5.1.r
  • Changed journal to allow selecting multiple files when retrieving
    journal entries.
  • Changed LPEX Task Tags preference page to sort the table of file
-   extensions by name. 
+   extensions by name.
+ • Added the "Copy Members to" menu option to the "Remote Scratchpad"
+   view.
  • Fixed NullPointerException in TimeEdit (WDSCi).
  • Fixed Journal Explorer to handle and display date, time and
    timestamp fields as text fields to avoid timezone and daylight
