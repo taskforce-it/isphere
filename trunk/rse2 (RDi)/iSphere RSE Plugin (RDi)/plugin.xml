@@ -534,6 +534,74 @@
 	         </action>
       	</objectContribution>
       	
+      	<!--
+      	  ==========================================
+      	    Copy Source Members Contributions
+      	  ==========================================
+      	-->
+      	
+      	<!-- Right-click: source file or source member -->
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief"
+            id="biz.isphere.core.menu.copymembersto.member">
+            
+            <enablement>
+            	<or>
+            		<!-- Rules to detect source members -->
+            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="SRC"/>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect source files   -->
+					<or>
+		            	<and>
+		            		<!-- a file -->
+		            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*FILE"/>
+		            		<!-- must be of one of the following sub types -->
+		            		<or>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
+		            		</or>
+		            	</and>
+					</or>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect libraries   -->
+					<or>
+	            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*LIB"/>
+					</or>
+				</or>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.CopyMembersToAction"
+                enablesFor="*"
+                id="biz.isphere.rse.actions.CopyMembersToAction"
+                label="%iSphere_CopyMembersTo"
+                icon="icons/copy_members_to.png"
+                menubarPath="group.importexport">
+	         </action>
+      	</objectContribution>
+      	
+      	<!-- Right-click: RSE object filter for QSYS filters -->
+      	<objectContribution
+            objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
+            id="biz.isphere.core.menu.copymembersto.filter">
+            
+            <enablement>
+            	<and>
+            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
+            		      value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem"/>
+				</and>
+         	</enablement>
+         	
+	         <action
+                class="biz.isphere.rse.actions.CopyMembersToAction"
+                enablesFor="*"
+                id="biz.isphere.rse.actions.CopyMembersToAction"
+                label="%iSphere_CopyMembersTo"
+                icon="icons/copy_members_to.png"
+                menubarPath="group.importexport">
+	         </action>
+      	</objectContribution>
+      	
    </extension>
       	
       	<!--
@@ -608,162 +676,6 @@
             id="biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"
             allowMultiple="true"/>
    </extension> 
-	      	
-      	<!--
-      	  ==========================================
-      	    iSphere Copy Source Members (RSE)
-      	  ==========================================
-      	-->
-   
-   <extension
-         point="org.eclipse.ui.menus">
-         
-      	<!-- Right-click: source member -->
-      <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
-	      <visibleWhen>
-	        <with variable="selection">
-	          <count value="*" />
-	          <iterate operator="and">
-	            <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
-	          </iterate>
-	        </with>
-	      </visibleWhen>
-        </command>
-      </menuContribution>
-
-      	<!-- Right-click: source file -->
-      <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
-	      <visibleWhen>
-	        <with variable="selection">
-	          <count value="*" />
-	          <iterate operator="and">
-	            <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
-	          </iterate>
-	        </with>
-	      </visibleWhen>
-        </command>
-      </menuContribution>
-
-      	<!-- Right-click: system member filter -->
-      <menuContribution
-            locationURI="popup:org.eclipse.rse.ui.view.systemView?before=group.adapters">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
-	      <visibleWhen>
-	        <with variable="selection">
-	          <count value="*" />
-	          <iterate operator="and">
-	          <and>
-	            <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
-            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
-            		      value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem"/>
-            		<test property="biz.isphere.adapter.propertytester.systemfilterreference.type" 
-            		      value="Member"/>
-	          </and>
-	          </iterate>
-	        </with>
-	      </visibleWhen>
-        </command>
-      </menuContribution>
-      
-   </extension>
-	      	
-      	<!--
-      	  ==========================================
-      	    iSphere Copy Source Members (PDM Table View)
-      	  ==========================================
-      	-->
-   
-   <extension
-         point="org.eclipse.ui.menus">
-         
-      	<!-- Right-click: source member -->
-      <menuContribution
-            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
-	      <visibleWhen>
-	        <with variable="selection">
-	          <count value="*" />
-	          <iterate operator="and">
-	            <or>          
-	            <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
-	            </or>
-	          </iterate>
-	        </with>
-	      </visibleWhen>
-        </command>
-      </menuContribution>
-         
-      	<!-- Right-click: source file -->
-      <menuContribution
-            locationURI="popup:com.ibm.etools.iseries.rse.ui.ObjectTableView?before=group.adapters">
-        <command
-              commandId="biz.isphere.core.command.SourceMember.copyTo"
-              id="biz.isphere.rse.handler.CopyToCommandHandler"
-              icon="icons/copy_members_to.png"
-              label="%command_CopyMembersTo_Label">
-	      <visibleWhen>
-	        <with variable="selection">
-	          <count value="*" />
-	          <iterate operator="and">
-	            <or>          
-	            <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
-	            </or>
-	          </iterate>
-	        </with>
-	      </visibleWhen>
-        </command>
-      </menuContribution>
-      
-   </extension>
-   
-   <extension point="org.eclipse.ui.commands">
-      <command
-            categoryId="biz.isphere.category.Commands"             
-            id="biz.isphere.core.command.SourceMember.copyTo"
-            name="%command_CopyMembersTo_Name">
-      </command>
-	</extension>	 
-	
-    <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="biz.isphere.rse.handler.CopyToCommandHandler"
-            id="biz.isphere.rse.handler.CopyToCommandHandler"
-            commandId="biz.isphere.core.command.SourceMember.copyTo">
-        <activeWhen>
-          <with variable="selection">
-            <count value="*" />
-            <iterate operator="and">
-              <or>
-                <adapt type="com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember" />
-                <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
-                <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
-              </or>
-            </iterate>
-          </with>
-        </activeWhen>
-      </handler>
-	</extension>	 
 
         <!--
       	  ==========================================
