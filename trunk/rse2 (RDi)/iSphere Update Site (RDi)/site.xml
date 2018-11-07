@@ -71,7 +71,7 @@
    </category-def>
    <category-def name="iSphere Additions for RDi 8.0+ (optional, see description)" label="iSphere Additions for RDi 8.0+ (optional, see description)">
       <description>
-         Optional additions for RDi 8.0+. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;. This component contains features that actually have been developed for WDSCi. Users who use WDSCi and RDi may install this component to use the same functions and keyboard shortcuts as with WDSCi.
+         Optional LPEX editor additions for RDi 8.0+. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;. This component contains features that actually have been developed for WDSCi. Users who use WDSCi and RDi may install this component to use the same functions and keyboard shortcuts as with WDSCi.
       </description>
    </category-def>
 </site>
