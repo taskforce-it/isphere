@@ -63,7 +63,7 @@
    </category-def>
    <category-def name="iSphere Additions for WDSCi 7.0" label="iSphere Additions for WDSCi 7.0">
       <description>
-         Optional additions for WDSCi 7.0. Requires installing the iSphere base component &quot;iSphere for WDSCi 7.0&quot;.
+         Optional LPEX editor additions for WDSCi 7.0. Requires installing the iSphere base component &quot;iSphere for WDSCi 7.0&quot;.
       </description>
    </category-def>
 </site>
