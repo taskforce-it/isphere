@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
@@ -118,7 +119,7 @@ public class SearchExec {
 
                             getStatus(monitor);
 
-                            while (_counter != -1 && !monitor.isCanceled()) {
+                            while (_counter != -1) {
 
                                 monitor.worked(_counter - _lastCounter);
 
@@ -141,6 +142,8 @@ public class SearchExec {
 
                             monitor.worked(_numberOfSearchElements - _lastCounter);
 
+                            monitor.done();
+
                             if (!monitor.isCanceled()) {
                                 _searchResults = getSearchResults(iSphereLibrary, _jdbcConnection, _handle);
                             }
@@ -150,8 +153,6 @@ public class SearchExec {
                         }
 
                     } finally {
-
-                        monitor.done();
 
                         try {
                             ISphereHelper.setCurrentLibrary(_as400, currentLibrary);
@@ -307,6 +308,11 @@ public class SearchExec {
                 resultSet = preparedStatementSelect.executeQuery();
                 if (resultSet.next()) {
                     _counter = resultSet.getInt("XSCNT"); //$NON-NLS-1$
+                } else {
+                    ISpherePlugin.logError("*** Source file search: Could not read status record (" + _handle + ") from file FNDSTRS ***", error);
+                    monitor.setCanceled(true);
+                    MessageDialogAsync.displayError(Messages.bind(Messages.Could_not_read_status_from_file_B_A_for_search_job_handle_C, new Object[] {
+                        "FNDSTRS", iSphereLibrary, new Integer(_handle) }));
                 }
             } catch (SQLException e) {
                 error = e;
@@ -329,9 +335,9 @@ public class SearchExec {
             }
 
             if (error != null) {
-                ISpherePlugin.logError("*** Source file search: Unexpected connection error. ***", error);
                 monitor.setCanceled(true);
                 MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(error));
+                ISpherePlugin.logError("*** Source file search: Unexpected connection error. ***", error);
             }
 
         }

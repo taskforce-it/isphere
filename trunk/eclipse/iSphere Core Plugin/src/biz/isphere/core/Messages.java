@@ -1494,6 +1494,8 @@ public class Messages extends NLS {
 
     public static String Selected_view_colon;
 
+    public static String Could_not_read_status_from_file_B_A_for_search_job_handle_C;
+
     /*
      * Warning messages
      */
