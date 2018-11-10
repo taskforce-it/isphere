@@ -20,6 +20,8 @@ Changelog: iSphere 3.5.1.r
    saving time adjustments.
  • Fixed exception due to disposed images in message file compare editor.
  • Fixed resize-problems when using the TableAutoSizeAdapter.
+ • Fixed iSphere Source File Search to log all JDBC connection problems
+   and to always close the monitor when leaving the search.
 
 Changelog: iSphere 3.5.0.r
 --------------------------
