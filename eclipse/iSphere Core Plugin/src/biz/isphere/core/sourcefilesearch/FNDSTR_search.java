@@ -81,7 +81,7 @@ public class FNDSTR_search {
 
             errno = -1;
 
-            ISpherePlugin.logError("*** Call to FNDSTR_search failed. See messages above ***", e);
+            ISpherePlugin.logError("*** Call to FNDSTR_search failed due to an unexpected PcmlException ***", e);
         }
 
         return errno;
