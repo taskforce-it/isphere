@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -129,7 +130,6 @@ public class SearchExec {
                                 try {
                                     Thread.sleep(500);
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
                                 }
 
                                 getStatus(monitor);
@@ -172,38 +172,56 @@ public class SearchExec {
 
         private void getStatus(IProgressMonitor monitor) {
 
+            Throwable error = null;
+
             String _separator;
             try {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
-                _separator = ".";
+                _separator = "."; //$NON-NLS-1$
+                ISpherePlugin.logError("*** Message file search (1): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
             }
 
             PreparedStatement preparedStatementSelect = null;
             ResultSet resultSet = null;
             try {
+
                 preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT XSCNT, XSCNL FROM " + iSphereLibrary + _separator
                     + "XFNDSTRS WHERE XSHDL = ?");
                 preparedStatementSelect.setInt(1, _handle);
                 resultSet = preparedStatementSelect.executeQuery();
                 if (resultSet.next()) {
                     _counter = resultSet.getInt("XSCNT");
+                } else {
+                    ISpherePlugin.logError("*** Message file search: Could not read status record (" + _handle + ") from file XFNDSTRS ***", error);
+                    monitor.setCanceled(true);
+                    MessageDialogAsync.displayError(Messages.bind(Messages.Could_not_read_status_from_file_B_A_for_search_job_handle_C, new Object[] {
+                        "XFNDSTRS", iSphereLibrary, new Integer(_handle) }));
                 }
             } catch (SQLException e) {
-                monitor.setCanceled(true);
-                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(e));
+                error = e;
             }
+
             if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
+                    error = e1;
                 }
             }
+
             if (preparedStatementSelect != null) {
                 try {
                     preparedStatementSelect.close();
                 } catch (SQLException e1) {
+                    error = e1;
                 }
+            }
+
+            if (error != null) {
+                monitor.setCanceled(true);
+                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(error));
+                ISpherePlugin.logError("*** Message file search: Unexpected connection error. ***", error);
             }
 
         }
