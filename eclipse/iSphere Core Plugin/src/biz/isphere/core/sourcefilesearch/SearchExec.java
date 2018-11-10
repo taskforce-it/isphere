@@ -118,7 +118,7 @@ public class SearchExec {
 
                             getStatus(monitor);
 
-                            while (_counter != -1) {
+                            while (_counter != -1 && !monitor.isCanceled()) {
 
                                 monitor.worked(_counter - _lastCounter);
 
@@ -133,7 +133,6 @@ public class SearchExec {
                                 try {
                                     Thread.sleep(500);
                                 } catch (InterruptedException e) {
-                                    e.printStackTrace();
                                 }
 
                                 getStatus(monitor);
@@ -141,8 +140,6 @@ public class SearchExec {
                             }
 
                             monitor.worked(_numberOfSearchElements - _lastCounter);
-
-                            monitor.done();
 
                             if (!monitor.isCanceled()) {
                                 _searchResults = getSearchResults(iSphereLibrary, _jdbcConnection, _handle);
@@ -153,6 +150,8 @@ public class SearchExec {
                         }
 
                     } finally {
+
+                        monitor.done();
 
                         try {
                             ISphereHelper.setCurrentLibrary(_as400, currentLibrary);
@@ -180,7 +179,7 @@ public class SearchExec {
                 _separator = jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
                 _separator = "."; //$NON-NLS-1$
-                e.printStackTrace();
+                ISpherePlugin.logError("*** Source file search (1): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
             }
 
             ArrayList<SearchResult> arrayListSearchResults = new ArrayList<SearchResult>();
@@ -262,14 +261,14 @@ public class SearchExec {
                 }
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                ISpherePlugin.logError("*** Could not load source file search result ***", e);
             }
 
             if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Could not close source file search result set ***", e);
                 }
             }
 
@@ -277,7 +276,7 @@ public class SearchExec {
                 try {
                     preparedStatementSelect.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Could not close prepared statement of source file search ***", e);
                 }
             }
 
@@ -289,11 +288,14 @@ public class SearchExec {
 
         private void getStatus(IProgressMonitor monitor) {
 
+            Throwable error = null;
+
             String _separator;
             try {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
                 _separator = "."; //$NON-NLS-1$
+                ISpherePlugin.logError("*** Source file search (2): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
             }
 
             PreparedStatement preparedStatementSelect = null;
@@ -307,20 +309,29 @@ public class SearchExec {
                     _counter = resultSet.getInt("XSCNT"); //$NON-NLS-1$
                 }
             } catch (SQLException e) {
-                monitor.setCanceled(true);
-                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(e));
+                error = e;
             }
+
             if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
+                    error = e1;
                 }
             }
+
             if (preparedStatementSelect != null) {
                 try {
                     preparedStatementSelect.close();
                 } catch (SQLException e1) {
+                    error = e1;
                 }
+            }
+
+            if (error != null) {
+                ISpherePlugin.logError("*** Source file search: Unexpected connection error. ***", error);
+                monitor.setCanceled(true);
+                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(error));
             }
 
         }
@@ -332,7 +343,7 @@ public class SearchExec {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
                 _separator = "."; //$NON-NLS-1$
-                e.printStackTrace();
+                ISpherePlugin.logError("*** Source file search (3): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
             }
 
             PreparedStatement preparedStatementUpdate = null;
