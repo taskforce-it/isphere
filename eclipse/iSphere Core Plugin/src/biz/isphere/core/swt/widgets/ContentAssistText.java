@@ -16,8 +16,11 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -36,9 +39,13 @@ public class ContentAssistText {
     private Color forgroundColor;
 
     private SourceViewer sourceViewer;
+    private TextTraverseListener traverseListener;
+    private boolean traverseEnabled;
 
     public ContentAssistText(Composite parent) {
         this(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
+
+        this.traverseEnabled = false;
     }
 
     public ContentAssistText(Composite parent, int style) {
@@ -60,6 +67,23 @@ public class ContentAssistText {
 
         this.forgroundColor = sourceViewer.getTextWidget().getForeground();
         this.isHintDisplayed = false;
+
+        this.traverseListener = new TextTraverseListener();
+
+        this.sourceViewer.getTextWidget().addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent event) {
+                sourceViewer.getTextWidget().addTraverseListener(traverseListener);
+            }
+
+            public void focusLost(FocusEvent e) {
+                sourceViewer.getTextWidget().removeTraverseListener(traverseListener);
+            }
+
+        });
+    }
+
+    public void setTraverseEnabled(boolean enabled) {
+        this.traverseEnabled = enabled;
     }
 
     public void setHint(String hint) {
@@ -163,8 +187,8 @@ public class ContentAssistText {
         sourceViewer.getControl().addFocusListener(listener);
     }
 
-    public void setFocus() {
-        sourceViewer.getControl().setFocus();
+    public boolean setFocus() {
+        return sourceViewer.getTextWidget().setFocus();
     }
 
     public void configure(SourceViewerConfiguration configuration) {
@@ -192,5 +216,15 @@ public class ContentAssistText {
             configuration = null;
         }
         sourceViewer.unconfigure();
+    }
+
+    private class TextTraverseListener implements TraverseListener {
+
+        public void keyTraversed(TraverseEvent event) {
+            if (traverseEnabled && SWT.TAB == event.keyCode) {
+                event.doit = true;
+            }
+        }
+
     }
 }
