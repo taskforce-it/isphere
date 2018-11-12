@@ -315,7 +315,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         if (viewer != null) {
 
             if (viewer.isLoading()) {
-                message = Messages.Status_Loading_journal_entries;
+                message = null;
             } else {
                 JournalEntries journalEntries = viewer.getInput();
                 if (journalEntries != null) {
