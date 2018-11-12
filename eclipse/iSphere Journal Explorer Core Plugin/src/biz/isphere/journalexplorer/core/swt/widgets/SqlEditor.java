@@ -77,14 +77,7 @@ public class SqlEditor extends Composite {
         layout.marginWidth = 0;
         setLayout(layout);
 
-        Composite leftPanel = new Composite(this, SWT.NONE);
-        GridLayout leftPanelLayout = new GridLayout(1, false);
-        leftPanelLayout.marginHeight = 0;
-        leftPanelLayout.marginWidth = 0;
-        leftPanel.setLayout(leftPanelLayout);
-        leftPanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-        Composite wherePanel = new Composite(leftPanel, SWT.NONE);
+        Composite wherePanel = new Composite(this, SWT.NONE);
         GridLayout wherePanelLayout = new GridLayout(1, false);
         wherePanelLayout.marginHeight = 0;
         wherePanelLayout.marginWidth = 0;
@@ -96,24 +89,10 @@ public class SqlEditor extends Composite {
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
 
-        Composite addFieldPanel = new Composite(leftPanel, SWT.NONE);
-        GridLayout addPanelLayout = new GridLayout(1, false);
-        addPanelLayout.marginHeight = 0;
-        addPanelLayout.marginWidth = 0;
-        addFieldPanel.setLayout(addPanelLayout);
+        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-        btnClear = WidgetFactory.createPushButton(addFieldPanel, Messages.ButtonLabel_Clear);
-        btnClear.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_HORIZONTAL));
-        btnClear.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                textSqlEditor.setText("");
-                textSqlEditor.getTextWidget().setFocus();
-            }
-        });
-
-        btnAddField = WidgetFactory.createPushButton(addFieldPanel, Messages.ButtonLabel_AddField);
-        btnAddField.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_HORIZONTAL));
+        btnAddField = WidgetFactory.createPushButton(wherePanel, Messages.ButtonLabel_AddField);
+        btnAddField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -174,8 +153,27 @@ public class SqlEditor extends Composite {
             }
         });
 
-        btnExecute = WidgetFactory.createPushButton(this, Messages.ButtonLabel_Execute);
-        btnExecute.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END));
+        Composite executePanel = new Composite(this, SWT.NONE);
+        GridLayout executePanelLayout = new GridLayout(1, false);
+        executePanelLayout.marginHeight = 0;
+        executePanelLayout.marginWidth = 0;
+        executePanel.setLayout(executePanelLayout);
+        executePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
+        btnClear.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        btnClear.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                textSqlEditor.setText("");
+                textSqlEditor.getTextWidget().setFocus();
+            }
+        });
+
+        new Label(executePanel, SWT.NONE).setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        btnExecute = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Execute);
+        btnExecute.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     public void addSelectionListener(SelectionListener listener) {
