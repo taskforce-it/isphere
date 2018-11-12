@@ -209,10 +209,10 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
     }
 
     protected ContentAssistProposal[] getContentAssistProposals() {
-        return new ContentAssistProposal[0]; // JournalEntry.getContentAssistProposal();
+        return JournalEntry.getContentAssistProposal();
     }
 
     public boolean hasSqlEditor() {
-        return false;
+        return true;
     }
 }

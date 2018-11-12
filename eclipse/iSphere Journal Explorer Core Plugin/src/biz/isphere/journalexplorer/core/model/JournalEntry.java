@@ -16,9 +16,11 @@ import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
@@ -35,6 +37,41 @@ public class JournalEntry {
     private static final String ADDRESS_FAMILY_IPV6 = "6";
 
     public static final String USER_GENERATED = "U"; //$NON-NLS-1$
+
+    private static final int JOCODE = 0;
+    private static final int JOENTT = 1;
+    private static final int JOJOB = 2;
+    private static final int JOUSER = 3;
+    private static final int JONBR = 4;
+    private static final int JOLIB = 5;
+    private static final int JOOBJ = 6;
+    private static final int JOMBR = 7;
+
+    private static HashMap<String, Integer> columnMappings;
+    static {
+        columnMappings = new HashMap<String, Integer>();
+        columnMappings.put("JOCODE", JOCODE);
+        columnMappings.put("JOENTT", JOENTT);
+        columnMappings.put("JOJOB", JOJOB);
+        columnMappings.put("JOUSER", JOUSER);
+        columnMappings.put("JONBR", JONBR);
+        columnMappings.put("JOLIB", JOLIB);
+        columnMappings.put("JOOBJ", JOOBJ);
+        columnMappings.put("JOMBR", JOMBR);
+    }
+
+    private static ContentAssistProposal[] contentAssistProposals;
+    static {
+        contentAssistProposals = new ContentAssistProposal[columnMappings.size()];
+        contentAssistProposals[JOCODE] = new ContentAssistProposal("JOCODE");
+        contentAssistProposals[JOENTT] = new ContentAssistProposal("JOENTT");
+        contentAssistProposals[JOJOB] = new ContentAssistProposal("JOJOB");
+        contentAssistProposals[JOUSER] = new ContentAssistProposal("JOUSER");
+        contentAssistProposals[JONBR] = new ContentAssistProposal("JONBR");
+        contentAssistProposals[JOLIB] = new ContentAssistProposal("JOLIB");
+        contentAssistProposals[JOOBJ] = new ContentAssistProposal("JOOBJ");
+        contentAssistProposals[JOMBR] = new ContentAssistProposal("JOMBR");
+    }
 
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
@@ -187,6 +224,30 @@ public class JournalEntry {
         }
 
         return false;
+    }
+
+    public static HashMap<String, Integer> getColumnMapping() {
+        return columnMappings;
+    }
+
+    public static ContentAssistProposal[] getContentAssistProposal() {
+        return contentAssistProposals;
+    }
+
+    public Comparable[] getRow() {
+
+        Comparable[] row = new Comparable[columnMappings.size()];
+
+        row[JOCODE] = getJournalCode();
+        row[JOENTT] = getEntryType();
+        row[JOJOB] = getJobName();
+        row[JOUSER] = getJobUserName();
+        row[JONBR] = getJobNumber();
+        row[JOLIB] = getObjectLibrary();
+        row[JOOBJ] = getObjectName();
+        row[JOMBR] = getMemberName();
+
+        return row;
     }
 
     // //////////////////////////////////////////////////////////
