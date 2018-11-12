@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Editors
+      	  ==========================================
+      	-->
+
+	<extension
+		point="org.eclipse.ui.editors">
+		<editor
+			name=""
+			icon="icons/joblog_explorer.png"
+			class="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"
+			contributorClass="biz.isphere.joblogexplorer.editor.JobLogExplorerEditorActionBarContributor"
+			id="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"/>
+	</extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Commands
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.commands">
+
+      <category
+            name="iSphere"
+            id="biz.isphere.category.Commands">
+      </category>
+
+      <command
+            defaultHandler="biz.isphere.joblogexplorer.handler.OpenJobLogExplorerHandler"
+            id="biz.isphere.joblogexplorer.command.JobLogExplorer.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%cmd_Open_Job_Log_Explorer">
+      </command>
+
+	</extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Key Bindings
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.bindings">
+
+      <key
+        sequence="Ctrl+I J"
+        commandId="biz.isphere.joblogexplorer.command.JobLogExplorer.open"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
+
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Preferences
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Job_Log_Explorer"
+            id="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage" >
+         <keywordReference id="biz.isphere.joblogexplorer.preferences.general"/>
+      </page>
+
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.joblogexplorer.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Keywords
+      	  ==========================================
+      	-->
+
+   <extension
+      point="org.eclipse.ui.keywords">
+      <keyword
+            label="%preferenceKeywords.general"
+            id="biz.isphere.joblogexplorer.preferences.general"/>
+   </extension>
+   
+</plugin>

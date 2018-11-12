@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Eclipse-BundleShape: dir
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Ant Plugin
+Bundle-SymbolicName: biz.isphere.antcontrib;singleton:=true
+Bundle-Version: 1.0.0.b5
+Bundle-Activator: biz.isphere.antcontrib.ISphereAntPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui.workbench,
+ org.eclipse.ant.core,
+ org.apache.ant
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/iSphere-ant-plugin.jar,
+ lib/iSphere-ant-runtime.jar,
+ lib/jacob.jar
+Export-Package: biz.isphere.antcontrib
