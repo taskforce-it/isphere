@@ -65,6 +65,7 @@ public class Messages extends NLS {
     public static String SideBySideCompareDialog_SideBySideComparison;
     public static String Number_of_journal_entries_A;
     public static String Number_of_journal_entries_A_of_B;
+    public static String subsetted_list;
     public static String SqlEditor_WHERE;
     public static String DisplayJournalEntriesDialog_Title;
     public static String DisplayJournalEntriesDialog_From_date_colon;

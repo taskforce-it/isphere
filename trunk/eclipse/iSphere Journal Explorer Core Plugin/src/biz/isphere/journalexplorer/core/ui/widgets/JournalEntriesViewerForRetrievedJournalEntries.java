@@ -21,10 +21,12 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
@@ -54,10 +56,13 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JrneToRtv jrneToRtv) {
-        super(parent);
+    public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JrneToRtv jrneToRtv,
+        SelectionListener loadJournalEntriesSelectionListener) {
+        super(parent, loadJournalEntriesSelectionListener);
 
         this.jrneToRtv = jrneToRtv;
+
+        setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
 
@@ -123,7 +128,13 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         return true;
     }
 
+    public void closeJournal() {
+        setInputData(null);
+    }
+
     public void openJournal(final JournalExplorerView view) throws Exception {
+
+        setFocusOnSqlEditor();
 
         Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
 
@@ -132,14 +143,16 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                 try {
 
                     JournalDAO journalDAO = new JournalDAO(jrneToRtv);
-                    final JournalEntries data = journalDAO.load();
+                    final JournalEntries data = journalDAO.getJournalData(getWhereClause());
 
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            setInputData(data);
-                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
-                        }
-                    });
+                    if (!isDisposed()) {
+                        getDisplay().asyncExec(new Runnable() {
+                            public void run() {
+                                setInputData(data);
+                                view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                            }
+                        });
+                    }
 
                     IBMiMessage[] messages = data.getMessages();
                     if (messages.length != 0) {
@@ -152,14 +165,16 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                         }
                     }
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
 
-                    final Exception e1 = e;
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
-                        }
-                    });
+                    if (!isDisposed()) {
+                        final Throwable e1 = e;
+                        getDisplay().asyncExec(new Runnable() {
+                            public void run() {
+                                view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
+                            }
+                        });
+                    }
 
                 }
 
@@ -191,5 +206,13 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         };
 
         loadJournalDataJob.schedule();
+    }
+
+    protected ContentAssistProposal[] getContentAssistProposals() {
+        return new ContentAssistProposal[0]; // JournalEntry.getContentAssistProposal();
+    }
+
+    public boolean hasSqlEditor() {
+        return false;
     }
 }

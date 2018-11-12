@@ -30,18 +30,23 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.IDialogSettingsManager;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -66,25 +71,102 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
     private Composite container;
+    private Set<ISelectionChangedListener> selectionChangedListeners;
+    private boolean isSqlEditorVisible;
+    private SelectionListener loadJournalEntriesSelectionListener;
+
     private TableViewer tableViewer;
     private JournalEntries data;
-    private Set<ISelectionChangedListener> selectionChangedListeners;
-    boolean isSqlEditorVisible;
+    private SqlEditor sqlEditor;
+    private String whereClause;
 
-    public AbstractJournalEntriesViewer(CTabFolder parent) {
+    public AbstractJournalEntriesViewer(CTabFolder parent, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
 
         this.container = new Composite(parent, SWT.NONE);
-
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
+        this.isSqlEditorVisible = false;
+        this.loadJournalEntriesSelectionListener = loadJournalEntriesSelectionListener;
+        this.whereClause = null;
+
         Preferences.getInstance().addPropertyChangeListener(this);
     }
 
     protected abstract String getLabel();
 
     protected abstract String getTooltip();
+
+    protected abstract ContentAssistProposal[] getContentAssistProposals();
+
+    protected void createSqlEditor() {
+
+        if (!isAvailable(sqlEditor)) {
+            sqlEditor = new SqlEditor(getContainer(), SWT.NONE);
+            sqlEditor.setContentAssistProposals(getContentAssistProposals());
+            sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
+            sqlEditor.setWhereClause(whereClause);
+            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+            gd.heightHint = 80;
+            sqlEditor.setLayoutData(gd);
+            getContainer().layout();
+            sqlEditor.setFocus();
+        }
+    }
+
+    protected void destroySqlEditor() {
+
+        if (sqlEditor != null) {
+            whereClause = sqlEditor.getWhereClause();
+            // Important, must be called to ensure the SqlEditor is removed from
+            // the list of preferences listeners.
+            sqlEditor.dispose();
+            getContainer().layout();
+        }
+    }
+
+    protected void setFocusOnSqlEditor() {
+
+        if (isSqlEditorVisible()) {
+            sqlEditor.setFocus();
+        }
+    }
+
+    protected String getWhereClause() {
+
+        if (isSqlEditorVisible()) {
+            return sqlEditor.getWhereClause();
+        }
+
+        return whereClause;
+    }
+
+    public boolean isFiltered() {
+        return hasWhereClause();
+    }
+
+    private boolean hasWhereClause() {
+
+        if (isSqlEditorVisible()) {
+            whereClause = getWhereClause();
+        }
+
+        if (!StringHelper.isNullOrEmpty(whereClause) && whereClause.length() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isAvailable(Control control) {
+
+        if (control != null && !control.isDisposed()) {
+            return true;
+        }
+
+        return false;
+    }
 
     protected void initializeComponents() {
 
@@ -158,7 +240,25 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     }
 
     public void setSqlEditorVisibility(boolean visible) {
-        this.isSqlEditorVisible = visible;
+
+        if (!hasSqlEditor()) {
+            this.isSqlEditorVisible = false;
+        } else {
+            this.isSqlEditorVisible = visible;
+        }
+
+        setSqlEditorEnablement();
+    }
+
+    private void setSqlEditorEnablement() {
+
+        if (hasSqlEditor()) {
+            if (isSqlEditorVisible()) {
+                createSqlEditor();
+            } else {
+                destroySqlEditor();
+            }
+        }
     }
 
     public JournalEntryColumn[] getColumns() {
@@ -169,6 +269,8 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     public abstract void openJournal(JournalExplorerView view) throws Exception;
 
+    public abstract void closeJournal();
+
     public abstract boolean isLoading();
 
     protected void setInputData(JournalEntries data) {
@@ -176,11 +278,18 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         this.data = data;
 
         container.layout(true);
-        tableViewer.getTable().setEnabled(true);
         tableViewer.setInput(null);
         tableViewer.setUseHashlookup(true);
-        tableViewer.setItemCount(data.size());
-        tableViewer.setInput(data);
+
+        if (data != null) {
+            tableViewer.setItemCount(data.size());
+            tableViewer.setInput(data);
+            tableViewer.getTable().setEnabled(true);
+        } else {
+            tableViewer.setItemCount(0);
+            tableViewer.getTable().setEnabled(false);
+        }
+
         tableViewer.setSelection(null);
     }
 

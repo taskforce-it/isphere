@@ -186,7 +186,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntries(tabs, jrneToRtv);
+            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntries(tabs, jrneToRtv, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -208,19 +208,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForOutputFiles(tabs, outputFile, new SelectionListener() {
-                public void widgetSelected(SelectionEvent event) {
-                    try {
-                        performLoadJournalEntries(getSelectedViewer());
-                    } catch (Exception e) {
-                        ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(2) ***", e);
-                        MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-                    }
-                }
-
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                }
-            });
+            journalEntriesViewer = new JournalEntriesViewerForOutputFiles(tabs, outputFile, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -286,6 +274,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     }
 
     private void performLoadJournalEntries(AbstractJournalEntriesViewer viewer) throws Exception {
+        viewer.closeJournal();
         updateStatusLine();
         viewer.openJournal(this);
     }
@@ -336,6 +325,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                         message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
                     } else {
                         message = Messages.bind(Messages.Number_of_journal_entries_A, numItems);
+                    }
+                    if (viewer.isFiltered()) {
+                        message += " (" + Messages.subsetted_list + ")";
                     }
                 }
             }
@@ -488,5 +480,19 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         //
         // return null;
         return getSelectedViewer();
+    }
+
+    private class SqlEditorSelectionListener implements SelectionListener {
+        public void widgetSelected(SelectionEvent event) {
+            try {
+                performLoadJournalEntries(getSelectedViewer());
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(2) ***", e);
+                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+        }
+
+        public void widgetDefaultSelected(SelectionEvent arg0) {
+        }
     }
 }
