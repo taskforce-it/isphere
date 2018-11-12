@@ -10,11 +10,15 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.Time;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.medfoster.sqljep.RowJEP;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -80,7 +84,21 @@ public class JournalDAO {
 
                         JournalEntry journalEntry = new JournalEntry(outputFile);
 
-                        journalEntries.add(populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry));
+                        JournalEntry populateJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
+
+                        boolean isSelected = true;
+
+                        if (!StringHelper.isNullOrEmpty(whereClause)) {
+                            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+                            Comparable[] row = journalEntry.getRow();
+                            RowJEP sqljep = new RowJEP(whereClause);
+                            sqljep.parseExpression(columnMapping);
+                            isSelected = (Boolean)sqljep.getValue(row);
+                        }
+
+                        if (isSelected) {
+                            journalEntries.add(populateJournalEntry);
+                        }
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.INSTANCE.prepareMetaData(journalEntry);

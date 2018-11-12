@@ -8,7 +8,8 @@ Bundle-ClassPath: .,
  commons-lang-2.1.jar,
  activation.jar,
  mail.jar,
- jxl.jar
+ jxl.jar,
+ sqljep-0.2.jar
 Bundle-Vendor: iSphere Project Team
 Export-Package: com.sun.activation.registries,
  com.sun.activation.viewers,
@@ -38,4 +39,5 @@ Export-Package: com.sun.activation.registries,
  org.apache.commons.lang.exception,
  org.apache.commons.lang.math,
  org.apache.commons.lang.mutable,
- org.apache.commons.lang.time
+ org.apache.commons.lang.time,
+ org.medfoster.sqljep
