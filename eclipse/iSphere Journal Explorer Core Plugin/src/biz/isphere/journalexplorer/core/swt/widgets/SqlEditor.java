@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -33,12 +34,23 @@ import biz.isphere.journalexplorer.core.Messages;
 public class SqlEditor extends Composite {
 
     private ContentAssistText textSqlEditor;
+    private Button btnClear;
     private Button btnAddField;
     private Button btnExecute;
 
     public SqlEditor(Composite parent, int style) {
         super(parent, style);
         createContentArea();
+    }
+
+    @Override
+    public boolean setFocus() {
+
+        if (!StringHelper.isNullOrEmpty(textSqlEditor.getText())) {
+            return textSqlEditor.setFocus();
+        }
+
+        return btnAddField.setFocus();
     }
 
     public void setWhereClause(String whereClause) {
@@ -48,14 +60,14 @@ public class SqlEditor extends Composite {
         }
 
         if (whereClause != null) {
-            textSqlEditor.setText(whereClause);
+            textSqlEditor.setText(whereClause.trim());
         } else {
             textSqlEditor.setText(""); //$NON-NLS-1$
         }
     }
 
     public String getWhereClause() {
-        return textSqlEditor.getText();
+        return textSqlEditor.getText().trim();
     }
 
     private void createContentArea() {
@@ -90,14 +102,22 @@ public class SqlEditor extends Composite {
         addPanelLayout.marginWidth = 0;
         addFieldPanel.setLayout(addPanelLayout);
 
+        btnClear = WidgetFactory.createPushButton(addFieldPanel, Messages.ButtonLabel_Clear);
+        btnClear.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_HORIZONTAL));
+        btnClear.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                textSqlEditor.setText("");
+                textSqlEditor.getTextWidget().setFocus();
+            }
+        });
+
         btnAddField = WidgetFactory.createPushButton(addFieldPanel, Messages.ButtonLabel_AddField);
-        btnAddField.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END));
+        btnAddField.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_END | GridData.FILL_HORIZONTAL));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 textSqlEditor.getTextWidget().setFocus();
-                textSqlEditor.setSelectedRange(1, 0);
-                textSqlEditor.setSelectedRange(0, 0);
                 textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
             }
         });
@@ -105,6 +125,7 @@ public class SqlEditor extends Composite {
         textSqlEditor = WidgetFactory.createContentAssistText(this);// ContentAssistText(this);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
         textSqlEditor.setHint(Messages.Tooltip_SqlEditor_Text);
+        textSqlEditor.setTraverseEnabled(true);
         textSqlEditor.enableAutoActivation(true);
         textSqlEditor.enableAutoInsert(true);
         textSqlEditor.getTextWidget().setToolTipText(Messages.Tooltip_SqlEditor_Text);
