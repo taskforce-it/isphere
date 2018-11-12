@@ -43,7 +43,7 @@ public class JournalDAO {
         this.jrneToRtv = jrneToRtv;
     }
 
-    public JournalEntries load() throws Exception {
+    public JournalEntries getJournalData(String whereClause) throws Exception {
 
         JournalEntries journalEntries = new JournalEntries();
 

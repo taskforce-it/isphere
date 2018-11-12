@@ -23,12 +23,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -42,7 +39,6 @@ import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
@@ -64,19 +60,14 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
     IPropertyChangeListener {
 
-    private SelectionListener loadJournalEntriesSelectionListener;
     private OutputFile outputFile;
-    private String whereClause;
 
-    private boolean showSqlEditor;
-    private SqlEditor sqlEditor;
     private TableViewer tableViewer;
 
     public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent);
+        super(parent, loadJournalEntriesSelectionListener);
 
         this.outputFile = outputFile;
-        this.loadJournalEntriesSelectionListener = loadJournalEntriesSelectionListener;
 
         setSqlEditorVisibility(false);
 
@@ -152,12 +143,13 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         return true;
     }
 
+    public void closeJournal() {
+        setInputData(null);
+    }
+
     public void openJournal(final JournalExplorerView view) throws Exception {
 
-        if (isAvailable(sqlEditor)) {
-            whereClause = sqlEditor.getWhereClause().trim();
-            sqlEditor.setFocus();
-        }
+        setFocusOnSqlEditor();
 
         Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
 
@@ -166,23 +158,27 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                 try {
 
                     OutputFileDAO journalDAO = new OutputFileDAO(outputFile);
-                    final JournalEntries data = journalDAO.getJournalData(whereClause);
+                    final JournalEntries data = journalDAO.getJournalData(getWhereClause());
 
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            setInputData(data);
-                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
-                        }
-                    });
+                    if (!isDisposed()) {
+                        getDisplay().asyncExec(new Runnable() {
+                            public void run() {
+                                setInputData(data);
+                                view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                            }
+                        });
+                    }
 
-                } catch (Exception e) {
+                } catch (Throwable e) {
 
-                    final Exception e1 = e;
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
-                        }
-                    });
+                    if (!isDisposed()) {
+                        final Throwable e1 = e;
+                        getDisplay().asyncExec(new Runnable() {
+                            public void run() {
+                                view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                            }
+                        });
+                    }
 
                 }
 
@@ -198,59 +194,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         return true;
     }
 
-    public boolean isSqlEditorVisible() {
-        return showSqlEditor;
-    }
-
-    public void setSqlEditorVisibility(boolean isVisible) {
-        showSqlEditor = isVisible;
-        setSqlEditorEnablement();
-    }
-
-    private void setSqlEditorEnablement() {
-
-        if (showSqlEditor) {
-            createSqlEditor();
-        } else {
-            destroySqlEditor();
-        }
-    }
-
-    private void createSqlEditor() {
-
-        if (!isAvailable(sqlEditor)) {
-            sqlEditor = new SqlEditor(getContainer(), SWT.NONE);
-            sqlEditor.setContentAssistProposals(getContentAssistProposals());
-            sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
-            sqlEditor.setWhereClause(whereClause);
-            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-            gd.heightHint = 80;
-            sqlEditor.setLayoutData(gd);
-            getContainer().layout();
-            sqlEditor.setFocus();
-        }
-    }
-
-    private void destroySqlEditor() {
-
-        if (sqlEditor != null) {
-            // Important, must be called to ensure the SqlEditor is removed from
-            // the list of preferences listeners.
-            sqlEditor.dispose();
-            getContainer().layout();
-        }
-    }
-
-    private boolean isAvailable(Control control) {
-
-        if (control != null && !control.isDisposed()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private ContentAssistProposal[] getContentAssistProposals() {
+    protected ContentAssistProposal[] getContentAssistProposals() {
 
         List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
 
