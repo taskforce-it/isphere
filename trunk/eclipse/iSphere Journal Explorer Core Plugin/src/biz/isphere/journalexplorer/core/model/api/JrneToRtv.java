@@ -334,6 +334,7 @@ public class JrneToRtv {
      */
     public void setJrnCde(String aJournalCodeSpecialValue) {
         RetrieveKey rtvKey = RetrieveKey.JRNCDE;
+
         if (!JRNCDE_ALL.equals(aJournalCodeSpecialValue) && !JRNCDE_CTL.equals(aJournalCodeSpecialValue)) {
             throw new IllegalArgumentException(String.format("Value for '%s' must be either '*ALL' or '*CTL' if String; "
                 + "or an instance of JournalCode[] containing the desired journal codes to retrieve.", rtvKey.getDescription()));
@@ -362,7 +363,9 @@ public class JrneToRtv {
      * @param aJournalCodes - Array of the 1-character journal code for which
      *        journal entries are to be retrieved
      */
-    public void setJrnCde(JournalCode[] aJournalCodes) {
+    public void setJrnCde(JournalCode... aJournalCodes) {
+        RetrieveKey rtvKey = RetrieveKey.JRNCDE;
+
         StringBuilder code = new StringBuilder();
         for (int i = 0; i < aJournalCodes.length; i++) {
             code.append(padRight(aJournalCodes[i].label(), 10));
@@ -381,13 +384,13 @@ public class JrneToRtv {
         type[1] = new AS400Text(temp.length());
         AS400Structure temp2Structure = new AS400Structure(type);
 
-        addSelectionCriterion(RetrieveKey.JRNCDE, temp2Structure, temp2);
+        addSelectionCriterion(rtvKey, temp2Structure, temp2);
     }
 
     /**
      * Add retrieval criterion 08: Journal entry types.
      * 
-     * @param aJournalEntryTypesSpecialValue:<br>
+     * @param aJournalEntryTypesSpecialValue - One of:<br>
      *        *ALL - The retrieval of journal entries is not limited to entries
      *        with a particular journal entry type.<br>
      *        *RCD - Only journal entries that have an entry type for record
@@ -396,6 +399,7 @@ public class JrneToRtv {
      */
     public void setEntTyp(String aJournalEntryTypesSpecialValue) {
         RetrieveKey rtvKey = RetrieveKey.ENTTYP;
+
         if (!ENTTYP_ALL.equals(aJournalEntryTypesSpecialValue) && !ENTTYP_RCD.equals(aJournalEntryTypesSpecialValue)) {
             throw new IllegalArgumentException(String.format("Value for '%s' must be either '*ALL' or '*RCD' if String; "
                 + "or an instance of JournalEntryType[] containing the desired entry types to retrieve.", rtvKey.getDescription()));
@@ -421,12 +425,14 @@ public class JrneToRtv {
      * 
      * @param aJournalEntryTypes
      */
-    public void setEntTyp(JournalEntryType[] aJournalEntryTypes) {
+    public void setEntTyp(JournalEntryType... aJournalEntryTypes) {
         RetrieveKey rtvKey = RetrieveKey.ENTTYP;
+
         StringBuilder entry = new StringBuilder();
         for (int i = 0; i < aJournalEntryTypes.length; i++) {
             entry.append(padRight(aJournalEntryTypes[i].label(), 10));
         }
+
         String temp = entry.toString();
         int count = aJournalEntryTypes.length;
 
