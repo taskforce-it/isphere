@@ -215,6 +215,7 @@ public abstract class CompareDialog extends XDialog {
         Control control = super.createContents(parent);
 
         loadScreenValues();
+        setFocus();
 
         return control;
     }
@@ -304,9 +305,9 @@ public abstract class CompareDialog extends XDialog {
                 }
             }
         });
-        
+
         if ((isThreeWay || !hasRightMember()) && CompareEditorConfiguration.isMethodSetChangeIgnoredAvailable()) {
-            
+
             ignoreChangesGroup = new Composite(modeGroup, SWT.NONE);
             GridLayout ignoreChangesLayout = new GridLayout(2, true);
             ignoreChangesGroup.setLayout(ignoreChangesLayout);
@@ -322,7 +323,7 @@ public abstract class CompareDialog extends XDialog {
             ignoreChangesRightCheckbox.setLayoutData(getGridData());
             ignoreChangesRightCheckbox.setSelection(false);
         }
-        
+
         if (!hasRightMember()) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
@@ -485,12 +486,11 @@ public abstract class CompareDialog extends XDialog {
         if (ignoreChangesGroup != null) {
             ignoreChangesLeft = ignoreChangesLeftCheckbox.getSelection();
             ignoreChangesRight = ignoreChangesRightCheckbox.getSelection();
-        }
-        else {
+        } else {
             ignoreChangesLeft = false;
             ignoreChangesRight = false;
         }
-        
+
         if (!hasRightMember()) {
             isThreeWay = threeWayButton.getSelection();
         }
@@ -759,13 +759,13 @@ public abstract class CompareDialog extends XDialog {
         }
 
         considerDate = getDialogBoundsSettings().getBoolean(CONSIDER_DATE_PROPERTY);
-        
+
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
 
         ignoreChangesLeft = false;
 
         ignoreChangesRight = false;
-        
+
         if (selectEditable) {
             if (!isEditable() || isIgnoreCase()) {
                 browseButton.setSelection(true);
@@ -797,7 +797,7 @@ public abstract class CompareDialog extends XDialog {
             dontIgnoreCaseButton.setSelection(false);
             ignoreCaseButton.setSelection(true);
         }
-        
+
     }
 
     protected void storeScreenValues() {
