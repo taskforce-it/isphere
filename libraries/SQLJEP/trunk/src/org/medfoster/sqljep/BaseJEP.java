@@ -124,7 +124,7 @@ public abstract class BaseJEP implements ParserVisitor {
 	 */
 	public BaseJEP(String exp) {
 		if (exp == null) {
-			throw new IllegalArgumentException("expression can be null");
+			throw new IllegalArgumentException("expression cannot be null");
 		}
 		expression = exp;
 		topNode = null;
