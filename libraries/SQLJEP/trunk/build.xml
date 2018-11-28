@@ -19,13 +19,17 @@
 	<property name="build"   value="build"/>
 	<property name="dist"    value="dist"/>
 	<property name="doc"     value="doc"/>
+	<property name="javadoc" value="${doc}/javadoc"/>
 	<property name="version" value="0.2"/>
 	<property name="jar"     value="${app.name}-${version}.jar"/>
 	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz" value="${app.name}-${version}-src.tar.gz"/>
 	<property name="disttemp"   value="disttemp"/>
 	<property environment="env"/>
+	<!--
 	<property name="javacchome" value="${env.JAVACCHOME}"/>
+	-->
+	<property name="javacchome" value="${basedir}/lib/javacc-6.0/bin/lib"/>
 	<property name="java.home" value="${env.JAVAHOME}"/>
 	<property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
 
@@ -79,11 +83,11 @@
 <!--======================================================================-->
 <!-- JAVADOC -->
 	<target name="javadoc" depends="init">
-		<delete dir="doc/javadoc"/>
-		<mkdir dir="doc/javadoc"/>
+		<delete dir="${javadoc}"/>
+		<mkdir dir="${javadoc}"/>
 		<javadoc packagenames="org.medfoster.sqljep.*"
 				sourcepath="src"
-				destdir="doc/javadoc"
+				destdir="${javadoc}"
 				windowtitle="SQLJEP API">
 			<bottom><![CDATA[<A HREF=\"http://sourceforge.net/projects/sqljep\" TARGET=\"_blank\">http://sourceforge.net/projects/sqljep</A> Copyright &#169; 2006 Alexey Gaidukov]]></bottom>
 		</javadoc>
@@ -163,6 +167,7 @@
 		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
+		<delete dir="${javadoc}"/>
 	</target>
 
 
