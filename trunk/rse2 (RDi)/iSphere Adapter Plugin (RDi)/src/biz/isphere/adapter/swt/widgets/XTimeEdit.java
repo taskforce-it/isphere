@@ -60,6 +60,10 @@ public class XTimeEdit implements ITimeEdit, SelectionListener {
         dateTime.setEnabled(enabled);
     }
 
+    public void setToolTipText(String text) {
+        dateTime.setToolTipText(text);
+    }
+
     public void setTime(int hours, int minutes, int seconds) {
         dateTime.setTime(hours, minutes, seconds);
     }

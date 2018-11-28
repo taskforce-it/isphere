@@ -26,6 +26,8 @@ public interface IDateEdit {
 
     public void setEnabled(boolean enabled);
 
+    public void setToolTipText(String text);
+
     public void setDate(int year, int month, int day);
 
     public int getYear();

@@ -21,10 +21,12 @@ public interface ITimeEdit {
     public void setLayoutData(Object layoutData);
 
     public void addModifyListener(ModifyListener listener);
-    
+
     public void removeModifyListener(ModifyListener listener);
 
     public void setEnabled(boolean enabled);
+
+    public void setToolTipText(String text);
 
     public void setTime(int hours, int minutes, int seconds);
 

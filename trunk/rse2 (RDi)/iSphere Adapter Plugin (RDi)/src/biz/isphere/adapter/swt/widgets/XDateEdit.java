@@ -60,6 +60,10 @@ public class XDateEdit implements IDateEdit, SelectionListener {
         dateTime.setEnabled(enabled);
     }
 
+    public void setToolTipText(String text) {
+        dateTime.setToolTipText(text);
+    }
+
     /**
      * Sets the values for the calendar fields YEAR, MONTH, and DAY_OF_MONTH.
      */
