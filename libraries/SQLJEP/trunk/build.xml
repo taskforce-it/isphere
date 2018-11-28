@@ -20,7 +20,7 @@
 	<property name="dist"    value="dist"/>
 	<property name="doc"     value="doc"/>
 	<property name="javadoc" value="${doc}/javadoc"/>
-	<property name="version" value="0.2"/>
+	<property name="version" value="0.2.2.b001"/>
 	<property name="jar"     value="${app.name}-${version}.jar"/>
 	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz" value="${app.name}-${version}-src.tar.gz"/>
@@ -32,6 +32,14 @@
 	<property name="javacchome" value="${basedir}/lib/javacc-6.0/bin/lib"/>
 	<property name="java.home" value="${env.JAVAHOME}"/>
 	<property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
+
+	<!-- Set date and time values -->
+	<tstamp>
+		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
+		<format property="today.date.eur" pattern="dd.MM.yyyy" locale="de,DE" />
+		<format property="today.date.iso" pattern="yyyy-MM-dd" locale="de,DE" />
+		<format property="today.year" pattern="yyyy" locale="de,DE" />
+	</tstamp>
 
 
 <!--======================================================================-->
@@ -102,7 +110,15 @@
 		<!-- Put everything in ${build} into the sqljep-${DSTAMP}.jar file -->
 		<jar jarfile="${dist}/sqljep-${version}.jar"
 		     basedir="${build}"
-		     includes="org/medfoster/sqljep/**"/>
+		     includes="org/medfoster/sqljep/**" 
+             description="SQLJEP patched for iSphere">
+            <manifest>
+            	<attribute name="Version" value="${version}"/>
+            	<attribute name="Date-Created" value="${today.timestamp}"/>
+            	<attribute name="Vendor" value="iSphere Project Team"/>
+            	<attribute name="Developer" value="Medfoster.ru"/>
+            </manifest>
+        </jar>
 		
 		<!-- Create a temp dir for contents of packages-->
 		<mkdir dir="${disttemp}/sqljep-${version}"/>
