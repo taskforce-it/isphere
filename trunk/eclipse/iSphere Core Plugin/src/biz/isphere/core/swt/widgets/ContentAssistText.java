@@ -82,6 +82,11 @@ public class ContentAssistText {
         });
     }
 
+    public void setEnabled(boolean enabled) {
+        sourceViewer.setEditable(enabled);
+        sourceViewer.getControl().setEnabled(enabled);
+    }
+
     public void setTraverseEnabled(boolean enabled) {
         this.traverseEnabled = enabled;
     }
