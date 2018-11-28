@@ -666,7 +666,20 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
 
         @Override
+        public void mouseDoubleClick(MouseEvent event) {
+
+            // Negate default behaviour on double-click, no modifiers
+            if (allowNegation && event.stateMask == 0) {
+                performOperation(!isSelected);
+            }
+        }
+
+        @Override
         public void mouseUp(MouseEvent event) {
+
+            if (event.count != 1) {
+                return;
+            }
 
             boolean newSelectedState = isSelected;
 
