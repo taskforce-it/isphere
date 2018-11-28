@@ -8,9 +8,7 @@
 
 package biz.isphere.journalexplorer.core.preferences;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +23,6 @@ import org.eclipse.swt.graphics.RGB;
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.IntHelper;
-import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
@@ -83,12 +80,6 @@ public final class Preferences implements ColumnsDAO {
     public static final String DYNAMIC_BUFFER_SIZE = LIMITATIONS + "DYNAMIC_BUFFER_SIZE"; //$NON-NLS-1$
 
     public static final String LOAD_JOURNAL_ENTRIES = DOMAIN + "LOAD_JOURNAL_ENTRIES."; //$NON-NLS-1$
-
-    public static final String STARTING_DATE = LOAD_JOURNAL_ENTRIES + "STARTING_DATE"; //$NON-NLS-1$
-
-    public static final String ENDING_DATE = LOAD_JOURNAL_ENTRIES + "ENDING_DATE"; //$NON-NLS-1$
-
-    public static final String RECORD_ENTRIES_ONLY = LOAD_JOURNAL_ENTRIES + "RECORD_ENTRIES_ONLY"; //$NON-NLS-1$
 
     public static final String EXPORT_JOURNAL_ENTRIES = DOMAIN + "EXPORT_JOURNAL_ENTRIES."; //$NON-NLS-1$
 
@@ -197,37 +188,6 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getBoolean(DYNAMIC_BUFFER_SIZE);
     }
 
-    public Calendar getStartingDate() {
-
-        String date = preferenceStore.getString(STARTING_DATE);
-
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateFormatter.parse(date));
-            return calendar;
-        } catch (ParseException e) {
-            return getInitialStartingDate();
-        }
-    }
-
-    public Calendar getEndingDate() {
-
-        String date = preferenceStore.getString(ENDING_DATE);
-
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateFormatter.parse(date));
-            return calendar;
-        } catch (ParseException e) {
-            return getInitialEndingDate();
-        }
-    }
-
-    public boolean isRecordsOnly() {
-
-        return preferenceStore.getBoolean(RECORD_ENTRIES_ONLY);
-    }
-
     public String getExportPath() {
 
         return preferenceStore.getString(EXPORT_PATH);
@@ -274,25 +234,6 @@ public final class Preferences implements ColumnsDAO {
 
     public void setRetrieveJournalEntriesEnableDynamicBufferSize(boolean enabled) {
         preferenceStore.setValue(DYNAMIC_BUFFER_SIZE, enabled);
-    }
-
-    public void setStartingDate(Calendar calendar) {
-
-        String dateString = dateFormatter.format(calendar.getTime());
-
-        preferenceStore.setValue(STARTING_DATE, dateString);
-    }
-
-    public void setEndingDate(Calendar calendar) {
-
-        String dateString = dateFormatter.format(calendar.getTime());
-
-        preferenceStore.setValue(ENDING_DATE, dateString);
-    }
-
-    public void setRecordsOnly(boolean recordsOnly) {
-
-        preferenceStore.setValue(RECORD_ENTRIES_ONLY, recordsOnly);
     }
 
     public void setExportPath(String exportPath) {
@@ -405,10 +346,6 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(BUFFER_SIZE, getInitialRetrieveJournalEntriesBufferSize());
         preferenceStore.setDefault(DYNAMIC_BUFFER_SIZE, getInitialRetrieveJournalEntriesIsDynamicBufferSize());
 
-        preferenceStore.setDefault(STARTING_DATE, dateFormatter.format(getInitialStartingDate().getTime()));
-        preferenceStore.setDefault(ENDING_DATE, dateFormatter.format(getInitialEndingDate().getTime()));
-        preferenceStore.setDefault(RECORD_ENTRIES_ONLY, getInitialRecordsOnly());
-
         preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
         preferenceStore.setDefault(EXPORT_FILE, getInitialExportFile());
         preferenceStore.setDefault(EXPORT_COLUMN_HEADINGS, getInitialExportColumnHeadings());
@@ -513,18 +450,6 @@ public final class Preferences implements ColumnsDAO {
 
     public boolean getInitialRetrieveJournalEntriesIsDynamicBufferSize() {
         return false;
-    }
-
-    public Calendar getInitialStartingDate() {
-        return DateTimeHelper.getStartOfDay();
-    }
-
-    public Calendar getInitialEndingDate() {
-        return DateTimeHelper.getEndOfDay();
-    }
-
-    public boolean getInitialRecordsOnly() {
-        return true;
     }
 
     public String getInitialExportPath() {

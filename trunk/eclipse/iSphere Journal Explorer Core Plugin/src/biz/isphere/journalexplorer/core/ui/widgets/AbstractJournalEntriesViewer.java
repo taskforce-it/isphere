@@ -126,6 +126,13 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         }
     }
 
+    protected void setSqlEditorEnabled(boolean enabled) {
+
+        if (isSqlEditorVisible()) {
+            sqlEditor.setEnabled(enabled);
+        }
+    }
+
     protected void setFocusOnSqlEditor() {
 
         if (isSqlEditorVisible()) {

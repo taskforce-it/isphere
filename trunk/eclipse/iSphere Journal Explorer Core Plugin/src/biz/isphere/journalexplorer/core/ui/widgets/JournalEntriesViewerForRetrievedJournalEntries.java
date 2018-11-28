@@ -11,6 +11,10 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -32,6 +36,10 @@ import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
@@ -53,6 +61,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
     ISelectionProvider, IPropertyChangeListener {
 
     private JrneToRtv jrneToRtv;
+    private OutputFile outputFile;
 
     private TableViewer tableViewer;
 
@@ -61,6 +70,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         super(parent, loadJournalEntriesSelectionListener);
 
         this.jrneToRtv = jrneToRtv;
+        this.outputFile = JournalDAO.getOutputFile(this.jrneToRtv.getConnectionName());
 
         setSqlEditorVisibility(false);
 
@@ -134,7 +144,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
     public void openJournal(final JournalExplorerView view) throws Exception {
 
-        setFocusOnSqlEditor();
+        setSqlEditorEnabled(false);
 
         Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
 
@@ -142,13 +152,19 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
                 try {
 
-                    JournalDAO journalDAO = new JournalDAO(jrneToRtv);
+                    // Clone the selection arguments to start with the original
+                    // values when the view is refreshed.
+                    JrneToRtv tJrneToRtv = jrneToRtv.clone();
+
+                    JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
                     final JournalEntries data = journalDAO.getJournalData(getWhereClause());
 
                     if (!isDisposed()) {
                         getDisplay().asyncExec(new Runnable() {
                             public void run() {
                                 setInputData(data);
+                                setSqlEditorEnabled(true);
+                                setFocusOnSqlEditor();
                                 view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
                             }
                         });
@@ -159,7 +175,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                         if (isBufferTooSmallException(messages)) {
                             throw new BufferTooSmallException();
                         } else if (isNoDataLoadedException(messages)) {
-                            throw new NoJournalEntriesLoadedException(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName());
+                            throw new NoJournalEntriesLoadedException(tJrneToRtv.getJournalLibraryName(), tJrneToRtv.getJournalName());
                         } else {
                             throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                         }
@@ -208,11 +224,41 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         loadJournalDataJob.schedule();
     }
 
-    protected ContentAssistProposal[] getContentAssistProposals() {
-        return JournalEntry.getContentAssistProposal();
-    }
-
     public boolean hasSqlEditor() {
         return true;
+    }
+
+    protected ContentAssistProposal[] getContentAssistProposals() {
+
+        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+
+        List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
+
+        MetaTable metaData = getMetaData();
+        if (metaData != null) {
+            for (MetaColumn column : metaData.getColumns()) {
+                if (columnMapping.containsKey(column.getName())) {
+                    proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
+                }
+            }
+        }
+
+        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    }
+
+    private MetaTable getMetaData() {
+
+        try {
+            return MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
+        } catch (Exception e) {
+            String fileName;
+            if (outputFile == null) {
+                fileName = "null"; //$NON-NLS-1$
+            } else {
+                fileName = outputFile.toString();
+            }
+            ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            return null;
+        }
     }
 }

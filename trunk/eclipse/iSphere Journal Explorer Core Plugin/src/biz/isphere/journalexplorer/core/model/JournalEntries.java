@@ -20,9 +20,9 @@ public class JournalEntries {
     private int numAvailableRows;
     private List<IBMiMessage> messages;
 
-    public JournalEntries() {
+    public JournalEntries(int initialCapacity) {
 
-        this.journalEntries = new ArrayList<JournalEntry>();
+        this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
         this.isOverflow = false;
         this.numAvailableRows = -1;
     }

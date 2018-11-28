@@ -322,7 +322,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                     int numItems = journalEntries.size();
                     if (journalEntries.isOverflow()) {
                         int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
-                        message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
+                        if (numItemsAvailable < 0) {
+                            message = Messages.bind(Messages.Number_of_journal_entries_A_more_items_available, numItems);
+                        } else {
+                            message = Messages.bind(Messages.Number_of_journal_entries_A_of_B, numItems, numItemsAvailable);
+                        }
                     } else {
                         message = Messages.bind(Messages.Number_of_journal_entries_A, numItems);
                     }

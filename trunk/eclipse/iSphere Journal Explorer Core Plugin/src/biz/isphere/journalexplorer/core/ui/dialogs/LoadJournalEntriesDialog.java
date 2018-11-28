@@ -8,13 +8,29 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -24,6 +40,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.internal.DateTimeHelper;
@@ -32,27 +50,51 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public class LoadJournalEntriesDialog extends XDialog {
+
+    private static final String STARTING_DATE = "STARTING_DATE";
+    private static final String ENDING_DATE = "ENDING_DATE";
+    private static final String SHOW_RECORDS_ONLY = "SHOW_RECORDS_ONLY";
+
+    public static int WIDTH_SELECTED = 30;
+    public static int WIDTH_TEXT = 500;
 
     private IDateEdit startingDateDateTime;
     private ITimeEdit startingTimeDateTime;
     private IDateEdit endingDateDateTime;
     private ITimeEdit endingTimeDateTime;
 
-    private Preferences preferences;
     private Button radioBtnDefault;
     private Button radioBtnToday;
     private Button radioBtnYesterday;
     private Button chkboxRecordsOnly;
+
+    private TableViewer tableViewer;
+    private List<SelectableJournalEntryType> journalEntryTypes;
+    private Label lblCmdNone;
+    private Label lblCmdAll;
+    private Label lblCmdInsert;
+    private Label lblCmdUpdate;
+    private Label lblCmdDelete;
 
     private SelectionCriterias selectionCriterias;
 
     public LoadJournalEntriesDialog(Shell parentShell) {
         super(parentShell);
 
-        this.preferences = Preferences.getInstance();
+        journalEntryTypes = new LinkedList<SelectableJournalEntryType>();
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.PT, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.PX, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.UB, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.UP, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.BR, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.UR, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.DL, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.DR, true));
+        journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.IL, true));
     }
 
     @Override
@@ -72,6 +114,8 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         createRightPanel(mainArea);
 
+        createBottomPanel(mainArea);
+
         createStatusLine(mainArea);
 
         loadScreenValues();
@@ -85,31 +129,43 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         Composite leftPanel = new Composite(mainArea, SWT.NONE);
         leftPanel.setLayout(new GridLayout(2, false));
-        leftPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        leftPanel.setLayoutData(new GridData());
 
         // From date and time
 
-        new Label(leftPanel, SWT.NONE).setText(Messages.DisplayJournalEntriesDialog_From_date_colon);
+        Label lblStartingDateDateTime = new Label(leftPanel, SWT.NONE);
+        lblStartingDateDateTime.setText(Messages.DisplayJournalEntriesDialog_From_date_colon);
+        lblStartingDateDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_From_date_colon);
 
         startingDateDateTime = WidgetFactory.createDateEdit(leftPanel);
         startingDateDateTime.setLayoutData(createLayoutData(1));
+        startingDateDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_From_date_colon);
 
-        new Label(leftPanel, SWT.NONE).setText(Messages.DisplayJournalEntriesDialog_From_time_colon);
+        Label lblStartingTimeDateTime = new Label(leftPanel, SWT.NONE);
+        lblStartingTimeDateTime.setText(Messages.DisplayJournalEntriesDialog_From_time_colon);
+        lblStartingTimeDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_From_time_colon);
 
         startingTimeDateTime = WidgetFactory.createTimeEdit(leftPanel);
         startingTimeDateTime.setLayoutData(createLayoutData(1));
+        startingTimeDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_From_time_colon);
 
         // To date and time
 
-        new Label(leftPanel, SWT.NONE).setText(Messages.DisplayJournalEntriesDialog_To_date_colon);
+        Label lblEndingDateDateTime = new Label(leftPanel, SWT.NONE);
+        lblEndingDateDateTime.setText(Messages.DisplayJournalEntriesDialog_To_date_colon);
+        lblEndingDateDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_To_date_colon);
 
         endingDateDateTime = WidgetFactory.createDateEdit(leftPanel);
         endingDateDateTime.setLayoutData(createLayoutData(1));
+        endingDateDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_To_date_colon);
 
-        new Label(leftPanel, SWT.NONE).setText(Messages.DisplayJournalEntriesDialog_To_time_colon);
+        Label lblEndingTimeDateTime = new Label(leftPanel, SWT.NONE);
+        lblEndingTimeDateTime.setText(Messages.DisplayJournalEntriesDialog_To_time_colon);
+        lblEndingTimeDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_To_time_colon);
 
         endingTimeDateTime = WidgetFactory.createTimeEdit(leftPanel);
         endingTimeDateTime.setLayoutData(createLayoutData(1));
+        endingTimeDateTime.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_To_time_colon);
     }
 
     private void createRightPanel(Composite mainArea) {
@@ -122,6 +178,7 @@ public class LoadJournalEntriesDialog extends XDialog {
         grpDatePresets.setLayout(new GridLayout(1, false));
         grpDatePresets.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         grpDatePresets.setText(Messages.DisplayJournalEntriesDialog_Fast_date_presets);
+        grpDatePresets.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_Fast_date_presets);
 
         radioBtnDefault = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Last_used_values);
         radioBtnDefault.addSelectionListener(new TimeRangeSelectionListener());
@@ -134,7 +191,82 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         // WidgetFactory.createLineFiller(rightPanel);
 
-        chkboxRecordsOnly = WidgetFactory.createCheckbox(rightPanel, Messages.DisplayJournalEntriesDialog_Time_Record_entries_only);
+        // chkboxRecordsOnly = WidgetFactory.createCheckbox(rightPanel,
+        // Messages.DisplayJournalEntriesDialog_Show_Record_entries_only);
+    }
+
+    private void createBottomPanel(Composite mainArea) {
+
+        Composite bottomPanel = new Composite(mainArea, SWT.NONE);
+        bottomPanel.setLayout(new GridLayout(1, false));
+        bottomPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+
+        chkboxRecordsOnly = WidgetFactory.createCheckbox(bottomPanel, Messages.DisplayJournalEntriesDialog_Show_Record_entries_only);
+        chkboxRecordsOnly.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_Show_Record_entries_only);
+        chkboxRecordsOnly.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                setControlEnablement();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        tableViewer = new TableViewer(bottomPanel, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.getTable().setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_Selectable_Journal_entry_types);
+        tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+        tableViewer.getTable().setHeaderVisible(false);
+        tableViewer.getTable().setLinesVisible(true);
+        tableViewer.setColumnProperties(new String[] { "SELECTED", "TEXT" });
+
+        CellEditor[] editors = new CellEditor[] { new CheckboxCellEditor(tableViewer.getTable()) };
+        tableViewer.setCellEditors(editors);
+
+        tableViewer.setCellModifier(new JournalTypesCellModifier(tableViewer));
+
+        new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(WIDTH_SELECTED);
+        new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(WIDTH_TEXT);
+
+        tableViewer.setLabelProvider(new JournalTypesLabelProvider());
+        tableViewer.setContentProvider(new JournalTypesContentProvider());
+
+        Composite cmdPanel = new Composite(bottomPanel, SWT.NONE);
+        GridLayout cmdPanelLayout = new GridLayout(5, false);
+        cmdPanelLayout.marginHeight = 0;
+        cmdPanel.setLayout(cmdPanelLayout);
+        cmdPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        lblCmdNone = new Label(cmdPanel, SWT.NONE);
+        lblCmdNone.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_None);
+        lblCmdNone.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_None);
+        lblCmdNone.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, false, false));
+
+        lblCmdAll = new Label(cmdPanel, SWT.NONE);
+        lblCmdAll.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_All);
+        lblCmdAll.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_All);
+        lblCmdAll.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, false, true));
+
+        lblCmdInsert = new Label(cmdPanel, SWT.NONE);
+        lblCmdInsert.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Insert);
+        lblCmdInsert.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_Insert);
+        lblCmdInsert.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.PT.label(),
+            JournalEntryType.PX.label()));
+
+        lblCmdUpdate = new Label(cmdPanel, SWT.NONE);
+        lblCmdUpdate.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Update);
+        lblCmdUpdate.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_Update);
+        lblCmdUpdate.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.UB.label(),
+            JournalEntryType.UP.label(), JournalEntryType.BR.label(), JournalEntryType.UR.label()));
+
+        lblCmdDelete = new Label(cmdPanel, SWT.NONE);
+        lblCmdDelete.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Delete);
+        lblCmdDelete.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_Delete);
+        lblCmdDelete.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.DL.label(),
+            JournalEntryType.DR.label()));
+
+        tableViewer.setInput(journalEntryTypes.toArray(new SelectableJournalEntryType[journalEntryTypes.size()]));
     }
 
     @Override
@@ -142,19 +274,22 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         selectionCriterias = new SelectionCriterias();
 
-        Calendar calendar;
+        Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
+        selectionCriterias.setStartDate(startingDate.getTime());
 
-        calendar = getTimestamp(startingDateDateTime, startingTimeDateTime);
-        preferences.setStartingDate(calendar);
-        selectionCriterias.setStartDate(calendar.getTime());
-
-        calendar = getTimestamp(endingDateDateTime, endingTimeDateTime);
-        preferences.setEndingDate(calendar);
-        selectionCriterias.setEndDate(calendar.getTime());
+        Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
+        selectionCriterias.setEndDate(endingDate.getTime());
 
         boolean recordsOnly = chkboxRecordsOnly.getSelection();
-        preferences.setRecordsOnly(recordsOnly);
         selectionCriterias.setRecordsOnly(recordsOnly);
+
+        for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
+            if (journalEntryType.isSelected()) {
+                selectionCriterias.addJournalEntryType(JournalEntryType.find(journalEntryType.getLabel()));
+            }
+        }
+
+        storeScreenValues();
 
         super.okPressed();
     }
@@ -192,20 +327,46 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         loadDateScreenValues();
 
-        chkboxRecordsOnly.setSelection(preferences.isRecordsOnly());
+        chkboxRecordsOnly.setSelection(loadBooleanValue(SHOW_RECORDS_ONLY, true));
+
+        for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
+            boolean isSelected = loadBooleanValue("JOURNAL_ENTRY_TYPE_" + journalEntryType.getLabel(), true);
+            journalEntryType.setSelected(isSelected);
+        }
+
+        tableViewer.refresh(true);
     }
 
     private void loadDateScreenValues() {
 
-        Calendar startOfDay = preferences.getStartingDate();
+        Calendar startOfDay = Calendar.getInstance();
+        startOfDay.setTime(loadDateValue(STARTING_DATE, DateTimeHelper.getStartOfDay().getTime()));
+
         setStartingDate(startOfDay);
         setStartingTime(startOfDay);
 
-        Calendar endOfDay = preferences.getEndingDate();
+        Calendar endOfDay = Calendar.getInstance();
+        endOfDay.setTime(loadDateValue(ENDING_DATE, DateTimeHelper.getEndOfDay().getTime()));
+
         setEndingDate(endOfDay);
         setEndingTime(endOfDay);
 
         radioBtnDefault.setSelection(true);
+    }
+
+    private void storeScreenValues() {
+
+        Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
+        Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
+        boolean recordsOnly = chkboxRecordsOnly.getSelection();
+
+        storeValue(STARTING_DATE, startingDate.getTime());
+        storeValue(ENDING_DATE, endingDate.getTime());
+        storeValue(SHOW_RECORDS_ONLY, recordsOnly);
+
+        for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
+            storeValue("JOURNAL_ENTRY_TYPE_" + journalEntryType.getLabel(), journalEntryType.isSelected());
+        }
     }
 
     private void setDateScreenvaluesToToday() {
@@ -267,6 +428,22 @@ public class LoadJournalEntriesDialog extends XDialog {
     }
 
     private void setControlEnablement() {
+
+        if (chkboxRecordsOnly.getSelection()) {
+            tableViewer.getTable().setEnabled(true);
+            lblCmdNone.setEnabled(true);
+            lblCmdAll.setEnabled(true);
+            lblCmdInsert.setEnabled(true);
+            lblCmdUpdate.setEnabled(true);
+            lblCmdDelete.setEnabled(true);
+        } else {
+            tableViewer.getTable().setEnabled(false);
+            lblCmdNone.setEnabled(false);
+            lblCmdAll.setEnabled(false);
+            lblCmdInsert.setEnabled(false);
+            lblCmdUpdate.setEnabled(false);
+            lblCmdDelete.setEnabled(false);
+        }
     }
 
     /**
@@ -282,7 +459,7 @@ public class LoadJournalEntriesDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return new Point(370, 250);
+        return new Point(570, 480);
     }
 
     /**
@@ -325,7 +502,8 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         private Date startDate;
         private Date endDate;
-        private boolean recordsOnly;
+        private boolean isRecordsOnly;
+        private Set<JournalEntryType> journalEntryTypes;
         int maxItemsToRetrieve;
 
         public SelectionCriterias() {
@@ -335,8 +513,9 @@ public class LoadJournalEntriesDialog extends XDialog {
         public SelectionCriterias(Date startDate, Date endDate, boolean recordsOnly, int maxItemsToRetrieve) {
             this.startDate = startDate;
             this.endDate = endDate;
-            this.recordsOnly = recordsOnly;
+            this.isRecordsOnly = recordsOnly;
             this.maxItemsToRetrieve = maxItemsToRetrieve;
+            this.journalEntryTypes = new HashSet<JournalEntryType>();
         }
 
         public Date getStartDate() {
@@ -356,11 +535,19 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
 
         public boolean isRecordsOnly() {
-            return recordsOnly;
+            return isRecordsOnly;
         }
 
         public void setRecordsOnly(boolean recordsOnly) {
-            this.recordsOnly = recordsOnly;
+            this.isRecordsOnly = recordsOnly;
+        }
+
+        public JournalEntryType[] getJournalEntryTypes() {
+            return journalEntryTypes.toArray(new JournalEntryType[journalEntryTypes.size()]);
+        }
+
+        public void addJournalEntryType(JournalEntryType journalEntryType) {
+            journalEntryTypes.add(journalEntryType);
         }
 
         public int getMaxItemsToRetrieve() {
@@ -370,5 +557,164 @@ public class LoadJournalEntriesDialog extends XDialog {
         public void setMaxItemsToRetrieve(int maxItemsToRetrieve) {
             this.maxItemsToRetrieve = maxItemsToRetrieve;
         }
+    }
+
+    private class JournalTypesContentProvider implements IStructuredContentProvider {
+
+        private SelectableJournalEntryType[] inputData;
+
+        public void dispose() {
+        }
+
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+            if (newInput != null) {
+                inputData = (SelectableJournalEntryType[])newInput;
+            } else {
+                inputData = null;
+            }
+        }
+
+        public Object[] getElements(Object inputData) {
+            return (SelectableJournalEntryType[])inputData;
+        }
+
+    }
+
+    private class JournalTypesLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+        public Image getColumnImage(Object object, int index) {
+
+            switch (index) {
+            case 0:
+                if (((SelectableJournalEntryType)object).isSelected()) {
+                    return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_CHECKED);
+                } else {
+                    return ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_UNCHECKED);
+                }
+
+            case 1:
+                return null;
+
+            default:
+                return null;
+            }
+        }
+
+        public String getColumnText(Object object, int index) {
+
+            switch (index) {
+            case 0:
+                // if (((SelectableJournalEntryType)object).isSelected()) {
+                // return "X";
+                // } else {
+                // return "";
+                // }
+                return null;
+
+            case 1:
+                return ((SelectableJournalEntryType)object).getText();
+
+            default:
+                return null;
+            }
+        }
+    }
+
+    private class JournalTypesCellModifier implements ICellModifier {
+
+        private TableViewer tableViewer;
+
+        public JournalTypesCellModifier(TableViewer tableViewer) {
+            this.tableViewer = tableViewer;
+        }
+
+        public boolean canModify(Object element, String property) {
+            return true;
+        }
+
+        public Object getValue(Object element, String property) {
+
+            SelectableJournalEntryType currentValue = (SelectableJournalEntryType)element;
+
+            return currentValue.isSelected();
+        }
+
+        public void modify(Object element, String property, Object value) {
+
+            TableItem item = (TableItem)element;
+            SelectableJournalEntryType currentValue = (SelectableJournalEntryType)item.getData();
+            currentValue.setSelected(!currentValue.isSelected());
+
+            tableViewer.update(currentValue, new String[] { property });
+        }
+
+    }
+
+    private class JournalEntryTypeCmdLabelsMouseAdapter extends MouseAdapter {
+
+        private TableViewer tableViewer;
+        private boolean allowNegation;
+        private boolean isSelected;
+        private Set<String> labels;
+
+        public JournalEntryTypeCmdLabelsMouseAdapter(TableViewer tableViewer, boolean allowNegation, boolean isSelected, String... labels) {
+            this.tableViewer = tableViewer;
+            this.allowNegation = allowNegation;
+            this.isSelected = isSelected;
+            this.labels = new HashSet<String>(Arrays.asList(labels));
+        }
+
+        @Override
+        public void mouseUp(MouseEvent event) {
+
+            boolean newSelectedState = isSelected;
+
+            // Negate default behaviour
+            // MOD1 = CTRL on most platforms, COMMAND on Mac
+            // MOD3 = ALT on most platforms
+            if (allowNegation && ((event.stateMask & SWT.MOD1) == SWT.MOD1 | (event.stateMask & SWT.MOD3) == SWT.MOD3)) {
+                newSelectedState = !isSelected;
+            }
+
+            performOperation(newSelectedState);
+        }
+
+        private void performOperation(boolean newSelectedState) {
+            for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
+                if (labels.size() == 0 || labels.contains(journalEntryType.getLabel())) {
+                    journalEntryType.setSelected(newSelectedState);
+                }
+            }
+            tableViewer.refresh(true);
+        }
+    }
+
+    private class SelectableJournalEntryType {
+
+        private JournalEntryType journalEntryType;
+        private boolean selected;
+
+        public SelectableJournalEntryType(JournalEntryType journalEntryType, boolean selected) {
+            this.journalEntryType = journalEntryType;
+            this.selected = selected;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+
+        public String getLabel() {
+            return journalEntryType.label();
+        }
+
+        public String getText() {
+            return journalEntryType.toString();
+        }
+
     }
 }

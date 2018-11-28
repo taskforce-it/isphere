@@ -8,7 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
-public class Journal {
+public class Journal implements Cloneable {
 
     private String connectionName;
     private String name;
@@ -87,6 +87,14 @@ public class Journal {
         }
 
         return true;
+    }
+
+    @Override
+    public Journal clone() throws CloneNotSupportedException {
+
+        Journal clone = (Journal)super.clone();
+
+        return clone;
     }
 
     @Override

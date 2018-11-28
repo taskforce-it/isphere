@@ -8,6 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.api;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -52,7 +52,9 @@ import com.ibm.as400.access.AS400Text;
  * See <a href="http://stanleyvong.blogspot.de/">RJNE0100</a> example from
  * February 19, 2013.
  */
-public class JrneToRtv {
+public class JrneToRtv implements Serializable, Cloneable {
+
+    private static final long serialVersionUID = 6666741116944210055L;
 
     public static final String FMTMINDTA_NO = "*NO";
     public static final String FMTMINDTA_YES = "*YES";
@@ -67,13 +69,13 @@ public class JrneToRtv {
     public static final String NULLINDLEN_VARLEN = "*VARLEN";
 
     private Journal journal;
-    private Map<RetrieveKey, RetrieveCriterion> selectionCriteria;
+    private HashMap<RetrieveKey, RetrieveCriterion> selectionCriteria;
     private ArrayList<AS400DataType> structure = null;
     private ArrayList<Object> data = null;
     private boolean isDirty = true;
     SimpleDateFormat dateFormatter = null;
 
-    private List<FileCriterion> fileCriterions;
+    private LinkedList<FileCriterion> fileCriterions;
 
     public JrneToRtv(Journal aJournal) {
         journal = aJournal;
@@ -734,6 +736,29 @@ public class JrneToRtv {
     private Date getTime(String aTimestamp) throws ParseException {
         Date date = dateFormatter.parse(aTimestamp);
         return date;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public JrneToRtv clone() throws CloneNotSupportedException {
+
+        JrneToRtv clone = (JrneToRtv)super.clone();
+
+        if (this.data != null) {
+            clone.data = (ArrayList<Object>)this.data.clone();
+        }
+
+        if (this.structure != null) {
+            clone.structure = (ArrayList<AS400DataType>)this.structure.clone();
+        }
+
+        clone.dateFormatter = (SimpleDateFormat)this.dateFormatter.clone();
+        clone.fileCriterions = (LinkedList<FileCriterion>)this.fileCriterions.clone();
+        clone.isDirty = this.isDirty;
+        clone.journal = this.journal.clone();
+        clone.selectionCriteria = (HashMap<RetrieveKey, RetrieveCriterion>)this.selectionCriteria.clone();
+
+        return clone;
     }
 
     @Override

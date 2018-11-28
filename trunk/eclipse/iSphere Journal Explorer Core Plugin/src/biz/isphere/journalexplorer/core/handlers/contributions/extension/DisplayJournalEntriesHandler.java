@@ -24,6 +24,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dialog.ConfirmErrorsDialog;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
@@ -118,9 +119,10 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         tJrneToRtv.setToTime(selectionCriterias.getEndDate());
 
         if (selectionCriterias.isRecordsOnly()) {
-            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_RCD);
+            tJrneToRtv.setJrnCde(JournalCode.R);
+            tJrneToRtv.setEntTyp(selectionCriterias.getJournalEntryTypes());
         } else {
-            tJrneToRtv.setEntTyp(JrneToRtv.ENTTYP_ALL);
+            tJrneToRtv.setJrnCde(JrneToRtv.JRNCDE_ALL);
         }
 
         tJrneToRtv.setNullIndLen(JrneToRtv.NULLINDLEN_VARLEN);
