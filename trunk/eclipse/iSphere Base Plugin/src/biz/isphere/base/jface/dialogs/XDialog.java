@@ -8,6 +8,8 @@
 
 package biz.isphere.base.jface.dialogs;
 
+import java.util.Date;
+
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -338,6 +340,18 @@ public class XDialog extends Dialog {
     }
 
     /**
+     * Retrieves the the value that is assigned to a given key.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @param aDefault - default value, that is returned if then key does not
+     *        yet exist
+     * @return the value that is assigned to the key
+     */
+    protected int loadIntValue(String aKey, int aDefault) {
+        return dialogSettingsManager.loadIntValue(aKey, aDefault);
+    }
+
+    /**
      * Stores a given numeric value to preserve it for the next time the dialog
      * is shown.
      * 
@@ -356,7 +370,18 @@ public class XDialog extends Dialog {
      *        yet exist
      * @return the value that is assigned to the key
      */
-    protected int loadIntValue(String aKey, int aDefault) {
-        return dialogSettingsManager.loadIntValue(aKey, aDefault);
+    protected Date loadDateValue(String aKey, Date aDefault) {
+        return dialogSettingsManager.loadDateValue(aKey, aDefault);
+    }
+
+    /**
+     * Stores a given java.util.Date value to preserve it for the next time the
+     * dialog is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    protected void storeValue(String aKey, Date aValue) {
+        dialogSettingsManager.storeValue(aKey, aValue);
     }
 }
