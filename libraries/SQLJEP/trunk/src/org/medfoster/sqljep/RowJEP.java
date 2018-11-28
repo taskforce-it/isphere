@@ -49,7 +49,7 @@ public class RowJEP extends BaseJEP {
 	
 	public int findColumn(String name){
 		if (columnMapping != null) {
-			Integer v = columnMapping.get(name);
+			Integer v = columnMapping.get(name.toUpperCase());
 			if (v != null) {
 				return v;
 			}
@@ -74,7 +74,10 @@ public class RowJEP extends BaseJEP {
 	}
 	
 	public void parseExpression(HashMap<String,Integer> columnMapping) throws ParseException {
-		this.columnMapping = columnMapping;
+		this.columnMapping = new HashMap<String,Integer>();
+		for (Map.Entry<String, Integer> entry : columnMapping.entrySet()) {
+			this.columnMapping.put(entry.getKey().toUpperCase(), entry.getValue());
+		}
 		super.parseExpression();
 	}
 	
