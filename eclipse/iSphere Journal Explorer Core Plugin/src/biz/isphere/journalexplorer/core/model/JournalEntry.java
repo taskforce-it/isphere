@@ -20,7 +20,6 @@ import java.util.HashMap;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
@@ -58,19 +57,6 @@ public class JournalEntry {
         columnMappings.put("JOLIB", JOLIB);
         columnMappings.put("JOOBJ", JOOBJ);
         columnMappings.put("JOMBR", JOMBR);
-    }
-
-    private static ContentAssistProposal[] contentAssistProposals;
-    static {
-        contentAssistProposals = new ContentAssistProposal[columnMappings.size()];
-        contentAssistProposals[JOCODE] = new ContentAssistProposal("JOCODE");
-        contentAssistProposals[JOENTT] = new ContentAssistProposal("JOENTT");
-        contentAssistProposals[JOJOB] = new ContentAssistProposal("JOJOB");
-        contentAssistProposals[JOUSER] = new ContentAssistProposal("JOUSER");
-        contentAssistProposals[JONBR] = new ContentAssistProposal("JONBR");
-        contentAssistProposals[JOLIB] = new ContentAssistProposal("JOLIB");
-        contentAssistProposals[JOOBJ] = new ContentAssistProposal("JOOBJ");
-        contentAssistProposals[JOMBR] = new ContentAssistProposal("JOMBR");
     }
 
     private SimpleDateFormat dateFormatter;
@@ -206,6 +192,9 @@ public class JournalEntry {
         this.qualifiedObjectName = null;
         this.bin8Formatter = new DecimalFormat("00000000000000000000");
         this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
+        this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+        this.timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+
     }
 
     public OutputFile getOutputFile() {
@@ -228,10 +217,6 @@ public class JournalEntry {
 
     public static HashMap<String, Integer> getColumnMapping() {
         return columnMappings;
-    }
-
-    public static ContentAssistProposal[] getContentAssistProposal() {
-        return contentAssistProposals;
     }
 
     public Comparable[] getRow() {
@@ -1249,13 +1234,13 @@ public class JournalEntry {
             if (date == null) {
                 return ""; //$NON-NLS-1$
             }
-            return getDateFormatter().format(date);
+            return dateFormatter.format(date);
         } else if (ColumnsDAO.JOTIME.equals(name)) {
             Time time = getTime();
             if (time == null) {
                 return ""; //$NON-NLS-1$
             }
-            return getTimeFormatter().format(time);
+            return timeFormatter.format(time);
         } else if (ColumnsDAO.JOJOB.equals(name)) {
             return getJobName();
         } else if (ColumnsDAO.JOUSER.equals(name)) {
@@ -1377,20 +1362,6 @@ public class JournalEntry {
         }
 
         return qualifiedObjectName;
-    }
-
-    private SimpleDateFormat getDateFormatter() {
-        if (dateFormatter == null) {
-            dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
-        }
-        return dateFormatter;
-    }
-
-    private SimpleDateFormat getTimeFormatter() {
-        if (timeFormatter == null) {
-            timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
-        }
-        return timeFormatter;
     }
 
     private String getValueChecked(String value) {

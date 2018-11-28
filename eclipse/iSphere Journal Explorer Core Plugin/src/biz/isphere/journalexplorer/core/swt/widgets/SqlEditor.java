@@ -37,10 +37,22 @@ public class SqlEditor extends Composite {
     private Button btnClear;
     private Button btnAddField;
     private Button btnExecute;
+    private Label labelWhere;
 
     public SqlEditor(Composite parent, int style) {
         super(parent, style);
         createContentArea();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        btnAddField.setEnabled(enabled);
+        btnClear.setEnabled(enabled);
+        btnExecute.setEnabled(enabled);
+        textSqlEditor.setEnabled(enabled);
+        labelWhere.setEnabled(enabled);
     }
 
     @Override
@@ -84,7 +96,7 @@ public class SqlEditor extends Composite {
         wherePanel.setLayout(wherePanelLayout);
         wherePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-        Label labelWhere = new Label(wherePanel, SWT.NONE);
+        labelWhere = new Label(wherePanel, SWT.NONE);
         labelWhere.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);

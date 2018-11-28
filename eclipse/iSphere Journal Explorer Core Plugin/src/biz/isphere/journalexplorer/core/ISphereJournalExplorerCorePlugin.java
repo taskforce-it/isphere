@@ -43,6 +43,9 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_EXCEL = "excel.png";
     public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png";
 
+    public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
+    public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
+
     public static final String IMAGE_WARNING_OV = "warning_ov.gif";
     public static final String IMAGE_ERROR_OV = "error_ov.gif";
     public static final String IMAGE_LOADED_OV = "loaded_ov.gif";
@@ -109,6 +112,9 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
         reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+
+        reg.put(IMAGE_CHECKED, getImageDescriptor(IMAGE_CHECKED));
+        reg.put(IMAGE_UNCHECKED, getImageDescriptor(IMAGE_UNCHECKED));
 
         reg.put(IMAGE_WARNING_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
         reg.put(IMAGE_ERROR_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));

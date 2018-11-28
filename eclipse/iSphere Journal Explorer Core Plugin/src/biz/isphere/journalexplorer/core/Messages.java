@@ -65,8 +65,10 @@ public class Messages extends NLS {
     public static String SideBySideCompareDialog_SideBySideComparison;
     public static String Number_of_journal_entries_A;
     public static String Number_of_journal_entries_A_of_B;
+    public static String Number_of_journal_entries_A_more_items_available;
     public static String subsetted_list;
     public static String SqlEditor_WHERE;
+
     public static String DisplayJournalEntriesDialog_Title;
     public static String DisplayJournalEntriesDialog_From_date_colon;
     public static String DisplayJournalEntriesDialog_From_time_colon;
@@ -75,8 +77,26 @@ public class Messages extends NLS {
     public static String DisplayJournalEntriesDialog_Time_Last_used_values;
     public static String DisplayJournalEntriesDialog_Time_Today;
     public static String DisplayJournalEntriesDialog_Time_Yesterday;
-    public static String DisplayJournalEntriesDialog_Time_Record_entries_only;
+    public static String DisplayJournalEntriesDialog_Show_Record_entries_only;
     public static String DisplayJournalEntriesDialog_Fast_date_presets;
+    public static String DisplayJournalEntriesDialog_Label_cmd_None;
+    public static String DisplayJournalEntriesDialog_Label_cmd_All;
+    public static String DisplayJournalEntriesDialog_Label_cmd_Insert;
+    public static String DisplayJournalEntriesDialog_Label_cmd_Update;
+    public static String DisplayJournalEntriesDialog_Label_cmd_Delete;
+
+    public static String DisplayJournalEntriesDialog_Tooltip_From_date_colon;
+    public static String DisplayJournalEntriesDialog_Tooltip_From_time_colon;
+    public static String DisplayJournalEntriesDialog_Tooltip_To_date_colon;
+    public static String DisplayJournalEntriesDialog_Tooltip_To_time_colon;
+    public static String DisplayJournalEntriesDialog_Tooltip_Show_Record_entries_only;
+    public static String DisplayJournalEntriesDialog_Tooltip_Fast_date_presets;
+    public static String DisplayJournalEntriesDialog_Tooltip_Selectable_Journal_entry_types;
+    public static String DisplayJournalEntriesDialog_Tooltip_cmd_None;
+    public static String DisplayJournalEntriesDialog_Tooltip_cmd_All;
+    public static String DisplayJournalEntriesDialog_Tooltip_cmd_Insert;
+    public static String DisplayJournalEntriesDialog_Tooltip_cmd_Update;
+    public static String DisplayJournalEntriesDialog_Tooltip_cmd_Delete;
 
     public static String Error_Unknown_data_type;
     public static String Error_No_NULL_indicator_information_available;

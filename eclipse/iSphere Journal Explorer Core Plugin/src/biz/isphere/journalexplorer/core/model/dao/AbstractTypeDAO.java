@@ -40,7 +40,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     public JournalEntries load(String whereClause) throws Exception {
 
-        JournalEntries journalEntries = new JournalEntries();
+        JournalEntries journalEntries = new JournalEntries(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

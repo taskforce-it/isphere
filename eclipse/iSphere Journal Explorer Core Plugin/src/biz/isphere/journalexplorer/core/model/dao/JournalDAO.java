@@ -41,24 +41,41 @@ public class JournalDAO {
     private static final int BUFFER_MAXIMUM_SIZE = Buffer.size("16MB");
 
     private JrneToRtv jrneToRtv;
+    private OutputFile outputFile;
 
     public JournalDAO(JrneToRtv jrneToRtv) throws Exception {
 
         this.jrneToRtv = jrneToRtv;
+        this.jrneToRtv.setNbrEnt(this.jrneToRtv.getNbrEnt() + 1);
+        this.outputFile = getOutputFile(jrneToRtv.getConnectionName());
+    }
+
+    public static OutputFile getOutputFile(String connectionName) {
+        return new OutputFile(connectionName, "QSYS", "QADSPJR5");
     }
 
     public JournalEntries getJournalData(String whereClause) throws Exception {
 
-        JournalEntries journalEntries = new JournalEntries();
-
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+
+        JournalEntries journalEntries = new JournalEntries(maxNumRows);
 
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(jrneToRtv);
 
-        OutputFile outputFile = new OutputFile(jrneToRtv.getConnectionName(), "QSYS", "QADSPJR5");
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
+
+        RowJEP sqljep;
+        if (!StringHelper.isNullOrEmpty(whereClause)) {
+            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+            sqljep = new RowJEP(whereClause);
+            sqljep.parseExpression(columnMapping);
+        } else {
+            sqljep = null;
+        }
+
+        Date startTime = new Date();
 
         do {
 
@@ -78,26 +95,24 @@ public class JournalDAO {
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
                         Messages.Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences));
                 } else {
-                    while (rjne0200.nextEntry()) {
+                    while (journalEntries.size() < maxNumRows && rjne0200.nextEntry()) {
 
                         id++;
 
                         JournalEntry journalEntry = new JournalEntry(outputFile);
 
-                        JournalEntry populateJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
+                        JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
 
-                        boolean isSelected = true;
-
-                        if (!StringHelper.isNullOrEmpty(whereClause)) {
-                            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+                        boolean isSelected;
+                        if (sqljep != null) {
                             Comparable[] row = journalEntry.getRow();
-                            RowJEP sqljep = new RowJEP(whereClause);
-                            sqljep.parseExpression(columnMapping);
                             isSelected = (Boolean)sqljep.getValue(row);
+                        } else {
+                            isSelected = true;
                         }
 
                         if (isSelected) {
-                            journalEntries.add(populateJournalEntry);
+                            journalEntries.add(populatedJournalEntry);
                         }
 
                         if (journalEntry.isRecordEntryType()) {
@@ -112,6 +127,8 @@ public class JournalDAO {
 
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.size() < maxNumRows);
 
+        System.out.println("mSecs total: " + timeElapsed(startTime));
+
         if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);
         }
@@ -119,6 +136,10 @@ public class JournalDAO {
         journalEntries.setMessages(messages);
 
         return journalEntries;
+    }
+
+    private long timeElapsed(Date startTime) {
+        return (new Date().getTime() - startTime.getTime());
     }
 
     private boolean isBufferTooSmall(RJNE0200 rjne0200) {
