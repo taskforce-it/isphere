@@ -1178,7 +1178,8 @@ public class OracleTimestampFormat extends Format {
 	}
 	
 	public Object parseObject(String source, ParsePosition pos) {
-		return new java.sql.Timestamp(parseInMillis(source, pos));
+        return new java.util.Date(parseInMillis(source, pos));
+        // return new java.sql.Timestamp(parseInMillis(source, pos));
 	}
 	
 	protected long parseInMillis(String source, ParsePosition pos) {
