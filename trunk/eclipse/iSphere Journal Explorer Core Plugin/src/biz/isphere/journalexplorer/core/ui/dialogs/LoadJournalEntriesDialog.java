@@ -658,6 +658,9 @@ public class LoadJournalEntriesDialog extends XDialog {
         private boolean isSelected;
         private Set<String> labels;
 
+        // Silly hack for WDSCi, which is missing MouseEvent.count.
+        private boolean isDoubleClick;
+
         public JournalEntryTypeCmdLabelsMouseAdapter(TableViewer tableViewer, boolean allowNegation, boolean isSelected, String... labels) {
             this.tableViewer = tableViewer;
             this.allowNegation = allowNegation;
@@ -666,7 +669,14 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
 
         @Override
+        public void mouseDown(MouseEvent arg0) {
+            isDoubleClick = false;
+        }
+
+        @Override
         public void mouseDoubleClick(MouseEvent event) {
+
+            isDoubleClick = true;
 
             // Negate default behaviour on double-click, no modifiers
             if (allowNegation && event.stateMask == 0) {
@@ -677,20 +687,26 @@ public class LoadJournalEntriesDialog extends XDialog {
         @Override
         public void mouseUp(MouseEvent event) {
 
-            if (event.count != 1) {
-                return;
+            try {
+
+                if (isDoubleClick) {
+                    return;
+                }
+
+                boolean newSelectedState = isSelected;
+
+                // Negate default behaviour
+                // MOD1 = CTRL on most platforms, COMMAND on Mac
+                // MOD3 = ALT on most platforms
+                if (allowNegation && ((event.stateMask & SWT.MOD1) == SWT.MOD1 | (event.stateMask & SWT.MOD3) == SWT.MOD3)) {
+                    newSelectedState = !isSelected;
+                }
+
+                performOperation(newSelectedState);
+
+            } finally {
+                isDoubleClick = false;
             }
-
-            boolean newSelectedState = isSelected;
-
-            // Negate default behaviour
-            // MOD1 = CTRL on most platforms, COMMAND on Mac
-            // MOD3 = ALT on most platforms
-            if (allowNegation && ((event.stateMask & SWT.MOD1) == SWT.MOD1 | (event.stateMask & SWT.MOD3) == SWT.MOD3)) {
-                newSelectedState = !isSelected;
-            }
-
-            performOperation(newSelectedState);
         }
 
         private void performOperation(boolean newSelectedState) {
