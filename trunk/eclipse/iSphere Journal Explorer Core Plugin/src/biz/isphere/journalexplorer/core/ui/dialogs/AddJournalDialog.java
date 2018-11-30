@@ -69,9 +69,9 @@ public class AddJournalDialog extends XDialog {
     }
 
     @Override
-    public void create() {
-
-        super.create();
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.AddJournalDialog_OpenJournal);
     }
 
     /**
@@ -220,13 +220,6 @@ public class AddJournalDialog extends XDialog {
 
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-    }
-
-    @Override
-    protected void configureShell(Shell newShell) {
-        super.configureShell(newShell);
-        newShell.setText(Messages.AddJournalDialog_OpenJournal);
-
     }
 
     @Override
