@@ -282,7 +282,7 @@ public class ConfigureParsersDialog extends XDialog {
 
     private void resetPressed() {
 
-        Collection<MetaTable> parsers = MetaDataCache.INSTANCE.getCachedParsers();
+        Collection<MetaTable> parsers = MetaDataCache.getInstance().getCachedParsers();
         for (MetaTable parser : parsers) {
             parser.setLoaded(false);
             tableViewer.update(parser, null);
@@ -292,7 +292,7 @@ public class ConfigureParsersDialog extends XDialog {
     }
 
     private void loadValues() {
-        tableViewer.setInput(MetaDataCache.INSTANCE.getCachedParsers().toArray());
+        tableViewer.setInput(MetaDataCache.getInstance().getCachedParsers().toArray());
         setButtonEnablement();
     }
 

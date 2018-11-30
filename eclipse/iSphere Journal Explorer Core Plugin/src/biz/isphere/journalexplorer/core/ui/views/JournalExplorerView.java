@@ -386,7 +386,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         openJournalOutputFileAction.setEnabled(true);
 
-        Collection<MetaTable> joesdParser = MetaDataCache.INSTANCE.getCachedParsers();
+        Collection<MetaTable> joesdParser = MetaDataCache.getInstance().getCachedParsers();
         if (joesdParser == null || joesdParser.isEmpty()) {
             configureParsersAction.setEnabled(false);
         } else {

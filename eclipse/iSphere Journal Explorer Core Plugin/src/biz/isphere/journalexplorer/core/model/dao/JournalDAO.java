@@ -116,7 +116,7 @@ public class JournalDAO {
                         }
 
                         if (journalEntry.isRecordEntryType()) {
-                            MetaDataCache.INSTANCE.prepareMetaData(journalEntry);
+                            MetaDataCache.getInstance().prepareMetaData(journalEntry);
                         }
 
                     }

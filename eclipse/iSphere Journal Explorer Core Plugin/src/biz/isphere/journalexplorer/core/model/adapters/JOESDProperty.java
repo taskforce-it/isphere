@@ -85,7 +85,7 @@ public class JOESDProperty extends JournalProperty {
 
         } else {
 
-            metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+            metatable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
 
             parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
 

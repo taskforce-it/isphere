@@ -17,14 +17,27 @@ import java.util.HashMap;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.MetaTableDAO;
 
-public class MetaDataCache {
+public final class MetaDataCache {
 
-    public static final MetaDataCache INSTANCE = new MetaDataCache();
+    /**
+     * The instance of this Singleton class.
+     */
+    private static MetaDataCache instance;
 
     private HashMap<String, MetaTable> cache;
 
-    public MetaDataCache() {
+    private MetaDataCache() {
         this.cache = new HashMap<String, MetaTable>();
+    }
+
+    /**
+     * Thread-safe method that returns the instance of this Singleton class.
+     */
+    public synchronized static MetaDataCache getInstance() {
+        if (instance == null) {
+            instance = new MetaDataCache();
+        }
+        return instance;
     }
 
     public void prepareMetaData(JournalEntry journalEntry) throws Exception {
@@ -37,6 +50,10 @@ public class MetaDataCache {
 
     public MetaTable retrieveMetaData(OutputFile file) throws Exception {
         return loadMetadata(file.getConnectionName(), file.getOutFileLibrary(), file.getOutFileName());
+    }
+
+    public MetaTable retrieveMetaData(String connectionName, String library, String file) throws Exception {
+        return loadMetadata(connectionName, library, file);
     }
 
     public MetaTable retrieveMetaData(JournalEntry journalEntry) throws Exception {
@@ -52,7 +69,6 @@ public class MetaDataCache {
             metatable = produceMetaTable(objectLibrary, objectName);
             this.saveMetaData(metatable);
             this.loadMetadata(metatable, connectionName);
-
         } else if (!metatable.isLoaded()) {
             metatable.clearColumns();
             this.loadMetadata(metatable, connectionName);
@@ -98,6 +114,10 @@ public class MetaDataCache {
 
     private void saveMetaData(MetaTable metaTable) {
         this.cache.put(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()), metaTable);
+    }
+
+    public void removeMetaData(MetaTable metaTable) {
+        this.cache.remove(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()));
     }
 
     public Collection<MetaTable> getCachedParsers() {

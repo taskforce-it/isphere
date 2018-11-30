@@ -38,7 +38,7 @@ public class OutputFile {
      */
     public JournalOutputType getType() throws Exception {
 
-        MetaTable metaTable = MetaDataCache.INSTANCE.retrieveMetaData(this);
+        MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(this);
         metaTable.setJournalOutputFile(true);
 
         return metaTable.getOutfileType();
