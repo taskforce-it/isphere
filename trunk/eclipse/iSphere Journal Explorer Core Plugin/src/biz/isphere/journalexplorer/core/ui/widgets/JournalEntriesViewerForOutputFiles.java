@@ -211,7 +211,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
     private MetaTable getMetaData() {
 
         try {
-            return MetaDataCache.INSTANCE.retrieveMetaData(outputFile);
+            return MetaDataCache.getInstance().retrieveMetaData(outputFile);
         } catch (Exception e) {
             String fileName;
             if (outputFile == null) {

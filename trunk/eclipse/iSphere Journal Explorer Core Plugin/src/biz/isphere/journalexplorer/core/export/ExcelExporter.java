@@ -67,7 +67,7 @@ public class ExcelExporter {
         // Read meta data of journaled file for displaying the column headings
         MetaTable metaData = null;
         if (Preferences.getInstance().isExportColumnHeadings() && displayColumnHeadings(journalEntries)) {
-            metaData = MetaDataCache.INSTANCE.retrieveMetaData(journalEntries[0]);
+            metaData = MetaDataCache.getInstance().retrieveMetaData(journalEntries[0]);
         }
 
         // Add headline
@@ -96,7 +96,7 @@ public class ExcelExporter {
         // Add data
         for (JournalEntry journalEntry : journalEntries) {
 
-            MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+            MetaTable metatable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
             Record parsedJOESD = new JoesdParser(metatable).execute(journalEntry);
 
             col = 0;

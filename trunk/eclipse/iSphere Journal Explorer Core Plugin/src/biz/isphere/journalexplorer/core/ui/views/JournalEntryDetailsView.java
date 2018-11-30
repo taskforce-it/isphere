@@ -182,7 +182,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
 
                 // Get specific data
                 if (journalEntry.isRecordEntryType()) {
-                    MetaTable metatable = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry);
+                    MetaTable metatable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
 
                     if (metatable.hasNullableFields()) {
                         if (!journalEntry.hasNullIndicatorTable()) {
@@ -206,7 +206,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
                 }
 
                 // Get journal entry data
-                MetaTable metatableOutputFile = MetaDataCache.INSTANCE.retrieveMetaData(journalEntry.getOutputFile());
+                MetaTable metatableOutputFile = MetaDataCache.getInstance().retrieveMetaData(journalEntry.getOutputFile());
 
                 if (messages.size() > 0) {
                     StringBuilder dialogMessage = new StringBuilder();
