@@ -50,8 +50,10 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
 
 public class LoadJournalEntriesDialog extends XDialog {
 
@@ -61,6 +63,8 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     public static int WIDTH_SELECTED = 30;
     public static int WIDTH_TEXT = 500;
+
+    private List<ISelectedFile> files;
 
     private IDateEdit startingDateDateTime;
     private ITimeEdit startingTimeDateTime;
@@ -82,8 +86,10 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private SelectionCriterias selectionCriterias;
 
-    public LoadJournalEntriesDialog(Shell parentShell) {
+    public LoadJournalEntriesDialog(Shell parentShell, List<ISelectedFile> files) {
         super(parentShell);
+
+        this.files = files;
 
         journalEntryTypes = new LinkedList<SelectableJournalEntryType>();
         journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.PT, true));
@@ -100,7 +106,18 @@ public class LoadJournalEntriesDialog extends XDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.DisplayJournalEntriesDialog_Title);
+        newShell.setText(Messages.DisplayJournalEntriesDialog_Title + addJournaledObjects(files));
+    }
+
+    private String addJournaledObjects(List<ISelectedFile> files) {
+
+        if (files.size() != 1) {
+            return ""; //$NON-NLS-1$
+        }
+
+        ISelectedFile file = files.get(0);
+
+        return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember()); //$NON-NLS-1$
     }
 
     @Override

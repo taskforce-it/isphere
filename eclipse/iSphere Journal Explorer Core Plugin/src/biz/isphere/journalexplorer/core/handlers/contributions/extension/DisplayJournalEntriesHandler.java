@@ -91,7 +91,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         }
 
         if (selectionCriterias == null) {
-            LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell());
+            LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedFiles);
             if (dialog.open() == LoadJournalEntriesDialog.OK) {
                 selectionCriterias = dialog.getSelectionCriterias();
             } else {
