@@ -108,7 +108,7 @@ public class SqlEditor extends Composite {
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                textSqlEditor.getTextWidget().setFocus();
+                textSqlEditor.setFocus();
                 textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
             }
         });
@@ -119,8 +119,8 @@ public class SqlEditor extends Composite {
         textSqlEditor.setTraverseEnabled(true);
         textSqlEditor.enableAutoActivation(true);
         textSqlEditor.enableAutoInsert(true);
-        textSqlEditor.getTextWidget().setToolTipText(Messages.Tooltip_SqlEditor_Text);
-        textSqlEditor.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+        textSqlEditor.setToolTipText(Messages.Tooltip_SqlEditor_Text);
+        textSqlEditor.addVerifyKeyListener(new VerifyKeyListener() {
 
             public void verifyKey(VerifyEvent event) {
                 if (isCtrlEnter(event)) {
@@ -143,7 +143,7 @@ public class SqlEditor extends Composite {
             }
         });
 
-        textSqlEditor.getTextWidget().addKeyListener(new KeyAdapter() {
+        textSqlEditor.addKeyListener(new KeyAdapter() {
 
             public void keyReleased(KeyEvent e) {
 
@@ -178,7 +178,7 @@ public class SqlEditor extends Composite {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 textSqlEditor.setText("");
-                textSqlEditor.getTextWidget().setFocus();
+                textSqlEditor.setFocus();
             }
         });
 
