@@ -34,7 +34,6 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
-import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
@@ -60,15 +59,13 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
     IPropertyChangeListener {
 
-    private OutputFile outputFile;
-
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, loadJournalEntriesSelectionListener);
+    public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, String whereClause,
+        SelectionListener loadJournalEntriesSelectionListener) {
+        super(parent, outputFile, loadJournalEntriesSelectionListener);
 
-        this.outputFile = outputFile;
-
+        setWhereClause(whereClause);
         setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -80,9 +77,9 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(outputFile.getConnectionName());
+        buffer.append(getOutputFile().getConnectionName());
         buffer.append(": ");
-        buffer.append(outputFile.getQualifiedName());
+        buffer.append(getOutputFile().getQualifiedName());
 
         return buffer.toString();
     }
@@ -91,9 +88,9 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(Messages.bind(Messages.Title_Connection_A, outputFile.getConnectionName()));
+        buffer.append(Messages.bind(Messages.Title_Connection_A, getOutputFile().getConnectionName()));
         buffer.append("\n");
-        buffer.append(Messages.bind(Messages.Title_File_A, outputFile.getQualifiedName()));
+        buffer.append(Messages.bind(Messages.Title_File_A, getOutputFile().getQualifiedName()));
 
         return buffer.toString();
     }
@@ -103,7 +100,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         try {
 
             AbstractTypeViewerFactory factory = null;
-            switch (outputFile.getType()) {
+            switch (getOutputFile().getType()) {
             case TYPE5:
                 factory = new Type5ViewerFactory();
                 break;
@@ -157,7 +154,8 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
                 try {
 
-                    OutputFileDAO journalDAO = new OutputFileDAO(outputFile);
+                    OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
+
                     final JournalEntries data = journalDAO.getJournalData(getWhereClause());
 
                     if (!isDisposed()) {
@@ -206,21 +204,5 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         }
 
         return proposals.toArray(new ContentAssistProposal[proposals.size()]);
-    }
-
-    private MetaTable getMetaData() {
-
-        try {
-            return MetaDataCache.getInstance().retrieveMetaData(outputFile);
-        } catch (Exception e) {
-            String fileName;
-            if (outputFile == null) {
-                fileName = "null"; //$NON-NLS-1$
-            } else {
-                fileName = outputFile.toString();
-            }
-            ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-            return null;
-        }
     }
 }
