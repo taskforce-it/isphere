@@ -11,6 +11,15 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -21,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -31,13 +41,21 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.model.MetaColumn;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
@@ -47,17 +65,23 @@ public class AddJournalDialog extends XDialog {
     private static final String LIBRARY = "LIBRARY";
     private static final String FILE = "FILE";
     private static final String MEMBER = "MEMBER";
+    private static final String WHERE_CLAUSE = "WHERE_CLAUSE";
 
     private ComboViewer cmbConnections;
     private Text txtLibraryName;
     private Text txtFileName;
     private Text txtMemberName;
+    private SqlEditor sqlEditor;
 
     private String libraryName;
     private String fileName;
     private String memberName;
+    private String whereClause;
+
+    private boolean isInitializing;
 
     private ConnectionDelegate connection;
+    private RefreshJob refreshJob;
 
     /**
      * Create the dialog.
@@ -66,6 +90,9 @@ public class AddJournalDialog extends XDialog {
      */
     public AddJournalDialog(Shell parentShell) {
         super(parentShell);
+
+        this.isInitializing = true;
+        this.refreshJob = new RefreshJob();
     }
 
     @Override
@@ -89,34 +116,51 @@ public class AddJournalDialog extends XDialog {
 
         Label lblConnections = new Label(container, SWT.NONE);
         lblConnections.setText(Messages.AddJournalDialog_Conection);
+        lblConnections.setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
         cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
         GridData cmbConnectionLayoutData = new GridData();
         cmbConnectionLayoutData.minimumWidth = 100;
         cmbConnectionLayoutData.grabExcessHorizontalSpace = true;
         cmbConnections.getControl().setLayoutData(cmbConnectionLayoutData);
+        cmbConnections.getControl().setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
+        lblLibrary.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
         txtLibraryName = WidgetFactory.createNameText(container, true);
-        txtLibraryName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        txtLibraryName.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
         Label lblFileName = new Label(container, SWT.NONE);
         lblFileName.setText(Messages.AddJournalDialog_FileName);
+        lblFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
         txtFileName = WidgetFactory.createNameText(container, true);
         txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
         Label lblMemberName = new Label(container, SWT.NONE);
         lblMemberName.setText(Messages.AddJournalDialog_MemberName);
+        lblMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
         txtMemberName = WidgetFactory.createNameText(container, true);
         txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
+
+        sqlEditor = new SqlEditor(container, SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
+        GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
+        sqlEditorLayoutData.horizontalSpan = 2;
+        sqlEditor.setLayoutData(sqlEditorLayoutData);
 
         configureControls();
 
         loadValues();
+
+        isInitializing = false;
+
+        updateContentAssistProposals();
 
         return container;
     }
@@ -167,6 +211,7 @@ public class AddJournalDialog extends XDialog {
         txtLibraryName.setText(loadValue(LIBRARY, ""));
         txtFileName.setText(loadValue(FILE, ""));
         txtMemberName.setText(loadValue(MEMBER, ""));
+        sqlEditor.setWhereClause(loadValue(WHERE_CLAUSE, ""));
     }
 
     private void storeValues() {
@@ -175,6 +220,7 @@ public class AddJournalDialog extends XDialog {
         storeValue(LIBRARY, libraryName);
         storeValue(FILE, fileName);
         storeValue(MEMBER, memberName);
+        storeValue(WHERE_CLAUSE, whereClause);
     }
 
     private void configureControls() {
@@ -187,6 +233,7 @@ public class AddJournalDialog extends XDialog {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 if (selection.size() > 0) {
                     connection = new ConnectionDelegate(selection.getFirstElement());
+                    updateContentAssistProposals();
                 }
             }
         });
@@ -194,20 +241,42 @@ public class AddJournalDialog extends XDialog {
         txtLibraryName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 libraryName = txtLibraryName.getText().trim();
+                updateContentAssistProposals();
             }
         });
 
         txtFileName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 fileName = txtFileName.getText().trim();
+                updateContentAssistProposals();
             }
         });
 
         txtMemberName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 memberName = txtMemberName.getText().trim();
+                updateContentAssistProposals();
             }
         });
+
+        sqlEditor.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                whereClause = sqlEditor.getWhereClause().trim();
+                ((StyledText)event.getSource()).getText();
+            }
+        });
+    }
+
+    private void updateContentAssistProposals() {
+
+        if (isInitializing) {
+            return;
+        }
+
+        int autoRefreshDelay = Preferences.getInstance().getAutoRefreshDelay();
+
+        refreshJob.cancel();
+        refreshJob.schedule(autoRefreshDelay);
     }
 
     /**
@@ -263,6 +332,29 @@ public class AddJournalDialog extends XDialog {
             return false;
         }
 
+        Statement s = null;
+
+        try {
+
+            if (!StringHelper.isNullOrEmpty(whereClause)) {
+                Connection c = IBMiHostContributionsHandler.getJdbcConnection(connection.getConnectionName());
+                s = c.prepareStatement(String.format("SELECT * FROM %s.%s WHERE %s", libraryName, fileName, whereClause));
+                s.close();
+            }
+
+        } catch (SQLException e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Error_in_SQL_WHERE_CLAUSE_A, e.getLocalizedMessage()));
+            return false;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return true;
     }
 
@@ -286,6 +378,10 @@ public class AddJournalDialog extends XDialog {
         return memberName.toUpperCase();
     }
 
+    public String getSqlWhere() {
+        return whereClause;
+    }
+
     /**
      * Overridden make this dialog resizable {@link XDialog}.
      */
@@ -299,7 +395,7 @@ public class AddJournalDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(410, 220, true);
+        return getShell().computeSize(500, 300, true);
     }
 
     /**
@@ -309,5 +405,42 @@ public class AddJournalDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings());
+    }
+
+    private class RefreshJob extends WorkbenchJob {
+
+        public RefreshJob() {
+            super("Refresh Job");
+            setSystem(true); // set to false to show progress to user
+        }
+
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+
+            monitor.beginTask("Refreshing", IProgressMonitor.UNKNOWN);
+
+            MetaTable metaData = null;
+
+            try {
+                metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName);
+                if (!metaData.hasColumns()) {
+                    MetaDataCache.getInstance().removeMetaData(metaData);
+                }
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+
+            List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
+
+            if (metaData != null) {
+                for (MetaColumn column : metaData.getColumns()) {
+                    proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
+                }
+            }
+
+            sqlEditor.setContentAssistProposals(proposals.toArray(new ContentAssistProposal[proposals.size()]));
+
+            monitor.done();
+            return Status.OK_STATUS;
+        };
     }
 }

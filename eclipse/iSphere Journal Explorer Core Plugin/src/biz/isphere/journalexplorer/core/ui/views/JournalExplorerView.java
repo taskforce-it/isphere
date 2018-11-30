@@ -40,6 +40,7 @@ import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
+import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -143,7 +144,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             public void postRunAction() {
                 OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
                 if (outputFile != null) {
-                    createJournalTab(outputFile);
+                    String whereClause = openJournalOutputFileAction.getWhereClause();
+                    createJournalTab(outputFile, whereClause);
                 }
             }
         };
@@ -202,13 +204,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    private void createJournalTab(OutputFile outputFile) {
+    private void createJournalTab(OutputFile outputFile, String whereClause) {
 
         JournalEntriesViewerForOutputFiles journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForOutputFiles(tabs, outputFile, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForOutputFiles(tabs, outputFile, whereClause, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -239,6 +241,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof NoJournalEntriesLoadedException) {
+            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+        } else if (e instanceof SQLSyntaxErrorException) {
             MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
         } else {
             ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(1) ***", e);
@@ -274,6 +278,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     }
 
     private void performLoadJournalEntries(AbstractJournalEntriesViewer viewer) throws Exception {
+
+        viewer.validateWhereClause(getViewSite().getShell());
+
         viewer.closeJournal();
         updateStatusLine();
         viewer.openJournal(this);
@@ -490,6 +497,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         public void widgetSelected(SelectionEvent event) {
             try {
                 performLoadJournalEntries(getSelectedViewer());
+            } catch (SQLSyntaxErrorException e) {
+                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(2) ***", e);
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

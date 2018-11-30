@@ -20,17 +20,24 @@ public class Messages extends NLS {
     public static String E_R_R_O_R;
     public static String Warning;
     public static String Information;
+
     public static String AddJournalDialog_AllDataRequired;
     public static String AddJournalDialog_Conection;
+    public static String AddJournalDialog_Conection_Tooltip;
     public static String AddJournalDialog_FileName;
+    public static String AddJournalDialog_FileName_Tooltip;
     public static String AddJournalDialog_MemberName;
+    public static String AddJournalDialog_MemberName_Tooltip;
     public static String AddJournalDialog_Library;
+    public static String AddJournalDialog_Library_Tooltip;
     public static String AddJournalDialog_OpenJournal;
+
     public static String ConfigureParsersDialog_DefinitionLibrary;
     public static String ConfigureParsersDialog_DefinitionObject;
     public static String ConfigureParsersDialog_JournalObject;
     public static String ConfigureParsersDialog_ParsingOffset;
     public static String ConfigureParsersDialog_SetDefinitions;
+
     public static String JoesdParser_Data_type_not_supported_A;
     public static String JoesdParser_TableMetadataDontMatchEntry;
     public static String Journal_RecordNum;
@@ -68,6 +75,7 @@ public class Messages extends NLS {
     public static String Number_of_journal_entries_A_more_items_available;
     public static String subsetted_list;
     public static String SqlEditor_WHERE;
+    public static String SqlEditor_WHERE_Tooltip;
 
     public static String DisplayJournalEntriesDialog_Title;
     public static String DisplayJournalEntriesDialog_From_date_colon;
@@ -109,6 +117,7 @@ public class Messages extends NLS {
     public static String Error_Meta_data_not_available_Check_file_A_B;
     public static String Error_The_following_objects_are_not_journaled_Continue_anyway;
     public static String Error_No_object_selected;
+    public static String Error_in_SQL_WHERE_CLAUSE_A;
 
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
@@ -122,9 +131,13 @@ public class Messages extends NLS {
     public static String ColLabel_JournalEntry_Table_A;
 
     public static String ButtonLabel_Reload_All;
+    public static String ButtonTooltip_Reload_All;
     public static String ButtonLabel_Execute;
+    public static String ButtonTooltip_Execute;
     public static String ButtonLabel_AddField;
+    public static String ButtonTooltip_AddField;
     public static String ButtonLabel_Clear;
+    public static String ButtonTooltip_Clear;
 
     public static String Tooltip_OutputFile_Rrn;
     public static String Tooltip_JOENTL;

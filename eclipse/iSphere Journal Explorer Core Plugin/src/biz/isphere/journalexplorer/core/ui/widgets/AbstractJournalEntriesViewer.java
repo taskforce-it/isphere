@@ -11,6 +11,9 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,21 +33,30 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
+import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
@@ -70,6 +82,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
+    private OutputFile outputFile;
     private Composite container;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
@@ -80,11 +93,12 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private SqlEditor sqlEditor;
     private String whereClause;
 
-    public AbstractJournalEntriesViewer(CTabFolder parent, SelectionListener loadJournalEntriesSelectionListener) {
+    public AbstractJournalEntriesViewer(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
 
+        this.outputFile = outputFile;
         this.container = new Composite(parent, SWT.NONE);
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
@@ -97,6 +111,10 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     protected abstract String getLabel();
 
     protected abstract String getTooltip();
+
+    protected OutputFile getOutputFile() {
+        return outputFile;
+    }
 
     protected abstract ContentAssistProposal[] getContentAssistProposals();
 
@@ -112,13 +130,17 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             sqlEditor.setLayoutData(gd);
             getContainer().layout();
             sqlEditor.setFocus();
+            sqlEditor.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    whereClause = sqlEditor.getWhereClause().trim();
+                }
+            });
         }
     }
 
     protected void destroySqlEditor() {
 
         if (sqlEditor != null) {
-            whereClause = sqlEditor.getWhereClause();
             // Important, must be called to ensure the SqlEditor is removed from
             // the list of preferences listeners.
             sqlEditor.dispose();
@@ -140,13 +162,44 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         }
     }
 
-    protected String getWhereClause() {
-
+    protected void setWhereClause(String whereClause) {
+        this.whereClause = whereClause;
         if (isSqlEditorVisible()) {
-            return sqlEditor.getWhereClause();
+            sqlEditor.setWhereClause(whereClause);
+        }
+    }
+
+    protected String getWhereClause() {
+        return whereClause;
+    }
+
+    public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
+
+        String whereClause = getWhereClause();
+        if (StringHelper.isNullOrEmpty(whereClause)) {
+            return;
         }
 
-        return whereClause;
+        Statement s = null;
+
+        try {
+
+            Connection c = IBMiHostContributionsHandler.getJdbcConnection(outputFile.getConnectionName());
+            s = c.prepareStatement(String.format("SELECT * FROM %s.%s WHERE %s", outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
+                whereClause));
+            s.close();
+
+        } catch (SQLException e) {
+            throw new SQLSyntaxErrorException(e);
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public boolean isFiltered() {
@@ -154,10 +207,6 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     }
 
     private boolean hasWhereClause() {
-
-        if (isSqlEditorVisible()) {
-            whereClause = getWhereClause();
-        }
 
         if (!StringHelper.isNullOrEmpty(whereClause) && whereClause.length() > 0) {
             return true;
@@ -426,6 +475,22 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             }
             refreshTable();
             return;
+        }
+    }
+
+    protected MetaTable getMetaData() {
+
+        try {
+            return MetaDataCache.getInstance().retrieveMetaData(getOutputFile());
+        } catch (Exception e) {
+            String fileName;
+            if (getOutputFile() == null) {
+                fileName = "null"; //$NON-NLS-1$
+            } else {
+                fileName = getOutputFile().toString();
+            }
+            ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+            return null;
         }
     }
 }

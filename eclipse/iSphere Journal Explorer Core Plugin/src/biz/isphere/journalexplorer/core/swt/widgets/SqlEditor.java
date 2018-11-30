@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -33,22 +34,49 @@ import biz.isphere.journalexplorer.core.Messages;
 
 public class SqlEditor extends Composite {
 
+    public static final int BUTTON_ADD = SWT.BUTTON1;
+    public static final int BUTTON_CLEAR = SWT.BUTTON2;
+    public static final int BUTTON_EXECUTE = SWT.BUTTON3;
+    public static final int BUTTON_NONE = SWT.BUTTON4;
+
     private ContentAssistText textSqlEditor;
+
     private Button btnClear;
     private Button btnAddField;
     private Button btnExecute;
     private Label labelWhere;
 
+    private boolean isButtonAddVisible;
+    private boolean isButtonClearVisible;
+    private boolean isButtonExecuteVisible;
+
     public SqlEditor(Composite parent, int style) {
         super(parent, style);
+
+        if (!isStyle(style, BUTTON_NONE)) {
+            if (hasButtonStyle(style)) {
+                isButtonAddVisible = isStyle(style, BUTTON_ADD);
+                isButtonClearVisible = isStyle(style, BUTTON_CLEAR);
+                isButtonExecuteVisible = isStyle(style, BUTTON_EXECUTE);
+            } else {
+                isButtonAddVisible = true;
+                isButtonClearVisible = true;
+                isButtonExecuteVisible = true;
+            }
+        }
+
         createContentArea();
+    }
+
+    public void addModifyListener(ModifyListener listener) {
+        textSqlEditor.addModifyListener(listener);
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        btnAddField.setEnabled(enabled);
+        setEnabledChecked(btnAddField, enabled);
         btnClear.setEnabled(enabled);
         btnExecute.setEnabled(enabled);
         textSqlEditor.setEnabled(enabled);
@@ -62,7 +90,7 @@ public class SqlEditor extends Composite {
             return textSqlEditor.setFocus();
         }
 
-        return btnAddField.setFocus();
+        return setFocusChecked(btnAddField);
     }
 
     public void setWhereClause(String whereClause) {
@@ -82,6 +110,40 @@ public class SqlEditor extends Composite {
         return textSqlEditor.getText().trim();
     }
 
+    private boolean isStyle(int style, int flag) {
+
+        if ((style & flag) == flag) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasButtonStyle(int style) {
+
+        if (isStyle(style, BUTTON_ADD) || isStyle(style, BUTTON_CLEAR) || isStyle(style, BUTTON_EXECUTE)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void setEnabledChecked(Button control, boolean enabled) {
+
+        if (control != null && !control.isDisposed()) {
+            control.setEnabled(enabled);
+        }
+    }
+
+    private boolean setFocusChecked(Button control) {
+
+        if (control != null && !control.isDisposed()) {
+            return control.setFocus();
+        }
+
+        return false;
+    }
+
     private void createContentArea() {
 
         GridLayout layout = new GridLayout(3, false);
@@ -91,6 +153,7 @@ public class SqlEditor extends Composite {
 
         Composite wherePanel = new Composite(this, SWT.NONE);
         GridLayout wherePanelLayout = new GridLayout(1, false);
+        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
         wherePanelLayout.marginHeight = 0;
         wherePanelLayout.marginWidth = 0;
         wherePanel.setLayout(wherePanelLayout);
@@ -104,6 +167,7 @@ public class SqlEditor extends Composite {
         new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
         btnAddField = WidgetFactory.createPushButton(wherePanel, Messages.ButtonLabel_AddField);
+        btnAddField.setToolTipText(Messages.ButtonTooltip_AddField);
         btnAddField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -119,6 +183,7 @@ public class SqlEditor extends Composite {
         textSqlEditor.setTraverseEnabled(true);
         textSqlEditor.enableAutoActivation(true);
         textSqlEditor.enableAutoInsert(true);
+        textSqlEditor.setContentAssistProposals(new ContentAssistProposal[0]);
         textSqlEditor.setToolTipText(Messages.Tooltip_SqlEditor_Text);
         textSqlEditor.addVerifyKeyListener(new VerifyKeyListener() {
 
@@ -167,12 +232,14 @@ public class SqlEditor extends Composite {
 
         Composite executePanel = new Composite(this, SWT.NONE);
         GridLayout executePanelLayout = new GridLayout(1, false);
+        executePanelLayout.marginLeft = executePanelLayout.marginWidth;
         executePanelLayout.marginHeight = 0;
         executePanelLayout.marginWidth = 0;
         executePanel.setLayout(executePanelLayout);
         executePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
         btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
+        btnClear.setToolTipText(Messages.ButtonTooltip_Clear);
         btnClear.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         btnClear.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -185,7 +252,17 @@ public class SqlEditor extends Composite {
         new Label(executePanel, SWT.NONE).setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
         btnExecute = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Execute);
+        btnExecute.setToolTipText(Messages.ButtonTooltip_Execute);
         btnExecute.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        btnAddField.setVisible(isButtonAddVisible);
+        btnAddField.setEnabled(isButtonAddVisible);
+
+        btnClear.setVisible(isButtonClearVisible);
+        btnClear.setEnabled(isButtonClearVisible);
+
+        btnExecute.setVisible(isButtonExecuteVisible);
+        btnExecute.setEnabled(isButtonExecuteVisible);
     }
 
     public void addSelectionListener(SelectionListener listener) {

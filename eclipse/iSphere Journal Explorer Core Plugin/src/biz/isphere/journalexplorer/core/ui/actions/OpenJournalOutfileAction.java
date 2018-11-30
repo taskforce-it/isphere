@@ -26,6 +26,7 @@ public abstract class OpenJournalOutfileAction extends Action {
 
     private Shell shell;
     private OutputFile outputFile;
+    private String whereClause;
 
     public OpenJournalOutfileAction(Shell shell) {
         super(Messages.JournalExplorerView_OpenJournal);
@@ -49,6 +50,10 @@ public abstract class OpenJournalOutfileAction extends Action {
         return outputFile;
     }
 
+    public String getWhereClause() {
+        return whereClause;
+    }
+
     private void performOpenJournal() {
 
         AddJournalDialog addJournalDialog = new AddJournalDialog(shell);
@@ -56,11 +61,13 @@ public abstract class OpenJournalOutfileAction extends Action {
         int result = addJournalDialog.open();
 
         outputFile = null;
+        whereClause = null;
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 addJournalDialog.getConnectionName())) {
                 outputFile = new OutputFile(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName(),
                     addJournalDialog.getMemberName());
+                whereClause = addJournalDialog.getSqlWhere();
             }
         }
     }

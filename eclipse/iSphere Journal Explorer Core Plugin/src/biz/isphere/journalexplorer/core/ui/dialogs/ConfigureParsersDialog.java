@@ -26,6 +26,7 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -67,7 +68,8 @@ public class ConfigureParsersDialog extends XDialog {
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
 
-        createButton(parent, RELOAD_BUTTON, Messages.ButtonLabel_Reload_All, false);
+        Button btnReaload = createButton(parent, RELOAD_BUTTON, Messages.ButtonLabel_Reload_All, false);
+        btnReaload.setToolTipText(Messages.ButtonTooltip_Reload_All);
 
         super.createButtonsForButtonBar(parent);
     }

@@ -37,9 +37,7 @@ import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedExcepti
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
-import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
@@ -61,16 +59,13 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
     ISelectionProvider, IPropertyChangeListener {
 
     private JrneToRtv jrneToRtv;
-    private OutputFile outputFile;
-
     private TableViewer tableViewer;
 
     public JournalEntriesViewerForRetrievedJournalEntries(CTabFolder parent, JrneToRtv jrneToRtv,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, loadJournalEntriesSelectionListener);
+        super(parent, JournalDAO.getOutputFile(jrneToRtv.getConnectionName()), loadJournalEntriesSelectionListener);
 
         this.jrneToRtv = jrneToRtv;
-        this.outputFile = JournalDAO.getOutputFile(this.jrneToRtv.getConnectionName());
 
         setSqlEditorVisibility(false);
 
@@ -244,21 +239,5 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         }
 
         return proposals.toArray(new ContentAssistProposal[proposals.size()]);
-    }
-
-    private MetaTable getMetaData() {
-
-        try {
-            return MetaDataCache.getInstance().retrieveMetaData(outputFile);
-        } catch (Exception e) {
-            String fileName;
-            if (outputFile == null) {
-                fileName = "null"; //$NON-NLS-1$
-            } else {
-                fileName = outputFile.toString();
-            }
-            ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-            return null;
-        }
     }
 }
