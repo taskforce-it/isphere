@@ -108,7 +108,7 @@ public class EditHeaderDialog extends XDialog {
         textParameters.setHint(Messages.Tooltip_Header_Text);
         textParameters.enableAutoActivation(true);
         textParameters.enableAutoInsert(true);
-        textParameters.getTextWidget().setToolTipText(Messages.Tooltip_Header_Text);
+        textParameters.setToolTipText(Messages.Tooltip_Header_Text);
         textParameters.setContentAssistProposals(StrPrePrcParser.getContentAssistProposals());
 
         Button insertVariable = WidgetFactory.createPushButton(mainArea, Messages.Label_Insert_Variable);
@@ -116,13 +116,13 @@ public class EditHeaderDialog extends XDialog {
         insertVariable.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                textParameters.getTextWidget().setFocus();
+                textParameters.setFocus();
                 textParameters.setSelectedRange(1, 0);
                 textParameters.setSelectedRange(0, 0);
                 textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
             }
         });
-        textParameters.getTextWidget().addKeyListener(new KeyAdapter() {
+        textParameters.addKeyListener(new KeyAdapter() {
 
             public void keyReleased(KeyEvent e) {
                 if (!e.doit) {

@@ -15,15 +15,19 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.TypedListener;
 
 import biz.isphere.core.swt.widgets.contentassist.ContentAssistEditorConfiguration;
 
@@ -84,7 +88,7 @@ public class ContentAssistText {
 
     public void setEnabled(boolean enabled) {
         sourceViewer.setEditable(enabled);
-        sourceViewer.getControl().setEnabled(enabled);
+        sourceViewer.getTextWidget().setEnabled(enabled);
     }
 
     public void setTraverseEnabled(boolean enabled) {
@@ -107,7 +111,7 @@ public class ContentAssistText {
 
     private void showHint() {
 
-        sourceViewer.getTextWidget().setText(this.hint);
+        sourceViewer.getDocument().set(this.hint);
         sourceViewer.getTextWidget().setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
         isHintDisplayed = true;
     }
@@ -115,7 +119,7 @@ public class ContentAssistText {
     private void hideHint() {
 
         if (isHintDisplayed) {
-            sourceViewer.getTextWidget().setText(""); //$NON-NLS-1$
+            sourceViewer.getDocument().set("");
             sourceViewer.getTextWidget().setForeground(forgroundColor);
             isHintDisplayed = false;
         }
@@ -161,10 +165,6 @@ public class ContentAssistText {
         sourceViewer.setSelectedRange(selectionOffset, selectionLength);
     }
 
-    public StyledText getTextWidget() {
-        return sourceViewer.getTextWidget();
-    }
-
     public String getText() {
 
         if (isHintDisplayed) {
@@ -175,21 +175,42 @@ public class ContentAssistText {
     }
 
     public void setText(String text) {
+
         hideHint();
         sourceViewer.getDocument().set(text);
         updateHint();
+
+        sourceViewer.getTextWidget().notifyListeners(SWT.Modify, new Event());
+    }
+
+    public void setToolTipText(String tooltip) {
+        sourceViewer.getTextWidget().setToolTipText(tooltip);
     }
 
     public void setLayoutData(Object layoutData) {
-        sourceViewer.getControl().setLayoutData(layoutData);
+        sourceViewer.getTextWidget().setLayoutData(layoutData);
     }
 
     public Object getLayoutData() {
-        return sourceViewer.getControl().getLayoutData();
+        return sourceViewer.getTextWidget().getLayoutData();
+    }
+
+    public void addModifyListener(ModifyListener listener) {
+
+        TypedListener typedListener = new TypedListener(listener);
+        sourceViewer.getTextWidget().addListener(SWT.Modify, typedListener);
     }
 
     public void addFocusListener(FocusListener listener) {
-        sourceViewer.getControl().addFocusListener(listener);
+        sourceViewer.getTextWidget().addFocusListener(listener);
+    }
+
+    public void addKeyListener(KeyListener listener) {
+        sourceViewer.getTextWidget().addKeyListener(listener);
+    }
+
+    public void addVerifyKeyListener(VerifyKeyListener listener) {
+        sourceViewer.getTextWidget().addVerifyKeyListener(listener);
     }
 
     public boolean setFocus() {
