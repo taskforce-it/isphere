@@ -27,13 +27,18 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
+import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
@@ -239,5 +244,25 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         }
 
         return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    }
+
+    @Override
+    public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
+
+        String whereClause = getWhereClause();
+        if (StringHelper.isNullOrEmpty(whereClause)) {
+            return;
+        }
+
+        try {
+
+            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+            RowJEP sqljep = new RowJEP(whereClause);
+            sqljep.parseExpression(columnMapping);
+
+        } catch (ParseException e) {
+            throw new SQLSyntaxErrorException(e);
+        }
+
     }
 }
