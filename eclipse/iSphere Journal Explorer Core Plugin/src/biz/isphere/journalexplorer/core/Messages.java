@@ -196,6 +196,8 @@ public class Messages extends NLS {
     public static String Enable_coloring;
     public static String Enable_coloring_tooltip;
     public static String Clear_Colors;
+    public static String Special_value_A_is_not_allowed;
+    public static String Library_A_does_not_exist;
     public static String File_A_B_does_not_exist;
     public static String Member_C_does_not_exist_in_file_A_B;
 
