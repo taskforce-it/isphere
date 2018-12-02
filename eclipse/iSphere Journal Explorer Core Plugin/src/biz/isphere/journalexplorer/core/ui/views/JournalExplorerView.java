@@ -498,7 +498,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             try {
                 performLoadJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
-                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                getSelectedViewer().setFocusOnSqlEditor();
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab(2) ***", e);
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

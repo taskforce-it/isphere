@@ -155,7 +155,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         }
     }
 
-    protected void setFocusOnSqlEditor() {
+    public void setFocusOnSqlEditor() {
 
         if (isSqlEditorVisible()) {
             sqlEditor.setFocus();
@@ -187,7 +187,6 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             Connection c = IBMiHostContributionsHandler.getJdbcConnection(outputFile.getConnectionName());
             s = c.prepareStatement(String.format("SELECT * FROM %s.%s WHERE %s", outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
                 whereClause));
-            s.close();
 
         } catch (SQLException e) {
             throw new SQLSyntaxErrorException(e);
