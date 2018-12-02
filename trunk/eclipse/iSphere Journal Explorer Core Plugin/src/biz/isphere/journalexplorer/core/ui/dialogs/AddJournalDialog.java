@@ -315,20 +315,53 @@ public class AddJournalDialog extends XDialog {
             }
         }
 
-        if (StringHelper.isNullOrEmpty(fileName) || StringHelper.isNullOrEmpty(libraryName) || connection == null) {
+        if (connection == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
+            cmbConnections.getCombo().setFocus();
+            return false;
+        }
+
+        if (StringHelper.isNullOrEmpty(libraryName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
+            txtLibraryName.setFocus();
+            return false;
+        }
+
+        if (StringHelper.isNullOrEmpty(fileName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
+            txtFileName.setFocus();
+            return false;
+        }
+
+        if (StringHelper.isNullOrEmpty(memberName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
+            txtMemberName.setFocus();
+            return false;
+        }
+
+        if (memberName.startsWith("*") && !"*FIRST".equals(memberName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Special_value_A_is_not_allowed, memberName));
+            txtMemberName.setFocus();
+            return false;
+        }
+
+        if (!IBMiHostContributionsHandler.checkLibrary(connection.getConnectionName(), libraryName)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_does_not_exist, new String[] { libraryName }));
+            txtLibraryName.setFocus();
             return false;
         }
 
         if (!IBMiHostContributionsHandler.checkFile(connection.getConnectionName(), libraryName, fileName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.File_A_B_does_not_exist, new String[] { libraryName, fileName }));
+            txtFileName.setFocus();
             return false;
         }
 
         if (!IBMiHostContributionsHandler.checkMember(connection.getConnectionName(), libraryName, fileName, memberName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, memberName }));
+            txtMemberName.setFocus();
             return false;
         }
 
@@ -344,6 +377,7 @@ public class AddJournalDialog extends XDialog {
 
         } catch (SQLException e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Error_in_SQL_WHERE_CLAUSE_A, e.getLocalizedMessage()));
+            sqlEditor.setFocus();
             return false;
         } finally {
             if (s != null) {
