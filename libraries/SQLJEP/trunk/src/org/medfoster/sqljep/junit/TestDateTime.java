@@ -26,12 +26,42 @@ public class TestDateTime extends AbstractJUnitTestCase {
 	}
 
 	@Test
+	public void testTimeEqual24EUR() throws org.medfoster.sqljep.ParseException,
+			ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+  		sqljep = new RowJEP("JOTIME < '21:30:45'");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
+	public void testTimeEqual24ISO() throws org.medfoster.sqljep.ParseException,
+			ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+  		sqljep = new RowJEP("JOTIME < '21.30.45'");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
 	public void testTimeEqual() throws org.medfoster.sqljep.ParseException,
 			ParseException {
 
 		HashMap<String, Integer> columnMapping = getColumnMapping();
 		RowJEP sqljep;
-		sqljep = new RowJEP("JOTIME = '03:05 pm'");
+  		sqljep = new RowJEP("JOTIME = '03:05 pm'");
 		sqljep.parseExpression(columnMapping);
 
 		Comparable[] row = getRow();

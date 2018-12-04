@@ -46,10 +46,10 @@ public final class ComparativeEQ extends PostfixCommand {
 		datePattern = Pattern.compile(getPattern(dateFormats));
 
 		timeFormats = new DateFormat[4];
-		timeFormats[TIME_ISO] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}", "HH.MI.SS");
+		timeFormats[TIME_ISO] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}", "HH24.MI.SS");
 		timeFormats[TIME_USA_AM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*AM", "HH:MI AM");
 		timeFormats[TIME_USA_PM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*PM", "HH:MI PM");
-		timeFormats[TIME_EUR] = new DateFormat("[0-9]{2}:[0-9]{2}:[0-9]{2}", "HH:MI:SS");
+		timeFormats[TIME_EUR] = new DateFormat("[0-9]{2}:[0-9]{2}:[0-9]{2}", "HH24:MI:SS");
 		timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
 	}
 
