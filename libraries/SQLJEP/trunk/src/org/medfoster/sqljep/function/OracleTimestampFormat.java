@@ -50,6 +50,13 @@ public class OracleTimestampFormat extends Format {
 	};
 	
 	public static abstract class TIME extends DATE {
+		protected void skipSpaces(String source, ParsePosition pos) {
+			int i = pos.getIndex();
+			while (i < source.length() && " ".equals(source.substring(i, i + 1))) {
+				i++;
+			}
+			pos.setIndex(i);
+		}
 	};
 
 	// ERA
@@ -844,13 +851,14 @@ public class OracleTimestampFormat extends Format {
 			return str;
 		}
 		public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
+			skipSpaces(source, pos);
 			String[] ampm = symb.getAmPmStrings();
 			int idx = pos.getIndex();
 			for (int i = 0; i < ampm.length; i++) {
 				int len = ampm[i].length();
 				if (source.regionMatches(true, idx, ampm[i], 0, len)) {
 					pos.setIndex(idx+len);
-					cal.set(ERA, i);
+					cal.set(AM_PM, i);
 					return;
 				}
 			}
@@ -872,13 +880,14 @@ public class OracleTimestampFormat extends Format {
 			return str;
 		}
 		public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
+			skipSpaces(source, pos);
 			String[] ampm = symb.getAmPmStrings();
 			int idx = pos.getIndex();
 			for (int i = 0; i < ampm.length; i++) {
 				int len = ampm[i].length();
 				if (source.regionMatches(true, idx, ampm[i], 0, len)) {
 					pos.setIndex(idx+len);
-					cal.set(ERA, i);
+					cal.set(AM_PM, i);
 					return;
 				}
 			}
@@ -1183,11 +1192,7 @@ public class OracleTimestampFormat extends Format {
 	}
 	
 	protected long parseInMillis(String source, ParsePosition pos) {
-		int year = cal.get(YEAR);
-		int month = cal.get(MONTH);
 		cal.clear();
-		cal.set(YEAR, year);
-		cal.set(MONTH, month);
 		final int slen = source.length();
 		try {
 			if (format != null) {
