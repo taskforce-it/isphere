@@ -23,8 +23,9 @@
 	<property name="version" value="0.2.2.b001"/>
 	<property name="jar"     value="${app.name}-${version}.jar"/>
 	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
-	<property name="src.tar.gz" value="${app.name}-${version}-src.tar.gz"/>
-	<property name="disttemp"   value="disttemp"/>
+	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
+	<property name="disttemp"    value="disttemp"/>
+	<property name="javac.debug" value="false"/>
 	<property environment="env"/>
 	<!--
 	<property name="javacchome" value="${env.JAVACCHOME}"/>
@@ -83,7 +84,10 @@
 		<javac srcdir="${src}"
 		       destdir="${build}"
 		       source="1.5"
-		       target="1.5">
+		       target="1.5"
+			   debug="${javac.debug}"
+			   debuglevel="lines,vars,source">
+			<exclude name="org/medfoster/sqljep/junit/**"/>
 		</javac>
 	</target>
 
