@@ -180,6 +180,7 @@ TOKEN:
 |	< LE:   "<=" >
 |	< GE:   ">=" >
 |	< NE:   "!=" >
+|	< NE_2:   "<>" >
 |	< AND:  "and" >
 |	< OR:   "or" >
 |	< NOT:  "not"  >
@@ -326,6 +327,12 @@ void EqualExpression() :
 	  ( <NE> RelationalExpression()
 	    {
 	    jjtThis.setFunction(tokenImage[NE], new ComparativeNE());
+	    }
+	  ) #FunNode(2)
+	|
+	  ( <NE_2> RelationalExpression()
+	    {
+	    jjtThis.setFunction(tokenImage[NE_2], new ComparativeNE());
 	    }
 	  ) #FunNode(2)
 	|
