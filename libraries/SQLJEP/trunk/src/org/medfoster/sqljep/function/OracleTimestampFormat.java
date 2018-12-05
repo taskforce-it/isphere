@@ -1187,12 +1187,20 @@ public class OracleTimestampFormat extends Format {
 	}
 	
 	public Object parseObject(String source, ParsePosition pos) {
-        return new java.util.Date(parseInMillis(source, pos));
-        // return new java.sql.Timestamp(parseInMillis(source, pos));
+        return new java.sql.Timestamp(parseInMillis(source, pos));
+	}
+	
+	public boolean hasMilliSeconds() {
+		return cal.isSet(MILLISECOND);
 	}
 	
 	protected long parseInMillis(String source, ParsePosition pos) {
+
 		cal.clear();
+		cal.set(DAY_OF_MONTH, 1);
+		cal.set(MONTH, 0);
+		cal.set(YEAR, 1970);
+
 		final int slen = source.length();
 		try {
 			if (format != null) {
