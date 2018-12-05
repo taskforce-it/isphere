@@ -14,6 +14,7 @@ package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +38,8 @@ public final class ComparativeEQ extends PostfixCommand {
 	private final static DateFormat[] timeFormats;
 	private final static Pattern timePattern;
 
+	private static Calendar calendar = Calendar.getInstance();
+	
 	static {
 
 		dateFormats = new DateFormat[3];
@@ -85,14 +88,15 @@ public final class ComparativeEQ extends PostfixCommand {
 	}
 
 	public static int compareTo(Comparable s1, Comparable s2) throws ParseException {
-		if (s1.getClass() == s2.getClass()) {
-			return s1.compareTo(s2);
-		} else if (s1 instanceof Number || s2 instanceof Number) {
+
+		if (s1 instanceof Number || s2 instanceof Number) {
 			return compareNumbers(s1, s2);
 		} else if (s1 instanceof Time || s2 instanceof Time) {
 			return compareTimes(s1, s2);
 		} else if (s1 instanceof Date || s2 instanceof Date) {
 			return compareDates(s1, s2);
+		} else if (s1.getClass() == s2.getClass()) {
+			return s1.compareTo(s2);
 		}
 
 		throw createParseException(s1, s2);
@@ -128,13 +132,34 @@ public final class ComparativeEQ extends PostfixCommand {
 
 	private static int compareDates(Comparable s1, Comparable s2) throws ParseException {
 
-		if (s2 instanceof Date && s1 instanceof String) {
-			s1 = ToDate.to_date((String) s1, getDateFormat((String) s1));
-		} else if (s1 instanceof Date && s2 instanceof String) {
-			s2 = ToDate.to_date((String) s2, getDateFormat((String) s2));
-		}
-		if (s1 instanceof Date && s2 instanceof Date) {
-			return s1.compareTo(s2);
+		try {
+			
+			int reverseOperation = 1;
+			
+			if (s2 instanceof Date && s1 instanceof String) {
+				Comparable s1Old = s1; 
+				s1 = s2;
+				s2 = s1Old;
+				reverseOperation = -1;
+			}
+	
+			if (s1 instanceof Date && s2 instanceof String) {
+				OracleDateFormat format = new OracleDateFormat(getDateFormat((String) s2));
+				s2 = (Comparable)format.parseObject((String) s2);
+				if (!format.hasMilliSeconds()){
+					s1 = stripMilliSeconds(s1);
+				}
+			}
+			
+			if (s1 instanceof Date && s2 instanceof Date) {
+				return s1.compareTo(s2) * reverseOperation;
+			}
+		
+		} catch (java.text.ParseException e) {
+			if (BaseJEP.debug) {
+				e.printStackTrace();
+			}
+			throw new ParseException(e.getMessage());
 		}
 
 		throw createParseException(s1, s2);
@@ -142,20 +167,46 @@ public final class ComparativeEQ extends PostfixCommand {
 
 	private static int compareTimes(Comparable s1, Comparable s2) throws ParseException {
 
-		if (s2 instanceof Time && s1 instanceof String) {
-			s1 = ((String)s1).replaceAll(" ", "");
-			s1 = new Time(ToDate.to_date((String) s1,
-					getTimeFormat((String) s1)).getTime());
-		} else if (s1 instanceof Date && s2 instanceof String) {
-			s2 = ((String)s2).replaceAll(" ", "");
-			s2 = new Time(ToDate.to_date((String) s2,
-					getTimeFormat((String) s2)).getTime());
-		}
-		if (s1 instanceof Time && s2 instanceof Time) {
-			return s1.compareTo(s2);
-		}
+		try {
+			
+			int reverseOperation = 1;
+			
+			if (s2 instanceof Date && s1 instanceof String) {
+				Comparable s1Old = s1; 
+				s1 = s2;
+				s2 = s1Old;
+				reverseOperation = -1;
+			}
+			
+			if (s1 instanceof Time && s2 instanceof String) {
+				OracleTimeFormat format = new OracleTimeFormat(getTimeFormat((String) s2));
+				s2 = (Comparable)format.parseObject((String) s2);
+				if (!format.hasMilliSeconds()){
+					s1 = stripMilliSeconds(s1);
+				}
+			}
 
+			if (s1 instanceof Time && s2 instanceof Time) {
+				return s1.compareTo(s2) * reverseOperation;
+			}
+		
+		} catch (java.text.ParseException e) {
+			if (BaseJEP.debug) {
+				e.printStackTrace();
+			}
+			throw new ParseException(e.getMessage());
+		}
+		
 		throw createParseException(s1, s2);
+	}
+	
+	private static Time stripMilliSeconds(Comparable time) {
+		
+		calendar.clear();
+		calendar.setTime((Date)time);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		return new Time(calendar.getTimeInMillis());
 	}
 
 	private static String getDateFormat(String string) throws ParseException {
@@ -169,7 +220,7 @@ public final class ComparativeEQ extends PostfixCommand {
 			}
 		}
 
-		return getTimeFormat(string);
+		throw new ParseException("Unknown date format: " + string);
 	}
 
 	private static String getTimeFormat(String string) throws ParseException {
@@ -183,7 +234,7 @@ public final class ComparativeEQ extends PostfixCommand {
 			}
 		}
 
-		throw new ParseException("Unknown date/time format: " + string);
+		throw new ParseException("Unknown time format: " + string);
 	}
 
 	private static ParseException createParseException(Comparable s1,
