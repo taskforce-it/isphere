@@ -74,7 +74,7 @@ public class ToDate extends PostfixCommand {
 		if (!(param1 instanceof String) || !(param2 instanceof String)) {
 			throw new ParseException(WRONG_TYPE+"  to_date("+param1.getClass()+","+param2.getClass()+")");
 		}
-		StringBuilder d = new StringBuilder((String)param1);
+
 		try {
 			OracleTimestampFormat format = new OracleTimestampFormat((String)param2);
 			return (java.util.Date)format.parseObject((String)param1);
