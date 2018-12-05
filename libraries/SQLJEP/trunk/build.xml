@@ -25,12 +25,12 @@
 	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
 	<property name="disttemp"    value="disttemp"/>
-	<property name="javac.debug" value="false"/>
+	<property name="javac.debug" value="true"/>
 	<property environment="env"/>
 	<!--
 	<property name="javacchome" value="${env.JAVACCHOME}"/>
 	-->
-	<property name="javacchome" value="${basedir}/lib/javacc-6.0/bin/lib"/>
+	<property name="javacchome" value="${basedir}/lib/javacc-3.2/bin/lib"/>
 	<property name="java.home" value="${env.JAVAHOME}"/>
 	<property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
 
@@ -50,12 +50,15 @@
 		<tstamp/>
 
 		<!-- Ensure JavaCC is present -->
-		<available file="${javacchome}/JavaCC.jar" property="javacc.present"/>
+		<echo>Testing Javacc availability: ${javacchome}</echo>
+		<available file="${javacchome}/javacc.jar" property="javacc.present"/>
+		<echo>Javacc ist present: ${javacc.present}</echo>
 	</target>
 
 <!--======================================================================-->
 <!-- JJTREE -->
 	<target name="jjtree" depends="init" if="javacc.present">
+		<echo>Executing Jjtree ...</echo>
 		<jjtree
 			target="${src}/org/medfoster/sqljep/Parser.jjt"
 			javacchome="${javacchome}"
@@ -66,6 +69,7 @@
 <!--======================================================================-->
 <!-- JAVACC -->
 	<target name="javacc" depends="jjtree" if="javacc.present">
+		<echo>Executing Javacc ...</echo>
 		<javacc
 			target="${src}/org/medfoster/sqljep/Parser.jj"
 			javacchome="${javacchome}"
