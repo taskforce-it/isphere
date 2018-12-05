@@ -11,6 +11,21 @@ import org.medfoster.sqljep.RowJEP;
 public class TestDateTime extends AbstractJUnitTestCase {
 
 	@Test
+	public void testTimeNotEqualComparingMSecs() throws org.medfoster.sqljep.ParseException,
+			ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+		sqljep = new RowJEP("JOTIME2 != JOTIME3");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
 	public void testDateEqual() throws org.medfoster.sqljep.ParseException,
 			ParseException {
 
@@ -26,12 +41,12 @@ public class TestDateTime extends AbstractJUnitTestCase {
 	}
 
 	@Test
-	public void testTimeEqual24EUR() throws org.medfoster.sqljep.ParseException,
+	public void testDateEqualReverse() throws org.medfoster.sqljep.ParseException,
 			ParseException {
 
 		HashMap<String, Integer> columnMapping = getColumnMapping();
 		RowJEP sqljep;
-  		sqljep = new RowJEP("JOTIME < '21:30:45'");
+		sqljep = new RowJEP("'22.10.2018' = JODATE");
 		sqljep.parseExpression(columnMapping);
 
 		Comparable[] row = getRow();
@@ -41,12 +56,42 @@ public class TestDateTime extends AbstractJUnitTestCase {
 	}
 
 	@Test
-	public void testTimeEqual24ISO() throws org.medfoster.sqljep.ParseException,
-			ParseException {
+	public void testTimeEqual24EUR()
+			throws org.medfoster.sqljep.ParseException, ParseException {
 
 		HashMap<String, Integer> columnMapping = getColumnMapping();
 		RowJEP sqljep;
-  		sqljep = new RowJEP("JOTIME < '21.30.45'");
+		sqljep = new RowJEP("JOTIME = '15:05:00'");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
+	public void testTimeEqual24EURReverse()
+			throws org.medfoster.sqljep.ParseException, ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+		sqljep = new RowJEP("'15:05:00' = JOTIME");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
+	public void testTimeEqual24ISO()
+			throws org.medfoster.sqljep.ParseException, ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+		sqljep = new RowJEP("JOTIME = '15.05.00'");
 		sqljep.parseExpression(columnMapping);
 
 		Comparable[] row = getRow();
@@ -61,7 +106,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 
 		HashMap<String, Integer> columnMapping = getColumnMapping();
 		RowJEP sqljep;
-  		sqljep = new RowJEP("JOTIME = '03:05 pm'");
+		sqljep = new RowJEP("JOTIME = '03:05 pm'");
 		sqljep.parseExpression(columnMapping);
 
 		Comparable[] row = getRow();
@@ -116,12 +161,42 @@ public class TestDateTime extends AbstractJUnitTestCase {
 	}
 
 	@Test
+	public void testDateGreaterReverse() throws org.medfoster.sqljep.ParseException,
+			ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+		sqljep = new RowJEP("'21.10.2018' < JODATE");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
 	public void testTimeGreater() throws org.medfoster.sqljep.ParseException,
 			ParseException {
 
 		HashMap<String, Integer> columnMapping = getColumnMapping();
 		RowJEP sqljep;
 		sqljep = new RowJEP("JOTIME > '03:04 pm'");
+		sqljep.parseExpression(columnMapping);
+
+		Comparable[] row = getRow();
+		boolean isSelected = (Boolean) sqljep.getValue(row);
+
+		assertEquals(true, isSelected);
+	}
+
+	@Test
+	public void testTimeGreaterReverse() throws org.medfoster.sqljep.ParseException,
+			ParseException {
+
+		HashMap<String, Integer> columnMapping = getColumnMapping();
+		RowJEP sqljep;
+		sqljep = new RowJEP("'03:04 pm' < JOTIME");
 		sqljep.parseExpression(columnMapping);
 
 		Comparable[] row = getRow();
@@ -145,6 +220,14 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		row[JODATE] = getDate(2018, 10, 22);
 		row[JOTIME] = getTime(3, 5, "pm");
 
+		try {
+			// Different mSecs
+			row[JOTIME2] = getTime(3, 5, 30);
+			Thread.sleep(15);
+			row[JOTIME3] = getTime(3, 5, 30);
+		} catch (InterruptedException e) {
+		}
+
 		return row;
 	}
 
@@ -158,6 +241,8 @@ public class TestDateTime extends AbstractJUnitTestCase {
 	private static final int JOMBR = 7;
 	private static final int JODATE = 8;
 	private static final int JOTIME = 9;
+	private static final int JOTIME2 = 10;
+	private static final int JOTIME3 = 11;
 
 	public static HashMap<String, Integer> getColumnMapping() {
 		return columnMappings;
@@ -176,6 +261,8 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		columnMappings.put("JOMBR", JOMBR);
 		columnMappings.put("JODATE", JODATE);
 		columnMappings.put("JOTIME", JOTIME);
+		columnMappings.put("JOTIME2", JOTIME2);
+		columnMappings.put("JOTIME3", JOTIME3);
 	}
 
 }

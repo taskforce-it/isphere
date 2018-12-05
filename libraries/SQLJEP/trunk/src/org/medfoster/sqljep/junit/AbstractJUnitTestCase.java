@@ -8,8 +8,8 @@
 
 package org.medfoster.sqljep.junit;
 
+import java.sql.Time;
 import java.text.DateFormatSymbols;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,31 +18,35 @@ import org.medfoster.sqljep.Node;
 
 public abstract class AbstractJUnitTestCase {
 
-	protected Date getDate(int year, int month, int day) {
+	protected java.sql.Date getDate(int year, int month, int day) {
 
 		Calendar calendar = Calendar.getInstance();
+		int mSecs = calendar.get(Calendar.MILLISECOND);
 		calendar.clear();
 
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month - 1);
 		calendar.set(Calendar.DAY_OF_MONTH, day);
+		calendar.set(Calendar.MILLISECOND, mSecs);
 
-		return calendar.getTime();
+		return new java.sql.Date(calendar.getTimeInMillis());
 	}
 
-	protected Date getTime(int hour, int minute, int second) {
+	protected java.sql.Time getTime(int hour, int minute, int second) {
 
 		Calendar calendar = Calendar.getInstance();
+		int mSecs = calendar.get(Calendar.MILLISECOND);
 		calendar.clear();
 
 		calendar.set(Calendar.HOUR, hour);
 		calendar.set(Calendar.MINUTE, minute);
 		calendar.set(Calendar.SECOND, second);
+		calendar.set(Calendar.MILLISECOND, mSecs);
 
-		return new Date(calendar.getTimeInMillis());
+		return new Time(calendar.getTimeInMillis());
 	}
 
-	protected Date getTime(int hour, int minute, String am_pm) {
+	protected java.sql.Time getTime(int hour, int minute, String am_pm) {
 
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
@@ -52,12 +56,23 @@ public abstract class AbstractJUnitTestCase {
 			if (ampm[i].equalsIgnoreCase(am_pm)) {
 				calendar.set(Calendar.HOUR, hour);
 				calendar.set(Calendar.MINUTE, minute);
+				calendar.set(Calendar.SECOND, 0);
 				calendar.set(Calendar.AM_PM, i);
-				return new Date(calendar.getTimeInMillis());
+				return new Time(calendar.getTimeInMillis());
 			}
 		}
 
 		throw new RuntimeException("AM/PM symbol not valid: " + ampm);
+	}
+	
+	protected Date stripMilliSeconds(Date timeOrTime) {
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.clear();
+		calendar.setTime((Date)timeOrTime);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		return new Time(calendar.getTimeInMillis());
 	}
 
 	protected static void printTree(Node topNode, int level) {
