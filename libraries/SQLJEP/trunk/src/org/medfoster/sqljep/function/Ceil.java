@@ -15,7 +15,9 @@ package org.medfoster.sqljep.function;
 import java.lang.Math;
 import java.math.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
 
+@JUnitTest
 public class Ceil extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;
@@ -28,12 +30,15 @@ public class Ceil extends PostfixCommand {
 	}
 
 	public static Comparable ceil(Comparable param) throws ParseException {
-		if (param == null) {
+
+	    if (param == null) {
 			return null;
 		}
+
 		if (param instanceof String) {
 			param = parse((String)param);
 		}
+
 		if (param instanceof BigDecimal) {		// BigInteger is not supported
 			BigDecimal b = ((BigDecimal)param).setScale(0, BigDecimal.ROUND_CEILING);
 			try {
@@ -42,13 +47,16 @@ public class Ceil extends PostfixCommand {
 			}
 			return b;
 		}
+
 		if (param instanceof Double || param instanceof Float) {
 			return Math.ceil(((Number)param).doubleValue());
 		}
+
 		if (param instanceof Number) {		// Long, Integer, Short, Byte 
 			return param;
 		}
-		throw new ParseException(WRONG_TYPE+" ceil("+param.getClass()+")");
+
+		throw createWrongTypeException("ceil", param);
 	}
 }
 

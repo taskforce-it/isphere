@@ -23,55 +23,6 @@ import org.medfoster.sqljep.*;
 
 public final class ComparativeEQ extends PostfixCommand {
 
-	private final static int DATE_ISO = 0;
-	private final static int DATE_USA = 1;
-	private final static int DATE_EUR = 2;
-
-	private final static int TIME_ISO = 0;
-	private final static int TIME_USA_AM = 1;
-	private final static int TIME_USA_PM = 2;
-	private final static int TIME_EUR = 3;
-
-	private final static DateFormat[] dateFormats;
-	private final static Pattern datePattern;
-
-	private final static DateFormat[] timeFormats;
-	private final static Pattern timePattern;
-
-	private static Calendar calendar = Calendar.getInstance();
-	
-	static {
-
-		dateFormats = new DateFormat[3];
-		dateFormats[DATE_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}", "YYYY-MM-DD");
-		dateFormats[DATE_USA] = new DateFormat("[0-9]{2}/[0-9]{2}/[0-9]{4}", "MM/DD/yyyy");
-		dateFormats[DATE_EUR] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", "DD.MM.YYYY");
-		datePattern = Pattern.compile(getPattern(dateFormats));
-
-		timeFormats = new DateFormat[4];
-		timeFormats[TIME_ISO] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}", "HH24.MI.SS");
-		timeFormats[TIME_USA_AM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*AM", "HH:MI AM");
-		timeFormats[TIME_USA_PM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*PM", "HH:MI PM");
-		timeFormats[TIME_EUR] = new DateFormat("[0-9]{2}:[0-9]{2}:[0-9]{2}", "HH24:MI:SS");
-		timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
-	}
-
-	private static String getPattern(DateFormat... dateFormats) {
-
-		StringBuilder buffer = new StringBuilder();
-
-		for (DateFormat dateFormat : dateFormats) {
-			if (buffer.length() > 0) {
-				buffer.append("|");
-			}
-			buffer.append("(");
-			buffer.append(dateFormat.getPattern());
-			buffer.append(")");
-		}
-
-		return buffer.toString();
-	}
-
 	final public int getNumberOfParameters() {
 		return 2;
 	}
@@ -144,7 +95,7 @@ public final class ComparativeEQ extends PostfixCommand {
 			}
 	
 			if (s1 instanceof Date && s2 instanceof String) {
-				OracleDateFormat format = new OracleDateFormat(getDateFormat((String) s2));
+				OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) s2));
 				s2 = (Comparable)format.parseObject((String) s2);
 				if (!format.hasMilliSeconds()){
 					s1 = stripMilliSeconds(s1);
@@ -179,7 +130,7 @@ public final class ComparativeEQ extends PostfixCommand {
 			}
 			
 			if (s1 instanceof Time && s2 instanceof String) {
-				OracleTimeFormat format = new OracleTimeFormat(getTimeFormat((String) s2));
+				OracleTimeFormat format = new OracleTimeFormat(ParserUtils.getTimeFormat((String) s2));
 				s2 = (Comparable)format.parseObject((String) s2);
 				if (!format.hasMilliSeconds()){
 					s1 = stripMilliSeconds(s1);
@@ -199,43 +150,6 @@ public final class ComparativeEQ extends PostfixCommand {
 		
 		throw createParseException(s1, s2);
 	}
-	
-	private static Time stripMilliSeconds(Comparable time) {
-		
-		calendar.clear();
-		calendar.setTime((Date)time);
-		calendar.set(Calendar.MILLISECOND, 0);
-		
-		return new Time(calendar.getTimeInMillis());
-	}
-
-	private static String getDateFormat(String string) throws ParseException {
-
-		Matcher matcher = datePattern.matcher(string);
-		if (matcher.matches()) {
-			for (int i = 0; i < matcher.groupCount(); i++) {
-				if (matcher.group(i + 1) != null) {
-					return dateFormats[i].getFormat();
-				}
-			}
-		}
-
-		throw new ParseException("Unknown date format: " + string);
-	}
-
-	private static String getTimeFormat(String string) throws ParseException {
-
-		Matcher matcher = timePattern.matcher(string);
-		if (matcher.matches()) {
-			for (int i = 0; i < matcher.groupCount(); i++) {
-				if (matcher.group(i + 1) != null) {
-					return timeFormats[i].getFormat();
-				}
-			}
-		}
-
-		throw new ParseException("Unknown time format: " + string);
-	}
 
 	private static ParseException createParseException(Comparable s1,
 			Comparable s2) {
@@ -246,24 +160,5 @@ public final class ComparativeEQ extends PostfixCommand {
 		ParseException parseException = new ParseException(text);
 
 		return parseException;
-	}
-
-	private static class DateFormat {
-
-		private String pattern;
-		private String format;
-
-		public DateFormat(String pattern, String format) {
-			this.pattern = pattern;
-			this.format = format;
-		}
-
-		public String getPattern() {
-			return pattern;
-		}
-
-		public String getFormat() {
-			return format;
-		}
 	}
 }

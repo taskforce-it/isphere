@@ -12,12 +12,14 @@
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 
 import static java.util.Calendar.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Months;
 
+@JUnitTest
 public class Month extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;
@@ -29,16 +31,45 @@ public class Month extends PostfixCommand {
 		runtime.stack.push(month(param, runtime.calendar));
 	}
 
-	public static Integer month(Comparable param, Calendar cal) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Timestamp || param instanceof java.sql.Date) {
-			java.util.Date ts = (java.util.Date)param;
-			cal.setTimeInMillis(ts.getTime());
-			return new Integer(cal.get(MONTH));
-		}
-		throw new ParseException(WRONG_TYPE+" month("+param.getClass()+")");
+	public static Months month(Comparable param, Calendar cal) throws ParseException {
+
+        try {
+        
+            if (param == null) {
+                return null;
+            }
+            
+            if (param instanceof String) {
+                try {
+                    return new Months((Integer)parse((String)param));
+                } catch (ParseException e) {
+                    // eat exception
+                }
+            }
+            
+            if (param instanceof String) {
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) param));
+                param = (Comparable)format.parseObject((String) param);
+            }
+            
+            if (param instanceof Long) {
+                return new Months(((Long)param).intValue());
+            }
+    
+            if (param instanceof java.util.Date) {
+                java.util.Date ts = (java.util.Date)param;
+                cal.setTimeInMillis(ts.getTime());
+                return new Months(cal.get(MONTH));
+            }
+        
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
+
+        throw createWrongTypeException("month", param);
 	}
 }
 

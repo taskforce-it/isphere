@@ -12,10 +12,11 @@
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
+import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.function.OracleTimestampFormat;
 import org.medfoster.sqljep.*;
 
+@JUnitTest
 public class ToDate extends PostfixCommand {
 	static final String PARAM_EXCEPTION = "Format shoud be string";
 	private static final String FORMAT_EXCEPTION = "Wrong timestamp";
@@ -25,40 +26,72 @@ public class ToDate extends PostfixCommand {
 	}
 	
 	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		int num = node.jjtGetNumChildren();
-		if (num == 1) {
-			Comparable param1 = runtime.stack.pop();
-			String res;
-			if (param1 == null) {
-				res = null;
-			}
-			else if (param1 instanceof String) {
-				runtime.stack.push(Timestamp.valueOf((String)param1));
-			} else {
-				throw new ParseException(FORMAT_EXCEPTION);
-			}
-		}
-		else if (num == 2) {
-			Comparable param2 = runtime.stack.pop();
-			Comparable param1 = runtime.stack.pop();
-			runtime.stack.push(to_date(param1, param2));
-		} else {
-			// remove all parameters from stack and push null
-			removeParams(runtime.stack, num);
-			throw new ParseException("Wrong number of parameters for instr");
-		}
+
+        try {
+
+    		node.childrenAccept(runtime.ev, null);
+    		int num = node.jjtGetNumChildren();
+    		if (num == 1) {
+    			Comparable param1 = runtime.stack.pop();
+    			String res;
+    			if (param1 == null) {
+    				res = null;
+    			}
+    			else if (param1 instanceof String) {
+                    OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) param1));
+                    param1 = (Comparable)format.parseObject((String) param1);
+    				runtime.stack.push(param1);
+    			} else {
+    				throw new ParseException(FORMAT_EXCEPTION);
+    			}
+    		}
+    		else if (num == 2) {
+    			Comparable param2 = runtime.stack.pop();
+    			Comparable param1 = runtime.stack.pop();
+    			runtime.stack.push(to_date(param1, param2));
+    		} else {
+    			// remove all parameters from stack and push null
+    			removeParams(runtime.stack, num);
+    			throw new ParseException("Wrong number of parameters for instr");
+    		}
+        
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
 	}
 	
 	public static java.util.Date to_date(Comparable param1) throws ParseException {
-		if (param1 == null) {
-			return null;
-		}
-		else if (param1 instanceof String) {
-			return Timestamp.valueOf((String)param1);
-		} else {
-			throw new ParseException(FORMAT_EXCEPTION);
-		}
+
+	    try {
+
+        	if (param1 == null) {
+        		return null;
+        	}
+        	else if (param1 instanceof String) {
+        	//	return Timestamp.valueOf((String)param1);
+        	//} else {
+        	//	throw new ParseException(FORMAT_EXCEPTION);
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) param1));
+                param1 = (Comparable)format.parseObject((String) param1);
+                if (!format.hasMilliSeconds()){
+                    param1 = stripMilliSeconds(param1);
+                }
+                
+                return (java.util.Date)param1;
+        	}
+        	else {
+        	    return null;
+        	}
+        
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
 	}
 
 	public static java.util.Date to_date(Comparable param1, Comparable param2) throws ParseException {

@@ -12,14 +12,17 @@
 
 package org.medfoster.sqljep.function;
 
-import java.lang.Math;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import org.medfoster.sqljep.*;
+import java.util.Calendar;
 
+import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Days;
+import org.medfoster.sqljep.datatypes.Months;
+import org.medfoster.sqljep.datatypes.Years;
+
+@JUnitTest
 public final class Add extends PostfixCommand {
-	final static String DATE_ADDITION = "Wrong operation";
-	final static BigDecimal DAY_MILIS = new BigDecimal(86400000);
 	
 	final public int getNumberOfParameters() {
 		return 2;
@@ -70,44 +73,36 @@ public final class Add extends PostfixCommand {
 				}
 			}
 		}
-		else if (param1 instanceof Timestamp || param2 instanceof Timestamp) {
-			if (param1 instanceof Timestamp && param2 instanceof Timestamp) {
-				throw new ParseException(DATE_ADDITION);
+		else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
+			if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
+	            throw createWrongTypeException("+", param1, param2);
 			}
-			Timestamp d;
-			Number n;
-			if (param1 instanceof Timestamp) {
-				d = (Timestamp)param1;
-				if (param2 instanceof Number) {
-					n = (Number)param2;
-				} else {
-					throw new ParseException(DATE_ADDITION);
-				}
-				return new Timestamp(d.getTime()+toDay(n));
+			java.util.Date d;
+			
+			if (param2 instanceof java.util.Date) {
+			    Comparable param2Old = param2;
+			    param2 = param1;
+			    param1 = param2Old;
 			}
-			else if (param2 instanceof Timestamp) {
-				d = (Timestamp)param2;
-				if (param1 instanceof Number) {
-					n = (Number)param1;
+			
+			if (param1 instanceof java.util.Date) {
+				d = (java.util.Date)param1;
+				if (param2 instanceof Days) {
+					Days n = (Days)param2;
+	                return addDays(d, n.intValue());
+				} else if (param2 instanceof Months) {
+				    Months n = (Months)param2;
+				    return addMonths(d, n.intValue());
+                } else if (param2 instanceof Years) {
+                    Years n = (Years)param2;
+                    return addYears(d, n.intValue());
 				} else {
-					throw new ParseException(DATE_ADDITION);
+		            throw createWrongTypeException("+", param1, param2);
 				}
-				return new Timestamp(d.getTime()+toDay(n));
 			}
 			throw new ParseException(INTERNAL_ERROR);
 		} else {
-			throw new ParseException(WRONG_TYPE+"  ("+param1.getClass()+"+"+param2.getClass()+")");
-		}
-	}
-	
-	static long toDay(Number n) {
-		if (n instanceof BigDecimal) {		// BigInteger is not supported
-			BigDecimal dec = (BigDecimal)n;
-			BigDecimal t = dec.multiply(DAY_MILIS);
-			t = t.setScale(0, BigDecimal.ROUND_HALF_UP);
-			return t.longValue();
-		} else {		// Long, Integer, Short, Byte 
-			return n.longValue()*86400000;
+			throw createWrongTypeException("+", param1, param2);
 		}
 	}
 }

@@ -14,7 +14,9 @@ package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
 
+@JUnitTest
 public class Sign extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;

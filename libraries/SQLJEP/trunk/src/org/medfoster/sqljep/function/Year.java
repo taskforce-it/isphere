@@ -17,7 +17,10 @@ import java.util.Calendar;
 
 import static java.util.Calendar.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Years;
 
+@JUnitTest
 public class Year extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;
@@ -29,16 +32,45 @@ public class Year extends PostfixCommand {
 		runtime.stack.push(year(param, runtime.calendar));
 	}
 
-	public static Integer year(Comparable param, Calendar cal) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Timestamp || param instanceof java.sql.Date) {
-			java.util.Date ts = (java.util.Date)param;
-			cal.setTimeInMillis(ts.getTime());
-			return new Integer(cal.get(YEAR));
-		}
-		throw new ParseException(WRONG_TYPE+" year("+param.getClass()+")");
+	public static Years year(Comparable param, Calendar cal) throws ParseException {
+
+        try {
+        
+            if (param == null) {
+                return null;
+            }
+            
+            if (param instanceof String) {
+                try {
+                    return new Years((Integer)parse((String)param));
+                } catch (ParseException e) {
+                    // eat exception
+                }
+            }
+            
+            if (param instanceof String) {
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) param));
+                param = (Comparable)format.parseObject((String) param);
+            }
+            
+            if (param instanceof Long) {
+                return new Years(((Long)param).intValue());
+            }
+    
+            if (param instanceof java.util.Date) {
+                java.util.Date ts = (java.util.Date)param;
+                cal.setTimeInMillis(ts.getTime());
+                return new Years(cal.get(YEAR));
+            }
+        
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
+
+        throw createWrongTypeException("year", param);
 	}
 }
 

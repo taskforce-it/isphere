@@ -12,18 +12,24 @@
 
 package org.medfoster.sqljep.function;
 
-import java.lang.Math;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 
-import static org.medfoster.sqljep.function.Add.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Days;
+import org.medfoster.sqljep.datatypes.Months;
+import org.medfoster.sqljep.datatypes.Years;
 
+@JUnitTest
 public final class Subtract extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 2;
 	}
 	
+    /**
+     * Calculates the result of applying the "-" operator to the arguments from
+     * the stack and pushes it back on the stack.
+     */
 	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 		node.childrenAccept(runtime.ev, null);
 		Comparable param2 = runtime.stack.pop();
@@ -43,16 +49,18 @@ public final class Subtract extends PostfixCommand {
 		}
 		if (param1 instanceof Number && param2 instanceof Number) {
 			// BigInteger type is not supported
-			if (param1 instanceof BigDecimal || param2 instanceof BigDecimal) {
-				BigDecimal b1 = getBigDecimal((Number)param1);
-				BigDecimal b2 = getBigDecimal((Number)param2);
+            Number n1 = (Number)param1;
+            Number n2 = (Number)param2;
+			if (n1 instanceof BigDecimal || n2 instanceof BigDecimal) {
+				BigDecimal b1 = getBigDecimal(n1);
+				BigDecimal b2 = getBigDecimal(n2);
 				return b1.subtract(b2);
 			}
-			if (param1 instanceof Double || param2 instanceof Double || param1 instanceof Float || param2 instanceof Float) {
-				return ((Number)param1).doubleValue() - ((Number)param2).doubleValue();
+			if (n1 instanceof Double || n2 instanceof Double || n1 instanceof Float || n2 instanceof Float) {
+				return n1.doubleValue() - n2.doubleValue();
 			} else {	// Long, Integer, Short, Byte 
-				long l1 = ((Number)param1).longValue();
-				long l2 = ((Number)param2).longValue();
+				long l1 = n1.longValue();
+				long l2 = n2.longValue();
 				long r = l1 - l2;
 				if (l1 >= r) {		// overflow check
 					return r;
@@ -63,37 +71,36 @@ public final class Subtract extends PostfixCommand {
 				}
 			}
 		}
-		else if (param1 instanceof Timestamp || param2 instanceof Timestamp) {
-			if (param1 instanceof Timestamp && param2 instanceof Timestamp) {
-				Timestamp d1 = (Timestamp)param1;
-				Timestamp d2 = (Timestamp)param2;
-				BigDecimal d = new BigDecimal(d1.getTime()-d2.getTime());
-				return d.divide(DAY_MILIS, 40, BigDecimal.ROUND_HALF_UP);
-			} else {
-				Timestamp d;
-				Number n;
-				if (param1 instanceof Timestamp) {
-					d = (Timestamp)param1;
-					if (param2 instanceof Number) {
-						n = (Number)param2;
-					} else {
-						throw new ParseException(DATE_ADDITION);
-					}
-					return new Timestamp(d.getTime()-toDay(n));
-				}
-				else if (param2 instanceof Timestamp) {
-					d = (Timestamp)param2;
-					if (param1 instanceof Number) {
-						n = (Number)param1;
-					} else {
-						throw new ParseException(DATE_ADDITION);
-					}
-					return new Timestamp(d.getTime()-toDay(n));
-				}
-				throw new ParseException(INTERNAL_ERROR);
-			}
-		} else {
-			throw new ParseException(WRONG_TYPE+"  ("+param1.getClass()+"-"+param2.getClass()+")");
-		}
+        else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
+            if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
+                throw createWrongTypeException("-", param1, param2);
+            }
+            java.util.Date d;
+            
+            if (param2 instanceof java.util.Date) {
+                Comparable param2Old = param2;
+                param2 = param1;
+                param1 = param2Old;
+            }
+            
+            if (param1 instanceof java.util.Date) {
+                d = (java.util.Date)param1;
+                if (param2 instanceof Days) {
+                    Days n = (Days)param2;
+                    return addDays(d, n.intValue() * -1);
+                } else if (param2 instanceof Months) {
+                    Months n = (Months)param2;
+                    return addMonths(d, n.intValue() * -1);
+                } else if (param2 instanceof Years) {
+                    Years n = (Years)param2;
+                    return addYears(d, n.intValue() * -1);
+                } else {
+                    throw createWrongTypeException("+", param1, param2);
+                }
+            }
+            throw new ParseException(INTERNAL_ERROR);
+        } else {
+            throw createWrongTypeException("-", param1, param2);
+        }
 	}
 }

@@ -15,7 +15,9 @@ package org.medfoster.sqljep.function;
 import java.lang.Math;
 import java.math.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
 
+@JUnitTest
 public class Abs extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;

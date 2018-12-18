@@ -13,6 +13,9 @@
 package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Stack;
 
 import org.medfoster.sqljep.ASTFunNode;
@@ -29,6 +32,7 @@ import org.medfoster.sqljep.ParseException;
  * allowed, initialize this member to -1.
  */
 public abstract class PostfixCommand implements PostfixCommandI {
+    private static Calendar calendar = Calendar.getInstance();
     protected static final Integer ZERO = new Integer(0);
     public static final String PARAMS_NUMBER = "Wrong number of parameters";
     public static final String WRONG_TYPE = "Wrong type";
@@ -129,6 +133,42 @@ public abstract class PostfixCommand implements PostfixCommandI {
 
     protected static ParseException createWrongTypeException(String function, Throwable e, Comparable...comparables) {
         return createExceptionInternally(WRONG_TYPE, function, comparables, e);
+    }
+    
+    protected static Time stripMilliSeconds(Comparable time) {
+        
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.set(Calendar.MILLISECOND, 0);
+        
+        return new Time(calendar.getTimeInMillis());
+    }
+    
+    protected static Date addDays(Date time, int days) {
+        
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+        
+        return calendar.getTime();
+    }
+    
+    protected static Date addMonths(Date time, int months) {
+        
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.MONTH, months);
+        
+        return calendar.getTime();
+    }
+    
+    protected static Date addYears(Date time, int years) {
+        
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.YEAR, years);
+        
+        return calendar.getTime();
     }
 
     private static ParseException createExceptionInternally(String type, String function, Comparable[] comparables, Throwable e) {

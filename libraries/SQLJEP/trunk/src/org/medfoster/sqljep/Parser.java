@@ -1029,8 +1029,7 @@ GRAMMAR START
     default:
       jj_la1[15] = jj_gen;
       if (jj_2_3(1)) {
-        if (getToken(1).kind == IDENTIFIER &&
-                                          jep.funTab.containsKey(getToken(1).image)) {
+        if (getToken(1).kind == IDENTIFIER && jep.hasFunction(getToken(1).image)) {
           Function();
         } else {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1112,7 +1111,7 @@ GRAMMAR START
           jjtree.openNodeScope(jjtn001);
     try {
       identString = Identifier();
-                        PostfixCommandI func = jep.funTab.get(identString);
+                        PostfixCommandI func = jep.getFunction(identString);
                         if (func != null) {
                                 //Set number of required arguments
                                 reqArguments = func.getNumberOfParameters();
@@ -1471,8 +1470,7 @@ GRAMMAR START
     Token xsp;
     xsp = jj_scanpos;
     lookingAhead = true;
-    jj_semLA = getToken(1).kind == IDENTIFIER &&
-                                  jep.funTab.containsKey(getToken(1).image);
+    jj_semLA = getToken(1).kind == IDENTIFIER && jep.hasFunction(getToken(1).image);
     lookingAhead = false;
     if (!jj_semLA || jj_3R_11()) {
     jj_scanpos = xsp;
