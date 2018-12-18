@@ -1,4 +1,4 @@
-#Wed Nov 28 10:59:06 CET 2018
+#Wed Dec 05 19:56:02 CET 2018
 sp_cleanup.add_missing_override_annotations=true
 sp_cleanup.convert_to_enhanced_for_loop=false
 sp_cleanup.use_this_for_non_static_method_access_only_if_necessary=true
@@ -28,7 +28,7 @@ sp_cleanup.remove_trailing_whitespaces_all=true
 sp_cleanup.add_missing_deprecated_annotations=true
 sp_cleanup.add_missing_annotations=true
 sp_cleanup.never_use_parentheses_in_expressions=true
-formatter_profile=org.eclipse.jdt.ui.default.eclipse_profile
+formatter_profile=_iSphere Formatter Profile (Helios)
 sp_cleanup.organize_imports=false
 sp_cleanup.format_source_code_changes_only=true
 sp_cleanup.always_use_blocks=true

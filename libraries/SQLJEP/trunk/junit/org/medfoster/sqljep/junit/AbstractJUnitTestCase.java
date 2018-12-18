@@ -12,12 +12,50 @@ import java.sql.Time;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.Node;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 public abstract class AbstractJUnitTestCase {
 
+	private static final int JOCODE = 0;
+	private static final int JOENTT = 1;
+	private static final int JOJOB = 2;
+	private static final int JOUSER = 3;
+	private static final int JONBR = 4;
+	private static final int JOLIB = 5;
+	private static final int JOOBJ = 6;
+	private static final int JOMBR = 7;
+	private static final int JODATE = 8;
+	private static final int JOTIME = 9;
+	private static final int JOTIME2 = 10;
+	private static final int JOTIME3 = 11;
+
+	private static HashMap<String, Integer> columnMappings;
+	static {
+		columnMappings = new HashMap<String, Integer>();
+		columnMappings.put("JOCODE", JOCODE);
+		columnMappings.put("JOENTT", JOENTT);
+		columnMappings.put("JOJOB", JOJOB);
+		columnMappings.put("JOUSER", JOUSER);
+		columnMappings.put("JONBR", JONBR);
+		columnMappings.put("JOLIB", JOLIB);
+		columnMappings.put("JOOBJ", JOOBJ);
+		columnMappings.put("JOMBR", JOMBR);
+		columnMappings.put("JODATE", JODATE);
+		columnMappings.put("JOTIME", JOTIME);
+		columnMappings.put("JOTIME2", JOTIME2);
+		columnMappings.put("JOTIME3", JOTIME3);
+	}
+	
+	private static HashMap<String, Integer> emptyColumnMappings;
+	static {
+		emptyColumnMappings = new HashMap<String, Integer>();
+	}
+	
 	protected java.sql.Date getDate(int year, int month, int day) {
 
 		Calendar calendar = Calendar.getInstance();
@@ -30,6 +68,40 @@ public abstract class AbstractJUnitTestCase {
 		calendar.set(Calendar.MILLISECOND, mSecs);
 
 		return new java.sql.Date(calendar.getTimeInMillis());
+	}
+
+	protected static HashMap<String, Integer> getColumnMapping() {
+		return columnMappings;
+	}
+
+	protected static HashMap<String, Integer> getEmptyColumnMapping() {
+		return emptyColumnMappings;
+	}
+
+	protected Comparable[] getRow() throws ParseException {
+
+		Comparable[] row = new Comparable[columnMappings.size()];
+
+		row[JOCODE] = "R";
+		row[JOENTT] = "PT";
+		row[JOJOB] = "QZDASOINIT";
+		row[JOUSER] = "DONALD";
+		row[JONBR] = "123456";
+		row[JOLIB] = "QGPL";
+		row[JOOBJ] = "ITEMS";
+		row[JOMBR] = "ITEMS";
+		row[JODATE] = getDate(2018, 10, 22);
+		row[JOTIME] = getTime(3, 5, "pm");
+
+		try {
+			// Different mSecs
+			row[JOTIME2] = getTime(3, 5, 30);
+			Thread.sleep(15);
+			row[JOTIME3] = getTime(3, 5, 30);
+		} catch (InterruptedException e) {
+		}
+
+		return row;
 	}
 
 	protected java.sql.Time getTime(int hour, int minute, int second) {
@@ -103,6 +175,29 @@ public abstract class AbstractJUnitTestCase {
 		}
 
 		return buffer.toString();
+	}
+
+	protected boolean parseExpression(String expression) throws ParseException {
+		return parseExpression(expression, getEmptyColumnMapping(), null);
+	}
+
+	protected boolean parseExpression(String expression,
+			HashMap<String, Integer> columnMapping) throws ParseException {
+		return parseExpression(expression, columnMapping, getRow());
+	}
+
+	protected boolean parseExpression(String expression,
+			HashMap<String, Integer> columnMapping, Comparable[] row)
+			throws ParseException {
+
+		RowJEP sqljep = new RowJEP(expression);
+		sqljep.parseExpression(columnMapping);
+
+		if (row == null) {
+			return (Boolean) sqljep.getValue();
+		} else {
+			return (Boolean) sqljep.getValue(row);
+		}
 	}
 
 }

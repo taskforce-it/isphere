@@ -188,6 +188,7 @@ TOKEN:
 |	< IS_NOT_NULL:  "is not null"  >
 |	< IN:  "in"  >
 |	< BETWEEN:  "between"  >
+|	< NOT_BETWEEN:  "not between"  >
 |	< LIKE:  "like"  >
 |	< NOT_LIKE:  "not like"  >
 }
@@ -406,6 +407,12 @@ void PostfixExpression() :
 	  ( <BETWEEN> AdditiveExpression() <AND> AdditiveExpression()
 		{
 		  jjtThis.setFunction(tokenImage[BETWEEN], new Between());
+		}
+	  ) #FunNode(3)
+	|
+	  ( <NOT_BETWEEN> AdditiveExpression() <AND> AdditiveExpression()
+		{
+		  jjtThis.setFunction(tokenImage[NOT_BETWEEN], new NotBetween());
 		}
 	  ) #FunNode(3)
 	|

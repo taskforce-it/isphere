@@ -26,20 +26,21 @@ public interface ParserConstants {
   int IS_NOT_NULL = 24;
   int IN = 25;
   int BETWEEN = 26;
-  int LIKE = 27;
-  int NOT_LIKE = 28;
-  int NULL_LITERAL = 29;
-  int TRUE_LITERAL = 30;
-  int FALSE_LITERAL = 31;
-  int INTEGER_LITERAL = 32;
-  int DECIMAL_LITERAL = 33;
-  int FLOATING_POINT_LITERAL = 34;
-  int EXPONENT = 35;
-  int STRING_LITERAL = 36;
-  int IDENTIFIER = 37;
-  int LETTER = 38;
-  int DIGIT = 39;
-  int OTHER_LETTER = 40;
+  int NOT_BETWEEN = 27;
+  int LIKE = 28;
+  int NOT_LIKE = 29;
+  int NULL_LITERAL = 30;
+  int TRUE_LITERAL = 31;
+  int FALSE_LITERAL = 32;
+  int INTEGER_LITERAL = 33;
+  int DECIMAL_LITERAL = 34;
+  int FLOATING_POINT_LITERAL = 35;
+  int EXPONENT = 36;
+  int STRING_LITERAL = 37;
+  int IDENTIFIER = 38;
+  int LETTER = 39;
+  int DIGIT = 40;
+  int OTHER_LETTER = 41;
 
   int DEFAULT = 0;
 
@@ -71,6 +72,7 @@ public interface ParserConstants {
     "\"is not null\"",
     "\"in\"",
     "\"between\"",
+    "\"not between\"",
     "\"like\"",
     "\"not like\"",
     "\"null\"",

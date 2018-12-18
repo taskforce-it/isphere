@@ -12,29 +12,19 @@
 
 package org.medfoster.sqljep.function;
 
-import java.math.BigDecimal;
 import org.medfoster.sqljep.*;
 
-public final class Between extends PostfixCommand {
+public final class NotBetween extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 3;
 	}
 	
 	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 		node.childrenAccept(runtime.ev, null);
-		Comparable limit2 = runtime.stack.pop();
-		Comparable limit1 = runtime.stack.pop();
-		Comparable source = runtime.stack.pop();
-		if (source == null || limit1 == null || limit2 == null) {
-			runtime.stack.push(Boolean.FALSE);
-		} else {
-			runtime.stack.push(between(limit2, limit1, source));
-		}
+        Comparable limit2 = runtime.stack.pop();
+        Comparable limit1 = runtime.stack.pop();
+        Comparable source = runtime.stack.pop();
+		runtime.stack.push(!Between.between(limit2, limit1, source));
 	}
-
-    public static boolean between(Comparable limit2, Comparable limit1, Comparable source) throws ParseException {
-        return ComparativeEQ.compareTo(source, limit1) >= 0 && ComparativeEQ.compareTo(source, limit2) <= 0;
-    }
-
 }
 
