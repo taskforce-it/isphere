@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.sql.Time;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -45,6 +46,8 @@ public class JournalEntry {
     private static final int JOLIB = 5;
     private static final int JOOBJ = 6;
     private static final int JOMBR = 7;
+    private static final int JODATE = 8;
+    private static final int JOTIME = 9;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -57,6 +60,8 @@ public class JournalEntry {
         columnMappings.put("JOLIB", JOLIB);
         columnMappings.put("JOOBJ", JOOBJ);
         columnMappings.put("JOMBR", JOMBR);
+        columnMappings.put("JODATE", JODATE);
+        columnMappings.put("JOTIME", JOTIME);
     }
 
     private SimpleDateFormat dateFormatter;
@@ -231,6 +236,8 @@ public class JournalEntry {
         row[JOLIB] = getObjectLibrary();
         row[JOOBJ] = getObjectName();
         row[JOMBR] = getMemberName();
+        row[JODATE] = getDate();
+        row[JOTIME] = getTime();
 
         return row;
     }
@@ -371,7 +378,13 @@ public class JournalEntry {
     }
 
     public void setTime(Time time) {
-        this.time = time;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(time);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.MONTH, 0);
+        calendar.set(Calendar.YEAR, 1970);
+        this.time = new Time(calendar.getTimeInMillis());
+        // this.time = time;
     }
 
     /**
