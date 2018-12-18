@@ -86,9 +86,6 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testToDate() throws ParseException {
         
-        Date date;
-        
-        date = getDate(2018, 12, 05);
         assertEquals(true, parseExpression("DATE('2018-12-05') > '2018-12-04'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') = '2018-12-05'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') < '2018-12-06'"));
