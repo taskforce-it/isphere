@@ -49,7 +49,7 @@ public class SubTime extends PostfixCommand {
 			cal.add(SECOND, -s);
 			cal.add(MINUTE, -m);
 			cal.roll(HOUR_OF_DAY, -h);
-			return (param1 instanceof Time) ? new Time(cal.getTimeInMillis()) : new Timestamp(cal.getTimeInMillis());
+			return (param1 instanceof java.sql.Time) ? new java.sql.Time(cal.getTimeInMillis()) : new Timestamp(cal.getTimeInMillis());
 		} else {
 			throw new ParseException(WRONG_TYPE+"  subtime("+param1.getClass()+","+param2.getClass()+")");
 		}

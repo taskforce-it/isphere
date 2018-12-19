@@ -8,41 +8,41 @@
 
 package org.medfoster.sqljep.datatypes;
 
-public class Months extends Number implements Comparable<Months>{
+public class Hours extends Number implements Comparable<Hours>{
+
+    private static final long serialVersionUID = -6531520516090932903L;
+
+    private Integer hours;
     
-    private static final long serialVersionUID = -2107158394104233397L;
-    
-    private Integer months;
-    
-    public Months(Integer days) {
-        this.months = days;
+    public Hours(Integer days) {
+        this.hours = days;
     }
     
-    public Months(int days) {
-        this.months = new Integer(days);
+    public Hours(int days) {
+        this.hours = new Integer(days);
     }
 
     @Override
     public double doubleValue() {
-        return months.doubleValue();
+        return hours.doubleValue();
     }
 
     @Override
     public float floatValue() {
-        return months.floatValue();
+        return hours.floatValue();
     }
 
     @Override
     public int intValue() {
-        return months.intValue();
+        return hours.intValue();
     }
 
     @Override
     public long longValue() {
-        return months.longValue();
+        return hours.longValue();
     }
 
-    public int compareTo(Months anotherDays) {
-        return months.compareTo(anotherDays.months);
+    public int compareTo(Hours anotherDays) {
+        return hours.compareTo(anotherDays.hours);
     }
 }

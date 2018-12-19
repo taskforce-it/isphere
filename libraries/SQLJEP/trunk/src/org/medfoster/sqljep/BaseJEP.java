@@ -17,6 +17,7 @@ import java.util.*;
 import java.text.DateFormatSymbols;
 
 import org.medfoster.sqljep.function.*;
+import org.medfoster.sqljep.function.Date;
 
 /**
  * Base class for different SQLJEP classes. This class doesn't know how to get
@@ -83,7 +84,8 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("months_between", new MonthsBetween());
         funTab.put("last_day", new LastDay());
         funTab.put("next_day", new NextDay());
-        funTab.put("date", new ToDate());
+        funTab.put("date", new Date());
+        funTab.put("time", new Time());
         funTab.put("index", new Instr()); // maxdb
         funTab.put("num", new ToNumber()); // maxdb
         funTab.put("chr", new ToChar()); // maxdb
@@ -104,8 +106,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("dayofyear", new DayOfYear()); // maxdb
         funTab.put("dayname", new DayName()); // maxdb
         funTab.put("monthname", new MonthName()); // maxdb
-        funTab.put("makedate", new MakeDate()); // maxdb
-        funTab.put("maketime", new MakeTime()); // maxdb
     }
 
     /** Parse time error List */

@@ -12,37 +12,37 @@ public class Years extends Number implements Comparable<Years>{
     
     private static final long serialVersionUID = 3033418957934552852L;
     
-    private Integer days;
+    private Integer years;
     
     public Years(Integer days) {
-        this.days = days;
+        this.years = days;
     }
     
     public Years(int days) {
-        this.days = new Integer(days);
+        this.years = new Integer(days);
     }
 
     @Override
     public double doubleValue() {
-        return days.doubleValue();
+        return years.doubleValue();
     }
 
     @Override
     public float floatValue() {
-        return days.floatValue();
+        return years.floatValue();
     }
 
     @Override
     public int intValue() {
-        return days.intValue();
+        return years.intValue();
     }
 
     @Override
     public long longValue() {
-        return days.longValue();
+        return years.longValue();
     }
 
     public int compareTo(Years anotherDays) {
-        return days.compareTo(anotherDays.days);
+        return years.compareTo(anotherDays.years);
     }
 }
