@@ -41,18 +41,18 @@ public class Date extends PostfixCommand {
 		}
 	}
 
-	public static java.util.Date to_date(Comparable expression, Comparable pattern) throws ParseException {
+	public static java.sql.Date to_date(Comparable expression, Comparable pattern) throws ParseException {
 
 		if (expression == null || pattern == null) {
 			return null;
 		}
 
         if (expression instanceof java.util.Date) {
-            return (java.util.Date)expression;
+            return new java.sql.Date(((java.util.Date)expression).getTime());
         } else if (expression instanceof String && pattern instanceof String) {
             try {
                 OracleDateFormat format = new OracleDateFormat((String)pattern);
-                return (java.util.Date)format.parseObject((String)expression);
+                return format.parseObject((String)expression);
             } catch (java.text.ParseException e) {
                 if (BaseJEP.debug) {
                     e.printStackTrace();

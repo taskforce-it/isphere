@@ -18,7 +18,11 @@ import java.util.Calendar;
 import org.medfoster.sqljep.*;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.datatypes.Days;
+import org.medfoster.sqljep.datatypes.Hours;
+import org.medfoster.sqljep.datatypes.Milliseconds;
+import org.medfoster.sqljep.datatypes.Minutes;
 import org.medfoster.sqljep.datatypes.Months;
+import org.medfoster.sqljep.datatypes.Seconds;
 import org.medfoster.sqljep.datatypes.Years;
 
 @JUnitTest
@@ -40,15 +44,19 @@ public final class Add extends PostfixCommand {
 	}
 
 	public static Comparable add(Comparable param1, Comparable param2) throws ParseException {
+	    
 		if (param1 == null || param2 == null) {
 			return null;
 		}
+		
 		if (param1 instanceof String) {
 			param1 = parse((String)param1);
 		}
+		
 		if (param2 instanceof String) {
 			param2 = parse((String)param2);
 		}
+		
 		if (param1 instanceof Number && param2 instanceof Number) {
 			// BigInteger type is not supported
 			Number n1 = (Number)param1;
@@ -72,8 +80,7 @@ public final class Add extends PostfixCommand {
 					return b1.add(b2);
 				}
 			}
-		}
-		else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
+		} else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
 			if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
 	            throw createWrongTypeException("+", param1, param2);
 			}
@@ -84,26 +91,57 @@ public final class Add extends PostfixCommand {
 			    param2 = param1;
 			    param1 = param2Old;
 			}
+            
+            if (param1 instanceof java.sql.Timestamp) {
+                
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds || param2 instanceof Milliseconds) {
+                    return new java.sql.Timestamp(performAdd(param1, param2).getTime());
+                }
+
+            } else if (param1 instanceof java.sql.Time) {
+
+                if (param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
+                    return new java.sql.Time(performAdd(param1, param2).getTime());
+                }
+                
+            } if (param1 instanceof java.sql.Date) {
+                
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
+                    return new java.sql.Date(performAdd(param1, param2).getTime());
+                }
+                
+            } if (param1 instanceof java.util.Date) {
+                
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
+                    return new java.util.Date(performAdd(param1, param2).getTime());
+                }
+                
+            }
 			
-			if (param1 instanceof java.util.Date) {
-				d = (java.util.Date)param1;
-				if (param2 instanceof Days) {
-					Days n = (Days)param2;
-	                return addDays(d, n.intValue());
-				} else if (param2 instanceof Months) {
-				    Months n = (Months)param2;
-				    return addMonths(d, n.intValue());
-                } else if (param2 instanceof Years) {
-                    Years n = (Years)param2;
-                    return addYears(d, n.intValue());
-				} else {
-		            throw createWrongTypeException("+", param1, param2);
-				}
-			}
 			throw new ParseException(INTERNAL_ERROR);
 		} else {
 			throw createWrongTypeException("+", param1, param2);
 		}
 	}
+
+    private static java.util.Date performAdd(Comparable param1, Comparable param2) throws ParseException {
+        
+        java.util.Date d = (java.util.Date)param1;
+        if (param2 instanceof Days) {
+            Days n = (Days)param2;
+            return addDays(d, n.intValue());
+        } else if (param2 instanceof Months) {
+            Months n = (Months)param2;
+            return addMonths(d, n.intValue());
+        } else if (param2 instanceof Years) {
+            Years n = (Years)param2;
+            return addYears(d, n.intValue());
+        } else if (param2 instanceof Hours) {
+            Hours n = (Hours)param2;
+            return addHours(d, n.intValue());
+        } else {
+            throw createWrongTypeException("+", param1, param2);
+        }
+    }
 }
 

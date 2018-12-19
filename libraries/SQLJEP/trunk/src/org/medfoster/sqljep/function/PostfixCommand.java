@@ -161,6 +161,15 @@ public abstract class PostfixCommand implements PostfixCommandI {
         
         return calendar.getTime();
     }
+    
+    protected static Date addHours(Date time, int hours) {
+        
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
+        
+        return calendar.getTime();
+    }
 
     private static ParseException createExceptionInternally(String type, String function, Comparable[] comparables, Throwable e) {
 

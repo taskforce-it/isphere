@@ -13,11 +13,6 @@
 package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
-import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.medfoster.sqljep.*;
 
@@ -42,7 +37,7 @@ public final class ComparativeEQ extends PostfixCommand {
 
 		if (s1 instanceof Number || s2 instanceof Number) {
 			return compareNumbers(s1, s2);
-		} else if (s1 instanceof Date || s2 instanceof Date) {
+		} else if (s1 instanceof java.util.Date || s2 instanceof java.util.Date) {
 			return compareDatesAndTimes(s1, s2);
 		} else if (s1.getClass() == s2.getClass()) {
 			return s1.compareTo(s2);
@@ -85,7 +80,7 @@ public final class ComparativeEQ extends PostfixCommand {
 			
 			int reverseOperation = 1;
 			
-			if (s2 instanceof Date && s1 instanceof String) {
+			if (s2 instanceof java.util.Date && s1 instanceof String) {
 				Comparable s1Old = s1; 
 				s1 = s2;
 				s2 = s1Old;
@@ -105,12 +100,16 @@ public final class ComparativeEQ extends PostfixCommand {
                 if (!format.hasMilliSeconds()){
                     s1 = format.stripMilliSeconds(s1);
                 }
-            } else if (s1 instanceof Date && s2 instanceof String) {
-				OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) s2));
-				s2 = (Comparable)format.parseObject((String) s2);
+            } else if (s1 instanceof java.sql.Date && s2 instanceof String) {
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) s2));
+                s2 = (Comparable)format.parseObject((String) s2);
+            } else if (s1 instanceof java.util.Date && s2 instanceof String) {
+                throw new IllegalArgumentException("Did not expect java.util.Date");
+//				OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) s2));
+//				s2 = (Comparable)format.parseObject((String) s2);
 			}
 			
-			if (s1 instanceof Date && s2 instanceof Date) {
+			if (s1 instanceof java.util.Date && s2 instanceof java.util.Date) {
 				return s1.compareTo(s2) * reverseOperation;
 			}
 		

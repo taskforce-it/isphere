@@ -45,7 +45,11 @@ public final class OracleDateFormat extends OracleTimestampFormat {
 		}
 	}
 
-	public Object parseObject(String source, ParsePosition pos) {
+    public java.sql.Date parseObject(String source) {
+        return new java.sql.Date(parseInMillis(source, new ParsePosition(0)));
+    }
+
+	public java.sql.Date parseObject(String source, ParsePosition pos) {
 		return new java.sql.Date(parseInMillis(source, pos));
 	}
     

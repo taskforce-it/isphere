@@ -1,0 +1,48 @@
+/*******************************************************************************
+ * Copyright (c) project_year-2018 project_team
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
+package org.medfoster.sqljep.datatypes;
+
+public class Milliseconds extends Number implements Comparable<Milliseconds>{
+
+    private static final long serialVersionUID = -5047847131341767688L;
+
+    private Integer milliseconds;
+    
+    public Milliseconds(Integer days) {
+        this.milliseconds = days;
+    }
+    
+    public Milliseconds(int days) {
+        this.milliseconds = new Integer(days);
+    }
+
+    @Override
+    public double doubleValue() {
+        return milliseconds.doubleValue();
+    }
+
+    @Override
+    public float floatValue() {
+        return milliseconds.floatValue();
+    }
+
+    @Override
+    public int intValue() {
+        return milliseconds.intValue();
+    }
+
+    @Override
+    public long longValue() {
+        return milliseconds.longValue();
+    }
+
+    public int compareTo(Milliseconds anotherDays) {
+        return milliseconds.compareTo(anotherDays.milliseconds);
+    }
+}
