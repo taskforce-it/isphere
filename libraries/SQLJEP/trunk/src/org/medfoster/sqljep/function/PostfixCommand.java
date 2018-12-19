@@ -135,15 +135,6 @@ public abstract class PostfixCommand implements PostfixCommandI {
         return createExceptionInternally(WRONG_TYPE, function, comparables, e);
     }
     
-    protected static Time stripMilliSeconds(Comparable time) {
-        
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.set(Calendar.MILLISECOND, 0);
-        
-        return new Time(calendar.getTimeInMillis());
-    }
-    
     protected static Date addDays(Date time, int days) {
         
         calendar.clear();

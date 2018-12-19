@@ -13,6 +13,7 @@
 package org.medfoster.sqljep.function;
 
 import java.util.*;
+import java.util.Date;
 import java.text.*;
 
 public final class OracleTimeFormat extends OracleTimestampFormat {
@@ -48,5 +49,14 @@ public final class OracleTimeFormat extends OracleTimestampFormat {
 	public Object parseObject(String source, ParsePosition pos) {
 		return new java.sql.Time(parseInMillis(source, pos));
 	}
+    
+    protected java.util.Date stripMilliSeconds(Comparable time) {
+        
+        cal.clear();
+        cal.setTime((Date)time);
+        cal.set(Calendar.MILLISECOND, 0);
+        
+        return new java.sql.Time(cal.getTimeInMillis());
+    }
 }
 

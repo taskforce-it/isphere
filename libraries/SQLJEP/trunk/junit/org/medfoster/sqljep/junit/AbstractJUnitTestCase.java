@@ -21,183 +21,202 @@ import org.medfoster.sqljep.RowJEP;
 
 public abstract class AbstractJUnitTestCase {
 
-	private static final int JOCODE = 0;
-	private static final int JOENTT = 1;
-	private static final int JOJOB = 2;
-	private static final int JOUSER = 3;
-	private static final int JONBR = 4;
-	private static final int JOLIB = 5;
-	private static final int JOOBJ = 6;
-	private static final int JOMBR = 7;
-	private static final int JODATE = 8;
-	private static final int JOTIME = 9;
-	private static final int JOTIME2 = 10;
-	private static final int JOTIME3 = 11;
+    private static final int JOCODE = 0;
+    private static final int JOENTT = 1;
+    private static final int JOJOB = 2;
+    private static final int JOUSER = 3;
+    private static final int JONBR = 4;
+    private static final int JOLIB = 5;
+    private static final int JOOBJ = 6;
+    private static final int JOMBR = 7;
+    private static final int JODATE = 8;
+    private static final int JOTIME = 9;
+    private static final int JOTIME2 = 10;
+    private static final int JOTIME3 = 11;
 
-	private static HashMap<String, Integer> columnMappings;
-	static {
-		columnMappings = new HashMap<String, Integer>();
-		columnMappings.put("JOCODE", JOCODE);
-		columnMappings.put("JOENTT", JOENTT);
-		columnMappings.put("JOJOB", JOJOB);
-		columnMappings.put("JOUSER", JOUSER);
-		columnMappings.put("JONBR", JONBR);
-		columnMappings.put("JOLIB", JOLIB);
-		columnMappings.put("JOOBJ", JOOBJ);
-		columnMappings.put("JOMBR", JOMBR);
-		columnMappings.put("JODATE", JODATE);
-		columnMappings.put("JOTIME", JOTIME);
-		columnMappings.put("JOTIME2", JOTIME2);
-		columnMappings.put("JOTIME3", JOTIME3);
-	}
-	
-	private static HashMap<String, Integer> emptyColumnMappings;
-	static {
-		emptyColumnMappings = new HashMap<String, Integer>();
-	}
-	
-	protected java.sql.Date getDate(int year, int month, int day) {
+    private static HashMap<String, Integer> columnMappings;
+    static {
+        columnMappings = new HashMap<String, Integer>();
+        columnMappings.put("JOCODE", JOCODE);
+        columnMappings.put("JOENTT", JOENTT);
+        columnMappings.put("JOJOB", JOJOB);
+        columnMappings.put("JOUSER", JOUSER);
+        columnMappings.put("JONBR", JONBR);
+        columnMappings.put("JOLIB", JOLIB);
+        columnMappings.put("JOOBJ", JOOBJ);
+        columnMappings.put("JOMBR", JOMBR);
+        columnMappings.put("JODATE", JODATE);
+        columnMappings.put("JOTIME", JOTIME);
+        columnMappings.put("JOTIME2", JOTIME2);
+        columnMappings.put("JOTIME3", JOTIME3);
+    }
 
-		Calendar calendar = Calendar.getInstance();
-		int mSecs = calendar.get(Calendar.MILLISECOND);
-		calendar.clear();
+    private static HashMap<String, Integer> emptyColumnMappings;
+    static {
+        emptyColumnMappings = new HashMap<String, Integer>();
+    }
 
-		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month - 1);
-		calendar.set(Calendar.DAY_OF_MONTH, day);
-		calendar.set(Calendar.MILLISECOND, mSecs);
+    protected java.sql.Date getDate(int year, int month, int day) {
 
-		return new java.sql.Date(calendar.getTimeInMillis());
-	}
+        Calendar calendar = Calendar.getInstance();
+        int mSecs = calendar.get(Calendar.MILLISECOND);
+        calendar.clear();
 
-	protected static HashMap<String, Integer> getColumnMapping() {
-		return columnMappings;
-	}
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.MILLISECOND, mSecs);
 
-	protected static HashMap<String, Integer> getEmptyColumnMapping() {
-		return emptyColumnMappings;
-	}
+        return new java.sql.Date(calendar.getTimeInMillis());
+    }
 
-	protected Comparable[] getRow() throws ParseException {
+    protected java.sql.Timestamp getTimestamp(int year, int month, int day, int hour, int minute, int second) {
+        return getTimestamp(year, month, day, hour, minute, second, -1);
+    }
 
-		Comparable[] row = new Comparable[columnMappings.size()];
+    protected java.sql.Timestamp getTimestamp(int year, int month, int day, int hour, int minute, int second, int millisecond) {
 
-		row[JOCODE] = "R";
-		row[JOENTT] = "PT";
-		row[JOJOB] = "QZDASOINIT";
-		row[JOUSER] = "DONALD";
-		row[JONBR] = "123456";
-		row[JOLIB] = "QGPL";
-		row[JOOBJ] = "ITEMS";
-		row[JOMBR] = "ITEMS";
-		row[JODATE] = getDate(2018, 10, 22);
-		row[JOTIME] = getTime(3, 5, "pm");
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
 
-		try {
-			// Different mSecs
-			row[JOTIME2] = getTime(3, 5, 30);
-			Thread.sleep(15);
-			row[JOTIME3] = getTime(3, 5, 30);
-		} catch (InterruptedException e) {
-		}
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
 
-		return row;
-	}
+        if (millisecond >= 0) {
+            calendar.set(Calendar.MILLISECOND, millisecond);
+        }
 
-	protected java.sql.Time getTime(int hour, int minute, int second) {
+        return new java.sql.Timestamp(calendar.getTimeInMillis());
+    }
 
-		Calendar calendar = Calendar.getInstance();
-		int mSecs = calendar.get(Calendar.MILLISECOND);
-		calendar.clear();
+    protected static HashMap<String, Integer> getColumnMapping() {
+        return columnMappings;
+    }
 
-		calendar.set(Calendar.HOUR, hour);
-		calendar.set(Calendar.MINUTE, minute);
-		calendar.set(Calendar.SECOND, second);
-		calendar.set(Calendar.MILLISECOND, mSecs);
+    protected static HashMap<String, Integer> getEmptyColumnMapping() {
+        return emptyColumnMappings;
+    }
 
-		return new Time(calendar.getTimeInMillis());
-	}
+    protected Comparable[] getRow() throws ParseException {
 
-	protected java.sql.Time getTime(int hour, int minute, String am_pm) {
+        Comparable[] row = new Comparable[columnMappings.size()];
 
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
+        row[JOCODE] = "R";
+        row[JOENTT] = "PT";
+        row[JOJOB] = "QZDASOINIT";
+        row[JOUSER] = "DONALD";
+        row[JONBR] = "123456";
+        row[JOLIB] = "QGPL";
+        row[JOOBJ] = "ITEMS";
+        row[JOMBR] = "ITEMS";
+        row[JODATE] = getDate(2018, 10, 22);
+        row[JOTIME] = getTime(3, 5, "pm");
 
-		String[] ampm = new DateFormatSymbols().getAmPmStrings();
-		for (int i = 0; i < ampm.length; i++) {
-			if (ampm[i].equalsIgnoreCase(am_pm)) {
-				calendar.set(Calendar.HOUR, hour);
-				calendar.set(Calendar.MINUTE, minute);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.AM_PM, i);
-				return new Time(calendar.getTimeInMillis());
-			}
-		}
+        try {
+            // Different mSecs
+            row[JOTIME2] = getTime(3, 5, 30);
+            Thread.sleep(15);
+            row[JOTIME3] = getTime(3, 5, 30);
+        } catch (InterruptedException e) {
+        }
 
-		throw new RuntimeException("AM/PM symbol not valid: " + ampm);
-	}
-	
-	protected Date stripMilliSeconds(Date timeOrTime) {
-		
-		Calendar calendar = Calendar.getInstance();
-		calendar.clear();
-		calendar.setTime((Date)timeOrTime);
-		calendar.set(Calendar.MILLISECOND, 0);
-		
-		return new Time(calendar.getTimeInMillis());
-	}
+        return row;
+    }
 
-	protected static void printTree(Node topNode, int level) {
-		System.out.println(spaces(level) + topNode.toString() + " ("
-				+ getClassName(topNode) + ")");
+    protected java.sql.Time getTime(int hour, int minute, int second) {
 
-		for (int i = 0; i < topNode.jjtGetNumChildren(); i++) {
-			printTree(topNode.jjtGetChild(i), level + 1);
-		}
-	}
+        Calendar calendar = Calendar.getInstance();
+        int mSecs = calendar.get(Calendar.MILLISECOND);
+        calendar.clear();
 
-	private static String getClassName(Node topNode) {
+        calendar.set(Calendar.HOUR, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
+        calendar.set(Calendar.MILLISECOND, mSecs);
 
-		if (topNode instanceof ASTFunNode) {
-			return ((ASTFunNode) topNode).getPFMC().getClass().getSimpleName();
-		} else {
-			return topNode.getClass().getSimpleName();
-		}
-	}
+        return new Time(calendar.getTimeInMillis());
+    }
 
-	private static String spaces(int level) {
+    protected java.sql.Time getTime(int hour, int minute, String am_pm) {
 
-		StringBuilder buffer = new StringBuilder();
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
 
-		while (level > 0) {
-			buffer.append(" ");
-			level--;
-		}
+        String[] ampm = new DateFormatSymbols().getAmPmStrings();
+        for (int i = 0; i < ampm.length; i++) {
+            if (ampm[i].equalsIgnoreCase(am_pm)) {
+                calendar.set(Calendar.HOUR, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.AM_PM, i);
+                return new Time(calendar.getTimeInMillis());
+            }
+        }
 
-		return buffer.toString();
-	}
+        throw new RuntimeException("AM/PM symbol not valid: " + ampm);
+    }
 
-	protected boolean parseExpression(String expression) throws ParseException {
-		return parseExpression(expression, getEmptyColumnMapping(), null);
-	}
+    protected Date stripMilliSeconds(Date timeOrTime) {
 
-	protected boolean parseExpression(String expression,
-			HashMap<String, Integer> columnMapping) throws ParseException {
-		return parseExpression(expression, columnMapping, getRow());
-	}
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.setTime((Date)timeOrTime);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-	protected boolean parseExpression(String expression,
-			HashMap<String, Integer> columnMapping, Comparable[] row)
-			throws ParseException {
+        return new Time(calendar.getTimeInMillis());
+    }
 
-		RowJEP sqljep = new RowJEP(expression);
-		sqljep.parseExpression(columnMapping);
+    protected static void printTree(Node topNode, int level) {
+        System.out.println(spaces(level) + topNode.toString() + " (" + getClassName(topNode) + ")");
 
-		if (row == null) {
-			return (Boolean) sqljep.getValue();
-		} else {
-			return (Boolean) sqljep.getValue(row);
-		}
-	}
+        for (int i = 0; i < topNode.jjtGetNumChildren(); i++) {
+            printTree(topNode.jjtGetChild(i), level + 1);
+        }
+    }
+
+    private static String getClassName(Node topNode) {
+
+        if (topNode instanceof ASTFunNode) {
+            return ((ASTFunNode)topNode).getPFMC().getClass().getSimpleName();
+        } else {
+            return topNode.getClass().getSimpleName();
+        }
+    }
+
+    private static String spaces(int level) {
+
+        StringBuilder buffer = new StringBuilder();
+
+        while (level > 0) {
+            buffer.append(" ");
+            level--;
+        }
+
+        return buffer.toString();
+    }
+
+    protected boolean parseExpression(String expression) throws ParseException {
+        return parseExpression(expression, getEmptyColumnMapping(), null);
+    }
+
+    protected boolean parseExpression(String expression, HashMap<String, Integer> columnMapping) throws ParseException {
+        return parseExpression(expression, columnMapping, getRow());
+    }
+
+    protected boolean parseExpression(String expression, HashMap<String, Integer> columnMapping, Comparable[] row) throws ParseException {
+
+        RowJEP sqljep = new RowJEP(expression);
+        sqljep.parseExpression(columnMapping);
+
+        if (row == null) {
+            return (Boolean)sqljep.getValue();
+        } else {
+            return (Boolean)sqljep.getValue(row);
+        }
+    }
 
 }

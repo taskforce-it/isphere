@@ -48,5 +48,9 @@ public final class OracleDateFormat extends OracleTimestampFormat {
 	public Object parseObject(String source, ParsePosition pos) {
 		return new java.sql.Date(parseInMillis(source, pos));
 	}
+    
+    protected java.util.Date stripMilliSeconds(Comparable time) {
+        throw new IllegalAccessError("stripMilliSeconds() is not allowed for " + getClass().getSimpleName());
+    }
 }
 

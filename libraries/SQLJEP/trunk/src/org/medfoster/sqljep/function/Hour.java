@@ -12,13 +12,14 @@
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 
 import static java.util.Calendar.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.datatypes.Hours;
 
+@JUnitTest
 public class Hour extends PostfixCommand {
 	final public int getNumberOfParameters() {
 		return 1;
@@ -55,10 +56,10 @@ public class Hour extends PostfixCommand {
                 return new Hours(((Long)param).intValue());
             }
     
-            if (param instanceof java.util.Date) {
+            if (param instanceof java.sql.Time || param instanceof java.sql.Timestamp) {
                 java.util.Date ts = (java.util.Date)param;
-                cal.setTimeInMillis(ts.getTime());
-                return new Hours(cal.get(DATE));
+                cal.setTime(ts);
+                return new Hours(cal.get(HOUR_OF_DAY));
             }
         
         } catch (java.text.ParseException e) {

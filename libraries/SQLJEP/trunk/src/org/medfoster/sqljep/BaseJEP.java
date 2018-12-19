@@ -86,12 +86,11 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("next_day", new NextDay());
         funTab.put("date", new Date());
         funTab.put("time", new Time());
+        funTab.put("timestamp", new Timestamp());
         funTab.put("index", new Instr()); // maxdb
         funTab.put("num", new ToNumber()); // maxdb
         funTab.put("chr", new ToChar()); // maxdb
         funTab.put("dayname", new DayName()); // maxdb
-        funTab.put("subdate", new SubDate()); // maxdb
-        funTab.put("subtime", new SubTime()); // maxdb
         funTab.put("year", new Year()); // maxdb
         funTab.put("month", new Month()); // maxdb
         funTab.put("day", new Day()); // maxdb

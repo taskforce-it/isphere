@@ -26,6 +26,9 @@ public final class ParserUtils {
     private final static int TIME_USA_PM = 2;
     private final static int TIME_EUR = 3;
 
+    private final static int TIMESTAMP_ISO = 0;
+    private final static int TIMESTAMP_IBM = 1;
+
     private final static BigDecimal DAY_MILIS = new BigDecimal(86400000);
 
     private final static DateFormat[] dateFormats;
@@ -33,6 +36,9 @@ public final class ParserUtils {
 
     private final static DateFormat[] timeFormats;
     private final static Pattern timePattern;
+
+    private final static DateFormat[] timestampFormats;
+    private final static Pattern timestampPattern;
 
     static {
 
@@ -48,6 +54,11 @@ public final class ParserUtils {
         timeFormats[TIME_USA_PM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*PM", "HH:MI PM");
         timeFormats[TIME_EUR] = new DateFormat("[0-9]{2}:[0-9]{2}:[0-9]{2}", "HH24:MI:SS");
         timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
+
+        timestampFormats = new DateFormat[2];
+        timestampFormats[TIMESTAMP_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]{0,12})?", "YYYY-MM-DD HH24:MI:SS.NNN");
+        timestampFormats[TIMESTAMP_IBM] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}.[0-9]{2}.[0-9]{2}(?:.[0-9]{0,12})?", "YYYY-MM-DD-HH24.MI.SS.NNN");
+        timestampPattern = Pattern.compile(getPattern(timestampFormats), Pattern.CASE_INSENSITIVE);
     }
 
     public static String getDateFormat(String string) throws ParseException {
@@ -91,6 +102,30 @@ public final class ParserUtils {
             for (int i = 0; i < matcher.groupCount(); i++) {
                 if (matcher.group(i + 1) != null) {
                     return timeFormats[i].getFormat();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static String getTimestampFormat(String string) throws ParseException {
+
+        String format = getTimestampFormatChecked(string);
+        if (format != null) {
+            return format;
+        }
+
+        throw new ParseException("Unknown timestamp format: " + string);
+    }
+
+    public static String getTimestampFormatChecked(String string) throws ParseException {
+
+        Matcher matcher = timestampPattern.matcher(string);
+        if (matcher.matches()) {
+            for (int i = 0; i < matcher.groupCount(); i++) {
+                if (matcher.group(i + 1) != null) {
+                    return timestampFormats[i].getFormat();
                 }
             }
         }
