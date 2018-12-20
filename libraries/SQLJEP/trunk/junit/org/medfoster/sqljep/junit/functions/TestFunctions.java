@@ -11,7 +11,6 @@ package org.medfoster.sqljep.junit.functions;
 import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import org.junit.Test;
 import org.medfoster.sqljep.ParseException;
@@ -51,9 +50,11 @@ public class TestFunctions extends AbstractJUnitTestCase {
     public void testCeil() throws ParseException {
 
         assertEquals(true, parseExpression("CEIL(10.5) = 11"));
-        assertEquals(true, parseExpression("ceil(10.4) = 11"));
+        assertEquals(true, parseExpression("ceil('10.4') = 11"));
+        assertEquals(true, parseExpression("ceil(10) = 10"));
+        
         assertEquals(false, parseExpression("CEIL(10.5) = 10"));
-        assertEquals(false, parseExpression("ceil(10.4) = 10"));
+        assertEquals(false, parseExpression("ceil('10.4') = 10"));
     }
 
     @Test
@@ -149,18 +150,17 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("TIME('12:00:00') < '12:00:01'"));
 
         assertEquals(true, parseExpression("TIME('12.00.00', 'HH24.MI.SS') > '11:59:59'"));
-        assertEquals(true, parseExpression("TIME('09:00 am', 'HH:MI AM') = '09:00:00'"));
-        assertEquals(true, parseExpression("TIME('09:00 pm', 'HH:MI PM') = '21:00:00'"));
+        assertEquals(true, parseExpression("TIME('09:00 am', 'HH12:MI AM') = '09:00:00'"));
+        assertEquals(true, parseExpression("TIME('09:00 pm', 'HH12:MI PM') = '21:00:00'"));
         assertEquals(true, parseExpression("TIME('12:00:00', 'HH24:MI:SS') < '12:00:01'"));
 
-        assertEquals(true, parseExpression("TIME('09:00am', 'HH:MI AM') = '09:00:00'"));
-        assertEquals(true, parseExpression("TIME('09:00   pm', 'HH:MI PM') = '21:00:00'"));
+        assertEquals(true, parseExpression("TIME('09:00am', 'HH12:MI AM') = '09:00:00'"));
+        assertEquals(true, parseExpression("TIME('09:00   pm', 'HH12:MI PM') = '21:00:00'"));
     }
 
     @Test
     public void testTimestamp() throws ParseException {
 
-        Calendar calendar = Calendar.getInstance();
         SimpleDateFormat formatter;
         String expected;
 

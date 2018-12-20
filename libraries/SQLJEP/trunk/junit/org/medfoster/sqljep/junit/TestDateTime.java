@@ -19,7 +19,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME2 <> JOTIME3");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -34,7 +34,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME2 != JOTIME3");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -49,7 +49,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JODATE = '22.10.2018'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -64,7 +64,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("'22.10.2018' = JODATE");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -79,7 +79,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME = '15:05:00'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -94,7 +94,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("'15:05:00' = JOTIME");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -109,7 +109,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME = '15.05.00'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -124,7 +124,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME = '03:05 pm'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -139,7 +139,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JODATE < '23.10.2018'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -154,7 +154,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME < '03:06 pm'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -169,7 +169,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JODATE > '21.10.2018'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -184,7 +184,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("'21.10.2018' < JODATE");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -199,7 +199,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("JOTIME > '03:04 pm'");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);
@@ -214,7 +214,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
 		sqljep = new RowJEP("'03:04 pm' < JOTIME");
 		sqljep.parseExpression(columnMapping);
 
-		Comparable[] row = getRow();
+		Comparable<?>[] row = getRow();
 		boolean isSelected = (Boolean) sqljep.getValue(row);
 
 		assertEquals(true, isSelected);

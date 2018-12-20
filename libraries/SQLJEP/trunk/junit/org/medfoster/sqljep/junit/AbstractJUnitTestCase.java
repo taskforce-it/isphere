@@ -59,13 +59,11 @@ public abstract class AbstractJUnitTestCase {
     protected java.sql.Date getDate(int year, int month, int day) {
 
         Calendar calendar = Calendar.getInstance();
-        int mSecs = calendar.get(Calendar.MILLISECOND);
         calendar.clear();
 
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.MILLISECOND, mSecs);
 
         return new java.sql.Date(calendar.getTimeInMillis());
     }
@@ -101,9 +99,9 @@ public abstract class AbstractJUnitTestCase {
         return emptyColumnMappings;
     }
 
-    protected Comparable[] getRow() throws ParseException {
+    protected Comparable<?>[] getRow() throws ParseException {
 
-        Comparable[] row = new Comparable[columnMappings.size()];
+        Comparable<?>[] row = new Comparable[columnMappings.size()];
 
         row[JOCODE] = "R";
         row[JOENTT] = "PT";
@@ -207,7 +205,7 @@ public abstract class AbstractJUnitTestCase {
         return parseExpression(expression, columnMapping, getRow());
     }
 
-    protected boolean parseExpression(String expression, HashMap<String, Integer> columnMapping, Comparable[] row) throws ParseException {
+    protected boolean parseExpression(String expression, HashMap<String, Integer> columnMapping, Comparable<?>[] row) throws ParseException {
 
         RowJEP sqljep = new RowJEP(expression);
         sqljep.parseExpression(columnMapping);
