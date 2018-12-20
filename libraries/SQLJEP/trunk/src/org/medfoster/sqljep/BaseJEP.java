@@ -12,12 +12,60 @@
 
 package org.medfoster.sqljep;
 
-import java.io.*;
-import java.util.*;
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.medfoster.sqljep.function.*;
+import org.medfoster.sqljep.function.Abs;
+import org.medfoster.sqljep.function.Ceil;
+import org.medfoster.sqljep.function.Concat;
 import org.medfoster.sqljep.function.Date;
+import org.medfoster.sqljep.function.Datediff;
+import org.medfoster.sqljep.function.Day;
+import org.medfoster.sqljep.function.DayName;
+import org.medfoster.sqljep.function.DayOfWeek;
+import org.medfoster.sqljep.function.DayOfYear;
+import org.medfoster.sqljep.function.Decode;
+import org.medfoster.sqljep.function.Floor;
+import org.medfoster.sqljep.function.Hour;
+import org.medfoster.sqljep.function.IndistinctMatching;
+import org.medfoster.sqljep.function.Initcap;
+import org.medfoster.sqljep.function.Instr;
+import org.medfoster.sqljep.function.LastDay;
+import org.medfoster.sqljep.function.Length;
+import org.medfoster.sqljep.function.Lower;
+import org.medfoster.sqljep.function.Lpad;
+import org.medfoster.sqljep.function.Ltrim;
+import org.medfoster.sqljep.function.Microsecond;
+import org.medfoster.sqljep.function.Minute;
+import org.medfoster.sqljep.function.Modulus;
+import org.medfoster.sqljep.function.Month;
+import org.medfoster.sqljep.function.MonthName;
+import org.medfoster.sqljep.function.MonthsBetween;
+import org.medfoster.sqljep.function.NextDay;
+import org.medfoster.sqljep.function.Nvl;
+import org.medfoster.sqljep.function.PostfixCommandI;
+import org.medfoster.sqljep.function.Replace;
+import org.medfoster.sqljep.function.Round;
+import org.medfoster.sqljep.function.Rpad;
+import org.medfoster.sqljep.function.Rtrim;
+import org.medfoster.sqljep.function.Second;
+import org.medfoster.sqljep.function.Sign;
+import org.medfoster.sqljep.function.Substring;
+import org.medfoster.sqljep.function.Time;
+import org.medfoster.sqljep.function.Timestamp;
+import org.medfoster.sqljep.function.ToChar;
+import org.medfoster.sqljep.function.ToNumber;
+import org.medfoster.sqljep.function.Translate;
+import org.medfoster.sqljep.function.Trim;
+import org.medfoster.sqljep.function.Trunc;
+import org.medfoster.sqljep.function.Upper;
+import org.medfoster.sqljep.function.WeekOfYear;
+import org.medfoster.sqljep.function.Year;
 
 /**
  * Base class for different SQLJEP classes. This class doesn't know how to get
@@ -46,6 +94,7 @@ import org.medfoster.sqljep.function.Date;
  * @author Alexey Gaidukov
  */
 public abstract class BaseJEP implements ParserVisitor {
+
     /** Debug flag for extra command line output */
     public static final boolean debug = false;
 
@@ -191,7 +240,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * @param column Number in the abstract table data
      * @throws org.medfoster.sqljep.ParseException
      */
-    public abstract Comparable getColumnObject(int column) throws ParseException;
+    public abstract Comparable<?> getColumnObject(int column) throws ParseException;
 
     /**
      * method is used to bind expression variables to columns of abstract table
@@ -219,7 +268,7 @@ public abstract class BaseJEP implements ParserVisitor {
      *         not found.
      * @throws org.medfoster.sqljep.ParseException
      */
-    public abstract Map.Entry getVariable(String name) throws ParseException;
+    public abstract Map.Entry<String, Comparable<?>> getVariable(String name) throws ParseException;
 
     /**
      * Adds a new function to the parser. This must be done before parsing an
@@ -343,7 +392,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * 
      * @return The value of the expression as an object.
      */
-    public Comparable getValue() throws ParseException {
+    public Comparable<?> getValue() throws ParseException {
         if (!isValid()) {
             throw new ParseException("Parser is not prepared");
         }
@@ -433,7 +482,7 @@ public abstract class BaseJEP implements ParserVisitor {
         if (node.index >= 0) {
             runtime.stack.push(getColumnObject(node.index));
         } else {
-            runtime.stack.push((Comparable)node.variable.getValue());
+            runtime.stack.push((Comparable<?>)node.variable.getValue());
         }
         return null;
     }
@@ -443,7 +492,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * stack.
      */
     final public Object visit(ASTConstant node, Object data) throws ParseException {
-        runtime.stack.push((Comparable)node.value);
+        runtime.stack.push((Comparable<?>)node.value);
         return null;
     }
 

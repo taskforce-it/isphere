@@ -6,7 +6,7 @@ package org.medfoster.sqljep;
  * Constant Node
  */
 class ASTConstant extends SimpleNode {
-	Comparable value;
+	Comparable<?> value;
 	
 	public ASTConstant(int id) {
 		super(id);
