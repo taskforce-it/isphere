@@ -120,6 +120,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
+    public void testMicrosecond() throws ParseException {
+
+        assertEquals(true, parseExpression("MICROSECOND(TIME('12:00:25')) = 0"));
+        assertEquals(true, parseExpression("MICROSECOND(TIMESTAMP('2018-12-05-15.00.55.123')) = 123"));
+
+        assertEquals(true, parseExpression("MICROSECOND(TIME('12:00:25')) = '0'"));
+        assertEquals(true, parseExpression("MICROSECOND(TIMESTAMP('2018-12-05-15.00.55.123')) = '123'"));
+    }
+
+    @Test
     public void testSign() throws ParseException {
 
         assertEquals(true, parseExpression("SIGN(-10) = -1"));

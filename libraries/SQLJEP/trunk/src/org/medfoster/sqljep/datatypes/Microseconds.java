@@ -8,17 +8,17 @@
 
 package org.medfoster.sqljep.datatypes;
 
-public class Milliseconds extends Number implements Comparable<Milliseconds>{
+public class Microseconds extends Number implements Comparable<Microseconds>{
 
     private static final long serialVersionUID = -5047847131341767688L;
 
     private Integer milliseconds;
     
-    public Milliseconds(Integer days) {
+    public Microseconds(Integer days) {
         this.milliseconds = days;
     }
     
-    public Milliseconds(int days) {
+    public Microseconds(int days) {
         this.milliseconds = new Integer(days);
     }
 
@@ -42,7 +42,7 @@ public class Milliseconds extends Number implements Comparable<Milliseconds>{
         return milliseconds.longValue();
     }
 
-    public int compareTo(Milliseconds anotherDays) {
+    public int compareTo(Microseconds anotherDays) {
         return milliseconds.compareTo(anotherDays.milliseconds);
     }
 }

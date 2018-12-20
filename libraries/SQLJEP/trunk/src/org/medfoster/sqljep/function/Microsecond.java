@@ -8,37 +8,24 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 
-import static java.util.Calendar.*;
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Microseconds;
 
-public class Microsecond extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(microsecond(param));
-	}
+@JUnitTest
+public class Microsecond extends AbstractTimePortion<Microseconds> {
 
+    public Microsecond() {
+        super(Calendar.MILLISECOND);
+    }
 
-	public static Long microsecond(Comparable param) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Timestamp) {
-			Timestamp ts = (Timestamp)param;
-			return new Long(ts.getTime());
-		}
-		throw new ParseException(WRONG_TYPE+" microsecond("+param.getClass()+")");
-	}
+    @Override
+    protected Microseconds createInstance(int value) {
+        return new Microseconds(value);
+    }
 }
-

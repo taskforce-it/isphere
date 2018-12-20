@@ -8,36 +8,24 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 
-import static java.util.Calendar.*;
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Seconds;
 
-public class Second extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(second(param, runtime.calendar));
-	}
+@JUnitTest
+public class Second extends AbstractTimePortion<Seconds> {
 
-	public static Integer second(Comparable param, Calendar cal) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Timestamp || param instanceof java.sql.Time) {
-			java.util.Date ts = (java.util.Date)param;
-			cal.setTimeInMillis(ts.getTime());
-			return new Integer(cal.get(SECOND));
-		}
-		throw new ParseException(WRONG_TYPE+" second("+param.getClass()+")");
-	}
+    public Second() {
+        super(Calendar.SECOND);
+    }
+
+    @Override
+    protected Seconds createInstance(int value) {
+        return new Seconds(value);
+    }
 }
-

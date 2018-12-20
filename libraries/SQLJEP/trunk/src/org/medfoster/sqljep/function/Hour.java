@@ -14,64 +14,18 @@ package org.medfoster.sqljep.function;
 
 import java.util.Calendar;
 
-import org.medfoster.sqljep.ASTFunNode;
-import org.medfoster.sqljep.BaseJEP;
-import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.datatypes.Hours;
 
 @JUnitTest
-public class Hour extends PostfixCommand {
-    final public int getNumberOfParameters() {
-        return 1;
+public class Hour extends AbstractTimePortion<Hours> {
+
+    public Hour() {
+        super(Calendar.HOUR_OF_DAY);
     }
 
-    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-        node.childrenAccept(runtime.ev, null);
-        Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(hour(param, runtime.calendar));
-    }
-
-    public Hours hour(Comparable<?> param, Calendar cal) throws ParseException {
-
-        try {
-
-            if (param == null) {
-                return null;
-            }
-
-            if (param instanceof String) {
-                try {
-                    return new Hours((Integer)parse((String)param));
-                } catch (ParseException e) {
-                    // eat exception
-                }
-            }
-
-            if (param instanceof String) {
-                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
-                param = (Comparable<?>)format.parseObject((String)param);
-            }
-
-            if (param instanceof Long) {
-                return new Hours(((Long)param).intValue());
-            }
-
-            if (param instanceof java.sql.Time || param instanceof java.sql.Timestamp) {
-                java.util.Date ts = (java.util.Date)param;
-                cal.setTime(ts);
-                return new Hours(cal.get(Calendar.HOUR_OF_DAY));
-            }
-
-        } catch (java.text.ParseException e) {
-            if (BaseJEP.debug) {
-                e.printStackTrace();
-            }
-            throw new ParseException(e.getMessage());
-        }
-
-        throw createWrongTypeException(param);
+    @Override
+    protected Hours createInstance(int value) {
+        return new Hours(value);
     }
 }

@@ -15,7 +15,7 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.datatypes.Days;
 import org.medfoster.sqljep.datatypes.Hours;
-import org.medfoster.sqljep.datatypes.Milliseconds;
+import org.medfoster.sqljep.datatypes.Microseconds;
 import org.medfoster.sqljep.datatypes.Minutes;
 import org.medfoster.sqljep.datatypes.Months;
 import org.medfoster.sqljep.datatypes.Seconds;
@@ -87,7 +87,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             
             if (param1 instanceof java.sql.Timestamp) {
                 
-                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds || param2 instanceof Milliseconds) {
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds || param2 instanceof Microseconds) {
                     return new java.sql.Timestamp(performOperation(param1, param2).getTime());
                 }
 

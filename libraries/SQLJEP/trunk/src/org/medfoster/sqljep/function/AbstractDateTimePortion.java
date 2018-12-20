@@ -1,0 +1,81 @@
+/*******************************************************************************
+ * Copyright (c) project_year-2018 project_team
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
+package org.medfoster.sqljep.function;
+
+import java.util.Calendar;
+
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.BaseJEP;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.ParserUtils;
+
+public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends PostfixCommand {
+
+    private int calendarField;
+
+    public AbstractDateTimePortion(int calendarField) {
+        this.calendarField = calendarField;
+    }
+
+    final public int getNumberOfParameters() {
+        return 1;
+    }
+
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(day(param, runtime.calendar));
+    }
+
+    protected abstract M createInstance(int value);
+
+    protected abstract boolean isSupportedType(Object object);
+    
+    public M day(Comparable<?> param, Calendar cal) throws ParseException {
+
+        try {
+
+            if (param == null) {
+                return null;
+            }
+
+            if (param instanceof String) {
+                try {
+                    return createInstance((Integer)parse((String)param));
+                } catch (ParseException e) {
+                    // eat exception
+                }
+            }
+
+            if (param instanceof String) {
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
+                param = format.parseObject((String)param);
+            }
+
+            if (param instanceof Long) {
+                return createInstance(((Long)param).intValue());
+            }
+
+            if (isSupportedType(param)) {
+                java.util.Date ts = (java.util.Date)param;
+                cal.setTimeInMillis(ts.getTime());
+                return createInstance(cal.get(calendarField));
+            }
+
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
+
+        throw createWrongTypeException(param);
+    }
+}

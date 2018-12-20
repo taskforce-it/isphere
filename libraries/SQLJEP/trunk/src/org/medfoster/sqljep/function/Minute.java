@@ -14,64 +14,18 @@ package org.medfoster.sqljep.function;
 
 import java.util.Calendar;
 
-import org.medfoster.sqljep.ASTFunNode;
-import org.medfoster.sqljep.BaseJEP;
-import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.datatypes.Minutes;
 
 @JUnitTest
-public class Minute extends PostfixCommand {
-    final public int getNumberOfParameters() {
-        return 1;
+public class Minute extends AbstractTimePortion<Minutes> {
+
+    public Minute() {
+        super(Calendar.MINUTE);
     }
 
-    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-        node.childrenAccept(runtime.ev, null);
-        Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(minute(param, runtime.calendar));
-    }
-
-    public Minutes minute(Comparable<?> param, Calendar cal) throws ParseException {
-
-        try {
-
-            if (param == null) {
-                return null;
-            }
-
-            if (param instanceof String) {
-                try {
-                    return new Minutes((Integer)parse((String)param));
-                } catch (ParseException e) {
-                    // eat exception
-                }
-            }
-
-            if (param instanceof String) {
-                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
-                param = (Comparable<?>)format.parseObject((String)param);
-            }
-
-            if (param instanceof Long) {
-                return new Minutes(((Long)param).intValue());
-            }
-
-            if (param instanceof java.sql.Time || param instanceof java.sql.Timestamp) {
-                java.util.Date ts = (java.util.Date)param;
-                cal.setTime(ts);
-                return new Minutes(cal.get(Calendar.MINUTE));
-            }
-
-        } catch (java.text.ParseException e) {
-            if (BaseJEP.debug) {
-                e.printStackTrace();
-            }
-            throw new ParseException(e.getMessage());
-        }
-
-        throw createWrongTypeException(param);
+    @Override
+    protected Minutes createInstance(int value) {
+        return new Minutes(value);
     }
 }
