@@ -50,8 +50,8 @@ public final class ParserUtils {
 
         timeFormats = new DateFormat[4];
         timeFormats[TIME_ISO] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}", "HH24.MI.SS");
-        timeFormats[TIME_USA_AM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*AM", "HH:MI AM");
-        timeFormats[TIME_USA_PM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*PM", "HH:MI PM");
+        timeFormats[TIME_USA_AM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*AM", "HH12:MI AM");
+        timeFormats[TIME_USA_PM] = new DateFormat("[0-9]{2}:[0-9]{2}\\s*PM", "HH12:MI PM");
         timeFormats[TIME_EUR] = new DateFormat("[0-9]{2}:[0-9]{2}:[0-9]{2}", "HH24:MI:SS");
         timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
 
