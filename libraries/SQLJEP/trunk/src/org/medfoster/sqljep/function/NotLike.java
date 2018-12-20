@@ -8,22 +8,26 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 
 public final class NotLike extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 2;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param2 = runtime.stack.pop();
-		Comparable param1 = runtime.stack.pop();
-		runtime.stack.push(!Like.like(param1, param2));
-	}
-}
 
+    private Like like = new Like();
+
+    final public int getNumberOfParameters() {
+        return 2;
+    }
+
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param2 = runtime.stack.pop();
+        Comparable<?> param1 = runtime.stack.pop();
+        runtime.stack.push(!like.like(param1, param2));
+    }
+}

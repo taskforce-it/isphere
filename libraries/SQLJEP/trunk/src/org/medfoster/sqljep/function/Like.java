@@ -44,7 +44,7 @@ public final class Like extends PostfixCommand {
         runtime.stack.push(like(param1, param2));
     }
 
-    public static boolean like(Comparable<?> param1, Comparable<?> param2) throws ParseException {
+    public boolean like(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
         if (param1 == null || param2 == null) {
             return false;

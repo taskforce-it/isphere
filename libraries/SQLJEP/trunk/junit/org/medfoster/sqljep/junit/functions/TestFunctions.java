@@ -54,7 +54,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("ceil(10) = 10"));
         
         assertEquals(false, parseExpression("CEIL(10.5) = 10"));
-        assertEquals(false, parseExpression("ceil('10.4') = 10"));
+    }
+
+    @Test
+    public void testFloor() throws ParseException {
+
+        assertEquals(true, parseExpression("FLOOR(10.5) = 10"));
+        assertEquals(true, parseExpression("floor('10.4') = 10"));
+        assertEquals(true, parseExpression("floor(10) = 10"));
+        
+        assertEquals(false, parseExpression("FLOOR(10.5) = 11"));
     }
 
     @Test
