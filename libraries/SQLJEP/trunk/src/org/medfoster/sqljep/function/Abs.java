@@ -21,6 +21,7 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 
 @JUnitTest
 public class Abs extends PostfixCommand {
+
     final public int getNumberOfParameters() {
         return 1;
     }
@@ -43,13 +44,9 @@ public class Abs extends PostfixCommand {
 
         if (param instanceof BigDecimal) { // BigInteger is not supported
             return ((BigDecimal)param).abs();
-        }
-
-        if (param instanceof Double || param instanceof Float) {
+        } else if (param instanceof Double || param instanceof Float) {
             return new Double(Math.abs(((Number)param).doubleValue()));
-        }
-
-        if (param instanceof Number) { // Long, Integer, Short, Byte
+        } else if (param instanceof Number) { // Long, Integer, Short, Byte
             return new Long(Math.abs(((Number)param).longValue()));
         }
 
