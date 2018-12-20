@@ -77,6 +77,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
+    public void testMinute() throws ParseException {
+
+        assertEquals(true, parseExpression("MINUTE(TIME('12:25:00')) = 25"));
+        assertEquals(true, parseExpression("MINUTE(TIMESTAMP('2018-12-05-15.45.00.123')) = 45"));
+
+        assertEquals(true, parseExpression("MINUTE(TIME('12:25:00')) = '25'"));
+        assertEquals(true, parseExpression("MINUTE(TIMESTAMP('2018-12-05-15.45.00.123')) = '45'"));
+    }
+
+    @Test
     public void testMonth() throws ParseException {
 
         assertEquals(true, parseExpression("DATE('2018-12-05') + Month(1) = '2019-01-05'"));

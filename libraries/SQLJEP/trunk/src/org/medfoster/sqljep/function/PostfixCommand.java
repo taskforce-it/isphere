@@ -119,19 +119,23 @@ public abstract class PostfixCommand implements PostfixCommandI {
         throw new ParseException("Not Double: " + (param != null ? param.getClass() : "null"));
     }
 
-    protected static ParseException createErrorException(String function, Comparable...comparables) {
+    protected ParseException createErrorException(String function, Comparable...comparables) {
         return createErrorException(function, null, comparables);
     }
 
-    protected static ParseException createErrorException(String function, Throwable e, Comparable...comparables) {
+    protected ParseException createErrorException(String function, Throwable e, Comparable...comparables) {
         return createExceptionInternally(INTERNAL_ERROR, function, comparables, e);
     }
 
-    protected static ParseException createWrongTypeException(String function, Comparable...comparables) {
+    protected ParseException createWrongTypeException(Comparable...comparables) {
+        return createWrongTypeException(getClass().getSimpleName(), null, comparables);
+    }
+
+    private ParseException createWrongTypeException(String function, Comparable...comparables) {
         return createWrongTypeException(function, null, comparables);
     }
 
-    protected static ParseException createWrongTypeException(String function, Throwable e, Comparable...comparables) {
+    private ParseException createWrongTypeException(String function, Throwable e, Comparable...comparables) {
         return createExceptionInternally(WRONG_TYPE, function, comparables, e);
     }
     

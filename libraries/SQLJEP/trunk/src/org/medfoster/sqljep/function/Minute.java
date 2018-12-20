@@ -8,37 +8,70 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import java.sql.Timestamp;
 import java.util.Calendar;
 
-import static java.util.Calendar.*;
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.BaseJEP;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.ParserUtils;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.datatypes.Minutes;
 
+@JUnitTest
 public class Minute extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(minute(param, runtime.calendar));
-	}
+    final public int getNumberOfParameters() {
+        return 1;
+    }
 
-	public static Integer minute(Comparable param, Calendar cal) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Timestamp || param instanceof java.sql.Time) {
-			java.util.Date ts = (java.util.Date)param;
-			cal.setTimeInMillis(ts.getTime());
-			return new Integer(cal.get(MINUTE));
-		}
-		throw new ParseException(WRONG_TYPE+" minute("+param.getClass()+")");
-	}
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(minute(param, runtime.calendar));
+    }
+
+    public Minutes minute(Comparable<?> param, Calendar cal) throws ParseException {
+
+        try {
+
+            if (param == null) {
+                return null;
+            }
+
+            if (param instanceof String) {
+                try {
+                    return new Minutes((Integer)parse((String)param));
+                } catch (ParseException e) {
+                    // eat exception
+                }
+            }
+
+            if (param instanceof String) {
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
+                param = (Comparable<?>)format.parseObject((String)param);
+            }
+
+            if (param instanceof Long) {
+                return new Minutes(((Long)param).intValue());
+            }
+
+            if (param instanceof java.sql.Time || param instanceof java.sql.Timestamp) {
+                java.util.Date ts = (java.util.Date)param;
+                cal.setTime(ts);
+                return new Minutes(cal.get(Calendar.MINUTE));
+            }
+
+        } catch (java.text.ParseException e) {
+            if (BaseJEP.debug) {
+                e.printStackTrace();
+            }
+            throw new ParseException(e.getMessage());
+        }
+
+        throw createWrongTypeException(param);
+    }
 }
-

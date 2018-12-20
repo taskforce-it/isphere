@@ -8,37 +8,40 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
 import java.util.Calendar;
 
-import static java.util.Calendar.*;
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.BaseJEP;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.datatypes.Months;
 
 @JUnitTest
 public class Month extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(month(param, runtime.calendar));
-	}
+    final public int getNumberOfParameters() {
+        return 1;
+    }
 
-	public static Months month(Comparable param, Calendar cal) throws ParseException {
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(month(param, runtime.calendar));
+    }
+
+    public Months month(Comparable<?> param, Calendar cal) throws ParseException {
 
         try {
-        
+
             if (param == null) {
                 return null;
             }
-            
+
             if (param instanceof String) {
                 try {
                     return new Months((Integer)parse((String)param));
@@ -46,22 +49,22 @@ public class Month extends PostfixCommand {
                     // eat exception
                 }
             }
-            
+
             if (param instanceof String) {
-                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String) param));
-                param = (Comparable)format.parseObject((String) param);
+                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
+                param = format.parseObject((String)param);
             }
-            
+
             if (param instanceof Long) {
                 return new Months(((Long)param).intValue());
             }
-    
+
             if (param instanceof java.util.Date) {
                 java.util.Date ts = (java.util.Date)param;
                 cal.setTimeInMillis(ts.getTime());
-                return new Months(cal.get(MONTH));
+                return new Months(cal.get(Calendar.MONTH));
             }
-        
+
         } catch (java.text.ParseException e) {
             if (BaseJEP.debug) {
                 e.printStackTrace();
@@ -69,7 +72,6 @@ public class Month extends PostfixCommand {
             throw new ParseException(e.getMessage());
         }
 
-        throw createWrongTypeException("month", param);
-	}
+        throw createWrongTypeException(param);
+    }
 }
-

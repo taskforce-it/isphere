@@ -8,23 +8,27 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 
 public final class NotBetween extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 3;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-        Comparable limit2 = runtime.stack.pop();
-        Comparable limit1 = runtime.stack.pop();
-        Comparable source = runtime.stack.pop();
-		runtime.stack.push(!Between.between(limit2, limit1, source));
-	}
-}
 
+    private Between between = new Between();
+
+    final public int getNumberOfParameters() {
+        return 3;
+    }
+
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> limit2 = runtime.stack.pop();
+        Comparable<?> limit1 = runtime.stack.pop();
+        Comparable<?> source = runtime.stack.pop();
+        runtime.stack.push(!between.between(limit2, limit1, source));
+    }
+}

@@ -8,44 +8,48 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.BaseJEP;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
-import org.medfoster.sqljep.*;
 
 @JUnitTest
 public class Timestamp extends PostfixCommand {
-	
-	final public int getNumberOfParameters() {
-		return -1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 
-		node.childrenAccept(runtime.ev, null);
-		int num = node.jjtGetNumChildren();
-		
-		if (num == 1) {
-			Comparable param1 = runtime.stack.pop();
-			runtime.stack.push(to_timestamp(param1, ParserUtils.getTimestampFormat((String) param1)));
-		} else if (num == 2) {
-			Comparable param2 = runtime.stack.pop();
-			Comparable param1 = runtime.stack.pop();
-			runtime.stack.push(to_timestamp(param1, param2));
-		} else {
-			// remove all parameters from stack and push null
-			removeParams(runtime.stack, num);
-			throw new ParseException("Wrong number of parameters for TIMESTAMP()");
-		}
-	}
+    final public int getNumberOfParameters() {
+        return -1;
+    }
 
-	public static java.sql.Timestamp to_timestamp(Comparable expression, Comparable pattern) throws ParseException {
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 
-		if (expression == null || pattern == null) {
-			return null;
-		}
+        node.childrenAccept(runtime.ev, null);
+        int num = node.jjtGetNumChildren();
+
+        if (num == 1) {
+            Comparable<?> param1 = runtime.stack.pop();
+            runtime.stack.push(to_timestamp(param1, ParserUtils.getTimestampFormat((String)param1)));
+        } else if (num == 2) {
+            Comparable<?> param2 = runtime.stack.pop();
+            Comparable<?> param1 = runtime.stack.pop();
+            runtime.stack.push(to_timestamp(param1, param2));
+        } else {
+            // remove all parameters from stack and push null
+            removeParams(runtime.stack, num);
+            throw new ParseException("Wrong number of parameters for TIMESTAMP()");
+        }
+    }
+
+    public java.sql.Timestamp to_timestamp(Comparable<?> expression, Comparable<?> pattern) throws ParseException {
+
+        if (expression == null || pattern == null) {
+            return null;
+        }
 
         if (expression instanceof java.sql.Timestamp) {
             return (java.sql.Timestamp)expression;
@@ -60,7 +64,7 @@ public class Timestamp extends PostfixCommand {
                 throw new ParseException(e.getMessage());
             }
         } else {
-            throw createWrongTypeException("TIMESTAMP", expression, pattern);
+            throw createWrongTypeException(expression, pattern);
         }
-	}
+    }
 }

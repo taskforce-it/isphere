@@ -8,7 +8,7 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
@@ -19,11 +19,11 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 
 @JUnitTest
 public final class Subtract extends AbstractLineCalculation {
-    
+
     public Subtract() {
         this.sign = new Integer(-1);
     }
-    
+
     @Override
     protected BigDecimal performOperation(BigDecimal param1, BigDecimal param2) throws ParseException {
         return param1.subtract(param2);
