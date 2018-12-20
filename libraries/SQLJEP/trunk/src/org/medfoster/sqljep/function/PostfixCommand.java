@@ -13,7 +13,6 @@
 package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Stack;
@@ -64,7 +63,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
         s.push(null);
     }
 
-    public static Comparable parse(String param) throws ParseException {
+    public static Comparable<?> parse(String param) throws ParseException {
         try {
             return Integer.valueOf((String)param);
         } catch (NumberFormatException e) {
@@ -91,7 +90,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
         return new BigDecimal(param.longValue());
     }
 
-    public static int getInteger(Comparable param) throws ParseException {
+    public static int getInteger(Comparable<?> param) throws ParseException {
         if (param instanceof Number) {
             return ((Number)param).intValue();
         } else if (param instanceof String) {
@@ -105,7 +104,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
         throw new ParseException("Not Integer: " + (param != null ? param.getClass() : "null"));
     }
 
-    public static double getDouble(Comparable param) throws ParseException {
+    public static double getDouble(Comparable<?> param) throws ParseException {
         if (param instanceof Number) {
             Number n = (Number)param;
             return n.doubleValue();
@@ -119,63 +118,59 @@ public abstract class PostfixCommand implements PostfixCommandI {
         throw new ParseException("Not Double: " + (param != null ? param.getClass() : "null"));
     }
 
-    protected ParseException createErrorException(String function, Comparable...comparables) {
+    protected ParseException createErrorException(String function, Comparable<?>... comparables) {
         return createErrorException(function, null, comparables);
     }
 
-    protected ParseException createErrorException(String function, Throwable e, Comparable...comparables) {
+    protected ParseException createErrorException(String function, Throwable e, Comparable<?>... comparables) {
         return createExceptionInternally(INTERNAL_ERROR, function, comparables, e);
     }
 
-    protected ParseException createWrongTypeException(Comparable...comparables) {
+    protected ParseException createWrongTypeException(Comparable<?>... comparables) {
         return createWrongTypeException(getClass().getSimpleName(), null, comparables);
     }
 
-    private ParseException createWrongTypeException(String function, Comparable...comparables) {
-        return createWrongTypeException(function, null, comparables);
-    }
-
-    private ParseException createWrongTypeException(String function, Throwable e, Comparable...comparables) {
+    private ParseException createWrongTypeException(String function, Throwable e, Comparable<?>... comparables) {
         return createExceptionInternally(WRONG_TYPE, function, comparables, e);
     }
-    
+
     protected static Date addDays(Date time, int days) {
-        
+
         calendar.clear();
         calendar.setTime((Date)time);
         calendar.add(Calendar.DAY_OF_MONTH, days);
-        
-        return calendar.getTime();
-    }
-    
-    protected static Date addMonths(Date time, int months) {
-        
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.MONTH, months);
-        
-        return calendar.getTime();
-    }
-    
-    protected static Date addYears(Date time, int years) {
-        
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.YEAR, years);
-        
-        return calendar.getTime();
-    }
-    
-    protected static Date addHours(Date time, int hours) {
-        
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.HOUR_OF_DAY, hours);
-        
+
         return calendar.getTime();
     }
 
-    private static ParseException createExceptionInternally(String type, String function, Comparable[] comparables, Throwable e) {
+    protected static Date addMonths(Date time, int months) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.MONTH, months);
+
+        return calendar.getTime();
+    }
+
+    protected static Date addYears(Date time, int years) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.YEAR, years);
+
+        return calendar.getTime();
+    }
+
+    protected static Date addHours(Date time, int hours) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
+
+        return calendar.getTime();
+    }
+
+    private static ParseException createExceptionInternally(String type, String function, Comparable<?>[] comparables, Throwable e) {
 
         boolean isFirstComparable = true;
 
@@ -184,7 +179,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
         buffer.append("  ");
         buffer.append(function);
         buffer.append("(");
-        for (Comparable comparable : comparables) {
+        for (Comparable<?> comparable : comparables) {
             if (isFirstComparable) {
                 isFirstComparable = false;
             } else {

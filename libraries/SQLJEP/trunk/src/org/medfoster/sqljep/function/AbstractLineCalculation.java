@@ -35,12 +35,12 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
      */
     public final void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
-        Comparable param2 = runtime.stack.pop();
-        Comparable param1 = runtime.stack.pop();
+        Comparable<?> param2 = runtime.stack.pop();
+        Comparable<?> param1 = runtime.stack.pop();
         runtime.stack.push(add(param1, param2));
     }
 
-    public final Comparable add(Comparable param1, Comparable param2) throws ParseException {
+    public final Comparable<?> add(Comparable<?> param1, Comparable<?> param2) throws ParseException {
         
         if (param1 == null || param2 == null) {
             return null;
@@ -68,7 +68,6 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             } else {    // Long, Integer, Short, Byte 
                 long l1 = n1.longValue();
                 long l2 = n2.longValue();
-                long r = l1 + l2;
                 BigDecimal b1 = new BigDecimal(l1);
                 BigDecimal b2 = new BigDecimal(l2);
                 return performOperation(b1, b2);
@@ -77,10 +76,9 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
                 throw createWrongTypeException("+", param1, param2);
             }
-            java.util.Date d;
             
             if (param2 instanceof java.util.Date) {
-                Comparable param2Old = param2;
+                Comparable<?> param2Old = param2;
                 param2 = param1;
                 param1 = param2Old;
             }
@@ -120,7 +118,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected abstract BigDecimal performOperation(BigDecimal param1, BigDecimal param2) throws ParseException;
 
 
-    protected java.util.Date performOperation(Comparable param1, Comparable param2) throws ParseException {
+    protected java.util.Date performOperation(Comparable<?> param1, Comparable<?> param2) throws ParseException {
         
         java.util.Date d = (java.util.Date)param1;
         if (param2 instanceof Days) {

@@ -8,21 +8,22 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 
 public final class ComparativeIsNotNull extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(param != null);
-	}
-}
+    final public int getNumberOfParameters() {
+        return 1;
+    }
 
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(param != null);
+    }
+}

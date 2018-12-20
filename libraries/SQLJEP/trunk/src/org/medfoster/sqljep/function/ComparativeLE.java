@@ -8,26 +8,27 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 
 public final class ComparativeLE extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 2;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param2 = runtime.stack.pop();
-		Comparable param1 = runtime.stack.pop();
-		if (param1 == null || param2 == null) {
-			runtime.stack.push(Boolean.FALSE);
-		} else {
-			runtime.stack.push(ComparativeEQ.compareTo(param1, param2) <= 0);
-		}
-	}
-}
+    final public int getNumberOfParameters() {
+        return 2;
+    }
 
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param2 = runtime.stack.pop();
+        Comparable<?> param1 = runtime.stack.pop();
+        if (param1 == null || param2 == null) {
+            runtime.stack.push(Boolean.FALSE);
+        } else {
+            runtime.stack.push(ComparativeEQ.compareTo(param1, param2) <= 0);
+        }
+    }
+}
