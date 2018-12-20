@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) project_year-2018 project_team
+ * Copyright (c) 2012-2018 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,8 @@
 
 package org.medfoster.sqljep;
 
-import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.medfoster.sqljep.function.OracleDateFormat;
-import org.medfoster.sqljep.function.OracleTimeFormat;
 
 public final class ParserUtils {
 
@@ -28,8 +24,6 @@ public final class ParserUtils {
 
     private final static int TIMESTAMP_ISO = 0;
     private final static int TIMESTAMP_IBM = 1;
-
-    private final static BigDecimal DAY_MILIS = new BigDecimal(86400000);
 
     private final static DateFormat[] dateFormats;
     private final static Pattern datePattern;
@@ -56,8 +50,10 @@ public final class ParserUtils {
         timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
 
         timestampFormats = new DateFormat[2];
-        timestampFormats[TIMESTAMP_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]{0,12})?", "YYYY-MM-DD HH24:MI:SS.NNN");
-        timestampFormats[TIMESTAMP_IBM] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}.[0-9]{2}.[0-9]{2}(?:.[0-9]{0,12})?", "YYYY-MM-DD-HH24.MI.SS.NNN");
+        timestampFormats[TIMESTAMP_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]{0,12})?",
+            "YYYY-MM-DD HH24:MI:SS.NNN");
+        timestampFormats[TIMESTAMP_IBM] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}.[0-9]{2}.[0-9]{2}(?:.[0-9]{0,12})?",
+            "YYYY-MM-DD-HH24.MI.SS.NNN");
         timestampPattern = Pattern.compile(getPattern(timestampFormats), Pattern.CASE_INSENSITIVE);
     }
 
@@ -133,22 +129,6 @@ public final class ParserUtils {
         return null;
     }
 
-    public static java.sql.Date parseDate(Comparable param1) throws java.text.ParseException, ParseException {
-
-        OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param1));
-        param1 = (Comparable)format.parseObject((String)param1);
-
-        return (java.sql.Date)param1;
-    }
-
-    public static java.sql.Time parseTime(Comparable param1) throws java.text.ParseException, ParseException {
-
-        OracleTimeFormat format = new OracleTimeFormat(ParserUtils.getTimeFormat((String)param1));
-        param1 = (Comparable)format.parseObject((String)param1);
-
-        return (java.sql.Time)param1;
-    }
-    
     private static String getPattern(DateFormat... dateFormats) {
 
         StringBuilder buffer = new StringBuilder();
