@@ -19,15 +19,18 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 
 @JUnitTest
 public final class Between extends PostfixCommand {
+
     final public int getNumberOfParameters() {
         return 3;
     }
 
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+
         node.childrenAccept(runtime.ev, null);
         Comparable<?> limit2 = runtime.stack.pop();
         Comparable<?> limit1 = runtime.stack.pop();
         Comparable<?> source = runtime.stack.pop();
+
         if (source == null || limit1 == null || limit2 == null) {
             runtime.stack.push(Boolean.FALSE);
         } else {

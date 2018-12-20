@@ -21,6 +21,7 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 
 @JUnitTest
 public class Ceil extends PostfixCommand {
+
     final public int getNumberOfParameters() {
         return 1;
     }
@@ -48,13 +49,10 @@ public class Ceil extends PostfixCommand {
             } catch (ArithmeticException e) {
             }
             return b;
-        }
-
-        if (param instanceof Double || param instanceof Float) {
+        } else if (param instanceof Double || param instanceof Float) {
+            // TODO: add unit test for Double/Float
             return Math.ceil(((Number)param).doubleValue());
-        }
-
-        if (param instanceof Number) { // Long, Integer, Short, Byte
+        } else if (param instanceof Number) { // Long, Integer, Short, Byte
             return param;
         }
 
