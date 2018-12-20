@@ -29,12 +29,12 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testAdd() throws ParseException {
 
-//        assertEquals(true, parseExpression("7.59 + 2.41 = 10.0"));
+        assertEquals(true, parseExpression("7.59 + 2.41 = 10.0"));
 
         // Test leap year
-//        assertEquals(true, parseExpression("DATE('2016-02-27') + DAY(5) = '2016-03-03'"));
-//        assertEquals(true, parseExpression("DATE('2016-02-27') + MONTH(3) = '2016-05-27'"));
-//        assertEquals(true, parseExpression("DATE('2016-02-29') + YEAR(1) = '2017-02-28'"));
+        assertEquals(true, parseExpression("DATE('2016-02-27') + DAY(5) = '2016-03-03'"));
+        assertEquals(true, parseExpression("DATE('2016-02-27') + MONTH(3) = '2016-05-27'"));
+        assertEquals(true, parseExpression("DATE('2016-02-29') + YEAR(1) = '2017-02-28'"));
 
         // Test time
         assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = '20:10:30'"));
