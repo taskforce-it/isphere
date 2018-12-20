@@ -8,53 +8,36 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import java.util.*;
-import java.text.*;
+import java.text.DateFormatSymbols;
+import java.text.ParsePosition;
+import java.util.Calendar;
 
-public final class OracleDateFormat extends OracleTimestampFormat {
+public final class OracleDateFormat extends AbstractOracleDateTimeFormat {
 
-	protected OracleDateFormat(ArrayList<Object> format, Calendar calendar, DateFormatSymbols dateSymb) {
-		this.format = format;
-		this.cal = calendar;
-		this.symb = dateSymb;
-	}
+    private static final long serialVersionUID = -3026029655535820385L;
 
-	public OracleDateFormat(String pattern) throws java.text.ParseException {
-		cal = Calendar.getInstance();
-		symb = new DateFormatSymbols();
-		format = formatsCache.get(pattern);
-		if (format == null) {
-			format = new ArrayList<Object>();
-			compilePattern(format, dateSymbols, pattern);
-			formatsCache.put(pattern, format);
-		}
-	}
+    public OracleDateFormat(String pattern) throws java.text.ParseException {
+        super(pattern);
+    }
 
-	public OracleDateFormat(String pattern, Calendar calendar, DateFormatSymbols dateSymb) throws java.text.ParseException {
-		cal = calendar;
-		symb = dateSymb;
-		format = formatsCache.get(pattern);
-		if (format == null) {
-			format = new ArrayList<Object>();
-			compilePattern(format, dateSymbols, pattern);
-			formatsCache.put(pattern, format);
-		}
-	}
+    public OracleDateFormat(String pattern, Calendar calendar, DateFormatSymbols dateSymb) throws java.text.ParseException {
+        super(pattern, calendar, dateSymb);
+    }
 
     public java.sql.Date parseObject(String source) {
         return new java.sql.Date(parseInMillis(source, new ParsePosition(0)));
     }
 
-	public java.sql.Date parseObject(String source, ParsePosition pos) {
-		return new java.sql.Date(parseInMillis(source, pos));
-	}
-    
+    public java.sql.Date parseObject(String source, ParsePosition pos) {
+        return new java.sql.Date(parseInMillis(source, pos));
+    }
+
+    @SuppressWarnings("rawtypes")
     protected java.util.Date stripMilliSeconds(Comparable time) {
         throw new IllegalAccessError("stripMilliSeconds() is not allowed for " + getClass().getSimpleName());
     }
 }
-

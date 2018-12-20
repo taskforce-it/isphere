@@ -8,55 +8,31 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import java.util.*;
-import java.util.Date;
-import java.text.*;
+import java.text.DateFormatSymbols;
+import java.text.ParsePosition;
+import java.util.Calendar;
 
-public final class OracleTimeFormat extends OracleTimestampFormat {
-	
-	protected OracleTimeFormat(ArrayList<Object> format, Calendar calendar, DateFormatSymbols dateSymb) {
-		this.format = format;
-		this.cal = calendar;
-		this.symb = dateSymb;
-	}
-	
-	public OracleTimeFormat(String pattern) throws java.text.ParseException {
-		cal = Calendar.getInstance();
-		symb = new DateFormatSymbols();
-		format = formatsCache.get(pattern);
-		if (format == null) {
-			format = new ArrayList<Object>();
-			compilePattern(format, timeSymbols, pattern);
-			formatsCache.put(pattern, format);
-		}
-	}
+public final class OracleTimeFormat extends AbstractOracleDateTimeFormat {
 
-	public OracleTimeFormat(String pattern, Calendar calendar, DateFormatSymbols dateSymb) throws java.text.ParseException {
-		cal = calendar;
-		symb = dateSymb;
-		format = formatsCache.get(pattern);
-		if (format == null) {
-			format = new ArrayList<Object>();
-			compilePattern(format, timeSymbols, pattern);
-			formatsCache.put(pattern, format);
-		}
-	}
+    private static final long serialVersionUID = -5204467719900951838L;
 
-	public Object parseObject(String source, ParsePosition pos) {
-		return new java.sql.Time(parseInMillis(source, pos));
-	}
-    
-    protected java.util.Date stripMilliSeconds(Comparable time) {
-        
-        cal.clear();
-        cal.setTime((Date)time);
-        cal.set(Calendar.MILLISECOND, 0);
-        
-        return new java.sql.Time(cal.getTimeInMillis());
+    public OracleTimeFormat(String pattern) throws java.text.ParseException {
+        super(pattern);
+    }
+
+    public OracleTimeFormat(String pattern, Calendar calendar, DateFormatSymbols dateSymb) throws java.text.ParseException {
+        super(pattern, calendar, dateSymb);
+    }
+
+    public java.sql.Time parseObject(String source) {
+        return new java.sql.Time(parseInMillis(source, new ParsePosition(0)));
+    }
+
+    public Object parseObject(String source, ParsePosition pos) {
+        return new java.sql.Time(parseInMillis(source, pos));
     }
 }
-
