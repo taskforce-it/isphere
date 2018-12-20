@@ -40,9 +40,35 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
+    public void testSubstract() throws ParseException {
+
+        assertEquals(true, parseExpression("2.41 - 10 = -7.59"));
+
+        // Test leap year
+        assertEquals(true, parseExpression("DATE('2016-03-03') - DAY(5) = '2016-02-27'"));
+        assertEquals(true, parseExpression("DATE('2016-03-03') - MONTH(3) = '2015-12-03'"));
+        assertEquals(true, parseExpression("DATE('2016-02-29') - YEAR(1) = '2015-02-28'"));
+    }
+
+    @Test
+    public void testMultiply() throws ParseException {
+        // TODO: create unit test
+    }
+
+    @Test
+    public void testDivide() throws ParseException {
+        // TODO: create unit test
+    }
+
+    @Test
     public void testBetween() throws ParseException {
 
         assertEquals(true, parseExpression("5 BETWEEN 1 AND 10"));
+    }
+
+    @Test
+    public void testNotBetween() throws ParseException {
+
         assertEquals(true, parseExpression("15 NOT BETWEEN 1 AND 10"));
     }
 
@@ -52,7 +78,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("CEIL(10.5) = 11"));
         assertEquals(true, parseExpression("ceil('10.4') = 11"));
         assertEquals(true, parseExpression("ceil(10) = 10"));
-        
+
         assertEquals(false, parseExpression("CEIL(10.5) = 10"));
     }
 
@@ -62,8 +88,25 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("FLOOR(10.5) = 10"));
         assertEquals(true, parseExpression("floor('10.4') = 10"));
         assertEquals(true, parseExpression("floor(10) = 10"));
-        
+
         assertEquals(false, parseExpression("FLOOR(10.5) = 11"));
+    }
+
+    @Test
+    public void testYear() throws ParseException {
+
+        assertEquals(true, parseExpression("year(JODATE) = 2018", getColumnMapping()));
+        assertEquals(true, parseExpression("year(JODATE) = '2018'", getColumnMapping()));
+    }
+
+    @Test
+    public void testMonth() throws ParseException {
+
+        assertEquals(true, parseExpression("DATE('2018-12-05') + Month(1) = '2019-01-05'"));
+        assertEquals(true, parseExpression("DATE('2018-12-05') - Month(1) = '2018-11-05'"));
+
+        assertEquals(true, parseExpression("DATE('2018-12-05') + Month('1') = '2019-01-05'"));
+        assertEquals(true, parseExpression("DATE('2018-12-05') - Month('1') = '2018-11-05'"));
     }
 
     @Test
@@ -97,36 +140,13 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testMonth() throws ParseException {
+    public void testSecond() throws ParseException {
 
-        assertEquals(true, parseExpression("DATE('2018-12-05') + Month(1) = '2019-01-05'"));
-        assertEquals(true, parseExpression("DATE('2018-12-05') - Month(1) = '2018-11-05'"));
+        assertEquals(true, parseExpression("SECOND(TIME('12:00:25')) = 25"));
+        assertEquals(true, parseExpression("SECOND(TIMESTAMP('2018-12-05-15.00.45.123')) = 45"));
 
-        assertEquals(true, parseExpression("DATE('2018-12-05') + Month('1') = '2019-01-05'"));
-        assertEquals(true, parseExpression("DATE('2018-12-05') - Month('1') = '2018-11-05'"));
-    }
-
-    @Test
-    public void testSubstract() throws ParseException {
-
-        assertEquals(true, parseExpression("2.41 - 10 = -7.59"));
-
-        // Test leap year
-        assertEquals(true, parseExpression("DATE('2016-03-03') - DAY(5) = '2016-02-27'"));
-        assertEquals(true, parseExpression("DATE('2016-03-03') - MONTH(3) = '2015-12-03'"));
-        assertEquals(true, parseExpression("DATE('2016-02-29') - YEAR(1) = '2015-02-28'"));
-    }
-
-    @Test
-    public void testDate() throws ParseException {
-
-        assertEquals(true, parseExpression("DATE('2018-12-05') > '2018-12-04'"));
-        assertEquals(true, parseExpression("DATE('2018-12-05') = '2018-12-05'"));
-        assertEquals(true, parseExpression("DATE('2018-12-05') < '2018-12-06'"));
-
-        assertEquals(true, parseExpression("DATE('2018-12-05', 'YYYY-MM-DD') > '2018-12-04'"));
-        assertEquals(true, parseExpression("DATE('12-05-2018', 'MM/DD/yyyy') = '2018-12-05'"));
-        assertEquals(true, parseExpression("DATE('05-12-2018', 'DD.MM.YYYY') < '2018-12-06'"));
+        assertEquals(true, parseExpression("SECOND(TIME('12:00:25')) = '25'"));
+        assertEquals(true, parseExpression("SECOND(TIMESTAMP('2018-12-05-15.00.45.123')) = '45'"));
     }
 
     @Test
@@ -140,15 +160,15 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testSign() throws ParseException {
+    public void testDate() throws ParseException {
 
-        assertEquals(true, parseExpression("SIGN(-10) = -1"));
-        assertEquals(true, parseExpression("SIGN(0) = 0"));
-        assertEquals(true, parseExpression("SIGN(10) = 1"));
+        assertEquals(true, parseExpression("DATE('2018-12-05') > '2018-12-04'"));
+        assertEquals(true, parseExpression("DATE('2018-12-05') = '2018-12-05'"));
+        assertEquals(true, parseExpression("DATE('2018-12-05') < '2018-12-06'"));
 
-        assertEquals(true, parseExpression("SIGN('-10') = -1"));
-        assertEquals(true, parseExpression("SIGN('0') = 0"));
-        assertEquals(true, parseExpression("SIGN('10') = 1"));
+        assertEquals(true, parseExpression("DATE('2018-12-05', 'YYYY-MM-DD') > '2018-12-04'"));
+        assertEquals(true, parseExpression("DATE('12-05-2018', 'MM/DD/yyyy') = '2018-12-05'"));
+        assertEquals(true, parseExpression("DATE('05-12-2018', 'DD.MM.YYYY') < '2018-12-06'"));
     }
 
     @Test
@@ -195,9 +215,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testYear() throws ParseException {
+    public void testSign() throws ParseException {
 
-        assertEquals(true, parseExpression("year(JODATE) = 2018", getColumnMapping()));
-        assertEquals(true, parseExpression("year(JODATE) = '2018'", getColumnMapping()));
+        assertEquals(true, parseExpression("SIGN(-10) = -1"));
+        assertEquals(true, parseExpression("SIGN(0) = 0"));
+        assertEquals(true, parseExpression("SIGN(10) = 1"));
+
+        assertEquals(true, parseExpression("SIGN('-10') = -1"));
+        assertEquals(true, parseExpression("SIGN('0') = 0"));
+        assertEquals(true, parseExpression("SIGN('10') = 1"));
     }
 }
