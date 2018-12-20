@@ -8,28 +8,30 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 
 public class Lower extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(lower(param));		//push the result on the inStack
-	}
 
-	public static String lower(Comparable param) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		return param.toString().toLowerCase();
-	}
+    final public int getNumberOfParameters() {
+        return 1;
+    }
+
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(lower(param)); // push the result on the inStack
+    }
+
+    public static String lower(Comparable<?> param) throws ParseException {
+        if (param == null) {
+            return null;
+        }
+        return param.toString().toLowerCase();
+    }
 }
-
