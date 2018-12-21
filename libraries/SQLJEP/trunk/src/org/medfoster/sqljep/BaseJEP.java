@@ -27,7 +27,6 @@ import org.medfoster.sqljep.function.Day;
 import org.medfoster.sqljep.function.Decode;
 import org.medfoster.sqljep.function.Floor;
 import org.medfoster.sqljep.function.Hour;
-import org.medfoster.sqljep.function.IndistinctMatching;
 import org.medfoster.sqljep.function.Initcap;
 import org.medfoster.sqljep.function.Instr;
 import org.medfoster.sqljep.function.LastDay;
@@ -55,7 +54,6 @@ import org.medfoster.sqljep.function.Time;
 import org.medfoster.sqljep.function.Timestamp;
 import org.medfoster.sqljep.function.ToChar;
 import org.medfoster.sqljep.function.ToNumber;
-import org.medfoster.sqljep.function.Translate;
 import org.medfoster.sqljep.function.Trim;
 import org.medfoster.sqljep.function.Trunc;
 import org.medfoster.sqljep.function.Upper;
@@ -116,15 +114,12 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("lpad", new Lpad());
         funTab.put("lower", new Lower());
         funTab.put("upper", new Upper());
-        funTab.put("translate", new Translate());
         funTab.put("replace", new Replace());
         funTab.put("initcap", new Initcap());
         funTab.put("value", new Nvl());
         funTab.put("decode", new Decode());
         funTab.put("to_char", new ToChar());
         funTab.put("to_number", new ToNumber());
-        funTab.put("imatch", new IndistinctMatching()); // replacement for of
-                                                        // Oracle's SOUNDEX
         funTab.put("months_between", new MonthsBetween());
         funTab.put("last_day", new LastDay());
         funTab.put("next_day", new NextDay());
