@@ -14,7 +14,6 @@ import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends PostfixCommand {
@@ -32,14 +31,16 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(day(param, runtime.calendar));
+        runtime.stack.push(evaluate(param, runtime.calendar));
     }
 
     protected abstract M createInstance(int value);
 
     protected abstract boolean isSupportedType(Object object);
 
-    public M day(Comparable<?> param, Calendar cal) throws ParseException {
+    protected abstract Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, ParseException;
+
+    private M evaluate(Comparable<?> param, Calendar cal) throws ParseException {
 
         try {
 
@@ -56,8 +57,7 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
             }
 
             if (param instanceof String) {
-                OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
-                param = format.parseObject((String)param);
+                param = parseObject(param);
             }
 
             if (param instanceof Long) {

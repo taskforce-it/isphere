@@ -8,11 +8,20 @@
 
 package org.medfoster.sqljep.function;
 
-public abstract class AbstractDatePortion<M extends Comparable<?>> extends AbstractDateTimePortion<M> {
+import org.medfoster.sqljep.ParserUtils;
 
+public abstract class AbstractDatePortion<M extends Comparable<?>> extends AbstractDateTimePortion<M> {
 
     public AbstractDatePortion(int calendarField) {
         super(calendarField);
+    }
+
+    protected Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, org.medfoster.sqljep.ParseException {
+
+        OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));
+        param = format.parseObject((String)param);
+
+        return param;
     }
 
     @Override
@@ -21,7 +30,7 @@ public abstract class AbstractDatePortion<M extends Comparable<?>> extends Abstr
         if (object instanceof java.sql.Time || object instanceof java.sql.Timestamp) {
             return false;
         }
-        
+
         if (object instanceof java.util.Date) {
             return true;
         }

@@ -25,7 +25,8 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     private static final String COMPARE_EXCEPTION = "Cannot compare '%s' with '%s'.";
     private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters: %d";
-    private static final String WRONG_PARAMETER_TYPES_EXCEPTION = "Wrong parameter types:  %s(%s, %s)";
+    private static final String WRONG_TYPE_EXCEPTION_1 = "Wrong parameter types:  %s(%s)";
+    private static final String WRONG_TYPE_EXCEPTION_2 = "Wrong parameter types:  %s(%s, %s)";
 
     @Test
     public void testAbs() throws ParseException {
@@ -59,7 +60,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIME('15.10.30') + MICROSECOND(65) = '15:11:35.65'"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Add", "Time", "Microseconds"), message);
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Add", "Time", "Microseconds"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -107,7 +108,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("3.25 * DATE('2018-12-21') = 26"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Multiply", "BigDecimal", "Date"), message);
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Multiply", "BigDecimal", "Date"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -123,7 +124,260 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("26 / DATE('2018-12-21') = 3.25"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Divide", "Long", "Date"), message);
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Divide", "Long", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRound1Parameter() throws ParseException {
+
+        assertEquals(true, parseExpression("Round('26') = 26"));
+        assertEquals(true, parseExpression("Round('26.4') = 26"));
+        assertEquals(true, parseExpression("Round('26.5') = 27"));
+
+        assertEquals(true, parseExpression("Round(26) = 26"));
+        assertEquals(true, parseExpression("Round(26.4) = 26"));
+        assertEquals(true, parseExpression("Round(26.5) = 27"));
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2018-12-21')) = 0"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('09.15.00')) = 0"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Time"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2018-12-21')) = 0"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-09.15.00.123')) = 0"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Timestamp"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRound2Parameters() throws ParseException {
+
+        // assertEquals(true, parseExpression("Round('26', 1) = 26"));
+        // assertEquals(true, parseExpression("Round('26', 0) = 26"));
+        // assertEquals(true, parseExpression("Round('26', -1) = 26"));
+        //
+        // assertEquals(true, parseExpression("Round(26, 1) = 26"));
+        // assertEquals(true, parseExpression("Round(26, 0) = 26"));
+        // assertEquals(true, parseExpression("Round(26, -1) = 26"));
+        //
+        // assertEquals(true, parseExpression("Round(125.432, 1) = 125.4"));
+        // assertEquals(true, parseExpression("Round(124.567, 1) = 124.6"));
+        //
+        // assertEquals(true, parseExpression("Round(125.432, 0) = 125"));
+        // assertEquals(true, parseExpression("Round(124.567, 0) = 125"));
+        //
+        // assertEquals(true, parseExpression("Round(125.432, -1) = 130"));
+        // assertEquals(true, parseExpression("Round(124.567, -1) = 120"));
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('09.15.00'), 0) = 0"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRoundDate() throws ParseException {
+
+        // Year: Rounds up on July 1 to January 1st of the next year
+        assertEquals(true, parseExpression("Round(Date('2018-07-01'), 'YYYY') = '2019-01-01'"));
+        assertEquals(true, parseExpression("Round(Date('2018-06-30'), 'YYYY') = '2018-01-01'"));
+
+        // Month: Rounds up on the 16th day of the month
+        assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'MM') = '2016-03-01'"));
+        assertEquals(true, parseExpression("Round(Date('2016-02-16'), 'MM') = '2016-03-01'"));
+        assertEquals(true, parseExpression("Round(Date('2016-02-15'), 'MM') = '2016-02-01'"));
+
+        // Day: Rounds up on the 12th hour of the day
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'DD') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "DD"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        /*
+         * Hour, minute, second and microsecond are not allowed for dates.
+         */
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'HH12') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "HH12"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'HH24') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "HH24"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'MI') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "MI"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'SS') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "SS"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Date('2016-02-29'), 'NNN') = '2016-03-01'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "NNN"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRoundTime() throws ParseException {
+
+        // Hour: Rounds up at 30 minutes
+        assertEquals(true, parseExpression("Round(Time('23:30:00'), 'HH24') = '00:00:00'"));
+        assertEquals(true, parseExpression("Round(Time('23:29:00'), 'HH24') = '23:00:00'"));
+
+        // Minute: Rounds up at 30 seconds
+        assertEquals(true, parseExpression("Round(Time('23:59:30'), 'MI') = '00:00:00'"));
+        assertEquals(true, parseExpression("Round(Time('23:59:29'), 'MI') = '23:59:00'"));
+
+        /*
+         * year, month, day, second and microsecond are not allowed for times.
+         */
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('23:59:30'), 'YYYY') = '00:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "YYYY"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('23:59:30'), 'MM') = '00:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "MM"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('23:59:30'), 'DD') = '00:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "DD"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('23:59:30'), 'SS') = '00:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "SS"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Round(Time('23:59:30'), 'NNN') = '00:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "NNN"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRoundTimestamp() throws ParseException {
+
+        // Year: Rounds up on July 1 to January 1st of the next year
+        assertEquals(true, parseExpression("Round(Timestamp('2018-07-01-23.30.00.123'), 'YYYY') = '2019-01-01-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2018-06-30-23.29.00.123'), 'YYYY') = '2018-01-01-00.00.00.000'"));
+
+        // Month: Rounds up on the 16th day of the month
+        assertEquals(true, parseExpression("Round(Timestamp('2016-02-29-23.30.00.123'), 'MM') = '2016-03-01-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2016-02-16-23.30.00.123'), 'MM') = '2016-03-01-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2016-02-15-23.30.00.123'), 'MM') = '2016-02-01-00.00.00.000'"));
+
+        // Day: Rounds up on the 12th hour of the day
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-12.00.00.000'), 'DD') = '2018-12-22-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-11.59.59.999'), 'DD') = '2018-12-21-00.00.00.000'"));
+
+        // Hour: Rounds up at 30 minutes
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.30.00.123'), 'HH24') = '2018-12-22-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.29.00.123'), 'HH24') = '2018-12-21-23.00.00.000'"));
+
+        // Minute: Rounds up at 30 seconds
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.59.30.123'), 'MI') = '2018-12-22-00.00.00.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.59.29.123'), 'MI') = '2018-12-21-23.59.00.000'"));
+
+        // Second: Rounds up at 500000 microseconds
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.59.30.500'), 'SS') = '2018-12-21-23.59.31.000'"));
+        assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.59.29.499'), 'SS') = '2018-12-21-23.59.29.000'"));
+
+        /*
+         * microsecond is not allowed for times.
+         */
+
+        try {
+            assertEquals(true, parseExpression("Round(Timestamp('2018-12-21-23.59.30.500'), 'NNN') = '2018-12-21-23.59.31.000'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Timestamp", "NNN"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }

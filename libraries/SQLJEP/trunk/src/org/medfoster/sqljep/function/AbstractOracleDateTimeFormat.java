@@ -73,18 +73,6 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         }
     }
 
-    private void eatNumbers(String source, ParsePosition pos, int digits) throws ParseException {
-
-        final int len = source.length();
-        for (int i = pos.getIndex(); i < len; i++) {
-            if (Character.isDigit(source.charAt(i))) {
-                pos.setIndex(pos.getIndex() + 1);
-            } else {
-                throw new java.text.ParseException("", i);
-            }
-        }
-    }
-
     protected long parseInMillis(String source, ParsePosition pos) {
 
         calendar.clear();
@@ -123,16 +111,6 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         return calendar.getTimeInMillis();
     }
 
-    @SuppressWarnings("rawtypes")
-    protected java.util.Date stripMilliSeconds(Comparable time) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return new java.sql.Timestamp(calendar.getTimeInMillis());
-    }
-
     public boolean hasMilliSeconds() {
         return calendar.isSet(MILLISECOND);
     }
@@ -163,7 +141,29 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         return (format != null) ? format.equals(other.format) : false;
     }
 
-    protected static void compilePattern(ArrayList<Object> format, ArrayList<DATE> symbols, String pattern) throws java.text.ParseException {
+    @SuppressWarnings("rawtypes")
+    protected java.util.Date stripMilliSeconds(Comparable time) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return new java.sql.Timestamp(calendar.getTimeInMillis());
+    }
+
+    private void eatNumbers(String source, ParsePosition pos, int digits) throws ParseException {
+
+        final int len = source.length();
+        for (int i = pos.getIndex(); i < len; i++) {
+            if (Character.isDigit(source.charAt(i))) {
+                pos.setIndex(pos.getIndex() + 1);
+            } else {
+                throw new java.text.ParseException("", i);
+            }
+        }
+    }
+
+    private void compilePattern(ArrayList<Object> format, ArrayList<DATE> symbols, String pattern) throws java.text.ParseException {
         if (pattern == null) {
             throw new java.text.ParseException(PATTERN_EXCEPTION, 0);
         }
@@ -200,9 +200,12 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
     }
 
     public StringBuffer format(Object obj, StringBuffer str, FieldPosition fieldPosition) {
+
         if (obj instanceof java.util.Date) {
+
             java.util.Date date = (java.util.Date)obj;
             calendar.setTime(date);
+
             if (format != null) {
                 for (Object f : format) {
                     if (f instanceof String) {
@@ -218,7 +221,29 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
                 }
             }
         }
+
         return str;
+    }
+
+    public static final DATE findFormat(String format) {
+
+        if (format == null) {
+            throw new IllegalArgumentException("Parameter 'format' must not be null");
+        }
+
+        for (DATE symbol : dateSymbols) {
+            if (symbol.toString().equalsIgnoreCase(format)) {
+                return symbol;
+            }
+        }
+
+        for (DATE symbol : timeSymbols) {
+            if (symbol.toString().equalsIgnoreCase(format)) {
+                return symbol;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -496,7 +521,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * IBM date format: milliseconds
      */
     public static final class NNN extends TIME {
-        
+
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int mSecs = cal.get(MILLISECOND);
             str.append(mSecs);
@@ -517,18 +542,18 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         timeSymbols.add(new NNN());
     }
 
-    private static abstract class DATE {
+    public static abstract class DATE {
 
         abstract public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException;
 
         abstract public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException;
 
         public boolean equals(Comparable<?> obj) {
-            
+
             if (obj == null) {
                 return false;
             }
-            
+
             return (obj.getClass() == this.getClass());
         }
 
@@ -570,16 +595,16 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         }
     };
 
-    private static abstract class TIME extends DATE {
+    public static abstract class TIME extends DATE {
 
         protected void skipSpaces(String source, ParsePosition pos) {
-            
+
             int i = pos.getIndex();
-            
+
             while (i < source.length() && " ".equals(source.substring(i, i + 1))) {
                 i++;
             }
-            
+
             pos.setIndex(i);
         }
     };

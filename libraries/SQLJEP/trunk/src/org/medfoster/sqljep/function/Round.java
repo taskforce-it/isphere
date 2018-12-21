@@ -12,29 +12,38 @@
 
 package org.medfoster.sqljep.function;
 
-import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
-import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MILLISECOND;
 import static java.util.Calendar.MINUTE;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.SECOND;
 import static java.util.Calendar.YEAR;
-import static org.medfoster.sqljep.function.Trunc.DATE_EXCEPTION;
-import static org.medfoster.sqljep.function.Trunc.FORMAT_EXCEPTION;
-import static org.medfoster.sqljep.function.Trunc.TIME_EXCEPTION;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Calendar;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.InternalErrorException;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.DATE;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.DD;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.HH12;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.HH24;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.MI;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.MM;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.NNN;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.SS;
+import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.YYYY;
 
+@JUnitTest
 public class Round extends PostfixCommand {
-    private static final String PARAM_EXCEPTION = "Scale in round shoud be integer";
 
     final public int getNumberOfParameters() {
         return -1;
@@ -53,56 +62,24 @@ public class Round extends PostfixCommand {
         } else {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
-            throw new ParseException(PARAMS_NUMBER + " for trunc");
+            throw new WrongNumberOfParametersException(num);
         }
     }
 
-    public static Comparable<?> round(Comparable<?> param, Calendar cal) throws ParseException {
+    public Comparable<?> round(Comparable<?> param, Calendar cal) throws ParseException {
 
         if (param == null) {
             return null;
         }
 
-        if (param instanceof String) {
-            param = parse((String)param);
+        if (param instanceof String || param instanceof BigDecimal || param instanceof Double || param instanceof Float || param instanceof Number) {
+            return round(param, 0, cal);
         }
 
-        if (param instanceof BigDecimal) { // BigInteger is not supported
-            BigDecimal b = ((BigDecimal)param).setScale(0, BigDecimal.ROUND_HALF_UP);
-            try {
-                return b.longValueExact();
-            } catch (ArithmeticException e) {
-            }
-            return b;
-        }
-
-        if (param instanceof Double || param instanceof Float) {
-            return Math.round(((Number)param).doubleValue());
-        }
-
-        if (param instanceof Number) { // Long, Integer, Short, Byte
-            return param;
-        }
-
-        if (param instanceof Timestamp) {
-            Timestamp ts = (Timestamp)param;
-            cal.setTimeInMillis(ts.getTime());
-            int year = cal.get(YEAR);
-            int month = cal.get(MONTH);
-            int date = cal.get(DATE);
-            int hour = cal.get(HOUR_OF_DAY);
-            cal.clear();
-            if (hour > 11) {
-                date++;
-            }
-            cal.set(year, month, date);
-            return new Timestamp(cal.getTimeInMillis());
-        }
-
-        throw new ParseException(WRONG_TYPE + " round(" + param.getClass() + ")");
+        throw new WrongTypeException(getFunctionName(), param);
     }
 
-    public static Comparable<?> round(Comparable<?> param1, Comparable<?> param2, Calendar cal) throws ParseException {
+    public Comparable<?> round(Comparable<?> param1, Comparable<?> param2, Calendar cal) throws ParseException {
 
         if (param1 == null || param2 == null) {
             return null;
@@ -112,237 +89,250 @@ public class Round extends PostfixCommand {
             param1 = parse((String)param1);
         }
 
-        if (param1 instanceof Number) {
+        // if (param1 instanceof java.sql.Time) {
+        // throw new WrongTypeException(getFunctionName(), param1, param2);
+        // }
 
-            int scale;
+        try {
 
-            try {
-                scale = getInteger(param2);
-            } catch (ParseException e) {
-                throw new ParseException(PARAM_EXCEPTION);
-            }
+            if (param1 instanceof Number) {
 
-            if (scale < 0) {
-                return ZERO;
-            }
+                int scale;
 
-            if (param1 instanceof BigDecimal) { // BigInteger is not supported
-                return ((BigDecimal)param1).setScale(scale, BigDecimal.ROUND_HALF_UP);
-            }
-
-            if (param1 instanceof Double || param1 instanceof Float) {
-                double d = ((Number)param1).doubleValue();
-                long mult = 1;
-                for (int i = 0; i < scale; i++) {
-                    mult *= 10;
+                try {
+                    scale = getInteger(param2);
+                } catch (ParseException e) {
+                    // The expected type is: Integer
+                    throw new WrongTypeException(getFunctionName(), param1, param2);
                 }
-                d *= mult;
-                return (Math.round(d)) / mult;
-            }
 
-            if (param1 instanceof Number) { // Long, Integer, Short, Byte
-                return param1;
-            }
+                if (param1 instanceof BigDecimal) {
+                    return ((BigDecimal)param1).setScale(scale, BigDecimal.ROUND_HALF_UP);
+                }
 
-            throw new ParseException(WRONG_TYPE + " round(" + param1.getClass() + "," + param2.getClass() + ")");
-
-        } else if (param1 instanceof java.util.Date) {
-
-            if (param2 instanceof String) {
-                String s = (String)param2;
-                java.util.Date d = (java.util.Date)param1;
-                cal.setTimeInMillis(d.getTime());
-                if (s.equalsIgnoreCase("CC") || s.equalsIgnoreCase("SCC")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
+                if (param1 instanceof Double || param1 instanceof Float) {
+                    double d = ((Number)param1).doubleValue();
+                    long mult = 1;
+                    for (int i = 0; i < scale; i++) {
+                        mult *= 10;
                     }
+                    d *= mult;
+                    return (Math.round(d)) / mult;
+                }
 
-                    int year = cal.get(YEAR);
-                    int year1 = (year / 100) * 100;
+                if (param1 instanceof Number) { // Long, Integer, Short, Byte
+                    return param1;
+                }
 
-                    if (year - year1 > 50) {
-                        year1 += 100;
-                    }
+                throw new WrongTypeException(getFunctionName(), param1, param2);
 
-                    cal.clear();
-                    cal.set(year1 + 1, 0, 1);
+            } else if (param1 instanceof java.util.Date) {
 
-                    return new Timestamp(cal.getTimeInMillis());
+                // param1 = a date or timestamp
+                // param2 = a calendar field
+                if (param2 instanceof String) {
 
-                } else if (s.equalsIgnoreCase("SYYYY") || s.equalsIgnoreCase("YYYY") || s.equalsIgnoreCase("YYY") || s.equalsIgnoreCase("Y")
-                    || s.equalsIgnoreCase("YEAR") || s.equalsIgnoreCase("SYEAR")) {
+                    DATE dateFormat = AbstractOracleDateTimeFormat.findFormat((String)param2);
 
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
+                    java.util.Date d = (java.util.Date)param1;
+                    cal.setTimeInMillis(d.getTime());
 
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
+                    if (dateFormat instanceof YYYY) {
 
-                    if (month > 6) {
-                        year++;
-                    }
-
-                    cal.clear();
-                    cal.set(year, 0, 1);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("IYYY") || s.equalsIgnoreCase("IY") || s.equalsIgnoreCase("I")) {
-                    throw new ParseException(NOT_IMPLIMENTED_EXCEPTION);
-                } else if (s.equalsIgnoreCase("Q")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
-
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
-                    int q = (month / 3) * 3;
-
-                    if (month > q + 1) {
-                        q++;
-                    } else if (month > q) {
-                        int day = cal.get(DAY_OF_MONTH);
-                        if (day > 15) {
-                            q++;
+                        if (!isDateOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
                         }
+
+                        int year = cal.get(YEAR);
+                        int month = cal.get(MONTH);
+
+                        /*
+                         * Year (Rounds up on July 1 to January 1st of the next
+                         * year)
+                         */
+                        if (month >= 6) { // 6 = July
+                            year++;
+                        }
+
+                        cal.clear();
+                        cal.set(year, 0, 1);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if (dateFormat instanceof MM) {
+
+                        if (!isDateOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        int year = cal.get(YEAR);
+                        int month = cal.get(MONTH);
+                        int day = cal.get(DAY_OF_MONTH);
+
+                        if (day >= 16) {
+                            month++;
+                        }
+
+                        cal.clear();
+                        cal.set(year, month, 1);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if (dateFormat instanceof DD) {
+
+                        if (!isDateOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        if (!isTimeOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        int hour = cal.get(HOUR_OF_DAY);
+
+                        if (hour >= 12) {
+                            cal.add(DAY_OF_MONTH, 1);
+                        }
+
+                        cal.set(HOUR_OF_DAY, 0);
+                        cal.set(MINUTE, 0);
+                        cal.set(SECOND, 0);
+                        cal.set(MILLISECOND, 0);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if ((dateFormat instanceof HH12) || (dateFormat instanceof HH24)) {
+
+                        if (!isTimeOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        int minute = cal.get(MINUTE);
+
+                        if (minute >= 30) {
+                            cal.add(HOUR_OF_DAY, 1);
+                        }
+
+                        cal.set(MINUTE, 0);
+                        cal.set(SECOND, 0);
+                        cal.set(MILLISECOND, 0);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if (dateFormat instanceof MI) {
+
+                        if (!isTimeOrTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        int second = cal.get(SECOND);
+
+                        if (second >= 30) {
+                            cal.add(MINUTE, 1);
+                        }
+
+                        cal.set(SECOND, 0);
+                        cal.set(MILLISECOND, 0);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if (dateFormat instanceof SS) {
+
+                        if (!isTimestamp(param1)) {
+                            throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+                        }
+
+                        int mSecs = cal.get(MILLISECOND);
+
+                        if (mSecs >= 500) {
+                            cal.add(SECOND, 1);
+                        }
+
+                        cal.set(MILLISECOND, 0);
+
+                        Comparable<?> date = createObjectInstance(param1, cal);
+
+                        return date;
+
+                    } else if (dateFormat instanceof NNN) {
+
+                        throw new WrongTypeException(getFunctionName(), param1, dateFormat);
+
                     }
-
-                    cal.clear();
-                    cal.set(year, q, 1);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("MONTH") || s.equalsIgnoreCase("MON") || s.equalsIgnoreCase("MM") || s.equalsIgnoreCase("RM")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
-
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
-                    int day = cal.get(DAY_OF_MONTH);
-
-                    if (day > 15) {
-                        month++;
-                    }
-
-                    cal.clear();
-                    cal.set(year, month, 1);
-
-                    return new Timestamp(cal.getTimeInMillis());
-                } else if (s.equalsIgnoreCase("WW")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
-
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
-                    int day = cal.get(DAY_OF_MONTH);
-                    int dw = cal.get(DAY_OF_WEEK);
-                    cal.clear();
-                    cal.set(year, 0, 1);
-                    int dayOfWeek = cal.get(DAY_OF_WEEK);
-                    int delta = (dw < dayOfWeek ? 7 - (dayOfWeek - dw) : dw - dayOfWeek);
-
-                    if (delta > 2) {
-                        delta = delta - 7;
-                    }
-
-                    cal.set(year, month, day - delta);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("W")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
-
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
-                    int day = cal.get(DAY_OF_MONTH);
-                    int dw = cal.get(DAY_OF_WEEK);
-                    cal.clear();
-                    cal.set(year, month, 1);
-                    int dayOfWeek = cal.get(DAY_OF_WEEK);
-                    int delta = (dw < dayOfWeek ? 7 - (dayOfWeek - dw) : dw - dayOfWeek);
-
-                    if (delta > 2) {
-                        delta = delta - 7;
-                    }
-
-                    cal.set(year, month, day - delta);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("IW")) {
-                    throw new ParseException(NOT_IMPLIMENTED_EXCEPTION);
-                } else if (s.equalsIgnoreCase("DAY") || s.equalsIgnoreCase("DY") || s.equalsIgnoreCase("D")) {
-
-                    if (d instanceof java.sql.Time) {
-                        throw new ParseException(TIME_EXCEPTION);
-                    }
-
-                    int year = cal.get(YEAR);
-                    int month = cal.get(MONTH);
-                    int day = cal.get(DAY_OF_MONTH);
-                    int dw = cal.get(DAY_OF_WEEK);
-                    int delta = dw - cal.getFirstDayOfWeek();
-
-                    if (delta > 2) {
-                        delta = delta - 7;
-                    }
-
-                    cal.clear();
-                    cal.set(year, month, day - delta);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("HH") || s.equalsIgnoreCase("HH12") || s.equalsIgnoreCase("HH24")) {
-
-                    if (d instanceof java.sql.Date) {
-                        throw new ParseException(DATE_EXCEPTION);
-                    }
-
-                    int minute = cal.get(MINUTE);
-
-                    if (minute >= 30) {
-                        cal.add(HOUR_OF_DAY, 1);
-                    }
-
-                    cal.set(MINUTE, 0);
-                    cal.set(SECOND, 0);
-                    cal.set(MILLISECOND, 0);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else if (s.equalsIgnoreCase("MI")) {
-
-                    if (d instanceof java.sql.Date) {
-                        throw new ParseException(DATE_EXCEPTION);
-                    }
-
-                    int second = cal.get(SECOND);
-
-                    if (second >= 30) {
-                        cal.add(MINUTE, 1);
-                    }
-
-                    cal.set(SECOND, 0);
-                    cal.set(MILLISECOND, 0);
-
-                    return new Timestamp(cal.getTimeInMillis());
-
-                } else {
-                    throw new ParseException(FORMAT_EXCEPTION);
                 }
             }
+
+        } catch (ParseException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalErrorException(getFunctionName(), e);
         }
 
-        throw new ParseException(WRONG_TYPE + " trunc(" + param1.getClass() + "," + param2.getClass() + ")");
+        throw new WrongTypeException(getFunctionName(), param1, param2);
+    }
+
+    private boolean isTimeOrTimestamp(Comparable<?> param1) {
+
+        if (param1 instanceof java.sql.Time) {
+            return true;
+        }
+
+        if (param1 instanceof java.sql.Timestamp) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isDateOrTimestamp(Comparable<?> param1) {
+
+        if (param1 instanceof java.sql.Time) {
+            return false;
+        }
+
+        if (isTimestamp(param1)) {
+            return true;
+        }
+
+        if (param1 instanceof java.util.Date) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isTimestamp(Comparable<?> param1) {
+
+        if (param1 instanceof java.sql.Timestamp) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private Comparable<?> createObjectInstance(Comparable<?> param1, Calendar cal) throws ClassNotFoundException, NoSuchMethodException,
+        InstantiationException, IllegalAccessException, InvocationTargetException {
+
+        if (param1 instanceof java.sql.Time) {
+            cal.set(DAY_OF_MONTH, 1);
+            cal.set(MONTH, 0);
+            cal.set(YEAR, 1970);
+        }
+
+        Class<?> clazz = Class.forName(param1.getClass().getName());
+        Constructor<?> objectConstructor = clazz.getConstructor(long.class);
+        Comparable<?> object = (Comparable<?>)objectConstructor.newInstance(new Object[] { cal.getTimeInMillis() });
+
+        return object;
     }
 }
