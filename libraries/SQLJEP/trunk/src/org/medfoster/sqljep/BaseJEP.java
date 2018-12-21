@@ -24,9 +24,6 @@ import org.medfoster.sqljep.function.Concat;
 import org.medfoster.sqljep.function.Date;
 import org.medfoster.sqljep.function.Datediff;
 import org.medfoster.sqljep.function.Day;
-import org.medfoster.sqljep.function.DayName;
-import org.medfoster.sqljep.function.DayOfWeek;
-import org.medfoster.sqljep.function.DayOfYear;
 import org.medfoster.sqljep.function.Decode;
 import org.medfoster.sqljep.function.Floor;
 import org.medfoster.sqljep.function.Hour;
@@ -137,7 +134,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("index", new Instr()); // maxdb
         funTab.put("num", new ToNumber()); // maxdb
         funTab.put("chr", new ToChar()); // maxdb
-        funTab.put("dayname", new DayName()); // maxdb
         funTab.put("year", new Year()); // maxdb
         funTab.put("month", new Month()); // maxdb
         funTab.put("day", new Day()); // maxdb
@@ -147,10 +143,7 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("second", new Second()); // maxdb
         funTab.put("microsecond", new Microsecond()); // maxdb
         funTab.put("datediff", new Datediff()); // maxdb
-        funTab.put("dayofweek", new DayOfWeek()); // maxdb
         funTab.put("weekofyear", new WeekOfYear()); // maxdb
-        funTab.put("dayofyear", new DayOfYear()); // maxdb
-        funTab.put("dayname", new DayName()); // maxdb
         funTab.put("monthname", new MonthName()); // maxdb
     }
 

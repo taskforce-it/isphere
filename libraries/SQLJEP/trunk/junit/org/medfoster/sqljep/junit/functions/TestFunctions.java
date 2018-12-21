@@ -45,7 +45,24 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("DATE('2016-02-29') + YEAR(1) = '2017-02-28'"));
 
         // Test time
-        assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = '20:10:30'"));
+        assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(15) = '06:10:30'"));
+        assertEquals(true, parseExpression("TIME('15.10.30') + MINUTE(65) = '16:15:30'"));
+        assertEquals(true, parseExpression("TIME('15.10.30') + SECOND(65) = '15:11:35'"));
+
+        // Test time
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + HOUR(5) = '2018-12-21-20.10.30.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + MINUTE(65) = '2018-12-21-16.15.30.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + SECOND(65) = '2018-12-21-15.11.35.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + MICROSECOND(965) = '2018-12-21-15.10.31.088'"));
+
+        try {
+            assertEquals(true, parseExpression("TIME('15.10.30') + MICROSECOND(65) = '15:11:35.65'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Add", "Time", "Microseconds"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
 
         try {
             assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));

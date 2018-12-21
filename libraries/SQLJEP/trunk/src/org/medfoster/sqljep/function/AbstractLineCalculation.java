@@ -8,6 +8,10 @@
 
 package org.medfoster.sqljep.function;
 
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -98,7 +102,8 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             } else if (param1 instanceof java.sql.Time) {
 
                 if (param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
-                    return new java.sql.Time(performOperation(param1, param2).getTime());
+                    java.util.Date date = performOperation(param1, param2);
+                    return new java.sql.Time(clearDatePortion(date).getTime());
                 }
 
             }
@@ -119,7 +124,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
 
             }
 
-            throw new ParseException(INTERNAL_ERROR);
+            throw new WrongTypeException(getFunctionName(), param1, param2);
         } else {
             throw new WrongTypeException(getFunctionName(), param1, param2);
         }
@@ -130,6 +135,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected java.util.Date performOperation(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
         java.util.Date d = (java.util.Date)param1;
+        
         if (param2 instanceof Days) {
             Days n = (Days)param2;
             return addDays(d, getOperand(n));
@@ -142,6 +148,15 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
         } else if (param2 instanceof Hours) {
             Hours n = (Hours)param2;
             return addHours(d, getOperand(n));
+        } else if (param2 instanceof Minutes) {
+            Minutes n = (Minutes)param2;
+            return addMinutes(d, getOperand(n));
+        } else if (param2 instanceof Seconds) {
+            Seconds n = (Seconds)param2;
+            return addSeconds(d, getOperand(n));
+        } else if (param2 instanceof Microseconds) {
+            Microseconds n = (Microseconds)param2;
+            return addMicroseconds(d, getOperand(n));
         } else {
             throw new WrongTypeException(getFunctionName(), param1, param2);
         }
@@ -180,6 +195,43 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
         calendar.setTime((Date)time);
         calendar.add(Calendar.HOUR_OF_DAY, hours);
 
+        return calendar.getTime();
+    }
+
+    protected Date addMinutes(Date time, int minutes) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.MINUTE, minutes);
+
+        return calendar.getTime();
+    }
+
+    protected Date addSeconds(Date time, int seconds) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.SECOND, seconds);
+
+        return calendar.getTime();
+    }
+
+    protected Date addMicroseconds(Date time, int microseconds) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.MILLISECOND, microseconds);
+
+        return calendar.getTime();
+    }
+
+    private java.util.Date clearDatePortion(Date date) {
+
+        calendar.clear();
+        calendar.setTime(date);
+        calendar.set(DAY_OF_MONTH, 1);
+        calendar.set(MONTH, 0);
+        calendar.set(YEAR, 1970);
         return calendar.getTime();
     }
 
