@@ -18,6 +18,7 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 @JUnitTest
 public class Date extends PostfixCommand {
@@ -64,7 +65,7 @@ public class Date extends PostfixCommand {
                 throw new ParseException(e.getMessage());
             }
         } else {
-            throw createWrongTypeException(expression, pattern);
+            throw new WrongTypeException(getFunctionName(), expression, pattern);
         }
     }
 }

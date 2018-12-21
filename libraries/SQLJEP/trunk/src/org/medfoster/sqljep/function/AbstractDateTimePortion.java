@@ -15,6 +15,7 @@ import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends PostfixCommand {
 
@@ -37,7 +38,7 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
     protected abstract M createInstance(int value);
 
     protected abstract boolean isSupportedType(Object object);
-    
+
     public M day(Comparable<?> param, Calendar cal) throws ParseException {
 
         try {
@@ -76,6 +77,6 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
             throw new ParseException(e.getMessage());
         }
 
-        throw createWrongTypeException(param);
+        throw new WrongTypeException(getFunctionName(), param);
     }
 }

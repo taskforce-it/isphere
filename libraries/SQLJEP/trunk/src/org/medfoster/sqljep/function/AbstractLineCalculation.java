@@ -9,6 +9,8 @@
 package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
@@ -20,15 +22,18 @@ import org.medfoster.sqljep.datatypes.Minutes;
 import org.medfoster.sqljep.datatypes.Months;
 import org.medfoster.sqljep.datatypes.Seconds;
 import org.medfoster.sqljep.datatypes.Years;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public abstract class AbstractLineCalculation extends PostfixCommand {
-   
-    protected Integer sign = null; 
-    
+
+    private Calendar calendar = Calendar.getInstance();
+
+    protected Integer sign = null;
+
     public final int getNumberOfParameters() {
         return 2;
     }
-    
+
     /**
      * Calculates the result of applying the "+" operator to the arguments from
      * the stack and pushes it back on the stack.
@@ -41,19 +46,19 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     }
 
     public final Comparable<?> add(Comparable<?> param1, Comparable<?> param2) throws ParseException {
-        
+
         if (param1 == null || param2 == null) {
             return null;
         }
-        
+
         if (param1 instanceof String) {
             param1 = parse((String)param1);
         }
-        
+
         if (param2 instanceof String) {
             param2 = parse((String)param2);
         }
-        
+
         if (param1 instanceof Number && param2 instanceof Number) {
             // BigInteger type is not supported
             Number n1 = (Number)param1;
@@ -65,7 +70,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             }
             if (n1 instanceof Double || n2 instanceof Double || n1 instanceof Float || n2 instanceof Float) {
                 return n1.doubleValue() + n2.doubleValue();
-            } else {    // Long, Integer, Short, Byte 
+            } else { // Long, Integer, Short, Byte
                 long l1 = n1.longValue();
                 long l2 = n2.longValue();
                 BigDecimal b1 = new BigDecimal(l1);
@@ -74,18 +79,19 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             }
         } else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
             if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
-                throw createWrongTypeException("+", param1, param2);
+                throw new WrongTypeException(getFunctionName(), param1, param2);
             }
-            
+
             if (param2 instanceof java.util.Date) {
                 Comparable<?> param2Old = param2;
                 param2 = param1;
                 param1 = param2Old;
             }
-            
+
             if (param1 instanceof java.sql.Timestamp) {
-                
-                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds || param2 instanceof Microseconds) {
+
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours
+                    || param2 instanceof Minutes || param2 instanceof Seconds || param2 instanceof Microseconds) {
                     return new java.sql.Timestamp(performOperation(param1, param2).getTime());
                 }
 
@@ -94,32 +100,35 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
                 if (param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
                     return new java.sql.Time(performOperation(param1, param2).getTime());
                 }
-                
-            } if (param1 instanceof java.sql.Date) {
-                
-                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
+
+            }
+            if (param1 instanceof java.sql.Date) {
+
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours
+                    || param2 instanceof Minutes || param2 instanceof Seconds) {
                     return new java.sql.Date(performOperation(param1, param2).getTime());
                 }
-                
-            } if (param1 instanceof java.util.Date) {
-                
-                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours || param2 instanceof Minutes || param2 instanceof Seconds) {
+
+            }
+            if (param1 instanceof java.util.Date) {
+
+                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours
+                    || param2 instanceof Minutes || param2 instanceof Seconds) {
                     return new java.util.Date(performOperation(param1, param2).getTime());
                 }
-                
+
             }
-            
+
             throw new ParseException(INTERNAL_ERROR);
         } else {
-            throw createWrongTypeException("+", param1, param2);
+            throw new WrongTypeException(getFunctionName(), param1, param2);
         }
     }
 
     protected abstract BigDecimal performOperation(BigDecimal param1, BigDecimal param2) throws ParseException;
 
-
     protected java.util.Date performOperation(Comparable<?> param1, Comparable<?> param2) throws ParseException {
-        
+
         java.util.Date d = (java.util.Date)param1;
         if (param2 instanceof Days) {
             Days n = (Days)param2;
@@ -134,10 +143,46 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
             Hours n = (Hours)param2;
             return addHours(d, getOperand(n));
         } else {
-            throw createWrongTypeException("+", param1, param2);
+            throw new WrongTypeException(getFunctionName(), param1, param2);
         }
     }
-    
+
+    protected Date addDays(Date time, int days) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.DAY_OF_MONTH, days);
+
+        return calendar.getTime();
+    }
+
+    protected Date addMonths(Date time, int months) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.MONTH, months);
+
+        return calendar.getTime();
+    }
+
+    protected Date addYears(Date time, int years) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.YEAR, years);
+
+        return calendar.getTime();
+    }
+
+    protected Date addHours(Date time, int hours) {
+
+        calendar.clear();
+        calendar.setTime((Date)time);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
+
+        return calendar.getTime();
+    }
+
     private int getOperand(Number number) {
         return number.intValue() * sign;
     }

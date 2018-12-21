@@ -13,14 +13,11 @@
 package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Stack;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 /**
  * Function classes extend this class. It is an implementation of the
@@ -33,7 +30,6 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
  */
 public abstract class PostfixCommand implements PostfixCommandI {
 
-    private static Calendar calendar = Calendar.getInstance();
     protected static final Integer ZERO = new Integer(0);
 
     public static final String PARAMS_NUMBER = "Wrong number of parameters";
@@ -126,47 +122,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
         throw new ParseException("Not Double: " + (param != null ? param.getClass() : "null"));
     }
 
-    protected ParseException createWrongTypeException(Comparable<?>... comparables) {
-        return new WrongTypeException(getFunctionName(), comparables);
-    }
-
     protected String getFunctionName() {
         return getClass().getSimpleName();
-    }
-
-    protected static Date addDays(Date time, int days) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.DAY_OF_MONTH, days);
-
-        return calendar.getTime();
-    }
-
-    protected static Date addMonths(Date time, int months) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.MONTH, months);
-
-        return calendar.getTime();
-    }
-
-    protected static Date addYears(Date time, int years) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.YEAR, years);
-
-        return calendar.getTime();
-    }
-
-    protected static Date addHours(Date time, int hours) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.add(Calendar.HOUR_OF_DAY, hours);
-
-        return calendar.getTime();
     }
 }

@@ -18,6 +18,7 @@ import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 @JUnitTest
 public class Ceil extends PostfixCommand {
@@ -60,6 +61,6 @@ public class Ceil extends PostfixCommand {
             return param;
         }
 
-        throw createWrongTypeException(param);
+        throw new WrongTypeException(getFunctionName(), param);
     }
 }
