@@ -67,6 +67,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
     }
 
     public static Comparable<?> parse(String param) throws ParseException {
+
         try {
             return Integer.valueOf((String)param);
         } catch (NumberFormatException e) {
@@ -83,13 +84,17 @@ public abstract class PostfixCommand implements PostfixCommandI {
     }
 
     public static BigDecimal getBigDecimal(Number param) {
+
         // BigInteger is not supported
+
         if (param instanceof BigDecimal) {
             return (BigDecimal)param;
         }
+
         if (param instanceof Double || param instanceof Float) {
             return new BigDecimal(param.doubleValue());
         }
+
         return new BigDecimal(param.longValue());
     }
 

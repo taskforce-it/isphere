@@ -18,9 +18,11 @@ import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 @JUnitTest
 public class Sign extends PostfixCommand {
+
     final public int getNumberOfParameters() {
         return 1;
     }
@@ -28,27 +30,35 @@ public class Sign extends PostfixCommand {
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(sign(param)); // push the result on the inStack
+        runtime.stack.push(sign(param));
     }
 
     public Integer sign(Comparable<?> param) throws ParseException {
+
         if (param == null) {
             return null;
         }
+
         if (param instanceof String) {
             param = parse((String)param);
         }
-        if (param instanceof BigDecimal) { // BigInteger is not supported
+
+        // BigInteger is not supported
+
+        if (param instanceof BigDecimal) {
             return ((BigDecimal)param).signum();
         }
+
         if (param instanceof Double || param instanceof Float) {
             double n = ((Number)param).doubleValue();
             return new Integer(n > 0 ? 1 : (n < 0 ? -1 : 0));
         }
+
         if (param instanceof Number) { // Long, Integer, Short, Byte
             long n = ((Number)param).longValue();
             return new Integer(n > 0 ? 1 : (n < 0 ? -1 : 0));
         }
-        throw createWrongTypeException(param);
+
+        throw new WrongTypeException(getFunctionName(), param);
     }
 }

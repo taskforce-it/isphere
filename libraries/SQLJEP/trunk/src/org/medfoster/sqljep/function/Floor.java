@@ -29,7 +29,7 @@ public class Floor extends PostfixCommand {
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(floor(param)); // push the result on the inStack
+        runtime.stack.push(floor(param));
     }
 
     public Comparable<?> floor(Comparable<?> param) throws ParseException {
@@ -42,7 +42,9 @@ public class Floor extends PostfixCommand {
             param = parse((String)param);
         }
 
-        if (param instanceof BigDecimal) { // BigInteger is not supported
+        // BigInteger is not supported
+        
+        if (param instanceof BigDecimal) {
             BigDecimal b = ((BigDecimal)param).setScale(0, BigDecimal.ROUND_FLOOR);
             try {
                 return b.longValueExact();

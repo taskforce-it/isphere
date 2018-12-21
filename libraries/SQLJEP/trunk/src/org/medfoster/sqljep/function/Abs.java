@@ -42,7 +42,7 @@ public class Abs extends PostfixCommand {
             param = parse((String)param); // parse Integer
         }
 
-        if (param instanceof BigDecimal) { // BigInteger is not supported
+        if (param instanceof BigDecimal) {
             return ((BigDecimal)param).abs();
         } else if (param instanceof Double || param instanceof Float) {
             return new Double(Math.abs(((Number)param).doubleValue()));
