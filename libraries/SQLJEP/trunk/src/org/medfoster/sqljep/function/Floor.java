@@ -43,7 +43,7 @@ public class Floor extends PostfixCommand {
         }
 
         // BigInteger is not supported
-        
+
         if (param instanceof BigDecimal) {
             BigDecimal b = ((BigDecimal)param).setScale(0, BigDecimal.ROUND_FLOOR);
             try {
@@ -52,7 +52,9 @@ public class Floor extends PostfixCommand {
             }
             return b;
         } else if (param instanceof Double || param instanceof Float) {
-            // TODO: add unit test for Double/Float
+            // Is that path really execute?
+            // Floating point values are converted to BigDecimal
+            // in org.medfoster.sqljep.Parser.
             return Math.floor(((Number)param).doubleValue());
         } else if (param instanceof Number) { // Long, Integer, Short, Byte
             return param;

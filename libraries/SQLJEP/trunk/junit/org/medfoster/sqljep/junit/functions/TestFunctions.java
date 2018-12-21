@@ -130,6 +130,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("CEIL(10.5) = 11"));
         assertEquals(true, parseExpression("ceil('10.4') = 11"));
         assertEquals(true, parseExpression("ceil(10) = 10"));
+        assertEquals(true, parseExpression("Ceil(1.234e2) = 124"));
 
         assertEquals(false, parseExpression("CEIL(10.5) = 10"));
     }
@@ -140,6 +141,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("FLOOR(10.5) = 10"));
         assertEquals(true, parseExpression("floor('10.4') = 10"));
         assertEquals(true, parseExpression("floor(10) = 10"));
+        assertEquals(true, parseExpression("Floor(1.234e2) = 123"));
 
         assertEquals(false, parseExpression("FLOOR(10.5) = 11"));
     }

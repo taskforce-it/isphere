@@ -52,7 +52,9 @@ public class Ceil extends PostfixCommand {
             }
             return b;
         } else if (param instanceof Double || param instanceof Float) {
-            // TODO: add unit test for Double/Float
+            // Is that path really execute?
+            // Floating point values are converted to BigDecimal
+            // in org.medfoster.sqljep.Parser.
             return Math.ceil(((Number)param).doubleValue());
         } else if (param instanceof Number) { // Long, Integer, Short, Byte
             return param;
