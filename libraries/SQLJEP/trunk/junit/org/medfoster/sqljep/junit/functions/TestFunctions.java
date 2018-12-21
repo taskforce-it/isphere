@@ -287,6 +287,9 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("Round(Time('23:30:00'), 'HH24') = '00:00:00'"));
         assertEquals(true, parseExpression("Round(Time('23:29:00'), 'HH24') = '23:00:00'"));
 
+        assertEquals(true, parseExpression("Round(Time('23:30:00'), 'HH12') = '00:00:00'"));
+        assertEquals(true, parseExpression("Round(Time('23:29:00'), 'HH12') = '23:00:00'"));
+
         // Minute: Rounds up at 30 seconds
         assertEquals(true, parseExpression("Round(Time('23:59:30'), 'MI') = '00:00:00'"));
         assertEquals(true, parseExpression("Round(Time('23:59:29'), 'MI') = '23:59:00'"));
