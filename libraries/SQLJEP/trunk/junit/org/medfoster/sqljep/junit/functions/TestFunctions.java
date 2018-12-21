@@ -489,6 +489,8 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     @Test
     public void testDate() throws ParseException {
+        
+        assertEquals(true, parseExpression("DATE(TIMESTAMP('2018-12-05-15.30.00.123')) = '2018-12-05'"));
 
         assertEquals(true, parseExpression("DATE('2018-12-05') > '2018-12-04'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') = '2018-12-05'"));
@@ -501,6 +503,8 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     @Test
     public void testTime() throws ParseException {
+        
+        assertEquals(true, parseExpression("TIME(TIMESTAMP('2018-12-05-15.30.00.123')) = '15.30.00'"));
 
         assertEquals(true, parseExpression("TIME('12:00:00') > '11:59:59'"));
         assertEquals(true, parseExpression("TIME('12:00:00') = '12:00:00'"));

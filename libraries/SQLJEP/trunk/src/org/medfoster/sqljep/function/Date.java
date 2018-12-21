@@ -12,6 +12,8 @@
 
 package org.medfoster.sqljep.function;
 
+import java.util.Calendar;
+
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
@@ -34,7 +36,7 @@ public class Date extends PostfixCommand {
 
         if (num == 1) {
             Comparable<?> param1 = runtime.stack.pop();
-            runtime.stack.push(to_date(param1, ParserUtils.getDateFormat((String)param1)));
+            runtime.stack.push(to_date(param1, runtime.calendar));
         } else if (num == 2) {
             Comparable<?> param2 = runtime.stack.pop();
             Comparable<?> param1 = runtime.stack.pop();
@@ -43,6 +45,27 @@ public class Date extends PostfixCommand {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
             throw new ParseException("Wrong number of parameters for DATE()");
+        }
+    }
+
+    public java.sql.Date to_date(Comparable<?> expression, Calendar cal) throws ParseException {
+
+        if (expression == null) {
+            return null;
+        }
+
+        if (expression instanceof java.sql.Timestamp) {
+            
+            cal.clear();
+            cal.setTime((java.sql.Timestamp)expression);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            
+            return new java.sql.Date(cal.getTimeInMillis());
+        } else {
+            return to_date(expression, ParserUtils.getDateFormat((String)expression));
         }
     }
 
