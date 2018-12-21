@@ -15,7 +15,10 @@ package org.medfoster.sqljep.function;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 
+@JUnitTest
 public class Rtrim extends PostfixCommand {
 
     final public int getNumberOfParameters() {
@@ -35,11 +38,11 @@ public class Rtrim extends PostfixCommand {
         } else {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
-            throw new ParseException(PARAMS_NUMBER + " for rtrim");
+            throw new WrongNumberOfParametersException(num);
         }
     }
 
-    public static String rtrim(Comparable<?> param1, Comparable<?> param2) throws ParseException {
+    public String rtrim(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
         if (param1 == null || param2 == null) {
             return null;

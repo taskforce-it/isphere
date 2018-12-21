@@ -20,6 +20,7 @@ import java.util.Stack;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 /**
  * Function classes extend this class. It is an implementation of the
@@ -31,8 +32,10 @@ import org.medfoster.sqljep.ParseException;
  * allowed, initialize this member to -1.
  */
 public abstract class PostfixCommand implements PostfixCommandI {
+
     private static Calendar calendar = Calendar.getInstance();
     protected static final Integer ZERO = new Integer(0);
+
     public static final String PARAMS_NUMBER = "Wrong number of parameters";
     public static final String WRONG_TYPE = "Wrong type";
     public static final String INTERNAL_ERROR = "Internal error";
@@ -53,7 +56,7 @@ public abstract class PostfixCommand implements PostfixCommandI {
      */
     abstract public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException;
 
-    protected final void removeParams(Stack<Comparable> s, int num) {
+    protected final void removeParams(Stack<Comparable<?>> s, int num) {
         int i = 1;
         s.pop();
         while (i < num) {
@@ -118,20 +121,12 @@ public abstract class PostfixCommand implements PostfixCommandI {
         throw new ParseException("Not Double: " + (param != null ? param.getClass() : "null"));
     }
 
-    protected ParseException createErrorException(String function, Comparable<?>... comparables) {
-        return createErrorException(function, null, comparables);
-    }
-
-    protected ParseException createErrorException(String function, Throwable e, Comparable<?>... comparables) {
-        return createExceptionInternally(INTERNAL_ERROR, function, comparables, e);
-    }
-
     protected ParseException createWrongTypeException(Comparable<?>... comparables) {
-        return createWrongTypeException(getClass().getSimpleName(), null, comparables);
+        return new WrongTypeException(getFunctionName(), comparables);
     }
 
-    private ParseException createWrongTypeException(String function, Throwable e, Comparable<?>... comparables) {
-        return createExceptionInternally(WRONG_TYPE, function, comparables, e);
+    protected String getFunctionName() {
+        return getClass().getSimpleName();
     }
 
     protected static Date addDays(Date time, int days) {
@@ -168,36 +163,5 @@ public abstract class PostfixCommand implements PostfixCommandI {
         calendar.add(Calendar.HOUR_OF_DAY, hours);
 
         return calendar.getTime();
-    }
-
-    private static ParseException createExceptionInternally(String type, String function, Comparable<?>[] comparables, Throwable e) {
-
-        boolean isFirstComparable = true;
-
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(type);
-        buffer.append("  ");
-        buffer.append(function);
-        buffer.append("(");
-        for (Comparable<?> comparable : comparables) {
-            if (isFirstComparable) {
-                isFirstComparable = false;
-            } else {
-                buffer.append(",");
-            }
-            buffer.append(comparable.getClass());
-        }
-        buffer.append(")");
-
-        if (e != null) {
-            buffer.append(": ");
-            String localizedMessage = e.getLocalizedMessage();
-            if (localizedMessage == null) {
-                localizedMessage = e.getClass().getSimpleName();
-            }
-            buffer.append(localizedMessage);
-        }
-
-        return new ParseException(buffer.toString());
     }
 }

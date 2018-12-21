@@ -12,11 +12,20 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.exceptions.CompareException;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 import org.medfoster.sqljep.junit.AbstractJUnitTestCase;
 
 public class TestFunctions extends AbstractJUnitTestCase {
+
+    private static final String COMPARE_EXCEPTION = "Cannot compare '%s' with '%s'.";
+    private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters: %d";
+    private static final String WRONG_PARAMETER_TYPES_EXCEPTION = "Wrong parameter types:  %s(%s, %s)";
 
     @Test
     public void testAbs() throws ParseException {
@@ -37,6 +46,15 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         // Test time
         assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = '20:10:30'"));
+
+        try {
+            assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));
+        } catch (CompareException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
@@ -48,16 +66,50 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("DATE('2016-03-03') - DAY(5) = '2016-02-27'"));
         assertEquals(true, parseExpression("DATE('2016-03-03') - MONTH(3) = '2015-12-03'"));
         assertEquals(true, parseExpression("DATE('2016-02-29') - YEAR(1) = '2015-02-28'"));
+
+        // Test time
+        assertEquals(true, parseExpression("TIME('15.10.30') - HOUR(5) = '10:10:30'"));
+
+        try {
+            assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));
+        } catch (CompareException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
     public void testMultiply() throws ParseException {
-        // TODO: create unit test
+
+        assertEquals(true, parseExpression("3.25 * 8 = 26"));
+        assertEquals(true, parseExpression("8 * 3.25 = 26"));
+
+        try {
+            assertEquals(true, parseExpression("3.25 * DATE('2018-12-21') = 26"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Multiply", "BigDecimal", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
     public void testDivide() throws ParseException {
-        // TODO: create unit test
+
+        assertEquals(true, parseExpression("26 / 8 = 3.25"));
+        assertEquals(true, parseExpression("26 / 3.25 = 8"));
+
+        try {
+            assertEquals(true, parseExpression("26 / DATE('2018-12-21') = 3.25"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_PARAMETER_TYPES_EXCEPTION, "Divide", "Long", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
@@ -224,5 +276,57 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("SIGN('-10') = -1"));
         assertEquals(true, parseExpression("SIGN('0') = 0"));
         assertEquals(true, parseExpression("SIGN('10') = 1"));
+    }
+
+    @Test
+    public void testTrim() throws ParseException {
+
+        assertEquals(true, parseExpression("Trim('   It works!   ') = 'It works!'"));
+        assertEquals(true, parseExpression("Trim('***It works!###', '*') = 'It works!###'"));
+        assertEquals(true, parseExpression("Trim('***It works!###', '#') = '***It works!'"));
+        assertEquals(true, parseExpression("Trim('123It works!789', '0123456789') = 'It works!'"));
+
+        try {
+            assertEquals(true, parseExpression("Trim('***It works!###', '*', '#') = 'It works!'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testLTrim() throws ParseException {
+
+        assertEquals(true, parseExpression("LTrim('   It works!   ') = 'It works!   '"));
+        assertEquals(true, parseExpression("LTrim('***It works!###', '*') = 'It works!###'"));
+        assertEquals(true, parseExpression("LTrim('123It works!789', '0123456789') = 'It works!789'"));
+
+        try {
+            assertEquals(true, parseExpression("LTrim('***It works!###', '*', '#') = 'It works!'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRTrim() throws ParseException {
+
+        assertEquals(true, parseExpression("RTrim('   It works!   ') = '   It works!'"));
+        assertEquals(true, parseExpression("RTrim('***It works!###', '#') = '***It works!'"));
+        assertEquals(true, parseExpression("RTrim('123It works!789', '0123456789') = '123It works!'"));
+
+        try {
+            assertEquals(true, parseExpression("RTrim('***It works!###', '*', '#') = 'It works!'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 }

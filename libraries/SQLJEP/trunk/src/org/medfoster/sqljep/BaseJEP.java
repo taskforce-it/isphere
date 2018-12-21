@@ -14,9 +14,7 @@ package org.medfoster.sqljep;
 
 import java.io.Reader;
 import java.io.StringReader;
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,7 +161,7 @@ public abstract class BaseJEP implements ParserVisitor {
     protected Node topNode;
 
     /** Evaluator's data */
-    final public JepRuntime runtime = new JepRuntime(this);
+    final public JepRuntime runtime;
 
     protected String expression;
 
@@ -174,21 +172,15 @@ public abstract class BaseJEP implements ParserVisitor {
      * To evaluate use {@link #getValue} method.
      */
     public BaseJEP(String exp) {
+
         if (exp == null) {
             throw new IllegalArgumentException("expression cannot be null");
         }
+
+        runtime = new JepRuntime(this);
         expression = exp;
         topNode = null;
-        runtime.calendar = JepRuntime.threadCalendar.get();
-        if (runtime.calendar == null) {
-            runtime.calendar = Calendar.getInstance();
-            JepRuntime.threadCalendar.set(runtime.calendar);
-        }
-        runtime.dateSymbols = JepRuntime.threadDateFormatSymbols.get();
-        if (runtime.dateSymbols == null) {
-            runtime.dateSymbols = new DateFormatSymbols();
-            JepRuntime.threadDateFormatSymbols.set(runtime.dateSymbols);
-        }
+
     }
 
     /**
@@ -427,7 +419,7 @@ public abstract class BaseJEP implements ParserVisitor {
     }
 
     /**
-     * Returns the expression string representation {@link #BaseJEP(String exp)}
+     * Returns the expression string representation
      */
     public String toString() {
         return expression;

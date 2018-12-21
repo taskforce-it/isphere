@@ -19,6 +19,7 @@ import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
+import org.medfoster.sqljep.exceptions.CompareException;
 
 public final class ComparativeEQ extends PostfixCommand {
 
@@ -128,11 +129,6 @@ public final class ComparativeEQ extends PostfixCommand {
     }
 
     private static ParseException createParseException(Comparable<?> s1, Comparable<?> s2) {
-
-        String text = String.format("Cannot compare '%s' with '%s'.", s1.getClass().getSimpleName(), s2.getClass().getSimpleName());
-
-        ParseException parseException = new ParseException(text);
-
-        return parseException;
+        return new CompareException(s1, s2);
     }
 }

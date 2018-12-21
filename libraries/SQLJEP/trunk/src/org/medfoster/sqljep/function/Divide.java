@@ -17,9 +17,12 @@ import java.math.BigDecimal;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
+@JUnitTest
 public final class Divide extends PostfixCommand {
-    
+
     final public int getNumberOfParameters() {
         return 2;
     }
@@ -28,11 +31,10 @@ public final class Divide extends PostfixCommand {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();
         Comparable<?> param1 = runtime.stack.pop();
-        runtime.stack.push(div(param1, param2)); // push the result on the
-                                                 // inStack
+        runtime.stack.push(div(param1, param2));
     }
 
-    public static Comparable<?> div(Comparable<?> param1, Comparable<?> param2) throws ParseException {
+    public Comparable<?> div(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
         if (param1 == null || param2 == null) {
             return null;
@@ -48,7 +50,6 @@ public final class Divide extends PostfixCommand {
 
         if (param1 instanceof Number && param2 instanceof Number) {
 
-            // BigInteger type is not supported
             if (param1 instanceof Double || param2 instanceof Double || param1 instanceof Float || param2 instanceof Float) {
                 return ((Number)param1).doubleValue() / ((Number)param2).doubleValue();
             }
@@ -59,7 +60,7 @@ public final class Divide extends PostfixCommand {
             return b1.divide(b2, 40, BigDecimal.ROUND_HALF_UP);
 
         } else {
-            throw new ParseException(WRONG_TYPE + "  (" + param1.getClass() + "/" + param2.getClass() + ")");
+            throw new WrongTypeException(getFunctionName(), param1, param2);
         }
     }
 }
