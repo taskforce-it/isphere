@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.medfoster.sqljep.exceptions.ParseException;
+
 /**
  * Example of usage <blockquote>
  * 

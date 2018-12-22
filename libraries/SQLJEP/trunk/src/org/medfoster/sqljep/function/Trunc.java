@@ -19,6 +19,7 @@ import java.math.*;
 
 import static java.util.Calendar.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public class Trunc extends PostfixCommand {
 	private static final String PARAM_EXCEPTION = "Scale in trunc shoud be integer";

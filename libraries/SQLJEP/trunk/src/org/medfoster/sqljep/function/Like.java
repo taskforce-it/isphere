@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 /**

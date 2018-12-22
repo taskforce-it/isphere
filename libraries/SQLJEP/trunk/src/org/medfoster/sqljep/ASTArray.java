@@ -2,6 +2,8 @@
 
 package org.medfoster.sqljep;
 
+import org.medfoster.sqljep.exceptions.ParseException;
+
 /**
  * 	This class is used only for IN (exp,exp,...) predicate. 
  *  All children of node with type ASTArray are items of an array.

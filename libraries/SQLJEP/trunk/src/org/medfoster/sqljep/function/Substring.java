@@ -13,6 +13,7 @@
 package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public class Substring extends PostfixCommand {
 	private static final String PARAM_EXCEPTION = "BeginIndex and CountChars in substr shoud be integers";

@@ -2,6 +2,8 @@
 
 package org.medfoster.sqljep;
 
+import org.medfoster.sqljep.exceptions.ParseException;
+
 public interface ParserVisitor
 {
   public Object visit(SimpleNode node, Object data) throws ParseException;

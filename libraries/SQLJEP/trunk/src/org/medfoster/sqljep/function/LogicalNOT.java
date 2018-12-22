@@ -13,6 +13,7 @@
 package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public final class LogicalNOT extends PostfixCommand {
 	final public int getNumberOfParameters() {

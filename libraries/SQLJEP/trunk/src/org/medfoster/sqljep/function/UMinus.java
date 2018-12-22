@@ -14,6 +14,7 @@ package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
  
 public final class UMinus extends PostfixCommand {
 	final public int getNumberOfParameters() {

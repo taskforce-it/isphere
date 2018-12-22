@@ -8,7 +8,6 @@
 
 package org.medfoster.sqljep.exceptions;
 
-import org.medfoster.sqljep.ParseException;
 
 public class InternalErrorException extends ParseException {
 

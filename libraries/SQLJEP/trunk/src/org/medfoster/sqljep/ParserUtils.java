@@ -11,6 +11,8 @@ package org.medfoster.sqljep;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.medfoster.sqljep.exceptions.ParseException;
+
 public final class ParserUtils {
 
     private final static int DATE_ISO = 0;

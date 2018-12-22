@@ -13,6 +13,7 @@
 package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public class Rpad extends PostfixCommand {
 	private static final String PARAM_EXCEPTION = "Length in rpad shoud be integer";

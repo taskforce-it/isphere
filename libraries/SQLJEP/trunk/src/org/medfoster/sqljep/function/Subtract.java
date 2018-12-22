@@ -14,8 +14,8 @@ package org.medfoster.sqljep.function;
 
 import java.math.BigDecimal;
 
-import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 @JUnitTest
 public final class Subtract extends AbstractLineCalculation {

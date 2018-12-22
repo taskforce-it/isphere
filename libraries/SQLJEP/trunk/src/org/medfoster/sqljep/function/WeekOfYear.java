@@ -17,6 +17,7 @@ import java.util.Calendar;
 
 import static java.util.Calendar.*;
 import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public class WeekOfYear extends PostfixCommand {
 	final public int getNumberOfParameters() {

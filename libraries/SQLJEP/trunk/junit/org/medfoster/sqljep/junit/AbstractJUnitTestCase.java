@@ -16,8 +16,8 @@ import java.util.HashMap;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.Node;
-import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public abstract class AbstractJUnitTestCase {
 

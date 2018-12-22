@@ -14,6 +14,8 @@ package org.medfoster.sqljep;
 
 import java.util.ArrayList;
 
+import org.medfoster.sqljep.exceptions.ParseException;
+
 /**
  * Finds all columns in parser tree and stores them in the array
  */

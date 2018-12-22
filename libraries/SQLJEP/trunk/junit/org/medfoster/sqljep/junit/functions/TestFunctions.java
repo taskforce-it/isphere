@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.CompareException;
+import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 import org.medfoster.sqljep.junit.AbstractJUnitTestCase;

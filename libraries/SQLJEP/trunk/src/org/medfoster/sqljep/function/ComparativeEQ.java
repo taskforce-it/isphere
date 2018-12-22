@@ -17,9 +17,9 @@ import java.math.BigDecimal;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.exceptions.CompareException;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public final class ComparativeEQ extends PostfixCommand {
 

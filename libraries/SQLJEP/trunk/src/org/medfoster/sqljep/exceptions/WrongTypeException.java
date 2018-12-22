@@ -8,7 +8,6 @@
 
 package org.medfoster.sqljep.exceptions;
 
-import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.DATE;
 
 public class WrongTypeException extends ParseException {

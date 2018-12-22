@@ -14,7 +14,7 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.exceptions.ParseException;
 
 public class ComparativeIsNull extends PostfixCommand {
     final public int getNumberOfParameters() {

@@ -3,6 +3,8 @@ package org.medfoster.sqljep;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
+import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.function.*;
 
 public class Parser/*@bgen(jjtree)*/implements ParserTreeConstants, ParserConstants {/*@bgen(jjtree)*/
