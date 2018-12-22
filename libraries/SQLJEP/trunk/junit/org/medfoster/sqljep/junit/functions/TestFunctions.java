@@ -36,6 +36,26 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
+    public void testConcat() throws ParseException {
+        
+        // String
+        assertEquals(true, parseExpression("Concat('Hello', '-World') = 'Hello-World'"));
+        
+        // Numbers
+        assertEquals(true, parseExpression("Concat(5.1, '9.8') = '5.19.8'"));
+        assertEquals(true, parseExpression("Concat(51, '98') = '5198'"));
+        
+        // Date
+        assertEquals(true, parseExpression("Concat('Date: ', Date('2018-12-22')) = 'Date: 2018-12-22'"));
+        
+        // Time
+        assertEquals(true, parseExpression("Concat('Time: ', Time('18.12.22')) = 'Time: 18:12:22'"));
+        
+        // Timestamp
+        assertEquals(true, parseExpression("Concat('Timestamp: ', Timestamp('2018-12-22-18:12:22.123')) = 'Timestamp: 2018-12-22 18:12:22.123'"));
+    }
+
+    @Test
     public void testAdd() throws ParseException {
 
         assertEquals(true, parseExpression("7.59 + 2.41 = 10.0"));
