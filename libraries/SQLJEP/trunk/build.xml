@@ -15,18 +15,25 @@
 <project name="SQLJEP" default="compile" basedir=".">
 	
 	<!-- set global properties for this build -->
-	<property name="src"     value="src"/>
-	<property name="build"   value="build"/>
-	<property name="dist"    value="dist"/>
-	<property name="doc"     value="doc"/>
-	<property name="javadoc" value="${doc}/javadoc"/>
-	<property name="version" value="0.2.2.b001"/>
-	<property name="jar"     value="${app.name}-${version}.jar"/>
-	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
+	<property name="src"            location="src"/>
+	<property name="junit"          location="junit"/>
+	<property name="build"          location="build"/>
+	<property name="build.compile"  location="${build}/compile"/>
+	<property name="build.junit"    location="${build}/junit"/>
+	<property name="build.dist"     location="${build}/dist"/>
+	<property name="junit.lib"      location="lib/junit"/>
+	<property name="build.doc"      location="${build}/doc"/>
+	<property name="build.javadoc"  location="${build.doc}/javadoc"/>
+	<property name="build.disttemp" location="${build}/disttemp"/>
+	
+	<property name="version"     value="0.2.2.b001"/>
+	<property name="jar"         value="${app.name}-${version}.jar"/>
+	<property name="src.zip"     value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
-	<property name="disttemp"    value="disttemp"/>
 	<property name="javac.debug" value="true"/>
+	<!--
 	<property environment="env"/>
+	-->
 	<!--
 	<property name="javacchome" value="${env.JAVACCHOME}"/>
 	-->
@@ -81,17 +88,36 @@
 <!--======================================================================-->
 <!-- COMPILE -->
 	<target name="compile" depends="javacc">
-		<!-- Create the build directory -->
-		<mkdir dir="${build}"/>
+		<echo>Compiling Java classes ...</echo>
 
-		<!-- Compile the java code from ${src} into ${build} -->
+		<!-- Create the build directory -->
+		<mkdir dir="${build.compile}"/>
+		<mkdir dir="${build.junit}"/>
+
+		<!-- Compile the java code from ${src} into ${build.compile} -->
 		<javac srcdir="${src}"
-		       destdir="${build}"
-		       source="1.5"
-		       target="1.5"
+		       destdir="${build.compile}"
+		       source="1.6"
+		       target="1.6"
 			   debug="${javac.debug}"
 			   debuglevel="lines,vars,source">
+			<!--
 			<exclude name="org/medfoster/sqljep/junit/**"/>
+			-->
+		</javac>
+
+		<!-- Compile the JUnit tests from ${junit} into ${build.junit} -->
+		<javac srcdir="${junit}"
+		       destdir="${build.junit}"
+		       source="1.6"
+		       target="1.6"
+			   debug="${javac.debug}"
+			   debuglevel="lines,vars,source">
+			<classpath>
+				<path location="${build.compile}" />
+				<path location="${junit.lib}/junit.jar" />
+				<path location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+			</classpath>
 		</javac>
 	</target>
 
@@ -99,25 +125,51 @@
 <!--======================================================================-->
 <!-- JAVADOC -->
 	<target name="javadoc" depends="init">
-		<delete dir="${javadoc}"/>
-		<mkdir dir="${javadoc}"/>
+		<echo>Generating Javadoc ...</echo>
+		
+		<delete dir="${build.javadoc}"/>
+		<mkdir dir="${build.javadoc}"/>
 		<javadoc packagenames="org.medfoster.sqljep.*"
 				sourcepath="src"
-				destdir="${javadoc}"
+				destdir="${build.javadoc}"
 				windowtitle="SQLJEP API">
 			<bottom><![CDATA[<A HREF=\"http://sourceforge.net/projects/sqljep\" TARGET=\"_blank\">http://sourceforge.net/projects/sqljep</A> Copyright &#169; 2006 Alexey Gaidukov]]></bottom>
 		</javadoc>
 	</target>
 
+
+	<!--======================================================================-->
+	<!-- JUNIT -->
+		<target name="junit" depends="compile">
+			<echo>Executing JUnit tests ...</echo>
+			
+			<junit haltonerror="true" haltonfailure="true" printsummary="true">
+				<classpath>
+					<!-- JUnit4 -->
+					<pathelement location="${junit.lib}/junit.jar" />
+					<pathelement location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+					<!-- SQLJEP -->
+					<pathelement location="${build.compile}" />
+				</classpath>
+				<batchtest>
+					<fileset dir="${build.junit}" id="id">
+	    				<include name="**/TestDummy.class"/>
+					</fileset>
+				</batchtest>
+			</junit>
+		</target>
+
 <!--======================================================================-->
 <!-- DIST -->
 	<target name="dist" depends="compile,javadoc">
+		<echo>Creating distribution package ...</echo>
+		
 		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}"/>
+		<mkdir dir="${build.dist}"/>
 
-		<!-- Put everything in ${build} into the sqljep-${DSTAMP}.jar file -->
-		<jar jarfile="${dist}/sqljep-${version}.jar"
-		     basedir="${build}"
+		<!-- Put everything in ${build.compile} into the sqljep-${DSTAMP}.jar file -->
+		<jar jarfile="${build.dist}/sqljep-${version}.jar"
+		     basedir="${build.compile}"
 		     includes="org/medfoster/sqljep/**" 
              description="SQLJEP patched for iSphere">
             <manifest>
@@ -132,7 +184,7 @@
 		<mkdir dir="${disttemp}/sqljep-${version}"/>
 
 		<!-- Copy jar -->
-		<copy file="${dist}/sqljep-${version}.jar" todir="${disttemp}/sqljep-${version}"/>
+		<copy file="${build.dist}/sqljep-${version}.jar" todir="${disttemp}/sqljep-${version}"/>
 
 		<!-- Copy src files -->
 		<!-- define filterset -->
@@ -156,31 +208,31 @@
 		<copy todir="${disttemp}/sqljep-${version}">
 			<fileset dir="."
 					includes="
-					 ${doc}/**,
-					 ${build}/**,
+					 ${build.doc}/**,
+					 ${build.compile}/**,
 					 build.xml,
 					 LICENSE.txt,
 					 README.html"/>
 		</copy>
 
 		<!-- zip file -->
-		<delete file="${dist}/sqljep-${version}.zip"/>
-		<zip zipfile="${dist}/sqljep-${version}.zip"
+		<delete file="${build.dist}/sqljep-${version}.zip"/>
+		<zip zipfile="${build.dist}/sqljep-${version}.zip"
 		     basedir="${disttemp}"
 		     >
 		</zip>
 
 		<!-- tar.gz file -->
-		<delete file="${dist}/sqljep-${version}.tar.gz"/>
-		<tar tarfile="${dist}/sqljep-${version}.tar"
+		<delete file="${build.dist}/sqljep-${version}.tar.gz"/>
+		<tar tarfile="${build.dist}/sqljep-${version}.tar"
 		     basedir="${disttemp}"
 		     >
 		</tar>
-		<gzip zipfile="${dist}/sqljep-${version}.tar.gz"
-		      src="${dist}/sqljep-${version}.tar"/>
+		<gzip zipfile="${build.dist}/sqljep-${version}.tar.gz"
+		      src="${build.dist}/sqljep-${version}.tar"/>
 
 		<!-- clean up temporary files -->
-		<delete file="${dist}/sqljep-${version}.tar"/>
+		<delete file="${build.dist}/sqljep-${version}.tar"/>
 		<delete dir="${disttemp}" />
 	</target>
 
@@ -188,10 +240,12 @@
 <!--======================================================================-->
 <!-- CLEAN -->
 	<target name="clean">
-		<!-- Delete the ${build} and ${dist} directory trees -->
+		<!-- Delete the ${build.compile} and ${build.dist} directory trees -->
+		<delete dir="${build.compile}"/>
+		<delete dir="${build.junit}"/>
+		<delete dir="${build.dist}"/>
+		<delete dir="${build.javadoc}"/>
 		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-		<delete dir="${javadoc}"/>
 	</target>
 
 
