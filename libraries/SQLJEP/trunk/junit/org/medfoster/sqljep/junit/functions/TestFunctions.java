@@ -707,6 +707,22 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         assertEquals(true, parseExpression("Time('18:12:20') In(Time('18:12:19'), '18:12:20', '18:12:21')"));
 
-        assertEquals(true, parseExpression("Timestamp('2018-12-20-18.12.20') In(Timestamp('2018-12-20-18.12.19'), '2018-12-20-18.12.20', '2018-12-20-18.12.21')"));
+        assertEquals(true,
+            parseExpression("Timestamp('2018-12-20-18.12.20') In(Timestamp('2018-12-20-18.12.19'), '2018-12-20-18.12.20', '2018-12-20-18.12.21')"));
+    }
+
+    @Test
+    public void testLength() throws ParseException {
+
+        assertEquals(true, parseExpression("Length('Hello World') = 11"));
+
+        try {
+            assertEquals(true, parseExpression("Length(Date('2018-12-21')) = 11"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Length", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 }
