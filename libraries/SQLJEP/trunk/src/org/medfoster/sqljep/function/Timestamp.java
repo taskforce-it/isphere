@@ -18,6 +18,7 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 @JUnitTest
@@ -33,16 +34,16 @@ public class Timestamp extends PostfixCommand {
         int num = node.jjtGetNumChildren();
 
         if (num == 1) {
-            Comparable<?> param1 = runtime.stack.pop();
-            runtime.stack.push(to_timestamp(param1, ParserUtils.getTimestampFormat((String)param1)));
+            Comparable<?> extression = runtime.stack.pop();
+            runtime.stack.push(to_timestamp(extression, ParserUtils.getTimestampFormat((String)extression)));
         } else if (num == 2) {
-            Comparable<?> param2 = runtime.stack.pop();
-            Comparable<?> param1 = runtime.stack.pop();
-            runtime.stack.push(to_timestamp(param1, param2));
+            Comparable<?> pattern = runtime.stack.pop();
+            Comparable<?> expression = runtime.stack.pop();
+            runtime.stack.push(to_timestamp(expression, pattern));
         } else {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
-            throw new ParseException("Wrong number of parameters for TIMESTAMP()");
+            throw new WrongNumberOfParametersException(num);
         }
     }
 

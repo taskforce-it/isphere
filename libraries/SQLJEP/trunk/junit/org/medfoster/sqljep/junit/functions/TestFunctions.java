@@ -491,6 +491,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
     public void testDate() throws ParseException {
         
         assertEquals(true, parseExpression("DATE(TIMESTAMP('2018-12-05-15.30.00.123')) = '2018-12-05'"));
+        assertEquals(true, parseExpression("DATE(TIMESTAMP('2018-12-05-15.30.00.123')) = '2018-12-05'"));
 
         assertEquals(true, parseExpression("DATE('2018-12-05') > '2018-12-04'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') = '2018-12-05'"));
@@ -504,6 +505,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testTime() throws ParseException {
         
+        assertEquals(true, parseExpression("TIME(TIMESTAMP('2018-12-05-15.30.00.123')) = '15.30.00'"));
         assertEquals(true, parseExpression("TIME(TIMESTAMP('2018-12-05-15.30.00.123')) = '15.30.00'"));
 
         assertEquals(true, parseExpression("TIME('12:00:00') > '11:59:59'"));
@@ -525,15 +527,25 @@ public class TestFunctions extends AbstractJUnitTestCase {
         SimpleDateFormat formatter;
         String expected;
 
-        // Test with milliseconds
+        // Test with milliseconds ISO
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
         expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 123));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.123') = '" + expected + "'"));
 
-        // Test without milliseconds
+        // Test without milliseconds ISO
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00') = '" + expected + "'"));
+
+        // Test with milliseconds IBM SQL
+        formatter = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 123));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00.00.123') = '" + expected + "'"));
+
+        // Test without milliseconds IBM SQL
+        formatter = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00.00') = '" + expected + "'"));
 
         // Test with too less milliseconds
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SS");
@@ -543,7 +555,29 @@ public class TestFunctions extends AbstractJUnitTestCase {
         // Test with too many milliseconds
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
         expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 888));
-        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.8888') = '" + expected + "'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.888999') = '" + expected + "'"));
+
+        // Test with pattern parameter
+
+        // Test ISO
+        formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 123));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.123', 'YYYY-MM-DD HH24:MI:SS.NNN') = '" + expected + "'"));
+
+        // Test IBM SQL
+        formatter = new SimpleDateFormat("yyyy-MM-dd-hh.mm.ss.SSS");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 123));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00.00.123', 'YYYY-MM-DD-HH24.MI.SS.NNN') = '" + expected + "'"));
+
+        try {
+            // Too many parameters
+            assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00.00.123', 'YYYY-MM-DD-HH24.MI.SS.NNN', 'TOO_MANY') = '" + expected + "'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
