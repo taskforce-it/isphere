@@ -17,7 +17,10 @@ import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.Node;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.InternalErrorException;
 
+@JUnitTest
 public final class In extends PostfixCommand {
 
     final public int getNumberOfParameters() {
@@ -43,7 +46,7 @@ public final class In extends PostfixCommand {
                 runtime.stack.setSize(0);
                 runtime.stack.push(Boolean.FALSE);
             } else {
-                throw new ParseException("Internal error in function IN");
+                throw new InternalErrorException(getFunctionName(), "Expected: ASTArray, got: " + arg.getClass().getName());
             }
         }
     }

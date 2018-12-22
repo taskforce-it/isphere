@@ -17,4 +17,8 @@ public class InternalErrorException extends ParseException {
     public InternalErrorException(String function, Throwable cause) {
         super(String.format("Internal error in function %s(): %s", function, cause.getLocalizedMessage()), cause);
     }
+
+    public InternalErrorException(String function, String message) {
+        super(String.format("Internal error in function %s(): %s", function, message));
+    }
 }

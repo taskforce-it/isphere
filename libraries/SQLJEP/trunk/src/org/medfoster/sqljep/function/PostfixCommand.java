@@ -65,23 +65,23 @@ public abstract class PostfixCommand implements PostfixCommandI {
     /**
      * Parses a String and returns an Integer or BigDecimal.
      * 
-     * @param param - Expression that is parsed
+     * @param expression - Expression that is parsed
      * @return Integer or BigDecimal
      * @throws ParseException
      */
-    public static Comparable<?> parse(String param) throws ParseException {
+    public static Comparable<?> parse(String expression) throws ParseException {
 
         try {
-            return Integer.valueOf((String)param);
+            return Integer.valueOf((String)expression);
         } catch (NumberFormatException e) {
             try {
-                BigDecimal d = new BigDecimal((String)param);
+                BigDecimal d = new BigDecimal((String)expression);
                 if (d.scale() < 0) {
                     d = d.setScale(0);
                 }
                 return d;
             } catch (Throwable ex) {
-                throw new ParseException("Expression cannot be parsed to an Integer or BigDecimal");
+                throw new ParseException(String.format("Expression '%s' cannot be parsed to an Integer or BigDecimal", expression));
             }
         }
     }
@@ -116,11 +116,12 @@ public abstract class PostfixCommand implements PostfixCommandI {
         if (param instanceof Number) {
             return ((Number)param).intValue();
         } else if (param instanceof String) {
+            String expression = (String)param;
             try {
-                BigDecimal d = new BigDecimal((String)param);
+                BigDecimal d = new BigDecimal(expression);
                 return d.intValueExact();
             } catch (Throwable e) {
-                throw new ParseException("Expression cannot be parsed to an Integer");
+                throw new ParseException(String.format("Expression '%s' cannot be parsed to an Integer", expression));
             }
         }
 

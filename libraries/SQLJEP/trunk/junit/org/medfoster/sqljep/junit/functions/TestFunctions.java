@@ -37,20 +37,20 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     @Test
     public void testConcat() throws ParseException {
-        
+
         // String
         assertEquals(true, parseExpression("Concat('Hello', '-World') = 'Hello-World'"));
-        
+
         // Numbers
         assertEquals(true, parseExpression("Concat(5.1, '9.8') = '5.19.8'"));
         assertEquals(true, parseExpression("Concat(51, '98') = '5198'"));
-        
+
         // Date
         assertEquals(true, parseExpression("Concat('Date: ', Date('2018-12-22')) = 'Date: 2018-12-22'"));
-        
+
         // Time
         assertEquals(true, parseExpression("Concat('Time: ', Time('18.12.22')) = 'Time: 18:12:22'"));
-        
+
         // Timestamp
         assertEquals(true, parseExpression("Concat('Timestamp: ', Timestamp('2018-12-22-18:12:22.123')) = 'Timestamp: 2018-12-22 18:12:22.123'"));
     }
@@ -416,7 +416,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("'Maxilaku' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
         assertEquals(true, parseExpression("'Mozzarella di Giovanni' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
         assertEquals(false, parseExpression("'Carnarvon Tigers' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
-        
+
         // Test Date
         assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN DATE('2018-12-20') AND DATE('2018-12-22')"));
 
@@ -424,8 +424,11 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("TIME('15.10.30') BETWEEN TIME('15.10.29') AND TIME('15.10.31')"));
 
         // Test Timestamp
-        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30') BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND TIMESTAMP('2018-12-21-15.10.31')"));
-        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
+        assertEquals(true,
+            parseExpression("TIMESTAMP('2018-12-21-15.10.30') BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND TIMESTAMP('2018-12-21-15.10.31')"));
+        assertEquals(
+            true,
+            parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
 
         // Test Date and Timestamp
         assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN TIMESTAMP('2018-12-20-23.59.59') AND TIMESTAMP('2018-12-22-00.00.00')"));
@@ -434,7 +437,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("5 BETWEEN 5 AND 5"));
         assertEquals(true, parseExpression("5 BETWEEN 5 AND 6"));
         assertEquals(true, parseExpression("5 BETWEEN 4 AND 5"));
-        
+
         // Test numbers
         assertEquals(true, parseExpression("5 BETWEEN 1 AND 10"));
         assertEquals(true, parseExpression("5.2 BETWEEN 1.1 AND 9.9"));
@@ -690,5 +693,20 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
+    }
+
+    @Test
+    public void testIn() throws ParseException {
+
+        assertEquals(true, parseExpression("'PT' In('PT', 'PX', 'UB', 'UP', 'UR', 'DL', 'DR')"));
+
+        assertEquals(true, parseExpression("'2.2' In(1, 2.2, 3, 4.5, 5, 6)"));
+        assertEquals(true, parseExpression("4.5 In(1, 2.2, 3, 4.5, 5, 6)"));
+
+        assertEquals(true, parseExpression("Date('2018-12-20') In(Date('2018-12-19'), '2018-12-20', '2018-12-21')"));
+
+        assertEquals(true, parseExpression("Time('18:12:20') In(Time('18:12:19'), '18:12:20', '18:12:21')"));
+
+        assertEquals(true, parseExpression("Timestamp('2018-12-20-18.12.20') In(Timestamp('2018-12-20-18.12.19'), '2018-12-20-18.12.20', '2018-12-20-18.12.21')"));
     }
 }
