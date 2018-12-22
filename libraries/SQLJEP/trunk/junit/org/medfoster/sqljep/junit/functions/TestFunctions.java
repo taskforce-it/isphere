@@ -201,22 +201,22 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testRound2Parameters() throws ParseException {
 
-        // assertEquals(true, parseExpression("Round('26', 1) = 26"));
-        // assertEquals(true, parseExpression("Round('26', 0) = 26"));
-        // assertEquals(true, parseExpression("Round('26', -1) = 26"));
-        //
-        // assertEquals(true, parseExpression("Round(26, 1) = 26"));
-        // assertEquals(true, parseExpression("Round(26, 0) = 26"));
-        // assertEquals(true, parseExpression("Round(26, -1) = 26"));
-        //
-        // assertEquals(true, parseExpression("Round(125.432, 1) = 125.4"));
-        // assertEquals(true, parseExpression("Round(124.567, 1) = 124.6"));
-        //
-        // assertEquals(true, parseExpression("Round(125.432, 0) = 125"));
-        // assertEquals(true, parseExpression("Round(124.567, 0) = 125"));
-        //
-        // assertEquals(true, parseExpression("Round(125.432, -1) = 130"));
-        // assertEquals(true, parseExpression("Round(124.567, -1) = 120"));
+        assertEquals(true, parseExpression("Round('26', 1) = 26"));
+        assertEquals(true, parseExpression("Round('26', 0) = 26"));
+        assertEquals(true, parseExpression("Round('26', -1) = 26"));
+
+        assertEquals(true, parseExpression("Round(26, 1) = 26"));
+        assertEquals(true, parseExpression("Round(26, 0) = 26"));
+        assertEquals(true, parseExpression("Round(26, -1) = 26"));
+
+        assertEquals(true, parseExpression("Round(125.432, 1) = 125.4"));
+        assertEquals(true, parseExpression("Round(124.567, 1) = 124.6"));
+
+        assertEquals(true, parseExpression("Round(125.432, 0) = 125"));
+        assertEquals(true, parseExpression("Round(124.567, 0) = 125"));
+
+        assertEquals(true, parseExpression("Round(125.432, -1) = 130"));
+        assertEquals(true, parseExpression("Round(124.567, -1) = 120"));
 
         try {
             assertEquals(true, parseExpression("Round(Time('09.15.00'), 0) = 0"));
