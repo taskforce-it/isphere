@@ -62,6 +62,13 @@ public abstract class PostfixCommand implements PostfixCommandI {
         s.push(null);
     }
 
+    /**
+     * Parses a String and returns an Integer or BigDecimal.
+     * 
+     * @param param - Expression that is parsed
+     * @return Integer or BigDecimal
+     * @throws ParseException
+     */
     public static Comparable<?> parse(String param) throws ParseException {
 
         try {
@@ -73,15 +80,19 @@ public abstract class PostfixCommand implements PostfixCommandI {
                     d = d.setScale(0);
                 }
                 return d;
-            } catch (NumberFormatException ex) {
-                throw new ParseException("Not a number");
+            } catch (Throwable ex) {
+                throw new ParseException("Expression cannot be parsed to an Integer or BigDecimal");
             }
         }
     }
 
+    /**
+     * Converts a Number to a BigDecimal.
+     * 
+     * @param param - Number that is converted to a BigDecimal.
+     * @return BigDecimal
+     */
     public static BigDecimal getBigDecimal(Number param) {
-
-        // BigInteger is not supported
 
         if (param instanceof BigDecimal) {
             return (BigDecimal)param;
@@ -94,32 +105,26 @@ public abstract class PostfixCommand implements PostfixCommandI {
         return new BigDecimal(param.longValue());
     }
 
+    /**
+     * Converts a Number or String to an Integer.
+     * 
+     * @param param - Comparable that is converted to a Number or BigDecimal.
+     * @return Integer
+     */
     public static int getInteger(Comparable<?> param) throws ParseException {
+
         if (param instanceof Number) {
             return ((Number)param).intValue();
         } else if (param instanceof String) {
             try {
                 BigDecimal d = new BigDecimal((String)param);
                 return d.intValueExact();
-            } catch (Exception e) {
-                throw new ParseException("Cant parse integer: '" + (String)param + "'");
+            } catch (Throwable e) {
+                throw new ParseException("Expression cannot be parsed to an Integer");
             }
         }
-        throw new ParseException("Not Integer: " + (param != null ? param.getClass() : "null"));
-    }
 
-    public static double getDouble(Comparable<?> param) throws ParseException {
-        if (param instanceof Number) {
-            Number n = (Number)param;
-            return n.doubleValue();
-        } else if (param instanceof String) {
-            try {
-                return Double.valueOf((String)param);
-            } catch (NumberFormatException e) {
-                throw new ParseException("Cant parse double: '" + (String)param + "'");
-            }
-        }
-        throw new ParseException("Not Double: " + (param != null ? param.getClass() : "null"));
+        throw new ParseException("Parameter is not a Number or String: " + (param != null ? param.getClass().getName() : "null"));
     }
 
     protected String getFunctionName() {
