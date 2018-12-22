@@ -33,8 +33,6 @@ import org.medfoster.sqljep.function.Microsecond;
 import org.medfoster.sqljep.function.Minute;
 import org.medfoster.sqljep.function.Modulus;
 import org.medfoster.sqljep.function.Month;
-import org.medfoster.sqljep.function.MonthName;
-import org.medfoster.sqljep.function.MonthsBetween;
 import org.medfoster.sqljep.function.PostfixCommandI;
 import org.medfoster.sqljep.function.Replace;
 import org.medfoster.sqljep.function.Round;
@@ -87,16 +85,28 @@ public abstract class BaseJEP implements ParserVisitor {
 
     static {
         // add functions to Function Table
-        funTab.put("abs", new Abs());
+        funTab.put("abs", new Abs()); // JUnit
+        funTab.put("ceil", new Ceil()); // JUnit
+        funTab.put("concat", new Concat()); // JUnit
+        funTab.put("date", new Date()); // JUnit
+        funTab.put("day", new Day()); // JUnit
+        funTab.put("dayofmonth", new Day()); // JUnit
+        funTab.put("floor", new Floor()); // JUnit
+        funTab.put("hour", new Hour()); // JUnit
+        funTab.put("microsecond", new Microsecond()); // JUnit
+        funTab.put("minute", new Minute()); // JUnit
+        funTab.put("month", new Month()); // JUnit
+        funTab.put("round", new Round()); // JUnit
+        funTab.put("second", new Second()); // JUnit
+        funTab.put("sign", new Sign()); // JUnit
+        funTab.put("time", new Time()); // JUnit
+        funTab.put("timestamp", new Timestamp()); // JUnit
+        funTab.put("year", new Year()); // JUnit
+
         funTab.put("mod", new Modulus());
         funTab.put("substr", new Substring());
-        funTab.put("sign", new Sign());
-        funTab.put("ceil", new Ceil());
-        funTab.put("floor", new Floor());
         funTab.put("trunc", new Trunc());
-        funTab.put("round", new Round());
         funTab.put("length", new Length());
-        funTab.put("concat", new Concat());
         funTab.put("trim", new Trim());
         funTab.put("rtrim", new Rtrim());
         funTab.put("ltrim", new Ltrim());
@@ -105,20 +115,7 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("lower", new Lower());
         funTab.put("upper", new Upper());
         funTab.put("replace", new Replace());
-        funTab.put("months_between", new MonthsBetween());
-        funTab.put("date", new Date());
-        funTab.put("time", new Time());
-        funTab.put("timestamp", new Timestamp());
-        funTab.put("year", new Year()); // maxdb
-        funTab.put("month", new Month()); // maxdb
-        funTab.put("day", new Day()); // maxdb
-        funTab.put("dayofmonth", new Day()); // maxdb
-        funTab.put("hour", new Hour()); // maxdb
-        funTab.put("minute", new Minute()); // maxdb
-        funTab.put("second", new Second()); // maxdb
-        funTab.put("microsecond", new Microsecond()); // maxdb
-        funTab.put("weekofyear", new WeekOfYear()); // maxdb
-        funTab.put("monthname", new MonthName()); // maxdb
+        funTab.put("weekofyear", new WeekOfYear());
     }
 
     /** Parse time error List */
