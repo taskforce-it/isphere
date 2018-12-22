@@ -389,7 +389,35 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testBetween() throws ParseException {
 
+        // Test String (Test values from https://www.w3schools.com)
+        assertEquals(false, parseExpression("'Carnarvon Tigers' BETWEEN 'Chais' AND 'Mishi Kobe Niku'"));
+        assertEquals(true, parseExpression("'Chais' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
+        assertEquals(true, parseExpression("'Chang' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
+        assertEquals(true, parseExpression("'Maxilaku' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
+        assertEquals(true, parseExpression("'Mozzarella di Giovanni' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
+        assertEquals(false, parseExpression("'Carnarvon Tigers' BETWEEN 'Chais' AND 'Mozzarella di Giovanni'"));
+        
+        // Test Date
+        assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN DATE('2018-12-20') AND DATE('2018-12-22')"));
+
+        // Test Time
+        assertEquals(true, parseExpression("TIME('15.10.30') BETWEEN TIME('15.10.29') AND TIME('15.10.31')"));
+
+        // Test Timestamp
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30') BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND TIMESTAMP('2018-12-21-15.10.31')"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
+
+        // Test Date and Timestamp
+        assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN TIMESTAMP('2018-12-20-23.59.59') AND TIMESTAMP('2018-12-22-00.00.00')"));
+
+        // Test Numbers: begin and end values are included
+        assertEquals(true, parseExpression("5 BETWEEN 5 AND 5"));
+        assertEquals(true, parseExpression("5 BETWEEN 5 AND 6"));
+        assertEquals(true, parseExpression("5 BETWEEN 4 AND 5"));
+        
+        // Test numbers
         assertEquals(true, parseExpression("5 BETWEEN 1 AND 10"));
+        assertEquals(true, parseExpression("5.2 BETWEEN 1.1 AND 9.9"));
     }
 
     @Test
@@ -489,7 +517,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     @Test
     public void testDate() throws ParseException {
-        
+
         assertEquals(true, parseExpression("DATE(TIMESTAMP('2018-12-05-15.30.00.123')) = '2018-12-05'"));
         assertEquals(true, parseExpression("DATE(TIMESTAMP('2018-12-05-15.30.00.123')) = '2018-12-05'"));
 
@@ -504,7 +532,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
     @Test
     public void testTime() throws ParseException {
-        
+
         assertEquals(true, parseExpression("TIME(TIMESTAMP('2018-12-05-15.30.00.123')) = '15.30.00'"));
         assertEquals(true, parseExpression("TIME(TIMESTAMP('2018-12-05-15.30.00.123')) = '15.30.00'"));
 
