@@ -725,4 +725,78 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
+
+    @Test
+    public void testLike() throws ParseException {
+
+        assertEquals(true, parseExpression("'Westend New York' Like('%New%')"));
+        assertEquals(true, parseExpression("'Westend New York' Like('__stend New York')"));
+        assertEquals(true, parseExpression("'Eastend New York' Like('__stend New York')"));
+
+        // Forwards to Regexp_Like
+        assertEquals(true, parseExpression("'Westend New York' Like('/.*New.*/')"));
+
+        try {
+            assertEquals(true, parseExpression("'1' Like(1)"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Like", "String", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testNotLike() throws ParseException {
+
+        assertEquals(true, parseExpression("'Westend New York' Not Like('%Old%')"));
+        assertEquals(true, parseExpression("'Westend New York' Not Like('__stend Old York')"));
+        assertEquals(true, parseExpression("'Eastend New York' Not Like('__stend Old York')"));
+
+        // Forwards to Not Regexp_Like
+        assertEquals(true, parseExpression("'Westend New York' Not Like('/.*Old.*/')"));
+
+        try {
+            assertEquals(true, parseExpression("'1' Not Like(2)"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "NotLike", "String", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRegexp_Like() throws ParseException {
+
+        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.*New.*')"));
+        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.{2}stend New York')"));
+        assertEquals(true, parseExpression("'Eastend New York' Regexp_Like('.{2}stend New York')"));
+
+        try {
+            assertEquals(true, parseExpression("'1' Regexp_Like(1)"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Regexp_Like", "String", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testNotRegexp_Like() throws ParseException {
+
+        assertEquals(true, parseExpression("'Westend New York' Not Like('.*Old.*')"));
+        assertEquals(true, parseExpression("'Westend New York' Not Like('.{2}stend Old York')"));
+        assertEquals(true, parseExpression("'Eastend New York' Not Like('.{2}stend Old York')"));
+
+        try {
+            assertEquals(true, parseExpression("'1' Not Regexp_Like(2)"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "NotRegexp_Like", "String", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
 }

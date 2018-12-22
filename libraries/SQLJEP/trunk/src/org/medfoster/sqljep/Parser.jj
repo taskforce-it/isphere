@@ -190,6 +190,8 @@ TOKEN:
 |	< NOT_BETWEEN:  "not between"  >
 |	< LIKE:  "like"  >
 |	< NOT_LIKE:  "not like"  >
+|	< REGEXP_LIKE:  "regexp_like"  >
+|	< NOT_REGEXP_LIKE:  "not regexp_like"  >
 }
 
 
@@ -943,6 +945,82 @@ void PostfixExpression() :
           } finally {
             if (jjtc007) {
               jjtree.closeNodeScope(jjtn007,  2);
+            }
+          }
+/*@egen*/
+	|/*@bgen(jjtree) #FunNode( 2) */
+          {
+            ASTFunNode jjtn008 = new ASTFunNode(JJTFUNNODE);
+            boolean jjtc008 = true;
+            jjtree.openNodeScope(jjtn008);
+          }
+          try {
+/*@egen*/
+	  ( <REGEXP_LIKE> AdditiveExpression()/*@bgen(jjtree)*/
+                {
+                  jjtree.closeNodeScope(jjtn008,  2);
+                  jjtc008 = false;
+                }
+/*@egen*/
+		{
+		  jjtn008.setFunction(tokenImage[REGEXP_LIKE], new Regexp_Like());
+		}
+	  )/*@bgen(jjtree)*/
+          } catch (Throwable jjte008) {
+            if (jjtc008) {
+              jjtree.clearNodeScope(jjtn008);
+              jjtc008 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte008 instanceof RuntimeException) {
+              throw (RuntimeException)jjte008;
+            }
+            if (jjte008 instanceof ParseException) {
+              throw (ParseException)jjte008;
+            }
+            throw (Error)jjte008;
+          } finally {
+            if (jjtc008) {
+              jjtree.closeNodeScope(jjtn008,  2);
+            }
+          }
+/*@egen*/
+	|/*@bgen(jjtree) #FunNode( 2) */
+          {
+            ASTFunNode jjtn009 = new ASTFunNode(JJTFUNNODE);
+            boolean jjtc009 = true;
+            jjtree.openNodeScope(jjtn009);
+          }
+          try {
+/*@egen*/
+	  ( <NOT_REGEXP_LIKE> AdditiveExpression()/*@bgen(jjtree)*/
+                {
+                  jjtree.closeNodeScope(jjtn009,  2);
+                  jjtc009 = false;
+                }
+/*@egen*/
+		{
+		  jjtn009.setFunction(tokenImage[NOT_REGEXP_LIKE], new NotRegexp_Like());
+		}
+	  )/*@bgen(jjtree)*/
+          } catch (Throwable jjte009) {
+            if (jjtc009) {
+              jjtree.clearNodeScope(jjtn009);
+              jjtc009 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte009 instanceof RuntimeException) {
+              throw (RuntimeException)jjte009;
+            }
+            if (jjte009 instanceof ParseException) {
+              throw (ParseException)jjte009;
+            }
+            throw (Error)jjte009;
+          } finally {
+            if (jjtc009) {
+              jjtree.closeNodeScope(jjtn009,  2);
             }
           }
 /*@egen*/

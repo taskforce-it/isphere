@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 /**
  * Like algorithm. It supports two variants of syntax. The first is SQL syntax.
@@ -27,7 +28,7 @@ import org.medfoster.sqljep.ParseException;
  * syntax put pattern into slashes. For example "/^10*.?/"
  */
 public final class Like extends PostfixCommand {
-    
+
     protected static final Integer ZERO_OR_MORE_CHARS = 0;
     protected static final Integer ONE_CHAR = 1;
 
@@ -50,23 +51,33 @@ public final class Like extends PostfixCommand {
             return false;
         }
 
-        String source = param1.toString();
-        String match = param2.toString();
-        Pattern pattern = patterns.get(match);
+        if (validateParameters(param1, param2)) {
 
-        if (pattern == null) {
-            ArrayList<Object> p = compile(match);
-            String regexp = toRegExp(p);
-            pattern = Pattern.compile(regexp);
-            patterns.put(match, pattern);
+            String source = param1.toString();
+            String match = param2.toString();
+            Pattern pattern = patterns.get(match);
+
+            if (pattern == null) {
+                ArrayList<Object> p = compile(match);
+                String regexp = toRegExp(p);
+                pattern = Pattern.compile(regexp);
+                patterns.put(match, pattern);
+            }
+
+            Matcher m = pattern.matcher(source);
+
+            return m.find();
+
         }
 
-        Matcher m = pattern.matcher(source);
-
-        return m.find();
+        throw new WrongTypeException(getFunctionName(), param1, param2);
     }
 
-    protected static ArrayList<Object> compile(String pattern) {
+    public boolean validateParameters(Comparable<?> param1, Comparable<?> param2) {
+        return (param1 instanceof String) && (param2 instanceof String);
+    }
+
+    private ArrayList<Object> compile(String pattern) {
 
         ArrayList<Object> format = new ArrayList<Object>();
         StringBuilder fill = new StringBuilder();
@@ -112,7 +123,7 @@ public final class Like extends PostfixCommand {
         return format;
     }
 
-    public static String toRegExp(ArrayList<Object> pattern) {
+    private String toRegExp(ArrayList<Object> pattern) {
 
         if (pattern != null) {
 
@@ -122,28 +133,6 @@ public final class Like extends PostfixCommand {
                     str.append(".*?");
                 } else if (o == ONE_CHAR) {
                     str.append(".?");
-                } else {
-                    str.append((String)o);
-                }
-            }
-
-            return str.toString();
-        } else {
-            return null;
-        }
-    }
-
-    public static String toString(ArrayList<Object> pattern) {
-
-        if (pattern != null) {
-
-            StringBuilder str = new StringBuilder();
-
-            for (Object o : pattern) {
-                if (o == ZERO_OR_MORE_CHARS) {
-                    str.append('%');
-                } else if (o == ONE_CHAR) {
-                    str.append('_');
                 } else {
                     str.append((String)o);
                 }

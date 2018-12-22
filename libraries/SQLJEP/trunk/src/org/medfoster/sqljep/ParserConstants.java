@@ -28,18 +28,20 @@ public interface ParserConstants {
   int NOT_BETWEEN = 26;
   int LIKE = 27;
   int NOT_LIKE = 28;
-  int NULL_LITERAL = 29;
-  int TRUE_LITERAL = 30;
-  int FALSE_LITERAL = 31;
-  int INTEGER_LITERAL = 32;
-  int DECIMAL_LITERAL = 33;
-  int FLOATING_POINT_LITERAL = 34;
-  int EXPONENT = 35;
-  int STRING_LITERAL = 36;
-  int IDENTIFIER = 37;
-  int LETTER = 38;
-  int DIGIT = 39;
-  int OTHER_LETTER = 40;
+  int REGEXP_LIKE = 29;
+  int NOT_REGEXP_LIKE = 30;
+  int NULL_LITERAL = 31;
+  int TRUE_LITERAL = 32;
+  int FALSE_LITERAL = 33;
+  int INTEGER_LITERAL = 34;
+  int DECIMAL_LITERAL = 35;
+  int FLOATING_POINT_LITERAL = 36;
+  int EXPONENT = 37;
+  int STRING_LITERAL = 38;
+  int IDENTIFIER = 39;
+  int LETTER = 40;
+  int DIGIT = 41;
+  int OTHER_LETTER = 42;
 
   int DEFAULT = 0;
 
@@ -73,6 +75,8 @@ public interface ParserConstants {
     "\"not between\"",
     "\"like\"",
     "\"not like\"",
+    "\"regexp_like\"",
+    "\"not regexp_like\"",
     "\"null\"",
     "\"true\"",
     "\"false\"",

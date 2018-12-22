@@ -17,7 +17,12 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
-public final class NotLike extends PostfixCommand {
+/**
+ * Like algorithm. It supports two variants of syntax. The first is SQL syntax.
+ * The second is JRE regexp syntax. By default SQL syntax is used. To use regexp
+ * syntax put pattern into slashes. For example "/^10*.?/"
+ */
+public final class Regexp_Like extends PostfixCommand {
 
     private Like like = new Like();
 
@@ -29,21 +34,17 @@ public final class NotLike extends PostfixCommand {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();
         Comparable<?> param1 = runtime.stack.pop();
-        runtime.stack.push(not_like(param1, param2));
+        runtime.stack.push(regexp_like(param1, param2));
     }
 
-    public boolean not_like(Comparable<?> param1, Comparable<?> param2) throws ParseException {
+    public boolean regexp_like(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
-        if (validateParameters(param1, param2)) {
+        if (like.validateParameters(param1, param2)) {
             String source = (String)param1;
             String match = (String)param2;
-            return !like.like(String.format("/%s/", source), match);
+            return like.like(source, String.format("/%s/", match));
         }
 
         throw new WrongTypeException(getFunctionName(), param1, param2);
-    }
-
-    public boolean validateParameters(Comparable<?> param1, Comparable<?> param2) {
-        return like.validateParameters(param1, param2);
     }
 }

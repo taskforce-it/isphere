@@ -483,6 +483,8 @@ GRAMMAR START
     case NOT_BETWEEN:
     case LIKE:
     case NOT_LIKE:
+    case REGEXP_LIKE:
+    case NOT_REGEXP_LIKE:
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IS_NOT_NULL:
             ASTFunNode jjtn001 = new ASTFunNode(JJTFUNNODE);
@@ -665,6 +667,66 @@ GRAMMAR START
         } finally {
             if (jjtc007) {
               jjtree.closeNodeScope(jjtn007,  2);
+            }
+        }
+        break;
+      case REGEXP_LIKE:
+            ASTFunNode jjtn008 = new ASTFunNode(JJTFUNNODE);
+            boolean jjtc008 = true;
+            jjtree.openNodeScope(jjtn008);
+        try {
+          jj_consume_token(REGEXP_LIKE);
+          AdditiveExpression();
+                  jjtree.closeNodeScope(jjtn008,  2);
+                  jjtc008 = false;
+                  jjtn008.setFunction(tokenImage[REGEXP_LIKE], new Regexp_Like());
+        } catch (Throwable jjte008) {
+            if (jjtc008) {
+              jjtree.clearNodeScope(jjtn008);
+              jjtc008 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte008 instanceof RuntimeException) {
+              {if (true) throw (RuntimeException)jjte008;}
+            }
+            if (jjte008 instanceof ParseException) {
+              {if (true) throw (ParseException)jjte008;}
+            }
+            {if (true) throw (Error)jjte008;}
+        } finally {
+            if (jjtc008) {
+              jjtree.closeNodeScope(jjtn008,  2);
+            }
+        }
+        break;
+      case NOT_REGEXP_LIKE:
+            ASTFunNode jjtn009 = new ASTFunNode(JJTFUNNODE);
+            boolean jjtc009 = true;
+            jjtree.openNodeScope(jjtn009);
+        try {
+          jj_consume_token(NOT_REGEXP_LIKE);
+          AdditiveExpression();
+                  jjtree.closeNodeScope(jjtn009,  2);
+                  jjtc009 = false;
+                  jjtn009.setFunction(tokenImage[NOT_REGEXP_LIKE], new NotRegexp_Like());
+        } catch (Throwable jjte009) {
+            if (jjtc009) {
+              jjtree.clearNodeScope(jjtn009);
+              jjtc009 = false;
+            } else {
+              jjtree.popNode();
+            }
+            if (jjte009 instanceof RuntimeException) {
+              {if (true) throw (RuntimeException)jjte009;}
+            }
+            if (jjte009 instanceof ParseException) {
+              {if (true) throw (ParseException)jjte009;}
+            }
+            {if (true) throw (Error)jjte009;}
+        } finally {
+            if (jjtc009) {
+              jjtree.closeNodeScope(jjtn009,  2);
             }
         }
         break;
@@ -1014,10 +1076,10 @@ GRAMMAR START
         }
       } else {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 41:
-          jj_consume_token(41);
+        case 43:
+          jj_consume_token(43);
           Expression();
-          jj_consume_token(42);
+          jj_consume_token(44);
           break;
         default:
           jj_la1[16] = jj_gen;
@@ -1089,9 +1151,9 @@ GRAMMAR START
                         } else {
                                 addToErrorList("!!! Unrecognized function \"" + identString +"\"");
                         }
-      jj_consume_token(41);
+      jj_consume_token(43);
       ArgumentList(reqArguments, identString);
-      jj_consume_token(42);
+      jj_consume_token(44);
     } catch (Throwable jjte001) {
           if (jjtc001) {
             jjtree.clearNodeScope(jjtn001);
@@ -1122,14 +1184,14 @@ GRAMMAR START
       label_7:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 43:
+        case 45:
           ;
           break;
         default:
           jj_la1[17] = jj_gen;
           break label_7;
         }
-        jj_consume_token(43);
+        jj_consume_token(45);
         Expression();
                                count++;
       }
@@ -1157,22 +1219,22 @@ GRAMMAR START
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      jj_consume_token(41);
+      jj_consume_token(43);
       AdditiveExpression();
       label_8:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 43:
+        case 45:
           ;
           break;
         default:
           jj_la1[18] = jj_gen;
           break label_8;
         }
-        jj_consume_token(43);
+        jj_consume_token(45);
         AdditiveExpression();
       }
-      jj_consume_token(42);
+      jj_consume_token(44);
     } catch (Throwable jjte000) {
           if (jjtc000) {
             jjtree.clearNodeScope(jjtn000);
@@ -1293,38 +1355,8 @@ GRAMMAR START
     finally { jj_save(3, xla); }
   }
 
-  final private boolean jj_3R_26() {
-    if (jj_scan_token(INTEGER_LITERAL)) return true;
-    return false;
-  }
-
   final private boolean jj_3_1() {
     if (jj_3R_9()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_31() {
-    if (jj_3R_32()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_25() {
-    if (jj_scan_token(STRING_LITERAL)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_24() {
-    if (jj_scan_token(FALSE_LITERAL)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_18() {
-    if (jj_3R_21()) return true;
     return false;
   }
 
@@ -1370,11 +1402,6 @@ GRAMMAR START
     return false;
   }
 
-  final private boolean jj_3R_28() {
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_34() {
     if (jj_scan_token(MINUS)) return true;
     return false;
@@ -1401,13 +1428,13 @@ GRAMMAR START
     return false;
   }
 
-  final private boolean jj_3R_17() {
-    if (jj_3R_20()) return true;
+  final private boolean jj_3R_18() {
+    if (jj_3R_21()) return true;
     return false;
   }
 
-  final private boolean jj_3R_13() {
-    if (jj_3R_18()) return true;
+  final private boolean jj_3R_17() {
+    if (jj_3R_20()) return true;
     return false;
   }
 
@@ -1416,18 +1443,18 @@ GRAMMAR START
     return false;
   }
 
-  final private boolean jj_3R_29() {
-    if (jj_3R_30()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_30() {
     if (jj_3R_31()) return true;
     return false;
   }
 
+  final private boolean jj_3R_28() {
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_15() {
-    if (jj_scan_token(41)) return true;
+    if (jj_scan_token(43)) return true;
     return false;
   }
 
@@ -1441,8 +1468,8 @@ GRAMMAR START
     return false;
   }
 
-  final private boolean jj_3R_9() {
-    if (jj_3R_13()) return true;
+  final private boolean jj_3R_13() {
+    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -1457,6 +1484,11 @@ GRAMMAR START
     jj_scanpos = xsp;
     if (jj_3R_12()) return true;
     }
+    return false;
+  }
+
+  final private boolean jj_3R_29() {
+    if (jj_3R_30()) return true;
     return false;
   }
 
@@ -1478,11 +1510,6 @@ GRAMMAR START
     return false;
   }
 
-  final private boolean jj_3R_21() {
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_16() {
     if (jj_3R_20()) return true;
     return false;
@@ -1490,6 +1517,41 @@ GRAMMAR START
 
   final private boolean jj_3R_20() {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_26() {
+    if (jj_scan_token(INTEGER_LITERAL)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_31() {
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_9() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_25() {
+    if (jj_scan_token(STRING_LITERAL)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_21() {
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_24() {
+    if (jj_scan_token(FALSE_LITERAL)) return true;
     return false;
   }
 
@@ -1510,10 +1572,10 @@ GRAMMAR START
       jj_la1_1();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x1,0x100000,0x80000,0x64000,0x64000,0x1b000,0x1b000,0x1fc00000,0x1fc00000,0x1c0,0x1c0,0xe00,0xe00,0x200180,0x0,0xe0000000,0x0,0x0,0x0,0xe0000000,};
+      jj_la1_0 = new int[] {0x1,0x100000,0x80000,0x64000,0x64000,0x1b000,0x1b000,0x7fc00000,0x7fc00000,0x1c0,0x1c0,0xe00,0xe00,0x200180,0x0,0x80000000,0x0,0x0,0x0,0x80000000,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x20,0x15,0x200,0x800,0x800,0x15,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x80,0x57,0x800,0x2000,0x2000,0x57,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -1687,8 +1749,8 @@ GRAMMAR START
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[44];
-    for (int i = 0; i < 44; i++) {
+    boolean[] la1tokens = new boolean[46];
+    for (int i = 0; i < 46; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -1707,7 +1769,7 @@ GRAMMAR START
         }
       }
     }
-    for (int i = 0; i < 44; i++) {
+    for (int i = 0; i < 46; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

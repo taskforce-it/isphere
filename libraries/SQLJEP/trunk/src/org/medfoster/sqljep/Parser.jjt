@@ -190,6 +190,8 @@ TOKEN:
 |	< NOT_BETWEEN:  "not between"  >
 |	< LIKE:  "like"  >
 |	< NOT_LIKE:  "not like"  >
+|	< REGEXP_LIKE:  "regexp_like"  >
+|	< NOT_REGEXP_LIKE:  "not regexp_like"  >
 }
 
 
@@ -424,6 +426,18 @@ void PostfixExpression() :
 	  ( <NOT_LIKE> AdditiveExpression()
 		{
 		  jjtThis.setFunction(tokenImage[NOT_LIKE], new NotLike());
+		}
+	  ) #FunNode(2)
+	|
+	  ( <REGEXP_LIKE> AdditiveExpression()
+		{
+		  jjtThis.setFunction(tokenImage[REGEXP_LIKE], new Regexp_Like());
+		}
+	  ) #FunNode(2)
+	|
+	  ( <NOT_REGEXP_LIKE> AdditiveExpression()
+		{
+		  jjtThis.setFunction(tokenImage[NOT_REGEXP_LIKE], new NotRegexp_Like());
 		}
 	  ) #FunNode(2)
   ]
