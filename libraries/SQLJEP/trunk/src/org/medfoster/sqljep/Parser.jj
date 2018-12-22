@@ -172,7 +172,6 @@ TOKEN:
 |	< MINUS:"-"  >
 |	< MUL:  "*"  >
 |	< DIV:  "/"  >
-|	< DIV2:  "div"  >
 |	< MOD:  "mod"  >
 |	< GT:   ">"  >
 |	< LT:   "<"  >
@@ -1163,14 +1162,14 @@ void MultiplicativeExpression() :
     }
     try {
 /*@egen*/
-    ( <DIV2> UnaryExpression()/*@bgen(jjtree)*/
+    ( <MOD> UnaryExpression()/*@bgen(jjtree)*/
       {
         jjtree.closeNodeScope(jjtn003,  2);
         jjtc003 = false;
       }
 /*@egen*/
       {
-        jjtn003.setFunction(tokenImage[DIV2], new Divide());
+        jjtn003.setFunction(tokenImage[MOD], new Modulus());
       }
     )/*@bgen(jjtree)*/
     } catch (Throwable jjte003) {
@@ -1190,44 +1189,6 @@ void MultiplicativeExpression() :
     } finally {
       if (jjtc003) {
         jjtree.closeNodeScope(jjtn003,  2);
-      }
-    }
-/*@egen*/
-	|/*@bgen(jjtree) #FunNode( 2) */
-    {
-      ASTFunNode jjtn004 = new ASTFunNode(JJTFUNNODE);
-      boolean jjtc004 = true;
-      jjtree.openNodeScope(jjtn004);
-    }
-    try {
-/*@egen*/
-    ( <MOD> UnaryExpression()/*@bgen(jjtree)*/
-      {
-        jjtree.closeNodeScope(jjtn004,  2);
-        jjtc004 = false;
-      }
-/*@egen*/
-      {
-        jjtn004.setFunction(tokenImage[MOD], new Modulus());
-      }
-    )/*@bgen(jjtree)*/
-    } catch (Throwable jjte004) {
-      if (jjtc004) {
-        jjtree.clearNodeScope(jjtn004);
-        jjtc004 = false;
-      } else {
-        jjtree.popNode();
-      }
-      if (jjte004 instanceof RuntimeException) {
-        throw (RuntimeException)jjte004;
-      }
-      if (jjte004 instanceof ParseException) {
-        throw (ParseException)jjte004;
-      }
-      throw (Error)jjte004;
-    } finally {
-      if (jjtc004) {
-        jjtree.closeNodeScope(jjtn004,  2);
       }
     }
 /*@egen*/
@@ -1329,7 +1290,7 @@ void UnaryExpressionNotPlusMinus() :
 	AnyConstant()
 |
 	( LOOKAHEAD({ getToken(1).kind == IDENTIFIER &&
-				  jep.funTab.containsKey(getToken(1).image) })
+				  BaseJEP.hasFunction(getToken(1).image) })
 		Function()
 		|
 		Variable()
@@ -1413,7 +1374,7 @@ void Function() :
 /*@egen*/
 	( identString = Identifier()
 		{
-			PostfixCommandI func = jep.funTab.get(identString);
+			PostfixCommandI func = BaseJEP.getFunction(identString);
 			if (func != null) {
 				//Set number of required arguments
 				reqArguments = func.getNumberOfParameters();

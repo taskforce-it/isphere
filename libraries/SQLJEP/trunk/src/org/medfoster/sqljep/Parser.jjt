@@ -172,7 +172,6 @@ TOKEN:
 |	< MINUS:"-"  >
 |	< MUL:  "*"  >
 |	< DIV:  "/"  >
-|	< DIV2:  "div"  >
 |	< MOD:  "mod"  >
 |	< GT:   ">"  >
 |	< LT:   "<"  >
@@ -476,12 +475,6 @@ void MultiplicativeExpression() :
       }
     ) #FunNode(2)
 	|
-    ( <DIV2> UnaryExpression()
-      {
-        jjtThis.setFunction(tokenImage[DIV2], new Divide());
-      }
-    ) #FunNode(2)
-	|
     ( <MOD> UnaryExpression()
       {
         jjtThis.setFunction(tokenImage[MOD], new Modulus());
@@ -521,7 +514,7 @@ void UnaryExpressionNotPlusMinus() :
 	AnyConstant()
 |
 	( LOOKAHEAD({ getToken(1).kind == IDENTIFIER &&
-				  jep.funTab.containsKey(getToken(1).image) })
+				  BaseJEP.hasFunction(getToken(1).image) })
 		Function()
 		|
 		Variable()
@@ -566,7 +559,7 @@ void Function() :
 {
 	( identString = Identifier()
 		{
-			PostfixCommandI func = jep.funTab.get(identString);
+			PostfixCommandI func = BaseJEP.getFunction(identString);
 			if (func != null) {
 				//Set number of required arguments
 				reqArguments = func.getNumberOfParameters();
