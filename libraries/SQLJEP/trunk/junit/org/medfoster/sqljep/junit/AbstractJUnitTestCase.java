@@ -162,7 +162,7 @@ public abstract class AbstractJUnitTestCase {
 
         Calendar calendar = Calendar.getInstance();
         calendar.clear();
-        calendar.setTime((Date)timeOrTime);
+        calendar.setTime(timeOrTime);
         calendar.set(Calendar.MILLISECOND, 0);
 
         return new Time(calendar.getTimeInMillis());

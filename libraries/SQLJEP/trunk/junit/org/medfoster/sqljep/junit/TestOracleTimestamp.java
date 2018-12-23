@@ -10,7 +10,6 @@ package org.medfoster.sqljep.junit;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -37,32 +36,32 @@ public class TestOracleTimestamp extends AbstractJUnitTestCase {
         OracleTimeFormat format;
 
         format = new OracleTimeFormat(TIME_ISO);
-        actual = (Time)format.parseObject("08:50:00");
+        actual = format.parseObject("08:50:00");
         expected = stripMilliSeconds(getTime(8, 50, 0));
         assertEquals(expected, actual);
 
         format = new OracleTimeFormat(TIME_USA_AM);
-        actual = (Time)format.parseObject("08:50am");
+        actual = format.parseObject("08:50am");
         expected = stripMilliSeconds(getTime(8, 50, "am"));
         assertEquals(expected, actual);
 
         format = new OracleTimeFormat(TIME_USA_AM);
-        actual = (Time)format.parseObject("08:50 am");
+        actual = format.parseObject("08:50 am");
         expected = stripMilliSeconds(getTime(8, 50, "am"));
         assertEquals(expected, actual);
 
         format = new OracleTimeFormat(TIME_USA_PM);
-        actual = (Time)format.parseObject("08:50pm");
+        actual = format.parseObject("08:50pm");
         expected = stripMilliSeconds(getTime(8, 50, "pm"));
         assertEquals(expected, actual);
 
         format = new OracleTimeFormat(TIME_USA_PM);
-        actual = (Time)format.parseObject("08:50 pm");
+        actual = format.parseObject("08:50 pm");
         expected = stripMilliSeconds(getTime(8, 50, "pm"));
         assertEquals(expected, actual);
 
         format = new OracleTimeFormat(TIME_EUR);
-        actual = (Time)format.parseObject("08.50.30");
+        actual = format.parseObject("08.50.30");
         expected = stripMilliSeconds(getTime(8, 50, 30));
         assertEquals(expected, actual);
 
@@ -76,17 +75,17 @@ public class TestOracleTimestamp extends AbstractJUnitTestCase {
         OracleDateFormat format;
 
         format = new OracleDateFormat(DATE_ISO);
-        actual = (Date)format.parseObject("2018-12-04");
+        actual = format.parseObject("2018-12-04");
         expected = stripMilliSeconds(getDate(2018, 12, 4));
         assertEquals(expected, actual);
 
         format = new OracleDateFormat(DATE_USA);
-        actual = (Date)format.parseObject("12/4/2018");
+        actual = format.parseObject("12/4/2018");
         expected = stripMilliSeconds(getDate(2018, 12, 4));
         assertEquals(expected, actual);
 
         format = new OracleDateFormat(DATE_EUR);
-        actual = (Date)format.parseObject("4.12.2018");
+        actual = format.parseObject("4.12.2018");
         expected = stripMilliSeconds(getDate(2018, 12, 4));
         assertEquals(expected, actual);
 
