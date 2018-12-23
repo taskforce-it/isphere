@@ -105,7 +105,7 @@ public class JournalDAO {
 
                         boolean isSelected;
                         if (sqljep != null) {
-                            Comparable[] row = journalEntry.getRow();
+                            Comparable<?>[] row = journalEntry.getRow();
                             isSelected = (Boolean)sqljep.getValue(row);
                         } else {
                             isSelected = true;
@@ -127,7 +127,7 @@ public class JournalDAO {
 
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.size() < maxNumRows);
 
-        System.out.println("mSecs total: " + timeElapsed(startTime));
+        // System.out.println("mSecs total: " + timeElapsed(startTime));
 
         if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);
