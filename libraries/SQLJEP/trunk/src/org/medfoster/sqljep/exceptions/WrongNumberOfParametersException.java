@@ -13,14 +13,16 @@ public class WrongNumberOfParametersException extends ParseException {
 
     private static final long serialVersionUID = 4788921664877612893L;
 
+    private String function;
     private int count;
 
-    public WrongNumberOfParametersException(int count) {
+    public WrongNumberOfParametersException(String function, int count) {
+        this.function = function;
         this.count = count;
     }
 
     @Override
     public String getMessage() {
-        return String.format("Wrong number of parameters: %d", count);
+        return String.format("Wrong number of parameters %d in function %s.", count, function);
     }
 }

@@ -26,7 +26,7 @@ import org.medfoster.sqljep.junit.AbstractJUnitTestCase;
 public class TestFunctions extends AbstractJUnitTestCase {
 
     private static final String COMPARE_EXCEPTION = "Cannot compare '%s' with '%s'.";
-    private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters: %d";
+    private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters %d in function %s.";
     private static final String WRONG_TYPE_EXCEPTION_1 = "Wrong parameter types:  %s(%s)";
     private static final String WRONG_TYPE_EXCEPTION_2 = "Wrong parameter types:  %s(%s, %s)";
     private static final String WRONG_VALUE_EXCEPTION = "Invalid value '%s' of parameter '%s' of function %s.";
@@ -630,7 +630,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00.00.123', 'YYYY-MM-DD-HH24.MI.SS.NNN', 'TOO_MANY') = '" + expected + "'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Timestamp"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -660,7 +660,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Trim('***It works!###', '*', '#') = 'It works!'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Trim"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -677,7 +677,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("LTrim('***It works!###', '*', '#') = 'It works!'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Ltrim"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -694,7 +694,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("RTrim('***It works!###', '*', '#') = 'It works!'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Rtrim"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -870,7 +870,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Lpad('Hello', 10, '-+', 4) = '-+-+-Hello'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Lpad"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -905,7 +905,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Rpad('Hello', 10, '-+', 4) = 'Hello-+-+-'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Rpad"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -972,7 +972,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Substring('Hello World', 1, 1, 'TOO_MANY') = 'Hello'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Substring"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -1020,7 +1020,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ') = 'ZZZ--ZZZ--ZZZ'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 1), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 1, "Replace"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -1029,7 +1029,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC', 'WWW', 'TOO_MANY') = 'ZZZ-WWW-ZZZ-WWW-ZZZ'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Replace"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }

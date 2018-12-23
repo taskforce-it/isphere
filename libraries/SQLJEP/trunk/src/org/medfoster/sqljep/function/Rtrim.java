@@ -38,7 +38,7 @@ public class Rtrim extends PostfixCommand {
         } else {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
-            throw new WrongNumberOfParametersException(num);
+            throw new WrongNumberOfParametersException(getFunctionName(), num);
         }
     }
 
