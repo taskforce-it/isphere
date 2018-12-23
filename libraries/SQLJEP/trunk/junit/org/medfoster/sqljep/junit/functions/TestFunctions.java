@@ -40,6 +40,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         // String
         assertEquals(true, parseExpression("Concat('Hello', '-World') = 'Hello-World'"));
+        assertEquals(true, parseExpression("'a' || 'b' || 'c' = 'abc'"));
 
         // Numbers
         assertEquals(true, parseExpression("Concat(5.1, '9.8') = '5.19.8'"));
@@ -795,6 +796,121 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "NotRegexp_Like", "String", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testModulus() throws ParseException {
+
+        assertEquals(true, parseExpression("'11' Mod 3 = 2"));
+        assertEquals(true, parseExpression("11 Mod '3' = 2"));
+        assertEquals(true, parseExpression("11 Mod 3 = '2'"));
+
+        assertEquals(true, parseExpression("11 Mod 3 = 2"));
+        assertEquals(true, parseExpression("10 Mod 3 = 1"));
+        assertEquals(true, parseExpression("9 Mod 3 = 0"));
+
+        try {
+            assertEquals(true, parseExpression("Date('2018-12-21') Mod 3 = 2"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Modulus", "Date", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("11 Mod Date('2018-12-21') = 2"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Modulus", "Long", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testUMinus() throws ParseException {
+
+        assertEquals(true, parseExpression("-5 = 5 * -1"));
+
+        try {
+            assertEquals(true, parseExpression("-Date('2018-12-21') = 5 * -1"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "UMinus", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testLPad() throws ParseException {
+
+        assertEquals(true, parseExpression("Lpad('Hello', 10) = '     Hello'"));
+        assertEquals(true, parseExpression("Lpad('Hello', 10, '-+') = '-+-+-Hello'"));
+
+        /*
+         * IBM SQL Reference: The LPAD function treats leading or trailing
+         * blanks in expression as significant. Padding will only occur if the
+         * actual length of expression is less than length, and pad is not an
+         * empty string
+         */
+        assertEquals(true, parseExpression("Lpad('The quick brown fox', 10) = 'The quick brown fox'"));
+        assertEquals(true, parseExpression("Lpad('  Hello', 10, '-+') = '-+-  Hello'"));
+
+        try {
+            // Too many parameters
+            assertEquals(true, parseExpression("Lpad('Hello', 10, '-+', 4) = '-+-+-Hello'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Lpad('Hello', Date('2018-12-21')) = '     Hello'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Lpad", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testRPad() throws ParseException {
+
+        assertEquals(true, parseExpression("Rpad('Hello', 10) = 'Hello     '"));
+        assertEquals(true, parseExpression("Rpad('Hello', 10, '-+') = 'Hello-+-+-'"));
+
+        /*
+         * IBM SQL Reference: The RPAD function treats leading or trailing
+         * blanks in expression as significant. Padding will only occur if the
+         * actual length of expression is less than length, and pad is not an
+         * empty string.
+         */
+        assertEquals(true, parseExpression("Rpad('The quick brown fox', 10) = 'The quick brown fox'"));
+        assertEquals(true, parseExpression("Rpad('Hello  ', 10, '-+') = 'Hello  -+-'"));
+
+        try {
+            // Too many parameters
+            assertEquals(true, parseExpression("Rpad('Hello', 10, '-+', 4) = 'Hello-+-+-'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Rpad('Hello', Date('2018-12-21')) = 'Hello     '"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Rpad", "Date"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
