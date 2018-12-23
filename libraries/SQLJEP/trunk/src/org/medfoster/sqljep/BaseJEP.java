@@ -93,6 +93,7 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("dayofmonth", new Day()); // JUnit
         funTab.put("floor", new Floor()); // JUnit
         funTab.put("hour", new Hour()); // JUnit
+        funTab.put("length", new Length()); // JUnit
         funTab.put("lpad", new Lpad()); // JUnit
         funTab.put("microsecond", new Microsecond()); // JUnit
         funTab.put("minute", new Minute()); // JUnit
@@ -108,7 +109,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("timestamp", new Timestamp()); // JUnit
         funTab.put("year", new Year()); // JUnit
 
-        funTab.put("length", new Length());
         funTab.put("trim", new Trim());
         funTab.put("rtrim", new Rtrim());
         funTab.put("ltrim", new Ltrim());

@@ -14,9 +14,11 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
+@JUnitTest
 public class Length extends PostfixCommand {
 
     final public int getNumberOfParameters() {
