@@ -32,6 +32,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
+import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -237,7 +238,10 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         updateStatusLine();
 
-        if (e instanceof BufferTooSmallException) {
+        if (e instanceof ParseException) {
+            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            return;
+        } else if (e instanceof BufferTooSmallException) {
             MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof NoJournalEntriesLoadedException) {
