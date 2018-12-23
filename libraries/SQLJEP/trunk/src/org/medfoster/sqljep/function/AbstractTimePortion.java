@@ -8,8 +8,6 @@
 
 package org.medfoster.sqljep.function;
 
-import java.text.ParseException;
-
 import org.medfoster.sqljep.ParserUtils;
 
 public abstract class AbstractTimePortion<M extends Comparable<?>> extends AbstractDateTimePortion<M> {
