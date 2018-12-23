@@ -23,6 +23,8 @@ import org.medfoster.sqljep.exceptions.ParseException;
 @JUnitTest
 public final class In extends PostfixCommand {
 
+    private ComparativeEQ comparativeEQ = new ComparativeEQ();
+
     final public int getNumberOfParameters() {
         return 2;
     }
@@ -37,7 +39,7 @@ public final class In extends PostfixCommand {
             if (arg instanceof ASTArray) {
                 arg.jjtAccept(runtime.ev, null);
                 for (Comparable<?> d : runtime.stack) {
-                    if (d != null && ComparativeEQ.compareTo(source, d) == 0) {
+                    if (d != null && comparativeEQ.compareTo(source, d) == 0) {
                         runtime.stack.setSize(0);
                         runtime.stack.push(Boolean.TRUE);
                         return;

@@ -17,6 +17,9 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.exceptions.ParseException;
 
 public final class ComparativeNE extends PostfixCommand {
+
+    private ComparativeEQ comparativeEQ = new ComparativeEQ();
+
     final public int getNumberOfParameters() {
         return 2;
     }
@@ -28,7 +31,7 @@ public final class ComparativeNE extends PostfixCommand {
         if (param1 == null || param2 == null) {
             runtime.stack.push(Boolean.FALSE);
         } else {
-            runtime.stack.push(ComparativeEQ.compareTo(param1, param2) != 0);
+            runtime.stack.push(comparativeEQ.compareTo(param1, param2) != 0);
         }
     }
 }

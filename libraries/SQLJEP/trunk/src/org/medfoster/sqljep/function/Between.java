@@ -20,6 +20,8 @@ import org.medfoster.sqljep.exceptions.ParseException;
 @JUnitTest
 public final class Between extends PostfixCommand {
 
+    private ComparativeEQ comparativeEQ = new ComparativeEQ();
+    
     final public int getNumberOfParameters() {
         return 3;
     }
@@ -39,7 +41,7 @@ public final class Between extends PostfixCommand {
     }
 
     public boolean between(Comparable<?> limit2, Comparable<?> limit1, Comparable<?> source) throws ParseException {
-        return ComparativeEQ.compareTo(source, limit1) >= 0 && ComparativeEQ.compareTo(source, limit2) <= 0;
+        return comparativeEQ.compareTo(source, limit1) >= 0 && comparativeEQ.compareTo(source, limit2) <= 0;
     }
 
 }

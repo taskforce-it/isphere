@@ -41,7 +41,7 @@ public final class ComparativeEQ extends PostfixCommand {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static int compareTo(Comparable s1, Comparable s2) throws ParseException {
+    public int compareTo(Comparable s1, Comparable s2) throws ParseException {
 
         if (s1 instanceof Number || s2 instanceof Number) {
             return compareNumbers(s1, s2);
@@ -52,10 +52,10 @@ public final class ComparativeEQ extends PostfixCommand {
             return s1.compareTo(s2);
         }
 
-        throw createParseException(s1, s2);
+        throw new CompareException(getFunctionName(), s1, s2);
     }
 
-    private static int compareNumbers(Comparable<?> s1, Comparable<?> s2) throws ParseException {
+    private int compareNumbers(Comparable<?> s1, Comparable<?> s2) throws ParseException {
 
         if (s2 instanceof Number && s1 instanceof String) {
             s1 = parse((String)s1);
@@ -79,11 +79,11 @@ public final class ComparativeEQ extends PostfixCommand {
             }
         }
 
-        throw createParseException(s1, s2);
+        throw new CompareException(getFunctionName(), s1, s2);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static int compareDatesAndTimes(Comparable s1, Comparable s2) throws ParseException {
+    private int compareDatesAndTimes(Comparable s1, Comparable s2) throws ParseException {
 
         try {
 
@@ -128,10 +128,6 @@ public final class ComparativeEQ extends PostfixCommand {
             throw new ParseException(e.getMessage());
         }
 
-        throw createParseException(s1, s2);
-    }
-
-    private static ParseException createParseException(Comparable<?> s1, Comparable<?> s2) {
-        return new CompareException(s1, s2);
+        throw new CompareException(getFunctionName(), s1, s2);
     }
 }
