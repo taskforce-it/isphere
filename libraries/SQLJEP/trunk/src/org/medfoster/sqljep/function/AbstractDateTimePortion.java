@@ -11,7 +11,6 @@ package org.medfoster.sqljep.function;
 import java.util.Calendar;
 
 import org.medfoster.sqljep.ASTFunNode;
-import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
@@ -40,44 +39,35 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
 
     protected abstract boolean isSupportedType(Object object);
 
-    protected abstract Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, ParseException;
+    protected abstract Comparable<?> parseObject(Comparable<?> param) throws ParseException;
 
     private M evaluate(Comparable<?> param, Calendar cal) throws ParseException {
 
-        try {
+        if (param == null) {
+            return null;
+        }
 
-            if (param == null) {
-                return null;
+        if (param instanceof String) {
+            try {
+                return createInstance((Integer)parse((String)param));
+            } catch (ParseException e) {
+                // eat exception
             }
+        }
 
-            if (param instanceof String) {
-                try {
-                    return createInstance((Integer)parse((String)param));
-                } catch (ParseException e) {
-                    // eat exception
-                }
-            }
+        if (param instanceof String) {
+            param = parseObject(param);
+        }
 
-            if (param instanceof String) {
-                param = parseObject(param);
-            }
+        if (param instanceof Long) {
+            return createInstance(((Long)param).intValue());
+        }
 
-            if (param instanceof Long) {
-                return createInstance(((Long)param).intValue());
-            }
-
-            if (isSupportedType(param)) {
-                // java.sql.Date or java.sql.Time or java.sql.Timestamp
-                java.util.Date ts = (java.util.Date)param;
-                cal.setTimeInMillis(ts.getTime());
-                return createInstance(cal.get(calendarField));
-            }
-
-        } catch (java.text.ParseException e) {
-            if (BaseJEP.debug) {
-                e.printStackTrace();
-            }
-            throw new ParseException(e.getMessage());
+        if (isSupportedType(param)) {
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
+            java.util.Date ts = (java.util.Date)param;
+            cal.setTimeInMillis(ts.getTime());
+            return createInstance(cal.get(calendarField));
         }
 
         throw new WrongTypeException(getFunctionName(), param);

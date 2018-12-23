@@ -9,6 +9,7 @@
 package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ParserUtils;
+import org.medfoster.sqljep.exceptions.UnknownTimeFormatException;
 
 public abstract class AbstractTimePortion<M extends Comparable<?>> extends AbstractDateTimePortion<M> {
 
@@ -17,10 +18,16 @@ public abstract class AbstractTimePortion<M extends Comparable<?>> extends Abstr
     }
 
     @Override
-    protected Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, org.medfoster.sqljep.ParseException {
+    protected Comparable<?> parseObject(Comparable<?> param) throws org.medfoster.sqljep.ParseException {
 
+        try {
+        
         OracleTimeFormat format = new OracleTimeFormat(ParserUtils.getTimeFormat((String)param));
         param = format.parseObject((String)param);
+
+        } catch (java.text.ParseException e) {
+            throw new UnknownTimeFormatException((String)param);
+        }
 
         return param;
     }
