@@ -11,6 +11,9 @@ package org.medfoster.sqljep;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.medfoster.sqljep.exceptions.UnknownDateFormatException;
+import org.medfoster.sqljep.exceptions.UnknownTimeFormatException;
+import org.medfoster.sqljep.exceptions.UnknownTimestampFormatException;
 
 public final class ParserUtils {
 
@@ -51,9 +54,9 @@ public final class ParserUtils {
         timePattern = Pattern.compile(getPattern(timeFormats), Pattern.CASE_INSENSITIVE);
 
         timestampFormats = new DateFormat[2];
-        timestampFormats[TIMESTAMP_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:.[0-9]{0,12})?",
+        timestampFormats[TIMESTAMP_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{0,12})?",
             "YYYY-MM-DD HH24:MI:SS.NNN");
-        timestampFormats[TIMESTAMP_IBM] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}.[0-9]{2}.[0-9]{2}(?:.[0-9]{0,12})?",
+        timestampFormats[TIMESTAMP_IBM] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}\\.[0-9]{2}\\.[0-9]{2}(?:\\.[0-9]{0,12})?",
             "YYYY-MM-DD-HH24.MI.SS.NNN");
         timestampPattern = Pattern.compile(getPattern(timestampFormats), Pattern.CASE_INSENSITIVE);
     }
@@ -65,7 +68,7 @@ public final class ParserUtils {
             return format;
         }
 
-        throw new ParseException("Unknown date format: " + string);
+        throw new UnknownDateFormatException(string);
     }
 
     public static String getDateFormatChecked(String string) throws ParseException {
@@ -89,7 +92,7 @@ public final class ParserUtils {
             return format;
         }
 
-        throw new ParseException("Unknown time format: " + string);
+        throw new UnknownTimeFormatException(string);
     }
 
     public static String getTimeFormatChecked(String string) throws ParseException {
@@ -113,7 +116,7 @@ public final class ParserUtils {
             return format;
         }
 
-        throw new ParseException("Unknown timestamp format: " + string);
+        throw new UnknownTimestampFormatException(string);
     }
 
     public static String getTimestampFormatChecked(String string) throws ParseException {

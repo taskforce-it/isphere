@@ -20,6 +20,7 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.ParserUtils;
 import org.medfoster.sqljep.annotations.JUnitTest;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 @JUnitTest
@@ -46,7 +47,7 @@ public class Date extends PostfixCommand {
         } else {
             // remove all parameters from stack and push null
             removeParams(runtime.stack, num);
-            throw new ParseException("Wrong number of parameters for DATE()");
+            throw new WrongNumberOfParametersException(getFunctionName(), num);
         }
     }
 

@@ -18,6 +18,9 @@ import org.junit.Test;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.CompareException;
 import org.medfoster.sqljep.exceptions.UnexpectedTypeException;
+import org.medfoster.sqljep.exceptions.UnknownDateFormatException;
+import org.medfoster.sqljep.exceptions.UnknownTimeFormatException;
+import org.medfoster.sqljep.exceptions.UnknownTimestampFormatException;
 import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 import org.medfoster.sqljep.exceptions.WrongValueException;
@@ -31,6 +34,9 @@ public class TestFunctions extends AbstractJUnitTestCase {
     private static final String WRONG_TYPE_EXCEPTION_2 = "Wrong parameter types:  %s(%s, %s)";
     private static final String WRONG_VALUE_EXCEPTION = "Invalid value '%s' of parameter '%s' of function %s.";
     private static final String UNEXPECTED_TYPE_EXCEPTION = "Parameter '%s' of function %s should be an %s.";
+    private static final String UNKNOWN_TIMESTAMP_FORMAT_EXCEPTION = "Unknown timestamp format: %s";
+    private static final String UNKNOWN_TIME_FORMAT_EXCEPTION = "Unknown time format: %s";
+    private static final String UNKNOWN_DATE_FORMAT_EXCEPTION = "Unknown date format: %s";
 
     @Test
     public void testAbs() throws ParseException {
@@ -57,7 +63,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("Concat('Time: ', Time('18.12.22')) = 'Time: 18:12:22'"));
 
         // Timestamp
-        assertEquals(true, parseExpression("Concat('Timestamp: ', Timestamp('2018-12-22-18:12:22.123')) = 'Timestamp: 2018-12-22 18:12:22.123'"));
+        assertEquals(true, parseExpression("Concat('Timestamp: ', Timestamp('2018-12-22 18:12:22.123')) = 'Timestamp: 2018-12-22 18:12:22.123'"));
     }
 
     @Test
@@ -556,6 +562,26 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("DATE('2018-12-05', 'YYYY-MM-DD') > '2018-12-04'"));
         assertEquals(true, parseExpression("DATE('12-05-2018', 'MM/DD/yyyy') = '2018-12-05'"));
         assertEquals(true, parseExpression("DATE('05-12-2018', 'DD.MM.YYYY') < '2018-12-06'"));
+
+        try {
+            // Too many parameters
+            assertEquals(true, parseExpression("DATE('2018-12-05', 'YYYY-MM-DD', 'TOO_MANY') = '2018-12-05'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            // Invalid date format
+            assertEquals(true, parseExpression("DATE('2018:12:05') = '2018-12-05'"));
+        } catch (UnknownDateFormatException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNKNOWN_DATE_FORMAT_EXCEPTION, "2018:12:05"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
@@ -575,6 +601,26 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         assertEquals(true, parseExpression("TIME('09:00am', 'HH12:MI AM') = '09:00:00'"));
         assertEquals(true, parseExpression("TIME('09:00   pm', 'HH12:MI PM') = '21:00:00'"));
+
+        try {
+            // Too many parameters
+            assertEquals(true, parseExpression("TIME('12:00:00', 'HH24:MI:SS', 'TOO_MANY') = '12:00:00'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Time"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            // Invalid time format
+            assertEquals(true, parseExpression("TIME('12.00:00') = '12:00:00'"));
+        } catch (UnknownTimeFormatException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNKNOWN_TIME_FORMAT_EXCEPTION, "12.00:00"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
@@ -631,6 +677,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Timestamp"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            // Invalid timestamp format
+            assertEquals(true, parseExpression("TIMESTAMP('2018-12-05-12.00:00.123') = '" + expected + "'"));
+        } catch (UnknownTimestampFormatException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNKNOWN_TIMESTAMP_FORMAT_EXCEPTION, "2018-12-05-12.00:00.123"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
