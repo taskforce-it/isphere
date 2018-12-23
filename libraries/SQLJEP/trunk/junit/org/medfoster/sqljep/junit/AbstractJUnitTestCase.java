@@ -33,7 +33,8 @@ public abstract class AbstractJUnitTestCase {
     private static final int JOTIME = 9;
     private static final int JOTIME2 = 10;
     private static final int JOTIME3 = 11;
-
+    private static final int JOTSTP = 12;
+    
     private static HashMap<String, Integer> columnMappings;
     static {
         columnMappings = new HashMap<String, Integer>();
@@ -49,6 +50,7 @@ public abstract class AbstractJUnitTestCase {
         columnMappings.put("JOTIME", JOTIME);
         columnMappings.put("JOTIME2", JOTIME2);
         columnMappings.put("JOTIME3", JOTIME3);
+        columnMappings.put("JOTSTP", JOTSTP);
     }
 
     private static HashMap<String, Integer> emptyColumnMappings;
@@ -80,9 +82,9 @@ public abstract class AbstractJUnitTestCase {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.HOUR_OF_DAY, 12);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
 
         if (millisecond >= 0) {
             calendar.set(Calendar.MILLISECOND, millisecond);
@@ -113,6 +115,7 @@ public abstract class AbstractJUnitTestCase {
         row[JOMBR] = "ITEMS";
         row[JODATE] = getDate(2018, 10, 22);
         row[JOTIME] = getTime(3, 5, "pm");
+        row[JOTSTP] = getTimestamp(2018, 10, 22, 15, 5, 0);
 
         try {
             // Different mSecs

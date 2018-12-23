@@ -11,6 +11,20 @@ import org.medfoster.sqljep.RowJEP;
 public class TestDateTime extends AbstractJUnitTestCase {
 
     @Test
+    public void testTimestampEqual() throws org.medfoster.sqljep.ParseException, ParseException {
+
+        HashMap<String, Integer> columnMapping = getColumnMapping();
+        RowJEP sqljep;
+        sqljep = new RowJEP("JOTSTP = '2018-10-22-15.05.00'");
+        sqljep.parseExpression(columnMapping);
+
+        Comparable<?>[] row = getRow();
+        boolean isSelected = (Boolean)sqljep.getValue(row);
+
+        assertEquals(true, isSelected);
+    }
+
+    @Test
     public void testTimeNotEqual2() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
