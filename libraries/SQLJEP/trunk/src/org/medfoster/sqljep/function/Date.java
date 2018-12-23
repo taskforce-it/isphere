@@ -75,8 +75,8 @@ public class Date extends PostfixCommand {
             return null;
         }
 
-        if (expression instanceof java.util.Date) {
-            return new java.sql.Date(((java.util.Date)expression).getTime());
+        if (expression instanceof java.sql.Date) {
+            return (java.sql.Date)expression;
         } else if (expression instanceof String && pattern instanceof String) {
             try {
                 OracleDateFormat format = new OracleDateFormat((String)pattern);

@@ -28,11 +28,11 @@ public final class ComparativeEQ extends PostfixCommand {
     }
 
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-        
+
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();
         Comparable<?> param1 = runtime.stack.pop();
-        
+
         if (param1 == null || param2 == null) {
             runtime.stack.push(Boolean.FALSE);
         } else {
@@ -46,6 +46,7 @@ public final class ComparativeEQ extends PostfixCommand {
         if (s1 instanceof Number || s2 instanceof Number) {
             return compareNumbers(s1, s2);
         } else if (s1 instanceof java.util.Date || s2 instanceof java.util.Date) {
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
             return compareDatesAndTimes(s1, s2);
         } else if (s1.getClass() == s2.getClass()) {
             return s1.compareTo(s2);
@@ -61,7 +62,7 @@ public final class ComparativeEQ extends PostfixCommand {
         } else if (s1 instanceof Number && s2 instanceof String) {
             s2 = parse((String)s2);
         }
-        
+
         if (s1 instanceof Number && s2 instanceof Number) {
             Number n1 = (Number)s1;
             Number n2 = (Number)s2;
@@ -88,6 +89,7 @@ public final class ComparativeEQ extends PostfixCommand {
 
             int reverseOperation = 1;
 
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
             if (s2 instanceof java.util.Date && s1 instanceof String) {
                 Comparable<?> s1Old = s1;
                 s1 = s2;
@@ -114,6 +116,7 @@ public final class ComparativeEQ extends PostfixCommand {
                 throw new IllegalArgumentException("Did not expect: " + s1.getClass().getName());
             }
 
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
             if (s1 instanceof java.util.Date && s2 instanceof java.util.Date) {
                 return s1.compareTo(s2) * reverseOperation;
             }

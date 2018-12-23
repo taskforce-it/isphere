@@ -203,6 +203,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
 
         if (obj instanceof java.util.Date) {
 
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
             java.util.Date date = (java.util.Date)obj;
             calendar.setTime(date);
 

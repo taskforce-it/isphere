@@ -128,7 +128,7 @@ public class Round extends PostfixCommand {
 
             } else if (param1 instanceof java.util.Date) {
 
-                // param1 = a date or timestamp
+                // param1 = java.sql.Date or java.sql.Time or java.sql.Timestamp
                 // param2 = a calendar field
                 if (param2 instanceof String) {
 
@@ -304,7 +304,7 @@ public class Round extends PostfixCommand {
             return true;
         }
 
-        if (param1 instanceof java.util.Date) {
+        if (param1 instanceof java.sql.Date) {
             return true;
         }
 

@@ -82,6 +82,8 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
                 return performOperation(b1, b2);
             }
         } else if (param1 instanceof java.util.Date || param2 instanceof java.util.Date) {
+
+            // java.sql.Date or java.sql.Time or java.sql.Timestamp
             if (param1 instanceof java.util.Date && param2 instanceof java.util.Date) {
                 throw new WrongTypeException(getFunctionName(), param1, param2);
             }
@@ -107,6 +109,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
                 }
 
             }
+
             if (param1 instanceof java.sql.Date) {
 
                 if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours
@@ -115,27 +118,19 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
                 }
 
             }
-            if (param1 instanceof java.util.Date) {
 
-                if (param2 instanceof Years || param2 instanceof Months || param2 instanceof Days || param2 instanceof Hours
-                    || param2 instanceof Minutes || param2 instanceof Seconds) {
-                    return new java.util.Date(performOperation(param1, param2).getTime());
-                }
-
-            }
-
-            throw new WrongTypeException(getFunctionName(), param1, param2);
-        } else {
-            throw new WrongTypeException(getFunctionName(), param1, param2);
         }
+
+        throw new WrongTypeException(getFunctionName(), param1, param2);
     }
 
     protected abstract BigDecimal performOperation(BigDecimal param1, BigDecimal param2) throws ParseException;
 
     protected java.util.Date performOperation(Comparable<?> param1, Comparable<?> param2) throws ParseException {
 
+        // java.sql.Date or java.sql.Time or java.sql.Timestamp
         java.util.Date d = (java.util.Date)param1;
-        
+
         if (param2 instanceof Days) {
             Days n = (Days)param2;
             return addDays(d, getOperand(n));

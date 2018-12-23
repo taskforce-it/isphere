@@ -37,7 +37,7 @@ public final class OracleDateFormat extends AbstractOracleDateTimeFormat {
     }
 
     @SuppressWarnings("rawtypes")
-    protected java.util.Date stripMilliSeconds(Comparable time) {
+    protected java.sql.Date stripMilliSeconds(Comparable time) {
         throw new IllegalAccessError("stripMilliSeconds() is not allowed for " + getClass().getSimpleName());
     }
 }

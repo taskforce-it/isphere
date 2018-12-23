@@ -31,7 +31,7 @@ public abstract class AbstractDatePortion<M extends Comparable<?>> extends Abstr
             return false;
         }
 
-        if (object instanceof java.util.Date) {
+        if (object instanceof java.sql.Date) {
             return true;
         }
 

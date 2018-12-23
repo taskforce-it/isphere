@@ -65,6 +65,7 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
             }
 
             if (isSupportedType(param)) {
+                // java.sql.Date or java.sql.Time or java.sql.Timestamp
                 java.util.Date ts = (java.util.Date)param;
                 cal.setTimeInMillis(ts.getTime());
                 return createInstance(cal.get(calendarField));
