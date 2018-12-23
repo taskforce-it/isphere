@@ -5,13 +5,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 
 import org.junit.Test;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
-import org.medfoster.sqljep.exceptions.ParseException;
 
 public class TestDateTime extends AbstractJUnitTestCase {
 
     @Test
-    public void testTimeNotEqual2() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeNotEqual2() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -25,7 +25,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeNotEqualComparingMSecs() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeNotEqualComparingMSecs() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -39,7 +39,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testDateEqual() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testDateEqual() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -53,7 +53,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testDateEqualReverse() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testDateEqualReverse() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -67,7 +67,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeEqual24EUR() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeEqual24EUR() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -81,7 +81,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeEqual24EURReverse() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeEqual24EURReverse() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -95,7 +95,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeEqual24ISO() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeEqual24ISO() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -109,7 +109,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeEqual() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeEqual() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -123,7 +123,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testDateLower() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testDateLower() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -137,7 +137,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeLower() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeLower() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -151,7 +151,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testDateGreater() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testDateGreater() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -165,7 +165,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testDateGreaterReverse() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testDateGreaterReverse() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -179,7 +179,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeGreater() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeGreater() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;
@@ -193,7 +193,7 @@ public class TestDateTime extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testTimeGreaterReverse() throws org.medfoster.sqljep.exceptions.ParseException, ParseException {
+    public void testTimeGreaterReverse() throws org.medfoster.sqljep.ParseException, ParseException {
 
         HashMap<String, Integer> columnMapping = getColumnMapping();
         RowJEP sqljep;

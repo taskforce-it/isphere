@@ -13,7 +13,7 @@ import java.util.Calendar;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.BaseJEP;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends PostfixCommand {

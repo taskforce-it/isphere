@@ -2,7 +2,6 @@
 
 package org.medfoster.sqljep;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 
 public class SimpleNode implements Node {
     protected Node parent;

@@ -14,7 +14,7 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.ParseException;
 
 /**
  * All function classes must implement this interface to ensure that the run()

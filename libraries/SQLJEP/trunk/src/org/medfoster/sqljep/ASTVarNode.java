@@ -4,7 +4,6 @@ package org.medfoster.sqljep;
 
 import java.util.Map;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 
 /**
  * It is public and fields index and variable are public because it is possible

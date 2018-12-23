@@ -17,7 +17,7 @@ import java.util.Stack;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
-import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.ParseException;
 
 /**
  * Function classes extend this class. It is an implementation of the

@@ -24,7 +24,6 @@
 
 package org.medfoster.sqljep;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 
 public class ParserDumpVisitor implements ParserVisitor {
     private int indent = 0;

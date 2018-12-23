@@ -8,6 +8,8 @@
 
 package org.medfoster.sqljep.exceptions;
 
+import org.medfoster.sqljep.ParseException;
+
 public class WrongNumberOfParametersException extends ParseException {
 
     private static final long serialVersionUID = 4788921664877612893L;

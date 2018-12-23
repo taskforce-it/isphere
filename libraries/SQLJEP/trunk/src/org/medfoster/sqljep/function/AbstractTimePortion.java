@@ -17,7 +17,7 @@ public abstract class AbstractTimePortion<M extends Comparable<?>> extends Abstr
     }
 
     @Override
-    protected Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, org.medfoster.sqljep.exceptions.ParseException {
+    protected Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, org.medfoster.sqljep.ParseException {
 
         OracleTimeFormat format = new OracleTimeFormat(ParserUtils.getTimeFormat((String)param));
         param = format.parseObject((String)param);

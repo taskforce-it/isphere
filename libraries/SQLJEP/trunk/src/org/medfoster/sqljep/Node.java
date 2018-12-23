@@ -2,7 +2,6 @@
 
 package org.medfoster.sqljep;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 
 /* All AST nodes must implement this interface.  It provides basic
  machinery for constructing the parent and child relationships

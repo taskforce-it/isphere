@@ -4,7 +4,6 @@ package org.medfoster.sqljep;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.function.Add;
 import org.medfoster.sqljep.function.Between;
 import org.medfoster.sqljep.function.ComparativeEQ;

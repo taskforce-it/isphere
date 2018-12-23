@@ -8,6 +8,8 @@
 
 package org.medfoster.sqljep.exceptions;
 
+import org.medfoster.sqljep.ParseException;
+
 public class CompareException extends ParseException {
 
     private static final long serialVersionUID = 1317668761754955133L;

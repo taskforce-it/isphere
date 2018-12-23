@@ -14,9 +14,9 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.exceptions.InternalErrorException;
-import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.exceptions.UnexpectedTypeException;
 import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongValueException;

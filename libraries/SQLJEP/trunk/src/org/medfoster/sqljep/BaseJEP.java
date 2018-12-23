@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.function.Abs;
 import org.medfoster.sqljep.function.Ceil;
 import org.medfoster.sqljep.function.Concat;
@@ -191,7 +190,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * 
      * @return the column value
      * @param column Number in the abstract table data
-     * @throws org.medfoster.sqljep.exceptions.ParseException
+     * @throws org.medfoster.sqljep.ParseException
      */
     public abstract Comparable<?> getColumnObject(int column) throws ParseException;
 
@@ -219,7 +218,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * @param name Name of the variable to return
      * @return Map.Entry variable with name and value. Null value means variable
      *         not found.
-     * @throws org.medfoster.sqljep.exceptions.ParseException
+     * @throws org.medfoster.sqljep.ParseException
      */
     public abstract Map.Entry<String, Comparable<?>> getVariable(String name) throws ParseException;
 
@@ -301,7 +300,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * Parses the expression. The root of the expression tree is returned by
      * {@link #getTopNode()} method
      * 
-     * @throws org.medfoster.sqljep.exceptions.ParseException If there are
+     * @throws org.medfoster.sqljep.ParseException If there are
      *         errors in the expression then it fires the exception
      */
     final protected void parseExpression() throws ParseException {
@@ -316,11 +315,11 @@ public abstract class BaseJEP implements ParserVisitor {
             topNode = null;
             errorList.add(e.getMessage());
         } catch (Throwable e) {
-            throw new org.medfoster.sqljep.exceptions.ParseException(toString(), e);
+            throw new org.medfoster.sqljep.ParseException(toString(), e);
         }
 
         if (hasError()) {
-            throw new org.medfoster.sqljep.exceptions.ParseException(getErrorInfo());
+            throw new org.medfoster.sqljep.ParseException(getErrorInfo());
         }
 
         // If debug is enabled, print a dump of the tree to

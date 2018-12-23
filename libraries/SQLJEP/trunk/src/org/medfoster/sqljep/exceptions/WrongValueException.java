@@ -8,6 +8,8 @@
 
 package org.medfoster.sqljep.exceptions;
 
+import org.medfoster.sqljep.ParseException;
+
 public class WrongValueException extends ParseException {
 
     private static final long serialVersionUID = -6742576991351297473L;

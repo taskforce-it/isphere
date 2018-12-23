@@ -16,9 +16,9 @@ import org.medfoster.sqljep.ASTArray;
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.Node;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.exceptions.InternalErrorException;
-import org.medfoster.sqljep.exceptions.ParseException;
 
 @JUnitTest
 public final class In extends PostfixCommand {

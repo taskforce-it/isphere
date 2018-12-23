@@ -8,7 +8,7 @@
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.exceptions.UnexpectedTypeException;
 
 public abstract class AbstractLowerUpper extends PostfixCommand {

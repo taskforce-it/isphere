@@ -18,6 +18,7 @@ import java.util.Date;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.datatypes.Days;
 import org.medfoster.sqljep.datatypes.Hours;
 import org.medfoster.sqljep.datatypes.Microseconds;
@@ -25,7 +26,6 @@ import org.medfoster.sqljep.datatypes.Minutes;
 import org.medfoster.sqljep.datatypes.Months;
 import org.medfoster.sqljep.datatypes.Seconds;
 import org.medfoster.sqljep.datatypes.Years;
-import org.medfoster.sqljep.exceptions.ParseException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public abstract class AbstractLineCalculation extends PostfixCommand {

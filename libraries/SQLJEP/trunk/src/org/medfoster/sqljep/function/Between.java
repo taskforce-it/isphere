@@ -14,8 +14,8 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
-import org.medfoster.sqljep.exceptions.ParseException;
 
 @JUnitTest
 public final class Between extends PostfixCommand {
