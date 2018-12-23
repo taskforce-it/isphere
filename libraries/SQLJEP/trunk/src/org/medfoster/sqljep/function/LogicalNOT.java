@@ -8,32 +8,37 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
+ *****************************************************************************/
 
 package org.medfoster.sqljep.function;
 
-import org.medfoster.sqljep.*;
+import org.medfoster.sqljep.ASTFunNode;
+import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public final class LogicalNOT extends PostfixCommand {
-	final public int getNumberOfParameters() {
-		return 1;
-	}
-	
-	public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
-		node.childrenAccept(runtime.ev, null);
-		Comparable param = runtime.stack.pop();
-		runtime.stack.push(not(param));		//push the result on the inStack
-	}
 
-	public static Boolean not(Comparable param) throws ParseException {
-		if (param == null) {
-			return null;
-		}
-		if (param instanceof Boolean) {
-			return ((Boolean)param).booleanValue() ? Boolean.TRUE : Boolean.FALSE;
-		}
-		throw new ParseException(WRONG_TYPE+" not "+param.getClass());
-	}
+    final public int getNumberOfParameters() {
+        return 1;
+    }
+
+    public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
+        node.childrenAccept(runtime.ev, null);
+        Comparable<?> param = runtime.stack.pop();
+        runtime.stack.push(not(param));
+    }
+
+    public Boolean not(Comparable<?> param) throws ParseException {
+
+        if (param == null) {
+            return null;
+        }
+
+        if (param instanceof Boolean) {
+            return ((Boolean)param).booleanValue() ? Boolean.TRUE : Boolean.FALSE;
+        }
+
+        throw new WrongTypeException(getFunctionName(), param);
+    }
 }
-

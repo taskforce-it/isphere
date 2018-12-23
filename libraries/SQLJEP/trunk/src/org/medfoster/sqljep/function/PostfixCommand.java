@@ -30,10 +30,6 @@ import org.medfoster.sqljep.exceptions.ParseException;
  */
 public abstract class PostfixCommand implements PostfixCommandI {
 
-    protected static final Integer ZERO = new Integer(0);
-
-    public static final String WRONG_TYPE = "Wrong type";
-
     /**
      * Return the required number of parameters. Number of parameters a the
      * function requires. Initialize this value to -1 if any number of
