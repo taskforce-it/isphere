@@ -25,7 +25,7 @@ import org.medfoster.sqljep.junit.AbstractJUnitTestCase;
 
 public class TestFunctions extends AbstractJUnitTestCase {
 
-    private static final String COMPARE_EXCEPTION = "Cannot compare '%s' with '%s'.";
+    private static final String COMPARE_EXCEPTION = "Cannot compare '%s' with '%s' in function %s.";
     private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters %d in function %s.";
     private static final String WRONG_TYPE_EXCEPTION_1 = "Wrong parameter types:  %s(%s)";
     private static final String WRONG_TYPE_EXCEPTION_2 = "Wrong parameter types:  %s(%s, %s)";
@@ -94,7 +94,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));
         } catch (CompareException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long"), message);
+            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long", "ComparativeEQ"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -117,7 +117,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));
         } catch (CompareException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long"), message);
+            assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long", "ComparativeEQ"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
