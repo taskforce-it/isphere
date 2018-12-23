@@ -46,7 +46,6 @@ import org.medfoster.sqljep.function.Time;
 import org.medfoster.sqljep.function.Timestamp;
 import org.medfoster.sqljep.function.Trim;
 import org.medfoster.sqljep.function.Upper;
-import org.medfoster.sqljep.function.WeekOfYear;
 import org.medfoster.sqljep.function.Year;
 
 /**
@@ -114,8 +113,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("trim", new Trim()); // JUnit
         funTab.put("upper", new Upper()); // JUnit
         funTab.put("year", new Year()); // JUnit
-
-        funTab.put("weekofyear", new WeekOfYear());
     }
 
     /** Parse time error List */

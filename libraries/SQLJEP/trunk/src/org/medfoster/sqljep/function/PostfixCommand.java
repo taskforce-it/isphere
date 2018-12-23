@@ -32,7 +32,6 @@ public abstract class PostfixCommand implements PostfixCommandI {
 
     protected static final Integer ZERO = new Integer(0);
 
-    public static final String PARAMS_NUMBER = "Wrong number of parameters";
     public static final String WRONG_TYPE = "Wrong type";
 
     /**
