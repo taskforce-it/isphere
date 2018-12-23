@@ -34,7 +34,6 @@ public abstract class PostfixCommand implements PostfixCommandI {
 
     public static final String PARAMS_NUMBER = "Wrong number of parameters";
     public static final String WRONG_TYPE = "Wrong type";
-    public static final String INTERNAL_ERROR = "Internal error";
     public static final String NOT_IMPLIMENTED_EXCEPTION = "Not implimented";
 
     /**

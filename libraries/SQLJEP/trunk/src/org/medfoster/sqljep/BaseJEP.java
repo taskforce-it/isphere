@@ -45,7 +45,6 @@ import org.medfoster.sqljep.function.Substring;
 import org.medfoster.sqljep.function.Time;
 import org.medfoster.sqljep.function.Timestamp;
 import org.medfoster.sqljep.function.Trim;
-import org.medfoster.sqljep.function.Trunc;
 import org.medfoster.sqljep.function.Upper;
 import org.medfoster.sqljep.function.WeekOfYear;
 import org.medfoster.sqljep.function.Year;
@@ -109,7 +108,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("timestamp", new Timestamp()); // JUnit
         funTab.put("year", new Year()); // JUnit
 
-        funTab.put("trunc", new Trunc());
         funTab.put("length", new Length());
         funTab.put("trim", new Trim());
         funTab.put("rtrim", new Rtrim());
