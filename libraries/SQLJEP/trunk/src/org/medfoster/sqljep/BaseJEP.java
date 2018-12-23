@@ -371,6 +371,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * Compares two objects for equality. Two SQLJEPs are equals only when their
      * String representations are equals.
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof BaseJEP) {
             BaseJEP f = (BaseJEP)obj;
@@ -382,6 +383,7 @@ public abstract class BaseJEP implements ParserVisitor {
     /**
      * Returns the expression string representation
      */
+    @Override
     public String toString() {
         return expression;
     }
@@ -445,7 +447,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * stack.
      */
     final public Object visit(ASTConstant node, Object data) throws ParseException {
-        runtime.stack.push((Comparable<?>)node.value);
+        runtime.stack.push(node.value);
         return null;
     }
 

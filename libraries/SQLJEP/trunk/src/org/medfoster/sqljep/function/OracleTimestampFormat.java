@@ -29,10 +29,12 @@ public class OracleTimestampFormat extends AbstractOracleDateTimeFormat {
         super(pattern, calendar, dateSymb);
     }
 
+    @Override
     public java.sql.Timestamp parseObject(String source) {
         return new java.sql.Timestamp(parseInMillis(source, new ParsePosition(0)));
     }
 
+    @Override
     public java.sql.Timestamp parseObject(String source, ParsePosition pos) {
         return new java.sql.Timestamp(parseInMillis(source, pos));
     }

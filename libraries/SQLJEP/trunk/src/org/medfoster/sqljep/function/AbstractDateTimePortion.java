@@ -24,10 +24,12 @@ public abstract class AbstractDateTimePortion<M extends Comparable<?>> extends P
         this.calendarField = calendarField;
     }
 
+    @Override
     final public int getNumberOfParameters() {
         return 1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();

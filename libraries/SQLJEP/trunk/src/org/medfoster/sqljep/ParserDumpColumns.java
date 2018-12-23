@@ -8,8 +8,8 @@
            (c) Copyright 2002, Nathan Funk
  
       See LICENSE.txt for license information.
-*****************************************************************************/
-   
+ *****************************************************************************/
+
 package org.medfoster.sqljep;
 
 import java.util.ArrayList;
@@ -20,42 +20,43 @@ import org.medfoster.sqljep.exceptions.ParseException;
  * Finds all columns in parser tree and stores them in the array
  */
 public class ParserDumpColumns implements ParserVisitor {
-	
-	ArrayList<Integer> columns;
-	
-	public ParserDumpColumns(ArrayList<Integer> columns) {
-		this.columns = columns;
-	}
-	
-	public Object visit(SimpleNode node, Object data) throws ParseException {
-		data = node.childrenAccept(this, data);
-		return data;
-	}
 
-	public Object visit(ASTStart node, Object data) throws ParseException {
-		data = node.childrenAccept(this, data);
-		return data;
-	}
+    ArrayList<Integer> columns;
 
-	public Object visit(ASTFunNode node, Object data) throws ParseException {
-		data = node.childrenAccept(this, data);
-		return data;
-	}
+    public ParserDumpColumns(ArrayList<Integer> columns) {
+        this.columns = columns;
+    }
 
-	public Object visit(ASTVarNode node, Object data) throws ParseException {
-		if (node.index >= 0) {
-			columns.add(node.index);
-		}
-		data = node.childrenAccept(this, data);
-		return data;
-	}
+    public Object visit(SimpleNode node, Object data) throws ParseException {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
 
-	public Object visit(ASTConstant node, Object data) throws ParseException {
-		data = node.childrenAccept(this, data);
-		return data;
-	}
-	public Object visit(ASTArray node, Object data) throws ParseException {
-		data = node.childrenAccept(this, data);
-		return data;
-	}
+    public Object visit(ASTStart node, Object data) throws ParseException {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTFunNode node, Object data) throws ParseException {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTVarNode node, Object data) throws ParseException {
+        if (node.index >= 0) {
+            columns.add(node.index);
+        }
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTConstant node, Object data) throws ParseException {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
+
+    public Object visit(ASTArray node, Object data) throws ParseException {
+        data = node.childrenAccept(this, data);
+        return data;
+    }
 }

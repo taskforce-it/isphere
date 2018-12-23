@@ -24,10 +24,12 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Timestamp extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return -1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 
         node.childrenAccept(runtime.ev, null);
@@ -58,7 +60,7 @@ public class Timestamp extends PostfixCommand {
         } else if (expression instanceof String && pattern instanceof String) {
             try {
                 OracleTimestampFormat format = new OracleTimestampFormat((String)pattern);
-                return (java.sql.Timestamp)format.parseObject((String)expression);
+                return format.parseObject((String)expression);
             } catch (java.text.ParseException e) {
                 if (BaseJEP.debug) {
                     e.printStackTrace();

@@ -17,10 +17,12 @@ import org.medfoster.sqljep.JepRuntime;
 import org.medfoster.sqljep.exceptions.ParseException;
 
 public class ComparativeIsNull extends PostfixCommand {
+    @Override
     final public int getNumberOfParameters() {
         return 1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();

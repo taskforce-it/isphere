@@ -34,6 +34,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
 
     protected Integer sign = null;
 
+    @Override
     public final int getNumberOfParameters() {
         return 2;
     }
@@ -42,6 +43,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
      * Calculates the result of applying the "+" operator to the arguments from
      * the stack and pushes it back on the stack.
      */
+    @Override
     public final void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();
@@ -160,7 +162,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addDays(Date time, int days) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.DAY_OF_MONTH, days);
 
         return calendar.getTime();
@@ -169,7 +171,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addMonths(Date time, int months) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.MONTH, months);
 
         return calendar.getTime();
@@ -178,7 +180,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addYears(Date time, int years) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.YEAR, years);
 
         return calendar.getTime();
@@ -187,7 +189,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addHours(Date time, int hours) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.HOUR_OF_DAY, hours);
 
         return calendar.getTime();
@@ -196,7 +198,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addMinutes(Date time, int minutes) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.MINUTE, minutes);
 
         return calendar.getTime();
@@ -205,7 +207,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addSeconds(Date time, int seconds) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.SECOND, seconds);
 
         return calendar.getTime();
@@ -214,7 +216,7 @@ public abstract class AbstractLineCalculation extends PostfixCommand {
     protected Date addMicroseconds(Date time, int microseconds) {
 
         calendar.clear();
-        calendar.setTime((Date)time);
+        calendar.setTime(time);
         calendar.add(Calendar.MILLISECOND, microseconds);
 
         return calendar.getTime();

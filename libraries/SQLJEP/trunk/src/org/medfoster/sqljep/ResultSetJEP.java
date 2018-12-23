@@ -56,11 +56,13 @@ public class ResultSetJEP extends BaseJEP {
         super(exp);
     }
 
+    @Override
     public void clear() {
         super.clear();
         this.rs = null;
     }
 
+    @Override
     public int findColumn(String name) {
         if (rs != null) {
             try {
@@ -72,6 +74,7 @@ public class ResultSetJEP extends BaseJEP {
         return -1;
     }
 
+    @Override
     public Comparable<?> getColumnObject(int column) throws ParseException {
         try {
             return (Comparable<?>)rs.getObject(column + 1);
@@ -97,6 +100,7 @@ public class ResultSetJEP extends BaseJEP {
      * TODO: Use constTab hash more effectively. If it was possible to use
      * HasMap.getEntry it will be optimal but HasMap.getEntry is not public
      */
+    @Override
     public Map.Entry<String, Comparable<?>> getVariable(String name) throws ParseException {
         for (Map.Entry<String, Comparable<?>> e : constTab.entrySet()) {
             if (e.getKey().equals(name))

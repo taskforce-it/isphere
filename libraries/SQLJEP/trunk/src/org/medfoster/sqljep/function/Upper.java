@@ -20,6 +20,7 @@ import org.medfoster.sqljep.exceptions.ParseException;
 @JUnitTest
 public class Upper extends AbstractLowerUpper {
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();

@@ -8,16 +8,16 @@
 
 package org.medfoster.sqljep.datatypes;
 
-public class Microseconds extends Number implements Comparable<Microseconds>{
+public class Microseconds extends Number implements Comparable<Microseconds> {
 
     private static final long serialVersionUID = -5047847131341767688L;
 
     private Integer milliseconds;
-    
+
     public Microseconds(Integer days) {
         this.milliseconds = days;
     }
-    
+
     public Microseconds(int days) {
         this.milliseconds = new Integer(days);
     }

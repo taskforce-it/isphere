@@ -26,10 +26,12 @@ public final class NotRegexp_Like extends PostfixCommand {
 
     private NotLike not_like = new NotLike();
 
+    @Override
     final public int getNumberOfParameters() {
         return 2;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();

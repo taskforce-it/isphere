@@ -7,37 +7,40 @@ import java.util.Map;
 import org.medfoster.sqljep.exceptions.ParseException;
 
 /**
- * 	It is public and fields index and variable are public 
- *  because it is possible to change values outside from SQLJEP.
+ * It is public and fields index and variable are public because it is possible
+ * to change values outside from SQLJEP.
+ * 
  * @see org.medfoster.sqljep.BaseJEP#getTopNode()
  */
 public class ASTVarNode extends SimpleNode {
-	public int index;			// index of column in a Row
-	public Map.Entry<String,Object> variable;
-	
-	public ASTVarNode(int id) {
-		super(id);
-	}
-	
-	public ASTVarNode(Parser p, int id) {
-		super(p, id);
-	}
-	
-	/**
-	 * Accept the visitor.
-	 */
-	public Object jjtAccept(ParserVisitor visitor, Object data) throws ParseException {
-		return visitor.visit(this, data);
-	}
+    public int index; // index of column in a Row
+    public Map.Entry<String, Object> variable;
 
-	/**
-	* Creates a string containing the variable's name and value
-	*/
-	public String toString() {
-		if (variable == null) {
-			return "Column: "+index;
-		} else {
-			return "Variable: \"" + (variable == null ? "null" : variable.getKey()) + "\"";
-		}
-	}
+    public ASTVarNode(int id) {
+        super(id);
+    }
+
+    public ASTVarNode(Parser p, int id) {
+        super(p, id);
+    }
+
+    /**
+     * Accept the visitor.
+     */
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data) throws ParseException {
+        return visitor.visit(this, data);
+    }
+
+    /**
+     * Creates a string containing the variable's name and value
+     */
+    @Override
+    public String toString() {
+        if (variable == null) {
+            return "Column: " + index;
+        } else {
+            return "Variable: \"" + (variable == null ? "null" : variable.getKey()) + "\"";
+        }
+    }
 }

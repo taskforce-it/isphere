@@ -23,10 +23,12 @@ import org.medfoster.sqljep.exceptions.ParseException;
 
 public final class ComparativeEQ extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return 2;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 
         node.childrenAccept(runtime.ev, null);

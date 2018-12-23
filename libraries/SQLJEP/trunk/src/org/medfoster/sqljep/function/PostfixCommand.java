@@ -65,10 +65,10 @@ public abstract class PostfixCommand implements PostfixCommandI {
     public static Comparable<?> parse(String expression) throws ParseException {
 
         try {
-            return Integer.valueOf((String)expression);
+            return Integer.valueOf(expression);
         } catch (NumberFormatException e) {
             try {
-                BigDecimal d = new BigDecimal((String)expression);
+                BigDecimal d = new BigDecimal(expression);
                 if (d.scale() < 0) {
                     d = d.setScale(0);
                 }

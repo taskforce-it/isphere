@@ -28,10 +28,12 @@ public final class OracleTimeFormat extends AbstractOracleDateTimeFormat {
         super(pattern, calendar, dateSymb);
     }
 
+    @Override
     public java.sql.Time parseObject(String source) {
         return new java.sql.Time(parseInMillis(source, new ParsePosition(0)));
     }
 
+    @Override
     public Object parseObject(String source, ParsePosition pos) {
         return new java.sql.Time(parseInMillis(source, pos));
     }

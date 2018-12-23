@@ -7,17 +7,17 @@ import org.medfoster.sqljep.exceptions.ParseException;
  * Start Node
  */
 public class ASTStart extends SimpleNode {
-  public ASTStart(int id) {
-    super(id);
-  }
+    public ASTStart(int id) {
+        super(id);
+    }
 
-  public ASTStart(Parser p, int id) {
-    super(p, id);
-  }
+    public ASTStart(Parser p, int id) {
+        super(p, id);
+    }
 
-  /** Accept the visitor. **/
-  public Object jjtAccept(ParserVisitor visitor, Object data) throws ParseException
-  {
-    return visitor.visit(this, data);
-  }
+    /** Accept the visitor. **/
+    @Override
+    public Object jjtAccept(ParserVisitor visitor, Object data) throws ParseException {
+        return visitor.visit(this, data);
+    }
 }

@@ -15,6 +15,7 @@ public abstract class AbstractLowerUpper extends PostfixCommand {
 
     protected abstract String performOperation(Comparable<?> param);
 
+    @Override
     final public int getNumberOfParameters() {
         return 1;
     }

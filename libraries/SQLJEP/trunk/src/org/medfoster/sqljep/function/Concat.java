@@ -20,6 +20,7 @@ import org.medfoster.sqljep.exceptions.ParseException;
 @JUnitTest
 public class Concat extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return 2;
     }
@@ -28,6 +29,7 @@ public class Concat extends PostfixCommand {
      * Calculates the result of applying the "||" operator to the arguments from
      * the stack and pushes it back on the stack.
      */
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();

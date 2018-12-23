@@ -49,11 +49,13 @@ public class RowJEP extends BaseJEP {
         super(exp);
     }
 
+    @Override
     public void clear() {
         super.clear();
         this.columnMapping = null;
     }
 
+    @Override
     public int findColumn(String name) {
         if (columnMapping != null) {
             Integer v = columnMapping.get(name.toUpperCase());
@@ -64,6 +66,7 @@ public class RowJEP extends BaseJEP {
         return -1;
     }
 
+    @Override
     public Comparable<?> getColumnObject(int column) throws ParseException {
         try {
             return row[column];
@@ -72,6 +75,7 @@ public class RowJEP extends BaseJEP {
         }
     }
 
+    @Override
     public Map.Entry<String, Comparable<?>> getVariable(String name) throws ParseException {
         return null;
     }

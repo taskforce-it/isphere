@@ -45,10 +45,12 @@ import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.YYYY;
 @JUnitTest
 public class Round extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return -1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         int num = node.jjtGetNumChildren();

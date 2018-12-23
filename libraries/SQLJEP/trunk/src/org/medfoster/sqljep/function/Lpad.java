@@ -22,10 +22,12 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Lpad extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return -1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         int num = node.jjtGetNumChildren();

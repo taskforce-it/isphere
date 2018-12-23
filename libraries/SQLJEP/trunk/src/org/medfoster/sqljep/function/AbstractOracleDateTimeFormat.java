@@ -115,6 +115,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         return calendar.isSet(MILLISECOND);
     }
 
+    @Override
     public String toString() {
         if (format != null) {
             StringBuilder str = new StringBuilder();
@@ -127,6 +128,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         }
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -199,6 +201,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         }
     }
 
+    @Override
     public StringBuffer format(Object obj, StringBuffer str, FieldPosition fieldPosition) {
 
         if (obj instanceof java.util.Date) {
@@ -251,6 +254,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: year
      */
     public static final class YYYY extends DATE {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int year = cal.get(YEAR);
             String y = Integer.toString(Math.abs(year));
@@ -261,11 +265,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int year = getNumber(source, pos, 4);
             cal.set(YEAR, year);
         }
 
+        @Override
         public String toString() {
             return "YYYY";
         }
@@ -279,6 +285,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: month
      */
     public static final class MM extends DATE {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int month = cal.get(MONTH) + 1;
             String m = Integer.toString(month);
@@ -289,11 +296,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int month = getNumber(source, pos, 2) - 1;
             cal.set(MONTH, month);
         }
 
+        @Override
         public String toString() {
             return "MM";
         }
@@ -308,6 +317,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      */
     public static final class DD extends DATE {
 
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int day = cal.get(DAY_OF_MONTH);
             String d = Integer.toString(day);
@@ -318,11 +328,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int day = getNumber(source, pos, 2);
             cal.set(DAY_OF_MONTH, day);
         }
 
+        @Override
         public String toString() {
             return "DD";
         }
@@ -336,6 +348,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: 24-hour
      */
     public static final class HH24 extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int hour = cal.get(HOUR_OF_DAY);
             String h = Integer.toString(hour);
@@ -346,11 +359,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int hour = getNumber(source, pos, 2);
             cal.set(HOUR_OF_DAY, hour);
         }
 
+        @Override
         public String toString() {
             return "HH24";
         }
@@ -364,6 +379,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: 12-hour
      */
     public static final class HH12 extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int hour = cal.get(HOUR);
             String h = Integer.toString(hour);
@@ -374,6 +390,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int hour = getNumber(source, pos, 2);
             if (hour > 0 && hour < 13) {
@@ -383,6 +400,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             }
         }
 
+        @Override
         public String toString() {
             return "HH12";
         }
@@ -396,6 +414,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: AM of 12-hour clock
      */
     public static final class AM extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             String[] ampm = symb.getAmPmStrings();
             int am = cal.get(AM_PM);
@@ -403,6 +422,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             skipSpaces(source, pos);
             String[] ampm = symb.getAmPmStrings();
@@ -418,6 +438,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             throw new java.text.ParseException("", 0);
         }
 
+        @Override
         public String toString() {
             return "AM";
         }
@@ -431,6 +452,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: PM of 12-hour clock
      */
     public static final class PM extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             String[] ampm = symb.getAmPmStrings();
             int am = cal.get(AM_PM);
@@ -438,6 +460,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             skipSpaces(source, pos);
             String[] ampm = symb.getAmPmStrings();
@@ -453,6 +476,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             throw new java.text.ParseException("", 0);
         }
 
+        @Override
         public String toString() {
             return "PM";
         }
@@ -466,6 +490,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * Format pattern: minute
      */
     public static final class MI extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int minute = cal.get(MINUTE);
             String m = Integer.toString(minute);
@@ -476,11 +501,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int minute = getNumber(source, pos, 2);
             cal.set(MINUTE, minute);
         }
 
+        @Override
         public String toString() {
             return "MI";
         }
@@ -494,6 +521,7 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      * IBM date format: seconds
      */
     public static final class SS extends TIME {
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int second = cal.get(SECOND);
             String s = Integer.toString(second);
@@ -504,11 +532,13 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int second = getNumber(source, pos, 2);
             cal.set(SECOND, second);
         }
 
+        @Override
         public String toString() {
             return "SS";
         }
@@ -523,17 +553,20 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
      */
     public static final class NNN extends TIME {
 
+        @Override
         public StringBuffer toString(StringBuffer str, Calendar cal, DateFormatSymbols symb) throws java.text.ParseException {
             int mSecs = cal.get(MILLISECOND);
             str.append(mSecs);
             return str;
         }
 
+        @Override
         public void parse(Calendar cal, DateFormatSymbols symb, String source, ParsePosition pos) throws java.text.ParseException {
             int nnn = getNumber(source, pos, 3);
             cal.set(MILLISECOND, nnn);
         }
 
+        @Override
         public String toString() {
             return "NNN";
         }

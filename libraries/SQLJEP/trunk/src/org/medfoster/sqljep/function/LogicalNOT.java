@@ -19,10 +19,12 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 
 public final class LogicalNOT extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return 1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();

@@ -25,10 +25,12 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Date extends PostfixCommand {
 
+    @Override
     final public int getNumberOfParameters() {
         return -1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
 
         node.childrenAccept(runtime.ev, null);
@@ -55,14 +57,14 @@ public class Date extends PostfixCommand {
         }
 
         if (expression instanceof java.sql.Timestamp) {
-            
+
             cal.clear();
             cal.setTime((java.sql.Timestamp)expression);
             cal.set(Calendar.HOUR_OF_DAY, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MILLISECOND, 0);
-            
+
             return new java.sql.Date(cal.getTimeInMillis());
         } else {
             return to_date(expression, ParserUtils.getDateFormat((String)expression));

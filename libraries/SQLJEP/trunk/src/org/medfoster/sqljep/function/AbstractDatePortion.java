@@ -16,6 +16,7 @@ public abstract class AbstractDatePortion<M extends Comparable<?>> extends Abstr
         super(calendarField);
     }
 
+    @Override
     protected Comparable<?> parseObject(Comparable<?> param) throws java.text.ParseException, org.medfoster.sqljep.exceptions.ParseException {
 
         OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)param));

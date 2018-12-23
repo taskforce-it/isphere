@@ -28,14 +28,17 @@ public final class OracleDateFormat extends AbstractOracleDateTimeFormat {
         super(pattern, calendar, dateSymb);
     }
 
+    @Override
     public java.sql.Date parseObject(String source) {
         return new java.sql.Date(parseInMillis(source, new ParsePosition(0)));
     }
 
+    @Override
     public java.sql.Date parseObject(String source, ParsePosition pos) {
         return new java.sql.Date(parseInMillis(source, pos));
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     protected java.sql.Date stripMilliSeconds(Comparable time) {
         throw new IllegalAccessError("stripMilliSeconds() is not allowed for " + getClass().getSimpleName());

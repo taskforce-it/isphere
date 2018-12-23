@@ -8,16 +8,16 @@
 
 package org.medfoster.sqljep.datatypes;
 
-public class Hours extends Number implements Comparable<Hours>{
+public class Hours extends Number implements Comparable<Hours> {
 
     private static final long serialVersionUID = -6531520516090932903L;
 
     private Integer hours;
-    
+
     public Hours(Integer days) {
         this.hours = days;
     }
-    
+
     public Hours(int days) {
         this.hours = new Integer(days);
     }

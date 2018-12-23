@@ -34,10 +34,12 @@ public final class Like extends PostfixCommand {
 
     protected static Hashtable<String, Pattern> patterns = new Hashtable<String, Pattern>();
 
+    @Override
     final public int getNumberOfParameters() {
         return 2;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param2 = runtime.stack.pop();

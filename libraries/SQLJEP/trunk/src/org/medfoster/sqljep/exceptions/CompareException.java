@@ -8,7 +8,6 @@
 
 package org.medfoster.sqljep.exceptions;
 
-
 public class CompareException extends ParseException {
 
     private static final long serialVersionUID = 1317668761754955133L;
@@ -25,6 +24,7 @@ public class CompareException extends ParseException {
 
     @Override
     public String getMessage() {
-        return String.format("Cannot compare '%s' with '%s' in function %s.", param1.getClass().getSimpleName(), param2.getClass().getSimpleName(), function);
+        return String.format("Cannot compare '%s' with '%s' in function %s.", param1.getClass().getSimpleName(), param2.getClass().getSimpleName(),
+            function);
     }
 }

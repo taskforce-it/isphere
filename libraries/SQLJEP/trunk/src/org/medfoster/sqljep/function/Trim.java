@@ -23,10 +23,12 @@ public class Trim extends PostfixCommand {
     private Rtrim rtrim = new Rtrim();
     private Ltrim ltrim = new Ltrim();
 
+    @Override
     final public int getNumberOfParameters() {
         return -1;
     }
 
+    @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         int num = node.jjtGetNumChildren();

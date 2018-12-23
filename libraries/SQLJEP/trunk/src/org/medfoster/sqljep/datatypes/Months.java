@@ -8,16 +8,16 @@
 
 package org.medfoster.sqljep.datatypes;
 
-public class Months extends Number implements Comparable<Months>{
-    
+public class Months extends Number implements Comparable<Months> {
+
     private static final long serialVersionUID = -2107158394104233397L;
-    
+
     private Integer months;
-    
+
     public Months(Integer days) {
         this.months = days;
     }
-    
+
     public Months(int days) {
         this.months = new Integer(days);
     }
