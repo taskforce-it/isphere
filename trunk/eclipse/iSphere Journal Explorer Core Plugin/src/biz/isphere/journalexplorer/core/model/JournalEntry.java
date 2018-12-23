@@ -13,6 +13,7 @@ package biz.isphere.journalexplorer.core.model;
 
 import java.math.BigInteger;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -48,6 +49,7 @@ public class JournalEntry {
     private static final int JOMBR = 7;
     private static final int JODATE = 8;
     private static final int JOTIME = 9;
+    private static final int JOTSTP = 10;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -62,8 +64,10 @@ public class JournalEntry {
         columnMappings.put("JOMBR", JOMBR);
         columnMappings.put("JODATE", JODATE);
         columnMappings.put("JOTIME", JOTIME);
+        columnMappings.put("JOTSTP", JOTSTP);
     }
 
+    private Calendar calendar;
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
 
@@ -186,6 +190,7 @@ public class JournalEntry {
     private byte[] nullIndicators; // JONVI
 
     // Cached values
+    private Timestamp timestamp; // JOTIME + JODATE
     private String stringSpecificDataForUI;
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
@@ -199,6 +204,7 @@ public class JournalEntry {
         this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
         this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
         this.timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        this.calendar = Calendar.getInstance();
 
     }
 
@@ -238,6 +244,7 @@ public class JournalEntry {
         row[JOMBR] = getMemberName();
         row[JODATE] = getDate();
         row[JOTIME] = getTime();
+        row[JOTSTP] = getTimestamp();
 
         return row;
     }
@@ -356,6 +363,8 @@ public class JournalEntry {
     }
 
     public void setDate(Date date) {
+
+        this.timestamp = null;
         this.date = date;
     }
 
@@ -378,13 +387,16 @@ public class JournalEntry {
     }
 
     public void setTime(Time time) {
-        Calendar calendar = Calendar.getInstance();
+
+        calendar.clear();
         calendar.setTime(time);
+        calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.MONTH, 0);
         calendar.set(Calendar.YEAR, 1970);
+
+        this.timestamp = null;
         this.time = new Time(calendar.getTimeInMillis());
-        // this.time = time;
     }
 
     /**
@@ -1382,6 +1394,32 @@ public class JournalEntry {
             return value.trim();
         }
         return "";
+    }
+
+    private Timestamp getTimestamp() {
+
+        if (timestamp == null) {
+
+            Time time = getTime();
+            Date date = getDate();
+
+            calendar.clear();
+            calendar.setTime(time);
+
+            int hour = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+            int second = calendar.get(Calendar.SECOND);
+
+            calendar.clear();
+            calendar.setTime(date);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            calendar.set(Calendar.SECOND, second);
+
+            this.timestamp = new Timestamp(calendar.getTimeInMillis());
+        }
+
+        return timestamp;
     }
 
     private String toString(boolean isTrue) {
