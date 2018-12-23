@@ -187,6 +187,8 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                         final Throwable e1 = e;
                         getDisplay().asyncExec(new Runnable() {
                             public void run() {
+                                setSqlEditorEnabled(true);
+                                setFocusOnSqlEditor();
                                 view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
                             }
                         });
