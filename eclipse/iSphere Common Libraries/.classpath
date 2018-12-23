@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="sqljep-0.2.2.r.jar"/>
 	<classpathentry exported="true" kind="lib" path="jxl.jar"/>
 	<classpathentry exported="true" kind="lib" path="activation.jar"/>
 	<classpathentry exported="true" kind="lib" path="mail.jar"/>
@@ -7,6 +8,5 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry exported="true" kind="lib" path="commons-codec-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-lang-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="sqljep-0.2.2.b001.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
