@@ -14,24 +14,20 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.exceptions.ParseException;
 
-public class Upper extends PostfixCommand {
-
-    final public int getNumberOfParameters() {
-        return 1;
-    }
+@JUnitTest
+public class Upper extends AbstractLowerUpper {
 
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);
         Comparable<?> param = runtime.stack.pop();
-        runtime.stack.push(upper(param)); // push the result on the inStack
+        runtime.stack.push(lower_upper(param));
     }
 
-    public static String upper(Comparable<?> param) throws ParseException {
-        if (param == null) {
-            return null;
-        }
+    @Override
+    protected String performOperation(Comparable<?> param) {
         return param.toString().toUpperCase();
     }
 }

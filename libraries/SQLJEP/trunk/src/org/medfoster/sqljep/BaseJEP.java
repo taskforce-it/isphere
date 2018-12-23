@@ -94,26 +94,26 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("floor", new Floor()); // JUnit
         funTab.put("hour", new Hour()); // JUnit
         funTab.put("length", new Length()); // JUnit
+        funTab.put("lower", new Lower()); // JUnit
         funTab.put("lpad", new Lpad()); // JUnit
+        funTab.put("ltrim", new Ltrim()); // JUnit
         funTab.put("microsecond", new Microsecond()); // JUnit
         funTab.put("minute", new Minute()); // JUnit
         funTab.put("mod", new Modulus()); // JUnit
         funTab.put("month", new Month()); // JUnit
         funTab.put("round", new Round()); // JUnit
         funTab.put("rpad", new Rpad()); // JUnit
+        funTab.put("rtrim", new Rtrim()); // JUnit
         funTab.put("second", new Second()); // JUnit
         funTab.put("sign", new Sign()); // JUnit
         funTab.put("substr", new Substring()); // JUnit
         funTab.put("substring", new Substring()); // JUnit
         funTab.put("time", new Time()); // JUnit
         funTab.put("timestamp", new Timestamp()); // JUnit
+        funTab.put("trim", new Trim()); // JUnit
+        funTab.put("upper", new Upper()); // JUnit
         funTab.put("year", new Year()); // JUnit
 
-        funTab.put("trim", new Trim());
-        funTab.put("rtrim", new Rtrim());
-        funTab.put("ltrim", new Ltrim());
-        funTab.put("lower", new Lower());
-        funTab.put("upper", new Upper());
         funTab.put("replace", new Replace());
         funTab.put("weekofyear", new WeekOfYear());
     }

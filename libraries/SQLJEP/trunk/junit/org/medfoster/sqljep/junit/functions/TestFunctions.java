@@ -977,4 +977,36 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
+    
+    @Test
+    public void testLower() throws ParseException {
+        
+        assertEquals(true, parseExpression("Lower('Hello World') = 'hello world'"));
+        assertEquals(true, parseExpression("Lower(2.235E+02) = '223.5'"));
+
+        try {
+            assertEquals(true, parseExpression("Lower(Date('2018-12-21')) = '2018-12-21'"));
+        } catch (UnexpectedTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "expression", "Lower", "String|Number"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+    
+    @Test
+    public void testUpper() throws ParseException {
+        
+        assertEquals(true, parseExpression("Upper('Hello World') = 'HELLO WORLD'"));
+        assertEquals(true, parseExpression("Upper(2.235E+02) = '223.5'"));
+
+        try {
+            assertEquals(true, parseExpression("Upper(Date('2018-12-21')) = '2018-12-21'"));
+        } catch (UnexpectedTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "expression", "Upper", "String|Number"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
 }
