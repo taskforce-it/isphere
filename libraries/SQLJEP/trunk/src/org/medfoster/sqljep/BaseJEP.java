@@ -94,25 +94,26 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("dayofmonth", new Day()); // JUnit
         funTab.put("floor", new Floor()); // JUnit
         funTab.put("hour", new Hour()); // JUnit
+        funTab.put("lpad", new Lpad()); // JUnit
         funTab.put("microsecond", new Microsecond()); // JUnit
         funTab.put("minute", new Minute()); // JUnit
+        funTab.put("mod", new Modulus()); // JUnit
         funTab.put("month", new Month()); // JUnit
         funTab.put("round", new Round()); // JUnit
+        funTab.put("rpad", new Rpad()); // JUnit
         funTab.put("second", new Second()); // JUnit
         funTab.put("sign", new Sign()); // JUnit
+        funTab.put("substr", new Substring()); // JUnit
+        funTab.put("substring", new Substring()); // JUnit
         funTab.put("time", new Time()); // JUnit
         funTab.put("timestamp", new Timestamp()); // JUnit
         funTab.put("year", new Year()); // JUnit
 
-        funTab.put("mod", new Modulus());
-        funTab.put("substr", new Substring());
         funTab.put("trunc", new Trunc());
         funTab.put("length", new Length());
         funTab.put("trim", new Trim());
         funTab.put("rtrim", new Rtrim());
         funTab.put("ltrim", new Ltrim());
-        funTab.put("rpad", new Rpad());
-        funTab.put("lpad", new Lpad());
         funTab.put("lower", new Lower());
         funTab.put("upper", new Upper());
         funTab.put("replace", new Replace());
@@ -305,8 +306,8 @@ public abstract class BaseJEP implements ParserVisitor {
      * Parses the expression. The root of the expression tree is returned by
      * {@link #getTopNode()} method
      * 
-     * @throws org.medfoster.sqljep.exceptions.ParseException If there are errors in the
-     *         expression then it fires the exception
+     * @throws org.medfoster.sqljep.exceptions.ParseException If there are
+     *         errors in the expression then it fires the exception
      */
     final protected void parseExpression() throws ParseException {
         Reader reader = new StringReader(expression);

@@ -17,8 +17,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.medfoster.sqljep.exceptions.CompareException;
 import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.exceptions.UnexpectedTypeException;
 import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 import org.medfoster.sqljep.exceptions.WrongTypeException;
+import org.medfoster.sqljep.exceptions.WrongValueException;
 import org.medfoster.sqljep.junit.AbstractJUnitTestCase;
 
 public class TestFunctions extends AbstractJUnitTestCase {
@@ -27,6 +29,8 @@ public class TestFunctions extends AbstractJUnitTestCase {
     private static final String WRONG_NUMBER_OF_PARAMETERS_EXCEPTION = "Wrong number of parameters: %d";
     private static final String WRONG_TYPE_EXCEPTION_1 = "Wrong parameter types:  %s(%s)";
     private static final String WRONG_TYPE_EXCEPTION_2 = "Wrong parameter types:  %s(%s, %s)";
+    private static final String WRONG_VALUE_EXCEPTION = "Invalid value '%s' of parameter '%s' of function %s.";
+    private static final String UNEXPECTED_TYPE_EXCEPTION = "Parameter '%s' of function %s should be an %s.";
 
     @Test
     public void testAbs() throws ParseException {
@@ -847,7 +851,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testLPad() throws ParseException {
+    public void testLpad() throws ParseException {
 
         assertEquals(true, parseExpression("Lpad('Hello', 10) = '     Hello'"));
         assertEquals(true, parseExpression("Lpad('Hello', 10, '-+') = '-+-+-Hello'"));
@@ -882,7 +886,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
     }
 
     @Test
-    public void testRPad() throws ParseException {
+    public void testRpad() throws ParseException {
 
         assertEquals(true, parseExpression("Rpad('Hello', 10) = 'Hello     '"));
         assertEquals(true, parseExpression("Rpad('Hello', 10, '-+') = 'Hello-+-+-'"));
@@ -911,6 +915,64 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Rpad", "Date"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+    
+    @Test
+    public void testSubstring() throws ParseException {
+        
+        assertEquals(true, parseExpression("Substring('Hello World', 1, 5) = 'Hello'"));
+        assertEquals(true, parseExpression("Substring('Hello World', 7) = 'World'"));
+        
+        assertEquals(true, parseExpression("Substr('Hello World', 1, 5) = 'Hello'"));
+        assertEquals(true, parseExpression("Substr('Hello World', 7) = 'World'"));
+
+        assertEquals(true, parseExpression("Substring('Hello World', 7, 999) = 'World'"));
+        assertEquals(true, parseExpression("Substring('Hello World', 999) = ''"));
+
+        try {
+            assertEquals(true, parseExpression("Substring('Hello World', -1) = 'Hello'"));
+        } catch (WrongValueException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_VALUE_EXCEPTION, "-1", "start", "Substring"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Substring('Hello World', 1, -1) = 'Hello'"));
+        } catch (WrongValueException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_VALUE_EXCEPTION, "-1", "length", "Substring"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Substring('Hello World', 'a') = 'Hello'"));
+        } catch (UnexpectedTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "start", "Substring", "Integer"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Substring('Hello World', 1, 'a') = 'Hello'"));
+        } catch (UnexpectedTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "length", "Substring", "Integer"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Substring('Hello World', 1, 1, 'to_many_parameters') = 'Hello'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
