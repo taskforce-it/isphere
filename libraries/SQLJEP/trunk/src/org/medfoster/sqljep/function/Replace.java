@@ -14,8 +14,12 @@ package org.medfoster.sqljep.function;
 
 import org.medfoster.sqljep.ASTFunNode;
 import org.medfoster.sqljep.JepRuntime;
+import org.medfoster.sqljep.annotations.JUnitTest;
 import org.medfoster.sqljep.exceptions.ParseException;
+import org.medfoster.sqljep.exceptions.UnexpectedTypeException;
+import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 
+@JUnitTest
 public class Replace extends PostfixCommand {
 
     final public int getNumberOfParameters() {
@@ -28,53 +32,50 @@ public class Replace extends PostfixCommand {
         if (num == 2) {
             Comparable<?> param2 = runtime.stack.pop();
             Comparable<?> param1 = runtime.stack.pop();
-            runtime.stack.push(replace(param1, param2, null));
+            runtime.stack.push(replace(param1, param2, ""));
         } else if (num == 3) {
             Comparable<?> param3 = runtime.stack.pop();
             Comparable<?> param2 = runtime.stack.pop();
             Comparable<?> param1 = runtime.stack.pop();
             runtime.stack.push(replace(param1, param2, param3));
         } else {
-            // remove all parameters from stack and push null
+            // remove all parameters from stack
             removeParams(runtime.stack, num);
-            throw new ParseException(PARAMS_NUMBER + " for replace");
+            throw new WrongNumberOfParametersException(num);
         }
     }
 
-    public static String replace(Comparable<?> param1, Comparable<?> param2, Comparable<?> param3) throws ParseException {
+    public String replace(Comparable<?> param1, Comparable<?> param2, Comparable<?> param3) throws ParseException {
 
         if (param1 == null || param2 == null) {
             return null;
         }
 
-        String source = param1.toString();
-        String from = param2.toString();
-        int fromLen = from.length();
-        String to = (param3 != null) ? param3.toString() : null;
-        StringBuilder output = new StringBuilder();
-        int beginIndex = 0;
-        int k;
-        boolean found = false;
-
-        if (to != null) {
-            while ((k = source.indexOf(from, beginIndex)) != -1) {
-                output.append(source.substring(beginIndex, k));
-                output.append(to);
-                beginIndex = k + fromLen;
-                found = true;
-            }
-        } else {
-            while ((k = source.indexOf(from, beginIndex)) != -1) {
-                output.append(source.substring(beginIndex, k));
-                beginIndex = k + fromLen;
-                found = true;
-            }
+        if (!isSupportedType(param1)) {
+            throw new UnexpectedTypeException(getFunctionName(), "source-string", "String|Number");
         }
 
-        if (found) {
-            output.append(source.substring(beginIndex));
+        if (!isSupportedType(param2)) {
+            throw new UnexpectedTypeException(getFunctionName(), "search-string", "String|Number");
         }
 
-        return output.toString();
+        if (!isSupportedType(param3)) {
+            throw new UnexpectedTypeException(getFunctionName(), "replace-string", "String|Number");
+        }
+
+        String source = (String)param1;
+        String search = (String)param2;
+        String replace = (String)param3;
+
+        return source.replaceAll(search, replace);
+    }
+
+    protected boolean isSupportedType(Object object) {
+
+        if (object instanceof String || object instanceof Number) {
+            return true;
+        }
+
+        return false;
     }
 }

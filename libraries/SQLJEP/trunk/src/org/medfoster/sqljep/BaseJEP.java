@@ -101,6 +101,7 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("minute", new Minute()); // JUnit
         funTab.put("mod", new Modulus()); // JUnit
         funTab.put("month", new Month()); // JUnit
+        funTab.put("replace", new Replace()); // JUnit
         funTab.put("round", new Round()); // JUnit
         funTab.put("rpad", new Rpad()); // JUnit
         funTab.put("rtrim", new Rtrim()); // JUnit
@@ -114,7 +115,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("upper", new Upper()); // JUnit
         funTab.put("year", new Year()); // JUnit
 
-        funTab.put("replace", new Replace());
         funTab.put("weekofyear", new WeekOfYear());
     }
 

@@ -919,13 +919,13 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
-    
+
     @Test
     public void testSubstring() throws ParseException {
-        
+
         assertEquals(true, parseExpression("Substring('Hello World', 1, 5) = 'Hello'"));
         assertEquals(true, parseExpression("Substring('Hello World', 7) = 'World'"));
-        
+
         assertEquals(true, parseExpression("Substr('Hello World', 1, 5) = 'Hello'"));
         assertEquals(true, parseExpression("Substr('Hello World', 7) = 'World'"));
 
@@ -969,7 +969,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         }
 
         try {
-            assertEquals(true, parseExpression("Substring('Hello World', 1, 1, 'to_many_parameters') = 'Hello'"));
+            assertEquals(true, parseExpression("Substring('Hello World', 1, 1, 'TOO_MANY') = 'Hello'"));
         } catch (WrongNumberOfParametersException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
@@ -977,10 +977,10 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
-    
+
     @Test
     public void testLower() throws ParseException {
-        
+
         assertEquals(true, parseExpression("Lower('Hello World') = 'hello world'"));
         assertEquals(true, parseExpression("Lower(2.235E+02) = '223.5'"));
 
@@ -993,10 +993,10 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
-    
+
     @Test
     public void testUpper() throws ParseException {
-        
+
         assertEquals(true, parseExpression("Upper('Hello World') = 'HELLO WORLD'"));
         assertEquals(true, parseExpression("Upper(2.235E+02) = '223.5'"));
 
@@ -1005,6 +1005,31 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (UnexpectedTypeException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "expression", "Upper", "String|Number"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+    }
+
+    @Test
+    public void testReplace() throws ParseException {
+
+        assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC', 'WWW') = 'ZZZ-WWW-ZZZ-WWW-ZZZ'"));
+        assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC') = 'ZZZ--ZZZ--ZZZ'"));
+
+        try {
+            assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ') = 'ZZZ--ZZZ--ZZZ'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 1), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            assertEquals(true, parseExpression("Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC', 'WWW', 'TOO_MANY') = 'ZZZ-WWW-ZZZ-WWW-ZZZ'"));
+        } catch (WrongNumberOfParametersException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
