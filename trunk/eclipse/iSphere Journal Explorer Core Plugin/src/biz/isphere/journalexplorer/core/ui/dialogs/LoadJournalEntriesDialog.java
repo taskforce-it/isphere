@@ -480,6 +480,25 @@ public class LoadJournalEntriesDialog extends XDialog {
     }
 
     /**
+     * Overridden to ensure a minimum dialog size.
+     */
+    @Override
+    protected Point getInitialSize() {
+
+        Point size = super.getInitialSize();
+
+        if (size.x < 310) {
+            size.x = 310;
+        }
+
+        if (size.y < 380) {
+            size.y = 380;
+        }
+
+        return size;
+    }
+
+    /**
      * Overridden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */

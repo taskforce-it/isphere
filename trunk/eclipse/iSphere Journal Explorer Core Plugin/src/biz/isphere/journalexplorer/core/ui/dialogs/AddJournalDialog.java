@@ -433,6 +433,25 @@ public class AddJournalDialog extends XDialog {
     }
 
     /**
+     * Overridden to ensure a minimum dialog size.
+     */
+    @Override
+    protected Point getInitialSize() {
+
+        Point size = super.getInitialSize();
+
+        if (size.x < 260) {
+            size.x = 260;
+        }
+
+        if (size.y < 270) {
+            size.y = 270;
+        }
+
+        return size;
+    }
+
+    /**
      * Overridden to let {@link XDialog} store the state of this dialog in a
      * separate section of the dialog settings file.
      */
