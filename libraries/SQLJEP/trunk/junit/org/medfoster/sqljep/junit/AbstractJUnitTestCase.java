@@ -119,9 +119,9 @@ public abstract class AbstractJUnitTestCase {
 
         try {
             // Different mSecs
-            row[JOTIME2] = getTime(3, 5, 30);
+            row[JOTIME2] = getTime(15, 5, 30);
             Thread.sleep(15);
-            row[JOTIME3] = getTime(3, 5, 30);
+            row[JOTIME3] = getTime(15, 5, 30);
         } catch (InterruptedException e) {
         }
 

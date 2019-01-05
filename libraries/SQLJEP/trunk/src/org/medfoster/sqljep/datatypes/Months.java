@@ -14,10 +14,6 @@ public class Months extends Number implements Comparable<Months> {
 
     private Integer months;
 
-    public Months(Integer days) {
-        this.months = days;
-    }
-
     public Months(int days) {
         this.months = new Integer(days);
     }

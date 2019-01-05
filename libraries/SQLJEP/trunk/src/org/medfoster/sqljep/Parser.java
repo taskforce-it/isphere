@@ -28,7 +28,7 @@ import org.medfoster.sqljep.function.NotLike;
 import org.medfoster.sqljep.function.NotRegexp_Like;
 import org.medfoster.sqljep.function.PostfixCommandI;
 import org.medfoster.sqljep.function.Regexp_Like;
-import org.medfoster.sqljep.function.Subtract;
+import org.medfoster.sqljep.function.Substract;
 import org.medfoster.sqljep.function.UMinus;
 
 public class Parser/* @bgen(jjtree) */implements ParserTreeConstants, ParserConstants {/*
@@ -971,7 +971,7 @@ public class Parser/* @bgen(jjtree) */implements ParserTreeConstants, ParserCons
                     MultiplicativeExpression();
                     jjtree.closeNodeScope(jjtn003, 2);
                     jjtc003 = false;
-                    jjtn003.setFunction(tokenImage[MINUS], new Subtract());
+                    jjtn003.setFunction(tokenImage[MINUS], new Substract());
                 } catch (Throwable jjte003) {
                     if (jjtc003) {
                         jjtree.clearNodeScope(jjtn003);

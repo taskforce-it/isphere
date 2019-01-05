@@ -42,7 +42,7 @@ public final class ParserUtils {
 
         dateFormats = new DateFormat[3];
         dateFormats[DATE_ISO] = new DateFormat("[0-9]{4}-[0-9]{2}-[0-9]{2}", "YYYY-MM-DD");
-        dateFormats[DATE_USA] = new DateFormat("[0-9]{2}/[0-9]{2}/[0-9]{4}", "MM/DD/yyyy");
+        dateFormats[DATE_USA] = new DateFormat("[0-9]{2}/[0-9]{2}/[0-9]{4}", "MM/DD/YYYY");
         dateFormats[DATE_EUR] = new DateFormat("[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", "DD.MM.YYYY");
         datePattern = Pattern.compile(getPattern(dateFormats));
 

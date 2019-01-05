@@ -81,14 +81,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("TIME('15.10.30') + MINUTE(65) = '16:15:30'"));
         assertEquals(true, parseExpression("TIME('15.10.30') + SECOND(65) = '15:11:35'"));
 
-        // Test time
+        // Test timestamp
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + HOUR(5) = '2018-12-21-20.10.30.123'"));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + MINUTE(65) = '2018-12-21-16.15.30.123'"));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + SECOND(65) = '2018-12-21-15.11.35.123'"));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') + MICROSECOND(965) = '2018-12-21-15.10.31.088'"));
 
         try {
-            assertEquals(true, parseExpression("TIME('15.10.30') + MICROSECOND(65) = '15:11:35.65'"));
+            assertEquals(true, parseExpression("TIME('15.10.30') + MICROSECOND(65) = '15:11:35'"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Add", "Time", "Microseconds"), message);
@@ -118,6 +118,23 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         // Test time
         assertEquals(true, parseExpression("TIME('15.10.30') - HOUR(5) = '10:10:30'"));
+        assertEquals(true, parseExpression("TIME('15.10.30') - MINUTE(65) = '14:05:30'"));
+        assertEquals(true, parseExpression("TIME('15.10.30') - SECOND(65) = '15:09:25'"));
+
+        // Test timestamp
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') - HOUR(5) = '2018-12-21-10.10.30.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') - MINUTE(65) = '2018-12-21-14.05.30.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') - SECOND(65) = '2018-12-21-15.09.25.123'"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') - MICROSECOND(965) = '2018-12-21-15.10.29.158'"));
+
+        try {
+            assertEquals(true, parseExpression("TIME('15.10.30') - MICROSECOND(65) = '15:10:29'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Substract", "Time", "Microseconds"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
 
         try {
             assertEquals(true, parseExpression("TIME('15.10.30') + HOUR(5) = 2"));
@@ -134,6 +151,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         assertEquals(true, parseExpression("3.25 * 8 = 26"));
         assertEquals(true, parseExpression("8 * 3.25 = 26"));
+        assertEquals(true, parseExpression("8 * '3.25' = 26"));
 
         try {
             assertEquals(true, parseExpression("3.25 * DATE('2018-12-21') = 26"));
@@ -150,6 +168,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         assertEquals(true, parseExpression("26 / 8 = 3.25"));
         assertEquals(true, parseExpression("26 / 3.25 = 8"));
+        assertEquals(true, parseExpression("26 / '3.25' = 8"));
 
         try {
             assertEquals(true, parseExpression("26 / DATE('2018-12-21') = 3.25"));
@@ -430,13 +449,23 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         // Test Date
         assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN DATE('2018-12-20') AND DATE('2018-12-22')"));
+        assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN '2018-12-20' AND '2018-12-22'"));
+        assertEquals(true, parseExpression("'2018-12-21' BETWEEN DATE('2018-12-20') AND '2018-12-22'"));
+        assertEquals(true, parseExpression("'2018-12-21' BETWEEN '2018-12-20' AND DATE('2018-12-22')"));
 
         // Test Time
         assertEquals(true, parseExpression("TIME('15.10.30') BETWEEN TIME('15.10.29') AND TIME('15.10.31')"));
+        assertEquals(true, parseExpression("TIME('15.10.30') BETWEEN '15.10.29' AND '15.10.31'"));
+        assertEquals(true, parseExpression("'15.10.30' BETWEEN TIME('15.10.29') AND '15.10.31'"));
+        assertEquals(true, parseExpression("'15.10.30' BETWEEN '15.10.29' AND TIME('15.10.31')"));
 
         // Test Timestamp
         assertEquals(true,
             parseExpression("TIMESTAMP('2018-12-21-15.10.30') BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND TIMESTAMP('2018-12-21-15.10.31')"));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-21-15.10.30') BETWEEN '2018-12-21-15.10.29' AND '2018-12-21-15.10.31'"));
+        assertEquals(true, parseExpression("'2018-12-21-15.10.30' BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND '2018-12-21-15.10.31'"));
+        assertEquals(true, parseExpression("'2018-12-21-15.10.30' BETWEEN '2018-12-21-15.10.29' AND TIMESTAMP('2018-12-21-15.10.31')"));
+
         assertEquals(
             true,
             parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
@@ -448,6 +477,9 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("5 BETWEEN 5 AND 5"));
         assertEquals(true, parseExpression("5 BETWEEN 5 AND 6"));
         assertEquals(true, parseExpression("5 BETWEEN 4 AND 5"));
+        assertEquals(true, parseExpression("'5' BETWEEN 4 AND 5"));
+        assertEquals(true, parseExpression("5 BETWEEN '4' AND 5"));
+        assertEquals(true, parseExpression("5 BETWEEN 4 AND '5'"));
 
         // Test numbers
         assertEquals(true, parseExpression("5 BETWEEN 1 AND 10"));
@@ -485,6 +517,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testYear() throws ParseException {
 
+        assertEquals(true, parseExpression("Year(DATE('2018-12-05')) = 2018"));
+
+        assertEquals(true, parseExpression("Date('2018-12-05') + Year(1) = '2019-12-05'"));
+        assertEquals(true, parseExpression("Date('2018-12-05') - Year(1) = '2017-12-05'"));
+
+        assertEquals(true, parseExpression("Date('2018-12-05') + Year('1') = '2019-12-05'"));
+        assertEquals(true, parseExpression("Date('2018-12-05') - Year('1') = '2017-12-05'"));
+
         assertEquals(true, parseExpression("year(JODATE) = 2018", getColumnMapping()));
         assertEquals(true, parseExpression("year(JODATE) = '2018'", getColumnMapping()));
     }
@@ -492,21 +532,31 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testMonth() throws ParseException {
 
+        assertEquals(true, parseExpression("Month(DATE('2018-12-05')) = 12"));
+
         assertEquals(true, parseExpression("DATE('2018-12-05') + Month(1) = '2019-01-05'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') - Month(1) = '2018-11-05'"));
 
         assertEquals(true, parseExpression("DATE('2018-12-05') + Month('1') = '2019-01-05'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') - Month('1') = '2018-11-05'"));
+
+        assertEquals(true, parseExpression("Month(JODATE) = 10", getColumnMapping()));
+        assertEquals(true, parseExpression("Month(JODATE) = '10'", getColumnMapping()));
     }
 
     @Test
     public void testDay() throws ParseException {
+
+        assertEquals(true, parseExpression("Day(DATE('2018-12-05')) = 5"));
 
         assertEquals(true, parseExpression("DATE('2018-12-05') + Day(10) = '2018-12-15'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') - Day(10) = '2018-11-25'"));
 
         assertEquals(true, parseExpression("DATE('2018-12-05') + Day('10') = '2018-12-15'"));
         assertEquals(true, parseExpression("DATE('2018-12-05') - Day('10') = '2018-11-25'"));
+
+        assertEquals(true, parseExpression("Day(JODATE) = 22", getColumnMapping()));
+        assertEquals(true, parseExpression("Day(JODATE) = '22'", getColumnMapping()));
     }
 
     @Test
@@ -515,8 +565,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("HOUR(TIME('12:00:00')) = 12"));
         assertEquals(true, parseExpression("HOUR(TIMESTAMP('2018-12-05-15.00.00.123')) = 15"));
 
+        assertEquals(true, parseExpression("TIME('12:00:00') + Hour(3) = '15:00:00'"));
+        assertEquals(true, parseExpression("TIME('12:00:00') - Hour(3) = '09:00:00'"));
+
         assertEquals(true, parseExpression("HOUR(TIME('12:00:00')) = '12'"));
         assertEquals(true, parseExpression("HOUR(TIMESTAMP('2018-12-05-15.00.00.123')) = '15'"));
+
+        assertEquals(true, parseExpression("Hour(JOTIME2) = 15", getColumnMapping()));
+        assertEquals(true, parseExpression("Hour(JOTIME2) = '15'", getColumnMapping()));
     }
 
     @Test
@@ -525,8 +581,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("MINUTE(TIME('12:25:00')) = 25"));
         assertEquals(true, parseExpression("MINUTE(TIMESTAMP('2018-12-05-15.45.00.123')) = 45"));
 
+        assertEquals(true, parseExpression("TIME('12:00:00') + Minute(65) = '13:05:00'"));
+        assertEquals(true, parseExpression("TIME('12:00:00') - Minute(65) = '10:55:00'"));
+
         assertEquals(true, parseExpression("MINUTE(TIME('12:25:00')) = '25'"));
         assertEquals(true, parseExpression("MINUTE(TIMESTAMP('2018-12-05-15.45.00.123')) = '45'"));
+
+        assertEquals(true, parseExpression("Minute(JOTIME2) = 5", getColumnMapping()));
+        assertEquals(true, parseExpression("Minute(JOTIME2) = '5'", getColumnMapping()));
     }
 
     @Test
@@ -535,8 +597,14 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("SECOND(TIME('12:00:25')) = 25"));
         assertEquals(true, parseExpression("SECOND(TIMESTAMP('2018-12-05-15.00.45.123')) = 45"));
 
+        assertEquals(true, parseExpression("TIME('12:00:00') + Second(65) = '12:01:05'"));
+        assertEquals(true, parseExpression("TIME('12:00:00') - Second(65) = '11:58:55'"));
+
         assertEquals(true, parseExpression("SECOND(TIME('12:00:25')) = '25'"));
         assertEquals(true, parseExpression("SECOND(TIMESTAMP('2018-12-05-15.00.45.123')) = '45'"));
+
+        assertEquals(true, parseExpression("Second(JOTIME2) = 30", getColumnMapping()));
+        assertEquals(true, parseExpression("Second(JOTIME2) = '30'", getColumnMapping()));
     }
 
     @Test
@@ -628,6 +696,18 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         SimpleDateFormat formatter;
         String expected;
+
+        // Compose Timestamp from Date and Time
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:15:25') = Date('2018-12-05') + Time('12:15:25')"));
+        
+        try {
+            assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:15:25') = Date('2018-12-05') - Time('12:15:25')"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Substract", "Date", "Time"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
 
         // Test with milliseconds ISO
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
@@ -790,12 +870,12 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testLike() throws ParseException {
 
-        assertEquals(true, parseExpression("'Westend New York' Like('%New%')"));
-        assertEquals(true, parseExpression("'Westend New York' Like('__stend New York')"));
-        assertEquals(true, parseExpression("'Eastend New York' Like('__stend New York')"));
+        assertEquals(true, parseExpression("'Westend New York' Like('%New%') = true"));
+        assertEquals(true, parseExpression("'Westend New York' Like('__stend New York') = true"));
+        assertEquals(true, parseExpression("'Eastend New York' Like('__stend New York') = true"));
 
         // Forwards to Regexp_Like
-        assertEquals(true, parseExpression("'Westend New York' Like('/.*New.*/')"));
+        assertEquals(true, parseExpression("'Westend New York' Like('/.*New.*/') = true"));
 
         try {
             assertEquals(true, parseExpression("'1' Like(1)"));
@@ -830,9 +910,9 @@ public class TestFunctions extends AbstractJUnitTestCase {
     @Test
     public void testRegexp_Like() throws ParseException {
 
-        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.*New.*')"));
-        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.{2}stend New York')"));
-        assertEquals(true, parseExpression("'Eastend New York' Regexp_Like('.{2}stend New York')"));
+        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.*New.*') = true"));
+        assertEquals(true, parseExpression("'Westend New York' Regexp_Like('.{2}stend New York') = true"));
+        assertEquals(true, parseExpression("'Eastend New York' Regexp_Like('.{2}stend New York') = true"));
 
         try {
             assertEquals(true, parseExpression("'1' Regexp_Like(1)"));

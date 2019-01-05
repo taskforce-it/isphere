@@ -88,7 +88,6 @@ public abstract class BaseJEP implements ParserVisitor {
         funTab.put("concat", new Concat()); // JUnit
         funTab.put("date", new Date()); // JUnit
         funTab.put("day", new Day()); // JUnit
-        funTab.put("dayofmonth", new Day()); // JUnit
         funTab.put("floor", new Floor()); // JUnit
         funTab.put("hour", new Hour()); // JUnit
         funTab.put("length", new Length()); // JUnit
