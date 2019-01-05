@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.5.1.r
 -----------------------------
+ • Changed the Journal Explorer to filter journal entries locally 
+   without accessing the host. 
  • Enhanced the "Display journal entries" dialog to display the list 
    of journal entry types of record level operation to let the user 
    decide which journal entries are retrieved from a journal.
