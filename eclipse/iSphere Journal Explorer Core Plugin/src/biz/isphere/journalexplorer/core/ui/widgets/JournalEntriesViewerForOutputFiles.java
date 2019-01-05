@@ -65,7 +65,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, outputFile, loadJournalEntriesSelectionListener);
 
-        setWhereClause(whereClause);
+        setSelectClause(whereClause);
         setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -144,48 +144,21 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
         setInputData(null);
     }
 
-    public void openJournal(final JournalExplorerView view) throws Exception {
+    public void openJournal(final JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception {
 
         setFocusOnSqlEditor();
 
-        Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
-
-            public IStatus run(IProgressMonitor monitor) {
-
-                try {
-
-                    OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
-
-                    final JournalEntries data = journalDAO.getJournalData(getWhereClause());
-
-                    if (!isDisposed()) {
-                        getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                setInputData(data);
-                                view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
-                            }
-                        });
-                    }
-
-                } catch (Throwable e) {
-
-                    if (!isDisposed()) {
-                        final Throwable e1 = e;
-                        getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
-                            }
-                        });
-                    }
-
-                }
-
-                return Status.OK_STATUS;
-            }
-
-        };
+        Job loadJournalDataJob = new OpenJournalJob(view, whereClause, filterWhereClause);
 
         loadJournalDataJob.schedule();
+    }
+
+    public void filterJournal(final JournalExplorerView view, String whereClause) throws Exception {
+
+        setSqlEditorEnabled(false);
+
+        Job filterJournalDataJob = new FilterJournalJob(view, whereClause);
+        filterJournalDataJob.schedule();
     }
 
     public boolean hasSqlEditor() {
@@ -205,4 +178,105 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
         return proposals.toArray(new ContentAssistProposal[proposals.size()]);
     }
+
+    private class OpenJournalJob extends Job {
+
+        private JournalExplorerView view;
+        private String whereClause;
+        private String filterWhereClause;
+
+        public OpenJournalJob(JournalExplorerView view, String whereClause, String filterWhereClause) {
+            super(Messages.Status_Loading_journal_entries);
+
+            this.view = view;
+            this.whereClause = whereClause;
+            this.filterWhereClause = filterWhereClause;
+        }
+
+        public IStatus run(IProgressMonitor monitor) {
+
+            try {
+
+                OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
+
+                final JournalEntries data = journalDAO.getJournalData(whereClause);
+                data.applyFilter(filterWhereClause);
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                        }
+                    });
+                }
+
+            } catch (Throwable e) {
+
+                if (!isDisposed()) {
+                    final Throwable e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                        }
+                    });
+                }
+
+            }
+
+            return Status.OK_STATUS;
+        }
+
+    }
+
+    private class FilterJournalJob extends Job {
+
+        private JournalExplorerView view;
+        private String whereClause;
+
+        public FilterJournalJob(JournalExplorerView view, String whereClause) {
+            super(Messages.Status_Loading_journal_entries);
+
+            this.view = view;
+            this.whereClause = whereClause;
+        }
+
+        public IStatus run(IProgressMonitor monitor) {
+
+            final JournalEntries data = getInput();
+
+            try {
+
+                data.applyFilter(whereClause);
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                        }
+                    });
+                }
+
+            } catch (Throwable e) {
+
+                if (!isDisposed()) {
+                    final Throwable e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                        }
+                    });
+                }
+
+            }
+
+            return Status.OK_STATUS;
+        }
+
+    };
 }

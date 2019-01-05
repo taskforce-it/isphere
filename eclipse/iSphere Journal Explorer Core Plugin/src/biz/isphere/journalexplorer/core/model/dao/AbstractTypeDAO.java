@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -49,6 +50,8 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
+            Date startTime = new Date();
+
             statement = createStatement();
             overwriteDatabaseFile(statement, outputFile.getOutFileName(), outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
                 outputFile.getOutMemberName());
@@ -83,6 +86,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
                     }
                 }
             }
+
+            // System.out.println("mSecs total: " + timeElapsed(startTime) +
+            // ", WHERE-CLAUSE: " + whereClause);
 
         } finally {
 
@@ -228,6 +234,10 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     protected String getJournalEntryCcsid() {
         return Preferences.getInstance().getJournalEntryCcsid();
+    }
+
+    private long timeElapsed(Date startTime) {
+        return (new Date().getTime() - startTime.getTime());
     }
 
 }

@@ -9,13 +9,20 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
+
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
 public class JournalEntries {
 
     private List<JournalEntry> journalEntries;
+    private List<JournalEntry> filteredJournalEntries;
     private boolean isOverflow;
     private int numAvailableRows;
     private List<IBMiMessage> messages;
@@ -23,23 +30,66 @@ public class JournalEntries {
     public JournalEntries(int initialCapacity) {
 
         this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
+        this.filteredJournalEntries = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
     }
 
+    public void applyFilter(String whereClause) throws ParseException {
+
+        Date startTime = new Date();
+
+        if (StringHelper.isNullOrEmpty(whereClause)) {
+            removeFilter();
+            return;
+        }
+
+        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+        RowJEP sqljep = new RowJEP(whereClause);
+        sqljep.parseExpression(columnMapping);
+
+        filteredJournalEntries = new ArrayList<JournalEntry>(journalEntries.size());
+
+        for (JournalEntry journalEntry : journalEntries) {
+            Comparable<?>[] row = journalEntry.getRow();
+            if ((Boolean)sqljep.getValue(row)) {
+                filteredJournalEntries.add(journalEntry);
+            }
+        }
+
+        // System.out.println("mSecs total: " + timeElapsed(startTime) +
+        // ", FILTER-CLAUSE: " + whereClause);
+    }
+
+    private long timeElapsed(Date startTime) {
+        return (new Date().getTime() - startTime.getTime());
+    }
+
+    public void removeFilter() {
+        this.filteredJournalEntries = null;
+    }
+
     public void add(JournalEntry journalEntry) {
 
-        journalEntries.add(journalEntry);
+        if (filteredJournalEntries != null) {
+            throw new IllegalAccessError("Cannot add entry when filter is active.");
+        }
+
+        getItems().add(journalEntry);
     }
 
     public List<JournalEntry> getItems() {
 
-        return journalEntries;
+        if (filteredJournalEntries != null) {
+            return filteredJournalEntries;
+        } else {
+            return journalEntries;
+        }
     }
 
     public JournalEntry getItem(int index) {
 
-        return journalEntries.get(index);
+        return getItems().get(index);
     }
 
     public boolean isOverflow() {
@@ -54,7 +104,7 @@ public class JournalEntries {
 
     public int size() {
 
-        return journalEntries.size();
+        return getItems().size();
     }
 
     public int getNumberOfRowsAvailable() {
@@ -68,7 +118,8 @@ public class JournalEntries {
 
     public void clear() {
 
-        journalEntries.clear();
+        removeFilter();
+        getItems().clear();
     }
 
     public void setMessages(List<IBMiMessage> messages) {

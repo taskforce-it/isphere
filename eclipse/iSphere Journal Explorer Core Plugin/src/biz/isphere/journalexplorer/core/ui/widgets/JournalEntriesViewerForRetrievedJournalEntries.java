@@ -72,6 +72,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
         this.jrneToRtv = jrneToRtv;
 
+        setSelectClause(null);
         setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -142,88 +143,20 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         setInputData(null);
     }
 
-    public void openJournal(final JournalExplorerView view) throws Exception {
+    public void openJournal(final JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception {
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new Job(Messages.Status_Loading_journal_entries) {
-
-            public IStatus run(IProgressMonitor monitor) {
-
-                try {
-
-                    // Clone the selection arguments to start with the original
-                    // values when the view is refreshed.
-                    JrneToRtv tJrneToRtv = jrneToRtv.clone();
-
-                    JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
-                    final JournalEntries data = journalDAO.getJournalData(getWhereClause());
-
-                    if (!isDisposed()) {
-                        getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                setInputData(data);
-                                setSqlEditorEnabled(true);
-                                setFocusOnSqlEditor();
-                                view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
-                            }
-                        });
-                    }
-
-                    IBMiMessage[] messages = data.getMessages();
-                    if (messages.length != 0) {
-                        if (isBufferTooSmallException(messages)) {
-                            throw new BufferTooSmallException();
-                        } else if (isNoDataLoadedException(messages)) {
-                            throw new NoJournalEntriesLoadedException(tJrneToRtv.getJournalLibraryName(), tJrneToRtv.getJournalName());
-                        } else {
-                            throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
-                        }
-                    }
-
-                } catch (Throwable e) {
-
-                    if (!isDisposed()) {
-                        final Throwable e1 = e;
-                        getDisplay().asyncExec(new Runnable() {
-                            public void run() {
-                                setSqlEditorEnabled(true);
-                                setFocusOnSqlEditor();
-                                view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
-                            }
-                        });
-                    }
-
-                }
-
-                return Status.OK_STATUS;
-            }
-
-            private boolean isBufferTooSmallException(IBMiMessage[] messages) {
-
-                for (IBMiMessage ibmiMessage : messages) {
-                    if (BufferTooSmallException.ID.equals(ibmiMessage.getID())) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            private boolean isNoDataLoadedException(IBMiMessage[] messages) {
-
-                for (IBMiMessage ibmiMessage : messages) {
-                    if (NoJournalEntriesLoadedException.ID.equals(ibmiMessage.getID())) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-        };
-
+        Job loadJournalDataJob = new OpenJournalJob(view, whereClause, filterWhereClause);
         loadJournalDataJob.schedule();
+    }
+
+    public void filterJournal(final JournalExplorerView view, String whereClause) throws Exception {
+
+        setSqlEditorEnabled(false);
+
+        Job filterJournalDataJob = new FilterJournalJob(view, whereClause);
+        filterJournalDataJob.schedule();
     }
 
     public boolean hasSqlEditor() {
@@ -249,9 +182,8 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
     }
 
     @Override
-    public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
+    public void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
 
-        String whereClause = getWhereClause();
         if (StringHelper.isNullOrEmpty(whereClause)) {
             return;
         }
@@ -267,4 +199,145 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
         }
 
     }
+
+    private class OpenJournalJob extends Job {
+
+        private JournalExplorerView view;
+        private String whereClause;
+        private String filterWhereClause;
+
+        public OpenJournalJob(JournalExplorerView view, String whereClause, String filterWhereClause) {
+            super(Messages.Status_Loading_journal_entries);
+
+            this.view = view;
+            this.whereClause = whereClause;
+            this.filterWhereClause = filterWhereClause;
+        }
+
+        public IStatus run(IProgressMonitor monitor) {
+
+            try {
+
+                // Clone the selection arguments to start with the original
+                // values when the view is refreshed.
+                JrneToRtv tJrneToRtv = jrneToRtv.clone();
+
+                JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
+                final JournalEntries data = journalDAO.getJournalData(whereClause);
+                data.applyFilter(filterWhereClause);
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                        }
+                    });
+                }
+
+                IBMiMessage[] messages = data.getMessages();
+                if (messages.length != 0) {
+                    if (isBufferTooSmallException(messages)) {
+                        throw new BufferTooSmallException();
+                    } else if (isNoDataLoadedException(messages)) {
+                        throw new NoJournalEntriesLoadedException(tJrneToRtv.getJournalLibraryName(), tJrneToRtv.getJournalName());
+                    } else {
+                        throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
+                    }
+                }
+
+            } catch (Throwable e) {
+
+                if (!isDisposed()) {
+                    final Throwable e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
+                        }
+                    });
+                }
+
+            }
+
+            return Status.OK_STATUS;
+        }
+
+        private boolean isBufferTooSmallException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (BufferTooSmallException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean isNoDataLoadedException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (NoJournalEntriesLoadedException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+    };
+
+    private class FilterJournalJob extends Job {
+
+        private JournalExplorerView view;
+        private String whereClause;
+
+        public FilterJournalJob(JournalExplorerView view, String whereClause) {
+            super(Messages.Status_Loading_journal_entries);
+
+            this.view = view;
+            this.whereClause = whereClause;
+        }
+
+        public IStatus run(IProgressMonitor monitor) {
+
+            final JournalEntries data = getInput();
+
+            try {
+
+                data.applyFilter(whereClause);
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                        }
+                    });
+                }
+
+            } catch (Throwable e) {
+
+                if (!isDisposed()) {
+                    final Throwable e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntries.this, e1);
+                        }
+                    });
+                }
+
+            }
+
+            return Status.OK_STATUS;
+        }
+
+    };
 }

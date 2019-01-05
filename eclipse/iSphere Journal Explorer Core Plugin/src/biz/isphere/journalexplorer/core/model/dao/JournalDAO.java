@@ -10,15 +10,11 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.Time;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.medfoster.sqljep.RowJEP;
-
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -66,15 +62,6 @@ public class JournalDAO {
         RJNE0200 rjne0200 = null;
         int id = 0;
 
-        RowJEP sqljep;
-        if (!StringHelper.isNullOrEmpty(whereClause)) {
-            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
-            sqljep = new RowJEP(whereClause);
-            sqljep.parseExpression(columnMapping);
-        } else {
-            sqljep = null;
-        }
-
         Date startTime = new Date();
 
         do {
@@ -102,18 +89,7 @@ public class JournalDAO {
                         JournalEntry journalEntry = new JournalEntry(outputFile);
 
                         JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
-
-                        boolean isSelected;
-                        if (sqljep != null) {
-                            Comparable<?>[] row = journalEntry.getRow();
-                            isSelected = (Boolean)sqljep.getValue(row);
-                        } else {
-                            isSelected = true;
-                        }
-
-                        if (isSelected) {
-                            journalEntries.add(populatedJournalEntry);
-                        }
+                        journalEntries.add(populatedJournalEntry);
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.getInstance().prepareMetaData(journalEntry);
@@ -127,7 +103,8 @@ public class JournalDAO {
 
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.size() < maxNumRows);
 
-        // System.out.println("mSecs total: " + timeElapsed(startTime));
+        // System.out.println("mSecs total: " + timeElapsed(startTime) +
+        // ", WHERE-CLAUSE: " + whereClause);
 
         if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);

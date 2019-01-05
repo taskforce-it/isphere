@@ -91,7 +91,8 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private TableViewer tableViewer;
     private JournalEntries data;
     private SqlEditor sqlEditor;
-    private String whereClause;
+    private String filterClause;
+    private String selectClause;
 
     public AbstractJournalEntriesViewer(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
@@ -103,7 +104,8 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
         this.loadJournalEntriesSelectionListener = loadJournalEntriesSelectionListener;
-        this.whereClause = null;
+        this.filterClause = null;
+        this.selectClause = null;
 
         Preferences.getInstance().addPropertyChangeListener(this);
     }
@@ -124,7 +126,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             sqlEditor = new SqlEditor(getContainer(), SWT.NONE);
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
-            sqlEditor.setWhereClause(whereClause);
+            sqlEditor.setWhereClause(getFilterClause());
             GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.heightHint = 80;
             sqlEditor.setLayoutData(gd);
@@ -132,7 +134,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             sqlEditor.setFocus();
             sqlEditor.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {
-                    whereClause = sqlEditor.getWhereClause().trim();
+                    setFilterClause(sqlEditor.getWhereClause().trim());
                 }
             });
         }
@@ -162,20 +164,24 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         }
     }
 
-    protected void setWhereClause(String whereClause) {
-        this.whereClause = whereClause;
-        if (isSqlEditorVisible()) {
-            sqlEditor.setWhereClause(whereClause);
-        }
+    protected void setSelectClause(String whereClause) {
+        this.selectClause = whereClause;
     }
 
-    protected String getWhereClause() {
-        return whereClause;
+    public String getSelectClause() {
+        return selectClause;
     }
 
-    public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
+    private void setFilterClause(String whereClause) {
+        this.filterClause = whereClause;
+    }
 
-        String whereClause = getWhereClause();
+    public String getFilterClause() {
+        return filterClause;
+    }
+
+    public void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
+
         if (StringHelper.isNullOrEmpty(whereClause)) {
             return;
         }
@@ -207,7 +213,11 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     private boolean hasWhereClause() {
 
-        if (!StringHelper.isNullOrEmpty(whereClause) && whereClause.length() > 0) {
+        if (!StringHelper.isNullOrEmpty(filterClause) && filterClause.length() > 0) {
+            return true;
+        }
+
+        if (!StringHelper.isNullOrEmpty(selectClause) && selectClause.length() > 0) {
             return true;
         }
 
@@ -322,7 +332,9 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     protected abstract TableViewer createTableViewer(Composite container);
 
-    public abstract void openJournal(JournalExplorerView view) throws Exception;
+    public abstract void openJournal(JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception;
+
+    public abstract void filterJournal(JournalExplorerView view, String whereClause) throws Exception;
 
     public abstract void closeJournal();
 
