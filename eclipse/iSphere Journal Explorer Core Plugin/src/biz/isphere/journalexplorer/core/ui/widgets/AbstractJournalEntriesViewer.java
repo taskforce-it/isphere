@@ -375,7 +375,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             tableViewer = null;
         }
 
-        Preferences.getInstance().addPropertyChangeListener(this);
+        Preferences.getInstance().removePropertyChangeListener(this);
 
         super.dispose();
     }

@@ -138,6 +138,15 @@ public class CompareSideBySideDialog extends XDialog {
         newShell.setText(Messages.SideBySideCompareDialog_SideBySideComparison);
     }
 
+    @Override
+    public boolean close() {
+
+        leftEntry.dispose();
+        rightEntry.dispose();
+
+        return super.close();
+    }
+
     /**
      * Overridden make this dialog resizable {@link XDialog}.
      */

@@ -11,16 +11,21 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 import biz.isphere.base.swt.events.TreeAutoSizeControlListener;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
 
@@ -29,15 +34,17 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabel
  * 
  * @see JournalProperties
  */
-public class JournalEntryDetailsViewer extends TreeViewer {
+public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyChangeListener {
 
     public JournalEntryDetailsViewer(Composite parent) {
         this(parent, 240);
     }
 
-    public JournalEntryDetailsViewer(Composite parent, int minValueColumnWidth) {
+    private JournalEntryDetailsViewer(Composite parent, int minValueColumnWidth) {
         super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
         this.initializeComponents(minValueColumnWidth);
+
+        Preferences.getInstance().addPropertyChangeListener(this);
     }
 
     @Override
@@ -72,5 +79,41 @@ public class JournalEntryDetailsViewer extends TreeViewer {
 
     public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {
         selectionProvider.setSelectionProviderDelegate(this);
+    }
+
+    public void propertyChange(PropertyChangeEvent event) {
+
+        if (event.getProperty() == null) {
+            return;
+        }
+
+        if (Preferences.HIGHLIGHT_USER_ENTRIES.equals(event.getProperty())) {
+            refresh();
+            return;
+        }
+
+        if (Preferences.ENABLED.equals(event.getProperty())) {
+            refresh();
+            return;
+        }
+
+        if (event.getProperty().startsWith(Preferences.COLORS)) {
+            JournalPropertiesLabelProvider labelProvider = (JournalPropertiesLabelProvider)getLabelProvider();
+            String columnName = event.getProperty().substring(Preferences.COLORS.length());
+            Object object = event.getNewValue();
+            if (object instanceof String) {
+                String rgb = (String)event.getNewValue();
+                if (columnName != null) {
+                    Color color = ISphereJournalExplorerCorePlugin.getDefault().getColor(rgb);
+                    labelProvider.setColumnColor(columnName, color);
+                }
+            }
+            refresh();
+            return;
+        }
+    }
+
+    public void dispose() {
+        Preferences.getInstance().removePropertyChangeListener(this);
     }
 }
