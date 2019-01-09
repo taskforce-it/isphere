@@ -13,8 +13,6 @@ package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
-import com.ibm.as400.access.Record;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
@@ -22,6 +20,9 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
+
+import com.ibm.as400.access.Record;
 
 public class JOESDProperty extends JournalProperty {
 
@@ -33,16 +34,23 @@ public class JOESDProperty extends JournalProperty {
 
     private Record parsedJOESD;
 
-    public JOESDProperty(JournalEntry journalEntry) {
-        this("", "", null, journalEntry);
+    public JOESDProperty(JournalEntryColumnUI columnDef, JournalEntry journalEntry) {
+        super(columnDef, null, null);
+
+        initialize(journalEntry);
     }
 
-    public JOESDProperty(String name, Object value, Object parent, JournalEntry journalEntry) {
+    public JOESDProperty(JournalEntryColumnUI columnDef, Object parent, JournalEntry journalEntry) {
+        super(columnDef, "", parent); //$NON-NLS-1$
 
-        super(name, "", parent); //$NON-NLS-1$
+        initialize(journalEntry);
+    }
+
+    private void initialize(JournalEntry journalEntry) {
+
         this.journalEntry = journalEntry;
-        setErrorParsing(false);
 
+        setErrorParsing(false);
         this.executeParsing();
     }
 
@@ -75,6 +83,7 @@ public class JOESDProperty extends JournalProperty {
     private void parseJOESD() throws Exception {
 
         String columnName;
+        String columnLabel;
 
         if (!journalEntry.isRecordEntryType()) {
 
@@ -98,26 +107,30 @@ public class JOESDProperty extends JournalProperty {
             for (MetaColumn column : metatable.getColumns()) {
                 columnName = column.getName().trim();
                 if (column.getText() != null && column.getText().trim().length() != 0) {
-                    columnName += " (" + column.getText().trim() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    columnLabel = column.getText().trim();
+                } else {
+                    columnLabel = ""; //$NON-NLS-1$
                 }
 
                 if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificDataLength()) {
-                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_not_available, this);
+                    JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, Messages.JournalPropertyValue_not_available, this);
                     journalProperty.setErrorParsing(true);
                     specificProperties.add(journalProperty);
                 } else if (column.isNullable() && journalEntry.isNull(column.getIndex())) {
-                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.JournalPropertyValue_null, this);
+                    JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, Messages.JournalPropertyValue_null, this);
                     journalProperty.setNullValue(true);
                     specificProperties.add(journalProperty);
                 } else if (MetaColumn.DataType.UNKNOWN.equals(column.getType())) {
-                    JournalProperty journalProperty = new JournalProperty(columnName, Messages.Error_Unknown_data_type, this);
+                    JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, Messages.Error_Unknown_data_type, this);
                     journalProperty.setErrorParsing(true);
                     specificProperties.add(journalProperty);
                 } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
-                    JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString().trim(), this);
+                    JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, parsedJOESD.getField(column.getName()).toString()
+                        .trim(), this);
                     specificProperties.add(journalProperty);
                 } else {
-                    JournalProperty journalProperty = new JournalProperty(columnName, parsedJOESD.getField(column.getName()).toString(), this);
+                    JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, parsedJOESD.getField(column.getName()).toString(),
+                        this);
                     specificProperties.add(journalProperty);
                 }
             }

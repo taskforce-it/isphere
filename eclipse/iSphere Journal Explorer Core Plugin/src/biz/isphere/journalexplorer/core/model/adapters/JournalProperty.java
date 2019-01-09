@@ -11,9 +11,12 @@
 
 package biz.isphere.journalexplorer.core.model.adapters;
 
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
+
 public class JournalProperty implements Comparable<JournalProperty> {
 
     public String name;
+    public String label;
     public Object value;
     public Object parent;
     public boolean highlighted;
@@ -21,9 +24,14 @@ public class JournalProperty implements Comparable<JournalProperty> {
     private boolean errorParsing;
     private boolean nullValue;
 
-    public JournalProperty(String name, Object value, Object parent) {
+    public JournalProperty(JournalEntryColumnUI columnDef, Object value, Object parent) {
+        this(columnDef.columnName(), columnDef.columnNameLong(), value, parent);
+    }
+
+    public JournalProperty(String name, String label, Object value, Object parent) {
 
         this.name = name;
+        this.label = name + " (" + label + ")";
         this.value = value;
         this.parent = parent;
 

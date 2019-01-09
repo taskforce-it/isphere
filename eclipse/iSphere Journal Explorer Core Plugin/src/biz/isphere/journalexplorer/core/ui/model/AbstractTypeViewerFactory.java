@@ -138,8 +138,7 @@ public abstract class AbstractTypeViewerFactory {
 
         List<JournalEntryColumn> columns = new LinkedList<JournalEntryColumn>();
 
-        columns
-            .add(new JournalEntryColumn(JournalEntryColumnUI.ID, Messages.ColLabel_OutputFile_Rrn, Messages.Tooltip_OutputFile_Rrn, 45, SWT.RIGHT));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.ID, Messages.Tooltip_OutputFile_Rrn, 45, SWT.RIGHT));
 
         // Entry seq#, code, type, ...
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOENTL, Messages.Tooltip_JOENTL, 60));
