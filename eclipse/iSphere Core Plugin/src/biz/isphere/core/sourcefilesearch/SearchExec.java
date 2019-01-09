@@ -101,22 +101,29 @@ public class SearchExec {
 
                     try {
 
+                        // Get search handle and create status record in
+                        // FNDSTRS.
                         _handle = new FNDSTR_getHandle().run(_as400);
 
                         if (_handle > 0) {
 
+                            // Append search elements to FNDSTRI.
                             SearchElement.setSearchElements(iSphereLibrary, _jdbcConnection, _handle, _searchElements);
 
+                            // Expand generic search elements in FNDSTRI.
                             new FNDSTR_resolveGenericSearchElements().run(_as400, _handle);
 
                             int _numberOfSearchElements = new FNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
                             monitor.beginTask("Searching", _numberOfSearchElements); //$NON-NLS-1$
 
+                            // Start the search job on the host.
                             new DoSearch(_as400, _handle, _searchOptions, monitor).start();
 
                             int _lastCounter = 0;
 
+                            // Wait for the end of the search job.
+                            // Read FNDSTRS to update '_counter'
                             getStatus(monitor);
 
                             while (_counter != -1) {
