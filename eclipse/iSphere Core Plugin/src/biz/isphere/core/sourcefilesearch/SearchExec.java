@@ -359,11 +359,13 @@ public class SearchExec {
                 preparedStatementUpdate.setInt(1, _handle);
                 preparedStatementUpdate.executeUpdate();
             } catch (SQLException e) {
+                ISpherePlugin.logError("*** Could not cancel host job of source file search ***", e);
             }
             if (preparedStatementUpdate != null) {
                 try {
                     preparedStatementUpdate.close();
                 } catch (SQLException e1) {
+                    e1.printStackTrace();
                 }
             }
 

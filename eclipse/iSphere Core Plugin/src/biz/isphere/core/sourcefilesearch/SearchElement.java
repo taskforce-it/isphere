@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 
 @CMOne(info = "Be careful, when changing this class! Also test CMOne source file search.")
@@ -88,7 +89,7 @@ public class SearchElement {
             _separator = jdbcConnection.getMetaData().getCatalogSeparator();
         } catch (SQLException e) {
             _separator = ".";
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Source file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
         }
 
         if (_searchElements.size() > 0) {
@@ -134,7 +135,7 @@ public class SearchElement {
                     statementInsert = jdbcConnection.createStatement();
                     statementInsert.executeUpdate(_sqlInsert);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Source file search, setSearchElements(): Could not insert search elements into FNDSTRI ***", e);
                 }
 
                 if (statementInsert != null) {
