@@ -1,6 +1,9 @@
 
 Changelog: iSphere 3.5.1.r
 -----------------------------
+ • Added coloring to journal entry details viewer. 
+ • Changed journal entry details viewer to use the same sort order
+   as the table viewer. 
  • Changed the Journal Explorer to filter journal entries locally 
    without accessing the host. 
  • Enhanced the "Display journal entries" dialog to display the list 
