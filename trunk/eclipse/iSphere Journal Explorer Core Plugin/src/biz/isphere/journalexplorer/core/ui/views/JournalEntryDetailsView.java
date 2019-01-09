@@ -63,6 +63,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
     public void dispose() {
         ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
         selectionService.removeSelectionListener(this);
+        viewer.dispose();
 
         super.dispose();
     };

@@ -117,7 +117,11 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
             if (journalProperty.highlighted) {
                 return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
             } else {
-                return null; // colors.get(journalProperty.name);
+                if (Preferences.getInstance().isColoringEnabled()) {
+                    return colors.get(journalProperty.name);
+                } else {
+                    return null;
+                }
             }
         }
         return null;
@@ -125,6 +129,15 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
 
     public Color getForeground(Object object, int columnIndex) {
         return null;
+    }
+
+    public void setColumnColor(String columnName, Color color) {
+
+        if (!colors.containsKey(columnName)) {
+            return;
+        }
+
+        colors.put(columnName, color);
     }
 
 }

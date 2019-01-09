@@ -19,9 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
@@ -56,8 +53,7 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer implements ISelectionChangedListener, ISelectionProvider,
-    IPropertyChangeListener {
+public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer {
 
     private TableViewer tableViewer;
 
