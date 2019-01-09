@@ -12,31 +12,50 @@
 package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
 public class JournalProperties {
 
     private final JournalEntry journal;
-
-    private ArrayList<JournalProperty> properties;
+    private final ArrayList<JournalProperty> properties;
+    private JournalEntryAppearanceAttributes[] sortedAttributes;
 
     public JournalProperties(JournalEntry journal) {
         this.journal = journal;
         this.properties = new ArrayList<JournalProperty>();
+        this.sortedAttributes = Preferences.getInstance().getSortedJournalEntryAppearancesAttributes();
+
         initialize();
     }
 
     private void initialize() {
 
-        properties.add(new JournalProperty(JournalEntryColumnUI.ID, journal.getId(), journal));
-        properties.add(new JournalProperty(JournalEntryColumnUI.JOENTL, journal.getEntryLength(), journal));
-        properties.add(new JournalProperty(JournalEntryColumnUI.JOSEQN, journal.getSequenceNumber(), journal));
-        properties.add(new JournalProperty(JournalEntryColumnUI.JOCODE, journal.getJournalCode(), journal));
-        properties.add(new JournalProperty(JournalEntryColumnUI.JOENTT, journal.getEntryType(), journal));
-        properties.add(new JournalProperty(JournalEntryColumnUI.JOCTRR, journal.getCountRrn(), journal));
-        properties.add(new JOESDProperty(JournalEntryColumnUI.JOESD, journal, journal)); //$NON-NLS-1$
+        Map<String, JournalProperty> journalProperties = new HashMap<String, JournalProperty>();
+
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.ID, journal.getId(), journal));
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOENTL, journal.getEntryLength(), journal));
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOSEQN, journal.getSequenceNumber(), journal));
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOCODE, journal.getJournalCode(), journal));
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOENTT, journal.getEntryType(), journal));
+        addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOCTRR, journal.getCountRrn(), journal));
+        addProperty(journalProperties, new JOESDProperty(JournalEntryColumnUI.JOESD, journal, journal));
+
+        for (JournalEntryAppearanceAttributes attribute : sortedAttributes) {
+            if (journalProperties.containsKey(attribute.getColumnName())) {
+                properties.add(journalProperties.get(attribute.getColumnName()));
+            }
+        }
+    }
+
+    private void addProperty(Map<String, JournalProperty> availableProperties, JournalProperty journalProperty) {
+
+        availableProperties.put(journalProperty.name, journalProperty);
     }
 
     public JOESDProperty getJOESDProperty() {
