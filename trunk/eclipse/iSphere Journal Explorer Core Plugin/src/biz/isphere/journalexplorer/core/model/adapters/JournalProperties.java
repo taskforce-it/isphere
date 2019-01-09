@@ -13,18 +13,10 @@ package biz.isphere.journalexplorer.core.model.adapters;
 
 import java.util.ArrayList;
 
-import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
 public class JournalProperties {
-
-    private static final String RRN_OUTPUT_FILE = Messages.JournalProperties_RRN_OutputFile;
-    private static final String JOENTL = Messages.JournalProperties_JOENTL;
-    private static final String JOSEQN = Messages.JournalProperties_JOSEQN;
-    private static final String JOCODE = Messages.JournalProperties_JOCODE;
-    private static final String JOENTT = Messages.JournalProperties_JOENTT;
-    private static final String JOCTRR = Messages.JournalProperties_JOCTRR;
-    private static final String STRING_SPECIFIC_DATA = Messages.JournalProperties_JOESD;
 
     private final JournalEntry journal;
 
@@ -38,19 +30,19 @@ public class JournalProperties {
 
     private void initialize() {
 
-        properties.add(new JournalProperty(RRN_OUTPUT_FILE, journal.getId(), journal));
-        properties.add(new JournalProperty(JOENTL, journal.getEntryLength(), journal));
-        properties.add(new JournalProperty(JOSEQN, journal.getSequenceNumber(), journal));
-        properties.add(new JournalProperty(JOCODE, journal.getJournalCode(), journal));
-        properties.add(new JournalProperty(JOENTT, journal.getEntryType(), journal));
-        properties.add(new JournalProperty(JOCTRR, journal.getCountRrn(), journal));
-        properties.add(new JOESDProperty(STRING_SPECIFIC_DATA, "", journal, journal)); //$NON-NLS-1$
+        properties.add(new JournalProperty(JournalEntryColumnUI.ID, journal.getId(), journal));
+        properties.add(new JournalProperty(JournalEntryColumnUI.JOENTL, journal.getEntryLength(), journal));
+        properties.add(new JournalProperty(JournalEntryColumnUI.JOSEQN, journal.getSequenceNumber(), journal));
+        properties.add(new JournalProperty(JournalEntryColumnUI.JOCODE, journal.getJournalCode(), journal));
+        properties.add(new JournalProperty(JournalEntryColumnUI.JOENTT, journal.getEntryType(), journal));
+        properties.add(new JournalProperty(JournalEntryColumnUI.JOCTRR, journal.getCountRrn(), journal));
+        properties.add(new JOESDProperty(JournalEntryColumnUI.JOESD, journal, journal)); //$NON-NLS-1$
     }
 
     public JOESDProperty getJOESDProperty() {
 
         for (JournalProperty property : properties) {
-            if (property.name == STRING_SPECIFIC_DATA && property instanceof JOESDProperty) {
+            if (property.name == "JOESD" && property instanceof JOESDProperty) {
                 return (JOESDProperty)property;
             }
         }

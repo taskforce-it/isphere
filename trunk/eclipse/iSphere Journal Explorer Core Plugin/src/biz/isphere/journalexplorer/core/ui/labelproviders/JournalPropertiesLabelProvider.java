@@ -11,6 +11,9 @@
 
 package biz.isphere.journalexplorer.core.ui.labelproviders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -23,11 +26,30 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 
 public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private final int PROPERTY_COLUMN = 0;
     private final int VALUE_COLUMN = 1;
+
+    private Map<String, Color> colors;
+
+    public JournalPropertiesLabelProvider() {
+        initialize();
+    }
+
+    private void initialize() {
+
+        JournalEntryAppearanceAttributes[] attributes = Preferences.getInstance().getSortedJournalEntryAppearancesAttributes();
+
+        colors = new HashMap<String, Color>();
+
+        for (JournalEntryAppearanceAttributes attribute : attributes) {
+            colors.put(attribute.getColumnName(), attribute.getColor());
+        }
+    }
 
     public void addListener(ILabelProviderListener listener) {
     }
@@ -76,7 +98,7 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
             switch (columnIndex) {
             case PROPERTY_COLUMN:
 
-                return journalProperty.name;
+                return journalProperty.label;
             case VALUE_COLUMN:
                 return journalProperty.value.toString();
             }
@@ -91,10 +113,11 @@ public class JournalPropertiesLabelProvider implements ITableLabelProvider, ITab
 
         } else if (object instanceof JournalProperty) {
 
-            if (((JournalProperty)object).highlighted) {
+            JournalProperty journalProperty = (JournalProperty)object;
+            if (journalProperty.highlighted) {
                 return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
             } else {
-                return null;
+                return null; // colors.get(journalProperty.name);
             }
         }
         return null;

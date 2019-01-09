@@ -10,10 +10,12 @@ package biz.isphere.journalexplorer.core.export;
 
 import java.io.File;
 
+import jxl.Workbook;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.as400.access.Record;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -28,9 +30,9 @@ import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
-import jxl.Workbook;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
+
+import com.ibm.as400.access.Record;
 
 public class ExcelExporter {
 
@@ -113,7 +115,7 @@ public class ExcelExporter {
             }
 
             for (MetaColumn column : metatable.getColumns()) {
-                JOESDProperty property = new JOESDProperty(journalEntry);
+                JOESDProperty property = new JOESDProperty(JournalEntryColumnUI.JOESD, journalEntry);
                 property.executeParsing();
                 property.toPropertyArray();
                 if (journalEntry.isRecordEntryType()) {

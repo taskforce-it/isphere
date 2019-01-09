@@ -33,20 +33,6 @@ public class JournalEntryColumn {
     private int width;
     private Color color;
 
-    private JournalEntryColumn(JournalEntryColumnUI columnDef) {
-
-        this.columnDef = columnDef;
-        this.resizable = true;
-        this.moveable = true;
-
-        this.style = SWT.NONE;
-        this.columnHeading = ""; //$NON-NLS-1$
-        this.tooltipText = ""; //$NON-NLS-1$
-        this.width = 90;
-
-        this.color = null;
-    }
-
     public JournalEntryColumn(JournalEntryColumnUI columnDef, String tooltipText, int width) {
         this(columnDef, columnDef.columnName(), tooltipText, width, SWT.NONE);
     }
@@ -55,12 +41,12 @@ public class JournalEntryColumn {
         this(columnDef, columnDef.columnName(), tooltipText, width, style);
     }
 
-    public JournalEntryColumn(JournalEntryColumnUI columnDef, String text, String tooltipText, int width) {
-        this(columnDef, text, tooltipText, width, SWT.NONE);
-    }
+    private JournalEntryColumn(JournalEntryColumnUI columnDef, String columnHeading, String tooltipText, int width, int style) {
 
-    public JournalEntryColumn(JournalEntryColumnUI columnDef, String columnHeading, String tooltipText, int width, int style) {
-        this(columnDef);
+        this.columnDef = columnDef;
+        this.resizable = true;
+        this.moveable = true;
+        this.color = null;
 
         this.columnHeading = columnHeading;
         this.tooltipText = tooltipText;
