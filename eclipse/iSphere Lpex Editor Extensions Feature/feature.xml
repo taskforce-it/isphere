@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.lpex.comments"
       label="iSphere Lpex Editor Extensions (optional)"
-      version="3.5.1.b001"
+      version="3.5.1.b002"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -19,7 +19,7 @@ indenting and unindenting source lines.
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
-      Copyright (c) 2012-2018 iSphere Project Team. All rights reserved.
+      Copyright (c) 2012-2019 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.example.com/license">
@@ -35,7 +35,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="3.5.1.b001" match="perfect"/>
+      <import feature="biz.isphere.core" version="3.5.1.b002" match="perfect"/>
    </requires>
 
    <plugin
