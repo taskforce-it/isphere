@@ -61,14 +61,14 @@ public class SearchElement {
         this.data = data;
     }
 
-    public static void setSearchElements(String connectionName, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
+    public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
         String _separator;
         try {
             _separator = jdbcConnection.getMetaData().getCatalogSeparator();
         } catch (SQLException e) {
             _separator = ".";
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Message file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
         }
 
         if (_searchElements.size() > 0) {
@@ -88,8 +88,7 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + ISpherePlugin.getISphereLibrary(connectionName) + _separator
-                    + "XFNDSTRI (XIHDL, XILIB, XIMSGF) VALUES");
+                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "XFNDSTRI (XIHDL, XILIB, XIMSGF) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {
@@ -114,7 +113,7 @@ public class SearchElement {
                     statementInsert = jdbcConnection.createStatement();
                     statementInsert.executeUpdate(_sqlInsert);
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    ISpherePlugin.logError("*** Message file search, setSearchElements(): Could not insert search elements into XFNDSTRI ***", e);
                 }
 
                 if (statementInsert != null) {

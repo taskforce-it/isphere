@@ -103,7 +103,7 @@ public class SearchExec {
 
                         if (_handle > 0) {
 
-                            SearchElement.setSearchElements(_connectionName, _jdbcConnection, _handle, _searchElements);
+                            SearchElement.setSearchElements(iSphereLibrary, _jdbcConnection, _handle, _searchElements);
 
                             int _numberOfSearchElements = new XFNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
@@ -233,7 +233,7 @@ public class SearchExec {
                 _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
             } catch (SQLException e) {
                 _separator = ".";
-                e.printStackTrace();
+                ISpherePlugin.logError("*** Message file search (3): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
             }
 
             PreparedStatement preparedStatementUpdate = null;
@@ -243,6 +243,7 @@ public class SearchExec {
                 preparedStatementUpdate.setInt(1, _handle);
                 preparedStatementUpdate.executeUpdate();
             } catch (SQLException e) {
+                ISpherePlugin.logError("*** Could not cancel host job of message file search ***", e);
             }
             if (preparedStatementUpdate != null) {
                 try {
