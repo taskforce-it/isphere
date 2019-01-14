@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Debugging Server Jobs</title>
+</head>
+<body>
+	<h1>Debugging Server Jobs</h1>
+	<p>
+	Sometimes it can be necessary to check the job logs of the RDi server jobs in order
+	to find the answer for an existing problem. In this case there are two options:
+	<p>
+	<ul>
+	<li><a href="#jobs_subsystem">RDi <i>Jobs</i> subsystem and iSphere Job Log Explorer</a></li>
+	<li><a href="#netstat">Command NETSTAT on a 5250 session</a></li>
+	</ul>
+	<p>
+	<a id="#jobs_subsystem"></a>
+	<h2>Jobs Subsystem</h2>
+	<p>
+	Expand the <i>Jobs</i> subsystem and the <i>My active jobs</i> node:
+	<p>
+		<img src="assets/rse_my_active_jobs.png" align="middle">
+	<p>
+	The relevant jobs are listed below the <i>QSERVER</i> and <i>QSYSWRK</i> nodes. Use the 
+	<a href="../../../biz.isphere.joblogexplorer.help/html/joblogexplorer/joblogexplorer.html">iSphere Job Log Explorer</a> to search the job logs for messages that could explain the problem.
+	<p>
+	<table>
+	<tr><td valign="top">QPWFSERVSO</td><td width="10px"></td>
+	                               <td>This  program belongs to the <i>*FILE</i> server that is started with STRHOSTSVR 
+	                                   SERVER(*FILE). The job is started when RDi establishs a connection to a host. Usually
+	                                   that job is not relevant for analyzing iSphere problems.</td></tr>
+	<tr><td valign="top">QZRCSRVS  </td><td width="10px"></td>
+	                               <td>This  program belongs to the <i>*RMTCMD</i> server that is started with STRHOSTSVR 
+	                                   SERVER(*RMTCMD). The job is started when RDi establishs a connection to a host. Whenever
+	                                   iSphere executes a CL command or calls a program, this job is used. Look at this job
+	                                   when trying to solve a problem.</td></tr>
+	<tr><td valign="top">QZDASOINIT</td><td width="10px"></td>
+	                               <td>This  program belongs to the <i>*DATABASE</i> server that is started with STRHOSTSVR 
+	                                   SERVER(*DATABASE). The job is started when RDi or iSphere executes a JDBC statement. Look 
+	                                   at this job when trying to solve a problem.</td></tr>
+	</table>
+	<p>
+	<a id="#netstat"></a>
+	<h2>NETSTAT Command</h2>
+	<p>
+	You need to know the TCP/IP address of your PC client, when you want to use the NETSTAT command. Without
+	that address it can be very difficult to find the relevant jobs. You can use the Retrieve Device Description (QDCRDEVD) API,
+	format DEVD0600 to retrieve the TCP/IP address in dotted decimal form. Or you can use one of
+	the tools available on the Internet, such as 
+	<a href="https://sourceforge.net/p/tools400/code/HEAD/tree/rpg-utilities/WHOAMI/trunk/QWHOAMI/">WHOAMI</a>, available
+	at the Tools/400 project at SourceForge. 
+	<p>
+	Logon to your host system and execute the NETSTAT command. Then use option 3 to work with the IPv4 connection status. Use
+	F15 to create a subset with the connections of your TCP/IP address.
+	<p>
+		<img src="assets/netstat_apply_filter.png" align="middle" >
+	<p>
+	The result is a nice and short list with your jobs:
+	<p>
+		<img src="assets/netstat_my_jobs.png" align="middle" >
+	<p>
+	Now use option 8 to display the jobs of a given connection and then proceed with option 5 to work with the job. From
+	there option 10 takes you to the job log.
+	<p>
+	<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
