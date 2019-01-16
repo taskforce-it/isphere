@@ -48,13 +48,26 @@
 	<p>
 	You need to know the TCP/IP address of your PC client, when you want to use the NETSTAT command. Without
 	that address it can be very difficult to find the relevant jobs. You can use the Retrieve Device Description (QDCRDEVD) API,
-	format DEVD0600 to retrieve the TCP/IP address in dotted decimal form. Or you can use one of
-	the tools available on the Internet, such as 
-	<a href="https://sourceforge.net/p/tools400/code/HEAD/tree/rpg-utilities/WHOAMI/trunk/QWHOAMI/">WHOAMI</a>, available
-	at the Tools/400 project at SourceForge. 
+	format DEVD0600 to retrieve the TCP/IP address in dotted decimal form. Or you can use the WHOAMI command that is shipped
+	with iSphere and which is available as an XML installation package in file QBUILD in the iSphere product library. 
 	<p>
-	Logon to your host system and execute the NETSTAT command. Then use option 3 to work with the IPv4 connection status. Use
-	F15 to create a subset with the connections of your TCP/IP address.
+	You can install it from there with the following commands:
+	<p>
+	<table>
+	<tr><td class="code">ADDLIBLE LIB(ISPHERE)</td></tr>
+	<tr><td class="code">CRTBNDRPG PGM(ISPHERE/XMLINST) SRCFILE(ISPHERE/QBUILD)</td></tr>
+	<tr><td class="code">CALL PGM(ISPHERE/XMLINST) PARM('WHOAMI' 'QBUILD' 'ISPHERE')</td></tr>
+	</table>
+	<p>
+	The WHOAMI command has no parameters and produces the following output:
+	<p>
+	<table>
+	<tr><td class="code">User: RADDATZ, System: GFD400, Device: QPADEV0001, IP: 10.214.131.8</td></tr>
+	</table>
+	<p>
+	Now, figure out your TCP/IP address. Then execute the NETSTAT command and use option 3 to 
+	work with the IPv4 connection status. Use F15 to create a subset with the connections 
+	of your TCP/IP address.
 	<p>
 		<img src="assets/netstat_apply_filter.png" align="middle" >
 	<p>
@@ -62,8 +75,8 @@
 	<p>
 		<img src="assets/netstat_my_jobs.png" align="middle" >
 	<p>
-	Now use option 8 to display the jobs of a given connection and then proceed with option 5 to work with the job. From
-	there option 10 takes you to the job log.
+	Use option 8 to display the jobs of a given connection and then proceed with option 5 to
+	work with a job. From there option 10 takes you to the job log.
 	<p>
 	<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
