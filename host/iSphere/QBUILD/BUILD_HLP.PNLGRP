@@ -31,6 +31,7 @@
 :IMHELP name='BUILD/DEVLIB    '.
 :IMHELP name='BUILD/TMPLIB    '.
 :IMHELP name='BUILD/PREPRC    '.
+:IMHELP name='BUILD/WHOAMI    '.
 :IMHELP name='BUILD/ISPHERE   '.
 :IMHELP name='BUILD/TGTRLS    '.
 :EHELP.
@@ -46,7 +47,7 @@ library.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort PRDLIB
+.* Help text of keyword PRDLIB
 .*--------------------------------------------------------------------
 :HELP name='BUILD/PRDLIB'.
 Production library - Help
@@ -67,7 +68,7 @@ testing purposes.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort DEVLIB
+.* Help text of keyword DEVLIB
 .*--------------------------------------------------------------------
 :HELP name='BUILD/DEVLIB'.
 Development library - Help
@@ -86,7 +87,7 @@ is ISPHEREDVP.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort TMPLIB
+.* Help text of keyword TMPLIB
 .*--------------------------------------------------------------------
 :HELP name='BUILD/TMPLIB'.
 Temporary library - Help
@@ -105,7 +106,7 @@ objects during the build process. Usually that is QTEMP.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort PREPRC
+.* Help text of keyword PREPRC
 .*--------------------------------------------------------------------
 :HELP name='BUILD/PREPRC'.
 Create preprocessor - Help
@@ -123,13 +124,36 @@ objects.
 :PT.:PK DEF.*NO:EPK.
 :PD.The STRPREPRC command is not created.
 :PT.:PV.*YES:EPV.
-:PD.Compile the STRPREPRC command.
+:PD.Compiles the STRPREPRC command.
 :EPARML.
 .*
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort ISPHERE
+.* Help text of keyword WHOAMI
+.*--------------------------------------------------------------------
+:HELP name='BUILD/WHOAMI'.
+Create WHOAMI utility - Help
+:XH3.Create WHOAMI utility (WHOAMI)
+:P.
+Specifies whether or not to compile the WHOAMI utility in the
+development library. The WHOAMI utility requires at least IBM i
+OS 7.2. The TGTRLS (Target release) parameter is ignored when
+compiling WHOAMI.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*NO:EPK.
+:PD.The WHOAMI utility is not created.
+:PT.:PV.*YES:EPV.
+:PD.Compiles the WHOAMI utility.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword ISPHERE
 .*--------------------------------------------------------------------
 :HELP name='BUILD/ISPHERE'.
 Create iSphere - Help
@@ -150,7 +174,7 @@ library.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort TGTRLS
+.* Help text of keyword TGTRLS
 .*--------------------------------------------------------------------
 :HELP name='BUILD/TGTRLS'.
 Target release - Help
@@ -172,7 +196,7 @@ operating system that is currently running on your system.
 :EHELP.
 .*
 .*--------------------------------------------------------------------
-.* Helptext für Schlüsselwort OWNER
+.* Help text of keyword OWNER
 .*--------------------------------------------------------------------
 :HELP name='BUILD/OWNER'.
 Object owner - Help

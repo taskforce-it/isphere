@@ -21,9 +21,10 @@ DUMMY1 "(" PRDLIB ")",
 DUMMY2 "(" DEVLIB ")",
 DUMMY3 "(" TMPLIB ")",
 DUMMY4 "(" PREPRC ")",
-DUMMY5 "(" ISPHERE")",
-DUMMY6 "(" TGTRLS ")",
-DUMMY7 "(" OWNER  ")";
+DUMMY5 "(" WHOAMI ")",
+DUMMY6 "(" ISPHERE")",
+DUMMY7 "(" TGTRLS ")",
+DUMMY8 "(" OWNER  ")";
 
 /* Change current library to iSphere development library */
 "CHGCURLIB ",
@@ -35,6 +36,15 @@ DO;
    /* The creation of the preprocessor has to run in a separate REXX procedure due to */
    /* inexplicable errors which occur when the creation runs in this REXX procedure */
    CALL BUILD2 DEVLIB TGTRLS;
+
+END;
+
+IF WHOAMI = "*YES" THEN;
+DO;
+
+   /* The creation of the WHOAMI utility has to run in a separate REXX procedure due to */
+   /* inexplicable errors which occur when the creation runs in this REXX procedure */
+   CALL BUILD3 DEVLIB TGTRLS;
 
 END;
 

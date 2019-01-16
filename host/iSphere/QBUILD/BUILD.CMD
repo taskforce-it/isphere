@@ -63,6 +63,10 @@
                           RSTD(*YES) SPCVAL((*YES) (*NO)) +
                           PROMPT('Create preprocessor')
 
+             PARM       KWD(WHOAMI) TYPE(*CHAR) LEN(10) DFT(*NO) +
+                          RSTD(*YES) SPCVAL((*YES) (*NO)) +
+                          PROMPT('Create WHOAMI utility')
+
              PARM       KWD(ISPHERE) TYPE(*CHAR) LEN(10) DFT(*YES) +
                           RSTD(*YES) SPCVAL((*YES) (*NO)) +
                           PROMPT('Create iSphere')
