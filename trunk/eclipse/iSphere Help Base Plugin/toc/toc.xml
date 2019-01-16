@@ -41,6 +41,7 @@
          <!-- </topic> -->
          <topic label="History" href="html/utilities/strpreprc/history.html" />
       </topic>
+      <topic label="Who am I (WHOAMI)" href="html/utilities/whoami/whoami.html" />
    </topic>
    <topic label="Troubleshooting" >
       <topic label="RSE Object Descoration is Missing" href="html/troubleshooting/rse_object_decoration/rse_object_decoration.html" />
