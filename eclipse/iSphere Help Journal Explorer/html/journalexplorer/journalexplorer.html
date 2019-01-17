@@ -65,7 +65,7 @@ ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
 </table>
 <p>
 You can open the Journal Explorer perspective from <i>'Window -> Open Perspective -> Other...'</i>. The
-perspective looks like that:	 
+perspective looks like that: 
 <p>
 <img src="assets/journal_explorer_perspective.png" align="middle">
 <p>
@@ -110,6 +110,15 @@ The following actions are available:
 <tr><td valign="top">File</td><td width="10px">&nbsp;</td><td valign="top">Specifies the name of the library where the output file is stored.</td></tr>
 <tr><td valign="top">Member</td><td width="10px">&nbsp;</td><td valign="top">Specifies the name of the member of the output file.</td></tr>
 <tr><td valign="top">WHERE</td><td width="10px">&nbsp;</td><td valign="top">Specifies a SQL WHERE clause to select a subset of the records of the output file.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL clause specified here is applied to the records of the
+		                   output file created by the DSPJRN command. It must be specified in IBM i SQL
+		                   syntax.
+		</td>
+	</tr>
 </table>
 <p>
 <h2>Loading Journal Entries From a Journal Receiver</h2>
@@ -174,8 +183,17 @@ The following actions are available:
 <p>
 <table>
 	<tr>
-		<td class="notice"><b>Notice: </b>Filtering jurnal entries is a local task, which does not reload the
+		<td class="notice"><b>Notice: </b>Filtering journal entries is a local task, which does not reload the
 		                                  journal entries from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL clause specified here is applied to the records that
+		                   that have been downloaded to the PC. It must be specified in the <a href="./sql_reference.html">iSphere SQL</a> syntax,
+		                   which in most cases matches the IBM i SQL syntax.
+		</td>
 	</tr>
 </table>
 <p>
