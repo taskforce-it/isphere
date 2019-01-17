@@ -62,6 +62,7 @@ public class Messages extends NLS {
     public static String LongFieldName_JOENTT;
     public static String LongFieldName_JODATE;
     public static String LongFieldName_JOTIME;
+    public static String LongFieldName_JOTSTP;
     public static String LongFieldName_JOJOB;
     public static String LongFieldName_JOUSER;
     public static String LongFieldName_JONBR;
@@ -186,6 +187,7 @@ public class Messages extends NLS {
     public static String Tooltip_JOENTT;
     public static String Tooltip_JODATE;
     public static String Tooltip_JOTIME;
+    public static String Tooltip_JOTSTP;
     public static String Tooltip_JOJOB;
     public static String Tooltip_JOUSER;
     public static String Tooltip_JONBR;

@@ -15,6 +15,8 @@ import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -25,8 +27,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -152,7 +156,7 @@ public class SqlEditor extends Composite {
         setLayout(layout);
 
         Composite wherePanel = new Composite(this, SWT.NONE);
-        GridLayout wherePanelLayout = new GridLayout(1, false);
+        GridLayout wherePanelLayout = new GridLayout(2, false);
         wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
         wherePanelLayout.marginHeight = 0;
         wherePanelLayout.marginWidth = 0;
@@ -164,11 +168,15 @@ public class SqlEditor extends Composite {
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
 
-        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(GridData.FILL_VERTICAL));
+        Label helpItem = new Label(wherePanel, SWT.NONE);
+        helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
+        helpItem.addMouseListener(new DisplayHelpListener());
+
+        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
         btnAddField = WidgetFactory.createPushButton(wherePanel, Messages.ButtonLabel_AddField);
         btnAddField.setToolTipText(Messages.ButtonTooltip_AddField);
-        btnAddField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        btnAddField.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, 2, 1));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -281,5 +289,13 @@ public class SqlEditor extends Composite {
     public void dispose() {
         textSqlEditor.dispose();
         super.dispose();
+    }
+
+    private class DisplayHelpListener extends MouseAdapter {
+        @Override
+        public void mouseUp(MouseEvent event) {
+            PlatformUI.getWorkbench().getHelpSystem()
+                .displayHelpResource("/biz.isphere.journalexplorer.help/html/journalexplorer/sql_reference.html");
+        }
     }
 }

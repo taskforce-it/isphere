@@ -10,7 +10,6 @@ package biz.isphere.journalexplorer.core.ui.dialogs;
 
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -292,10 +291,10 @@ public class LoadJournalEntriesDialog extends XDialog {
         selectionCriterias = new SelectionCriterias();
 
         Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
-        selectionCriterias.setStartDate(startingDate.getTime());
+        selectionCriterias.setStartDate(new java.sql.Timestamp(startingDate.getTimeInMillis()));
 
         Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
-        selectionCriterias.setEndDate(endingDate.getTime());
+        selectionCriterias.setEndDate(new java.sql.Timestamp(endingDate.getTimeInMillis()));
 
         boolean recordsOnly = chkboxRecordsOnly.getSelection();
         selectionCriterias.setRecordsOnly(recordsOnly);
@@ -536,8 +535,8 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     public class SelectionCriterias {
 
-        private Date startDate;
-        private Date endDate;
+        private java.sql.Timestamp startDate;
+        private java.sql.Timestamp endDate;
         private boolean isRecordsOnly;
         private Set<JournalEntryType> journalEntryTypes;
         int maxItemsToRetrieve;
@@ -546,7 +545,7 @@ public class LoadJournalEntriesDialog extends XDialog {
             this(null, null, false, Preferences.getInstance().getMaximumNumberOfRowsToFetch());
         }
 
-        public SelectionCriterias(Date startDate, Date endDate, boolean recordsOnly, int maxItemsToRetrieve) {
+        public SelectionCriterias(java.sql.Timestamp startDate, java.sql.Timestamp endDate, boolean recordsOnly, int maxItemsToRetrieve) {
             this.startDate = startDate;
             this.endDate = endDate;
             this.isRecordsOnly = recordsOnly;
@@ -554,19 +553,19 @@ public class LoadJournalEntriesDialog extends XDialog {
             this.journalEntryTypes = new HashSet<JournalEntryType>();
         }
 
-        public Date getStartDate() {
+        public java.sql.Timestamp getStartDate() {
             return startDate;
         }
 
-        public void setStartDate(Date startDate) {
+        public void setStartDate(java.sql.Timestamp startDate) {
             this.startDate = startDate;
         }
 
-        public Date getEndDate() {
+        public java.sql.Timestamp getEndDate() {
             return endDate;
         }
 
-        public void setEndDate(Date endDate) {
+        public void setEndDate(java.sql.Timestamp endDate) {
             this.endDate = endDate;
         }
 

@@ -25,6 +25,7 @@ public enum JournalEntryColumnUI {
     JOENTT (ColumnsDAO.JOENTT, Messages.LongFieldName_JOENTT, Messages.Tooltip_JOENTT),
     JODATE (ColumnsDAO.JODATE, Messages.LongFieldName_JODATE, Messages.Tooltip_JODATE),
     JOTIME (ColumnsDAO.JOTIME, Messages.LongFieldName_JOTIME, Messages.Tooltip_JOTIME),
+    JOTSTP (ColumnsDAO.JOTSTP, Messages.LongFieldName_JOTSTP, Messages.Tooltip_JOTSTP),
     JOJOB (ColumnsDAO.JOJOB, Messages.LongFieldName_JOJOB, Messages.Tooltip_JOJOB),
     JOUSER (ColumnsDAO.JOUSER, Messages.LongFieldName_JOUSER, Messages.Tooltip_JOUSER),
     JONBR (ColumnsDAO.JONBR, Messages.LongFieldName_JONBR, Messages.Tooltip_JONBR),

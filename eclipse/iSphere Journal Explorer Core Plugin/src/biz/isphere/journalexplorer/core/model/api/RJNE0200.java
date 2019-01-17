@@ -427,14 +427,14 @@ public class RJNE0200 {
      * 
      * @return date and time the journal entry was added to the receiver
      */
-    public Date getTimestamp() throws Exception {
+    public java.sql.Timestamp getTimestamp() throws Exception {
 
         Object[] tResult = getEntryHeaderData();
         Date tTimestamp = dateTimeConverter.convert((byte[])tResult[7], "*DTS");
 
         tTimestamp = convertToLocalTimeZone(tTimestamp);
 
-        return tTimestamp;
+        return new java.sql.Timestamp(tTimestamp.getTime());
     }
 
     private Date convertToLocalTimeZone(Date timestamp) {

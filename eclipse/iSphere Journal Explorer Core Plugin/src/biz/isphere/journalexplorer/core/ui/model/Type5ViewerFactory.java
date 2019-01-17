@@ -31,6 +31,7 @@ public class Type5ViewerFactory extends AbstractTypeViewerFactory {
         JournalEntryColumnUI.JOENTL,
         JournalEntryColumnUI.JODATE, 
         JournalEntryColumnUI.JOTIME,
+        JournalEntryColumnUI.JOTSTP, // Added for Type3 viewer
         JournalEntryColumnUI.JOCCID, // Added for Type5 viewer
         JournalEntryColumnUI.JOLUW, // Added for Type5 viewer
         JournalEntryColumnUI.JOXID, // Added for Type5 viewer

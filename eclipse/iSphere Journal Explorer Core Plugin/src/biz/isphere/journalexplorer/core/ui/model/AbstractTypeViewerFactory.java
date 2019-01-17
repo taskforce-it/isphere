@@ -147,6 +147,7 @@ public abstract class AbstractTypeViewerFactory {
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOENTT, Messages.Tooltip_JOENTT, 60));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JODATE, Messages.Tooltip_JODATE, 80));
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOTIME, Messages.Tooltip_JOTIME, 80));
+        columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOTSTP, Messages.Tooltip_JOTSTP, 140));
 
         // Job, that added the journal entry ...
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOJOB, Messages.Tooltip_JOJOB, 90));
