@@ -67,8 +67,10 @@ public class Time extends PostfixCommand {
             cal.set(Calendar.MILLISECOND, 0);
 
             return new java.sql.Time(cal.getTimeInMillis());
-        } else {
+        } else if (expression instanceof String) {
             return to_time(expression, ParserUtils.getTimeFormat((String)expression));
+        } else {
+            throw new WrongTypeException(getFunctionName(), expression);
         }
     }
 

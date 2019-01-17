@@ -650,6 +650,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
+
+        try {
+            // Wrong type
+            assertEquals(true, parseExpression("DATE(20181205) = '2018-12-05'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Date", "Long"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
     }
 
     @Test
@@ -686,6 +696,16 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (UnknownTimeFormatException e) {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNKNOWN_TIME_FORMAT_EXCEPTION, "12.00:00"), message);
+        } catch (Throwable e) {
+            Assert.fail("Wrong exception: " + e.getClass());
+        }
+
+        try {
+            // Wrong type
+            assertEquals(true, parseExpression("TIME(120000) = '12:00:00'"));
+        } catch (WrongTypeException e) {
+            String message = e.getLocalizedMessage();
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Time", "Long"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
