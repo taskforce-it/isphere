@@ -10,7 +10,6 @@ package biz.isphere.journalexplorer.rse.shared.model;
 
 import java.sql.Time;
 import java.util.Calendar;
-import java.util.Date;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Date;
@@ -18,12 +17,12 @@ import biz.isphere.journalexplorer.rse.shared.as400fields.AS400Time;
 
 public class JournalEntryDelegate {
 
-    public static Date getDate(String date, int dateFormat, Character dateSeparator) {
+    public static java.sql.Date getDate(String date, int dateFormat, Character dateSeparator) {
 
         AS400Date as400date = new AS400Date(Calendar.getInstance().getTimeZone(), dateFormat, dateSeparator);
         java.sql.Date dateObject = as400date.parse(date);
 
-        return new Date(dateObject.getTime());
+        return new java.sql.Date(dateObject.getTime());
     }
 
     public static Time getTime(int time, Character timeSeparator) {
