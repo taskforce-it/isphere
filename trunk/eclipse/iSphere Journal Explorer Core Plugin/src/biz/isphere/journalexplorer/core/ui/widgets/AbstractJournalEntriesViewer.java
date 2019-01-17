@@ -11,9 +11,7 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,10 +41,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -118,9 +117,26 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         return outputFile;
     }
 
-    protected abstract ContentAssistProposal[] getContentAssistProposals();
+    private ContentAssistProposal[] getContentAssistProposals() {
 
-    protected void createSqlEditor() {
+        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+
+        List<ContentAssistProposal> proposals = JournalEntry.getContentAssistProposals();
+
+        // MetaTable metaData = getMetaData();
+        // if (metaData != null) {
+        // for (MetaColumn column : metaData.getColumns()) {
+        // if (columnMapping.containsKey(column.getName())) {
+        // proposals.add(new ContentAssistProposal(column.getName(),
+        // column.getFormattedType() + " - " + column.getText()));
+        // }
+        // }
+        // }
+
+        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    }
+
+    private void createSqlEditor() {
 
         if (!isAvailable(sqlEditor)) {
             sqlEditor = new SqlEditor(getContainer(), SWT.NONE);
@@ -140,7 +156,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         }
     }
 
-    protected void destroySqlEditor() {
+    private void destroySqlEditor() {
 
         if (sqlEditor != null) {
             // Important, must be called to ensure the SqlEditor is removed from
@@ -186,25 +202,16 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
             return;
         }
 
-        Statement s = null;
-
         try {
 
-            Connection c = IBMiHostContributionsHandler.getJdbcConnection(outputFile.getConnectionName());
-            s = c.prepareStatement(String.format("SELECT * FROM %s.%s WHERE %s", outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
-                whereClause));
+            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
+            RowJEP sqljep = new RowJEP(whereClause);
+            sqljep.parseExpression(columnMapping);
 
-        } catch (SQLException e) {
+        } catch (ParseException e) {
             throw new SQLSyntaxErrorException(e);
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+
     }
 
     public boolean isFiltered() {

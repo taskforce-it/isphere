@@ -8,7 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
-import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -162,9 +162,8 @@ public class JournalDAO {
         journalEntry.setStringSpecificData(journalEntryData.getEntrySpecificDataRaw());
 
         try {
-            Date timestamp = journalEntryData.getTimestamp();
-            journalEntry.setDate(timestamp);
-            journalEntry.setTime(new Time(timestamp.getTime()));
+            Timestamp timestamp = journalEntryData.getTimestamp();
+            journalEntry.setTimestamp(timestamp);
         } catch (Exception e) {
         }
 

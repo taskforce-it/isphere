@@ -10,8 +10,8 @@ package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.ResultSet;
 
-import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.OutputFile;
 
 public class Type3DAO extends AbstractTypeDAO {
 
@@ -63,8 +63,7 @@ public class Type3DAO extends AbstractTypeDAO {
         // Depending of the journal out type, the timestamp can be a
         // single field or splitted in JODATE and JOTYPE.
         // For TYPE3+ output files it is returned as a timestamp value.
-        journalEntry.setDate(resultSet.getDate(JOTSTP));
-        journalEntry.setTime(resultSet.getTime(JOTSTP));
+        journalEntry.setTimestamp(resultSet.getTimestamp(JOTSTP));
         journalEntry.setNullIndicators(new String(resultSet.getBytes(JONVI), getJournalEntryCcsid()).getBytes());
 
         return journalEntry;

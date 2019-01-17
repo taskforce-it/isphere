@@ -126,6 +126,8 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
             return journalEntry.getValueForUi(ColumnsDAO.JODATE);
         case JOTIME:
             return journalEntry.getValueForUi(ColumnsDAO.JOTIME);
+        case JOTSTP:
+            return journalEntry.getValueForUi(ColumnsDAO.JOTSTP);
         case JOJOB:
             return journalEntry.getValueForUi(ColumnsDAO.JOJOB);
         case JOUSER:

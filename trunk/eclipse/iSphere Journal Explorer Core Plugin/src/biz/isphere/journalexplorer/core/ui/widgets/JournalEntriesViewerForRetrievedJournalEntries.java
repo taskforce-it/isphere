@@ -11,10 +11,6 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -24,22 +20,14 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
-import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.MetaColumn;
-import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
@@ -157,43 +145,6 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
 
     public boolean hasSqlEditor() {
         return true;
-    }
-
-    protected ContentAssistProposal[] getContentAssistProposals() {
-
-        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
-
-        List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
-
-        MetaTable metaData = getMetaData();
-        if (metaData != null) {
-            for (MetaColumn column : metaData.getColumns()) {
-                if (columnMapping.containsKey(column.getName())) {
-                    proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
-                }
-            }
-        }
-
-        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
-    }
-
-    @Override
-    public void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
-
-        if (StringHelper.isNullOrEmpty(whereClause)) {
-            return;
-        }
-
-        try {
-
-            HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
-            RowJEP sqljep = new RowJEP(whereClause);
-            sqljep.parseExpression(columnMapping);
-
-        } catch (ParseException e) {
-            throw new SQLSyntaxErrorException(e);
-        }
-
     }
 
     private class OpenJournalJob extends Job {

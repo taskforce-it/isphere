@@ -11,9 +11,6 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,12 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.MetaColumn;
-import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -159,20 +153,6 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
     public boolean hasSqlEditor() {
         return true;
-    }
-
-    protected ContentAssistProposal[] getContentAssistProposals() {
-
-        List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
-
-        MetaTable metaData = getMetaData();
-        if (metaData != null) {
-            for (MetaColumn column : metaData.getColumns()) {
-                proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
-            }
-        }
-
-        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
     }
 
     private class OpenJournalJob extends Job {

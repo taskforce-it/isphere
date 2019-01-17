@@ -375,6 +375,7 @@ public final class Preferences implements ColumnsDAO {
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOENTT.columnName(), JournalEntryColumnUI.JOENTT.description()));
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JODATE.columnName(), JournalEntryColumnUI.JODATE.description()));
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTIME.columnName(), JournalEntryColumnUI.JOTIME.description()));
+        sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOTSTP.columnName(), JournalEntryColumnUI.JOTSTP.description()));
 
         // Job, that added the journal entry ...
         sortedNames.add(createAppearanceAttributes(JournalEntryColumnUI.JOJOB.columnName(), JournalEntryColumnUI.JOJOB.description()));

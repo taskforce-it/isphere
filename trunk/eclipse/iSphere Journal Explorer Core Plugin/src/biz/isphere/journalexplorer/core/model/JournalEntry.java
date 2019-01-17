@@ -12,16 +12,16 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.math.BigInteger;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
@@ -50,6 +50,13 @@ public class JournalEntry {
     private static final int JODATE = 8;
     private static final int JOTIME = 9;
     private static final int JOTSTP = 10;
+    private static final int JOPGM = 11;
+    private static final int JOPGMLIB = 12;
+    private static final int JOOBJTYP = 13;
+    private static final int JOFILTYP = 14;
+    private static final int JOSYNM = 15;
+    private static final int JORCV = 16;
+    private static final int JORCVLIB = 17;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -65,11 +72,42 @@ public class JournalEntry {
         columnMappings.put("JODATE", JODATE);
         columnMappings.put("JOTIME", JOTIME);
         columnMappings.put("JOTSTP", JOTSTP);
+        columnMappings.put("JOPGM", JOPGM);
+        columnMappings.put("JOPGMLIB", JOPGMLIB);
+        columnMappings.put("JOOBJTYP", JOOBJTYP);
+        columnMappings.put("JOFILTYP", JOFILTYP);
+        columnMappings.put("JOSYNM", JOSYNM);
+        columnMappings.put("JORCV", JORCV);
+        columnMappings.put("JORCVLIB", JORCVLIB);
+    }
+
+    private static List<ContentAssistProposal> proposals;
+    static {
+        proposals = new LinkedList<ContentAssistProposal>();
+        proposals.add(new ContentAssistProposal("JOCODE", "CHAR(1)" + " - " + Messages.LongFieldName_JOCODE));
+        proposals.add(new ContentAssistProposal("JOENTT", "CHAR(2)" + " - " + Messages.LongFieldName_JOENTT));
+        proposals.add(new ContentAssistProposal("JOJOB", "CHAR(10)" + " - " + Messages.LongFieldName_JOJOB));
+        proposals.add(new ContentAssistProposal("JOUSER", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSER));
+        proposals.add(new ContentAssistProposal("JONBR", "INTEGER" + " - " + Messages.LongFieldName_JONBR));
+        proposals.add(new ContentAssistProposal("JOLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JOLIB));
+        proposals.add(new ContentAssistProposal("JOOBJ", "CHAR(10)" + " - " + Messages.LongFieldName_JOOBJ));
+        proposals.add(new ContentAssistProposal("JOMBR", "CHAR(10)" + " - " + Messages.LongFieldName_JOMBR));
+        proposals.add(new ContentAssistProposal("JODATE", "DATE" + " - " + Messages.LongFieldName_JODATE));
+        proposals.add(new ContentAssistProposal("JOTIME", "TIME" + " - " + Messages.LongFieldName_JOTIME));
+        proposals.add(new ContentAssistProposal("JOTSTP", "TIMESTAMP" + " - " + Messages.LongFieldName_JOTSTP));
+        proposals.add(new ContentAssistProposal("JOPGM", "CHAR(10)" + " - " + Messages.LongFieldName_JOPGM));
+        proposals.add(new ContentAssistProposal("JOPGMLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JOPGMLIB));
+        proposals.add(new ContentAssistProposal("JOOBJTYP", "CHAR(7)" + " - " + Messages.LongFieldName_JOOBJTYP));
+        proposals.add(new ContentAssistProposal("JOFILTYP", "CHAR(2)" + " - " + Messages.LongFieldName_JOFILTYP));
+        proposals.add(new ContentAssistProposal("JOSYNM", "CHAR(8)" + " - " + Messages.LongFieldName_JOSYNM));
+        proposals.add(new ContentAssistProposal("JORCV", "CHAR(10)" + " - " + Messages.LongFieldName_JORCV));
+        proposals.add(new ContentAssistProposal("JORCVLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
     }
 
     private Calendar calendar;
     private SimpleDateFormat dateFormatter;
     private SimpleDateFormat timeFormatter;
+    private SimpleDateFormat timestampFormatter;
 
     private OutputFile outputFile;
     private String qualifiedObjectName;
@@ -80,8 +118,8 @@ public class JournalEntry {
     private BigInteger sequenceNumber; // JOSEQN
     private String journalCode; // JOCODE
     private String entryType; // JOENTT
-    private Date date; // JODATE
-    private Time time; // JOTIME
+    private java.sql.Date date; // JODATE
+    private java.sql.Time time; // JOTIME
     private String jobName; // JOJOB
     private String jobUserName; // JOUSER
     private int jobNumber; // JONBR
@@ -190,7 +228,7 @@ public class JournalEntry {
     private byte[] nullIndicators; // JONVI
 
     // Cached values
-    private Timestamp timestamp; // JOTIME + JODATE
+    private java.sql.Timestamp timestamp; // JOTIME + JODATE
     private String stringSpecificDataForUI;
 
     private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
@@ -202,8 +240,11 @@ public class JournalEntry {
         this.qualifiedObjectName = null;
         this.bin8Formatter = new DecimalFormat("00000000000000000000");
         this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
-        this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
-        this.timeFormatter = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+        this.dateFormatter = biz.isphere.core.preferences.Preferences.getInstance().getDateFormatter();
+        // this.timeFormatter = // new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        this.timeFormatter = biz.isphere.core.preferences.Preferences.getInstance().getTimeFormatter();
+        this.timestampFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); //$NON-NLS-1$
         this.calendar = Calendar.getInstance();
 
     }
@@ -230,6 +271,10 @@ public class JournalEntry {
         return columnMappings;
     }
 
+    public static List<ContentAssistProposal> getContentAssistProposals() {
+        return proposals;
+    }
+
     public Comparable[] getRow() {
 
         Comparable[] row = new Comparable[columnMappings.size()];
@@ -242,9 +287,19 @@ public class JournalEntry {
         row[JOLIB] = getObjectLibrary();
         row[JOOBJ] = getObjectName();
         row[JOMBR] = getMemberName();
-        row[JODATE] = getDate();
+        row[JODATE] = new java.sql.Date(getDate().getTime());
         row[JOTIME] = getTime();
         row[JOTSTP] = getTimestamp();
+        row[JOPGM] = getProgramName();
+        row[JOPGMLIB] = getProgramLibrary();
+        row[JOOBJTYP] = getObjectType();
+        row[JOFILTYP] = getFileTypeIndicator();
+        row[JOSYNM] = getSystemName();
+        row[JORCV] = getReceiver();
+        row[JORCVLIB] = getReceiverLibrary();
+
+        // System.out.println("Date: " + row[JODATE] + ", Time: " + row[JOTIME]
+        // + ", Timestamp: " + row[JOTSTP]);
 
         return row;
     }
@@ -264,10 +319,6 @@ public class JournalEntry {
     public String getKey() {
         return Messages.bind(Messages.Journal_RecordNum, new Object[] { getConnectionName(), getOutFileLibrary(), getOutFileName(), getId() });
     }
-
-    // public String getQualifiedObjectName() {
-    // return String.format("%s/%s", objectLibrary, objectName);
-    // }
 
     public int getId() {
         return id;
@@ -358,19 +409,25 @@ public class JournalEntry {
      * 
      * @return value of field 'JOTSTP' or 'JODATE'.
      */
-    public Date getDate() {
+    public java.sql.Date getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    private void setDate(java.sql.Timestamp timestamp) {
 
-        this.timestamp = null;
-        this.date = date;
+        calendar.clear();
+        calendar.setTime(timestamp);
+
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        this.date = new java.sql.Date(calendar.getTimeInMillis());
     }
 
     public void setDateAndTime(String date, int time, int dateFormat, Character dateSeparator, Character timeSeparator) {
-        setDate(JournalEntryDelegate.getDate(date, dateFormat, dateSeparator));
-        setTime(JournalEntryDelegate.getTime(time, timeSeparator));
+        setTimestamp(JournalEntryDelegate.getDate(date, dateFormat, dateSeparator), JournalEntryDelegate.getTime(time, timeSeparator));
     }
 
     /**
@@ -382,21 +439,48 @@ public class JournalEntry {
      * 
      * @return value of field 'JOTSTP' or 'JOTIME'.
      */
-    public Time getTime() {
+    public java.sql.Time getTime() {
         return time;
     }
 
-    public void setTime(Time time) {
+    private void setTime(java.sql.Timestamp timestamp) {
 
         calendar.clear();
-        calendar.setTime(time);
+        calendar.setTime(timestamp);
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         calendar.set(Calendar.MONTH, 0);
         calendar.set(Calendar.YEAR, 1970);
 
-        this.timestamp = null;
-        this.time = new Time(calendar.getTimeInMillis());
+        this.time = new java.sql.Time(calendar.getTimeInMillis());
+    }
+
+    public void setTimestamp(java.sql.Date date, java.sql.Time time) {
+
+        calendar.clear();
+        calendar.setTime(time);
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        int milliseconds = calendar.get(Calendar.MILLISECOND);
+
+        calendar.clear();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, second);
+        calendar.set(Calendar.MILLISECOND, milliseconds);
+
+        setTimestamp(new java.sql.Timestamp(calendar.getTimeInMillis()));
+    }
+
+    public void setTimestamp(java.sql.Timestamp timestamp) {
+
+        this.timestamp = timestamp;
+
+        setDate(timestamp);
+        setTime(timestamp);
     }
 
     /**
@@ -1253,15 +1337,19 @@ public class JournalEntry {
         } else if (ColumnsDAO.JOENTT.equals(name)) {
             return getEntryType();
         } else if (ColumnsDAO.JOTSTP.equals(name)) {
-
+            java.sql.Timestamp timestamp = getTimestamp();
+            if (timestamp == null) {
+                return ""; //$NON-NLS-1$
+            }
+            return timestampFormatter.format(timestamp);
         } else if (ColumnsDAO.JODATE.equals(name)) {
-            Date date = getDate();
+            java.sql.Date date = getDate();
             if (date == null) {
                 return ""; //$NON-NLS-1$
             }
             return dateFormatter.format(date);
         } else if (ColumnsDAO.JOTIME.equals(name)) {
-            Time time = getTime();
+            java.sql.Time time = getTime();
             if (time == null) {
                 return ""; //$NON-NLS-1$
             }
@@ -1396,29 +1484,7 @@ public class JournalEntry {
         return "";
     }
 
-    private Timestamp getTimestamp() {
-
-        if (timestamp == null) {
-
-            Time time = getTime();
-            Date date = getDate();
-
-            calendar.clear();
-            calendar.setTime(time);
-
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minute = calendar.get(Calendar.MINUTE);
-            int second = calendar.get(Calendar.SECOND);
-
-            calendar.clear();
-            calendar.setTime(date);
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minute);
-            calendar.set(Calendar.SECOND, second);
-
-            this.timestamp = new Timestamp(calendar.getTimeInMillis());
-        }
-
+    private java.sql.Timestamp getTimestamp() {
         return timestamp;
     }
 

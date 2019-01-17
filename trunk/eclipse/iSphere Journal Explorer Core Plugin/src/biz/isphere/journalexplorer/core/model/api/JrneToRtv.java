@@ -13,7 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -243,7 +242,7 @@ public class JrneToRtv implements Serializable, Cloneable {
      * @param aStartingTimestamp - The time stamp of the first journal entry
      *        considered for retrieval
      */
-    public void setFromTime(Date aStartingTimestamp) {
+    public void setFromTime(java.sql.Timestamp aStartingTimestamp) {
         // TimeZone temp = aStartingTimestamp.getTimeZone();
         // Timestamp temp2 = new
         // Timestamp(aStartingTimestamp.getTime().getTime());
@@ -291,7 +290,7 @@ public class JrneToRtv implements Serializable, Cloneable {
      * @param anEndingTimestamp - The time stamp of the last journal entry
      *        considered for retrieval
      */
-    public void setToTime(Date anEndingTimestamp) {
+    public void setToTime(java.sql.Timestamp anEndingTimestamp) {
         // TimeZone temp = anEndingTimestamp.getTimeZone();
         // Timestamp temp2 = new
         // Timestamp(anEndingTimestamp.getTime().getTime());
@@ -733,9 +732,9 @@ public class JrneToRtv implements Serializable, Cloneable {
         return StringHelper.getFixLengthLeading(aFormatMinimizedData, byteLength).replaceAll(" ", "0");
     }
 
-    private Date getTime(String aTimestamp) throws ParseException {
-        Date date = dateFormatter.parse(aTimestamp);
-        return date;
+    private java.sql.Timestamp getTime(String aTimestamp) throws ParseException {
+        java.sql.Timestamp timestamp = new java.sql.Timestamp(dateFormatter.parse(aTimestamp).getTime());
+        return timestamp;
     }
 
     @SuppressWarnings("unchecked")
