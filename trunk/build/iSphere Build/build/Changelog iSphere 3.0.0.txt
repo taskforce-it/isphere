@@ -33,6 +33,8 @@ Changelog: iSphere 3.5.1.r
    connection problems and to leave the "check status" loop when the
    status record could not be found for whatever reasons.
  • Fixed cursor positioning issue in iSphere compare dialog.
+ • Fixed problem in iSphere Job Log Explorer that searchUp/searchDown
+   did not properly wrap.
 
 Changelog: iSphere 3.5.0.r
 --------------------------

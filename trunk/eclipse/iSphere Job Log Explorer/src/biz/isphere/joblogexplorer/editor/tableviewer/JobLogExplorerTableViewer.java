@@ -137,7 +137,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     public int getItemCount() {
         return tableViewer.getTable().getItemCount();
     }
-    
+
     private JobLog getInput() {
         return (JobLog)tableViewer.getInput();
     }
@@ -645,8 +645,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         }
 
         int currentIndex = startIndex;
-        if (currentIndex == -1) {
-            currentIndex = table.getItemCount() - 1;
+        if (currentIndex < 0) {
+            currentIndex = table.getItemCount();
         }
 
         currentIndex--;
@@ -663,7 +663,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         Display.getCurrent().beep();
 
         if (startIndex < table.getItemCount() - 1) {
-            doSearchUp(text, table.getItemCount() - 1, startIndex);
+            doSearchUp(text, table.getItemCount(), startIndex);
         }
     }
 
@@ -686,8 +686,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         }
 
         int currentIndex = startIndex;
-        if (currentIndex == -1) {
-            currentIndex = 0;
+        if (currentIndex > maxIndex) {
+            currentIndex = -1;
         }
 
         currentIndex++;
@@ -704,7 +704,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         Display.getCurrent().beep();
 
         if (startIndex > 0) {
-            doSearchDown(text, 0, startIndex);
+            doSearchDown(text, -1, startIndex);
         }
     }
 
