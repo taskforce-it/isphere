@@ -185,7 +185,15 @@ public class SqlEditor extends Composite {
             }
         });
 
-        textSqlEditor = WidgetFactory.createContentAssistText(this);// ContentAssistText(this);
+        Composite editorPanel = new Composite(this, SWT.NONE);
+        GridLayout editorPanelLayout = new GridLayout();
+        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
+        editorPanelLayout.marginHeight = 0;
+        editorPanelLayout.marginWidth = 0;
+        editorPanel.setLayout(editorPanelLayout);
+        editorPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        textSqlEditor = WidgetFactory.createContentAssistText(editorPanel);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
         textSqlEditor.setHint(Messages.Tooltip_SqlEditor_Text);
         textSqlEditor.setTraverseEnabled(true);
