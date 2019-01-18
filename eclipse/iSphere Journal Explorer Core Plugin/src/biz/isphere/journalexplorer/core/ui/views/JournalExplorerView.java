@@ -301,19 +301,20 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         viewer.filterJournal(this, viewer.getFilterClause());
     }
 
-    public void finishDataLoading(AbstractJournalEntriesViewer viewer) {
+    public void finishDataLoading(AbstractJournalEntriesViewer viewer, boolean isFilter) {
 
         if (viewer != null) {
             JournalEntries journalEntries = viewer.getInput();
             if (journalEntries != null) {
-                int numItems = journalEntries.size();
-                if (journalEntries.isOverflow()) {
+                int numItemsDownloaded = journalEntries.getNumberOfRowsDownloaded();
+                if (journalEntries.isOverflow() && !isFilter) {
                     String messageText;
                     int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
                     if (numItemsAvailable < 0) {
-                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable, numItems);
+                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable,
+                            numItemsDownloaded);
                     } else {
-                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItems);
+                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItemsDownloaded);
                     }
                     DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED,
                         messageText);

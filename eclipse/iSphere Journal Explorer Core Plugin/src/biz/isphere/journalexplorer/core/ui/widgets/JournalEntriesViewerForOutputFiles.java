@@ -182,7 +182,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setInputData(data);
-                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this, false);
                         }
                     });
                 }
@@ -231,7 +231,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                             setInputData(data);
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this);
+                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this, true);
                         }
                     });
                 }

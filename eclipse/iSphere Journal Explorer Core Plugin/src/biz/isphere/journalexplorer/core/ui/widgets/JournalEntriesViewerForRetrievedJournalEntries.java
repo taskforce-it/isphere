@@ -179,7 +179,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                             setInputData(data);
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this, false);
                         }
                     });
                 }
@@ -263,7 +263,7 @@ public class JournalEntriesViewerForRetrievedJournalEntries extends AbstractJour
                             setInputData(data);
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this);
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntries.this, true);
                         }
                     });
                 }

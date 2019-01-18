@@ -82,7 +82,7 @@ public class JournalDAO {
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
                         Messages.Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences));
                 } else {
-                    while (journalEntries.size() < maxNumRows && rjne0200.nextEntry()) {
+                    while (journalEntries.getNumberOfRowsDownloaded() < maxNumRows && rjne0200.nextEntry()) {
 
                         id++;
 
@@ -101,7 +101,7 @@ public class JournalDAO {
                 messages = tRetriever.getMessages();
             }
 
-        } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.size() < maxNumRows);
+        } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.getNumberOfRowsDownloaded() < maxNumRows);
 
         // System.out.println("mSecs total: " + timeElapsed(startTime) +
         // ", WHERE-CLAUSE: " + whereClause);
