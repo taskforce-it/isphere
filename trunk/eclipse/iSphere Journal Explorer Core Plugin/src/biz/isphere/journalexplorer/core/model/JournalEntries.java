@@ -112,8 +112,12 @@ public class JournalEntries {
         if (isOverflow()) {
             return numAvailableRows;
         } else {
-            return size();
+            return getNumberOfRowsDownloaded();
         }
+    }
+
+    public int getNumberOfRowsDownloaded() {
+        return journalEntries.size();
     }
 
     public void clear() {
