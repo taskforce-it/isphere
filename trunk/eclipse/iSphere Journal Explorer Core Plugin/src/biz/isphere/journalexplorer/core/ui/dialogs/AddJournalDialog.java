@@ -149,7 +149,7 @@ public class AddJournalDialog extends XDialog {
         txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        sqlEditor = new SqlEditor(container, SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = new SqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);
@@ -215,6 +215,8 @@ public class AddJournalDialog extends XDialog {
     }
 
     private void storeValues() {
+
+        sqlEditor.storeHistory();
 
         storeValue(CONNECTION, connection.getConnectionName());
         storeValue(LIBRARY, libraryName);
@@ -299,6 +301,14 @@ public class AddJournalDialog extends XDialog {
             super.okPressed();
         }
     };
+
+    @Override
+    public boolean close() {
+        // Important, must be called to ensure the SqlEditor is removed from
+        // the list of preferences listeners.
+        sqlEditor.dispose();
+        return super.close();
+    }
 
     private boolean validated() {
 

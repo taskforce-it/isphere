@@ -503,6 +503,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private class SqlEditorSelectionListener implements SelectionListener {
         public void widgetSelected(SelectionEvent event) {
             try {
+                getSelectedViewer().storeSqlEditorHistory();
                 performFilterJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());

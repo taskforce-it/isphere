@@ -483,6 +483,17 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces a read-only history combo field.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return read-only history combo field
+     */
+    public static HistoryCombo createReadOnlyHistoryCombo(Composite parent) {
+        return WidgetFactory.getInstance().produceHistoryComboField(parent, SWT.READ_ONLY);
+    }
+
+    /**
      * Produces a spinner field.
      * 
      * @param parent a composite control which will be the parent of the new
@@ -802,6 +813,13 @@ public final class WidgetFactory {
     private Combo produceComboField(Composite parent, int style) {
 
         Combo combo = new Combo(parent, style | SWT.DROP_DOWN);
+
+        return combo;
+    }
+
+    private HistoryCombo produceHistoryComboField(Composite parent, int style) {
+
+        HistoryCombo combo = new HistoryCombo(parent, style | SWT.DROP_DOWN);
 
         return combo;
     }

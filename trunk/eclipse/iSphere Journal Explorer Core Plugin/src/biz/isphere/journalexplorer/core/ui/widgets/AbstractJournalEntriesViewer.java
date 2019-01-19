@@ -44,11 +44,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -77,7 +78,7 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  */
 public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
-    private IDialogSettingsManager dialogSettingsManager = null;
+    private DialogSettingsManager dialogSettingsManager = null;
 
     private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
@@ -139,15 +140,17 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private void createSqlEditor() {
 
         if (!isAvailable(sqlEditor)) {
-            sqlEditor = new SqlEditor(getContainer(), SWT.NONE);
+            sqlEditor = new SqlEditor(getContainer(), getClass().getSimpleName(), getDialogSettingsManager(), SWT.NONE);
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
             sqlEditor.setWhereClause(getFilterClause());
             GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-            gd.heightHint = 80;
+            gd.heightHint = 120;
             sqlEditor.setLayoutData(gd);
             getContainer().layout();
             sqlEditor.setFocus();
+            sqlEditor.setBtnExecuteLabel(Messages.ButtonLabel_Filter);
+            sqlEditor.setBtnExecuteToolTipText(Messages.ButtonTooltip_Filter);
             sqlEditor.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {
                     setFilterClause(sqlEditor.getWhereClause().trim());
@@ -178,6 +181,10 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         if (isSqlEditorVisible()) {
             sqlEditor.setFocus();
         }
+    }
+
+    public void storeSqlEditorHistory() {
+        sqlEditor.storeHistory();
     }
 
     protected void setSelectClause(String whereClause) {
@@ -275,10 +282,11 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         return COLUMN_WIDTH + Type5ViewerFactory.getColumnName(column);
     }
 
-    private IDialogSettingsManager getDialogSettingsManager() {
+    private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
-            dialogSettingsManager = new IDialogSettingsManager(AbstractJournalEntriesViewer.class);
+            dialogSettingsManager = new DialogSettingsManager(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings(),
+                AbstractJournalEntriesViewer.class);
         }
         return dialogSettingsManager;
     }

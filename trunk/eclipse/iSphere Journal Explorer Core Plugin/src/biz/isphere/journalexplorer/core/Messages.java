@@ -117,6 +117,8 @@ public class Messages extends NLS {
     public static String subsetted_list;
     public static String SqlEditor_WHERE;
     public static String SqlEditor_WHERE_Tooltip;
+    public static String SqlEditor_History;
+    public static String SqlEditor_History_Tooltip;
 
     public static String DisplayJournalEntriesDialog_Title;
     public static String DisplayJournalEntriesDialog_From_date_colon;
@@ -175,6 +177,8 @@ public class Messages extends NLS {
     public static String ButtonTooltip_Reload_All;
     public static String ButtonLabel_Execute;
     public static String ButtonTooltip_Execute;
+    public static String ButtonLabel_Filter;
+    public static String ButtonTooltip_Filter;
     public static String ButtonLabel_AddField;
     public static String ButtonTooltip_AddField;
     public static String ButtonLabel_Clear;

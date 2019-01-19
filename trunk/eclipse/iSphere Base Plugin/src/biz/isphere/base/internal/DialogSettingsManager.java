@@ -15,13 +15,19 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class DialogSettingsManager {
 
-    private IDialogSettings dialogSettings = null;
+    private IDialogSettings dialogSettings;
+    private Class<?> section;
 
     private SimpleDateFormat dateFormatter;
 
     public DialogSettingsManager(IDialogSettings aDialogSettings) {
-        dialogSettings = aDialogSettings;
-        dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
+        this(aDialogSettings, null);
+    }
+
+    public DialogSettingsManager(IDialogSettings aDialogSettings, Class<?> section) {
+        this.dialogSettings = aDialogSettings;
+        this.section = section;
+        this.dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
     }
 
     /**
@@ -139,7 +145,18 @@ public class DialogSettingsManager {
      * @return dialog settings
      */
     private IDialogSettings getDialogSettings() {
-        return dialogSettings;
+
+        if (section == null) {
+            return dialogSettings;
+        }
+
+        String sectionName = section.getName();
+        IDialogSettings dialogSectionSettings = dialogSettings.getSection(sectionName);
+        if (dialogSectionSettings == null) {
+            dialogSectionSettings = dialogSettings.addNewSection(sectionName);
+        }
+
+        return dialogSectionSettings;
     }
 
 }
