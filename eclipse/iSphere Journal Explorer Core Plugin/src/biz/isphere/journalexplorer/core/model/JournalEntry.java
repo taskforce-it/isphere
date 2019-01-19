@@ -57,6 +57,7 @@ public class JournalEntry {
     private static final int JOSYNM = 15;
     private static final int JORCV = 16;
     private static final int JORCVLIB = 17;
+    private static final int JOUSPF = 17;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -79,6 +80,7 @@ public class JournalEntry {
         columnMappings.put("JOSYNM", JOSYNM);
         columnMappings.put("JORCV", JORCV);
         columnMappings.put("JORCVLIB", JORCVLIB);
+        columnMappings.put("JOUSPF", JOUSPF);
     }
 
     private static List<ContentAssistProposal> proposals;
@@ -102,6 +104,7 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JOSYNM", "CHAR(8)" + " - " + Messages.LongFieldName_JOSYNM));
         proposals.add(new ContentAssistProposal("JORCV", "CHAR(10)" + " - " + Messages.LongFieldName_JORCV));
         proposals.add(new ContentAssistProposal("JORCVLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
+        proposals.add(new ContentAssistProposal("JOUSPF", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
     }
 
     private Calendar calendar;
@@ -297,6 +300,7 @@ public class JournalEntry {
         row[JOSYNM] = getSystemName();
         row[JORCV] = getReceiver();
         row[JORCVLIB] = getReceiverLibrary();
+        row[JOUSPF] = getUserProfile();
 
         // System.out.println("Date: " + row[JODATE] + ", Time: " + row[JOTIME]
         // + ", Timestamp: " + row[JOTSTP]);
