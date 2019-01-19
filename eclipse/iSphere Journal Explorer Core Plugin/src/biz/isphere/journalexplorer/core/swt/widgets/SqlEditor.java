@@ -24,15 +24,17 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
+import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.Messages;
 
@@ -49,12 +51,19 @@ public class SqlEditor extends Composite {
     private Button btnAddField;
     private Button btnExecute;
     private Label labelWhere;
+    private Label labelHistory;
+    private Label helpItem;
+    private HistoryCombo cboHistory;
+    private SelectionListener selectionListener;
 
     private boolean isButtonAddVisible;
     private boolean isButtonClearVisible;
     private boolean isButtonExecuteVisible;
 
-    public SqlEditor(Composite parent, int style) {
+    private String historyKey;
+    private DialogSettingsManager dialogSettings;
+
+    public SqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
         super(parent, style);
 
         if (!isStyle(style, BUTTON_NONE)) {
@@ -68,6 +77,9 @@ public class SqlEditor extends Composite {
                 isButtonExecuteVisible = true;
             }
         }
+
+        this.historyKey = historyKey;
+        this.dialogSettings = dialogSettingsManager;
 
         createContentArea();
     }
@@ -85,16 +97,14 @@ public class SqlEditor extends Composite {
         btnExecute.setEnabled(enabled);
         textSqlEditor.setEnabled(enabled);
         labelWhere.setEnabled(enabled);
+        labelHistory.setEnabled(enabled);
+        helpItem.setEnabled(enabled);
     }
 
     @Override
     public boolean setFocus() {
 
-        if (!StringHelper.isNullOrEmpty(textSqlEditor.getText())) {
-            return textSqlEditor.setFocus();
-        }
-
-        return setFocusChecked(btnAddField);
+        return textSqlEditor.setFocus();
     }
 
     public void setWhereClause(String whereClause) {
@@ -163,12 +173,18 @@ public class SqlEditor extends Composite {
         wherePanel.setLayout(wherePanelLayout);
         wherePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
+        labelHistory = new Label(wherePanel, SWT.NONE);
+        labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+        labelHistory.setText(Messages.SqlEditor_History);
+        labelHistory.setToolTipText(Messages.SqlEditor_History_Tooltip);
+
         labelWhere = new Label(wherePanel, SWT.NONE);
-        labelWhere.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+        labelWhere.setLayoutData(new GridData());
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
 
-        Label helpItem = new Label(wherePanel, SWT.NONE);
+        helpItem = new Label(wherePanel, SWT.NONE);
+        helpItem.setLayoutData(new GridData());
         helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
         helpItem.addMouseListener(new DisplayHelpListener());
 
@@ -190,8 +206,27 @@ public class SqlEditor extends Composite {
         editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
         editorPanelLayout.marginHeight = 0;
         editorPanelLayout.marginWidth = 0;
+        editorPanelLayout.verticalSpacing = -1;
         editorPanel.setLayout(editorPanelLayout);
         editorPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        selectionListener = new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                textSqlEditor.setText(((Combo)event.getSource()).getText());
+                textSqlEditor.setFocus();
+                cboHistory.deselectAll();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        };
+
+        cboHistory = WidgetFactory.createReadOnlyHistoryCombo(editorPanel);
+        cboHistory.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        cboHistory.addSelectionListener(selectionListener);
+        cboHistory.load(dialogSettings, historyKey);
+        cboHistory.setToolTipText(Messages.SqlEditor_History_Tooltip);
 
         textSqlEditor = WidgetFactory.createContentAssistText(editorPanel);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -254,6 +289,8 @@ public class SqlEditor extends Composite {
         executePanel.setLayout(executePanelLayout);
         executePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
+        // new Label(executePanel, SWT.NONE).setVisible(false);
+
         btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
         btnClear.setToolTipText(Messages.ButtonTooltip_Clear);
         btnClear.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -281,6 +318,14 @@ public class SqlEditor extends Composite {
         btnExecute.setEnabled(isButtonExecuteVisible);
     }
 
+    public void setBtnExecuteLabel(String label) {
+        btnExecute.setText(label);
+    }
+
+    public void setBtnExecuteToolTipText(String tooltip) {
+        btnExecute.setToolTipText(tooltip);
+    }
+
     public void addSelectionListener(SelectionListener listener) {
         btnExecute.addSelectionListener(listener);
     }
@@ -293,8 +338,14 @@ public class SqlEditor extends Composite {
         textSqlEditor.setContentAssistProposals(contentAssistProposals);
     }
 
+    public void storeHistory() {
+        cboHistory.updateHistory(textSqlEditor.getText());
+        cboHistory.store();
+    }
+
     @Override
     public void dispose() {
+        cboHistory.removeSelectionListener(selectionListener);
         textSqlEditor.dispose();
         super.dispose();
     }

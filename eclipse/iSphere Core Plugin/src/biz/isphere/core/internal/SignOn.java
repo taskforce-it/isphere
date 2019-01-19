@@ -11,7 +11,6 @@ package biz.isphere.core.internal;
 import java.io.IOException;
 
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -181,17 +180,7 @@ public class SignOn {
     private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
-            IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
-            if (workbenchSettings == null) {
-                throw new IllegalArgumentException("Parameter 'workbenchSettings' must not be null.");
-            }
-            String sectionName = getClass().getName();
-            IDialogSettings dialogSettings = workbenchSettings.getSection(sectionName);
-            if (dialogSettings == null) {
-                dialogSettings = workbenchSettings.addNewSection(sectionName);
-            }
-
-            dialogSettingsManager = new DialogSettingsManager(dialogSettings);
+            dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         }
 
         return dialogSettingsManager;

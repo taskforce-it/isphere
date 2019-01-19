@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -135,7 +134,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         isLeftMessageFileValid = false;
         isRightMessageFileValid = false;
 
-        dialogSettingsManager = new DialogSettingsManager(getDialogSettings());
+        dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
     }
 
@@ -733,29 +732,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         dialogSettingsManager.storeValue(BUTTON_SINGLES, btnSingles.getSelection());
         dialogSettingsManager.storeValue(BUTTON_DUPLICATES, btnDuplicates.getSelection());
         dialogSettingsManager.storeValue(BUTTON_COMPARE_AFTER_SYNC, chkCompareAfterSync.getSelection());
-    }
-
-    /**
-     * Returns the dialog settings if this editor.
-     * 
-     * @return settings the dialog settings used to store the dialog's location
-     *         and/or size, or null if the dialog's bounds should never be
-     *         stored.
-     */
-    protected IDialogSettings getDialogSettings() {
-
-        IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
-        if (workbenchSettings == null) {
-            throw new IllegalArgumentException("Parameter 'workbenchSettings' must not be null."); //$NON-NLS-1$
-        }
-
-        String sectionName = getClass().getName();
-        IDialogSettings dialogSettings = workbenchSettings.getSection(sectionName);
-        if (dialogSettings == null) {
-            dialogSettings = workbenchSettings.addNewSection(sectionName);
-        }
-
-        return dialogSettings;
     }
 
     private MessageFileCompareItem[] getSelectedItems() {

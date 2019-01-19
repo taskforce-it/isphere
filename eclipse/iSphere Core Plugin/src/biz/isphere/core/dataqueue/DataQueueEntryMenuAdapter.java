@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.HexFormatter;
 import biz.isphere.core.ISpherePlugin;
@@ -35,7 +36,6 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200;
 import biz.isphere.core.dataqueue.retrieve.message.RDQM0200MessageEntry;
 import biz.isphere.core.dataqueue.viewer.DataQueueEntryViewer;
-import biz.isphere.core.internal.IDialogSettingsManager;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
@@ -43,7 +43,7 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
 
     private static final String LAST_USED_SAVE_PATH = "lastUsedSavePath"; //$NON-NLS-1$
 
-    private IDialogSettingsManager dialogSettingsManager = null;
+    private DialogSettingsManager dialogSettingsManager = null;
 
     private Menu menu;
     private TableViewer tableViewer;
@@ -302,7 +302,7 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
             List<RDQM0200MessageEntry> tmpMessages = new ArrayList<RDQM0200MessageEntry>();
             for (Object item : getSelection().toArray()) {
                 if (item instanceof RDQM0200MessageEntry) {
-                    tmpMessages.add((RDQM0200MessageEntry) item);
+                    tmpMessages.add((RDQM0200MessageEntry)item);
                 }
             }
             return tmpMessages.toArray(new RDQM0200MessageEntry[tmpMessages.size()]);
@@ -333,11 +333,12 @@ public class DataQueueEntryMenuAdapter extends MenuAdapter {
         return fileName;
     }
 
-    private IDialogSettingsManager getDialogSettingsManager() {
+    private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
-            dialogSettingsManager = new IDialogSettingsManager(getClass());
+            dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         }
+
         return dialogSettingsManager;
     }
 
