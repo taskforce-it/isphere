@@ -51,7 +51,6 @@ public abstract class AbstractDAOBase {
             timeSeparator = ibmiConnection.getServerJob(null).getTimeSeparator();
 
             connection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
-            connection.setAutoCommit(false);
         } else
             throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
     }
