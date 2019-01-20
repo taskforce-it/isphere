@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -29,12 +30,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -54,6 +57,7 @@ public class StringListEditor extends Composite implements SelectionListener {
     private static final String COLUMN_PROPERTY_ITEM = "ITEM"; //$NON-NLS-1$
     private static final String[] COLUMN_PROPERTIES = { COLUMN_PROPERTY_ITEM }; //$NON-NLS-1$
 
+    private boolean isEditable;
     private Shell shell;
     private Button parentDefaultButton;
     private List<Item> itemsList;
@@ -63,7 +67,7 @@ public class StringListEditor extends Composite implements SelectionListener {
     private UpperCaseOnlyVerifier upperCaseOnlyVerifier;
 
     private Table itemsTable;
-    private TableViewer itemsViewer;
+    private TableViewer itemsTableViewer;
     private Text textItem;
     private Button addButton;
     private Button removeButton;
@@ -75,8 +79,13 @@ public class StringListEditor extends Composite implements SelectionListener {
     private CellEditor[] cellEditors;
 
     public StringListEditor(Composite parent, int style) {
+        this(parent, true, style);
+    }
+
+    public StringListEditor(Composite parent, boolean isEditable, int style) {
         super(parent, style);
 
+        this.isEditable = isEditable;
         this.shell = parent.getShell();
         this.itemsList = new ArrayList<Item>();
 
@@ -92,12 +101,19 @@ public class StringListEditor extends Composite implements SelectionListener {
     }
 
     public void setTextLimit(int limit) {
-        textItem.setTextLimit(limit);
-        Text editorControl = (Text)cellEditors[COLUMN_ITEM].getControl();
-        editorControl.setTextLimit(limit);
+        if (isEditable) {
+            textItem.setTextLimit(limit);
+            Text editorControl = (Text)cellEditors[COLUMN_ITEM].getControl();
+            editorControl.setTextLimit(limit);
+        }
     }
 
     public void setEnableLowerCase(boolean enable) {
+
+        if (!isEditable) {
+            return;
+        }
+
         this.enableLowerCase = enable;
 
         Text editorControl = (Text)cellEditors[COLUMN_ITEM].getControl();
@@ -126,9 +142,13 @@ public class StringListEditor extends Composite implements SelectionListener {
     }
 
     public void clearAll() {
-        textItem.setText(""); //$NON-NLS-1$
+
+        if (isEditable) {
+            textItem.setText(""); //$NON-NLS-1$
+        }
+
         itemsList.clear();
-        itemsViewer.refresh();
+        itemsTableViewer.refresh();
     }
 
     public void setItems(String[] items) {
@@ -137,7 +157,7 @@ public class StringListEditor extends Composite implements SelectionListener {
             this.itemsList.add(new Item(item));
         }
 
-        itemsViewer.setInput(itemsList);
+        itemsTableViewer.setInput(itemsList);
 
         setButtonEnablement();
     }
@@ -158,7 +178,7 @@ public class StringListEditor extends Composite implements SelectionListener {
 
     @Override
     public boolean setFocus() {
-        if (textItem.isEnabled()) {
+        if (isEditable && textItem.isEnabled()) {
             return textItem.setFocus();
         } else {
             return super.setFocus();
@@ -179,16 +199,16 @@ public class StringListEditor extends Composite implements SelectionListener {
         super.setEnabled(enabled);
 
         if (!enabled) {
-            textItem.setEnabled(false);
-            itemsTable.setEnabled(false);
-            addButton.setEnabled(false);
-            removeButton.setEnabled(false);
-            removeAllButton.setEnabled(false);
-            moveUpButton.setEnabled(false);
-            moveDownButton.setEnabled(false);
+            setEnabled(textItem, false);
+            setEnabled(itemsTable, false);
+            setEnabled(addButton, false);
+            setEnabled(removeButton, false);
+            setEnabled(removeAllButton, false);
+            setEnabled(moveUpButton, false);
+            setEnabled(moveDownButton, false);
         } else {
-            textItem.setEnabled(true);
-            itemsTable.setEnabled(true);
+            setEnabled(textItem, true);
+            setEnabled(itemsTable, true);
             setButtonEnablement();
         }
     }
@@ -196,24 +216,26 @@ public class StringListEditor extends Composite implements SelectionListener {
     private void setButtonEnablement() {
 
         // Add-button
-        if (textItem.getText().trim().length() > 0) {
-            addButton.setEnabled(true);
-        } else {
-            addButton.setEnabled(false);
+        if (isEditable) {
+            if (textItem.getText().trim().length() > 0) {
+                setEnabled(addButton, true);
+            } else {
+                setEnabled(addButton, false);
+            }
         }
 
         // Remove all-button
         if (itemsTable.getItemCount() <= 0 || !isEnabled()) {
-            removeAllButton.setEnabled(false);
+            setEnabled(removeAllButton, false);
         } else {
-            removeAllButton.setEnabled(true);
+            setEnabled(removeAllButton, true);
         }
 
         // Other buttons
         if (itemsTable.getSelectionCount() == 0) {
-            removeButton.setEnabled(false);
-            moveUpButton.setEnabled(false);
-            moveDownButton.setEnabled(false);
+            setEnabled(removeButton, false);
+            setEnabled(moveUpButton, false);
+            setEnabled(moveDownButton, false);
         } else {
             int[] selectionIndices = itemsTable.getSelectionIndices();
             boolean upEnabled = true;
@@ -226,11 +248,20 @@ public class StringListEditor extends Composite implements SelectionListener {
                     downEnabled = false;
                 }
             }
-            removeButton.setEnabled(true);
-            moveUpButton.setEnabled(upEnabled);
-            moveDownButton.setEnabled(downEnabled);
+            setEnabled(removeButton, true);
+            setEnabled(moveUpButton, upEnabled);
+            setEnabled(moveDownButton, downEnabled);
         }
 
+    }
+
+    private void setEnabled(Control control, boolean enabled) {
+
+        if (control == null || control.isDisposed()) {
+            return;
+        }
+
+        control.setEnabled(enabled);
     }
 
     protected Composite prepareComposite(int numColumns) {
@@ -261,57 +292,64 @@ public class StringListEditor extends Composite implements SelectionListener {
         mainPanel.setLayout(new GridLayout(numColumns, false));
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        textItem = WidgetFactory.createText(mainPanel);
-        textItem.addModifyListener(new ModifyListener() {
+        if (isEditable) {
 
-            public void modifyText(ModifyEvent e) {
-                if (textItem.getText().trim().length() > 0) {
-                    addButton.getParent().getShell().setDefaultButton(addButton);
+            textItem = WidgetFactory.createText(mainPanel);
+            textItem.addModifyListener(new ModifyListener() {
+
+                public void modifyText(ModifyEvent e) {
+                    if (textItem.getText().trim().length() > 0) {
+                        addButton.getParent().getShell().setDefaultButton(addButton);
+                    }
+                    setButtonEnablement();
                 }
-                setButtonEnablement();
-            }
-        });
+            });
 
-        textItem.addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e) {
-                parentDefaultButton = addButton.getParent().getShell().getDefaultButton();
-                if (addButton.isEnabled()) {
-                    addButton.getParent().getShell().setDefaultButton(addButton);
+            textItem.addFocusListener(new FocusAdapter() {
+                public void focusGained(FocusEvent e) {
+                    parentDefaultButton = addButton.getParent().getShell().getDefaultButton();
+                    if (addButton.isEnabled()) {
+                        addButton.getParent().getShell().setDefaultButton(addButton);
+                    }
                 }
-            }
 
-            public void focusLost(FocusEvent e) {
-                shell.setDefaultButton(parentDefaultButton);
-            }
+                public void focusLost(FocusEvent e) {
+                    shell.setDefaultButton(parentDefaultButton);
+                }
 
-        });
+            });
 
-        addButton = WidgetFactory.createPushButton(mainPanel);
-        addButton.setText(Messages.Add);
-        addButton.addSelectionListener(this);
+            addButton = WidgetFactory.createPushButton(mainPanel);
+            addButton.setText(Messages.Add);
+            addButton.addSelectionListener(this);
+        }
 
-        itemsTable = new Table(mainPanel, 68354);
+        GridData itemsTableLayoutData = new GridData(GridData.FILL_BOTH);
+        itemsTableLayoutData.horizontalSpan = (numColumns - 1);
+        itemsTableLayoutData.grabExcessHorizontalSpace = true;
+        itemsTableLayoutData.grabExcessVerticalSpace = true;
+
+        itemsTableViewer = new TableViewer(mainPanel, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
+        itemsTable = itemsTableViewer.getTable();
+        itemsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
         itemsTable.setLinesVisible(true);
         itemsTable.setHeaderVisible(true);
         itemsTable.addSelectionListener(this);
+        itemsTable.setLayoutData(itemsTableLayoutData);
 
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.horizontalSpan = (numColumns - 1);
-        gd.grabExcessHorizontalSpace = true;
-        gd.grabExcessVerticalSpace = true;
-        itemsTable.setLayoutData(gd);
-
-        TableColumn itemColumn = new TableColumn(itemsTable, 0);
+        TableColumn itemColumn = new TableColumn(itemsTable, SWT.NONE);
         itemColumn.setText(Messages.Item);
         itemColumn.setWidth(100);
 
-        itemsViewer = new TableViewer(itemsTable);
         StringListContentProvider cp = new StringListContentProvider();
-        itemsViewer.setContentProvider(cp);
-        itemsViewer.setLabelProvider(new StringListLabelProvider());
-        itemsViewer.setCellModifier(new StringListCellModifier());
-        itemsViewer.setColumnProperties(COLUMN_PROPERTIES);
-        itemsViewer.setInput(null);
+        itemsTableViewer.setContentProvider(cp);
+        itemsTableViewer.setLabelProvider(new StringListLabelProvider());
+        itemsTableViewer.setColumnProperties(COLUMN_PROPERTIES);
+        itemsTableViewer.setInput(null);
+
+        if (isEditable) {
+            itemsTableViewer.setCellModifier(new StringListCellModifier());
+        }
 
         cellEditors = new CellEditor[1];
         cellEditors[COLUMN_ITEM] = new TextCellEditor(itemsTable);
@@ -331,7 +369,11 @@ public class StringListEditor extends Composite implements SelectionListener {
             }
         });
 
-        itemsViewer.setCellEditors(cellEditors);
+        itemsTableViewer.setCellEditors(cellEditors);
+
+        TableAutoSizeControlListener tableAutoSizeListener = new TableAutoSizeControlListener(itemsTable);
+        tableAutoSizeListener.addResizableColumn(itemColumn, 1);
+        itemsTable.addControlListener(tableAutoSizeListener);
 
         Composite buttonsPanel = new Composite(mainPanel, 0);
         GridLayout layout = new GridLayout();
@@ -377,7 +419,7 @@ public class StringListEditor extends Composite implements SelectionListener {
                     itemsList.add(item);
                     textItem.setText(""); //$NON-NLS-1$
                     textItem.setFocus();
-                    itemsViewer.setInput(itemsList);
+                    itemsTableViewer.setInput(itemsList);
                     if (itemsList.size() > 0) {
                         itemsTable.setTopIndex(itemsList.size());
                     }
@@ -390,11 +432,11 @@ public class StringListEditor extends Composite implements SelectionListener {
                 for (int loop = selections.length - 1; loop >= 0; loop--) {
                     itemsList.remove(selections[loop]);
                 }
-                itemsViewer.refresh();
+                itemsTableViewer.refresh();
             }
         } else if (e.widget == removeAllButton) {
             itemsList.clear();
-            itemsViewer.refresh();
+            itemsTableViewer.refresh();
         } else if (e.widget == moveUpButton) {
             int[] selections = itemsTable.getSelectionIndices();
             itemsTable.deselectAll();
@@ -406,7 +448,7 @@ public class StringListEditor extends Composite implements SelectionListener {
                         itemsList.add(selections[loop] - 1, temp);
                     }
                 }
-                itemsViewer.refresh();
+                itemsTableViewer.refresh();
 
                 for (int loop = 0; loop < selections.length; loop++) {
                     if (selections[loop] > 0) {
@@ -428,7 +470,7 @@ public class StringListEditor extends Composite implements SelectionListener {
                         itemsList.add(selections[loop] + 1, temp);
                     }
                 }
-                itemsViewer.refresh();
+                itemsTableViewer.refresh();
 
                 for (int loop = 0; loop < selections.length; loop++) {
                     if (selections[loop] < itemsList.size() - 1) {
@@ -482,7 +524,7 @@ public class StringListEditor extends Composite implements SelectionListener {
 
             Item item = (Item)tableItem.getData();
             item.setValue((String)value);
-            itemsViewer.refresh();
+            itemsTableViewer.refresh();
         }
 
     }
