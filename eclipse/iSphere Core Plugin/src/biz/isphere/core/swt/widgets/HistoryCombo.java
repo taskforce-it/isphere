@@ -109,7 +109,8 @@ public class HistoryCombo {
         }
 
         if (currentHistoryItems.contains(string)) {
-            return;
+            // Remove item to sort it to first position.
+            currentHistoryItems.remove(string);
         }
 
         String[] items = currentHistoryItems.toArray(new String[currentHistoryItems.size()]);
