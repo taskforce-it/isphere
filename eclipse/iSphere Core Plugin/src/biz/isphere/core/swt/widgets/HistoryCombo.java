@@ -10,14 +10,25 @@ package biz.isphere.core.swt.widgets;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.swt.widgets.historycombo.WorkWithHistoryDialog;
 
 public class HistoryCombo {
 
@@ -25,11 +36,10 @@ public class HistoryCombo {
     private DialogSettingsManager dialogSettingsmanager;
     private LinkedHashSet<String> currentHistoryItems;
     private int maxSize;
-    private Combo combo;
 
-    public HistoryCombo(Composite parent) {
-        this(parent, SWT.READ_ONLY);
-    }
+    private Composite panel;
+    private Combo cboHistory;
+    private Button btnWworkWithHistory;
 
     public HistoryCombo(Composite parent, int style) {
 
@@ -38,7 +48,62 @@ public class HistoryCombo {
         this.currentHistoryItems = null;
 
         this.maxSize = 10;
-        this.combo = new Combo(parent, style | SWT.DROP_DOWN);
+
+        createPanel(parent, style);
+    }
+
+    private void createPanel(final Composite parent, int style) {
+
+        panel = new Composite(parent, SWT.NONE);
+        GridLayout panelLayout = new GridLayout(2, false);
+        panelLayout.marginHeight = 0;
+        panelLayout.marginWidth = 0;
+        panelLayout.horizontalSpacing = 0;
+        panel.setLayout(panelLayout);
+
+        cboHistory = new Combo(panel, style);
+        cboHistory.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        btnWworkWithHistory = new Button(panel, SWT.ARROW_LEFT);
+
+        boolean isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
+        if (isDrawn) {
+            final Image upArrow = new Image(parent.getDisplay(), 5, 6);
+            GC gc = new GC(upArrow);
+            gc.setBackground(btnWworkWithHistory.getBackground());
+            gc.fillRectangle(upArrow.getBounds());
+            gc.setForeground(btnWworkWithHistory.getForeground());
+            gc.drawLine(0, 5, 4, 5);
+            gc.drawLine(0, 4, 4, 4);
+            gc.drawLine(1, 3, 3, 3);
+            gc.drawLine(1, 2, 3, 2);
+            gc.drawLine(2, 1, 2, 1);
+            gc.drawLine(2, 0, 2, 0);
+            gc.dispose();
+            btnWworkWithHistory.addDisposeListener(new DisposeListener() {
+                public void widgetDisposed(DisposeEvent e) {
+                    upArrow.dispose();
+                }
+            });
+            btnWworkWithHistory.setImage(upArrow);
+        } else {
+            btnWworkWithHistory = new Button(panel, SWT.ARROW);
+            btnWworkWithHistory.setAlignment(SWT.UP);
+        }
+
+        btnWworkWithHistory.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                WorkWithHistoryDialog workWithHistoryDialog = new WorkWithHistoryDialog(parent.getShell());
+                workWithHistoryDialog.setItems(cboHistory.getItems());
+                if (workWithHistoryDialog.open() == Dialog.OK) {
+                    setHistoryItems(workWithHistoryDialog.getItems());
+                    store();
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
+            }
+        });
     }
 
     public void setMaxSize(int maxSize) {
@@ -46,39 +111,39 @@ public class HistoryCombo {
     }
 
     public void setLayoutData(Object layoutData) {
-        combo.setLayoutData(layoutData);
+        panel.setLayoutData(layoutData);
     }
 
     public Object getLayoutData() {
-        return combo.getLayoutData();
+        return panel.getLayoutData();
     }
 
     public void addSelectionListener(SelectionListener listener) {
-        combo.addSelectionListener(listener);
+        cboHistory.addSelectionListener(listener);
     }
 
     public void removeSelectionListener(SelectionListener listener) {
-        combo.removeSelectionListener(listener);
+        cboHistory.removeSelectionListener(listener);
     }
 
     public void deselectAll() {
-        combo.deselectAll();
+        cboHistory.deselectAll();
     }
 
     public boolean setFocus() {
-        return combo.setFocus();
+        return cboHistory.setFocus();
     }
 
     public void setEnabled(boolean enabled) {
-        combo.setEnabled(enabled);
+        cboHistory.setEnabled(enabled);
     }
 
     public void setToolTipText(String string) {
-        combo.setToolTipText(string);
+        cboHistory.setToolTipText(string);
     }
 
     public int getItemCount() {
-        return combo.getItemCount();
+        return cboHistory.getItemCount();
     }
 
     public void load(DialogSettingsManager dialogSettingsmanager, String key) {
@@ -86,7 +151,7 @@ public class HistoryCombo {
         this.dialogSettingsmanager = dialogSettingsmanager;
         this.key = key;
 
-        currentHistoryItems = new LinkedHashSet<String>(Arrays.asList(combo.getItems()));
+        currentHistoryItems = new LinkedHashSet<String>(Arrays.asList(cboHistory.getItems()));
 
         int count = dialogSettingsmanager.loadIntValue(getCountKey(), 0);
         if (count > 0) {
@@ -98,7 +163,7 @@ public class HistoryCombo {
                 }
             }
 
-            setHistoryItems();
+            setHistoryItems(currentHistoryItems);
         }
     }
 
@@ -125,10 +190,7 @@ public class HistoryCombo {
         System.arraycopy(items, 0, tmpItems, 1, tmpItems.length - 1);
         tmpItems[0] = string;
 
-        currentHistoryItems.clear();
-        currentHistoryItems.addAll(Arrays.asList(tmpItems));
-
-        setHistoryItems();
+        setHistoryItems(tmpItems);
     }
 
     public void store() {
@@ -145,8 +207,17 @@ public class HistoryCombo {
         }
     }
 
-    private void setHistoryItems() {
-        combo.setItems(currentHistoryItems.toArray(new String[currentHistoryItems.size()]));
+    private void setHistoryItems(String[] items) {
+
+        currentHistoryItems.clear();
+        currentHistoryItems.addAll(Arrays.asList(items));
+
+        cboHistory.setItems(items);
+    }
+
+    private void setHistoryItems(Set<String> items) {
+
+        cboHistory.setItems(items.toArray(new String[items.size()]));
     }
 
     private String getCountKey() {
