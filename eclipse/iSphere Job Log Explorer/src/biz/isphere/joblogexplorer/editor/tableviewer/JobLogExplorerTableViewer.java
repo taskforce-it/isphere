@@ -164,7 +164,10 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         // Create main panel
         viewerArea = new Composite(parent, SWT.NONE);
-        viewerArea.setLayout(new GridLayout(1, false));
+        GridLayout gridLayout = new GridLayout(1, false);
+        gridLayout.marginHeight = 0;
+        gridLayout.marginWidth = 0;
+        viewerArea.setLayout(gridLayout);
         viewerArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // Create the table

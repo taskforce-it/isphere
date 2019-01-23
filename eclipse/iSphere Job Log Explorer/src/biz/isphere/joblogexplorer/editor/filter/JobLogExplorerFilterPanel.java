@@ -60,10 +60,23 @@ public class JobLogExplorerFilterPanel {
         this.filterChangedListeners = new ArrayList<SelectionListener>();
     }
 
+    private GridLayout createGridLayout(int numColumns, boolean makeColumnsEqual) {
+
+        GridLayout gridLayout = new GridLayout(numColumns, makeColumnsEqual);
+        gridLayout.marginTop = 0;
+        gridLayout.marginBottom = 0;
+        gridLayout.marginHeight = 1;
+        gridLayout.marginWidth = 5;
+
+        return gridLayout;
+    }
+
     public void createViewer(Composite parent) {
 
         filterArea = new Composite(parent, SWT.NONE);
-        filterArea.setLayout(new GridLayout(2, false));
+        GridLayout gridLayout = createGridLayout(2, false);
+        gridLayout.marginTop = 5;
+        filterArea.setLayout(gridLayout);
         filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Create controls
@@ -77,7 +90,8 @@ public class JobLogExplorerFilterPanel {
     private void createFilterControls(Composite parent) {
 
         Composite combosArea = new Composite(parent, SWT.NONE);
-        combosArea.setLayout(new GridLayout(6, true));
+        GridLayout gridLayout = createGridLayout(6, true);
+        combosArea.setLayout(gridLayout);
         combosArea.setLayoutData(new GridData(GridData.BEGINNING));
 
         int horizontalSpan = 1;
@@ -111,7 +125,8 @@ public class JobLogExplorerFilterPanel {
     private void createTextSearchControls(Composite parent) {
 
         Composite textSearchArea = new Composite(parent, SWT.NONE);
-        textSearchArea.setLayout(new GridLayout(4, false));
+        GridLayout gridLayout = createGridLayout(4, false);
+        textSearchArea.setLayout(gridLayout);
         textSearchArea.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
 
         new Label(textSearchArea, SWT.NONE).setText(Messages.Label_Text);
@@ -133,7 +148,8 @@ public class JobLogExplorerFilterPanel {
     private void createButtons(Composite parent) {
 
         Composite buttonsArea = new Composite(parent, SWT.NONE);
-        buttonsArea.setLayout(new GridLayout(0, true));
+        GridLayout gridLayout = createGridLayout(0, true);
+        buttonsArea.setLayout(gridLayout);
         buttonsArea.setLayoutData(new GridData(GridData.CENTER));
 
         buttonApplyFilters = createCommandButton(buttonsArea, Messages.Apply_filters, new ApplyFiltersSelectionListener());
