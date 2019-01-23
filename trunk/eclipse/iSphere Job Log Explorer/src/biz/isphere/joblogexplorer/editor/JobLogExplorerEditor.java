@@ -274,10 +274,10 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         rightMainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Composite alignmentHelperPanel = new Composite(rightMainPanel, SWT.NONE);
-        alignmentHelperPanel.setLayout(new GridLayout(1, false));
+        alignmentHelperPanel.setLayout(createGridLayoutNoMargin());
         alignmentHelperPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        JobLogExplorerDetailsViewer details = new JobLogExplorerDetailsViewer();
+        JobLogExplorerDetailsViewer details = new JobLogExplorerDetailsViewer(getDialogBoundsSettings());
         details.createViewer(alignmentHelperPanel);
 
         return details;
@@ -296,6 +296,8 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
     private GridLayout createGridLayoutWithMargin() {
         GridLayout treeAreaLayout = new GridLayout(1, false);
+        treeAreaLayout.marginHeight = 2;
+        treeAreaLayout.marginWidth = 2;
         return treeAreaLayout;
     }
 

@@ -11,12 +11,17 @@ package biz.isphere.joblogexplorer.editor.detailsviewer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,6 +31,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
@@ -35,11 +42,14 @@ import biz.isphere.joblogexplorer.preferences.SeverityColor;
 
 public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
+    private final static String SASH_WEIGHTS = "SASH_WEIGHTS_"; //$NON-NLS-1$
+
     private static final String EMPTY = ""; //$NON-NLS-1$
     private static final String NEW_LINE = "\n"; //$NON-NLS-1$ 
 
     private JobLogMessage jobLogMessage;
 
+    private DialogSettingsManager dialogSettingsManager;
     private Preferences preferences;
     private boolean isColoring;
     private Color severityColorBL;
@@ -73,8 +83,9 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private Text textMessage;
 
-    public JobLogExplorerDetailsViewer() {
+    public JobLogExplorerDetailsViewer(IDialogSettings dialogSettings) {
 
+        this.dialogSettingsManager = new DialogSettingsManager(dialogSettings, getClass());
         this.preferences = Preferences.getInstance();
 
         initializeColors();
@@ -83,7 +94,24 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     public void createViewer(Composite parent) {
 
-        Composite messageDetailsArea = new Composite(parent, SWT.BORDER);
+        SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+        GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
+        sashForm.setLayoutData(sashFormLayoutData);
+        sashForm.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent event) {
+                SashForm sashForm = (SashForm)event.getSource();
+                int[] weights = sashForm.getWeights();
+                storeWeights(weights);
+            }
+        });
+
+        ScrolledComposite messageDetailsScrollableArea = new ScrolledComposite(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
+        messageDetailsScrollableArea.setLayout(new GridLayout(1, false));
+        messageDetailsScrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        messageDetailsScrollableArea.setExpandHorizontal(true);
+        messageDetailsScrollableArea.setExpandVertical(true);
+
+        Composite messageDetailsArea = new Composite(messageDetailsScrollableArea, SWT.BORDER);
         GridLayout messageDetailsLayout = new GridLayout(2, false);
         messageDetailsLayout.horizontalSpacing = 30;
         messageDetailsArea.setLayout(messageDetailsLayout);
@@ -110,14 +138,28 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         textToProcedure = createDetailsField(messageDetailsArea, Messages.Label_To_Procedure);
         textToStatement = createDetailsField(messageDetailsArea, Messages.Label_To_Stmt);
 
+        messageDetailsScrollableArea.setContent(messageDetailsArea);
+        messageDetailsScrollableArea.setMinSize(messageDetailsArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
         // createSeparator(messageDetailsArea);
 
-        Composite messageArea = new Composite(parent, SWT.BORDER);
+        ScrolledComposite messageAreaScrollable = new ScrolledComposite(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
+        messageAreaScrollable.setLayout(new GridLayout(1, false));
+        messageAreaScrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
+        messageAreaScrollable.setExpandHorizontal(true);
+        messageAreaScrollable.setExpandVertical(true);
+
+        Composite messageArea = new Composite(messageAreaScrollable, SWT.BORDER);
         messageArea.setLayout(new GridLayout(1, false));
-        messageArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        messageArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         messageArea.setBackground(getBackgroundColor());
 
         textMessage = createMultilineDetailsField(messageArea);
+
+        messageAreaScrollable.setContent(messageArea);
+        messageAreaScrollable.setMinSize(messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+        sashForm.setWeights(loadWeights());
     }
 
     private void createSeparator(Composite detailsArea) {
@@ -141,6 +183,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private Text createMultilineDetailsField(Composite parent) {
 
         Text textField = WidgetFactory.createSelectableMultilineLabel(parent);
+        textField.setEditable(false);
         textField.setBackground(getBackgroundColor());
         textField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -183,11 +226,11 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private String getCompleteMessageText() {
 
-        if (jobLogMessage.getText() == null && jobLogMessage.getHelp() == null) {
+        if (StringHelper.isNullOrEmpty(jobLogMessage.getText()) && StringHelper.isNullOrEmpty(jobLogMessage.getHelp())) {
             return EMPTY;
-        } else if (jobLogMessage.getText() != null && jobLogMessage.getHelp() != null) {
+        } else if (!StringHelper.isNullOrEmpty(jobLogMessage.getText()) && !StringHelper.isNullOrEmpty(jobLogMessage.getHelp())) {
             return jobLogMessage.getText() + NEW_LINE + NEW_LINE + jobLogMessage.getHelp();
-        } else if (jobLogMessage.getText() != null) {
+        } else if (!StringHelper.isNullOrEmpty(jobLogMessage.getText())) {
             return jobLogMessage.getText();
         } else {
             return jobLogMessage.getHelp();
@@ -286,4 +329,21 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         return Display.getCurrent().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
     }
 
+    private int[] loadWeights() {
+
+        int[] weights = new int[2];
+        weights[0] = dialogSettingsManager.loadIntValue(SASH_WEIGHTS + "0", 11);
+        weights[1] = dialogSettingsManager.loadIntValue(SASH_WEIGHTS + "1", 3);
+
+        return weights;
+    }
+
+    private void storeWeights(int[] weights) {
+
+        int count = 0;
+        for (int weight : weights) {
+            dialogSettingsManager.storeValue(SASH_WEIGHTS + count, weight);
+            count++;
+        }
+    }
 }
