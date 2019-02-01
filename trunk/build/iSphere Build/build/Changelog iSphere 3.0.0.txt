@@ -1,6 +1,10 @@
 
-Changelog: iSphere 3.5.1.r
+Changelog: iSphere 3.5.2.b001
 -----------------------------
+ • Added option "Date range" to Journal Explorer preferences.
+
+Changelog: iSphere 3.5.1.r
+--------------------------
  • Added SQL history combo box to SQL editor.
  • Added help topic "Troubleshooting".
  • Added help page "Debugging Server Jobs".

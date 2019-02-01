@@ -36,6 +36,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -56,6 +57,7 @@ import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IS
 
 public class LoadJournalEntriesDialog extends XDialog {
 
+    private static final String DEFAULT_DATE = "DEFAULT_DATE";
     private static final String STARTING_DATE = "STARTING_DATE";
     private static final String ENDING_DATE = "ENDING_DATE";
     private static final String SHOW_RECORDS_ONLY = "SHOW_RECORDS_ONLY";
@@ -70,7 +72,7 @@ public class LoadJournalEntriesDialog extends XDialog {
     private IDateEdit endingDateDateTime;
     private ITimeEdit endingTimeDateTime;
 
-    private Button radioBtnDefault;
+    private Button radioBtnLastUsedValues;
     private Button radioBtnToday;
     private Button radioBtnYesterday;
     private Button chkboxRecordsOnly;
@@ -196,8 +198,8 @@ public class LoadJournalEntriesDialog extends XDialog {
         grpDatePresets.setText(Messages.DisplayJournalEntriesDialog_Fast_date_presets);
         grpDatePresets.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_Fast_date_presets);
 
-        radioBtnDefault = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Last_used_values);
-        radioBtnDefault.addSelectionListener(new TimeRangeSelectionListener());
+        radioBtnLastUsedValues = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Last_used_values);
+        radioBtnLastUsedValues.addSelectionListener(new TimeRangeSelectionListener());
 
         radioBtnToday = WidgetFactory.createRadioButton(grpDatePresets, Messages.DisplayJournalEntriesDialog_Time_Today);
         radioBtnToday.addSelectionListener(new TimeRangeSelectionListener());
@@ -341,7 +343,14 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private void loadScreenValues() {
 
-        loadDateScreenValues();
+        String defaultDate = loadValue(DEFAULT_DATE, Preferences.getInstance().getDefaultDateGUILabel());
+        if (radioBtnToday.getText().equals(defaultDate)) {
+            setRadioButtonSelected(radioBtnToday);
+        } else if (radioBtnYesterday.getText().equals(defaultDate)) {
+            setRadioButtonSelected(radioBtnYesterday);
+        } else {
+            setRadioButtonSelected(radioBtnLastUsedValues);
+        }
 
         chkboxRecordsOnly.setSelection(loadBooleanValue(SHOW_RECORDS_ONLY, true));
 
@@ -353,24 +362,21 @@ public class LoadJournalEntriesDialog extends XDialog {
         tableViewer.refresh(true);
     }
 
-    private void loadDateScreenValues() {
+    private void setRadioButtonSelected(Button button) {
 
-        Calendar startOfDay = Calendar.getInstance();
-        startOfDay.setTime(loadDateValue(STARTING_DATE, DateTimeHelper.getStartOfDay().getTime()));
-
-        setStartingDate(startOfDay);
-        setStartingTime(startOfDay);
-
-        Calendar endOfDay = Calendar.getInstance();
-        endOfDay.setTime(loadDateValue(ENDING_DATE, DateTimeHelper.getEndOfDay().getTime()));
-
-        setEndingDate(endOfDay);
-        setEndingTime(endOfDay);
-
-        radioBtnDefault.setSelection(true);
+        button.setSelection(true);
+        button.notifyListeners(SWT.Selection, new Event());
     }
 
     private void storeScreenValues() {
+
+        if (radioBtnToday.getSelection()) {
+            storeValue(DEFAULT_DATE, radioBtnToday.getText());
+        } else if (radioBtnYesterday.getSelection()) {
+            storeValue(DEFAULT_DATE, radioBtnYesterday.getText());
+        } else {
+            storeValue(DEFAULT_DATE, radioBtnLastUsedValues.getText());
+        }
 
         Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
         Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
@@ -385,7 +391,22 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
     }
 
-    private void setDateScreenvaluesToToday() {
+    private void setDateScreenValuesToLastUsedValues() {
+
+        Calendar startOfDay = Calendar.getInstance();
+        startOfDay.setTime(loadDateValue(STARTING_DATE, DateTimeHelper.getStartOfDay().getTime()));
+
+        setStartingDate(startOfDay);
+        setStartingTime(startOfDay);
+
+        Calendar endOfDay = Calendar.getInstance();
+        endOfDay.setTime(loadDateValue(ENDING_DATE, DateTimeHelper.getEndOfDay().getTime()));
+
+        setEndingDate(endOfDay);
+        setEndingTime(endOfDay);
+    }
+
+    private void setDateScreenValuesToToday() {
 
         Calendar startOfDay = DateTimeHelper.getStartOfDay();
         setStartingDate(startOfDay);
@@ -396,7 +417,7 @@ public class LoadJournalEntriesDialog extends XDialog {
         setEndingTime(endOfDay);
     }
 
-    private void setDateScreenvaluesToYesterday() {
+    private void setDateScreenValuesToYesterday() {
 
         Calendar startOfDay = DateTimeHelper.getStartOfDay(-1);
         setStartingDate(startOfDay);
@@ -523,11 +544,11 @@ public class LoadJournalEntriesDialog extends XDialog {
             }
 
             if (label.equals(Messages.DisplayJournalEntriesDialog_Time_Last_used_values)) {
-                loadDateScreenValues();
+                setDateScreenValuesToLastUsedValues();
             } else if (label.equals(Messages.DisplayJournalEntriesDialog_Time_Today)) {
-                setDateScreenvaluesToToday();
+                setDateScreenValuesToToday();
             } else {
-                setDateScreenvaluesToYesterday();
+                setDateScreenValuesToYesterday();
             }
         }
 

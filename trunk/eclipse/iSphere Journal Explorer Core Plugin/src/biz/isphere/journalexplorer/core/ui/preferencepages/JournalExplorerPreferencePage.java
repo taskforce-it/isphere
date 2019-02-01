@@ -39,6 +39,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
     private JournalEntryAppearanceAttributesEditor editor;
     private JournalEntryAppearanceAttributes[] columns;
+    private String defaultDate;
     private int maxNumRowsToFetch;
     private int bufferSize;
     private boolean exportColumnHeadings;
@@ -47,8 +48,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
     private Button checkboxEnableColoring;
     private Group groupColors;
-    private Group groupLimitationProperties;
+    private Group groupDefaults;
+    private Group groupLimits;
     private Group groupExcelExport;
+    private Combo comboDefaultDate;
     private Text textMaxNumRowsToFetch;
     private Combo comboBufferSize;
     private Button chkboxEportColumnHeadings;
@@ -72,7 +75,8 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         container.setLayout(new GridLayout(1, false));
 
         createGroupColors(container);
-        createGroupSqlAttributes(container);
+        createGroupDefaults(container);
+        createGroupLimits(container);
         createGroupExcelExport(container);
 
         setScreenToValues();
@@ -103,17 +107,38 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         editor.setLayoutData(new GridData(GridData.FILL, SWT.FILL, true, true));
     }
 
-    private void createGroupSqlAttributes(Composite container) {
+    private void createGroupDefaults(Composite container) {
 
-        groupLimitationProperties = new Group(container, SWT.NONE);
-        groupLimitationProperties.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        groupLimitationProperties.setLayout(new GridLayout(2, false));
-        groupLimitationProperties.setText(Messages.Limitation_Properties);
+        groupDefaults = new Group(container, SWT.NONE);
+        groupDefaults.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupDefaults.setLayout(new GridLayout(2, false));
+        groupDefaults.setText(Messages.Default_Properties);
 
-        Label labelMaxNumRowsToFetch = new Label(groupLimitationProperties, SWT.NONE);
+        Label labelDefaultDate = new Label(groupDefaults, SWT.NONE);
+        labelDefaultDate.setText(Messages.Default_date);
+
+        comboDefaultDate = WidgetFactory.createReadOnlyCombo(groupDefaults);
+        comboDefaultDate.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        comboDefaultDate.addModifyListener(new ModifyListener() {
+
+            public void modifyText(ModifyEvent event) {
+                defaultDate = comboDefaultDate.getText();
+            }
+        });
+        comboDefaultDate.setItems(preferences.getDefaultDateLabels());
+    }
+
+    private void createGroupLimits(Composite container) {
+
+        groupLimits = new Group(container, SWT.NONE);
+        groupLimits.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupLimits.setLayout(new GridLayout(2, false));
+        groupLimits.setText(Messages.Limitation_Properties);
+
+        Label labelMaxNumRowsToFetch = new Label(groupLimits, SWT.NONE);
         labelMaxNumRowsToFetch.setText(Messages.Maximum_number_of_rows_to_fetch);
 
-        textMaxNumRowsToFetch = WidgetFactory.createDecimalText(groupLimitationProperties);
+        textMaxNumRowsToFetch = WidgetFactory.createDecimalText(groupLimits);
         textMaxNumRowsToFetch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         textMaxNumRowsToFetch.setTextLimit(5);
         textMaxNumRowsToFetch.addModifyListener(new ModifyListener() {
@@ -123,10 +148,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
             }
         });
 
-        Label labelBufferSize = new Label(groupLimitationProperties, SWT.NONE);
+        Label labelBufferSize = new Label(groupLimits, SWT.NONE);
         labelBufferSize.setText(Messages.Buffer_size);
 
-        comboBufferSize = WidgetFactory.createDecimalCombo(groupLimitationProperties);
+        comboBufferSize = WidgetFactory.createDecimalCombo(groupLimits);
         comboBufferSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         comboBufferSize.addModifyListener(new ModifyListener() {
 
@@ -185,6 +210,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         columns = editor.getInput();
 
         preferences.setSortedJournalEntryAppearanceAttributes(columns);
+        preferences.setDefaultDateGUILabel(defaultDate);
         preferences.setMaximumNumberOfRowsToFetch(maxNumRowsToFetch);
         preferences.setRetrieveJournalEntriesBufferSize(bufferSize);
         preferences.setExportColumnHeadings(exportColumnHeadings);
@@ -195,6 +221,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         checkboxEnableColoring.setSelection(preferences.isColoringEnabled());
 
         columns = preferences.getSortedJournalEntryAppearancesAttributes();
+        defaultDate = preferences.getDefaultDateGUILabel();
         maxNumRowsToFetch = preferences.getMaximumNumberOfRowsToFetch();
         bufferSize = preferences.getRetrieveJournalEntriesBufferSize();
         exportColumnHeadings = preferences.isExportColumnHeadings();
@@ -207,6 +234,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
         checkboxEnableColoring.setSelection(preferences.getInitialColoringEnabled());
 
         columns = preferences.getInitialSortedJournalEntryAppearanceAttributes();
+        defaultDate = preferences.getInitialDefaultDateGUILabel();
         maxNumRowsToFetch = preferences.getInitialMaximumNumberOfRowsToFetch();
         bufferSize = preferences.getInitialRetrieveJournalEntriesBufferSize();
         exportColumnHeadings = preferences.getInitialExportColumnHeadings();
@@ -217,6 +245,7 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
     protected void setScreenValues() {
 
         editor.setInput(columns);
+        comboDefaultDate.setText(defaultDate);
         textMaxNumRowsToFetch.setText(Integer.toString(maxNumRowsToFetch));
 
         String bufferSizeLabel = IntHelper.convertStorageSizeToLabel(bufferSize);
