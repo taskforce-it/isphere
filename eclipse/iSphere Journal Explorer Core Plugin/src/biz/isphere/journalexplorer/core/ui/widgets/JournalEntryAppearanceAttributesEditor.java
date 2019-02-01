@@ -122,7 +122,8 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         groupButtons.setLayout(new GridLayout());
         groupButtons.setLayoutData(new GridData(GridData.FILL, SWT.CENTER, true, true));
 
-        btnUp = WidgetFactory.createPushButton(groupButtons, "&Up");
+        btnUp = WidgetFactory.createPushButton(groupButtons, Messages.Move_up);
+        btnUp.setToolTipText(Messages.Move_up_tooltip);
         btnUp.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         btnUp.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -134,7 +135,8 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
             }
         });
 
-        btnDown = WidgetFactory.createPushButton(groupButtons, "&Down");
+        btnDown = WidgetFactory.createPushButton(groupButtons, Messages.Move_down);
+        btnDown.setToolTipText(Messages.Move_down_tooltip);
         btnDown.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
         btnDown.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -147,6 +149,7 @@ public class JournalEntryAppearanceAttributesEditor extends Composite {
         });
 
         btnClearColors = WidgetFactory.createPushButton(this, Messages.Clear_Colors);
+        btnClearColors.setToolTipText(Messages.Clear_Colors_tooltip);
         btnClearColors.setLayoutData(new GridData());
         btnClearColors.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
