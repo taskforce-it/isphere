@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.strpreprc"
       label="iSphere STRPREPRC Support (optional)"
-      version="3.5.1.r"
+      version="3.5.2.b001"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -30,7 +30,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="3.5.1.r" match="perfect"/>
+      <import feature="biz.isphere.core" version="3.5.2.b001" match="perfect"/>
    </requires>
 
    <plugin
