@@ -3,7 +3,7 @@ Bundle-Version: 3.5.1.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Various improvements of iSphere Journal Explorer.\nAdded the "Copy Members to" menu option to the "Remote Scratchpad" view.\nBugfixes.
-X-Beta-Version: 3.5.1.r
+X-Beta-Version: 3.5.2.b001
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Various improvements of iSphere Journal Explorer.\nAdded the "Copy Members to" menu option to the "Remote Scratchpad" view.\nBugfixes.
+X-Beta-Info: Added option "Date range" to Journal Explorer preferences.
