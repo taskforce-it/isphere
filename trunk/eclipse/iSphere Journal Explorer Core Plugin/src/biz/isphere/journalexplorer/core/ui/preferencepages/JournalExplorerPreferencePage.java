@@ -116,8 +116,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         Label labelDefaultDate = new Label(groupDefaults, SWT.NONE);
         labelDefaultDate.setText(Messages.Default_date);
+        labelDefaultDate.setToolTipText(Messages.Default_date_tooltip);
 
         comboDefaultDate = WidgetFactory.createReadOnlyCombo(groupDefaults);
+        comboDefaultDate.setToolTipText(Messages.Default_date_tooltip);
         comboDefaultDate.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         comboDefaultDate.addModifyListener(new ModifyListener() {
 
@@ -137,8 +139,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         Label labelMaxNumRowsToFetch = new Label(groupLimits, SWT.NONE);
         labelMaxNumRowsToFetch.setText(Messages.Maximum_number_of_rows_to_fetch);
+        labelMaxNumRowsToFetch.setToolTipText(Messages.Maximum_number_of_rows_to_fetch_tooltip);
 
         textMaxNumRowsToFetch = WidgetFactory.createDecimalText(groupLimits);
+        textMaxNumRowsToFetch.setToolTipText(Messages.Maximum_number_of_rows_to_fetch_tooltip);
         textMaxNumRowsToFetch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         textMaxNumRowsToFetch.setTextLimit(5);
         textMaxNumRowsToFetch.addModifyListener(new ModifyListener() {
@@ -150,8 +154,10 @@ public class JournalExplorerPreferencePage extends PreferencePage implements IWo
 
         Label labelBufferSize = new Label(groupLimits, SWT.NONE);
         labelBufferSize.setText(Messages.Buffer_size);
+        labelBufferSize.setToolTipText(Messages.Buffer_size_tooltip);
 
         comboBufferSize = WidgetFactory.createDecimalCombo(groupLimits);
+        comboBufferSize.setToolTipText(Messages.Buffer_size_tooltip);
         comboBufferSize.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         comboBufferSize.addModifyListener(new ModifyListener() {
 

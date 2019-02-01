@@ -242,6 +242,11 @@ public class Messages extends NLS {
     public static String Enable_coloring;
     public static String Enable_coloring_tooltip;
     public static String Clear_Colors;
+    public static String Clear_Colors_tooltip;
+    public static String Move_up;
+    public static String Move_up_tooltip;
+    public static String Move_down;
+    public static String Move_down_tooltip;
     public static String Special_value_A_is_not_allowed;
     public static String Library_A_does_not_exist;
     public static String File_A_B_does_not_exist;
@@ -249,9 +254,12 @@ public class Messages extends NLS {
 
     public static String Default_Properties;
     public static String Default_date;
+    public static String Default_date_tooltip;
     public static String Limitation_Properties;
     public static String Maximum_number_of_rows_to_fetch;
+    public static String Maximum_number_of_rows_to_fetch_tooltip;
     public static String Buffer_size;
+    public static String Buffer_size_tooltip;
 
     public static String Excel_Export;
     public static String Export_Export_column_headings;
