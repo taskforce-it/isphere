@@ -247,6 +247,8 @@ public class Messages extends NLS {
     public static String File_A_B_does_not_exist;
     public static String Member_C_does_not_exist_in_file_A_B;
 
+    public static String Default_Properties;
+    public static String Default_date;
     public static String Limitation_Properties;
     public static String Maximum_number_of_rows_to_fetch;
     public static String Buffer_size;

@@ -8,10 +8,11 @@
 
 package biz.isphere.journalexplorer.core.preferences;
 
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,6 +25,7 @@ import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
@@ -71,6 +73,10 @@ public final class Preferences implements ColumnsDAO {
 
     private static final String COLOR_NULL = "[null]"; //$NON-NLS-1$
 
+    public static final String DEFAULTS = DOMAIN + "DEFAULTS."; //$NON-NLS-1$
+
+    public static final String DEFAULT_DATE = DEFAULTS + "DATE"; //$NON-NLS-1$
+
     public static final String LIMITATIONS = DOMAIN + "LIMITATIONS."; //$NON-NLS-1$
 
     public static final String MAX_NUM_ROWS_TO_FETCH = LIMITATIONS + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
@@ -89,14 +95,39 @@ public final class Preferences implements ColumnsDAO {
 
     public static final String EXPORT_COLUMN_HEADINGS = DOMAIN + "EXPORT_COLUMN_HEADINGS"; //$NON-NLS-1$
 
-    private SimpleDateFormat dateFormatter;
+    public enum DefaultDate {
+        LAST_USED (Messages.DisplayJournalEntriesDialog_Time_Last_used_values),
+        TODAY (Messages.DisplayJournalEntriesDialog_Time_Today),
+        YESTERDAY (Messages.DisplayJournalEntriesDialog_Time_Yesterday);
+
+        private String labelGUI;
+
+        private static Map<String, DefaultDate> labels;
+
+        static {
+            labels = new HashMap<String, DefaultDate>();
+            for (DefaultDate status : DefaultDate.values()) {
+                labels.put(status.labelGUI, status);
+            }
+        }
+
+        private DefaultDate(String labelGUI) {
+            this.labelGUI = labelGUI;
+        }
+
+        public String getGUILabel() {
+            return labelGUI;
+        }
+
+        public static DefaultDate find(String label) {
+            return labels.get(label);
+        }
+    }
 
     /**
      * Private constructor to ensure the Singleton pattern.
      */
     private Preferences() {
-
-        this.dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
     }
 
     /**
@@ -168,6 +199,17 @@ public final class Preferences implements ColumnsDAO {
         return "IBM037"; //$NON-NLS-1$
     }
 
+    public String getDefaultDateGUILabel() {
+
+        String value = preferenceStore.getString(DEFAULT_DATE);
+        DefaultDate defaultDate = DefaultDate.valueOf(value);
+        if (defaultDate != null) {
+            return defaultDate.getGUILabel();
+        }
+
+        return null;
+    }
+
     public int getMaximumNumberOfRowsToFetch() {
 
         int maxNumRows = preferenceStore.getInt(MAX_NUM_ROWS_TO_FETCH);
@@ -221,6 +263,14 @@ public final class Preferences implements ColumnsDAO {
             Color color = journalEntriesAppearances[i].getColor();
             preferenceStore.setValue(getColumnOrderKey(i), columnName);
             preferenceStore.setValue(getColorKey(columnName), serializeColor(color));
+        }
+    }
+
+    public void setDefaultDateGUILabel(String guiLabel) {
+
+        DefaultDate defaultDate = DefaultDate.find(guiLabel);
+        if (defaultDate != null) {
+            preferenceStore.setValue(DEFAULT_DATE, defaultDate.toString());
         }
     }
 
@@ -342,6 +392,7 @@ public final class Preferences implements ColumnsDAO {
             preferenceStore.setDefault(getColorKey(columnName), serializeColor(getInitialColumnColor(columnName)));
         }
 
+        preferenceStore.setDefault(DEFAULT_DATE, getInitialDefaultDate().toString());
         preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
         preferenceStore.setDefault(BUFFER_SIZE, getInitialRetrieveJournalEntriesBufferSize());
         preferenceStore.setDefault(DYNAMIC_BUFFER_SIZE, getInitialRetrieveJournalEntriesIsDynamicBufferSize());
@@ -441,12 +492,20 @@ public final class Preferences implements ColumnsDAO {
         return sortedNames.toArray(new JournalEntryAppearanceAttributes[sortedNames.size()]);
     }
 
+    public String getInitialDefaultDateGUILabel() {
+        return getInitialDefaultDate().getGUILabel();
+    }
+
+    private DefaultDate getInitialDefaultDate() {
+        return DefaultDate.LAST_USED;
+    }
+
     public int getInitialMaximumNumberOfRowsToFetch() {
         return 1000;
     }
 
     public int getInitialRetrieveJournalEntriesBufferSize() {
-        return Buffer.size("128 KB");
+        return Buffer.size("128 KB"); //$NON-NLS-1$
     }
 
     public boolean getInitialRetrieveJournalEntriesIsDynamicBufferSize() {
@@ -458,11 +517,22 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public String getInitialExportFile() {
-        return "ExportJournalEntries";
+        return "ExportJournalEntries"; //$NON-NLS-1$
     }
 
     public boolean getInitialExportColumnHeadings() {
         return true;
+    }
+
+    public String[] getDefaultDateLabels() {
+
+        List<String> labels = new LinkedList<String>();
+
+        labels.add(DefaultDate.LAST_USED.getGUILabel());
+        labels.add(DefaultDate.TODAY.getGUILabel());
+        labels.add(DefaultDate.YESTERDAY.getGUILabel());
+
+        return labels.toArray(new String[labels.size()]);
     }
 
     public String[] getRetrieveJournalEntriesBufferSizeLabels() {
