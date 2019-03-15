@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 4/19/2018">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/10/2019">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1494,7 +1494,7 @@ srccssid=  "00273">
              CRTPNLGRP PNLGRP(&TOLIB/STRPREPRCP) +
                           SRCFILE(&SRCLIB/&SRCFILE) +
                           SRCMBR(&PNLGRP)
-             DLTSPLF    FILE(&PNLGRP   ) JOB(*) SPLNBR(*LAST)
+             DLTSPLF    FILE(STRPREPRCP) JOB(*) SPLNBR(*LAST)
              MONMSG     MSGID(CPF0000)
 
      /* -------------------------------- */
@@ -2257,6 +2257,214 @@ on command'' (CMD).'                                                  +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0031                    */
+     /* Die Parameter USESRCFILE und USESRCMBR können nicht mit dem */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0031) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0031) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'The USESRCFILE and USESRCMBR parameters cannot be specified with the -
+USESRCSTMF parameter.'                                                +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0032                    */
+     /* Either USESRCFILE and USESRCMBR or USESRCSTMF must be speci */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0032) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0032) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Either USESRCFILE and USESRCMBR or USESRCSTMF must be specified.'    +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0033                    */
+     /* Value *DFT is not allowed for SRCFILE, SRCLIB and SRCMBR wh */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0033) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0033) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Value *DFT is not allowed for SRCFILE, SRCLIB and SRCMBR when USESRCS-
+TMF is specified.'                                                    +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0034                    */
+     /* Unable to open file &1.                                     */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0034) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0034) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Unable to open file &1.'                                             +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0035                    */
+     /* Library &1 not found.                                       */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0035) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0035) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Library &1 not found.'                                               +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0036                    */
+     /* File &1 in library &2 not found.                            */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0036) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0036) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'File &1 in library &2 not found.'                                    +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0037                    */
+     /* Member &3 file &1 in library &2 not found.                  */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0037) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0037) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Member &3 file &1 in library &2 not found.'                          +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0038                    */
+     /* No Pre-Compiler instructions found in source file &1.       */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0038) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0038) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'No Pre-Compiler instructions found in source file &1.'               +
+                ) +
+                SEV(40) +
+                FMT( +
+                    (*CHAR 512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0039                    */
+     /* Object creation command not found in member &3 of file &2/& */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0039) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0039) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Object creation command not found in source file &1.'                +
+                ) +
+                SECLVL(+
+'Cause . . . . . . :   The source file does not contain pre-compiler t-
+ags and no creation command had been specified at parameter ''Creation-
+ command'' (CMD).'                                                    +
+                ) +
+                SEV(40) +
+                FMT( +
+                    (*CHAR 512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -2988,6 +3196,215 @@ r Befehl'' (CMD) angegeben.'                                          +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0031                    */
+     /* Die Parameter USESRCFILE und USESRCMBR können nicht mit dem */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0031) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0031) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Die Parameter USESRCFILE und USESRCMBR können nicht mit dem Parameter-
+ USESRCSTMF angegeben werden.'                                        +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0032                    */
+     /* Entweder USESRCFILE und USESRCMBR oder USESRCSTMF angeben.  */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0032) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0032) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Entweder USESRCFILE und USESRCMBR oder USESRCSTMF angeben.'          +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0033                    */
+     /* Wert *DFT ist unzulässig für SRCFILE, SRCLIB und SRCMBR, we */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0033) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0033) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Wert *DFT ist unzulässig für SRCFILE, SRCLIB und SRCMBR, wenn USESRCS-
+TMF angegeben ist.'                                                   +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0070) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0034                    */
+     /* Datei &1 kann nicht geöffnet werden.                        */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0034) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0034) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Datei &1 kann nicht geöffnet werden.'                                +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0035                    */
+     /* Bibliothek &1 nicht gefunden.                               */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0035) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0035) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Bibliothek &1 nicht gefunden.'                                       +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0036                    */
+     /* Datei &1 in Bibliothek &2 nicht gefunden.                   */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0036) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0036) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Datei &1 in Bibliothek &2 nicht gefunden.'                           +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0037                    */
+     /* Teildatei &3 von Datei &1 in Bibliothek &2 nicht gefunden.  */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0037) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0037) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Teildatei &3 von Datei &1 in Bibliothek &2 nicht gefunden.'          +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0038                    */
+     /* Keine Pre-Compiler Anweisungen in Quellendatenstromdatei &1 */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0038) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0038) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Keine Pre-Compiler Anweisungen in Quellendatenstromdatei &1 gefunden.-
+'                                                                     +
+                ) +
+                SEV(40) +
+                FMT( +
+                    (*CHAR 512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0039                    */
+     /* Object creation command not found in member &3 of file &2/& */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0039) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0039) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Erstellungsbefehl nicht gefunden in Quellendatenstromdatei &1.'      +
+                ) +
+                SECLVL(+
+'Ursache . . . . . :   Die Quellendatenstromdatei enthält keine Pre-Co-
+mpiler Anweisungen und es wurde kein Erstellungsbefehl im Parameter ''-
+Auszuführender Befehl'' (CMD) angegeben.'                             +
+                ) +
+                SEV(40) +
+                FMT( +
+                    (*CHAR 512) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
              ENDPGM
 ]]>  </copysrc>
 </mbr>
@@ -3026,6 +3443,83 @@ and service programs (BND).
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing CLIB3  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "CLIB3     "
+mbrtype =  "RPGLE     "
+mbrtext =  "Prototypes of C-Library   File IO        (include)"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      /if not defined(CLIB3)
+      /define CLIB3
+      *
+     d EOF             c                   const(-1)
+      *
+      *  fopen() -- Open files
+      *    #include <stdio.h>
+      *    FILE *fopen(const char *filename, const char *mode);
+      /if defined(USE_IFS_IO)
+     d fopen           pr              *          extproc('_C_IFS_fopen')
+      /else
+     d fopen           pr              *          extproc('fopen')
+      /endif
+     d  i_fileName                     *   value  options(*string)
+     d  i_mode                         *   value  options(*string)
+      *
+      *  fclose -- Close stream
+      *    #include <stdio.h>
+      *    int fclose(FILE *stream);
+      /if defined(USE_IFS_IO)
+     d fclose          pr            10i 0        extproc('_C_IFS_fclose')
+      /else
+     d fclose          pr            10i 0        extproc('fclose')
+      /endif
+     d  i_stream                       *   value
+      *
+      *  fwrite -- Write Items
+      *    #include <stdio.h>
+      *    size_t fwrite(const void *buffer, size_t size, size_t count, FILE *stream);
+      /if defined(USE_IFS_IO)
+     d fwrite          pr            10u 0        extproc('_C_IFS_fwrite')
+      /else
+     d fwrite          pr            10u 0        extproc('fwrite')
+      /endif
+     d  i_pData                        *   value
+     d  i_size                       10u 0 value
+     d  i_count                      10u 0 value
+     d  i_stream                       *   value
+      *
+      *  fgets -- Read a String
+      *    #include <stdio.h>
+      *    char *fgets (char *string, int n, FILE *stream);
+      /if defined(USE_IFS_IO)
+     d fgets           pr              *          extproc('_C_IFS_fgets')
+      /else
+     d fgets           pr              *          extproc('fgets')
+      /endif
+     d  i_pString                      *   value
+     d  i_size                       10i 0 value
+     d  i_stream                       *   value
+      *
+      *  feof -- Test End-of-File Indicator
+      *    #include <stdio.h>
+      *    int feof(FILE *stream);
+      /if defined(USE_IFS_IO)
+     d feof            pr            10i 0        extproc('_C_IFS_feof')
+      /else
+     d feof            pr              *          extproc('feof')
+      /endif
+     d  i_stream                       *   value
+      *
+      /endif
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing COPYRIGHT  type RPGLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -3039,13 +3533,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.15.3 - 18.04.2018 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V2.0.0 - 09.03.2019 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.15.3'
+     d                 C                   '2.0'
      d STRPREPRC_DATE...
-     d                 C                   '18.04.2018'
+     d                 C                   '09.03.2019'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3881,6 +4375,225 @@ srccssid=  "00273">
       *   Keine Ersatzvariablen definiert!
      D PRZ0030_SIZE    S              8B 0 INZ(0000)
       *
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0031  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0031   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Die Parameter USESRCFILE und USESRCMBR können"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0031
+
+      //  Die Parameter USESRCFILE und USESRCMBR können nicht mit dem
+
+     d PRZ0031         ds
+     d  PRZ00311                     70A   inz(*BLANKS)
+     d PRZ0031_SIZE    s             10I 0 inz(70)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0032  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0032   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Entweder USESRCFILE und USESRCMBR oder USESRC"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0032
+
+      //  Entweder USESRCFILE und USESRCMBR oder USESRCSTMF angeben.
+
+     d PRZ0032         ds
+     d  PRZ00321                     70A   inz(*BLANKS)
+     d PRZ0032_SIZE    s             10I 0 inz(70)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0033  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0033   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Wert *DFT ist unzulässig für SRCFILE, SRCLIB "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0033
+
+      //  Wert *DFT ist unzulässig für SRCFILE, SRCLIB und SRCMBR, we
+
+     d PRZ0033         ds
+     d  PRZ00331                     70A   inz(*BLANKS)
+     d PRZ0033_SIZE    s             10I 0 inz(70)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0034  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0034   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Datei  1 kann nicht geöffnet werden.         "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0034
+
+      //  Datei &1 kann nicht geöffnet werden.
+
+     d PRZ0034         ds
+     d  PRZ00341                    512A   inz(*BLANKS)
+     d PRZ0034_SIZE    s             10I 0 inz(512)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0035  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0035   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Bibliothek  1 nicht gefunden.                "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0035
+
+      //  Bibliothek &1 nicht gefunden.
+
+     d PRZ0035         ds
+     d  PRZ00351                     10A   inz(*BLANKS)
+     d PRZ0035_SIZE    s             10I 0 inz(10)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0036  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0036   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Datei  1 in Bibliothek  2 nicht gefunden.    "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0036
+
+      //  Datei &1 in Bibliothek &2 nicht gefunden.
+
+     d PRZ0036         ds
+     d  PRZ00361                     10A   inz(*BLANKS)
+     d  PRZ00362                     10A   inz(*BLANKS)
+     d PRZ0036_SIZE    s             10I 0 inz(20)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0037  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0037   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Teildatei  3 von Datei  1 in Bibliothek  2 ni"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0037
+
+      //  Teildatei &3 von Datei &1 in Bibliothek &2 nicht gefunden.
+
+     d PRZ0037         ds
+     d  PRZ00371                     10A   inz(*BLANKS)
+     d  PRZ00372                     10A   inz(*BLANKS)
+     d  PRZ00373                     10A   inz(*BLANKS)
+     d PRZ0037_SIZE    s             10I 0 inz(30)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0038  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0038   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Keine Pre-Compiler Anweisungen in Quellendate"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0038
+
+      //  Keine Pre-Compiler Anweisungen in Quellendatenstromdatei &1
+
+     d PRZ0038         ds
+     d  PRZ00381                    512A   inz(*BLANKS)
+     d PRZ0038_SIZE    s             10I 0 inz(512)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0039  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0039   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Erstellungsbefehl nicht gefunden in Quellenda"
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0039
+
+      //  Erstellungsbefehl nicht gefunden in Quellendatenstromdatei
+
+     d PRZ0039         ds
+     d  PRZ00391                    512A   inz(*BLANKS)
+     d PRZ0039_SIZE    s             10I 0 inz(512)
+
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -4909,18 +5622,13 @@ srccssid=  "00273">
 .*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *
 .*                            command.                                 *
 .*                                                                     *
+.*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
-.*                                                                     *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
-.*                           SRCFILE(&SL/&SF) +                        *
-.*                           SRCMBR(&SM);                              *
-.*                                                                     *
-.*   >>COMPILE<<                                                       *
-.*   >>END-COMPILE<<                                                   *
-.*                                                                     *
+.*                           SRCFILE(&SL/&SF) SRCMBR(&SM);             *
 .*   >>EXECUTE<<                                                       *
-.*                                                                     *
 .* >>END-PRE-COMPILER<<                                                *
 .*=====================================================================*
 .*
@@ -4937,6 +5645,7 @@ srccssid=  "00273">
 :IMHELP name=STRPREPRC.
 :IMHELP name='STRPREPRC/USESRCFILE'.
 :IMHELP name='STRPREPRC/USESRCMBR'.
+:IMHELP name='STRPREPRC/USESRCSTMF'.
 :IMHELP name='STRPREPRC/CMD'.
 :IMHELP name='STRPREPRC/OPTION'.
 :IMHELP name='STRPREPRC/CHGOBJD'.
@@ -4966,6 +5675,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER7'.
 :IMHELP name='STRPREPRC/USER8'.
 :IMHELP name='STRPREPRC/USER9'.
+:IMHELP name='STRPREPRC/STMF'.
 :IMHELP name='STRPREPRC/USRDEFVAR'.
 :IMHELP name='STRPREPRC/LIBL'.
 :IMHELP name='STRPREPRC/USELIBL'.
@@ -5211,6 +5921,37 @@ Objekterstellung verwendet wird.
 :PT.:PV.Name der Quellenteildatei:EPV.
 :PD.Geben sie den Namen der Quellenteildatei ein, welche die
 Pre-Prozessor-Anweisungen enthält.
+:EPARML.
+:EHELP.
+
+.********************************************
+.*  Keyword:  USESRCSTMF
+.********************************************
+:HELP NAME='STRPREPRC/USESRCSTMF'.
+Quellendatenstromdatei (USESRCSTMF) - Hilfe
+:XH3.Quellendatenstromdatei (USESRCSTMF)
+:P.
+Name der Quellendatenstromdatei, welche die Pre-Prozessor-Anweisungen enthält.
+:IMHELP name='COM/REQPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+:PARML.
+:PT.:PV.Name der Quellendatenstromdatei:EPV.
+:PD.Gibt den Pfadnamen der Datenstromdatei an, welche die
+auszuführenden Pre-Prozessoranweisungen enthält.
+:P.
+Der Pfadname kann entweder absolut oder relativ
+qualifiziert werden. Ein absoluter Pfadname beginnt mit
+'/'; ein relativer Pfadname beginnt mit einem anderen
+Zeichen als '/'.
+:P.
+Wird der Pfadname absolut qualifiziert, ist der Pfadname
+vollständig. Wird der Pfadname relativ qualifiziert, wird
+er vervollständigt, indem das aktuelle Arbeitsverzeichnis
+des Jobs an den Pfadnamen angehängt wird.
+:P.
+Die Parameter USESRCFILE und USESRCMBR können nicht mit dem
+Parameter USESRCSTMF angegeben werden.
 :EPARML.
 :EHELP.
 
@@ -5922,6 +6663,30 @@ eingetragen werden soll.
 :EHELP.
 
 .********************************************
+.*  Keyword:  STMF (optional)
+.********************************************
+:HELP NAME='STRPREPRC/STMF'.
+Wert für Parameter     (&STMF) - Hilfe
+:XH3.Wert für Parameter     (&STMF) (STMF)
+:P.
+Wert, der für die Ersatzvariable 'Datenstromdatei' (&STMF)
+eingetragen werden soll.
+:IMHELP name='COM/OPTPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+
+:PARML.
+:PT.:PK DEF.*NONE:EPK.
+:PD.Es ist kein Wert angegeben.
+:PT.:PV.*DFT:EPV.
+:PD.Name der Quellendatenstromdatei, wie am Parameter :HP2.USESRCSTMF:EHP2. angegeben.
+:PT.:PV.Name der Datenstromdatei:EPV.
+:PD.Name der Datenstromdatei.
+:EPARML.
+
+:EHELP.
+
+.********************************************
 .*  Keyword:  USRDEFVAR (optional)
 .********************************************
 :HELP NAME='STRPREPRC/USRDEFVAR'.
@@ -6269,18 +7034,13 @@ srccssid=  "00273">
 .*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *
 .*                            command.                                 *
 .*                                                                     *
+.*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
-.*                                                                     *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
-.*                           SRCFILE(&SL/&SF) +                        *
-.*                           SRCMBR(&SM);                              *
-.*                                                                     *
-.*   >>COMPILE<<                                                       *
-.*   >>END-COMPILE<<                                                   *
-.*                                                                     *
+.*                           SRCFILE(&SL/&SF) SRCMBR(&SM);             *
 .*   >>EXECUTE<<                                                       *
-.*                                                                     *
 .* >>END-PRE-COMPILER<<                                                *
 .*=====================================================================*
 .*
@@ -6297,6 +7057,7 @@ srccssid=  "00273">
 :IMHELP name=STRPREPRC.
 :IMHELP name='STRPREPRC/USESRCFILE'.
 :IMHELP name='STRPREPRC/USESRCMBR'.
+:IMHELP name='STRPREPRC/USESRCSTMF'.
 :IMHELP name='STRPREPRC/CMD'.
 :IMHELP name='STRPREPRC/OPTION'.
 :IMHELP name='STRPREPRC/CHGOBJD'.
@@ -6326,6 +7087,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USER7'.
 :IMHELP name='STRPREPRC/USER8'.
 :IMHELP name='STRPREPRC/USER9'.
+:IMHELP name='STRPREPRC/STMF'.
 :IMHELP name='STRPREPRC/USRDEFVAR'.
 :IMHELP name='STRPREPRC/LIBL'.
 :IMHELP name='STRPREPRC/USELIBL'.
@@ -6560,6 +7322,35 @@ the pre-compiler tags.
 :PT.:PV.source-file-member-name:EPV.
 :PD.Enter the name of the source physical file member that
 contains the pre-compiler tags.
+:EPARML.
+:EHELP.
+
+.********************************************
+.*  Keyword:  USESRCSTMF
+.********************************************
+:HELP NAME='STRPREPRC/USESRCSTMF'.
+Source stream file (USESRCSTMF) - Help
+:XH3.Source stream file (USESRCSTMF)
+:P.
+Name of the source stream file, that contains the pre-compiler tags.
+:IMHELP name='COM/REQPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+:PARML.
+:PT.:PV.Source stream file:EPV.
+:PD.Specifies the path name of the stream file containing the
+pre-compiler statements to be executed.
+:P.
+The path name can be either absolutely or relatively qualified. An
+absolute path name starts with '/'; a relative path name starts with a
+character other than '/'.
+:P.
+If absolutely-qualified, the path name is complete. If
+relatively-qualified, the path name is completed by appending the job's
+current working directory to the path name.
+:P.
+The USESRCFILE and USESRCMBR parameters cannot be specified with the
+USESRCSTMF parameter.
 :EPARML.
 :EHELP.
 
@@ -6891,7 +7682,7 @@ Value for the replacement variable 'Source Member' (&SM).
 :PT.:PV.*DFT:EPV.
 :PD.Name of the source member as specified at parameter :HP2.USESRCMBR:EHP2..
 :PT.:PV.source-file-member-name:EPV.
-:PD.Name der Quellenteildatei.
+:PD.Source file member name.
 :EPARML.
 
 :EHELP.
@@ -7249,6 +8040,29 @@ Specifies the value for the replacement variable
 :PD.Value for user-defined parameter &U9.
 :EPARML.
 :IMHELP name='COM/RPLVAR'.
+
+:EHELP.
+
+.********************************************
+.*  Keyword:  STMF (optional)
+.********************************************
+:HELP NAME='STRPREPRC/STMF'.
+Value for stream file  (&STMF) (STMF) - Help
+:XH3.Value for stream file  (&STMF) (STMF)
+:P.
+Value for the replacement variable 'Stream File' (&STMF).
+:IMHELP name='COM/OPTPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+
+:PARML.
+:PT.:PK DEF.*NONE:EPK.
+:PD.Not specified.
+:PT.:PV.*DFT:EPV.
+:PD.Name of the source stream file as specified at parameter :HP2.USESRCSTMF:EHP2..
+:PT.:PV.stream-file-name:EPV.
+:PD.Stream file name.
+:EPARML.
 
 :EHELP.
 
@@ -7617,6 +8431,69 @@ srccssid=  "00273">
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing STRPREPRC  type MAKPGM - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "STRPREPRC "
+mbrtype =  "MAKPGM    "
+mbrtext =  "Command: Start Pre-Processor (CPP Module)         "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+     /* =================================================================== */
+     /*                                                                     */
+     /*  Kurzdokumentation :                                                */
+     /*                                                                     */
+     /*  Bereich . . . : STRPREPRC                                          */
+     /*  Objekt  . . . : STRPREPRC                                          */
+     /*  Beschreibung  : Start Pre-Processor - CPP                          */
+     /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
+     /*  Datum . . . . : 11.02.2019                                         */
+     /*                                                                     */
+     /* =================================================================== */
+     /*                                                                     */
+     /*  This software is free software, you can redistribute it and/or     */
+     /*  modify it under the terms of the GNU General Public License (GPL)  */
+     /*  as published by the Free Software Foundation.                      */
+     /*                                                                     */
+     /*  See GNU General Public License for details.                        */
+     /*          http://www.opensource.org                                  */
+     /*          http://www.opensource.org/licenses/gpl-license.html        */
+     /*                                                                     */
+     /* =================================================================== */
+     /*  History:                                                           */
+     /*                                                                     */
+     /*  Datum       Name          Änderung                                 */
+     /*  ----------  ------------  ---------------------------------------  */
+     /*  11.02.2019  Th.Raddatz    Added DSPSRCC to descibe the creation    */
+     /*                            command of the command processing        */
+     /*                            program.                                 */
+     /*                                                                     */
+     /* =================================================================== */
+     /* >>PRE-COMPILER<<                                                    */
+     /*   >>CRTCMD<< CRTPGM       PGM(&LI/STRPREPRC );                      */
+     /*   >>IMPORTANT<<                                                     */
+     /*     >>PARM<< MODULE(&LI/STRPREPRC1 +                                */
+     /*                     &LI/STRPREPRC2 +                                */
+     /*                     &LI/STRPREPRC3 +                                */
+     /*                     &LI/STRPREPRC4 );                               */
+     /*     >>PARM<< ENTMOD(&LI/STRPREPRC1);                                */
+     /*     >>PARM<< BNDSRVPGM(&LI/BASICS1 +                                */
+     /*                        &LI/EVENTF  +                                */
+     /*                        &LI/JOBLOG );                                */
+     /*     >>PARM<< ACTGRP(*NEW);                                          */
+     /*     >>PARM<< DETAIL(*BASIC);                                        */
+     /*   >>END-IMPORTANT<<                                                 */
+     /*   >>EXECUTE<<                                                       */
+     /* >>END-PRE-COMPILER<<                                                */
+     /* =================================================================== */
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing STRPREPRC1  type CLLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -7635,7 +8512,7 @@ srccssid=  "00273">
      /*                                                                     */
      /*  Bereich . . . : STRPREPRC                                          */
      /*  Objekt  . . . : STRPREPRC1                                         */
-     /*  Beschreibung  : Start Pre-Processor - CPP                          */
+     /*  Beschreibung  : Start Pre-Processor - CPP Module                   */
      /*  Author  . . . : Thomas Raddatz   <thomas.raddatz@tools400.de>      */
      /*  Datum . . . . : 21.11.2000                                         */
      /*                                                                     */
@@ -7675,30 +8552,28 @@ srccssid=  "00273">
      /*                                                                     */
      /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */
      /*                                                                     */
+     /*  11.02.2019  Th.Raddatz    Replaced OVRDBF of module STRPREPRC1     */
+     /*                            with EXTFILE and EXTMBR in STRPREPRC2    */
+     /*                            Added parameters &USESRCSTMF and &XSTMF. */
+     /*                            Moved checking of object existence to    */
+     /*                            STRPREPRC2.                              */
+     /*                            Moved handling the *DFT special value to */
+     /*                            STRPREPRC2.                              */
+     /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
      /*   >>CRTCMD<< CRTCLMOD     MODULE(&LI/&OB) +                         */
      /*                           SRCFILE(&SL/&SF) SRCMBR(&SM);             */
-     /*   >>COMPILE<<                                                       */
+     /*   >>IMPORTANT<<                                                     */
      /*     >>PARM<< DBGVIEW(*LIST);                                        */
      /*     >>PARM<< OPTION(*EVENTF);                                       */
-     /*   >>END-COMPILE<<                                                   */
+     /*   >>END-IMPORTANT<<                                                 */
      /*   >>EXECUTE<<                                                       */
-     /*   >>CMD<<    CRTPGM       PGM(&LI/STRPREPRC ) +                     */
-     /*                           MODULE(&LI/STRPREPRC1 +                   */
-     /*                                  &LI/STRPREPRC2 +                   */
-     /*                                  &LI/STRPREPRC3 +                   */
-     /*                                  &LI/STRPREPRC4 ) +                 */
-     /*                           ENTMOD(&LI/STRPREPRC1) +                  */
-     /*                           BNDSRVPGM(&LI/BASICS1 +                   */
-     /*                                     &LI/EVENTF  +                   */
-     /*                                     &LI/JOBLOG ) +                  */
-     /*                           ACTGRP(*NEW) +                            */
-     /*                           DETAIL(*BASIC);                           */
      /* >>END-PRE-COMPILER<<                                                */
      /* =================================================================== */
              PGM        PARM(&QUSESRCF   +
                              &USESRCMBR  +
+                             &USESRCSTMF +
                              &CMD        +
                              &OPTION     +
                              &CHGOBJD    +
@@ -7728,6 +8603,7 @@ srccssid=  "00273">
                              &XUSER7     +
                              &XUSER8     +
                              &XUSER9     +
+                             &XSTMF      +
                              &USRDEFVAR  +
                              &LIBL       +
                              &USELIBL    +
@@ -7737,6 +8613,7 @@ srccssid=  "00273">
 
              DCL        VAR(&QUSESRCF  ) TYPE(*CHAR) LEN(  20)
              DCL        VAR(&USESRCMBR ) TYPE(*CHAR) LEN(  10)
+             DCL        VAR(&USESRCSTMF) TYPE(*CHAR) LEN(4098)
              DCL        VAR(&CMD       ) TYPE(*CHAR) LEN(8192)
              DCL        VAR(&OPTION    ) TYPE(*CHAR) LEN(  52)
              DCL        VAR(&CHGOBJD   ) TYPE(*CHAR) LEN(   4)
@@ -7766,6 +8643,7 @@ srccssid=  "00273">
              DCL        VAR(&XUSER7    ) TYPE(*CHAR) LEN(  50)
              DCL        VAR(&XUSER8    ) TYPE(*CHAR) LEN(  50)
              DCL        VAR(&XUSER9    ) TYPE(*CHAR) LEN(  50)
+             DCL        VAR(&XSTMF     ) TYPE(*CHAR) LEN(4098)
              DCL        VAR(&XTAGSREQ  ) TYPE(*LGL ) LEN(   1)
              DCL        VAR(&XMSGF     ) TYPE(*CHAR) LEN(  10)
              DCL        VAR(&XMSGFLIB  ) TYPE(*CHAR) LEN(  10)
@@ -7825,14 +8703,6 @@ srccssid=  "00273">
              CHGVAR     VAR(&USESRCLIB ) VALUE(%SST(&QUSESRCF 11 10))
 
  /* - - - - - - - - - - - - - - - - - - */
- /*  Prüfen der Quelldatei/-teildatei   */
- /* - - - - - - - - - - - - - - - - - - */
-             CHKOBJ     OBJ(&USESRCLIB) OBJTYPE(*LIB)
-             CHKOBJ     OBJ(&USESRCLIB/&USESRCFILE) OBJTYPE(*FILE)
-             CHKOBJ     OBJ(&USESRCLIB/&USESRCFILE) OBJTYPE(*FILE) +
-                          MBR(&USESRCMBR)
-
- /* - - - - - - - - - - - - - - - - - - */
  /*  Prüfen der Steuerdatei STRPRE1     */
  /* - - - - - - - - - - - - - - - - - - */
              CHKOBJ     OBJ(*LIBL/STRPRE1) OBJTYPE(*FILE)
@@ -7862,38 +8732,6 @@ srccssid=  "00273">
  /* - - - - - - - - - - - - - - - - - - */
  /*  Starten Pre-Prozessor              */
  /* - - - - - - - - - - - - - - - - - - */
-             OVRDBF     FILE(SRCFILE)                     +
-                          TOFILE(&USESRCLIB/&USESRCFILE)  +
-                          MBR(&USESRCMBR)                 +
-                          OVRSCOPE(*CALLLVL)
-
-             IF         COND(&XSRCLIB *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&XSRCLIB) VALUE(&USESRCLIB)
-             ENDDO
-
-             IF         COND(&XSRCFILE *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&XSRCFILE) VALUE(&USESRCFILE)
-             ENDDO
-
-             IF         COND(&XSRCMBR *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&XSRCMBR) VALUE(&USESRCMBR)
-             ENDDO
-
-             IF         COND(&OBJSRCFILE *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&OBJSRCFILE) VALUE(&XSRCFILE)
-             ENDDO
-
-             IF         COND(&OBJSRCLIB *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&OBJSRCLIB) VALUE(&XSRCLIB)
-             ENDDO
-
-             IF         COND(&OBJSRCMBR *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&OBJSRCMBR) VALUE(&XSRCMBR)
-             ENDDO
-
-             IF         COND(&XOBJ *EQ '*DFT') THEN(DO)
-                CHGVAR     VAR(&XOBJ) VALUE(&XSRCMBR)
-             ENDDO
 
              CHGVAR     VAR(&PGMCMDEXC) VALUE(%SST(&EXICMDEXC 1 10))
              CHGVAR     VAR(&LPGMCMDEXC) VALUE(%SST(&EXICMDEXC 11 10))
@@ -7901,6 +8739,7 @@ srccssid=  "00273">
              CALLPRC    PRC(STRPREPRC) PARM(&USESRCFILE +
                                             &USESRCLIB  +
                                             &USESRCMBR  +
+                                            &USESRCSTMF +
                                             &CMD        +
                                             &CHGOBJD    +
                                             &OBJTYPE    +
@@ -7929,6 +8768,7 @@ srccssid=  "00273">
                                             &XUSER7     +
                                             &XUSER8     +
                                             &XUSER9     +
+                                            &XSTMF      +
                                             &XTAGSREQ   +
                                             &XMSGF      +
                                             &XMSGFLIB   +
@@ -7938,8 +8778,6 @@ srccssid=  "00273">
                                             &LIBL       +
                                             &USELIBL    +
                                             &USRDEFVAR  )
-
-             DLTOVR     FILE(SRCFILE) LVL(*)
 
  /* -------------------------------------------------------------- */
  /*  Programm beenden                                              */
@@ -8089,19 +8927,24 @@ srccssid=  "00273">
       *  19.11.2017  Th.Raddatz    Fixed bug in restoreLibraryList() to     *
       *                            restore the library list.                *
       *                                                                     *
+      *  11.02.2019  Th.Raddatz    Replaced OVRDBF of module STRPREPRC1     *
+      *                            with EXTFILE and EXTMBR in STRPREPRC2    *
+      *                            Added parameters &USESRCSTMF and &XSTMF. *
+      *                            Moved checking of object existence to    *
+      *                            STRPREPRC2.                              *
+      *                            Moved handling the *DFT special value to *
+      *                            STRPREPRC2.                              *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
-      *                           SRCFILE(&SL/&SF) +                        *
-      *                           SRCMBR(&SM);                              *
-      *   >>COMPILE<<                                                       *
+      *                           SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+      *   >>IMPORTANT<<                                                     *
       *     >>PARM<< TRUNCNBR(*NO);                                         *
       *     >>PARM<< DBGVIEW(*LIST);                                        *
       *     >>PARM<< OPTION(*EVENTF);                                       *
-      *   >>END-COMPILE<<                                                   *
+      *   >>END-IMPORTANT<<                                                 *
       *   >>EXECUTE<<                                                       *
-      *   >>CMD<<    SNDMSG MSG('Successfully created: &OB') +              *
-      *                TOUSR(RADDATZ);                                      *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
      H NOMAIN BNDDIR('QC2LE')
@@ -8113,11 +8956,18 @@ srccssid=  "00273">
       *  Verwendete Dateien
       * -------------------------------------------------------------
      FSRCFILE   IF   F  256        DISK    usropn
+     F                                     extfile(g_useSrcFile.name)
+     F                                     extmbr(g_useSrcFile.member)
      F                                     infds(f1)
       *
      FSTRPRE1   IF   E           K DISK    usropn
      F                                     prefix(P1)
      F                                     infds(f2)
+      *
+     D g_useSrcFile    ds                  qualified
+     D  name                         21a   varying
+     D  member                       10a   varying
+     D  hStmf                          *
       *
      D cMaxRcdLen      c                   256
       *
@@ -8125,6 +8975,10 @@ srccssid=  "00273">
      D  srcSeq                             like(srcSeq_t) inz
      D  srcDat                             like(srcDat_t) inz
      D  srcDta                             like(srcDta_t) inz
+      *
+     D g_readBuffer    ds                  qualified
+     D  size                         10i 0
+     D  data                        512a
       *
      D f1              ds                  qualified
      D  status                11     15S 0
@@ -8149,6 +9003,7 @@ srccssid=  "00273">
      D srcFile_t       s             10a   based(pDummy)
      D srcLib_t        s             10a   based(pDummy)
      D srcMbr_t        s             10a   based(pDummy)
+     D stmf_t          s           4096a   based(pDummy) varying
      D cmd_t           s           8192a   based(pDummy)
      D cmdLong_t       s          32702a   based(pDummy) varying
      D cmdLongFixLen_t...
@@ -8243,6 +9098,7 @@ srccssid=  "00273">
      D  user7                              like(userParm_t)
      D  user8                              like(userParm_t)
      D  user9                              like(userParm_t)
+     D  srcStmf                            like(stmf_t)
      D  libl                               likeds(liblList_t)
      D  usrDefVars                         likeds(usrDefVars_t)
      D  useLibl                            like(bool_t)
@@ -8357,10 +9213,12 @@ srccssid=  "00273">
       *
      D g_startUpLiblList...
      D                 ds                  likeds(liblList_t) inz
-
+      *
       * -------------------------------------------------------------
       *  Importierte Prototypen
       * -------------------------------------------------------------
+      /define USE_IFS_IO
+      /copy QSTRPREPRC,CLIB3
       /copy QSTRPREPRC,QMHRCVPM
       /copy QBASICS1,PBASICS1
       /copy QSTRPREPRC,PROTO_H
@@ -8376,6 +9234,7 @@ srccssid=  "00273">
      D  i_useSrcFile                              like(srcFile_t)
      D  i_useSrcLib                               like(srcLib_t)
      D  i_useSrcMbr                               like(srcMbr_t)
+     D  i_useSrcStmf                              like(stmf_t)
      D  i_cmd                                     like(cmd_t)
      D  i_chgObjD                                 like(chgObjD_t)
      D  i_objType                                 like(objType_t)
@@ -8404,6 +9263,7 @@ srccssid=  "00273">
      D  i_user7                                   like(userParm_t)
      D  i_user8                                   like(userParm_t)
      D  i_user9                                   like(userParm_t)
+     D  i_stmf                                    like(stmf_t)
      D  i_tagsReq                                 like(bool_t)
      D  i_msgFile                                 like(msg_t.file)
      D  i_msgFileLib                              like(msg_t.lib)
@@ -8415,6 +9275,12 @@ srccssid=  "00273">
      D  i_libl                                    likeds(inpLibList_t)
      D  i_useLibl                                 like(bool_t)
      D  i_usrDefVars                              likeds(inpUsrDefVars_t)
+      *
+     D getValue...
+     D                 pr                  like(stmf_t)
+     D                                     extproc('getValue')
+     D  i_actual                           const like(stmf_t) options(*varsize)
+     D  i_default                          const like(stmf_t) options(*varsize)
       *
      D restoreLibraryList...
      D                 pr
@@ -8582,6 +9448,16 @@ srccssid=  "00273">
      D  i_value                            value  like(cmdLong_t)
      D  io_string                                 like(cmdLong_t)
       *
+     D chkStmf...
+     D                 PR                  extproc('chkStmf')
+     D  i_stmf                     4096a   const varying options(*varsize)
+      *
+     D chkMbr...
+     D                 PR                  extproc('chkMbr')
+     D  i_file                       10a   const
+     D  i_lib                        10a   const
+     D  i_mbr                        10a   const
+      *
      D QMHRMVPM...
      D                 PR                         extpgm('QMHRMVPM')
      D  i_callStackE                 10a   const
@@ -8640,6 +9516,7 @@ srccssid=  "00273">
      D  i_useSrcFile                              like(srcFile_t)
      D  i_useSrcLib                               like(srcLib_t)
      D  i_useSrcMbr                               like(srcMbr_t)
+     D  i_useSrcStmf                              like(stmf_t)
      D  i_cmd                                     like(cmd_t)
      D  i_chgObjD                                 like(chgObjD_t)
      D  i_objType                                 like(objType_t)
@@ -8668,6 +9545,7 @@ srccssid=  "00273">
      D  i_user7                                   like(userParm_t)
      D  i_user8                                   like(userParm_t)
      D  i_user9                                   like(userParm_t)
+     D  i_stmf                                    like(stmf_t)
      D  i_tagsReq                                 like(bool_t)
      D  i_msgFile                                 like(msg_t.file)
      D  i_msgFileLib                              like(msg_t.lib)
@@ -8699,6 +9577,10 @@ srccssid=  "00273">
       /COPY QSTRPREPRC,PRZ0028
       *  ... Die Option *ADDJOBLOG ist nur in Verbindung mit *EVENTF zulässig.
       /COPY QSTRPREPRC,PRZ0030
+      *  ... Keine Pre-Compiler Anweisungen in Datei &1 gefunden.
+      /COPY QSTRPREPRC,PRZ0038
+      *  ... Erstellungsbefehl nicht gefunden in Datei &1.
+      /COPY QSTRPREPRC,PRZ0039
       *
       *  Arbeitsfelder
      D i               S             10i 0 inz
@@ -8721,6 +9603,9 @@ srccssid=  "00273">
      D variables       ds                  likeds(variables_t) inz
      D inpUsrDefVar    ds                  likeds(inpUsrDefVar_t)
      D                                     based(pInpUsrDefVar)
+     D objSrcFile      s                   like(i_objSrcFile)
+     D objSrcLib       s                   like(i_objSrcLib)
+     D objSrcMbr       s                   like(i_objSrcMbr)
       /free
 
          ceertx(%paddr('abnormalEndHandler'): *omit: *omit);
@@ -8782,11 +9667,11 @@ srccssid=  "00273">
 
          clear variables;
          variables.lib = i_lib;
-         variables.obj = i_obj;
+         variables.obj = getValue(i_obj: i_srcMbr);
          variables.typeCode = i_typeCode;
-         variables.srcLib = i_srcLib;
-         variables.srcFile = i_srcFile;
-         variables.srcMbr = i_srcMbr;
+         variables.srcLib = getValue(i_srcLib: i_useSrcLib);
+         variables.srcFile = getValue(i_srcFile: i_useSrcFile);
+         variables.srcMbr = getValue(i_srcMbr: i_useSrcMbr);
          variables.testLib = i_testLib;
          variables.testObj = i_testObj;
          variables.tgtRls = i_tgtRls;
@@ -8803,6 +9688,7 @@ srccssid=  "00273">
          variables.user7 = i_user7;
          variables.user8 = i_user8;
          variables.user9 = i_user9;
+         variables.srcStmf = getValue(i_stmf: i_useSrcStmf);
          variables.libl = i_libl;
          variables.useLibl = i_useLibl;
 
@@ -8827,27 +9713,45 @@ srccssid=  "00273">
          endfor;
 
          if (i_chgObjD = '*YES');
+
+            objSrcFile = getValue(i_objSrcFile: i_srcFile);
+            objSrcLib = getValue(i_objSrcLib: i_srcLib);
+            objSrcMbr = getValue(i_objSrcMbr: i_srcMbr);
+
             cmdChgObjD =
                'CHGOBJDA +
                    OBJ(' + %trim(i_lib) + '/' + %trim(i_obj) + ') +
                    OBJTYPE(' + %trim(i_objType) + ') +
-                   SRCF(' + %trim(i_objSrcFile) + ') +
-                   SRCFLIB(' + %trim(i_objSrcLib) + ') +
-                   SRCMBR(' + %trim(i_objSrcMbr) + ') +
+                   SRCF(' + %trim(objSrcFile) + ') +
+                   SRCFLIB(' + %trim(objSrcLib) + ') +
+                   SRCMBR(' + %trim(objSrcMbr) + ') +
                    SRCDATE(' + %trim('*SRCMBR') + ') +
                    SRCTIME(' + %trim('*SRCMBR') + ')';
          else;
             cmdChgObjD = '';
          endif;
 
-         open(E) SRCFILE;
-         if (%error());
-            clear PRZ0012;
-            PRZ00121 = f1.file;
-            PRZ00122 = f1.lib;
-            PRZ00123 = f1.mbr;
-            sendMsg(f_newMsg('PRZ0012': PRZ0012: cTYPE_DIAG));
-            endAbnormal();
+         if (i_useSrcStmf <> '');
+            chkStmf(i_useSrcStmf);
+         else;
+            chkMbr(i_useSrcFile: i_useSrcLib: i_useSrcMbr);
+         endif;
+
+         g_useSrcFile.name = %trim(i_useSrcLib) + '/' + %trim(i_useSrcFile);
+         g_useSrcFile.member = %trim(i_useSrcMbr);
+
+         if (i_useSrcStmf <> '');
+            g_useSrcFile.hStmf = fopen(i_useSrcStmf: 'r, ccsid=0');
+         else;
+            open(E) SRCFILE;
+            if (%error());
+               clear PRZ0012;
+               PRZ00121 = f1.file;
+               PRZ00122 = f1.lib;
+               PRZ00123 = f1.mbr;
+               sendMsg(f_newMsg('PRZ0012': PRZ0012: cTYPE_DIAG));
+               endAbnormal();
+            endif;
          endif;
 
          open(E) STRPRE1;
@@ -8864,14 +9768,19 @@ srccssid=  "00273">
          p_rmvPgmMsg(cMsg_Rmv_All);
 
          // Prüfen der Datensatzlänge
-         if (f1.rcdLen > cMaxRcdLen);
-            clear PRZ0011;
-            PRZ00111 = f1.rcdLen;
-            PRZ00112 = cMaxRcdLen;
-            PRZ00113 = f1.lib;
-            PRZ00114 = f1.file;
-            sendMsg(f_newMsg('PRZ0011': PRZ0011: cTYPE_DIAG));
-            endAbnormal();
+         if (%open(SRCFILE));
+            if (f1.rcdLen > cMaxRcdLen);
+               clear PRZ0011;
+               PRZ00111 = f1.rcdLen;
+               PRZ00112 = cMaxRcdLen;
+               PRZ00113 = f1.lib;
+               PRZ00114 = f1.file;
+               sendMsg(f_newMsg('PRZ0011': PRZ0011: cTYPE_DIAG));
+               endAbnormal();
+            endif;
+            srcDtaLen = getSrcDataLength();
+         else;
+            srcDtaLen = %size(srcDta);
          endif;
 
          // Formatieren Befehl
@@ -8889,9 +9798,6 @@ srccssid=  "00273">
          // Initialisieren "STRPREPRC" Anweisungen gefunden
          foundPrePrcTags = cFalse;
 
-         // Berechnen Datenlänge
-         srcDtaLen = getSrcDataLength();
-
          // Initialisieren Fortsetzungszeile
          resetLineData(lineData);
 
@@ -8899,15 +9805,26 @@ srccssid=  "00273">
          f1_line_number = 0;
 
          dow '1';
-            read SRCFILE ds_srcFile;
-            if (%eof());
-               leave;
+
+            if (g_useSrcFile.hStmf <> *null);
+               g_readBuffer.size = %size(g_readBuffer.data);
+               fgets(%addr(g_readBuffer.data)
+                     : g_readBuffer.size: g_useSrcFile.hStmf);
+               if (feof(g_useSrcFile.hStmf) <> 0);
+                  leave;
+               else;
+                  srcDta = %trimr(%str(%addr(g_readBuffer.data)): x'25');
+               endif;
+            else;
+               read SRCFILE ds_srcFile;
+               if (%eof());
+                  leave;
+               else;
+                  srcDta = %subst(ds_srcFile.srcDta: 1: srcDtaLen);
+               endif;
             endif;
 
             f1_line_number = f1_line_number + 1;
-
-            // Extrahieren Datenteil gemäß der Datensatzlänge
-            srcDta = %subst(ds_srcFile.srcDta: 1: srcDtaLen);
 
             // Wenn sich in der Programmzeile ein Tag befindet, ...
             if (isTag(srcDta: tag));
@@ -9089,8 +10006,19 @@ srccssid=  "00273">
 
          enddo;
 
-         close SRCFILE;
-         close STRPRE1;
+
+         if (%open(SRCFILE));
+            close SRCFILE;
+         endif;
+
+         if (g_useSrcFile.hStmf <> *null);
+            fclose(g_useSrcFile.hStmf);
+            g_useSrcFile.hStmf = *null;
+         endif;
+
+         if (%open(STRPRE1));
+            close STRPRE1;
+         endif;
 
          // Ausführen >>EXECUTE<< implizit, weil
          // kein Pre-Prozessor Abschnitt gefunden werden konnte
@@ -9136,19 +10064,31 @@ srccssid=  "00273">
          // Senden Abbruchnachricht, weil keine STRPREPRC Anweisungen
          // gefunden worden sind
          if (not foundPrePrcTags and i_tagsReq);
-            clear PRZ0024;
-            PRZ00241 = f1.file;
-            PRZ00242 = f1.lib;
-            PRZ00243 = f1.mbr;
-            sendMsg(f_newMsg('PRZ0024': PRZ0024: cTYPE_ESCAPE));
+            if (i_useSrcStmf <> '');
+               clear PRZ0038;
+               PRZ00381 = i_useSrcStmf;
+               sendMsg(f_newMsg('PRZ0038': PRZ0038: cTYPE_ESCAPE));
+            else;
+               clear PRZ0024;
+               PRZ00241 = f1.file;
+               PRZ00242 = f1.lib;
+               PRZ00243 = f1.mbr;
+               sendMsg(f_newMsg('PRZ0024': PRZ0024: cTYPE_ESCAPE));
+            endif;
          endif;
 
          if (isCmdMissingError);
-            clear PRZ0028;
-            PRZ00281 = f1.file;
-            PRZ00282 = f1.lib;
-            PRZ00283 = f1.mbr;
-            sendMsg(f_newMsg('PRZ0028': PRZ0028: cTYPE_ESCAPE));
+            if (i_useSrcStmf <> '');
+               clear PRZ0039;
+               PRZ00391 = i_useSrcStmf;
+               sendMsg(f_newMsg('PRZ0039': PRZ0039: cTYPE_ESCAPE));
+            else;
+               clear PRZ0028;
+               PRZ00281 = f1.file;
+               PRZ00282 = f1.lib;
+               PRZ00283 = f1.mbr;
+               sendMsg(f_newMsg('PRZ0028': PRZ0028: cTYPE_ESCAPE));
+            endif;
          endif;
 
       /end-free
@@ -9165,6 +10105,26 @@ srccssid=  "00273">
 
          // Restore library list to startup value
          restoreLibraryList();
+
+      /end-free
+     P                 E
+
+      * =============================================================
+      *  Returns the actual value or the default value if the
+      *  actual value is specified as *DFT.
+      * =============================================================
+     P getValue...
+     P                 b
+     D                 pi                  like(stmf_t)
+     D  i_actual                           const like(stmf_t) options(*varsize)
+     D  i_default                          const like(stmf_t) options(*varsize)
+      /free
+
+         if (i_actual = '*DFT');
+            return i_default;
+         endif;
+
+         return i_actual;
 
       /end-free
      P                 E
@@ -9384,6 +10344,11 @@ srccssid=  "00273">
        //  if (i_variables.prvLibl.curLib <> '');
        //     replaceVar('*CX': i_variables.prvLibl.curLib: cmdString);
        //  endif;
+
+         // Ersetzen Parameter  (&STMF)
+         if (i_variables.prvLibl.curLib <> '');
+            replaceVar('&STMF': i_variables.srcStmf: cmdString);
+         endif;
 
          // Prüfen, ob alle Variablen ersetzt worden sind
          posOfVar = %scan('&': cmdString);
@@ -9785,7 +10750,7 @@ srccssid=  "00273">
          endif;
 
          // ermitteln Zeilenende
-         x = getSrcDataLength();
+         x = %len(%trimr(i_srcDta));
          dow (x >= start);
 
             // ... Zeilenende
@@ -10031,8 +10996,12 @@ srccssid=  "00273">
      D srcDtaLen       s                   like(int4_t) inz
       /free
 
-         srcDtaLen = f1.rcdLen -
-                     (%size(ds_srcFile.srcSeq) + %size(ds_srcFile.srcDat));
+         if (%open(SRCFILE));
+            srcDtaLen = f1.rcdLen -
+                        (%size(ds_srcFile.srcSeq) + %size(ds_srcFile.srcDat));
+         else;
+            srcDtaLen = g_readBuffer.size;
+         endif;
 
          return srcDtaLen;
 
@@ -10745,6 +11714,11 @@ srccssid=  "00273">
             close SRCFILE;
          endif;
 
+         if (g_useSrcFile.hStmf <> *null);
+            fclose(g_useSrcFile.hStmf);
+            g_useSrcFile.hStmf = *null;
+         endif;
+
          if (%open(STRPRE1));
             close STRPRE1;
          endif;
@@ -10822,6 +11796,7 @@ srccssid=  "00273">
             if (g_eventf.isOpen);
 
                if (isEmpty or g_option.doAppendJobLog);
+                  // Append job log messages to event file
                   if (i_chgMsgs);
                      writeEventFile(
                         g_srcFile.name: g_srcFile.lib: g_srcFile.mbr
@@ -10881,6 +11856,124 @@ srccssid=  "00273">
             endif;
             x = %scan(%trim(i_var): io_string);
          enddo;
+
+      /end-free
+     P                 E
+      *
+      *===============================================================*
+      *  Check existence of a stream file
+      *===============================================================*
+     P chkStmf...
+     P                 b                   export
+     D                 pi
+     D  i_stmf                     4096a   const varying options(*varsize)
+     D
+      *
+     D rc              s             10i 0
+     D st_stat         ds                  likeds(st_stat_t) inz
+      *
+      *  0/-1 = stat()--Get File Information                include <sys/stat.h>
+     D stat...
+     D                 pr            10i 0        extproc('stat')               = int
+     D  i_pPath                        *   value options(*string)               = *path
+     D  o_stat                             const likeds(st_stat_t)              = *buf
+      *
+     D st_stat_t       ds                  qualified based(pDummy) align(*full)
+     D  mode                         10u 0                                      mode_t =uint
+     D  ino                          10u 0                                      ino_t  =uint
+     D  nlink                         5u 0                                      nlink_t=ushort
+     D  reserved2                     2a
+     D  uid                          10u 0                                      uid_t  =uint
+     D  gid                          10u 0                                      gid_t  =uint
+     D  size                         10i 0                                      off_t  =int
+     D  atime                        10i 0                                      time_t =long
+     D  mtime                        10i 0                                      time_t =long
+     D  ctime                        10i 0                                      time_t =long
+     D  dev                          10u 0                                      dev_t  =uint
+     D  blksize                      10u 0                                      size_t =uint
+     D  allocsize                    10u 0                                      ulong
+     D  objtype                      11A                                        qp0l_objtype_t
+     D  reserved3                     1a
+     D  codepage                      5u 0                                      ushort
+     D  ccsid                         5u 0                                      ushort
+     D  rdev                         10u 0                                      dev_t  =uint
+     D  nlink32                      10u 0                                      nlink32_t=ulng
+     D  rdev64                       20U 0                                      dev64_t=ullng
+     D  dev64                        20U 0                                      dev64_t=ullng
+     D  reserved1                    36A
+     D  ino_gen_id                   10u 0                                      uint
+      *
+      *  Nachrichten
+      *  ... Datei &1 kann nicht geöffnet werden.
+      /COPY QSTRPREPRC,PRZ0034
+      /free
+
+         rc = stat(i_stmf: st_stat);
+         if (rc < 0);
+            clear PRZ0034;
+            PRZ00341 = i_stmf;
+            sendMsg(f_newMsg('PRZ0034': PRZ0034: cTYPE_ESCAPE));
+         endif;
+
+      /end-free
+     P                 E
+      *
+      *===============================================================*
+      *  Check existence of a stream file
+      *===============================================================*
+     P chkMbr...
+     P                 b                   export
+     D                 pi
+     D  i_file                       10a   const
+     D  i_lib                        10a   const
+     D  i_mbr                        10a   const
+      *
+     D rc              s             10i 0
+      *
+      *  system -- Execute a Command
+      *     Return value       Meaning
+      *     ----------------   --------------------------------------
+      *     0                  the command is successful
+      *     -1                 for a NULL pointer
+      *     1                  the command fails
+     d system          pr            10i 0 extproc('system')
+     d  i_clCommand                    *   value options(*string)
+      *
+      *  Nachrichten
+      *  ... Bibliothek &1 nicht gefunden.
+      /COPY QSTRPREPRC,PRZ0035
+      *  ... Datei &1 in Bibliothek &2 nicht gefunden.
+      /COPY QSTRPREPRC,PRZ0036
+      *  ... Teildatei &3 von Datei &1 in Bibliothek &2 nicht gefunden.
+      /COPY QSTRPREPRC,PRZ0037
+      /free
+
+         rc = system('CHKOBJ OBJ(' + %trim(i_lib) + ') OBJTYPE(*LIB)');
+         if (rc <> 0);
+            clear PRZ0035;
+            PRZ00351 = i_lib;
+            sendMsg(f_newMsg('PRZ0035': PRZ0035: cTYPE_ESCAPE));
+         endif;
+
+         rc = system('CHKOBJ OBJ(' + %trim(i_lib) + '/' +
+                                     %trim(i_file) + ') OBJTYPE(*FILE)');
+         if (rc <> 0);
+            clear PRZ0036;
+            PRZ00361 = i_file;
+            PRZ00362 = i_lib;
+            sendMsg(f_newMsg('PRZ0036': PRZ0036: cTYPE_ESCAPE));
+         endif;
+
+         rc = system('CHKOBJ OBJ(' + %trim(i_lib) + '/' +
+                                     %trim(i_file) + ') OBJTYPE(*FILE) ' +
+                                     'MBR(' + %trim(i_mbr) + ')');
+         if (rc <> 0);
+            clear PRZ0037;
+            PRZ00371 = i_file;
+            PRZ00372 = i_lib;
+            PRZ00373 = i_mbr;
+            sendMsg(f_newMsg('PRZ0037': PRZ0037: cTYPE_ESCAPE));
+         endif;
 
       /end-free
      P                 E
@@ -10950,23 +12043,16 @@ srccssid=  "00273">
       *  ----------  ------------  ---------------------------------------  *
       *  18.05.2015  Th.Raddatz    Converted to /free.                      *
       *                                                                     *
-      *  18.02.2016  Th.Raddatz    Added the >IMPORTANT< parameter tag.     *
-      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
-      *                                                                     *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
-      *                           SRCFILE(&SL/&SF) +                        *
-      *                           SRCMBR(&SM);                              *
-      *                                                                     *
-      *   >>COMPILE<<                                                       *
+      *                           SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+      *   >>IMPORTANT<<                                                     *
       *     >>PARM<< TRUNCNBR(*NO);                                         *
       *     >>PARM<< DBGVIEW(*LIST);                                        *
       *     >>PARM<< OPTION(*EVENTF);                                       *
-      *   >>END-COMPILE<<                                                   *
-      *                                                                     *
+      *   >>END-IMPORTANT<<                                                 *
       *   >>EXECUTE<<                                                       *
-      *                                                                     *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
      H NOMAIN
@@ -11159,21 +12245,20 @@ srccssid=  "00273">
       *  03.02.2017  Th.Raddatz    Changed, to append the version           *
       *                            information to the job log.              *
       *                                                                     *
+      *  09.03.2019  Th.Raddatz    Changed, to open the event file for      *
+      *                            modus 'new', when the event file is      *
+      *                            empty.                                   *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
-      *                                                                     *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
-      *                           SRCFILE(&SL/&SF) +                        *
-      *                           SRCMBR(&SM);                              *
-      *                                                                     *
-      *   >>COMPILE<<                                                       *
+      *                           SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+      *   >>IMPORTANT<<                                                     *
       *     >>PARM<< TRUNCNBR(*NO);                                         *
       *     >>PARM<< DBGVIEW(*LIST);                                        *
       *     >>PARM<< OPTION(*EVENTF);                                       *
-      *   >>END-COMPILE<<                                                   *
-      *                                                                     *
+      *   >>END-IMPORTANT<<                                                 *
       *   >>EXECUTE<<                                                       *
-      *                                                                     *
       * >>END-PRE-COMPILER<<                                                *
       * =================================================================== *
       /COPY QSTRPREPRC,H_SPEC
@@ -11396,7 +12481,8 @@ srccssid=  "00273">
 
          if (qEventf.name <> '' and qEventf.lib <> '');
             if (qEventf.name = i_obj and qEventf.lib = i_lib);
-               g_status.openForAppend = cTrue;
+               g_status.openForAppend =
+                  not isEmptyEventFile(qEventf.lib: qEventf.name);
             else;
                g_status.copyEvents = cTrue;
             endif;
@@ -11829,37 +12915,39 @@ srccssid=  "00273">
      /*                            header.                                  */
      /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */
      /*                            command.                                 */
+     /*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    */
      /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
-     /*                                                                     */
      /*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */
-     /*                           SRCFILE(&SL/&SF) +                        */
-     /*                           SRCMBR(&SM);                              */
-     /*                                                                     */
-     /*   >>COMPILE<<                                                       */
+     /*                           SRCFILE(&SL/&SF) SRCMBR(&SM);             */
+     /*   >>IMPORTANT<<                                                     */
      /*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */
      /*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */
      /*     >>PARM<< HLPID(STRPREPRC);                                      */
      /*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */
      /*     >>PARM<< PRDLIB(&LI);                                           */
-     /*   >>END-COMPILE<<                                                   */
-     /*                                                                     */
+     /*   >>END-IMPORTANT<<                                                 */
      /*   >>EXECUTE<<                                                       */
-     /*                                                                     */
      /* >>END-PRE-COMPILER<<                                                */
      /* =================================================================== */
 
              CMD        PROMPT('Pre-Prozessor starten')
 
              PARM       KWD(USESRCFILE) TYPE(QUAL1)        +
-                        MIN(1)                             +
+                        MIN(0)                             +
                         PROMPT('Quellendatei')
 
              PARM       KWD(USESRCMBR ) TYPE(*CHAR)        +
                           LEN(10)                          +
-                          MIN(1)                           +
+                          MIN(0)                           +
                           PROMPT('Teildatei')
+
+             PARM       KWD(USESRCSTMF) TYPE(*CHAR)        +
+                          LEN(4096)                        +
+                          VARY(*YES *INT2)                 +
+                          MIN(0)                           +
+                          PROMPT('Quellendatenstromdatei')
 
              PARM       KWD(CMD       ) TYPE(*CMDSTR)      +
                           LEN(8192)                        +
@@ -12117,6 +13205,15 @@ srccssid=  "00273">
                           PMTCTL(*PMTRQS)                  +
                           PROMPT('Wert für Parameter       (&U9)')
 
+             PARM       KWD(STMF      ) TYPE(*CHAR)        +
+                          LEN(4096)                        +
+                          VARY(*YES *INT2)                 +
+                          MIN(0)                           +
+                          DFT(*NONE)                       +
+                          SPCVAL((*NONE) (*DFT))           +
+                          PMTCTL(*PMTRQS)                  +
+                          PROMPT('Wert für Parameter     (&STMF)')
+
              PARM       KWD(USRDEFVAR ) TYPE(USRDEFVAR)    +
                           MIN(0)                           +
                           MAX(20)                          +
@@ -12203,15 +13300,48 @@ srccssid=  "00273">
  /* Prüfen der Abhängigkeiten */
  /* ------------------------- */
 
- /* ... Ausgeben Ereignisdatei    */
- /*     ... Option = *EVENTF      */
+ /* ... Angeben Quellendatenstromdatei  */
+ /*     oder Quelledatei und -teildatei */
+             DEP        CTL(&USESRCFILE *NE ' ') +
+                          PARM((&USESRCSTMF *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCMBR *NE ' ') +
+                          PARM((&USESRCSTMF *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCSTMF *NE ' ') +
+                          PARM((&USESRCFILE *EQ ' ')  +
+                               (&USESRCMBR  *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCFILE *EQ ' ') +
+                          PARM((&USESRCSTMF *NE ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0032)
+
+             DEP        CTL(&USESRCSTMF *EQ ' ') +
+                          PARM((&USESRCFILE *NE ' ')  +
+                               (&USESRCMBR  *NE ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0032)
+
+ /* ... *DFT nicht zulässig für         */
+ /*     SRCLIB, SRCFILE und SRCMBR,     */
+ /*     wenn USESRCSTMF angegeben ist   */
+             DEP        CTL(&USESRCSTMF *NE ' ') +
+                          PARM((&SRCLIB     *NE '*DFT')  +
+                               (&SRCFILE    *NE '*DFT')  +
+                               (&SRCMBR     *NE '*DFT')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0033)
+
+ /* ... Ausgeben Ereignisdatei          */
+ /*     ... Option = *EVENTF            */
              DEP        CTL(&OPTION *EQ '*EVENTF') +
                           PARM((&LIB *NE '*NONE')  +
                                (&OBJ *NE '*NONE')) +
                           NBRTRUE(*ALL) MSGID(PRZ0027)
 
- /* ... Ändern Objektbeschreibung */
- /*     ... Objekttyp             */
+ /* ... Ändern Objektbeschreibung       */
+ /*     ... Objekttyp                   */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJTYPE          +
                               *EQ '*PGM'))      +
@@ -12224,21 +13354,21 @@ srccssid=  "00273">
                         NBRTRUE(*ALL)            +
                         MSGID(PRZ0020)
 
- /*     ... Objekt-Quellendatei   */
+ /*     ... Objekt-Quellendatei         */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCFILE       +
                               *EQ '*SAME'))     +
                         NBRTRUE(*ALL)           +
                         MSGID(PRZ0016)
 
- /*     ... Objekt-Quellenbibliothek */
+ /*     ... Objekt-Quellenbibliothek    */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCLIB        +
                               *EQ '*SAME'))     +
                         NBRTRUE(*ALL)           +
                         MSGID(PRZ0017)
 
- /*     ... Objekt-Quellenteildatei  */
+ /*     ... Objekt-Quellenteildatei     */
              DEP        CTL(&CHGOBJD *EQ '*NO') +
                         PARM((&OBJSRCMBR        +
                               *EQ '*SAME'))     +
@@ -12298,24 +13428,20 @@ srccssid=  "00273">
      /*                            header.                                  */
      /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */
      /*                            command.                                 */
+     /*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    */
      /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
-     /*                                                                     */
      /*   >>CRTCMD<< CRTCMD       CMD(&LI/STRPREPRC) +                      */
-     /*                           SRCFILE(&SL/&SF) +                        */
-     /*                           SRCMBR(&SM);                              */
-     /*                                                                     */
-     /*   >>COMPILE<<                                                       */
+     /*                           SRCFILE(&SL/&SF) SRCMBR(&SM);             */
+     /*   >>IMPORTANT<<                                                     */
      /*     >>PARM<< PGM(*LIBL/STRPREPRC);                                  */
      /*     >>PARM<< HLPPNLGRP(*LIBL/STRPREPRCP);                           */
      /*     >>PARM<< HLPID(STRPREPRC);                                      */
      /*     >>PARM<< MSGF(*LIBL/STRPREPRC);                                 */
      /*     >>PARM<< PRDLIB(&LI);                                           */
-     /*   >>END-COMPILE<<                                                   */
-     /*                                                                     */
+     /*   >>END-IMPORTANT<<                                                 */
      /*   >>EXECUTE<<                                                       */
-     /*                                                                     */
      /* >>END-PRE-COMPILER<<                                                */
      /* =================================================================== */
 
@@ -12327,8 +13453,14 @@ srccssid=  "00273">
 
              PARM       KWD(USESRCMBR ) TYPE(*CHAR)        +
                           LEN(10)                          +
-                          MIN(1)                           +
+                          MIN(0)                           +
                           PROMPT('Source member')
+
+             PARM       KWD(USESRCSTMF) TYPE(*CHAR)        +
+                          LEN(4096)                        +
+                          VARY(*YES *INT2)                 +
+                          MIN(0)                           +
+                          PROMPT('Source stream file')
 
              PARM       KWD(CMD       ) TYPE(*CMDSTR)      +
                           LEN(8192)                        +
@@ -12586,6 +13718,15 @@ srccssid=  "00273">
                           PMTCTL(*PMTRQS)                  +
                           PROMPT('Value for user-def. par. (&U9)')
 
+             PARM       KWD(STMF      ) TYPE(*CHAR)        +
+                          LEN(4096)                        +
+                          VARY(*YES *INT2)                 +
+                          MIN(0)                           +
+                          DFT(*NONE)                       +
+                          SPCVAL((*NONE) (*DFT))           +
+                          PMTCTL(*PMTRQS)                  +
+                          PROMPT('Value for stream file  (&STMF)')
+
              PARM       KWD(USRDEFVAR ) TYPE(USRDEFVAR)    +
                           MIN(0)                           +
                           MAX(20)                          +
@@ -12672,6 +13813,39 @@ srccssid=  "00273">
  /* Check dependencies        */
  /* ------------------------- */
 
+ /* ... Specify source stream file      */
+ /*     or source file and member.      */
+             DEP        CTL(&USESRCFILE *NE ' ') +
+                          PARM((&USESRCSTMF *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCMBR *NE ' ') +
+                          PARM((&USESRCSTMF *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCSTMF *NE ' ') +
+                          PARM((&USESRCFILE *EQ ' ')  +
+                               (&USESRCMBR  *EQ ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0031)
+
+             DEP        CTL(&USESRCFILE *EQ ' ') +
+                          PARM((&USESRCSTMF *NE ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0032)
+
+             DEP        CTL(&USESRCSTMF *EQ ' ') +
+                          PARM((&USESRCFILE *NE ' ')  +
+                               (&USESRCMBR  *NE ' ')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0032)
+
+ /* ... *DFT ist not allowed for        */
+ /*     SRCLIB, SRCFILE und SRCMBR,     */
+ /*     when USESRCSTMF is specified.   */
+             DEP        CTL(&USESRCSTMF *NE ' ') +
+                          PARM((&SRCLIB     *NE '*DFT')  +
+                               (&SRCFILE    *NE '*DFT')  +
+                               (&SRCMBR     *NE '*DFT')) +
+                          NBRTRUE(*ALL) MSGID(PRZ0033)
+
  /* ... Create Event File         */
  /*     ... Option = *EVENTF      */
              DEP        CTL(&OPTION *EQ '*EVENTF') +
@@ -12729,4 +13903,4 @@ DLTPGM PGM(&tolib/A_INSTALL)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application STRPREPRC successfully installed.
 ]]>  </sendmsg>
-</upload>
+</upload> 
