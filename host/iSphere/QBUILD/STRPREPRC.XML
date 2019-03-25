@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/10/2019">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/25/2019">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3533,13 +3533,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V2.0.0 - 09.03.2019 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V2.0.1 - 25.03.2019 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '2.0'
+     d                 C                   '2.0.1'
      d STRPREPRC_DATE...
-     d                 C                   '09.03.2019'
+     d                 C                   '25.03.2019'
       *
 ]]>  </copysrc>
 </mbr>
@@ -9276,7 +9276,7 @@ srccssid=  "00273">
      D  i_useLibl                                 like(bool_t)
      D  i_usrDefVars                              likeds(inpUsrDefVars_t)
       *
-     D getValue...
+     D getSpcValDft...
      D                 pr                  like(stmf_t)
      D                                     extproc('getValue')
      D  i_actual                           const like(stmf_t) options(*varsize)
@@ -9667,11 +9667,12 @@ srccssid=  "00273">
 
          clear variables;
          variables.lib = i_lib;
-         variables.obj = getValue(i_obj: i_srcMbr);
+         variables.obj =
+            getSpcValDft(getSpcValDft(i_obj: i_srcMbr): i_useSrcMbr);
          variables.typeCode = i_typeCode;
-         variables.srcLib = getValue(i_srcLib: i_useSrcLib);
-         variables.srcFile = getValue(i_srcFile: i_useSrcFile);
-         variables.srcMbr = getValue(i_srcMbr: i_useSrcMbr);
+         variables.srcLib = getSpcValDft(i_srcLib: i_useSrcLib);
+         variables.srcFile = getSpcValDft(i_srcFile: i_useSrcFile);
+         variables.srcMbr = getSpcValDft(i_srcMbr: i_useSrcMbr);
          variables.testLib = i_testLib;
          variables.testObj = i_testObj;
          variables.tgtRls = i_tgtRls;
@@ -9688,7 +9689,7 @@ srccssid=  "00273">
          variables.user7 = i_user7;
          variables.user8 = i_user8;
          variables.user9 = i_user9;
-         variables.srcStmf = getValue(i_stmf: i_useSrcStmf);
+         variables.srcStmf = getSpcValDft(i_stmf: i_useSrcStmf);
          variables.libl = i_libl;
          variables.useLibl = i_useLibl;
 
@@ -9714,9 +9715,9 @@ srccssid=  "00273">
 
          if (i_chgObjD = '*YES');
 
-            objSrcFile = getValue(i_objSrcFile: i_srcFile);
-            objSrcLib = getValue(i_objSrcLib: i_srcLib);
-            objSrcMbr = getValue(i_objSrcMbr: i_srcMbr);
+            objSrcFile = getSpcValDft(i_objSrcFile: i_srcFile);
+            objSrcLib = getSpcValDft(i_objSrcLib: i_srcLib);
+            objSrcMbr = getSpcValDft(i_objSrcMbr: i_srcMbr);
 
             cmdChgObjD =
                'CHGOBJDA +
@@ -10113,7 +10114,7 @@ srccssid=  "00273">
       *  Returns the actual value or the default value if the
       *  actual value is specified as *DFT.
       * =============================================================
-     P getValue...
+     P getSpcValDft...
      P                 b
      D                 pi                  like(stmf_t)
      D  i_actual                           const like(stmf_t) options(*varsize)
@@ -13903,4 +13904,4 @@ DLTPGM PGM(&tolib/A_INSTALL)
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*COMP     "><![CDATA[
 Application STRPREPRC successfully installed.
 ]]>  </sendmsg>
-</upload> 
+</upload>
