@@ -1,8 +1,8 @@
 
 Changelog: iSphere 3.5.2.b002
 -----------------------------
- • Added parameters &USESRCSTMF and &XSTMF to STRPREPRC command.
-   Improved reporting of errors when the creation command is invalid.
+ • Improved error reporting of STRPREPRC command.
+ • Update library version number to 3.2.2.
 
 Changelog: iSphere 3.5.2.b001
 -----------------------------
