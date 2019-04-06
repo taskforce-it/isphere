@@ -14,7 +14,6 @@ import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 
 public class DatatypeConverterDelegate implements IDatatypeConverterDelegate {
 
-    @Override
     public byte[] parseHexBinary(String paramString) {
         return DatatypeConverter.parseHexBinary(paramString);
     }
