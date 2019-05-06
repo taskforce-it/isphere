@@ -21,6 +21,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
@@ -28,6 +30,7 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -55,7 +58,9 @@ public class TransferISphereLibrary extends Shell {
     private CommandCall commandCall;
     private Table tableStatus;
     private Button buttonStart;
+    private Composite buttonPanel;
     private Button buttonClose;
+    private Button buttonJobLog;
     private String iSphereLibrary;
     private int ftpPort;
     private String hostName;
@@ -136,7 +141,16 @@ public class TransferISphereLibrary extends Shell {
                     tableStatus.selectAll();
                 }
                 if (event.keyCode == 'c') {
-                    ClipboardHelper.setTableItemsText(tableStatus.getSelection());
+                    copyStatusLinesToClipboard(tableStatus.getSelection());
+                }
+            }
+        });
+
+        tableStatus.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                if (e.button == 1) {
+                    copyStatusLinesToClipboard(tableStatus.getSelection());
                 }
             }
         });
@@ -145,7 +159,63 @@ public class TransferISphereLibrary extends Shell {
         menuTableStatusContextMenu.addMenuListener(new TableContextMenu(tableStatus));
         tableStatus.setMenu(menuTableStatusContextMenu);
 
-        buttonClose = WidgetFactory.createPushButton(this);
+        buttonPanel = createButtons(false);
+    }
+
+    protected void copyStatusLinesToClipboard(TableItem[] tableItems) {
+
+        if (tableItems.length == 1) {
+            copyStatusLineToClipboard();
+        } else {
+            ClipboardHelper.setTableItemsText(tableItems);
+        }
+    }
+
+    protected void copyStatusLineToClipboard() {
+
+        TableItem[] tableItems = tableStatus.getSelection();
+        if (tableItems != null && tableItems.length >= 1) {
+            String text = tableItems[0].getText();
+            if (text.startsWith(Messages.Server_job_colon)) {
+                text = text.substring(Messages.Server_job_colon.length());
+            }
+            ClipboardHelper.setText(text.trim());
+        }
+    }
+
+    private Composite createButtons(boolean printJobLogButton) {
+
+        Composite buttonPanel = new Composite(this, SWT.NONE);
+        GridLayout buttonPanelLayout = new GridLayout(2, true);
+        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        buttonPanelLayout.marginHeight = 0;
+        buttonPanelLayout.marginWidth = 0;
+        buttonPanel.setLayout(buttonPanelLayout);
+
+        if (printJobLogButton) {
+            createButtonPrintJobLog(buttonPanel);
+        }
+
+        createButtonClose(buttonPanel);
+
+        return buttonPanel;
+    }
+
+    private void createButtonPrintJobLog(Composite buttonPanel) {
+        buttonJobLog = WidgetFactory.createPushButton(buttonPanel);
+        buttonJobLog.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        buttonJobLog.setText(Messages.btnLabel_Print_job_log);
+        buttonJobLog.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                printJobLog();
+            }
+        });
+    }
+
+    private void createButtonClose(Composite buttonPanel) {
+        buttonClose = WidgetFactory.createPushButton(buttonPanel);
+        buttonClose.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonClose.setText(Messages.btnLabel_Close);
         buttonClose.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -153,9 +223,6 @@ public class TransferISphereLibrary extends Shell {
                 close();
             }
         });
-
-        GridData gd_buttonClose = new GridData(GridData.CENTER, GridData.CENTER, true, false);
-        buttonClose.setLayoutData(gd_buttonClose);
     }
 
     @Override
@@ -259,6 +326,14 @@ public class TransferISphereLibrary extends Shell {
         return true;
     }
 
+    private void printJobLog() {
+
+        String cpfMsg = executeCommand("DSPJOBLOG JOB(*) OUTPUT(*PRINT)", true);
+        if (cpfMsg.equals("")) {
+            setStatus(Messages.Job_log_has_been_printed);
+        }
+    }
+
     private String executeCommand(String command, boolean logError) {
         try {
             commandCall.run(command);
@@ -296,6 +371,7 @@ public class TransferISphereLibrary extends Shell {
                     as400.connectService(AS400.COMMAND);
                     commandCall = new CommandCall(as400);
                     if (commandCall != null) {
+                        setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
                         hostName = as400.getSystemName();
                         setStatus(Messages.bind(Messages.About_to_transfer_library_A_to_host_B_using_port_C, new String[] { iSphereLibrary.trim(),
                             hostName, Integer.toString(ftpPort) }));
@@ -377,6 +453,10 @@ public class TransferISphereLibrary extends Shell {
                 }
             }
 
+            buttonPanel.dispose();
+            buttonPanel = createButtons(true);
+            layout(true);
+
             if (successfullyTransfered) {
                 buttonStart.setEnabled(false);
                 buttonClose.setEnabled(true);
@@ -384,7 +464,7 @@ public class TransferISphereLibrary extends Shell {
             } else {
                 buttonStart.setEnabled(true);
                 buttonClose.setEnabled(true);
-                buttonClose.setFocus();
+                buttonJobLog.setFocus();
             }
         }
     }
@@ -396,6 +476,7 @@ public class TransferISphereLibrary extends Shell {
 
         private Table table;
         private MenuItem menuItemCopySelected;
+        private MenuItem menuItemCopyAll;
 
         public TableContextMenu(Table table) {
             this.table = table;
@@ -415,6 +496,9 @@ public class TransferISphereLibrary extends Shell {
             if (!((menuItemCopySelected == null) || (menuItemCopySelected.isDisposed()))) {
                 menuItemCopySelected.dispose();
             }
+            if (!((menuItemCopyAll == null) || (menuItemCopyAll.isDisposed()))) {
+                menuItemCopyAll.dispose();
+            }
         }
 
         private void createMenuItems() {
@@ -429,7 +513,16 @@ public class TransferISphereLibrary extends Shell {
             menuItemCopySelected.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ClipboardHelper.setTableItemsText(table.getItems());
+                    copyStatusLinesToClipboard(table.getSelection());
+                }
+            });
+
+            menuItemCopyAll = new MenuItem(getMenu(), SWT.NONE);
+            menuItemCopyAll.setText(Messages.Copy_all);
+            menuItemCopyAll.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    copyStatusLinesToClipboard(table.getItems());
                 }
             });
         }
