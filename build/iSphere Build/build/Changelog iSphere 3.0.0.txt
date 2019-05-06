@@ -4,6 +4,8 @@ Changelog: iSphere 3.5.3.b001
  • Changed LPEXTaskManager to remove closing comment characters from
    task description.
  • Fixed NullPointerException in task tags editor.
+ • Fixed NullPointerException in task tags preferences when saving
+   a document.
 
 Changelog: iSphere 3.5.2.b002
 -----------------------------
