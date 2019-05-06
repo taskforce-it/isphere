@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.5.3.b001
 -----------------------------
+ • Added "Print job log" button to the install iSphere library
+   dialog.
  • Changed LPEXTaskManager to remove closing comment characters from
    task description.
  • Fixed NullPointerException in task tags editor.

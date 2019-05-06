@@ -66,6 +66,8 @@ public class Messages extends NLS {
 
     public static String Copy;
 
+    public static String Copy_all;
+
     public static String Duplicate;
 
     public static String Decimal_positions_Bytes;
@@ -778,7 +780,13 @@ public class Messages extends NLS {
 
     public static String Deleting_object_A_B_of_type_C;
 
+    public static String Job_log_has_been_printed;
+
+    public static String Server_job_colon;
+
     public static String btnLabel_Close;
+
+    public static String btnLabel_Print_job_log;
 
     public static String Text;
 
