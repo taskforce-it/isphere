@@ -23,6 +23,8 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -68,6 +70,18 @@ public class TransferISphereLibrary extends Shell {
         setFtpPort(aFtpPort);
 
         createContents();
+
+        addShellListener(new ShellAdapter() {
+
+            public void shellClosed(ShellEvent arg0) {
+
+                if (as400 != null) {
+                    as400.disconnectAllServices();
+                    as400 = null;
+                    commandCall = null;
+                }
+            }
+        });
     }
 
     private void setFtpPort(int aFtpPort) {
