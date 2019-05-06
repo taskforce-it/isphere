@@ -98,8 +98,13 @@ public final class Preferences {
     }
 
     public boolean supportsResource(IResource resource) {
-        if (getOrCreateFileExtensionsSet().contains(resource.getFileExtension().toUpperCase())) {
-            return true;
+        if (resource != null) {
+            String fileExtension = resource.getFileExtension();
+            if (fileExtension != null) {
+                if (getOrCreateFileExtensionsSet().contains(fileExtension.toUpperCase())) {
+                    return true;
+                }
+            }
         }
         return false;
     }
