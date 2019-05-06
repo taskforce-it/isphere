@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.3.b001
+-----------------------------
+ • Changed LPEXTaskManager to remove closing comment characters from
+   task description.
+
 Changelog: iSphere 3.5.2.b002
 -----------------------------
  • Improved error reporting of STRPREPRC command.
