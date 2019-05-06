@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.texteditor.MarkerUtilities;
@@ -46,6 +47,10 @@ public class LPEXTaskManager {
     private final Integer TASK_PRIORITY_NORMAL = new Integer(IMarker.PRIORITY_NORMAL);
 
     private final Integer TASK_PRIORITY_HIGH = new Integer(IMarker.PRIORITY_HIGH);
+
+    private static final String XML_END_COMMENT = "-->";
+
+    private static final String CL_END_COMMENT = "*/";
 
     public LPEXTaskManager(IResource aResource, IDocument aDocument) {
         resource = aResource;
@@ -79,7 +84,7 @@ public class LPEXTaskManager {
      * @throws CoreException
      */
     public void removeMarkers() throws CoreException {
-        if (resource==null) {
+        if (resource == null) {
             return;
         }
         IMarker[] tMarkers = null;
@@ -109,7 +114,7 @@ public class LPEXTaskManager {
      * @return <code>true</code>, if marker tags are enabled.
      */
     public boolean markerAreEnabled() {
-        if (resource==null){
+        if (resource == null) {
             return false;
         }
         if (!(preferences.isEnabled() && preferences.supportsResource(resource))) {
@@ -159,7 +164,7 @@ public class LPEXTaskManager {
             }
             tTagList.append(tagName);
         }
-        return "(?:(?:(?://|\\*).*\\s)(" + tTagList.toString() + ")(?::|\\s))";
+        return "(?:(?:(?://|\\*|<!--).*\\s)(" + tTagList.toString() + ")(?::|\\s))";
     }
 
     private Integer getPriority(String priority) {
@@ -183,11 +188,25 @@ public class LPEXTaskManager {
         IRegion tRange = document.getLineInformationOfOffset(tEnd);
 
         String tTaskTag = aMatcher.group(1).trim();
-        String tTaskDescription = document.get(tStart, tRange.getOffset() + tRange.getLength() - tStart).trim();
+        String tTaskDescription = retrieveTaskDescription(tStart, tRange);
         Integer tPriority = findPriority(aJavaTasks, tTaskTag);
 
         LPEXTask tTask = new LPEXTask(tTaskTag, tTaskDescription, document.getLineOfOffset(tStart) + 1, tPriority, tStart);
         return tTask;
+    }
+
+    private String retrieveTaskDescription(int tStart, IRegion tRange) throws BadLocationException {
+
+        String description = document.get(tStart, tRange.getOffset() + tRange.getLength() - tStart).trim();
+        if (description != null) {
+            if (description.endsWith(XML_END_COMMENT)) {
+                description = description.substring(0, description.length() - XML_END_COMMENT.length());
+            } else if (description.endsWith(CL_END_COMMENT)) {
+                description = description.substring(0, description.length() - CL_END_COMMENT.length());
+            }
+        }
+
+        return description.trim();
     }
 
     private Integer findPriority(Map<String, Integer> aJavaTasks, String aTaskTag) {
