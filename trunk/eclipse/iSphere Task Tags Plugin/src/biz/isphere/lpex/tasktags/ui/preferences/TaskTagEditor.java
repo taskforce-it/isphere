@@ -221,13 +221,16 @@ public class TaskTagEditor extends Dialog {
     }
 
     private void performOK(SelectionEvent anEvent) {
+
+        editedFileExtension = txtFileExtension.getText();
+
         if (mode == MODE_NEW) {
-            new TableItem(tblFileExtensions, SWT.NONE).setText(txtFileExtension.getText());
+            new TableItem(tblFileExtensions, SWT.NONE).setText(editedFileExtension);
         } else {
-            getEditedItem().setText(txtFileExtension.getText());
+            getEditedItem().setText(editedFileExtension);
         }
+
         tblFileExtensions.redraw();
-        editedFileExtension = getEditedItem().getText();
         result = SWT.OK;
         shell.dispose();
     }
