@@ -1,8 +1,11 @@
 
-Changelog: iSphere 3.5.3.b001
------------------------------
+Changelog: iSphere 3.5.3.r
+--------------------------
+ • Added option to specify the name of an ASP device, when uploading
+   the iSphere library.
  • Added "Print job log" button to the install iSphere library
    dialog.
+ • Disabled dialog close button while uploading the iSphere library.
  • Changed LPEXTaskManager to remove closing comment characters from
    task description.
  • Fixed NullPointerException in task tags editor.
