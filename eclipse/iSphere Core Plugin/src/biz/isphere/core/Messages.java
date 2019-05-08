@@ -296,6 +296,10 @@ public class Messages extends NLS {
 
     public static String Start_Transfer;
 
+    public static String ASP_device_name_colon;
+
+    public static String Restore_library_parameters;
+
     public static String Enter_a_host;
 
     public static String iSphere_Message_File_Search;
@@ -781,6 +785,8 @@ public class Messages extends NLS {
     public static String Deleting_object_A_B_of_type_C;
 
     public static String Job_log_has_been_printed;
+
+    public static String Error_A;
 
     public static String Server_job_colon;
 

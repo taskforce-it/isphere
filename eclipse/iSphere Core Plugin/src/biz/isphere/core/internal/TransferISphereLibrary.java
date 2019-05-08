@@ -32,15 +32,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
@@ -54,6 +60,8 @@ import com.ibm.as400.access.FTP;
 
 public class TransferISphereLibrary extends Shell {
 
+    private static final String ASP_DEVICE_DEFAULT_VALUE = "*DEFAULT";
+
     private AS400 as400;
     private CommandCall commandCall;
     private Table tableStatus;
@@ -62,8 +70,12 @@ public class TransferISphereLibrary extends Shell {
     private Button buttonClose;
     private Button buttonJobLog;
     private String iSphereLibrary;
+    private String aspDevice;
     private int ftpPort;
     private String hostName;
+    private Group groupRestoreParameters;
+    private Label lblASPDevice;
+    private Text txtASPDevice;
 
     public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aHostName, int aFtpPort) {
         super(display, style);
@@ -71,15 +83,24 @@ public class TransferISphereLibrary extends Shell {
         setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32));
 
         iSphereLibrary = anISphereLibrary;
+        aspDevice = ASP_DEVICE_DEFAULT_VALUE;
         hostName = aHostName;
         setFtpPort(aFtpPort);
 
         createContents();
 
+        addListener(SWT.Close, new Listener() {
+            public void handleEvent(Event event) {
+                if (!buttonClose.isDisposed()) {
+                    event.doit = buttonClose.isEnabled();
+                } else {
+                    event.doit = true;
+                }
+            }
+        });
+
         addShellListener(new ShellAdapter() {
-
             public void shellClosed(ShellEvent arg0) {
-
                 if (as400 != null) {
                     as400.disconnectAllServices();
                     as400 = null;
@@ -105,12 +126,26 @@ public class TransferISphereLibrary extends Shell {
         setLayout(gl_shell);
 
         setText(Messages.Transfer_iSphere_library);
-        setSize(500, 330);
+        setSize(500, 400);
 
         buttonStart = WidgetFactory.createPushButton(this);
         buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
         buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         buttonStart.setText(Messages.Start_Transfer);
+
+        groupRestoreParameters = new Group(this, SWT.NONE);
+        groupRestoreParameters.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        groupRestoreParameters.setLayout(new GridLayout(2, false));
+        groupRestoreParameters.setText(Messages.Restore_library_parameters);
+
+        lblASPDevice = new Label(groupRestoreParameters, SWT.NONE);
+        lblASPDevice.setText(Messages.ASP_device_name_colon);
+
+        txtASPDevice = WidgetFactory.createNameText(groupRestoreParameters);
+        GridData ld_txtASPDevice = new GridData();
+        ld_txtASPDevice.widthHint = 120;
+        txtASPDevice.setLayoutData(ld_txtASPDevice);
+        txtASPDevice.setText(aspDevice);
 
         tableStatus = new Table(this, SWT.BORDER | SWT.MULTI);
         final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -186,7 +221,7 @@ public class TransferISphereLibrary extends Shell {
     private Composite createButtons(boolean printJobLogButton) {
 
         Composite buttonPanel = new Composite(this, SWT.NONE);
-        GridLayout buttonPanelLayout = new GridLayout(2, true);
+        GridLayout buttonPanelLayout = new GridLayout(1, true);
         buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         buttonPanelLayout.marginHeight = 0;
         buttonPanelLayout.marginWidth = 0;
@@ -202,6 +237,10 @@ public class TransferISphereLibrary extends Shell {
     }
 
     private void createButtonPrintJobLog(Composite buttonPanel) {
+
+        GridLayout buttonPanelLayout = (GridLayout)buttonPanel.getLayout();
+        buttonPanelLayout.numColumns++;
+
         buttonJobLog = WidgetFactory.createPushButton(buttonPanel);
         buttonJobLog.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonJobLog.setText(Messages.btnLabel_Print_job_log);
@@ -234,9 +273,10 @@ public class TransferISphereLibrary extends Shell {
         TableItem itemStatus = new TableItem(tableStatus, SWT.BORDER);
         itemStatus.setText(status);
         tableStatus.update();
+        redraw();
     }
 
-    private boolean checkLibraryPrecondition(String iSphereLibrary) {
+    private boolean checkLibraryPrecondition(String iSphereLibrary, String aspDevice) {
 
         while (libraryExists(iSphereLibrary)) {
             if (!MessageDialog.openQuestion(
@@ -247,7 +287,7 @@ public class TransferISphereLibrary extends Shell {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_library_A, iSphereLibrary));
-            deleteLibrary(iSphereLibrary, true);
+            deleteLibrary(iSphereLibrary, aspDevice);
         }
 
         return true;
@@ -262,9 +302,9 @@ public class TransferISphereLibrary extends Shell {
         return true;
     }
 
-    private boolean deleteLibrary(String iSphereLibrary, boolean logErrors) {
+    private boolean deleteLibrary(String iSphereLibrary, String aspDevice) {
 
-        if (!executeCommand("DLTLIB LIB(" + iSphereLibrary + ")", logErrors).equals("")) {
+        if (!executeCommand(produceDeleteLibraryCommand(iSphereLibrary, aspDevice), true).equals("")) {
             return false;
         }
 
@@ -282,7 +322,7 @@ public class TransferISphereLibrary extends Shell {
                 return false;
             }
             setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
-            deleteSaveFile(workLibrary, saveFileName, true);
+            deleteSaveFile(workLibrary, saveFileName);
         }
 
         return true;
@@ -297,28 +337,27 @@ public class TransferISphereLibrary extends Shell {
         return true;
     }
 
-    private boolean deleteSaveFile(String workLibrary, String saveFileName, boolean logErrors) {
+    private boolean deleteSaveFile(String workLibrary, String saveFileName) {
 
-        if (!executeCommand("DLTF FILE(" + workLibrary + "/" + saveFileName + ")", logErrors).equals("")) {
+        if (!executeCommand("DLTF FILE(" + workLibrary + "/" + saveFileName + ")", true).equals("")) {
             return false;
         }
 
         return true;
     }
 
-    private boolean createSaveFile(String workLibrary, String saveFileName, boolean logErrors) {
+    private boolean createSaveFile(String workLibrary, String saveFileName) {
 
-        if (!executeCommand("CRTSAVF FILE(" + workLibrary + "/" + saveFileName + ") TEXT('iSphere')", logErrors).equals("")) {
+        if (!executeCommand("CRTSAVF FILE(" + workLibrary + "/" + saveFileName + ") TEXT('iSphere')", true).equals("")) {
             return false;
         }
 
         return true;
     }
 
-    private boolean restoreLibrary(String workLibrary, String saveFileName, String iSphereLibrary) {
+    private boolean restoreLibrary(String workLibrary, String saveFileName, String iSphereLibrary, String aspDevice) {
 
-        String cpfMsg = executeCommand("RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary
-            + ")", true);
+        String cpfMsg = executeCommand(produceRestoreLibraryCommand(workLibrary, saveFileName, iSphereLibrary, aspDevice), true);
         if (!cpfMsg.equals("")) {
             return false;
         }
@@ -347,6 +386,7 @@ public class TransferISphereLibrary extends Shell {
                 }
                 if (escapeMessage != null) {
                     if (logError) {
+                        setStatus(Messages.bind(Messages.Error_A, command));
                         for (int idx = 0; idx < messageList.length; idx++) {
                             setStatus(messageList[idx].getID() + ": " + messageList[idx].getText());
                         }
@@ -387,84 +427,127 @@ public class TransferISphereLibrary extends Shell {
         return false;
     }
 
+    private String produceRestoreLibraryCommand(String workLibrary, String saveFileName, String iSphereLibrary, String aspDevice) {
+
+        String command = "RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary + ")";
+        if (isASPDeviceSpecified(aspDevice)) {
+            command += " RSTASPDEV(" + aspDevice + ")";
+        }
+
+        return command;
+    }
+
+    private String produceDeleteLibraryCommand(String iSphereLibrary, String aspDevice) {
+
+        String command = "DLTLIB LIB(" + iSphereLibrary + ")";
+        if (isASPDeviceSpecified(aspDevice)) {
+            command += " ASPDEV(*)";
+        }
+
+        return command;
+    }
+
+    private boolean isASPDeviceSpecified(String aspDevice) {
+
+        if (StringHelper.isNullOrEmpty(aspDevice)) {
+            return false;
+        }
+
+        if (ASP_DEVICE_DEFAULT_VALUE.equals(aspDevice)) {
+            return false;
+        }
+
+        return true;
+    }
+
     private class TransferLibrarySelectionAdapter extends SelectionAdapter {
         @Override
         public void widgetSelected(final SelectionEvent event) {
 
             buttonStart.setEnabled(false);
             buttonClose.setEnabled(false);
+            txtASPDevice.setEnabled(false);
+
             boolean successfullyTransfered = false;
 
-            String workLibrary = "QGPL";
-            String saveFileName = iSphereLibrary;
+            try {
 
-            setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
-            if (!checkLibraryPrecondition(iSphereLibrary)) {
-                setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
-            } else {
-                setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
-                if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
-                    setStatus("!!!   " + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName })
-                        + "   !!!");
+                String workLibrary = "QGPL";
+                String saveFileName = iSphereLibrary;
+                aspDevice = txtASPDevice.getText().toUpperCase();
+
+                setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
+                if (!checkLibraryPrecondition(iSphereLibrary, aspDevice)) {
+                    setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
                 } else {
-
-                    setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
-                    if (!createSaveFile(workLibrary, saveFileName, true)) {
+                    setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
+                    if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
                         setStatus("!!!   "
-                            + Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName })
-                            + "   !!!");
+                            + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "   !!!");
                     } else {
 
-                        try {
+                        setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
+                        if (!createSaveFile(workLibrary, saveFileName)) {
+                            setStatus("!!!   "
+                                + Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName })
+                                + "   !!!");
+                        } else {
 
-                            setStatus(Messages.Sending_save_file_to_host);
-                            setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
-                            AS400FTP client = new AS400FTP(as400);
+                            try {
 
-                            URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
-                            File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE.SAVF");
-                            client.setPort(ftpPort);
-                            client.setDataTransferType(FTP.BINARY);
-                            if (client.connect()) {
-                                client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
-                                client.disconnect();
+                                setStatus(Messages.Sending_save_file_to_host);
+                                setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
+                                AS400FTP client = new AS400FTP(as400);
+
+                                URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
+                                File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE.SAVF");
+                                client.setPort(ftpPort);
+                                client.setDataTransferType(FTP.BINARY);
+                                if (client.connect()) {
+                                    client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
+                                    client.disconnect();
+                                }
+
+                                setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
+                                if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary, aspDevice)) {
+                                    setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
+                                } else {
+                                    setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
+                                    successfullyTransfered = true;
+                                }
+
+                            } catch (Throwable e) {
+                                ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
+
+                                setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
+                                setStatus(e.getLocalizedMessage());
+                            } finally {
+
+                                setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
+                                deleteSaveFile(workLibrary, saveFileName);
                             }
 
-                            setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
-                            if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary)) {
-                                setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
-                            } else {
-                                setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
-                                successfullyTransfered = true;
-                            }
-
-                        } catch (Throwable e) {
-                            ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
-
-                            setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
-                            setStatus(e.getLocalizedMessage());
-                        } finally {
-
-                            setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
-                            deleteSaveFile(workLibrary, saveFileName, true);
                         }
-
                     }
                 }
-            }
 
-            buttonPanel.dispose();
-            buttonPanel = createButtons(true);
-            layout(true);
+                buttonPanel.dispose();
+                buttonPanel = createButtons(true);
+                layout(true);
 
-            if (successfullyTransfered) {
-                buttonStart.setEnabled(false);
-                buttonClose.setEnabled(true);
-                buttonClose.setFocus();
-            } else {
-                buttonStart.setEnabled(true);
-                buttonClose.setEnabled(true);
-                buttonJobLog.setFocus();
+            } finally {
+
+                if (successfullyTransfered) {
+                    buttonStart.setEnabled(false);
+                    buttonClose.setEnabled(true);
+                    txtASPDevice.setEnabled(false);
+                    buttonClose.setFocus();
+                } else {
+                    buttonStart.setEnabled(true);
+                    buttonClose.setEnabled(true);
+                    txtASPDevice.setEnabled(true);
+                    buttonJobLog.setFocus();
+                }
             }
         }
     }

@@ -92,7 +92,14 @@
 			<p>
 		</li>
 		<li>On the following &quot;Transfer iSphere library&quot; dialog,
-			click [Start Transfer] to start the FTP transfer.
+			click [Start Transfer] to start the FTP transfer.<br>
+			Use the <i>ASP device name</i> parameter to specify the
+			name of the ASP device for restoring the library.
+			<p>
+			<table>
+			<tr><td nowrap valign="top">*DFAULT</td><td valign="top">-</td><td valign="top">The DLTLIB and RSTLIB commands are executed without the ASPDEV and RSTASPDEV parameters.</td></tr>
+			<tr><td nowrap valign="top">asp-device-name</td><td valign="top">-</td><td valign="top">The DLTLIB command is executed with ASPDEV(*) and the RSTLIB command is extended with RSTASPDEV(asp-device-name).</td></tr>
+			</table>
 			<p>
 				<img src="./assets/transfer_start.png" />
 			<p>
@@ -106,19 +113,20 @@
 
 		<li>The transfer will start and the steps will be displayed in
 			the window as the transfer runs.</li>
-		<li>At the end of a successful install a [Close] buttom will
-			appear. Click it to end the transfer dialog:
+		<li>At the end of the transfer request a [Print job log] button will
+			appear:
 			<p>
-				<img src="./assets/transfer_end.gif" />
+				<img src="./assets/transfer_end.png" />
 			<p>
 		</li>
 		<p>
 		<li>Review the contents of the window to check, whether the library has been
 		    successfully installed. If you need to report errors, use the context menu
-			to copy all messages to the clipboard . Alternatively you can use <i>CTRL-A</i>
-			to select all messages and <i>CTRL-C</i> to copy the selected
-			messages.
+			to copy all messages to the clipboard and click the [Print job log] button
+			to print a job log on the host. Use the [Close] button to close the dialog.
 			<p>
+			Alternatively you can use <i>CTRL-A</i> to select all messages and 
+			<i>CTRL-C</i> to copy the selected messages to the clipboard.
 		</li>
 	</ul>
 	<p>
