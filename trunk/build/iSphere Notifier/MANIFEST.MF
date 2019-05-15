@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.5.2.r
-X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: Update the library if you want to get the update of the STRPREPRC command.
-X-Bundle-Info: This is a small maintenance release but also the last release with a library compiled for V6R1.
-X-Beta-Version: 3.5.2.r
-X-Beta-Update-Library: true
-X-Beta-Update-Library-Info: Update the library if you want to get the update of the STRPREPRC command.
-X-Beta-Info: This is a small maintenance release but also the last release with a library compiled for V6R1.
+Bundle-Version: 3.5.3.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: This is a small maintenance release. The library is compiled forV6R1.
+X-Beta-Version: 3.5.3.r
+X-Beta-Update-Library: false
+X-Beta-Update-Library-Info: .
+X-Beta-Info: This is a small maintenance release. The library is compiled forV6R1.
