@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.4.r
+--------------------------
+ • Fixed cursor positioning issue, when filtering messages in the
+   iSphere message file editor. (Ticket #72).
+
 Changelog: iSphere 3.5.3.r
 --------------------------
  • Added option to specify the name of an ASP device, when uploading
