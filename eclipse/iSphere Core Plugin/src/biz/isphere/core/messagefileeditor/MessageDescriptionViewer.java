@@ -558,7 +558,7 @@ public class MessageDescriptionViewer {
 
         refreshJob.cancel();
         refreshJob.setFocusControl(control);
-        
+
         if (!(control instanceof Text) || autoRefreshDelay <= 0 || messageDescriptions.length < threshold) {
             refreshJob.schedule();
         } else {
@@ -785,11 +785,15 @@ public class MessageDescriptionViewer {
             compositeHeader.setEnabled(true);
 
             if (focusControl != null) {
-                focusControl.setFocus();
                 if (focusControl instanceof Text) {
                     Text text = (Text)focusControl;
-                    int length = text.getText().length();
-                    text.setSelection(length, length);
+                    int caretPosition = text.getCaretPosition();
+                    focusControl.setFocus();
+                    if (caretPosition >= 0) {
+                        text.setSelection(caretPosition, caretPosition);
+                    }
+                } else {
+                    focusControl.setFocus();
                 }
             }
 
