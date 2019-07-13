@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.5.3.r
+Bundle-Version: 3.5.4.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: This is a small maintenance release. The library is compiled forV6R1.
-X-Beta-Version: 3.5.3.r
+X-Bundle-Info: Fixed cursor positioning issue, when filtering messages in the iSphere message file editor. The library is compiled forV6R1.
+X-Beta-Version: 3.5.4.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: This is a small maintenance release. The library is compiled forV6R1.
+X-Beta-Info: Fixed cursor positioning issue, when filtering messages in the iSphere message file editor. The library is compiled forV6R1.
