@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 4/01/2019">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 8/09/2019">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3177,13 +3177,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.15.4 - 01.04.2019 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.17.0 - 07.08.2019 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.15.4'
+     d                 C                   '1.17.0'
      d STRPREPRC_DATE...
-     d                 C                   '01.04.2019'
+     d                 C                   '07.08.2019'
       *
 ]]>  </copysrc>
 </mbr>
@@ -5122,6 +5122,15 @@ srccssid=  "00273">
 .*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *
 .*                            command.                                 *
 .*                                                                     *
+.*  17.05.2019  Th.Raddatz    Added new tags for monitoring messages   *
+.*                            of 'CMD' tags. The new tags are:         *
+.*                              'CMD'  CHKOBJ FOO/BAR *FILE;           *
+.*                              'MONMSG'                               *
+.*                                'MSGID' CPF9801; // Object not found *
+.*                              'END-MONMSG'                           *
+.*                                                                     *
+.*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
@@ -5177,6 +5186,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USELIBL'.
 :IMHELP name='STRPREPRC/TAGSREQ'.
 :IMHELP name='STRPREPRC/EXICMDEXC'.
+:IMHELP name='STRPREPRC/EXECOPT'.
 :EHELP.
 
 .*****************************************************************
@@ -5272,6 +5282,14 @@ ein.
 Quellendatei. Alle sonstigen Marken des Pre-Prozessors müssen sich zwischen
 diesen beiden Marken befinden.
 
+:PT.>>CRTCMD<<
+:PD.Diese Marke definiert den über >>EXECUTE<< auszuführenden
+Erstellungsbefehl.
+Die >>CRTCMD<< Marke ist optional. Der Erstellungsbefehl kann
+alternativ auch über den Befehl STRPREPRC mitgegeben werden. Wenn
+die >>CRTCMD<< Marke angegeben wird, dann sollte sie nur einmal
+am Anfang der Pre-Prozessor-Anweisungen definiert werden.
+
 :PT.>>IMPORTANT<<
 :PD.Diese Marke leitet den Abschnitt für die Compiler-Schlüsselworte ein.
 
@@ -5312,7 +5330,7 @@ durch Leerzeichen getrennt angegeben sein. Die überschriebene Bibliotheksliste
 steht anschließend in der Variablen :HP2.&LX:EHP2. zur Verfügung.
 
 :PT.>>CURLIB<<
-:PD.Diese Marke für den Befehl CHGLIBL aus, um die aktuelle Bibliothek
+:PD.Diese Marke führt den Befehl CHGLIBL aus, um die aktuelle Bibliothek
 auf den angegebenen Wert zu setzen. Die überschriebene aktuelle Bibliothek
 steht anschließend in der Variablen :HP2.&CX:EHP2. zur Verfügung.
 
@@ -5332,14 +5350,21 @@ einem Vorlaufbefehl, der vor dem Erstellungsbefehl ausgeführt wird. Wenn
 diese Marke nach einer :HP3.>>EXECUTE<<:EHP3. Marke angegeben wird, so
 entspricht dies einem Nachlaufbefehl, der nach dem Erstellungsbefehl
 ausgeführt wird. >>CMD<< Marken dürfen mehrfach vorkommen.
-
-:PT.>>CRTCMD<<
-:PD.Diese Marke definiert den über >>EXECUTE<< auszuführenden
-Erstellungsbefehl.
-Die >>CRTCMD<< Marke ist optional. Der Erstellungsbefehl kann
-alternativ auch über den Befehl STRPREPRC mitgegeben werden. Wenn
-die >>CRTCMD<< Marke angegeben wird, dann sollte sie nur einmal
-am Anfang der Pre-Prozessor-Anweisungen definiert werden.
+:P.
+Bei Vor- und Nachlaufbefehlen können auftretende Fehler ignoriert
+werden, wie in folgendem Beispiel gezeigt:
+:P.
+:LINES.
+0001.00    >>PRE-COMPILER<<
+0002.00      >>CMD<<  DLTF FILE(QGPL/QFOO);
+0003.00      >>MONMSG<<
+0004.00        >>MSGID<< CPF2105; // Object FOO not found;
+0005.00      >>END-MONMSG<<
+0006.00    >>END-PRE-COMPILER<<
+:ELINES.
+:P.
+Es können bis zu 50 Nachrichten angegeben werden, die bei einem
+auftretenden Fehler ignoriert werden.
 
 :PT.>>EXECUTE<<
 :PD.Diese Marke lässt den Erstellungsbefehl ausführen. Die >>EXECUTE<<
@@ -6341,6 +6366,39 @@ Exitprogramm gespeichert ist.
 
 :EHELP.
 
+.********************************************
+.*  Keyword:  EXECOPT  (optional)
+.********************************************
+:HELP NAME='STRPREPRC/EXECOPT'.
+Befehlsausführungsoptionen - Hilfe
+:XH3.Befehlsausführungsoptionen (EXECOPT)
+:P.
+Gibt an, welche Befehle ausgeführt werden. Die zur
+Verfügung stehenden Befehlsgruppen sind:
+:P.
+:LINES.
+ - Vorlaufbefehle
+ - Objekterstellungsbefeh
+ - Nachlaufbefele
+:ELINES.
+:P.
+:IMHELP name='COM/OPTPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+
+:PARML.
+:PT.:PK DEF.*ALL:EPK.
+:PD.Es werden alle Befehlsgruppe ausgeführt.
+:PT.:PV.*PRECMDS:EPV.
+:PD.Es werden nur die Vorlaufbefehle ausgeführt.
+:PT.:PV.*CRTCMD:EPV.
+:PD.Es wird nur der Objekterstellungsbefehl ausgeführt.
+:PT.:PV.*POSTCMDS:EPV.
+:PD.Es werden nur die Nachlaufbefehle ausgeführt.
+:EPARML.
+
+:EHELP.
+
 .*****************************************************************
 .*  Common help text that is imbedded into one or more places.
 .*****************************************************************
@@ -6475,6 +6533,15 @@ srccssid=  "00273">
 .*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   *
 .*                            command.                                 *
 .*                                                                     *
+.*  17.05.2019  Th.Raddatz    Added new tags for monitoring messages   *
+.*                            of 'CMD' tags. The new tags are:         *
+.*                              'CMD'  CHKOBJ FOO/BAR *FILE;           *
+.*                              'MONMSG'                               *
+.*                                'MSGID' CPF9801; // Object not found *
+.*                              'END-MONMSG'                           *
+.*                                                                     *
+.*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
@@ -6530,6 +6597,7 @@ srccssid=  "00273">
 :IMHELP name='STRPREPRC/USELIBL'.
 :IMHELP name='STRPREPRC/TAGSREQ'.
 :IMHELP name='STRPREPRC/EXICMDEXC'.
+:IMHELP name='STRPREPRC/EXECOPT'.
 :EHELP.
 
 .*****************************************************************
@@ -6687,6 +6755,19 @@ then the command specified acts as a pre-command. If this
 tag has been specified after an :HP3.>>EXECUTE<<:EHP3. tag, then
 the command specified acts as a post-command. Any number of >>CMD<<
 tags can be specified.
+:P.
+Errors of pre- and post commands can be monitored as shown below:
+:P.
+:LINES.
+0001.00    >>PRE-COMPILER<<
+0002.00      >>CMD<<  DLTF FILE(QGPL/QFOO);
+0003.00      >>MONMSG<<
+0004.00        >>MSGID<< CPF2105; // Object FOO not found;
+0005.00      >>END-MONMSG<<
+0006.00    >>END-PRE-COMPILER<<
+:ELINES.
+:P.
+You can specify up to 50 message IDs, that are monitored.
 
 :PT.>>EXECUTE<<
 :PD.This tag is used to execute the creation command. It should be
@@ -7635,6 +7716,39 @@ used.
 
 :EHELP.
 
+.********************************************
+.*  Keyword:  EXECOPT  (optional)
+.********************************************
+:HELP NAME='STRPREPRC/EXECOPT'.
+Execute commands options - Help
+:XH3.Execute commands options (EXECOPT)
+:P.
+Specifies the command groups that are executed.
+The available command groups are:
+:P.
+:LINES.
+ - Pre-commands
+ - Object creation command
+ - Post-commands
+:ELINES.
+:P.
+:IMHELP name='COM/OPTPARM'.
+:P.
+:IMHELP name='COM/VALUES'.
+
+:PARML.
+:PT.:PK DEF.*ALL:EPK.
+:PD.All command groups are executed.
+:PT.:PV.*PRECMDS:EPV.
+:PD.Only pre-commands are executed.
+:PT.:PV.*CRTCMD:EPV.
+:PD.Only the object creation command is executed.
+:PT.:PV.*POSTCMDS:EPV.
+:PD.Only post-commands are executed.
+:EPARML.
+
+:EHELP.
+
 .*****************************************************************
 .*  Common help text that is imbedded into one or more places.
 .*****************************************************************
@@ -7991,7 +8105,8 @@ srccssid=  "00273">
                              &USELIBL    +
                              &XTAGSREQ   +
                              &XMSGF      +
-                             &EXICMDEXC  )
+                             &EXICMDEXC  +
+                             &EXECOPT    )
 
              DCL        VAR(&QUSESRCF  ) TYPE(*CHAR) LEN(  20)
              DCL        VAR(&USESRCMBR ) TYPE(*CHAR) LEN(  10)
@@ -8030,6 +8145,7 @@ srccssid=  "00273">
              DCL        VAR(&EXICMDEXC ) TYPE(*CHAR) LEN(  20)
              DCL        VAR(&PGMCMDEXC ) TYPE(*CHAR) LEN(  10)
              DCL        VAR(&LPGMCMDEXC) TYPE(*CHAR) LEN(  10)
+             DCL        VAR(&EXECOPT   ) TYPE(*CHAR) LEN(  32)
 
              DCL        VAR(&USRDEFVAR ) TYPE(*CHAR) LEN(2282)
                 /* number of items:            BINARY(2)               */
@@ -8155,7 +8271,8 @@ srccssid=  "00273">
                                             &OPTION     +
                                             &LIBL       +
                                             &USELIBL    +
-                                            &USRDEFVAR  )
+                                            &USRDEFVAR  +
+                                            &EXECOPT    )
 
  /* -------------------------------------------------------------- */
  /*  Programm beenden                                              */
@@ -8312,6 +8429,15 @@ srccssid=  "00273">
       *                            Moved handling the *DFT special value to *
       *                            STRPREPRC2.                              *
       *                                                                     *
+      *  08.05.2019  Th.Raddatz    Added procedure readLine().              *
+      *                                                                     *
+      *  17.05.2019  Th.Raddatz    Added new tags for monitoring messages   *
+      *                            of 'CMD' tags. The new tags are:         *
+      *                              'CMD'  CHKOBJ FOO/BAR *FILE;           *
+      *                              'MONMSG'                               *
+      *                                'MSGID' CPF9801; // Object not found *
+      *                              'END-MONMSG'                           *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -8347,10 +8473,10 @@ srccssid=  "00273">
       *
      D cMaxRcdLen      c                   256
       *
-     D ds_srcFile      ds                  qualified
-     D  srcSeq                             like(srcSeq_t) inz
-     D  srcDat                             like(srcDat_t) inz
-     D  srcDta                             like(srcDta_t) inz
+     D ds_srcFile_t    ds                  qualified based(pDummy)
+     D  srcSeq                             like(srcSeq_t)
+     D  srcDat                             like(srcDat_t)
+     D  srcDta                             like(srcDta_t)
       *
      D f1              ds                  qualified
      D  status                11     15S 0
@@ -8416,6 +8542,12 @@ srccssid=  "00273">
      D  name                         10a
      D  value                       100a
       *
+     D DIM_EXECOPTS    c                   3
+      *
+     D execOpt_t       ds                  qualified based(pDummy)
+     D  numElem                       5i 0
+     D  execOpt                      10a   dim(DIM_EXECOPTS)
+      *
      D DIM_LIBLIST     c                   250
       *
      D inpLibList_t    ds                  qualified based(pDummy)
@@ -8445,6 +8577,9 @@ srccssid=  "00273">
      D lineData_t      ds                  qualified based(pDummy)
      D  continue                           like(continue_t)
      D  keyData                            like(keyData_t)
+      *
+     D monMsgIds_t     ds                  qualified based(pDummy)
+     D  item                               like(msgId_t) dim(50)
       *
      D variables_t     ds                  qualified based(pDummy)
      D  lib                                like(lib_t)
@@ -8498,6 +8633,11 @@ srccssid=  "00273">
      D cTAG_ENDIMPORTANT...
      D                 c                   '>>END-IMPORTANT<<'
       *
+     D cTAG_MONMSG     c                   '>>MONMSG<<'
+     D cTAG_MSGID      c                   '>>MSGID<<'
+     D cTAG_ENDMONMSG...
+     D                 c                   '>>END-MONMSG<<'
+      *
      D cTAG_WIDTH      c                   '>>WIDTH<<'
      D cTAG_CRTCMD     c                   '>>CRTCMD<<'
      D cTAG_PARM       c                   '>>PARM<<'
@@ -8524,6 +8664,11 @@ srccssid=  "00273">
      D cMODE_ENDIMPORTANT...
      D                 c                   '>>END-IMPORTANT<<'
       *
+     D cMODE_MONMSG    c                   '>>MONMSG<<'
+     D cMODE_MSGID     c                   '>>MSGID<<'
+     D cMODE_ENDMONMSG...
+     D                 c                   '>>END-MONMSG<<'
+      *
      D cMODE_WIDTH     c                   '>>WIDTH<<'
      D cMODE_CRTCMD    c                   '>>CRTCMD<<'
      D cMODE_PARM      c                   '>>PARM<<'
@@ -8543,6 +8688,11 @@ srccssid=  "00273">
       *
      D cJOBLOG_NO      c                   '*NOJOBLOG'
      D cJOBLOG_YES     c                   '*ADDJOBLOG'
+      *
+     D EXEC_ALL        c                   '*ALL'
+     D EXEC_PRECMDS    c                   '*PRECMDS'
+     D EXEC_CRTCMD     c                   '*CRTCMD'
+     D EXEC_POSTCMDS   c                   '*POSTCMDS'
       *
      D CURLIB_CRTDFT   c                   '*CRTDFT'
       * -------------------------------------------------------------
@@ -8565,6 +8715,9 @@ srccssid=  "00273">
      D  doAppendJobLog...
      D                                 n   inz(cFalse)
       *
+     D g_execOpt...
+     D                 ds                  likeds(execOpt_t)
+      *
      D g_srcFile       ds                  qualified
      D  name                         10a
      D  lib                          10a
@@ -8584,6 +8737,11 @@ srccssid=  "00273">
      D g_startUpLiblList...
      D                 ds                  likeds(liblList_t) inz
       *
+     D g_prePostCmdsMode...
+     D                 s             10i 0
+      *
+     D MODE_PRECMDS    c                   1
+     D MODE_POSTCMDS   c                   2
       * -------------------------------------------------------------
       *  Importierte Prototypen
       * -------------------------------------------------------------
@@ -8641,6 +8799,17 @@ srccssid=  "00273">
      D  i_libl                                    likeds(inpLibList_t)
      D  i_useLibl                                 like(bool_t)
      D  i_usrDefVars                              likeds(inpUsrDefVars_t)
+     D  i_execOpt                                 likeds(execOpt_t)
+      *
+     D readLine...
+     D                 pr              n
+     D                                     extproc('readLine')
+     D  io_srcDta                                 like(ds_srcFile_t.srcDta)
+      *
+     D readPrvLine...
+     D                 pr              n
+     D                                     extproc('readPrvLine')
+     D  io_srcDta                                 like(ds_srcFile_t.srcDta)
       *
      D getSpcValDft...
      D                 pr                  like(keyData_t)
@@ -8692,6 +8861,21 @@ srccssid=  "00273">
      D                                     extproc('performSetCurrentLibrary')
      D  i_libl                             value  like(cmdLong_t)
      D  io_variables                              likeds(variables_t)
+      *
+     D loadMonitoredMessageIDs...
+     D                 pr                  likeds(monMsgIds_t)
+     D                                     extproc('loadMonitoredMessageIDs')
+      *
+     D isMonitoredMessageID...
+     D                 pr              n
+     D                                     extproc('isMonitoredMessageID')
+     D  i_errMsgId                         value like(msgId_t)
+     D  i_monMsgIds                        value likeds(monMsgIds_t)
+      *
+     D isExecOpt...
+     D                 pr              n
+     D                                     extproc('isExecOpt')
+     D  i_execOpt                          value like(execOpt_t.execOpt)
       *
      D retrieveLibraryList...
      D                 pr                  likeds(liblList_t)
@@ -8780,6 +8964,7 @@ srccssid=  "00273">
      D                                     extproc('executeCmd')
      D  i_monErr                           value  like(bool_t)
      D  i_cmd                              value  like(cmdLong_t)
+     D  o_errMsgId                                like(msgId_t) options(*nopass)
       *
      D appendToJobLog...
      D                 PR
@@ -8864,13 +9049,6 @@ srccssid=  "00273">
      d  i_procPtr                      *   const  procptr
      d  o_fc                         12a          options(*omit)
       *
-      * -------------------------------------------------------------
-      *  Dateischlüssel
-      * -------------------------------------------------------------
-     D P1Key2          ds                  qualified
-     D  MODE                               like(P1MODE)
-     D  NEWMODE                            like(P1NEWMODE)
-      *
       * =============================================================
       *  Ausführen Pre-Prozessor
       * =============================================================
@@ -8919,8 +9097,11 @@ srccssid=  "00273">
      D  i_libl                                    likeds(inpLibList_t)
      D  i_useLibl                                 like(bool_t)
      D  i_usrDefVars                              likeds(inpUsrDefVars_t)
+     D  i_execOpt                                 likeds(execOpt_t)
       *
       *  Nachrichten
+      *  ... Falsche Reihenfolge im Betriebsmodus.
+      /COPY QSTRPREPRC,PRZ0001
       *  ... Die Datensatzlänge der Eingabedatei ist zu lang.
       /COPY QSTRPREPRC,PRZ0011
       *  ... Fehler beim Öffnen der Quellendatei &2/&1, Teildatei &3.
@@ -8942,7 +9123,7 @@ srccssid=  "00273">
       *
       *  Arbeitsfelder
      D i               S             10i 0 inz
-     D srcDta          S                   like(ds_srcFile.srcDta)
+     D srcDta          S                   like(ds_srcFile_t.srcDta)
      D tag             S                   like(tag_t) inz
      D mode            S                   like(mode_t) inz
      D newMode         S                   like(mode_t) inz
@@ -8955,6 +9136,8 @@ srccssid=  "00273">
      D cmdChgObjD      S                   like(cmdLong_t)
      D cmd             S                   like(cmdLong_t)
      D isCmdMissingError...
+     D                 S               n   inz(cFalse)
+     D isMonMsgAllowed...
      D                 S               n   inz(cFalse)
       *
      D lineData        ds                  likeds(lineData_t) inz
@@ -8972,6 +9155,8 @@ srccssid=  "00273">
 
          g_startUpLiblList = retrieveLibraryList();
 
+         g_prePostCmdsMode = MODE_PRECMDS;
+
          // Initialisieren globaler Variablen
          reset g_msgFile;
          reset g_mode;
@@ -8980,6 +9165,7 @@ srccssid=  "00273">
          reset g_libPgmCmdExc;
          reset g_eventf;
          reset g_option;
+         reset g_execOpt;
          g_msgFile = i_msgFile;
          g_pgmCmdExc = i_pgmCmdExc;
          g_libPgmCmdExc = i_libPgmCmdExc;
@@ -9022,6 +9208,8 @@ srccssid=  "00273">
                endAbnormal();
             endmon;
          endif;
+
+         g_execOpt = i_execOpt;
 
          clear variables;
          variables.lib = i_lib;
@@ -9151,25 +9339,33 @@ srccssid=  "00273">
          // Lesen der Quellenteildatei
          f1_line_number = 0;
 
-         dow '1';
-
-            read SRCFILE ds_srcFile;
-            if (%eof());
-               leave;
-            endif;
-
-            srcDta = %subst(ds_srcFile.srcDta: 1: srcDtaLen);
-
-            f1_line_number = f1_line_number + 1;
+         dow readLine(srcDta);
 
             // Wenn sich in der Programmzeile ein Tag befindet, ...
             if (isTag(srcDta: tag));
+
                // ermitteln neue Betriebsart
                newMode = tagToMode(tag);
 
                // prüfen Betriebsartenwechsel
                if (not checkMode(mode: newMode));
                   endAbnormal();
+               endif;
+
+               if (newMode = cMODE_MONMSG);
+                  if (not isMonMsgAllowed);
+                     clear PRZ0001;
+                     PRZ00011 = mode;
+                     PRZ00012 = newMode;
+                     sendMsg(f_newMsg('PRZ0001': PRZ0001: cTYPE_DIAG));
+                     endAbnormal();
+                  endif;
+               endif;
+
+               if (newMode = cMODE_CMD);
+                  isMonMsgAllowed = cTrue;
+               else;
+                  isMonMsgAllowed = cFalse;
                endif;
 
                // umschalten Betriebsartenwechsel
@@ -9216,6 +9412,13 @@ srccssid=  "00273">
                iter;
             endif;
 
+            // Ende MONMSG
+            if (mode = cMODE_ENDMONMSG);
+               mode = popMode();
+               mode = popMode();
+               iter;
+            endif;
+
             // Breite der Quellenangaben >>WIDTH<<
             if (mode  = cMODE_WIDTH);
                srcDtaLen = getWidthValue(srcDta: srcDtaLen);
@@ -9241,6 +9444,13 @@ srccssid=  "00273">
                   mode = popMode();
                   iter;
                endif;
+            endif;
+
+            // MsgID-Anweisung     >>MSGID<<
+            if (mode = cMODE_MSGID);
+               // Ignore >>MSGID<< tags not related to >>CMD<<
+               mode = popMode();
+               iter;
             endif;
 
             // Parm-Anweisung      >>PARM<<
@@ -9270,8 +9480,7 @@ srccssid=  "00273">
 
             // Execute-Anweisung   >>EXECUTE<<
             if (mode = cMODE_EXECUTE);
-               cmdString = cmd;
-               performExecute(replaceVars(cmdString: variables): cmdChgObjD);
+               performExecute(replaceVars(cmd: variables): cmdChgObjD);
                mode = popMode();
                iter;
             endif;
@@ -9288,8 +9497,7 @@ srccssid=  "00273">
                if (lineData.continue <> cEND_OF_LINE);
                   iter;
                else;
-                  cmdString = lineData.keyData;
-                  performCmd(replaceVars(cmdString: variables));
+                  performCmd(replaceVars(lineData.keyData: variables));
                   resetLineData(lineData);
                   mode = popMode();
                   iter;
@@ -9308,10 +9516,9 @@ srccssid=  "00273">
                if (lineData.continue <> cEND_OF_LINE);
                   iter;
                else;
-                  cmdString = 'CHGLIBL +
-                               LIBL(' + lineData.keyData + ')';
+                  cmdString = 'CHGLIBL LIBL(' + lineData.keyData + ')';
                   performSetLibraryList(
-                     replaceVars(cmdString: variables): variables);
+                     replaceVars(cmdString: variables): variables); // TODO: test it
                   resetLineData(lineData);
                   mode = popMode();
                   iter;
@@ -9330,10 +9537,9 @@ srccssid=  "00273">
                if (lineData.continue <> cEND_OF_LINE);
                   iter;
                else;
-                  cmdString = 'CHGLIBL +
-                               CURLIB(' + lineData.keyData + ')';
+                  cmdString = 'CHGLIBL CURLIB(' + lineData.keyData + ')';
                   performSetCurrentLibrary(
-                     replaceVars(cmdString: variables): variables);
+                     replaceVars(cmdString: variables): variables); // TODO: test it
                   resetLineData(lineData);
                   mode = popMode();
                   iter;
@@ -9408,6 +9614,58 @@ srccssid=  "00273">
             PRZ00283 = f1.mbr;
             sendMsg(f_newMsg('PRZ0028': PRZ0028: cTYPE_ESCAPE));
          endif;
+
+      /end-free
+     P                 E
+
+      * =============================================================
+      *  Reads a line from the source input file.
+      * =============================================================
+     P readLine...
+     P                 b
+     D                 pi              n
+     D  io_srcDta                                 like(ds_srcFile_t.srcDta)
+      *
+     D ds_srcFile      ds                  likeds(ds_srcFile_t) inz
+      /free
+
+         read SRCFILE ds_srcFile;
+         if (%eof());
+            io_srcDta = '';
+            return cFalse;
+         endif;
+
+         io_srcDta = %subst(ds_srcFile.srcDta: 1: getSrcDataLength());
+
+         f1_line_number = f1_line_number + 1;
+
+         return cTrue;
+
+      /end-free
+     P                 E
+
+      * =============================================================
+      *  Read the previous line from the source input file.
+      * =============================================================
+     P readPrvLine...
+     P                 b
+     D                 pi              n
+     D  io_srcDta                                 like(ds_srcFile_t.srcDta)
+      *
+     D ds_srcFile      ds                  likeds(ds_srcFile_t) inz
+      /free
+
+         readp SRCFILE ds_srcFile;
+         if (%eof());
+            io_srcDta = '';
+            return cFalse;
+         endif;
+
+         io_srcDta = %subst(ds_srcFile.srcDta: 1: getSrcDataLength());
+
+         f1_line_number = f1_line_number - 1;
+
+         return cTrue;
 
       /end-free
      P                 E
@@ -9718,6 +9976,12 @@ srccssid=  "00273">
       /COPY QSTRPREPRC,PRZ0026
       /free
 
+         g_prePostCmdsMode = MODE_POSTCMDS;
+
+         if (not isExecOpt(EXEC_CRTCMD));
+            return;
+         endif;
+
          if (g_option.isEventf);
             monitor;
                prepareEventFile();
@@ -9763,9 +10027,22 @@ srccssid=  "00273">
      D                 pi
      D  i_cmd                              value  like(cmdLong_t)
       *
+     D errMsgId        s                   like(msgId_t)
+     D monMsgIds       ds                  likeds(monMsgIds_t)
+      *
       *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
       /COPY QSTRPREPRC,PRZ0026
       /free
+
+         if (g_prePostCmdsMode = MODE_PRECMDS and
+             not isExecOpt(EXEC_PRECMDS));
+            return;
+         endif;
+
+         if (g_prePostCmdsMode = MODE_POSTCMDS and
+             not isExecOpt(EXEC_POSTCMDS));
+            return;
+         endif;
 
          if (g_option.isEventf);
             monitor;
@@ -9781,13 +10058,172 @@ srccssid=  "00273">
             endAbnormal();
          endif;
 
-         if (not executeCmd(cTrue: i_cmd));
-            if (%scan(cEVENTF_YES: i_cmd) > 0);
-               endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
+         if (not executeCmd(cTrue: i_cmd: errMsgId));
+            monMsgIds = loadMonitoredMessageIDs();
+            if (isMonitoredMessageId(errMsgId: monMsgIds));
+               // TODO: remove job log entries
             else;
-               endAbnormal();
+               if (%scan(cEVENTF_YES: i_cmd) > 0);
+                  endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
+               else;
+                  endAbnormal();
+               endif;
             endif;
          endif;
+
+      /end-free
+     P                 e
+
+      * =============================================================
+      *  Loads monitored message IDs from >>MONMSG<< section.
+      * =============================================================
+     P loadMonitoredMessageIDs...
+     P                 b
+     D                 pi                  likeds(monMsgIds_t)
+      *
+     D monMsgIds       ds                  likeds(monMsgIds_t)
+      *
+     D isFirstLine     s               n   inz(cTrue)
+     D count           s             10i 0
+     D srcDta          S                   like(ds_srcFile_t.srcDta)
+     D tag             S                   like(tag_t) inz
+     D mode            s                   like(mode_t) inz
+     D newMode         s                   like(mode_t) inz
+     D lineData        ds                  likeds(lineData_t) inz
+      /free
+
+         count = 0;
+         isFirstLine = cTrue;
+
+         mode = cMODE_CMD;
+
+         dow readLine(srcDta);
+
+            // Wenn sich in der Programmzeile ein Tag befindet, ...
+            if (isTag(srcDta: tag));
+
+               if (isFirstLine and tag <> cTAG_MONMSG);
+                  readPrvLine(srcDta);
+                  leave;
+               else;
+                  isFirstLine = cFalse;
+               endif;
+
+               // ermitteln neue Betriebsart
+               newMode = tagToMode(tag);
+
+               // prüfen Betriebsartenwechsel
+               if (not checkMode(mode: newMode));
+                  endAbnormal();
+               endif;
+
+               // umschalten Betriebsartenwechsel
+               mode = newMode;
+
+               // Betriebsart merken
+               pushMode(mode);
+            endif;
+
+            // MsgID-Anweisung     >>MSGID<<
+            if (mode = cMODE_MSGID);
+
+               // zufügen Schlüsselwortdaten
+               lineData.keyData = addData(cTAG_MSGID
+                                          : lineData.keyData
+                                          : srcDta
+                                          : lineData.continue );
+
+               // prüfen auf Fortsetzungszeile
+               if (lineData.continue <> cEND_OF_LINE);
+                  iter;
+               else;
+                  count += 1;
+                  monMsgIds.item(count) = lineData.keyData;
+                  resetLineData(lineData);
+                  mode = popMode();
+                  iter;
+               endif;
+            endif;
+
+            // Ende MONMSG
+            if (mode = cMODE_ENDMONMSG);
+               mode = popMode();
+               mode = popMode();
+               leave;
+            endif;
+
+         enddo;
+
+         return monMsgIds;
+
+      /end-free
+     P                 e
+
+      * =============================================================
+      *  Checks whether a given message ID is covered by a list
+      *  of monitored message IDs.
+      * =============================================================
+     P isMonitoredMessageID...
+     P                 b
+     D                 pi              n
+     D  i_errMsgId                         value like(msgId_t)
+     D  i_monMsgIds                        value likeds(monMsgIds_t)
+      *
+     D i               s             10i 0
+     D msgId           s                   like(msgId_t)
+     D cmpLen          s             10i 0
+      /free
+
+         if (i_errMsgId = '');
+            return cTrue;
+         endif;
+
+         i = 1;
+
+         dow (i <= %elem(i_monMsgIds.item) and i_monMsgIds.item(i) <> '');
+            msgId = i_monMsgIds.item(i);
+
+            select;
+            when (%subst(msgId: 4: 4) = '0000');
+               cmpLen = 3;
+            when (%subst(msgId: 6: 2) = '00');
+               cmpLen = 5;
+            other;
+               cmpLen = 7;
+            endsl;
+
+            if (%subst(i_errMsgId: 1: cmpLen) = %subst(msgId: 1: cmpLen));
+               return cTrue;
+            endif;
+
+            i += 1;
+         enddo;
+
+         return cFalse;
+
+      /end-free
+     P                 e
+
+      * =============================================================
+      *  Checks whether a given message ID is covered by a list
+      *  of monitored message IDs.
+      * =============================================================
+     P isExecOpt...
+     P                 b
+     D                 pi              n
+     D  i_execOpt                          value like(execOpt_t.execOpt)
+      *
+     D i               s             10i 0
+      /free
+
+         for i = 1 to g_execOpt.numElem;
+            if (g_execOpt.execOpt(i) = EXEC_ALL or
+                g_execOpt.execOpt(i) = i_execOpt);
+              return cTrue;
+            endif;
+         endfor;
+
+         return cFalse;
 
       /end-free
      P                 e
@@ -10312,7 +10748,7 @@ srccssid=  "00273">
       /free
 
          srcDtaLen = f1.rcdLen -
-                     (%size(ds_srcFile.srcSeq) + %size(ds_srcFile.srcDat));
+                     (%size(ds_srcFile_t.srcSeq) + %size(ds_srcFile_t.srcDat));
 
          return srcDtaLen;
 
@@ -10409,6 +10845,18 @@ srccssid=  "00273">
                leave;
             endif;
 
+            // Anfang MONMSG
+            if (retrieveTag(cTAG_MONMSG: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
+            // Ende MONMSG
+            if (retrieveTag(cTAG_ENDMONMSG: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
             // Breite der Quellenangaben
             if (retrieveTag(cTAG_WIDTH: i_srcDta: o_tag));
                isTag = cTrue;
@@ -10423,6 +10871,12 @@ srccssid=  "00273">
 
             // Parameter
             if (retrieveTag(cTAG_PARM: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
+            // Message ID
+            if (retrieveTag(cTAG_MSGID: i_srcDta: o_tag));
                isTag = cTrue;
                leave;
             endif;
@@ -10538,6 +10992,14 @@ srccssid=  "00273">
             when (i_tag = cTAG_ENDIMPORTANT);
                mode = cMODE_ENDIMPORTANT;
 
+            // Anfang MONMSG
+            when (i_tag = cTAG_MONMSG);
+               mode = cMODE_MONMSG;
+
+            // Ende MONMSG
+            when (i_tag = cTAG_ENDMONMSG);
+               mode = cMODE_ENDMONMSG;
+
             // Maximale Breite der Quellendaten
             when (i_tag = cTAG_WIDTH);
                mode = cMODE_WIDTH;
@@ -10549,6 +11011,10 @@ srccssid=  "00273">
             // Parameter
             when (i_tag = cTAG_PARM);
                mode = cMODE_PARM;
+
+            // Message ID
+            when (i_tag = cTAG_MSGID);
+               mode = cMODE_MSGID;
 
             // Ausführen "Hauptbefehl"
          when (i_tag = cTAG_EXECUTE);
@@ -10589,6 +11055,11 @@ srccssid=  "00273">
      D                 pi              n
      D  i_mode                             value  like(mode_t)
      D  i_newMode                          value  like(mode_t)
+      *
+      *  Access key of file STRPRE1 (Pre-compiler modes)
+     D P1Key2          ds                  qualified
+     D  MODE                               like(P1MODE)
+     D  NEWMODE                            like(P1NEWMODE)
       *
       *  Nachrichten
       *  ... Falsche Reihenfolge im Betriebsmodus.
@@ -10725,6 +11196,9 @@ srccssid=  "00273">
      D                 pi                         like(bool_t)
      D  i_monErr                           value  like(bool_t)
      D  i_cmd                              value  like(cmdLong_t)
+     D  o_errMsgId                                like(msgId_t) options(*nopass)
+      *
+     D p_errMsgId      c                   3
       *
       *  Fields for getMsgInf()
      D msgID           s                   like(msgID_t) inz
@@ -10786,16 +11260,20 @@ srccssid=  "00273">
 
             appendToJobLog(i_cmd);
 
+            getMsgInf('STRPREPRC': 'STRPREPRC2': 'executeCmd'
+                      : errCode.excID: msgID: msgDta: msgFile: msgLib);
+
             if (not g_option.isEventf);
                clear PRZ0015;
                PRZ00151 = i_cmd;
-               getMsgInf('STRPREPRC': 'STRPREPRC2': 'executeCmd'
-                         : errCode.excID: msgID: msgDta: msgFile: msgLib);
                sendMsg(f_newMsg('PRZ0015': PRZ0015: cTYPE_DIAG));
                sendMsg(f_newMsg(msgID: msgDta: cTYPE_DIAG: msgFile: msgLib));
             endif;
 
             if (i_monErr);
+               if (%parms() >= p_errMsgId and %addr(o_errMsgId) <> *null);
+                  o_errMsgId = msgID;
+               endif;
                return cFalse;
             else;
                endAbnormal();
@@ -11337,7 +11815,7 @@ srccssid=  "00273">
       * -------------------------------------------------------------
       *  Globale Variablen
       * -------------------------------------------------------------
-     D ctrlEntry       S             60A   dim(17) ctdata perrcd(1)
+     D ctrlEntry       S             60A   dim(21) ctdata perrcd(1)
      D msgIDs          S             83A   dim(25) ctdata perrcd(1)
       *
       * -------------------------------------------------------------
@@ -11424,6 +11902,10 @@ srccssid=  "00273">
 >>PRE-COMPILER<<              >>WIDTH<<
 >>PRE-COMPILER<<              >>CURLIB<<
 >>PRE-COMPILER<<              >>LIBL<<
+>>PRE-COMPILER<<              >>MONMSG<<
+>>CMD<<                       >>MONMSG<<
+>>MONMSG<<                    >>END-MONMSG<<
+>>MONMSG<<                    >>MSGID<<
 ** CTDATA(msgIDs)                12345678901234567890123456789012345678901234567890
 QCPFMSG    *LIBL      CPD5CDB 04 The signature of an export block has been trun ...     # 1
 QCPFMSG    *LIBL      CPD5CDC 04 The signature of an export block has been padd ...     # 2
@@ -12164,6 +12646,7 @@ srccssid=  "00273">
      /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */
      /*                            command.                                 */
      /*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    */
+     /*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 */
      /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
@@ -12483,7 +12966,21 @@ srccssid=  "00273">
                           DFT(*NONE)                       +
                           SNGVAL((*NONE))                  +
                           PMTCTL(*PMTRQS)                  +
-                          PROMPT('Ausgangspgm. Befehlsausführung')
+                          PROMPT('Exit Program Command Execution')
+
+             PARM       KWD(EXECOPT   ) TYPE(*CHAR)        +
+                          DFT(*ALL)                        +
+                          SNGVAL(*ALL)                     +
+                          LEN(10)                          +
+                          MIN(0)                           +
+                          MAX(3)                           +
+                          RSTD(*YES)                       +
+                          VALUES(*ALL                      +
+                                 *PRECMDS                  +
+                                 *CRTCMD                   +
+                                 *POSTCMDS)                +
+                          PMTCTL(*PMTRQS)                  +
+                          PROMPT('Befehlsausführungsoptionen')
 
  USRDEFVAR:  ELEM         TYPE(*CHAR)                      +
                           MIN(1)                           +
@@ -12629,6 +13126,7 @@ srccssid=  "00273">
      /*  22.09.2017  Th.Raddatz    Added parameter USRDEFVAR to STRPREPRC   */
      /*                            command.                                 */
      /*  11.02.2019  Th.Raddatz    Added parameters USESRCSTMF and STMF.    */
+     /*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 */
      /*                                                                     */
      /* =================================================================== */
      /* >>PRE-COMPILER<<                                                    */
@@ -12949,6 +13447,20 @@ srccssid=  "00273">
                           SNGVAL((*NONE))                  +
                           PMTCTL(*PMTRQS)                  +
                           PROMPT('Exit Program Command Execution')
+
+             PARM       KWD(EXECOPT   ) TYPE(*CHAR)        +
+                          DFT(*ALL)                        +
+                          SNGVAL(*ALL)                     +
+                          LEN(10)                          +
+                          MIN(0)                           +
+                          MAX(3)                           +
+                          RSTD(*YES)                       +
+                          VALUES(*ALL                      +
+                                 *PRECMDS                  +
+                                 *CRTCMD                   +
+                                 *POSTCMDS)                +
+                          PMTCTL(*PMTRQS)                  +
+                          PROMPT('Execute commands options')
 
  USRDEFVAR:  ELEM         TYPE(*CHAR)                      +
                           MIN(1)                           +
