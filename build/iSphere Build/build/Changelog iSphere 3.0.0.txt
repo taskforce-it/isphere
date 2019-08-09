@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.5.5.r
+--------------------------
+ • Updated STRPREPRC to v1.17. Added command parameter EXECOPT to
+   select the type of commands to execute: *PRECMDS, *CRTCMD and
+   *POSTCMDS. This parameter has been added for a better integration
+   with CMOne.
+
 Changelog: iSphere 3.5.4.r
 --------------------------
  • Fixed cursor positioning issue, when filtering messages in the
