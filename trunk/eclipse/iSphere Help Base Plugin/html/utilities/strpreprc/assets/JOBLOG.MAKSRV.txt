@@ -20,7 +20,6 @@
      /*     >>PARM<< ALWLIBUPD(*YES);                                         */
      /*     >>PARM<< BNDSRVPGM(&LI/BASICS1);                                  */
      /*     >>PARM<< TEXT('Job Log API');                                     */
-     /*     >>PARM<< TGTRLS(V6R1M0  );                                        */
      /*     >>PARM<< DETAIL(*BASIC);                                          */
      /*   >>END-LINK<<                                                        */
      /*   >>EXECUTE<<                                                         */
