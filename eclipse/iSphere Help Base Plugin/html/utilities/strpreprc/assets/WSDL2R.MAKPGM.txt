@@ -62,7 +62,6 @@
      /*                        IFS        +                                   */
      /*                        LOG4RPG    );                                  */
      /*     >>PARM<< BNDDIR(*LIBL/QC2LE);                                     */
-     /*     >>PARM<< TGTRLS(V6R1M0  );                                        */
      /*     >>PARM<< DETAIL(*BASIC);                                          */
      /*   >>END-LINK<<                                                        */
      /*                                                                       */

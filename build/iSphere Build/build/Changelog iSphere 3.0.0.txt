@@ -1,10 +1,19 @@
 
-Changelog: iSphere 3.5.5.r
---------------------------
+Changelog: iSphere 3.5.5.b001
+-----------------------------
  • Updated STRPREPRC to v1.17. Added command parameter EXECOPT to
    select the type of commands to execute: *PRECMDS, *CRTCMD and
    *POSTCMDS. This parameter has been added for a better integration
    with CMOne.
+
+ ----------------------------------------------------------------------
+  We are sorry to let you know that we no longer have an option to
+  create the iSphere library for V6R1. Version 3.5.4.r was the
+  last release with a library compiled for V6R1. All newer versions
+  will be compiled for V7R1.
+  Please refer to the iSphere help to read how to install the library
+  from an i Project.
+ ----------------------------------------------------------------------
 
 Changelog: iSphere 3.5.4.r
 --------------------------
