@@ -370,7 +370,7 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
-            leftMemberPrompt.updateHistory();
+            leftMemberPrompt.updateHistory(true);
 
         }
 
@@ -390,7 +390,7 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
-            rightMemberPrompt.updateHistory();
+            rightMemberPrompt.updateHistory(true);
 
         }
 
@@ -405,7 +405,7 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
-            ancestorMemberPrompt.updateHistory();
+            ancestorMemberPrompt.updateHistory(true);
 
         }
 
