@@ -370,6 +370,8 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
+            leftMemberPrompt.updateHistory();
+
         }
 
         if (hasEditableRightMember()) {
@@ -388,6 +390,8 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
+            rightMemberPrompt.updateHistory();
+
         }
 
         if (isThreeWay() && hasEditableAncestorMember()) {
@@ -400,6 +404,8 @@ public class RSECompareDialog extends CompareDialog {
             if (!validateMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember, ancestorMemberPrompt)) {
                 return;
             }
+
+            ancestorMemberPrompt.updateHistory();
 
         }
 
