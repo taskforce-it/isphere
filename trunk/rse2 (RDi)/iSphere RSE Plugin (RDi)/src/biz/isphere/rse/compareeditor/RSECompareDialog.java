@@ -71,8 +71,8 @@ public class RSECompareDialog extends CompareDialog {
      * Creates the compare dialog, for 2 selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      */
@@ -89,8 +89,8 @@ public class RSECompareDialog extends CompareDialog {
      * This constructor is used by CMOne.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      * @param ancestorMember - the ancestor member
@@ -108,8 +108,8 @@ public class RSECompareDialog extends CompareDialog {
      * Creates the compare dialog, for 3 and more selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param selectedMembers - the selected members that go to the left side of
      *        the compare dialog
      */
@@ -123,8 +123,8 @@ public class RSECompareDialog extends CompareDialog {
      * Creates the compare dialog, for 2 selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      */
@@ -138,8 +138,8 @@ public class RSECompareDialog extends CompareDialog {
      * Creates the compare dialog, for 1 selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
@@ -151,8 +151,8 @@ public class RSECompareDialog extends CompareDialog {
      * Creates the compare dialog, for 0 selected members.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell, selectEditable);
@@ -370,6 +370,8 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
+            leftMemberPrompt.updateHistory();
+
         }
 
         if (hasEditableRightMember()) {
@@ -388,6 +390,8 @@ public class RSECompareDialog extends CompareDialog {
                 return;
             }
 
+            rightMemberPrompt.updateHistory();
+
         }
 
         if (isThreeWay() && hasEditableAncestorMember()) {
@@ -400,6 +404,8 @@ public class RSECompareDialog extends CompareDialog {
             if (!validateMember(ancestorConnection, ancestorLibrary, ancestorFile, ancestorMember, ancestorMemberPrompt)) {
                 return;
             }
+
+            ancestorMemberPrompt.updateHistory();
 
         }
 
