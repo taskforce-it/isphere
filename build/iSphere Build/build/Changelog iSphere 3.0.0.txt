@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.5.b002
+-----------------------------
+ • Changed the source member compare dialog to update the history 
+   values.
+
 Changelog: iSphere 3.5.5.b001
 -----------------------------
  • Updated STRPREPRC to v1.17. Added command parameter EXECOPT to
