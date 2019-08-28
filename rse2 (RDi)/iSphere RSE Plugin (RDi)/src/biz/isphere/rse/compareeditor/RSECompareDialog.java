@@ -301,7 +301,7 @@ public class RSECompareDialog extends CompareDialog {
 
     private QSYSMemberPrompt createMemberPrompt(Group leftGroup, ModifyListener modifyListener) {
 
-        QSYSMemberPrompt memberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
+        QSYSMemberPrompt memberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, false, QSYSMemberPrompt.FILETYPE_SRC);
         memberPrompt.getMemberCombo().setAutoUpperCase(true);
         memberPrompt.getFileCombo().setAutoUpperCase(true);
         memberPrompt.getLibraryCombo().setAutoUpperCase(true);
@@ -704,7 +704,9 @@ public class RSECompareDialog extends CompareDialog {
 
         if (hasEditableRightMember()) {
             if (hasMultipleRightMembers()) {
-                rightMemberPrompt.setMemberName(SPECIAL_MEMBER_NAME_LEFT);
+                // Initialize right member with left member
+                setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
+                    getCurrentLeftFileName(), SPECIAL_MEMBER_NAME_LEFT);
             } else if (rememberScreenValues) {
                 loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             } else {
@@ -768,10 +770,10 @@ public class RSECompareDialog extends CompareDialog {
             }
         }
 
-        if (hasMultipleRightMembers()) {
-            // do not store special value *LEFT.
-        } else if (hasEditableRightMember()) {
-            if (rememberScreenValues) {
+        if (hasEditableRightMember()) {
+            if (hasMultipleRightMembers()) {
+                // do not store special value *LEFT.
+            } else if (rememberScreenValues) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
         }
