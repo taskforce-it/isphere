@@ -14,6 +14,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -199,25 +200,17 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void createEditableLeftArea(Composite parent) {
 
-        Group leftGroup = new Group(parent, SWT.NONE);
-        leftGroup.setText(Messages.Left);
-        GridLayout rightLayout = new GridLayout();
-        rightLayout.numColumns = 1;
-        leftGroup.setLayout(rightLayout);
-        leftGroup.setLayoutData(getGridData());
+        Group leftGroup = createMemberGroup(parent, Messages.Left);
 
-        leftConnectionCombo = new IBMiConnectionCombo(leftGroup, getLeftConnection(), false);
-        leftConnectionCombo.setLayoutData(getGridData());
-        leftConnectionCombo.getCombo().setLayoutData(getGridData());
-        leftConnectionCombo.addSelectionListener(new SelectionAdapter() {
+        SelectionListener selectionListener = new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
                 leftMemberPrompt.setSystemConnection(leftConnectionCombo.getHost());
             }
-        });
+        };
 
-        leftMemberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
+        leftConnectionCombo = createConnectionCombo(leftGroup, getLeftConnection(), selectionListener);
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -225,35 +218,25 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        leftMemberPrompt.getMemberCombo().addModifyListener(modifyListener);
-        leftMemberPrompt.getFileCombo().addModifyListener(modifyListener);
-        leftMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+        leftMemberPrompt = createMemberPrompt(leftGroup, modifyListener);
         leftMemberPrompt.getLibraryCombo().setFocus();
     }
 
     @Override
     protected void createEditableRightArea(Composite parent) {
 
-        Group rightGroup = new Group(parent, SWT.NONE);
-        rightGroup.setText(Messages.Right);
-        GridLayout rightLayout = new GridLayout();
-        rightLayout.numColumns = 1;
-        rightGroup.setLayout(rightLayout);
-        rightGroup.setLayoutData(getGridData());
+        Group rightGroup = createMemberGroup(parent, Messages.Right);
 
-        // Initialize right connection with left connection
-        rightConnectionCombo = new IBMiConnectionCombo(rightGroup, getLeftConnection(), false);
-        rightConnectionCombo.setLayoutData(getGridData());
-        rightConnectionCombo.getCombo().setLayoutData(getGridData());
-        rightConnectionCombo.addSelectionListener(new SelectionAdapter() {
+        SelectionListener selectionListener = new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
                 rightMemberPrompt.setSystemConnection(rightConnectionCombo.getHost());
             }
-        });
+        };
 
-        rightMemberPrompt = new QSYSMemberPrompt(rightGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
+        // Initialize right connection with left connection
+        rightConnectionCombo = createConnectionCombo(rightGroup, getLeftConnection(), selectionListener);
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -261,9 +244,7 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        rightMemberPrompt.getMemberCombo().addModifyListener(modifyListener);
-        rightMemberPrompt.getFileCombo().addModifyListener(modifyListener);
-        rightMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+        rightMemberPrompt = createMemberPrompt(rightGroup, modifyListener);
         rightMemberPrompt.getLibraryCombo().setFocus();
 
         rightMemberPrompt.getMemberCombo().setEnabled(!hasMultipleRightMembers());
@@ -273,26 +254,18 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void createEditableAncestorArea(Composite parent) {
 
-        ancestorGroup = new Group(parent, SWT.NONE);
-        ancestorGroup.setText(Messages.Ancestor);
-        GridLayout ancestorLayout = new GridLayout();
-        ancestorLayout.numColumns = 1;
-        ancestorGroup.setLayout(ancestorLayout);
-        ancestorGroup.setLayoutData(getGridData());
+        ancestorGroup = createMemberGroup(parent, Messages.Ancestor);
 
-        // Initialize ancestor connection with left connection
-        ancestorConnectionCombo = new IBMiConnectionCombo(ancestorGroup, getLeftConnection(), false);
-        ancestorConnectionCombo.setLayoutData(getGridData());
-        ancestorConnectionCombo.getCombo().setLayoutData(getGridData());
-        ancestorConnectionCombo.addSelectionListener(new SelectionAdapter() {
+        SelectionListener selectionListener = new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
                 ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getHost());
             }
-        });
+        };
 
-        ancestorMemberPrompt = new QSYSMemberPrompt(ancestorGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
+        // Initialize ancestor connection with left connection
+        ancestorConnectionCombo = createConnectionCombo(ancestorGroup, getLeftConnection(), selectionListener);
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
@@ -300,10 +273,44 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        ancestorMemberPrompt.getMemberCombo().addModifyListener(modifyListener);
-        ancestorMemberPrompt.getFileCombo().addModifyListener(modifyListener);
-        ancestorMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+        ancestorMemberPrompt = createMemberPrompt(ancestorGroup, modifyListener);
+    }
 
+    private Group createMemberGroup(Composite parent, String label) {
+
+        Group memberGroup = new Group(parent, SWT.NONE);
+        memberGroup.setText(label);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 1;
+        memberGroup.setLayout(layout);
+        memberGroup.setLayoutData(getGridData());
+
+        return memberGroup;
+    }
+
+    private IBMiConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
+
+        IBMiConnectionCombo connectionCombo = new IBMiConnectionCombo(group, connection, false);
+        connectionCombo.setLayoutData(getGridData());
+        connectionCombo.getCombo().setLayoutData(getGridData());
+
+        connectionCombo.addSelectionListener(selectionListener);
+
+        return connectionCombo;
+    }
+
+    private QSYSMemberPrompt createMemberPrompt(Group leftGroup, ModifyListener modifyListener) {
+
+        QSYSMemberPrompt memberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, true, QSYSMemberPrompt.FILETYPE_SRC);
+        memberPrompt.getMemberCombo().setAutoUpperCase(true);
+        memberPrompt.getFileCombo().setAutoUpperCase(true);
+        memberPrompt.getLibraryCombo().setAutoUpperCase(true);
+
+        memberPrompt.getMemberCombo().addModifyListener(modifyListener);
+        memberPrompt.getFileCombo().addModifyListener(modifyListener);
+        memberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+
+        return memberPrompt;
     }
 
     private void setOKButtonEnablement() {
