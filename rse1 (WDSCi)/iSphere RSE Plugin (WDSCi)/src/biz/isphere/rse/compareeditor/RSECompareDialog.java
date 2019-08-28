@@ -212,7 +212,7 @@ public class RSECompareDialog extends CompareDialog {
         leftConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
                 leftMemberPrompt.setSystemConnection(leftConnectionCombo.getSystemConnection());
             }
         });
@@ -221,7 +221,7 @@ public class RSECompareDialog extends CompareDialog {
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
             }
         };
 
@@ -248,7 +248,7 @@ public class RSECompareDialog extends CompareDialog {
         rightConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
                 rightMemberPrompt.setSystemConnection(rightConnectionCombo.getSystemConnection());
             }
         });
@@ -257,7 +257,7 @@ public class RSECompareDialog extends CompareDialog {
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
             }
         };
 
@@ -287,7 +287,7 @@ public class RSECompareDialog extends CompareDialog {
         ancestorConnectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
                 ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getSystemConnection());
             }
         });
@@ -296,7 +296,7 @@ public class RSECompareDialog extends CompareDialog {
 
         ModifyListener modifyListener = new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                getOkButton().setEnabled(canFinish());
+                setOKButtonEnablement();
             }
         };
 
@@ -304,6 +304,12 @@ public class RSECompareDialog extends CompareDialog {
         ancestorMemberPrompt.getFileCombo().addModifyListener(modifyListener);
         ancestorMemberPrompt.getLibraryCombo().addModifyListener(modifyListener);
 
+    }
+
+    private void setOKButtonEnablement() {
+        if (getOkButton() != null) {
+            getOkButton().setEnabled(canFinish());
+        }
     }
 
     @Override
