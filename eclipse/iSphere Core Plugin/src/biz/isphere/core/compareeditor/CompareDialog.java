@@ -44,6 +44,14 @@ public abstract class CompareDialog extends XDialog {
     // Must match the qualified name of class RSECompareDialog.
     public static final String DIALOG_SETTINGS = "biz.isphere.rse.compareeditor.RSECompareDialog"; //$NON-NLS-1$
 
+    protected static final String PREFIX_LEFT = "LEFT";
+    protected static final String PREFIX_RIGHT = "RIGHT";
+    protected static final String PREFIX_ANCESTOR = "ANCESTOR";
+    protected static final String CONNECTION = "_CONNECTION";
+    protected static final String LIBRARY = "_LIBRARY";
+    protected static final String FILE = "_FILE";
+    protected static final String MEMBER = "_MEMBER";
+
     protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT"; //$NON-NLS-1$
     protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED"; //$NON-NLS-1$
 

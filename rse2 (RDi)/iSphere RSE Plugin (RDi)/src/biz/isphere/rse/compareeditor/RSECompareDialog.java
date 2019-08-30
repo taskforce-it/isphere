@@ -35,14 +35,6 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSECompareDialog extends CompareDialog {
 
-    private static final String PREFIX_LEFT = "LEFT";
-    private static final String PREFIX_RIGHT = "RIGHT";
-    private static final String PREFIX_ANCESTOR = "ANCESTOR";
-    private static final String CONNECTION = "_CONNECTION";
-    private static final String LIBRARY = "_LIBRARY";
-    private static final String FILE = "_FILE";
-    private static final String MEMBER = "_MEMBER";
-
     private Group ancestorGroup;
 
     private IBMiConnectionCombo leftConnectionCombo;
@@ -697,53 +689,67 @@ public class RSECompareDialog extends CompareDialog {
         super.loadScreenValues();
 
         if (hasEditableLeftMember()) {
+            // Load left member, when no members has been selected (iSphere
+            // search selected from the main menu)
             if (rememberScreenValues) {
                 loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
 
         if (hasEditableRightMember()) {
-            if (hasMultipleRightMembers()) {
-                // Initialize right member with left member
-                setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
-                    getCurrentLeftFileName(), SPECIAL_MEMBER_NAME_LEFT);
-            } else if (rememberScreenValues) {
-                loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
-            } else {
-                // Initialize right member with left member
+
+            boolean hasLoaded = false;
+
+            if (rememberScreenValues) {
+                // Load previous member values
+                hasLoaded = loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
+            }
+
+            if (!hasLoaded) {
+                // Initialize right member with left member prompt
                 setMemberValues(rightConnectionCombo, rightMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
                     getCurrentLeftFileName(), getCurrentLeftMemberName());
+            }
+
+            if (hasMultipleRightMembers()) {
+                // Overwrite right member name to: *LEFT
+                rightMemberPrompt.getMemberCombo().setText(SPECIAL_MEMBER_NAME_LEFT);
             }
         }
 
         if (hasEditableAncestorMember()) {
+
+            boolean hasLoaded = false;
+
             if (rememberScreenValues) {
-                loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
-            } else {
-                // Initialize ancestor member with left member
+                hasLoaded = loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
+            }
+
+            if (!hasLoaded) {
+                // Initialize ancestor member with left member prompt
                 setMemberValues(ancestorConnectionCombo, ancestorMemberPrompt, getCurrentLeftConnectionName(), getCurrentLeftLibraryName(),
                     getCurrentLeftFileName(), getCurrentLeftMemberName());
             }
         }
     }
 
-    private void loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
-
-        memberPrompt.setSystemConnection(null);
-        memberPrompt.setLibraryName(""); //$NON-NLS-1$
-        memberPrompt.setFileName(""); //$NON-NLS-1$
-        memberPrompt.setMemberName(""); //$NON-NLS-1$
+    private boolean loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
 
         String connection = loadValue(prefix + CONNECTION, null);
         String library = loadValue(prefix + LIBRARY, null);
         String file = loadValue(prefix + FILE, null);
         String member = loadValue(prefix + MEMBER, null);
 
-        setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
+        return setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
     }
 
-    private void setMemberValues(IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt, String connection, String library, String file,
-        String member) {
+    private boolean setMemberValues(IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt, String connection, String library,
+        String file, String member) {
+
+        memberPrompt.setSystemConnection(null);
+        memberPrompt.setLibraryName(""); //$NON-NLS-1$
+        memberPrompt.setFileName(""); //$NON-NLS-1$
+        memberPrompt.setMemberName(""); //$NON-NLS-1$
 
         if (haveMemberValues(connection, library, file, member)) {
             String[] connections = connectionCombo.getItems();
@@ -755,9 +761,12 @@ public class RSECompareDialog extends CompareDialog {
                     memberPrompt.getFileCombo().setText(file);
                     memberPrompt.getMemberCombo().setText(member);
                     memberPrompt.setSystemConnection(connectionCombo.getHost());
+                    return true;
                 }
             }
         }
+
+        return false;
     }
 
     @Override
