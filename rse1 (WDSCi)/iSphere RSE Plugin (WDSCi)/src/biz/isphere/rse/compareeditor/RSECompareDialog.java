@@ -58,8 +58,6 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorFile;
     private String ancestorMember;
 
-    private boolean rememberScreenValues;
-
     /**
      * Creates the compare dialog, for 2 selected member.
      * 
@@ -149,13 +147,6 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell, selectEditable);
-
-        /*
-         * Controls whether or not to store/load member values. For now members
-         * are stored and loaded when the editor has been opened from the
-         * iSphere main menu, so that no initial members has been passed to it.
-         */
-        rememberScreenValues = true;
     }
 
     private void initializeLeftMember(Member leftMember) {
@@ -691,7 +682,7 @@ public class RSECompareDialog extends CompareDialog {
         if (hasEditableLeftMember()) {
             // Load left member, when no members has been selected (iSphere
             // search selected from the main menu)
-            if (rememberScreenValues) {
+            if (isLoadingPreviousValuesEnabled()) {
                 loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
@@ -700,7 +691,7 @@ public class RSECompareDialog extends CompareDialog {
 
             boolean hasLoaded = false;
 
-            if (rememberScreenValues) {
+            if (isLoadingPreviousValuesEnabled()) {
                 // Load previous member values
                 hasLoaded = loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
@@ -721,7 +712,7 @@ public class RSECompareDialog extends CompareDialog {
 
             boolean hasLoaded = false;
 
-            if (rememberScreenValues) {
+            if (isLoadingPreviousValuesEnabled()) {
                 hasLoaded = loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
 
@@ -774,7 +765,7 @@ public class RSECompareDialog extends CompareDialog {
         super.storeScreenValues();
 
         if (hasEditableLeftMember()) {
-            if (rememberScreenValues) {
+            if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
@@ -782,13 +773,13 @@ public class RSECompareDialog extends CompareDialog {
         if (hasEditableRightMember()) {
             if (hasMultipleRightMembers()) {
                 // do not store special value *LEFT.
-            } else if (rememberScreenValues) {
+            } else if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
         }
 
         if (hasEditableAncestorMember()) {
-            if (rememberScreenValues) {
+            if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
         }
