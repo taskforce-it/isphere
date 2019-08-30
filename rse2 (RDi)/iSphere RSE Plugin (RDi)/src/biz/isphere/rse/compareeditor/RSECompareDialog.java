@@ -201,7 +201,7 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        leftMemberPrompt = createMemberPrompt(leftGroup, modifyListener);
+        leftMemberPrompt = createMemberPrompt(leftGroup, modifyListener, PREFIX_LEFT);
         leftMemberPrompt.getLibraryCombo().setFocus();
     }
 
@@ -227,7 +227,7 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        rightMemberPrompt = createMemberPrompt(rightGroup, modifyListener);
+        rightMemberPrompt = createMemberPrompt(rightGroup, modifyListener, PREFIX_RIGHT);
         rightMemberPrompt.getLibraryCombo().setFocus();
 
         rightMemberPrompt.getMemberCombo().setEnabled(!hasMultipleRightMembers());
@@ -256,7 +256,7 @@ public class RSECompareDialog extends CompareDialog {
             }
         };
 
-        ancestorMemberPrompt = createMemberPrompt(ancestorGroup, modifyListener);
+        ancestorMemberPrompt = createMemberPrompt(ancestorGroup, modifyListener, PREFIX_ANCESTOR);
     }
 
     private Group createMemberGroup(Composite parent, String label) {
@@ -282,9 +282,14 @@ public class RSECompareDialog extends CompareDialog {
         return connectionCombo;
     }
 
-    private QSYSMemberPrompt createMemberPrompt(Group leftGroup, ModifyListener modifyListener) {
+    private QSYSMemberPrompt createMemberPrompt(Group leftGroup, ModifyListener modifyListener, String memberPromptType) {
 
         QSYSMemberPrompt memberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, false, QSYSMemberPrompt.FILETYPE_SRC);
+
+        memberPrompt.getMemberCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_MBR));
+        memberPrompt.getFileCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_SRC));
+        memberPrompt.getLibraryCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_LIB));
+
         memberPrompt.getMemberCombo().setAutoUpperCase(true);
         memberPrompt.getFileCombo().setAutoUpperCase(true);
         memberPrompt.getLibraryCombo().setAutoUpperCase(true);
@@ -768,6 +773,7 @@ public class RSECompareDialog extends CompareDialog {
             if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
+            storeHistory(leftMemberPrompt);
         }
 
         if (hasEditableRightMember()) {
@@ -776,12 +782,14 @@ public class RSECompareDialog extends CompareDialog {
             } else if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
+            storeHistory(rightMemberPrompt);
         }
 
-        if (hasEditableAncestorMember()) {
+        if (hasEditableAncestorMember() && isThreeWay()) {
             if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
+            storeHistory(ancestorMemberPrompt);
         }
     }
 
@@ -798,6 +806,16 @@ public class RSECompareDialog extends CompareDialog {
             storeValue(prefix + FILE, file);
             storeValue(prefix + MEMBER, member);
         }
+    }
+
+    private void storeHistory(QSYSMemberPrompt memberPrompt) {
+
+        if (!canStoreHistory()) {
+            return;
+        }
+
+        System.out.println("Updating history: " + memberPrompt.getText());
+        memberPrompt.updateHistory();
     }
 
     private boolean haveMemberValues(String connection, String library, String file, String member) {

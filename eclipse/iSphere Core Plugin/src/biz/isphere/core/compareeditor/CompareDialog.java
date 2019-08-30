@@ -44,6 +44,11 @@ public abstract class CompareDialog extends XDialog {
     // Must match the qualified name of class RSECompareDialog.
     public static final String DIALOG_SETTINGS = "biz.isphere.rse.compareeditor.RSECompareDialog"; //$NON-NLS-1$
 
+    private static final String BASE_SETTINGS_KEY = "biz.isphere.rse.compareeditor.ui."; //$NON-NLS-1$
+    protected static final String OBJECT_TYPE_LIB = "lib"; //$NON-NLS-1$
+    protected static final String OBJECT_TYPE_SRC = "src"; //$NON-NLS-1$
+    protected static final String OBJECT_TYPE_MBR = "mbr"; //$NON-NLS-1$
+
     protected static final String PREFIX_LEFT = "LEFT";
     protected static final String PREFIX_RIGHT = "RIGHT";
     protected static final String PREFIX_ANCESTOR = "ANCESTOR";
@@ -107,7 +112,7 @@ public abstract class CompareDialog extends XDialog {
      * stored and loaded when the editor has been opened from the iSphere main
      * menu, when no initial members are selected.
      */
-    private boolean rememberScreenValues;
+    private String historyValuesCategoryKey;
 
     /**
      * Creates the compare dialog, for 0 selected members.
@@ -120,7 +125,7 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, null, null, null);
         this.hasMultipleRightMembers = false;
-        this.rememberScreenValues = true;
+        this.historyValuesCategoryKey = "global.";
 
         checkCompareFilters();
     }
@@ -137,7 +142,7 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, null, null);
         this.hasMultipleRightMembers = false;
-        this.rememberScreenValues = false;
+        this.historyValuesCategoryKey = "1.";
 
         checkCompareFilters();
     }
@@ -155,7 +160,7 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, null);
         this.hasMultipleRightMembers = false;
-        this.rememberScreenValues = false;
+        this.historyValuesCategoryKey = "2.";
 
         checkCompareFilters();
     }
@@ -174,7 +179,7 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
         this.hasMultipleRightMembers = false;
-        this.rememberScreenValues = false;
+        this.historyValuesCategoryKey = "3.";
 
         checkCompareFilters();
     }
@@ -192,7 +197,7 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, selectedMembers[0], selectedMembers[0], null);
         this.hasMultipleRightMembers = true;
-        this.rememberScreenValues = false;
+        this.historyValuesCategoryKey = "multiple.";
 
         checkCompareFilters();
     }
@@ -227,7 +232,30 @@ public abstract class CompareDialog extends XDialog {
     }
 
     protected boolean isLoadingPreviousValuesEnabled() {
-        return rememberScreenValues;
+
+        if (historyValuesCategoryKey != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean canStoreHistory() {
+
+        if (historyValuesCategoryKey != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected String getPartialMemberPromptSettingsKey(String memberPromptType, String objectType) {
+
+        if (historyValuesCategoryKey == null) {
+            return null;
+        }
+
+        return BASE_SETTINGS_KEY + historyValuesCategoryKey + memberPromptType + "." + objectType;
     }
 
     public void setDateOptionsEnabled(boolean enabled) {
