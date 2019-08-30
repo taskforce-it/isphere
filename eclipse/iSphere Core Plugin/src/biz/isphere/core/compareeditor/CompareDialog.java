@@ -102,6 +102,13 @@ public abstract class CompareDialog extends XDialog {
     private Text rightFileText;
     private Text rightMemberText;
 
+    /*
+     * Controls whether or not to store/load member values. For now members are
+     * stored and loaded when the editor has been opened from the iSphere main
+     * menu, when no initial members are selected.
+     */
+    private boolean rememberScreenValues;
+
     /**
      * Creates the compare dialog, for 0 selected members.
      * 
@@ -112,7 +119,8 @@ public abstract class CompareDialog extends XDialog {
     public CompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell);
         initialize(parentShell, selectEditable, null, null, null);
-        hasMultipleRightMembers = false;
+        this.hasMultipleRightMembers = false;
+        this.rememberScreenValues = true;
 
         checkCompareFilters();
     }
@@ -128,7 +136,8 @@ public abstract class CompareDialog extends XDialog {
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, null, null);
-        hasMultipleRightMembers = false;
+        this.hasMultipleRightMembers = false;
+        this.rememberScreenValues = false;
 
         checkCompareFilters();
     }
@@ -145,24 +154,8 @@ public abstract class CompareDialog extends XDialog {
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, null);
-        hasMultipleRightMembers = false;
-
-        checkCompareFilters();
-    }
-
-    /**
-     * Creates the compare dialog, for 3 and more selected member.
-     * 
-     * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
-     * @param selectedMembers - the selected members that go to the right side
-     *        of the compare dialog
-     */
-    public CompareDialog(Shell parentShell, boolean selectEditable, Member[] selectedMembers) {
-        super(parentShell);
-        initialize(parentShell, selectEditable, selectedMembers[0], selectedMembers[0], null);
-        hasMultipleRightMembers = true;
+        this.hasMultipleRightMembers = false;
+        this.rememberScreenValues = false;
 
         checkCompareFilters();
     }
@@ -180,7 +173,26 @@ public abstract class CompareDialog extends XDialog {
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember, Member ancestorMember) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
-        hasMultipleRightMembers = false;
+        this.hasMultipleRightMembers = false;
+        this.rememberScreenValues = false;
+
+        checkCompareFilters();
+    }
+
+    /**
+     * Creates the compare dialog, for 3 and more selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option
+     *        "Open for browse/edit" is displayed
+     * @param selectedMembers - the selected members that go to the right side
+     *        of the compare dialog
+     */
+    public CompareDialog(Shell parentShell, boolean selectEditable, Member[] selectedMembers) {
+        super(parentShell);
+        initialize(parentShell, selectEditable, selectedMembers[0], selectedMembers[0], null);
+        this.hasMultipleRightMembers = true;
+        this.rememberScreenValues = false;
 
         checkCompareFilters();
     }
@@ -212,6 +224,10 @@ public abstract class CompareDialog extends XDialog {
         }
 
         dateOptionsEditable = true;
+    }
+
+    protected boolean isLoadingPreviousValuesEnabled() {
+        return rememberScreenValues;
     }
 
     public void setDateOptionsEnabled(boolean enabled) {
