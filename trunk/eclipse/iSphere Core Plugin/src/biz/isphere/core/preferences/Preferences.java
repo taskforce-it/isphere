@@ -127,12 +127,14 @@ public final class Preferences {
 
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
 
+    private static final String ASP_GROUP = "ASP_GROUP"; //$NON-NLS-1$
+
     private static final String HOST_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
 
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
     private static final String SYSTEM_CCSID = DOMAIN + "SYSTEM_CCSID"; //$NON-NLS-1$
-
+    
     private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String SEARCH_FOR_BETA_VERSIONS = DOMAIN + "SEARCH_FOR_BETA_VERSIONS"; //$NON-NLS-1$
@@ -265,6 +267,10 @@ public final class Preferences {
 
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
+    }
+    
+    public String getASPGroup() {
+        return preferenceStore.getString(ASP_GROUP);
     }
 
     public String getHostName() {
@@ -573,6 +579,10 @@ public final class Preferences {
         preferenceStore.setValue(ISPHERE_LIBRARY, aLibrary.trim());
     }
 
+    public void setASPGroup(String aASPGroup) {
+        preferenceStore.setValue(ASP_GROUP, aASPGroup.trim());
+    }
+
     public void setHostName(String aHostName) {
         preferenceStore.setValue(HOST_NAME, aHostName);
     }
@@ -817,6 +827,7 @@ public final class Preferences {
         }
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
+        preferenceStore.setDefault(ASP_GROUP, getDefaultASPGroup());
         preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
         preferenceStore.setDefault(SYSTEM_CCSID, getDefaultSystemCcsid());
@@ -901,6 +912,15 @@ public final class Preferences {
      */
     public String getDefaultISphereLibrary() {
         return "ISPHERE";
+    }
+
+    /**
+     * Returns the default asp group.
+     * 
+     * @return default asp group
+     */
+    public String getDefaultASPGroup() {
+        return "*NONE";
     }
 
     /**

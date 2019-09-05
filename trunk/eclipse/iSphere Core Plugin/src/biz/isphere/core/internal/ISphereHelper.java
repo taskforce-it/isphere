@@ -33,6 +33,8 @@ import com.ibm.as400.access.QSYSObjectPathName;
 
 public class ISphereHelper {
 
+    private static final String ASP_GROUP_NONE_VALUE = "*NONE";
+    
     public static String getISphereLibraryVersion(AS400 as400, String library) {
 
         String dataAreaISphereContent = readISphereDataArea(null, as400, library);
@@ -308,4 +310,18 @@ public class ISphereHelper {
 
         return false;
     }
+
+    public static boolean isASPGroupSpecified(String aspGroup) {
+
+        if (StringHelper.isNullOrEmpty(aspGroup)) {
+            return false;
+        }
+
+        if (ASP_GROUP_NONE_VALUE.equals(aspGroup)) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

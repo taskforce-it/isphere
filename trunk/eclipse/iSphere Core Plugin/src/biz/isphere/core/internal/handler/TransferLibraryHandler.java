@@ -30,6 +30,7 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
     private String hostName;
     private int ftpPort;
     private String iSphereLibrary;
+    private String aspGroup;
 
     /**
      * Default constructor, used by the Eclipse framework.
@@ -38,10 +39,11 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
         super();
     }
 
-    public TransferLibraryHandler(String hostName, int ftpPort, String iSphereLibrary) {
+    public TransferLibraryHandler(String hostName, int ftpPort, String iSphereLibrary, String aspGroup) {
         this.hostName = hostName;
         this.ftpPort = ftpPort;
         this.iSphereLibrary = iSphereLibrary;
+        this.aspGroup = aspGroup;
     }
 
     /*
@@ -62,7 +64,7 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
             }
 
             TransferISphereLibrary statusDialog = new TransferISphereLibrary(shell.getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM,
-                iSphereLibrary, hostName, ftpPort);
+                iSphereLibrary, aspGroup, hostName, ftpPort);
             if (statusDialog.connect()) {
                 statusDialog.open();
             }
