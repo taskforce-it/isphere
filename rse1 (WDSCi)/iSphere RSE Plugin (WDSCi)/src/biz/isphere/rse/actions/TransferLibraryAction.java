@@ -26,8 +26,9 @@ public class TransferLibraryAction extends WorkbenchWindowActionDelegate {
             String hostName = Preferences.getInstance().getHostName();
             int port = Preferences.getInstance().getFtpPortNumber();
             String iSphereLibrary = Preferences.getInstance().getISphereLibrary(); // CHECKED
+            String aspGroup = Preferences.getInstance().getASPGroup();
 
-            TransferLibraryHandler handler = new TransferLibraryHandler(hostName, port, iSphereLibrary);
+            TransferLibraryHandler handler = new TransferLibraryHandler(hostName, port, iSphereLibrary, aspGroup);
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
         } catch (ExecutionException e) {
