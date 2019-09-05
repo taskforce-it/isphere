@@ -225,6 +225,8 @@ public class Messages extends NLS {
     public static String The_value_in_field_Type_is_not_valid;
 
     public static String The_value_in_field_iSphere_library_is_not_valid;
+    
+    public static String The_value_in_field_ASP_group_is_not_valid;
 
     public static String The_value_in_field_Severity_is_not_valid;
 
@@ -255,6 +257,8 @@ public class Messages extends NLS {
     public static String iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B;
 
     public static String iSphere_library_colon;
+    
+    public static String ASP_group_colon;
 
     public static String System_ccsid_colon;
 
@@ -293,12 +297,12 @@ public class Messages extends NLS {
     public static String Could_not_restore_library_A;
 
     public static String Library_A_successfull_transfered;
+    
+    public static String Error_occurred_while_transfering_library_A;
+
+    public static String Error_occurred_while_setting_the_asp_group_to_A;
 
     public static String Start_Transfer;
-
-    public static String ASP_device_name_colon;
-
-    public static String Restore_library_parameters;
 
     public static String Enter_a_host;
 

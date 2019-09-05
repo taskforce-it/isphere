@@ -23,6 +23,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -49,9 +50,13 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     private String iSphereLibrary;
     private Validator validatorLibrary;
 
+    private String aspGroup;
+    private Validator validatorASPGroup;
+    
     private Text textHostName;
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
+    private Combo comboASPGroup;
     private Label textISphereLibraryVersion;
     private Text textSystemCcsid;
     private Button buttonUpdateISphereLibraryVersion;
@@ -126,6 +131,31 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         // TODO: fix library name validator (pass CCSID) - DONE
         validatorLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
+        Label labelASPGroup = new Label(container, SWT.NONE);
+        labelASPGroup.setLayoutData(createLabelLayoutData());
+        labelASPGroup.setText(Messages.ASP_group_colon);
+
+        comboASPGroup = WidgetFactory.createUpperCaseCombo(container);
+        comboASPGroup.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                aspGroup = comboASPGroup.getText().toUpperCase().trim();
+                if (aspGroup.equals("") || !validatorASPGroup.validate(aspGroup)) {
+                    setErrorMessage(Messages.The_value_in_field_ASP_group_is_not_valid);
+                    setValid(false);
+                } else {
+                    setErrorMessage(null);
+                    setValid(true);
+                    updateISphereLibraryVersion();
+                }
+            }
+        });
+        comboASPGroup.setLayoutData(createTextLayoutData());
+        comboASPGroup.setTextLimit(10);
+        comboASPGroup.add("*NONE");
+
+        validatorASPGroup = Validator.getNameInstance(getDefaultSystemCcsid());
+        validatorASPGroup.addSpecialValue("*NONE");
+        
         Label labelSystemCcsid = new Label(container, SWT.NONE);
         labelSystemCcsid.setLayoutData(createLabelLayoutData());
         labelSystemCcsid.setText(Messages.System_ccsid_colon);
@@ -159,7 +189,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
             public void widgetSelected(SelectionEvent event) {
                 String hostName = textHostName.getText();
                 int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary);
+                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary, aspGroup);
                 try {
                     handler.execute(null);
                 } catch (Throwable e) {
@@ -226,6 +256,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setSystemCcsid(IntHelper.tryParseInt(textSystemCcsid.getText(), Preferences.getInstance().getDefaultSystemCcsid()));
         Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
+        Preferences.getInstance().setASPGroup(aspGroup);
 
     }
 
@@ -237,6 +268,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         iSphereLibrary = Preferences.getInstance().getISphereLibrary();
         textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getSystemCcsid()));
         chkboxUseISphereJdbc.setSelection(Preferences.getInstance().isISphereJdbcConnectionManager());
+        aspGroup = Preferences.getInstance().getASPGroup();
 
         setScreenValues();
     }
@@ -248,6 +280,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getDefaultSystemCcsid()));
         chkboxUseISphereJdbc.setSelection(Preferences.getInstance().getDefaultUseISphereJdbcConnectionManager());
+        aspGroup = Preferences.getInstance().getDefaultASPGroup();
 
         setScreenValues();
     }
@@ -255,6 +288,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     protected void setScreenValues() {
 
         textISphereLibrary.setText(iSphereLibrary);
+        comboASPGroup.setText(aspGroup);
+        
     }
 
     public void init(IWorkbench workbench) {

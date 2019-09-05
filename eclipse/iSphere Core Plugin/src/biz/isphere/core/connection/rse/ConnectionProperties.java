@@ -19,6 +19,7 @@ public class ConnectionProperties {
     public static final String ISPHERE_FTP_HOST_NAME = "connection.isphere.ftp.host";
     public static final String ISPHERE_FTP_PORT_NUMBER = "connection.isphere.ftp.port";
     public static final String ISPHERE_LIBRARY_NAME = "connection.isphere.library";
+    public static final String ISPHERE_ASP_GROUP = "connection.isphere.aspgroup";
     public static final String USE_CONNECTION_SPECIFIC_SETTINGS = "connection.use.settings";
 
     private Properties properties;
@@ -58,6 +59,20 @@ public class ConnectionProperties {
 
     public void setISphereLibraryName(String name) {
         properties.setProperty(ISPHERE_LIBRARY_NAME, name);
+    }
+
+    public String getASPGroup() {
+        String aspGroup = properties.getProperty(ISPHERE_ASP_GROUP);
+        if (aspGroup == null) {
+            return Preferences.getInstance().getDefaultASPGroup();
+        }
+        else {
+            return aspGroup;
+        }
+    }
+
+    public void setASPGroup(String aspGroup) {
+        properties.setProperty(ISPHERE_ASP_GROUP, aspGroup);
     }
 
     public boolean useISphereLibraryName() {
