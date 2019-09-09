@@ -70,6 +70,7 @@ public class RSECompareDialog extends CompareDialog {
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
+        setHistoryValuesCategoryKey(null);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
         setSwitchMemberAllowed(false);
@@ -89,6 +90,7 @@ public class RSECompareDialog extends CompareDialog {
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember) {
         super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
+        setHistoryValuesCategoryKey(null);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
         initializeAncestorMember(ancestorMember);
@@ -106,6 +108,7 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, Member[] selectedMembers) {
         super(parentShell, selectEditable, selectedMembers);
+        setHistoryValuesCategoryKey("multiple");
         initializeLeftMember(selectedMembers[0]);
         initializeRightMember(selectedMembers[0]);
     }
@@ -121,6 +124,7 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, Member leftMember, Member rightMember) {
         super(parentShell, selectEditable, leftMember, rightMember);
+        setHistoryValuesCategoryKey("2");
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
     }
@@ -135,6 +139,7 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
         super(parentShell, selectEditable, leftMember);
+        setHistoryValuesCategoryKey("1");
         initializeLeftMember(leftMember);
     }
 
@@ -147,6 +152,7 @@ public class RSECompareDialog extends CompareDialog {
      */
     public RSECompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell, selectEditable);
+        setHistoryValuesCategoryKey("0");
     }
 
     private void initializeLeftMember(Member leftMember) {
@@ -286,9 +292,11 @@ public class RSECompareDialog extends CompareDialog {
 
         QSYSMemberPrompt memberPrompt = new QSYSMemberPrompt(leftGroup, SWT.NONE, false, false, QSYSMemberPrompt.FILETYPE_SRC);
 
-        memberPrompt.getMemberCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_MBR));
-        memberPrompt.getFileCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_SRC));
-        memberPrompt.getLibraryCombo().setHistoryKey(getPartialMemberPromptSettingsKey(memberPromptType, OBJECT_TYPE_LIB));
+        if (canStoreHistory()) {
+            memberPrompt.getMemberCombo().setHistoryKey(getMemberPromptHistoryKey(memberPromptType, OBJECT_TYPE_MBR));
+            memberPrompt.getFileCombo().setHistoryKey(getMemberPromptHistoryKey(memberPromptType, OBJECT_TYPE_SRC));
+            memberPrompt.getLibraryCombo().setHistoryKey(getMemberPromptHistoryKey(memberPromptType, OBJECT_TYPE_LIB));
+        }
 
         memberPrompt.getMemberCombo().setAutoUpperCase(true);
         memberPrompt.getFileCombo().setAutoUpperCase(true);
@@ -731,10 +739,10 @@ public class RSECompareDialog extends CompareDialog {
 
     private boolean loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
 
-        String connection = loadValue(prefix + CONNECTION, null);
-        String library = loadValue(prefix + LIBRARY, null);
-        String file = loadValue(prefix + FILE, null);
-        String member = loadValue(prefix + MEMBER, null);
+        String connection = loadValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), null);
+        String library = loadValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), null);
+        String file = loadValue(getMemberPromptDialogSettingsKey(prefix, FILE), null);
+        String member = loadValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), null);
 
         return setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
     }
@@ -778,7 +786,7 @@ public class RSECompareDialog extends CompareDialog {
 
         if (hasEditableRightMember()) {
             if (hasMultipleRightMembers()) {
-                // do not store special value *LEFT.
+                storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             } else if (isLoadingPreviousValuesEnabled()) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
@@ -801,10 +809,10 @@ public class RSECompareDialog extends CompareDialog {
         String member = memberPrompt.getMemberName();
 
         if (haveMemberValues(connection, library, file, member)) {
-            storeValue(prefix + CONNECTION, connection);
-            storeValue(prefix + LIBRARY, library);
-            storeValue(prefix + FILE, file);
-            storeValue(prefix + MEMBER, member);
+            storeValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), connection);
+            storeValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), library);
+            storeValue(getMemberPromptDialogSettingsKey(prefix, FILE), file);
+            storeValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), member);
         }
     }
 
@@ -814,7 +822,6 @@ public class RSECompareDialog extends CompareDialog {
             return;
         }
 
-        System.out.println("Updating history: " + memberPrompt.getText());
         memberPrompt.updateHistory();
     }
 
