@@ -16,7 +16,11 @@ public abstract class AbstractIntegerFilter extends AbstractMessagePropertyFilte
 
     public static final int NULL_VALUE = -1; //$NON-NLS-1$
 
-    private int intValue;
+    protected int intValue;
+
+    public AbstractIntegerFilter(String fieldName) {
+        super(fieldName);
+    }
 
     public void setValue(String value) {
         super.setValue(value);
@@ -40,6 +44,15 @@ public abstract class AbstractIntegerFilter extends AbstractMessagePropertyFilte
         JobLogMessage jobLogMessage = (JobLogMessage)element;
         int currentValue = getCurrentValue(jobLogMessage);
         return intValue == currentValue;
+    }
+
+    public String getWhereClause() {
+
+        if (negated) {
+            return fieldName + " <> " + Integer.toString(intValue);
+        } else {
+            return fieldName + " = " + Integer.toString(intValue);
+        }
     }
 
     protected abstract int getCurrentValue(JobLogMessage jobLogMessage);

@@ -16,4 +16,5 @@ public interface IMessagePropertyFilter {
 
     public boolean xselect(Viewer tableViewer, Object parentElement, JobLogMessage element);
 
+    public String getWhereClause();
 }

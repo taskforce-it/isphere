@@ -12,43 +12,47 @@ import org.eclipse.jface.viewers.Viewer;
 
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class TextFilter implements IMessagePropertyFilter {
+public class TextFilter extends AbstractStringFilter {
 
     private static final String NEGATED_MARKER = AbstractMessagePropertyFilter.NEGATED_MARKER;
 
-    private String text;
     protected boolean negated;
 
     public TextFilter(String text) {
+        super(JobLogMessage.Fields.TEXT.fieldName());
 
         if (text.startsWith(NEGATED_MARKER)) {
-            this.text = text.substring(1);
+            setValue(text.substring(1).toLowerCase());
             this.negated = true;
         } else {
-            this.text = text;
+            setValue(text.toLowerCase());
             this.negated = false;
         }
     }
 
-    public boolean xselect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
-        return applyNegatedAttribute(doSelect(tableViewer, parentElement, element));
-    }
-
     protected boolean doSelect(Viewer tableViewer, Object parentElement, JobLogMessage element) {
 
-        if (element == null || element.getText() == null) {
+        JobLogMessage jobLogMessage = (JobLogMessage)element;
+        if (jobLogMessage == null || getCurrentValue(jobLogMessage) == null) {
             return true;
         }
 
-        return element.getLowerCaseText().indexOf(text) >= 0;
+        String currentValue = getCurrentValue(jobLogMessage);
+
+        return currentValue.indexOf(value) >= 0;
     }
 
-    protected boolean applyNegatedAttribute(boolean isSelected) {
+    @Override
+    protected String getCurrentValue(JobLogMessage jobLogMessage) {
+        return jobLogMessage.getLowerCaseText();
+    }
+
+    public String getWhereClause() {
 
         if (negated) {
-            return !isSelected;
+            return "Lower(" + fieldName + ") NOT LIKE '%" + value + "%'";
         } else {
-            return isSelected;
+            return "Lower(" + fieldName + ") LIKE '%" + value + "%'";
         }
     }
 }

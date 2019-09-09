@@ -13,6 +13,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 public class SeverityFilter extends AbstractIntegerFilter {
 
     public SeverityFilter(String severity) {
+        super(JobLogMessage.Fields.SEVERITY.fieldName());
         setValue(severity);
     }
 

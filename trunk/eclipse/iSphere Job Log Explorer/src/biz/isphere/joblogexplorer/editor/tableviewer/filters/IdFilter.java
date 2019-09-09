@@ -13,6 +13,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 public class IdFilter extends AbstractStringFilter {
 
     public IdFilter(String id) {
+        super(JobLogMessage.Fields.ID.fieldName());
         setValue(id);
     }
 
