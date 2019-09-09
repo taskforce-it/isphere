@@ -65,7 +65,13 @@
 			<b>Note:</b> You may use another library name, but be aware
 			that this library will be <b>deleted</b> if it exists.
 		<li>Verify the ASP group. The name of the ASP group is used for parameter <i>RSTASPDEV</i>
-			of command <i>RSTLIB</i> when restoring the iSphere library.</li>
+		    of command <i>RSTLIB</i> when restoring the iSphere library. The possible values are:<p>
+		    <table>
+		    <tr><td nowrap valign="top">*NONE</td><td valign="top">-</td><td valign="top">The DLTLIB and RSTLIB commands are executed without the ASPDEV and RSTASPDEV parameters.</td></tr>
+		    <tr><td nowrap valign="top">asp-device-name</td><td valign="top">-</td><td valign="top">The DLTLIB command is executed with ASPDEV(*) and the RSTLIB command is extended with RSTASPDEV(asp-device-name).</td></tr>
+		    </table>
+		    <p>
+		</li>
 		<li>Verify the system CCSID. The system CCSID is used when validating object names.</li>
 		<li>Click the [Transfer iSphere library] button.</li>
 		<li>Use the refresh button to retrieve the version of the iSphere library. Once
