@@ -390,8 +390,8 @@ public class TransferISphereLibrary extends Shell {
                     if (commandCall != null) {
                         setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
                         hostName = as400.getSystemName();
-                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_to_host_B_using_port_C, new String[] { iSphereLibrary.trim() + " (" + Messages.ASP_group_colon + aspGroup + ")",
-                            hostName, Integer.toString(ftpPort) }));
+                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C, new String[] {
+                            iSphereLibrary, hostName, Integer.toString(ftpPort), aspGroup }));
                         buttonStart.setEnabled(true);
                         buttonClose.setEnabled(true);
                         return true;
@@ -437,7 +437,7 @@ public class TransferISphereLibrary extends Shell {
 
                 String workLibrary = "QGPL";
                 String saveFileName = iSphereLibrary;
-                
+
                 boolean ok = true;
                 if (ISphereHelper.isASPGroupSpecified(aspGroup)) {
                     String cpfMsg = executeCommand("SETASPGRP ASPGRP(" + aspGroup + ")", true);
@@ -454,22 +454,23 @@ public class TransferISphereLibrary extends Shell {
                         setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
                         if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
                             setStatus("!!!   "
-                                + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "   !!!");
+                                + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName })
+                                + "   !!!");
                         } else {
-    
+
                             setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
                             if (!createSaveFile(workLibrary, saveFileName)) {
                                 setStatus("!!!   "
                                     + Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName })
                                     + "   !!!");
                             } else {
-    
+
                                 try {
-    
+
                                     setStatus(Messages.Sending_save_file_to_host);
                                     setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
                                     AS400FTP client = new AS400FTP(as400);
-    
+
                                     URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
                                     File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE.SAVF");
                                     client.setPort(ftpPort);
@@ -478,25 +479,26 @@ public class TransferISphereLibrary extends Shell {
                                         client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
                                         client.disconnect();
                                     }
-    
+
                                     setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
                                     if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary, aspGroup)) {
                                         setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
                                     } else {
                                         successfullyTransfered = true;
                                     }
-    
+
                                 } catch (Throwable e) {
                                     ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
-    
+
                                     setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
                                     setStatus(e.getLocalizedMessage());
                                 } finally {
-    
-                                    setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
+
+                                    setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C,
+                                        new String[] { workLibrary, saveFileName, "*FILE" }));
                                     deleteSaveFile(workLibrary, saveFileName);
                                 }
-    
+
                             }
                         }
                     }
