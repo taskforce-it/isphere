@@ -57,14 +57,17 @@
 		<li>Click on "Windows / Preferences".</li>
 		<li>Expand item "iSphere".</li>
 		<li>Click "Library".</li>
-		<li>In &quot;Host name:&quot; enter the name of the IBM i host
-			system. (You could also enter an IP address.)<br>
+		<li>In &quot;Host name:&quot; enter the name of an IBM i host
+			system that is configured as a <i>Remote System</i> in the <i>Remote System Explorer</i> view.<br>
 			Review the &quot;FTP port number&quot; and the name of the &quot;iSphere
 			library&quot;. The default FTP port is 21. The default library name is
 			ISPHERE.<br>
-            <b>Note:</b> You may use another library name, but be aware
-			that this library will be <b>deleted</b> if it exists.<br> Click
-			the [Transfer iSphere library] button.
+			<b>Note:</b> You may use another library name, but be aware
+			that this library will be <b>deleted</b> if it exists.
+		<li>Verify the ASP group. The name of the ASP group is used for parameter <i>RSTASPDEV</i>
+			of command <i>RSTLIB</i> when restoring the iSphere library.</li>
+		<li>Verify the system CCSID. The system CCSID is used when validating object names.</li>
+		<li>Click the [Transfer iSphere library] button.</li>
 		<li>Use the refresh button to retrieve the version of the iSphere library. Once
 		    pressed, the version is automatically updated as the library name changes.
 		    Auto-update is disabled, when the host name is changed.</li>
