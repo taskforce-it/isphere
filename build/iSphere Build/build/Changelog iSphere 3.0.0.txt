@@ -4,7 +4,8 @@ Changelog: iSphere 3.5.5.b002
  • Moved parameter "ASP group" from the "Transfer iSphere library"
    dialog to the iSphere "Library" preferences page.
  • Changed the source member compare dialog to update the history 
-   values.
+   values. Now history values and last used values are stored
+   separately depending on how many members were selected.
  • Updated STRPREPRC to v1.17. Added command parameter EXECOPT to
    select the type of commands to execute: *PRECMDS, *CRTCMD and
    *POSTCMDS. This parameter has been added for a better integration
