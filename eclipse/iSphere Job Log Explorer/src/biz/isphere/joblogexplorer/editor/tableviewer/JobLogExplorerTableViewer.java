@@ -29,8 +29,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
 import biz.isphere.joblogexplorer.editor.StatusLineData;
@@ -587,7 +589,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
                     tableViewer.addFilter(masterFilter);
                 }
             }
-
+        } catch (ParseException e) {
+            MessageDialogAsync.displayError(e.getLocalizedMessage());
         } finally {
             notifyStatusChangedListeners();
         }

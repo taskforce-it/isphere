@@ -14,6 +14,10 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 
 public abstract class AbstractStringFilter extends AbstractMessagePropertyFilter {
 
+    public AbstractStringFilter(String fieldName) {
+        super(fieldName);
+    }
+
     public void setValue(String value) {
         super.setValue(value);
     }
@@ -31,6 +35,15 @@ public abstract class AbstractStringFilter extends AbstractMessagePropertyFilter
             currentValue = UI_SPCVAL_BLANK;
         }
         return value.equalsIgnoreCase(currentValue);
+    }
+
+    public String getWhereClause() {
+
+        if (negated) {
+            return fieldName + " <> '" + value + "'";
+        } else {
+            return fieldName + " = '" + value + "'";
+        }
     }
 
     protected abstract String getCurrentValue(JobLogMessage jobLogMessage);

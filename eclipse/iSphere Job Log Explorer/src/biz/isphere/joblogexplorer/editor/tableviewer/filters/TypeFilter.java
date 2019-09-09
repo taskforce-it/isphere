@@ -13,6 +13,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 public class TypeFilter extends AbstractStringFilter {
 
     public TypeFilter(String type) {
+        super(JobLogMessage.Fields.TYPE.fieldName());
         setValue(type);
     }
 

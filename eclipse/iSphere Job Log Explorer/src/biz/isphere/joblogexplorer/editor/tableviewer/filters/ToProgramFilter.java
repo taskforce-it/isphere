@@ -13,6 +13,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 public class ToProgramFilter extends AbstractStringFilter {
 
     public ToProgramFilter(String fromProgram) {
+        super(JobLogMessage.Fields.TO_PROGRAM.fieldName());
         setValue(fromProgram);
     }
 

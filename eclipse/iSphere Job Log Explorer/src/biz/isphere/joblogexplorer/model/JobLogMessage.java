@@ -9,6 +9,7 @@
 package biz.isphere.joblogexplorer.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import biz.isphere.base.internal.IntHelper;
@@ -47,6 +48,72 @@ public class JobLogMessage {
 
     private int severityInt;
     private String lowerCaseText;
+
+    // private static final int ID = 0;
+    // private static final int TYPE = 1;
+    // private static final int SEVERITY = 2;
+    // private static final int FROM_LIBRARY = 3;
+    // private static final int FROM_PROGRAM = 4;
+    // private static final int FROM_STATEMENT = 5;
+    // private static final int TO_LIBRARY = 6;
+    // private static final int TO_PROGRAM = 7;
+    // private static final int TO_STATEMENT = 8;
+    // private static final int TEXT = 9;
+    //
+    // public static final String FIELD_NAME_ID = "ID";
+    // public static final String FIELD_NAME_TYPE = "TYPE";
+    // public static final String FIELD_NAME_SEVERITY = "SEVERITY";
+    // public static final String FIELD_NAME_FROM_LIBRARY = "FROM_LIBRARY";
+    // public static final String FIELD_NAME_FROM_PROGRAM = "FROM_PROGRAM";
+    // public static final String FIELD_NAME_FROM_STATEMENT = "FROM_STATEMENT";
+    // public static final String FIELD_NAME_TO_LIBRARY = "TO_LIBRARY";
+    // public static final String FIELD_NAME_TO_PROGRAM = "TO_PROGRAM";
+    // public static final String FIELD_NAME_TO_STATEMENT = "TO_STATEMENT";
+    // public static final String FIELD_NAME_TEXT = "TEXT";
+
+    public static enum Fields {
+        ID ("ID", 0),
+        TYPE ("TYPE", 1),
+        SEVERITY ("SEVERITY", 2),
+        FROM_LIBRARY ("FROM_LIBRARY", 3),
+        FROM_PROGRAM ("FROM_PROGRAM", 4),
+        FROM_STATEMENT ("FROM_STATEMENT", 5),
+        TO_LIBRARY ("TO_LIBRARY", 6),
+        TO_PROGRAM ("TO_PROGRAM", 7),
+        TO_STATEMENT ("TO_STATEMENT", 8),
+        TEXT ("TEXT", 9);
+
+        private String fieldName;
+        private int fieldIndex;
+
+        private Fields(String fieldName, int fieldIndex) {
+            this.fieldName = fieldName;
+            this.fieldIndex = fieldIndex;
+        }
+
+        public String fieldName() {
+            return fieldName;
+        }
+
+        public int fieldIndex() {
+            return fieldIndex;
+        }
+    }
+
+    private static HashMap<String, Integer> columnMappings;
+    static {
+        columnMappings = new HashMap<String, Integer>();
+        columnMappings.put(Fields.ID.fieldName(), Fields.ID.fieldIndex());
+        columnMappings.put(Fields.TYPE.fieldName(), Fields.TYPE.fieldIndex());
+        columnMappings.put(Fields.SEVERITY.fieldName(), Fields.SEVERITY.fieldIndex());
+        columnMappings.put(Fields.FROM_LIBRARY.fieldName(), Fields.FROM_LIBRARY.fieldIndex());
+        columnMappings.put(Fields.FROM_PROGRAM.fieldName(), Fields.FROM_PROGRAM.fieldIndex());
+        columnMappings.put(Fields.FROM_STATEMENT.fieldName(), Fields.FROM_STATEMENT.fieldIndex());
+        columnMappings.put(Fields.TO_LIBRARY.fieldName(), Fields.TO_LIBRARY.fieldIndex());
+        columnMappings.put(Fields.TO_PROGRAM.fieldName(), Fields.TO_PROGRAM.fieldIndex());
+        columnMappings.put(Fields.TO_STATEMENT.fieldName(), Fields.TO_STATEMENT.fieldIndex());
+        columnMappings.put(Fields.TEXT.fieldName(), Fields.TEXT.fieldIndex());
+    }
 
     public JobLogMessage(int pageNumber) {
         this.selected = false;
@@ -256,6 +323,32 @@ public class JobLogMessage {
             listener.modifyText(event);
         }
 
+    }
+
+    public static HashMap<String, Integer> getColumnMapping() {
+        return columnMappings;
+    }
+
+    public Comparable[] getRow() {
+
+        Comparable[] row = new Comparable[columnMappings.size()];
+
+        row[Fields.ID.fieldIndex()] = getId();
+        row[Fields.TYPE.fieldIndex()] = getType();
+        row[Fields.SEVERITY.fieldIndex()] = getSeverityInt();
+        row[Fields.FROM_LIBRARY.fieldIndex()] = getFromLibrary();
+        row[Fields.FROM_PROGRAM.fieldIndex()] = getFromProgram();
+        row[Fields.FROM_STATEMENT.fieldIndex()] = getFromStatement();
+        row[Fields.TO_LIBRARY.fieldIndex()] = getToLibrary();
+        row[Fields.TO_PROGRAM.fieldIndex()] = getToProgram();
+        row[Fields.TO_STATEMENT.fieldIndex()] = getToStatement();
+        row[Fields.TEXT.fieldIndex()] = getText();
+
+        // System.out.println("Date: " + row[TO_STATEMENT] + ", Time: " +
+        // row[TEXT]
+        // + ", Timestamp: " + row[JOTSTP]);
+
+        return row;
     }
 
     @Override

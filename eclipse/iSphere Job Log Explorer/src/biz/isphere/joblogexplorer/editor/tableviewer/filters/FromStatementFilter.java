@@ -13,6 +13,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 public class FromStatementFilter extends AbstractStringFilter {
 
     public FromStatementFilter(String fromStatement) {
+        super(JobLogMessage.Fields.FROM_STATEMENT.fieldName());
         setValue(fromStatement);
     }
 

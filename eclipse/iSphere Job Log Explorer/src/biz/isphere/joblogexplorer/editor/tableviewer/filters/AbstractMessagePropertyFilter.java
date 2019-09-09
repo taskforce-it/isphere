@@ -16,11 +16,16 @@ public abstract class AbstractMessagePropertyFilter implements IMessagePropertyF
 
     public static final String UI_SPCVAL_ALL = "*ALL"; //$NON-NLS-1$
     public static final String UI_SPCVAL_BLANK = "*BLANK"; //$NON-NLS-1$
-    
+
     public static final String NEGATED_MARKER = "!"; //$NON-NLS-1$
 
+    protected String fieldName;
     protected String value;
     protected boolean negated;
+
+    public AbstractMessagePropertyFilter(String fieldName) {
+        this.fieldName = fieldName;
+    }
 
     public void setValue(String value) {
 
