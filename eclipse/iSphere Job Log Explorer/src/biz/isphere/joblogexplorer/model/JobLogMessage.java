@@ -11,6 +11,7 @@ package biz.isphere.joblogexplorer.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractIntegerFilter;
@@ -49,39 +50,21 @@ public class JobLogMessage {
     private int severityInt;
     private String lowerCaseText;
 
-    // private static final int ID = 0;
-    // private static final int TYPE = 1;
-    // private static final int SEVERITY = 2;
-    // private static final int FROM_LIBRARY = 3;
-    // private static final int FROM_PROGRAM = 4;
-    // private static final int FROM_STATEMENT = 5;
-    // private static final int TO_LIBRARY = 6;
-    // private static final int TO_PROGRAM = 7;
-    // private static final int TO_STATEMENT = 8;
-    // private static final int TEXT = 9;
-    //
-    // public static final String FIELD_NAME_ID = "ID";
-    // public static final String FIELD_NAME_TYPE = "TYPE";
-    // public static final String FIELD_NAME_SEVERITY = "SEVERITY";
-    // public static final String FIELD_NAME_FROM_LIBRARY = "FROM_LIBRARY";
-    // public static final String FIELD_NAME_FROM_PROGRAM = "FROM_PROGRAM";
-    // public static final String FIELD_NAME_FROM_STATEMENT = "FROM_STATEMENT";
-    // public static final String FIELD_NAME_TO_LIBRARY = "TO_LIBRARY";
-    // public static final String FIELD_NAME_TO_PROGRAM = "TO_PROGRAM";
-    // public static final String FIELD_NAME_TO_STATEMENT = "TO_STATEMENT";
-    // public static final String FIELD_NAME_TEXT = "TEXT";
-
     public static enum Fields {
         ID ("ID", 0),
         TYPE ("TYPE", 1),
         SEVERITY ("SEVERITY", 2),
         FROM_LIBRARY ("FROM_LIBRARY", 3),
         FROM_PROGRAM ("FROM_PROGRAM", 4),
-        FROM_STATEMENT ("FROM_STATEMENT", 5),
-        TO_LIBRARY ("TO_LIBRARY", 6),
-        TO_PROGRAM ("TO_PROGRAM", 7),
-        TO_STATEMENT ("TO_STATEMENT", 8),
-        TEXT ("TEXT", 9);
+        FROM_MODULE ("FROM_MODULE", 5),
+        FROM_PROCEDURE ("FROM_PROCEDURE", 6),
+        FROM_STATEMENT ("FROM_STATEMENT", 7),
+        TO_LIBRARY ("TO_LIBRARY", 8),
+        TO_PROGRAM ("TO_PROGRAM", 9),
+        TO_MODULE ("TO_MODULE", 10),
+        TO_PROCEDURE ("TO_PROCEDURE", 11),
+        TO_STATEMENT ("TO_STATEMENT", 12),
+        TEXT ("TEXT", 13);
 
         private String fieldName;
         private int fieldIndex;
@@ -103,16 +86,24 @@ public class JobLogMessage {
     private static HashMap<String, Integer> columnMappings;
     static {
         columnMappings = new HashMap<String, Integer>();
-        columnMappings.put(Fields.ID.fieldName(), Fields.ID.fieldIndex());
-        columnMappings.put(Fields.TYPE.fieldName(), Fields.TYPE.fieldIndex());
-        columnMappings.put(Fields.SEVERITY.fieldName(), Fields.SEVERITY.fieldIndex());
-        columnMappings.put(Fields.FROM_LIBRARY.fieldName(), Fields.FROM_LIBRARY.fieldIndex());
-        columnMappings.put(Fields.FROM_PROGRAM.fieldName(), Fields.FROM_PROGRAM.fieldIndex());
-        columnMappings.put(Fields.FROM_STATEMENT.fieldName(), Fields.FROM_STATEMENT.fieldIndex());
-        columnMappings.put(Fields.TO_LIBRARY.fieldName(), Fields.TO_LIBRARY.fieldIndex());
-        columnMappings.put(Fields.TO_PROGRAM.fieldName(), Fields.TO_PROGRAM.fieldIndex());
-        columnMappings.put(Fields.TO_STATEMENT.fieldName(), Fields.TO_STATEMENT.fieldIndex());
-        columnMappings.put(Fields.TEXT.fieldName(), Fields.TEXT.fieldIndex());
+        addColumnMappingEntry(columnMappings, Fields.ID);
+        addColumnMappingEntry(columnMappings, Fields.TYPE);
+        addColumnMappingEntry(columnMappings, Fields.SEVERITY);
+        addColumnMappingEntry(columnMappings, Fields.FROM_LIBRARY);
+        addColumnMappingEntry(columnMappings, Fields.FROM_PROGRAM);
+        addColumnMappingEntry(columnMappings, Fields.FROM_MODULE);
+        addColumnMappingEntry(columnMappings, Fields.FROM_PROCEDURE);
+        addColumnMappingEntry(columnMappings, Fields.FROM_STATEMENT);
+        addColumnMappingEntry(columnMappings, Fields.TO_LIBRARY);
+        addColumnMappingEntry(columnMappings, Fields.TO_PROGRAM);
+        addColumnMappingEntry(columnMappings, Fields.TO_MODULE);
+        addColumnMappingEntry(columnMappings, Fields.TO_PROCEDURE);
+        addColumnMappingEntry(columnMappings, Fields.TO_STATEMENT);
+        addColumnMappingEntry(columnMappings, Fields.TEXT);
+    }
+
+    private static void addColumnMappingEntry(Map<String, Integer> columnMappings, Fields field) {
+        columnMappings.put(field.fieldName(), field.fieldIndex());
     }
 
     public JobLogMessage(int pageNumber) {
@@ -338,9 +329,13 @@ public class JobLogMessage {
         row[Fields.SEVERITY.fieldIndex()] = getSeverityInt();
         row[Fields.FROM_LIBRARY.fieldIndex()] = getFromLibrary();
         row[Fields.FROM_PROGRAM.fieldIndex()] = getFromProgram();
+        row[Fields.FROM_MODULE.fieldIndex()] = getFromModule();
+        row[Fields.FROM_PROCEDURE.fieldIndex()] = getFromProcedure();
         row[Fields.FROM_STATEMENT.fieldIndex()] = getFromStatement();
         row[Fields.TO_LIBRARY.fieldIndex()] = getToLibrary();
         row[Fields.TO_PROGRAM.fieldIndex()] = getToProgram();
+        row[Fields.TO_MODULE.fieldIndex()] = getToModule();
+        row[Fields.TO_PROCEDURE.fieldIndex()] = getToProcedure();
         row[Fields.TO_STATEMENT.fieldIndex()] = getToStatement();
         row[Fields.TEXT.fieldIndex()] = getText();
 
