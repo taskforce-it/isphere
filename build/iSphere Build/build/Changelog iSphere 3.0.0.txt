@@ -7,6 +7,8 @@ Changelog: iSphere 3.5.5.b002
    values. Now history values and last used values are stored
    separately depending on how many members were selected.
  • Changed job log explorer to use SQLJEP under the cover.
+ • Changed job log explorer to keep a selected row, when applying
+   a filter that does not hide that row.
  • Updated STRPREPRC to v1.17. Added command parameter EXECOPT to
    select the type of commands to execute: *PRECMDS, *CRTCMD and
    *POSTCMDS. This parameter has been added for a better integration
