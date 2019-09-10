@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Security Plugin (RDi) (Dummy Project)
 Bundle-SymbolicName: biz.isphere.dummy.equinox.security
-Bundle-Version: 3.5.5.b001
+Bundle-Version: 3.5.5.r
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
