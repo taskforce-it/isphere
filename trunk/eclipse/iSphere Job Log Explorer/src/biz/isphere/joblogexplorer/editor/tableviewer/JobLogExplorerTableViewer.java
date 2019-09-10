@@ -588,6 +588,11 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
                 } else {
                     tableViewer.addFilter(masterFilter);
                 }
+                if (getItemCount() > 0) {
+                    if (tableViewer.getTable().getSelection().length == 0) {
+                        setSelection(0);
+                    }
+                }
             }
         } catch (ParseException e) {
             MessageDialogAsync.displayError(e.getLocalizedMessage());
