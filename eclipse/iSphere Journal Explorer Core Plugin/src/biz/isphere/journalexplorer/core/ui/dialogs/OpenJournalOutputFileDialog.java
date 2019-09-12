@@ -59,7 +59,7 @@ import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
-public class AddJournalDialog extends XDialog {
+public class OpenJournalOutputFileDialog extends XDialog {
 
     private static final String CONNECTION = "CONNECTION";
     private static final String LIBRARY = "LIBRARY";
@@ -89,7 +89,7 @@ public class AddJournalDialog extends XDialog {
      * 
      * @param parentShell
      */
-    public AddJournalDialog(Shell parentShell) {
+    public OpenJournalOutputFileDialog(Shell parentShell) {
         super(parentShell);
 
         this.isInitializing = true;
