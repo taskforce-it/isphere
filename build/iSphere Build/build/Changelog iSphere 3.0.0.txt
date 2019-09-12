@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.5.6.b001
+-----------------------------
+ • Fixed the "Open journal" dialog to accept special value *FIRST
+   as a member name.
+
 Changelog: iSphere 3.5.5.b002
 -----------------------------
  • Moved parameter "ASP group" from the "Transfer iSphere library"

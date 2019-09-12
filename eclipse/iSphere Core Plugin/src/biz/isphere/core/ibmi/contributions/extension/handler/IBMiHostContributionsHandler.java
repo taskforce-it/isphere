@@ -8,6 +8,7 @@
 
 package biz.isphere.core.ibmi.contributions.extension.handler;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +24,13 @@ import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContribution
 import biz.isphere.core.internal.Member;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.ErrorCompletingRequestException;
+import com.ibm.as400.access.MemberDescription;
+import com.ibm.as400.access.ObjectDoesNotExistException;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 public class IBMiHostContributionsHandler {
 
@@ -88,6 +95,15 @@ public class IBMiHostContributionsHandler {
         return factory.checkFile(connectionName, libraryName, fileName);
     }
 
+    public static String resolveMemberName(String connectionName, String libraryName, String fileName, String memberName) throws AS400Exception,
+        AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
+
+        MemberDescription file = new MemberDescription(IBMiHostContributionsHandler.getSystem(connectionName), new QSYSObjectPathName(libraryName,
+            fileName, memberName, "MBR"));
+
+        return (String)file.getValue(MemberDescription.MEMBER_NAME);
+    }
+
     public static boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -96,7 +112,17 @@ public class IBMiHostContributionsHandler {
             return false;
         }
 
-        return factory.checkMember(connectionName, libraryName, fileName, memberName);
+        String tMemberName = memberName;
+
+        if (memberName.startsWith("*")) {
+            try {
+                tMemberName = resolveMemberName(connectionName, libraryName, fileName, tMemberName);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        return factory.checkMember(connectionName, libraryName, fileName, tMemberName);
     }
 
     public static String getISphereLibrary(String connectionName) {

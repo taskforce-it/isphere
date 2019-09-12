@@ -77,6 +77,7 @@ public class AddJournalDialog extends XDialog {
     private String fileName;
     private String memberName;
     private String whereClause;
+    private String resolvedMemberName;
 
     private boolean isInitializing;
 
@@ -312,6 +313,8 @@ public class AddJournalDialog extends XDialog {
 
     private boolean validated() {
 
+        resolvedMemberName = null;
+
         if (StringHelper.isNullOrEmpty(memberName)) {
             txtMemberName.setText("*FIRST");
             txtMemberName.setFocus();
@@ -349,10 +352,22 @@ public class AddJournalDialog extends XDialog {
             return false;
         }
 
-        if (memberName.startsWith("*") && !"*FIRST".equals(memberName)) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Special_value_A_is_not_allowed, memberName));
-            txtMemberName.setFocus();
-            return false;
+        if (memberName.startsWith("*")) {
+            if ("*FIRST".equals(memberName)) {
+                try {
+                    resolvedMemberName = IBMiHostContributionsHandler.resolveMemberName(connection.getConnectionName(), libraryName, fileName,
+                        memberName);
+                } catch (Exception e) {
+                    resolvedMemberName = null;
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                    txtMemberName.setFocus();
+                    return false;
+                }
+            } else {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Special_value_A_is_not_allowed, memberName));
+                txtMemberName.setFocus();
+                return false;
+            }
         }
 
         if (!IBMiHostContributionsHandler.checkLibrary(connection.getConnectionName(), libraryName)) {
@@ -368,9 +383,9 @@ public class AddJournalDialog extends XDialog {
             return false;
         }
 
-        if (!IBMiHostContributionsHandler.checkMember(connection.getConnectionName(), libraryName, fileName, memberName)) {
+        if (!IBMiHostContributionsHandler.checkMember(connection.getConnectionName(), libraryName, fileName, resolvedMemberName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, memberName }));
+                Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, resolvedMemberName }));
             txtMemberName.setFocus();
             return false;
         }
@@ -419,7 +434,7 @@ public class AddJournalDialog extends XDialog {
 
     public String getMemberName() {
 
-        return memberName.toUpperCase();
+        return resolvedMemberName.toUpperCase();
     }
 
     public String getSqlWhere() {
