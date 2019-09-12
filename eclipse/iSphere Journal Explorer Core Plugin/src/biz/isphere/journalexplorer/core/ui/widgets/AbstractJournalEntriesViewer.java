@@ -48,6 +48,8 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
@@ -58,7 +60,6 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -140,7 +141,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private void createSqlEditor() {
 
         if (!isAvailable(sqlEditor)) {
-            sqlEditor = new SqlEditor(getContainer(), getClass().getSimpleName(), getDialogSettingsManager(), SWT.NONE);
+            sqlEditor = WidgetFactory.createSqlEditor(getContainer(), getClass().getSimpleName(), getDialogSettingsManager());
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
             sqlEditor.setWhereClause(getFilterClause());

@@ -1514,6 +1514,28 @@ public class Messages extends NLS {
 
     public static String Could_not_read_status_from_file_B_A_for_search_job_handle_C;
 
+    public static String SqlEditor_WHERE;
+
+    public static String SqlEditor_WHERE_Tooltip;
+
+    public static String SqlEditor_History;
+
+    public static String SqlEditor_History_Tooltip;
+
+    public static String ButtonLabel_AddField;
+
+    public static String ButtonTooltip_AddField;
+
+    public static String ButtonLabel_Clear;
+
+    public static String ButtonTooltip_Clear;
+
+    public static String ButtonLabel_Execute;
+
+    public static String ButtonTooltip_Execute;
+
+    public static String Tooltip_SqlEditor_Text;
+
     /*
      * Warning messages
      */

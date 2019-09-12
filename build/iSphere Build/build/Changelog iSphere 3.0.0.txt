@@ -3,6 +3,8 @@ Changelog: iSphere 3.5.6.b001
 -----------------------------
  • Fixed the "Open journal" dialog to accept special value *FIRST
    as a member name.
+ • Moved SqlEditor from iSphere Journal Explorer Core plug-in to
+   iSphere Core plug-in to make it available for the Job Log explorer. 
 
 Changelog: iSphere 3.5.5.b002
 -----------------------------

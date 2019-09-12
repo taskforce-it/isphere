@@ -50,12 +50,12 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.swt.widgets.SqlEditor;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
@@ -150,7 +150,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        sqlEditor = new SqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
+            | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);
