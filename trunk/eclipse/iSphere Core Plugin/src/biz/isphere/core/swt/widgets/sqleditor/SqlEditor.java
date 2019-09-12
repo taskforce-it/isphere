@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.swt.widgets;
+package biz.isphere.core.swt.widgets.sqleditor;
 
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -32,11 +32,11 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.journalexplorer.core.Messages;
 
 public class SqlEditor extends Composite {
 

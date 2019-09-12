@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
@@ -32,6 +33,7 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
+import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 
 /**
@@ -758,6 +760,35 @@ public final class WidgetFactory {
         return WidgetFactory.getInstance().produceStringListEditor(parent, style);
     }
 
+    /**
+     * Produces a SqlEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param historyKey the history key used for storing the history values
+     * @param dialogSettingsManager the dialog settings manager used for storing
+     *        history values
+     * @return editor for editing SQL where clauses
+     */
+    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager) {
+        return createSqlEditor(parent, historyKey, dialogSettingsManager, SWT.NONE);
+    }
+
+    /**
+     * Produces a SqlEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param historyKey the history key used for storing the history values
+     * @param dialogSettingsManager the dialog settings manager used for storing
+     *        history values
+     * @param style the style of control to construct
+     * @return editor for editing SQL where clauses
+     */
+    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
+        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, style);
+    }
+
     /*
      * Private worker procedures, doing the actual work.
      */
@@ -895,6 +926,10 @@ public final class WidgetFactory {
 
     private StringListEditor produceStringListEditor(Composite parent, int style) {
         return new StringListEditor(parent, style);
+    }
+
+    private SqlEditor produceSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
+        return new SqlEditor(parent, historyKey, dialogSettingsManager, style);
     }
 
     private Control produceLineFiller(Composite parent, int height) {
