@@ -18,7 +18,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.ui.dialogs.AddJournalDialog;
+import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 
 public abstract class OpenJournalOutfileAction extends Action {
 
@@ -42,7 +42,7 @@ public abstract class OpenJournalOutfileAction extends Action {
 
     @Override
     public void run() {
-        performOpenJournal();
+        performOpenJournalOutputFile();
         postRunAction();
     }
 
@@ -54,21 +54,21 @@ public abstract class OpenJournalOutfileAction extends Action {
         return whereClause;
     }
 
-    private void performOpenJournal() {
+    private void performOpenJournalOutputFile() {
 
-        AddJournalDialog addJournalDialog = new AddJournalDialog(shell);
-        addJournalDialog.create();
-        int result = addJournalDialog.open();
+        OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
+        openJournalOutputFileDialog.create();
+        int result = openJournalOutputFileDialog.open();
 
         outputFile = null;
         whereClause = null;
 
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                addJournalDialog.getConnectionName())) {
-                outputFile = new OutputFile(addJournalDialog.getConnectionName(), addJournalDialog.getLibrary(), addJournalDialog.getFileName(),
-                    addJournalDialog.getMemberName());
-                whereClause = addJournalDialog.getSqlWhere();
+                openJournalOutputFileDialog.getConnectionName())) {
+                outputFile = new OutputFile(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibrary(),
+                    openJournalOutputFileDialog.getFileName(), openJournalOutputFileDialog.getMemberName());
+                whereClause = openJournalOutputFileDialog.getSqlWhere();
             }
         }
     }
