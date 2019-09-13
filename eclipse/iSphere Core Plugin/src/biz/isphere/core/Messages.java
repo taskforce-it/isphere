@@ -1022,6 +1022,16 @@ public class Messages extends NLS {
 
     public static String Message_data_fields_formats_colon;
 
+    public static String Source_member_compare_dialog;
+
+    public static String Load_previous_values_right;
+
+    public static String Tooltip_Load_previous_values_right;
+
+    public static String Load_previous_values_ancestor;
+
+    public static String Tooltip_Load_previous_values_ancestor;
+
     public static String Message_descriptions_compare;
 
     public static String Line_width_colon;
