@@ -695,7 +695,7 @@ public class RSECompareDialog extends CompareDialog {
         if (hasEditableLeftMember()) {
             // Load left member, when no members has been selected (iSphere
             // search selected from the main menu)
-            if (isLoadingPreviousValuesEnabled()) {
+            if (isLoadingPreviousValuesOfLeftMemberEnabled()) {
                 loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
         }
@@ -704,7 +704,7 @@ public class RSECompareDialog extends CompareDialog {
 
             boolean hasLoaded = false;
 
-            if (isLoadingPreviousValuesEnabled()) {
+            if (isLoadingPreviousValuesOfRightMemberEnabled()) {
                 // Load previous member values
                 hasLoaded = loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
@@ -725,7 +725,7 @@ public class RSECompareDialog extends CompareDialog {
 
             boolean hasLoaded = false;
 
-            if (isLoadingPreviousValuesEnabled()) {
+            if (isLoadingPreviousValuesOfAncestorMemberEnabled()) {
                 hasLoaded = loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
 
@@ -778,7 +778,7 @@ public class RSECompareDialog extends CompareDialog {
         super.storeScreenValues();
 
         if (hasEditableLeftMember()) {
-            if (isLoadingPreviousValuesEnabled()) {
+            if (isLoadingPreviousValuesOfLeftMemberEnabled()) {
                 storeMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
             }
             storeHistory(leftMemberPrompt);
@@ -787,14 +787,14 @@ public class RSECompareDialog extends CompareDialog {
         if (hasEditableRightMember()) {
             if (hasMultipleRightMembers()) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
-            } else if (isLoadingPreviousValuesEnabled()) {
+            } else if (isLoadingPreviousValuesOfRightMemberEnabled()) {
                 storeMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
             }
             storeHistory(rightMemberPrompt);
         }
 
         if (hasEditableAncestorMember() && isThreeWay()) {
-            if (isLoadingPreviousValuesEnabled()) {
+            if (isLoadingPreviousValuesOfAncestorMemberEnabled()) {
                 storeMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
             }
             storeHistory(ancestorMemberPrompt);

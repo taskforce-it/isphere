@@ -37,6 +37,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareDialog extends XDialog {
@@ -230,9 +231,43 @@ public abstract class CompareDialog extends XDialog {
         dateOptionsEditable = true;
     }
 
-    protected boolean isLoadingPreviousValuesEnabled() {
+    protected boolean isLoadingPreviousValuesOfLeftMemberEnabled() {
 
-        if (historyValuesCategoryKey != null) {
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean isLoadingPreviousValuesOfRightMemberEnabled() {
+
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        boolean isLoadingPreviousValuesEnabled = Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled();
+
+        return isLoadingPreviousValuesEnabled;
+    }
+
+    protected boolean isLoadingPreviousValuesOfAncestorMemberEnabled() {
+
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        boolean isLoadingPreviousValuesEnabled = Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled();
+
+        return isLoadingPreviousValuesEnabled;
+    }
+
+    private boolean isLoadedFromMainMenu() {
+
+        /*
+         * Load previous values when called from the main menu.
+         */
+        if (!hasLeftMember() && !hasRightMember() && !hasAncestorMember()) {
             return true;
         }
 

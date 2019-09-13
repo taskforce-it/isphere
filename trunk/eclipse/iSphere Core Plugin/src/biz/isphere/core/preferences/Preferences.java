@@ -134,7 +134,7 @@ public final class Preferences {
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
     private static final String SYSTEM_CCSID = DOMAIN + "SYSTEM_CCSID"; //$NON-NLS-1$
-    
+
     private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String SEARCH_FOR_BETA_VERSIONS = DOMAIN + "SEARCH_FOR_BETA_VERSIONS"; //$NON-NLS-1$
@@ -190,6 +190,13 @@ public final class Preferences {
     private static final String MESSAGE_FILE_COMPARE = DOMAIN + "MESSAGE_FILE_COMPARE."; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_COMPARE_LINE_WIDTH = MESSAGE_FILE_COMPARE + "LINE_WIDTH"; //$NON-NLS-1$
+
+    private static final String SOURCE_MEMBER_COMPARE = DOMAIN + "SOURCE_MEMBER_COMPARE."; //$NON-NLS-1$
+
+    private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER = SOURCE_MEMBER_COMPARE + "LOAD_PREVIOUS_VALUES_RIGHT_MEMBER"; //$NON-NLS-1$
+
+    private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER = SOURCE_MEMBER_COMPARE
+        + "LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER"; //$NON-NLS-1$
 
     private static final String APPEARANCE = DOMAIN + "APPEARANCE."; //$NON-NLS-1$
 
@@ -268,7 +275,7 @@ public final class Preferences {
     public String getISphereLibrary() {
         return preferenceStore.getString(ISPHERE_LIBRARY);
     }
-    
+
     public String getASPGroup() {
         return preferenceStore.getString(ASP_GROUP);
     }
@@ -520,6 +527,14 @@ public final class Preferences {
 
     public int getMessageFileCompareLineWidth() {
         return preferenceStore.getInt(MESSAGE_FILE_COMPARE_LINE_WIDTH);
+    }
+
+    public boolean isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled() {
+        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
+    }
+
+    public boolean isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled() {
+        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
     }
 
     public String getDateFormatLabel() {
@@ -775,6 +790,14 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
     }
 
+    public void setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(boolean enabled) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER, enabled);
+    }
+
+    public void setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(boolean enabled) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, enabled);
+    }
+
     public void setDateFormatLabel(String dateFormatLabel) {
         preferenceStore.setValue(APPEARANCE_DATE_FORMAT, dateFormatLabel);
     }
@@ -885,6 +908,10 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultMessageFileSearchExportDirectory());
 
         preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
+        preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER,
+            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+        preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER,
+            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
@@ -1360,6 +1387,10 @@ public final class Preferences {
     public int getDefaultMessageFileCompareMinLineWidth() {
 
         return 70;
+    }
+
+    public boolean getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
+        return false;
     }
 
     public String getDefaultDateFormatLabel() {
