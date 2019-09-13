@@ -369,6 +369,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
                 txtMemberName.setFocus();
                 return false;
             }
+        } else {
+            resolvedMemberName = memberName;
         }
 
         if (!IBMiHostContributionsHandler.checkLibrary(connection.getConnectionName(), libraryName)) {
