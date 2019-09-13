@@ -18,7 +18,9 @@
 	<li><a href="#comparing_remote_members">Comparing Remote Members</a></li>
 	<li><a href="#selecting_multiple_members_at_once">Selecting Multiple Members at Once</a></li>
 	<li><a href="#starting_the_compare_editor_from_an_lpex_editor">Starting The Compare Editor From an Lpex Editor</a></li>
+	<li><a href="#starting_the_compare_editor_from_the_isphere_menu">Starting The Compare Editor From the iSphere menu</a></li>
 	<li><a href="#comparing_i_project_members">Comparing i Project Members</a></li>
+	<li><a href="#loading_previous_values">Loading Previous Values</a></li>
 	</ul>
 	<p>
 	<a id="#comparing_remote_members" />
@@ -172,6 +174,11 @@
 	<li>There is no edit option when the compare editor is started from an Lpex editor.</li>
 	</ul>
 	<p>
+	<a id="#starting_the_compare_editor_from_the_isphere_menu" />
+	<h2>Starting The Compare Editor From the iSphere menu</h2>
+	<p>The iSphere compare editor can be started from the iSPhere menu of the main menu 
+	   bar. Select <i>iSphere -> Compare Source Members</i> to do so.
+	<p>
 	<a id="#comparing_i_project_members" />
 	<h2>Comparing i Project Member</h2>
 	<p>When the iSphere compare editor is started from an Lpex editor with a source member loaded
@@ -182,6 +189,33 @@
 	<li>When the i Project member does not have sequence numbers and date fields, the <i>Consider date</i> option 
 	    is not available and sequence numbers and last changed dates are not displayed at all.</li>
 	</ul>
+	<p>
+	<a id="#loading_previous_values" />
+	<h2>Loading Previous Values</h2>
+	<p>The iSphere compare editor can be configured to load the values of the right and/or ancestor 
+	   member of the previous compare action. The associated options can be configured on the
+	   <a href="../compare/preferences/preferences.html"><i>preferences</i></a> page.
+	   The rules for loading previous values are: 
+	<p>
+	<ul>
+	<li>Previous values for left, right and ancestor member are always loaded, when the compare editor
+	    is started from the iSphere menu.</li>
+    <li>The previously used values of the right member are loaded when the associated option 
+        has been selected on the preference page.</li>
+    <li>The previously used values of the ancestor member are loaded when the associated option 
+        has been selected on the preference page.</li>
+	</ul>
+	<p>
+	The history values of libraries, files and members are always updated. The history values are the 
+	values that you can select from the combo box. These values can be edited with the little button 
+	at the right hand side of the combo box.
+	<p>
+	The previously used values are the connection, library, file and member names of the last compare
+	operation.
+	<p>
+	Both types of values are stored as independant value sets depending on the number of members selected for a 
+	compare operation. For example, when you star the compare editor from the iSphere menu, there are no members 
+	selected. But when you right-click a member to start a compare operation, then there is one selected member.
 	<p>
 		<iframe src="../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
