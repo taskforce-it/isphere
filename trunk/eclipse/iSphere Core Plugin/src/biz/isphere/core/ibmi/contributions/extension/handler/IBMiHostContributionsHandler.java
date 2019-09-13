@@ -8,6 +8,7 @@
 
 package biz.isphere.core.ibmi.contributions.extension.handler;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
@@ -19,18 +20,19 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
+import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.MemberDescription;
 import com.ibm.as400.access.ObjectDoesNotExistException;
-import com.ibm.as400.access.QSYSObjectPathName;
 
 public class IBMiHostContributionsHandler {
 
@@ -98,10 +100,22 @@ public class IBMiHostContributionsHandler {
     public static String resolveMemberName(String connectionName, String libraryName, String fileName, String memberName) throws AS400Exception,
         AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
 
-        MemberDescription file = new MemberDescription(IBMiHostContributionsHandler.getSystem(connectionName), new QSYSObjectPathName(libraryName,
-            fileName, memberName, "MBR"));
+        try {
 
-        return (String)file.getValue(MemberDescription.MEMBER_NAME);
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            MBRD0100 mbrd0100 = new MBRD0100(system);
+
+            QUSRMBRD memberDescription = new QUSRMBRD(system);
+            memberDescription.setFile(fileName, libraryName, memberName);
+            if (memberDescription.execute(mbrd0100)) {
+                return mbrd0100.getMemberName();
+            }
+
+        } catch (PropertyVetoException e) {
+            ISpherePlugin.logError("*** Failed to retrieve member description " + libraryName + "/" + fileName + "(" + memberName + ")" + " ***", e);
+        }
+
+        return null;
     }
 
     public static boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {

@@ -21,8 +21,8 @@ public class MBRD0100 extends APIFormat {
     private static final String FILE_NAME = "fileName"; //$NON-NLS-1$
     private static final String LIBRARY_NAME = "libraryName"; //$NON-NLS-1$
     private static final String MEMBER_NAME = "memberName"; //$NON-NLS-1$
-    private static final String FILE_ATTRIBUTE = "memberName"; //$NON-NLS-1$
-    private static final String SOURCE_TYPE = "memberName"; //$NON-NLS-1$
+    private static final String FILE_ATTRIBUTE = "fileAttribute"; //$NON-NLS-1$
+    private static final String SOURCE_TYPE = "sourceType"; //$NON-NLS-1$
     private static final String CREATION_DATE_AND_TIME = "creationDateAndTime"; //$NON-NLS-1$
     private static final String LAST_CHANGE_DATE_AND_TIME = "lastChangeDateAndTIme"; //$NON-NLS-1$
     private static final String MEMBER_DESCRIPTION = "memberDescription"; //$NON-NLS-1$
@@ -41,10 +41,14 @@ public class MBRD0100 extends APIFormat {
         createStructure();
     }
 
-    public String getMeberDescription() throws UnsupportedEncodingException {
+    public String getMemberName() throws UnsupportedEncodingException {
+        return getCharValue(MEMBER_NAME);
+    }
+
+    public String getMemberDescription() throws UnsupportedEncodingException {
         return getCharValue(MEMBER_DESCRIPTION);
     }
-    
+
     /**
      * Creates the MBRD0100 structure.
      */
@@ -57,10 +61,10 @@ public class MBRD0100 extends APIFormat {
         addCharField(MEMBER_NAME, 28, 10);
         addCharField(FILE_ATTRIBUTE, 38, 10);
         addCharField(SOURCE_TYPE, 48, 10);
-        addCharField(CREATION_DATE_AND_TIME, 58, 10);
-        addCharField(LAST_CHANGE_DATE_AND_TIME, 71, 10);
+        addCharField(CREATION_DATE_AND_TIME, 58, 13);
+        addCharField(LAST_CHANGE_DATE_AND_TIME, 71, 13);
         addCharField(MEMBER_DESCRIPTION, 84, 50);
-        addCharField(SOURCE_FILE, 134, 10);
-   }
+        addCharField(SOURCE_FILE, 134, 1);
+    }
 
 }
