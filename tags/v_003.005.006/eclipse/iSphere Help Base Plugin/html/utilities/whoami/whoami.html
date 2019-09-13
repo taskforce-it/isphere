@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Who am I (WHOAMI) Command</title>
+</head>
+<body>
+	<h1>Who am I (WHOAMI) Command</h1>
+	<p>
+	Sometimes it is necessary to know the TCP/IP address of the PC client that runs RDi.
+	<p>
+	You can use the Retrieve Device Description (QDCRDEVD) API,	format DEVD0600 to retrieve
+	the TCP/IP address of a 5250 session in dotted decimal form. Or you can use the WHOAMI
+	command that is shipped	with iSphere and which is available as an XML installation package
+	in file QBUILD in the iSphere product library. 
+	<p>
+	Follow these steps to install the WHOAMI command:
+	<p>
+	<table>
+	<tr><td class="code">ADDLIBLE LIB(ISPHERE)</td></tr>
+	<tr><td class="code">CRTBNDRPG PGM(ISPHERE/XMLINST) SRCFILE(ISPHERE/QBUILD)</td></tr>
+	<tr><td class="code">CALL PGM(ISPHERE/XMLINST) PARM('WHOAMI' 'QBUILD' 'ISPHERE')</td></tr>
+	<tr><td class="code">DLTPGM PGM(ISPHERE/XMLINST)</td></tr>
+	</table>
+	<p>
+	The WHOAMI command has no parameters and produces the following output:
+	<p>
+	<table>
+	<tr><td class="code">User: RADDATZ, System: GFD400, Device: QPADEV0001, IP: 10.214.131.8</td></tr>
+	</table>
+	<p>
+	<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
