@@ -1,10 +1,11 @@
 
-Changelog: iSphere 3.5.6.b001
------------------------------
+Changelog: iSphere 3.5.6.r
+--------------------------
  • Added preferences options to enable/disable loading previous
    values in source member compare dialog.
  • Fixed the "Open journal" dialog to accept special value *FIRST
    as a member name.
+ • Fixed incompatibility with WDSC 7.0.
  • Moved SqlEditor from iSphere Journal Explorer Core plug-in to
    iSphere Core plug-in to make it available for the Job Log explorer. 
 
