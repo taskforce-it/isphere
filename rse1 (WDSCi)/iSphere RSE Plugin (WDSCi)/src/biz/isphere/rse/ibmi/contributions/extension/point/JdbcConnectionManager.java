@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.ISphereRSEPlugin;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400JDBCDriver;
@@ -146,6 +147,7 @@ public class JdbcConnectionManager implements ICommunicationsListener {
             addConnectionToCache(ISeriesConnection, properties, jdbcConnection);
 
         } catch (Throwable e) {
+            ISphereRSEPlugin.logError("*** Could not produce JDBC connection ***", e);
         }
 
         return jdbcConnection;
