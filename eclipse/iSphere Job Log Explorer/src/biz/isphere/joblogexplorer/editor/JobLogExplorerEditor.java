@@ -124,53 +124,15 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
 
         JobLogExplorerFilterPanel filterPanel = createTopPanel(mainArea);
 
-        // createUsagePanel(mainArea);
+        JobLogExplorerTableViewer tableViewer = createMainPanel(mainArea, filterPanel);
 
-        SashForm sashForm = new SashForm(mainArea, SWT.NONE);
-        GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
-        sashForm.setLayoutData(sashFormLayoutData);
-        sashForm.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent event) {
-                SashForm sashForm = (SashForm)event.getSource();
-                int[] weights = sashForm.getWeights();
-                storeWeights(weights);
-            }
-        });
-
-        tableViewerPanel = createLeftPanel(sashForm);
-        JobLogExplorerDetailsViewer detailsPanel = createRightPanel(sashForm);
-        sashForm.setWeights(loadWeights());
-
-        tableViewerPanel.addMessageSelectionChangedListener(detailsPanel);
-        tableViewerPanel.addStatusChangedListener(this);
-        filterPanel.addFilterChangedListener(tableViewerPanel);
-
-        Object input = getEditorInput();
-
-        if (input instanceof JobLogExplorerEditorFileInput) {
-            JobLogExplorerEditorFileInput fileInput = (JobLogExplorerEditorFileInput)input;
-            if (fileInput.getPath() != null) {
-                dropJobLog(fileInput.getPath(), fileInput.getOriginalFileName(), null);
-            } else {
-                // Open empty editor to drag & drop files.
-            }
-        } else if (input instanceof JobLogExplorerEditorJobInput) {
-            JobLogExplorerEditorJobInput jobInput = (JobLogExplorerEditorJobInput)input;
-            if (jobInput.getName() != null) {
-                dropJobLog(jobInput.getConnectionName(), jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber(), null);
-            }
-        }
-
-        getSite().setSelectionProvider(tableViewerPanel);
+        getSite().setSelectionProvider(tableViewer);
 
         new UIJob("") { //$NON-NLS-1$
-
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
-
                 DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
                     Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
-
                 return Status.OK_STATUS;
             }
         }.schedule();
@@ -251,6 +213,46 @@ public class JobLogExplorerEditor extends XEditorPart implements IDropFileListen
         filterPanel.createViewer(parent);
 
         return filterPanel;
+    }
+
+    private JobLogExplorerTableViewer createMainPanel(Composite parent, JobLogExplorerFilterPanel filterPanel) {
+
+        SashForm sashForm = new SashForm(parent, SWT.NONE);
+        GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
+        sashForm.setLayoutData(sashFormLayoutData);
+        sashForm.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent event) {
+                SashForm sashForm = (SashForm)event.getSource();
+                int[] weights = sashForm.getWeights();
+                storeWeights(weights);
+            }
+        });
+
+        tableViewerPanel = createLeftPanel(sashForm);
+        JobLogExplorerDetailsViewer detailsPanel = createRightPanel(sashForm);
+        sashForm.setWeights(loadWeights());
+
+        tableViewerPanel.addMessageSelectionChangedListener(detailsPanel);
+        tableViewerPanel.addStatusChangedListener(this);
+        filterPanel.addFilterChangedListener(tableViewerPanel);
+
+        Object input = getEditorInput();
+
+        if (input instanceof JobLogExplorerEditorFileInput) {
+            JobLogExplorerEditorFileInput fileInput = (JobLogExplorerEditorFileInput)input;
+            if (fileInput.getPath() != null) {
+                dropJobLog(fileInput.getPath(), fileInput.getOriginalFileName(), null);
+            } else {
+                // Open empty editor to drag & drop files.
+            }
+        } else if (input instanceof JobLogExplorerEditorJobInput) {
+            JobLogExplorerEditorJobInput jobInput = (JobLogExplorerEditorJobInput)input;
+            if (jobInput.getName() != null) {
+                dropJobLog(jobInput.getConnectionName(), jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber(), null);
+            }
+        }
+
+        return tableViewerPanel;
     }
 
     private JobLogExplorerTableViewer createLeftPanel(SashForm sashForm) {
