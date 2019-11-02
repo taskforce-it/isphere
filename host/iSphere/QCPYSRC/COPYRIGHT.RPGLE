@@ -3,7 +3,7 @@
 
       /if defined(VERSION_INFO)
      D ISPHERE_SERVER_VERSION...
-     D                 c                   '3.5.5'
+     D                 c                   '3.5.7'
      D ISPHERE_MIN_CLIENT_VERSION...
      D                 c                   '3.4.0'
 
