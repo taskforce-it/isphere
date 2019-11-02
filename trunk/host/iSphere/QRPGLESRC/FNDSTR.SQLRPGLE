@@ -92,18 +92,6 @@
 
      d/Copy QCPYSRC,MBRD0300
 
-      // Regular expression functions
-
-     d/Copy QCPYSRC,REGEX
-
-      // Character translation functions
-
-     d*Copy QCPYSRC,ICONV
-
-      // Locale functions
-
-     d*Copy QCPYSRC,LOCALE
-
       // Record format for file FNDSTRI
 
      dFNDSTRIRF      E DS                  ExtName(FNDSTRI)
@@ -124,19 +112,6 @@
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
      dNULL             C                   -1
-
-      // This array has a 1:1 relation to
-      // the LSARGS input array of procedure FNDSTR_search().
-     d gregex          DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
-     d                                     Qualified
-     d                                     Inz
-     d  isInit                         N   Inz(*OFF)
-     d  isError                        N   Inz(*OFF)
-      /if defined(*V5R4M0)
-     d  handle                             Likeds(regex_t) inz
-      /else
-     d  handle                             Like(regex_t) inz(*ALLx'00')
-      /endif
 
       // Caching of member attributes
 
@@ -168,12 +143,6 @@
      d                 PR                  Extproc('updateStatus')
      d  i_handle                     10S 0 Const
      d  i_status                     10I 0 Const
-
-     d freeRegEx       PR                  Extproc('freeRegEx')
-
-     d*cvtCcsid_lc     PR                        like(searchArgument_t.string)
-     d*                                    Extproc('cvtCcsid_lc')
-     d* i_string                           value like(searchArgument_t.string)
 
       //*==========================================================================================*
       //* Get Handle                                                                               *
@@ -216,9 +185,6 @@
               0,
               '*NO'
              );
-
-       // Free regular expression handles
-       freeRegEx();
 
        // Leave procedure
        Return LIHDL;
@@ -488,15 +454,12 @@
      d  mustBeFound                    N
      d  hasBeenFound                   N
 
-     d rc              S             10I 0
-     d cflags          S             10I 0
-     d nmatch          S             10U 0 Inz(1)
-     d regmatch        DS                  Likeds(regmatch_t) inz
-     d error           S            256A
-
      d searchArgFound  S               N
      d recordFound     S               N
      d memberFound     S               N
+
+     d flags           S             10A   varying
+     d count           S             10I 0
 
       //*------------------------------------------------------------------------------------------*
 
@@ -698,7 +661,7 @@
              LISTG = LSARGS(LIIDX).string;
 
              // Initialize regular expression search
-             cflags = REG_EXTENDED;
+             flags = 'c'; // Specifies that matching is case sensitive.
 
              // Ignore upper/lower case
              If LSARGS(LIIDX).case = SRCHOPTS_CASE_IGNORE;
@@ -706,7 +669,7 @@
                  LISTG = %XLate(GILO:GIUP:LISTG);
                  LILINE = %XLate(GILO:GIUP:LILINE);
                Else;
-                 cflags = cflags + REG_ICASE;
+                 flags = 'i'; // Specifies that matching is case insensitive.
                Endif;
              EndIf;
 
@@ -715,33 +678,9 @@
 
              // Match!
              If LSARGS(LIIDX).regex = SRCHOPTS_ARG_REGEX;
-               If not gregex(LIIDX).isInit and not gregex(LIIDX).isError;
-                 // LISTG = cvtCcsid_lc(LISTG);
-                 rc = regcomp(gregex(LIIDX).handle: LISTG: cflags);
-                 If rc = 0;
-                   gregex(LIIDX).isInit = *ON;
-                 Else;
-                   gregex(LIIDX).isInit = *OFF;
-                   gregex(LIIDX).isError = *ON;
-                   regerror(
-                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
-                 Endif;
-               Endif;
-               If gregex(LIIDX).isInit and not gregex(LIIDX).isError;
-                 // LILINE = cvtCcsid_lc(LILINE);
-                 rc = regexec(
-                        gregex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
-                 Select;
-                 When rc = 0;             // found!
-                   searchArgFound = *ON;
-                 When rc = REG_NOMATCH;   // not found
-                   searchArgFound = *OFF;
-                 Other;                   // error!
-                   gregex(LIIDX).isError = *ON;
-                   regerror(
-                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
-                 Endsl;
-               Endif;
+               Exec SQL
+                 SET :count = REGEXP_COUNT(:LILINE, :LISTG, :flags);
+               searchArgFound = count > *Zero;
              Else;
                searchArgFound = %Scan(%TrimR(LISTG) : LILINE) > *Zero;
              Endif;
@@ -850,9 +789,6 @@
       //*------------------------------------------------------------------------------------------*
 
       /Free
-
-       // Free regular expression handles
-       freeRegEx();
 
        // Clear file 'Status'
        Exec SQL
@@ -1020,89 +956,4 @@
 
       /End-Free
      p                 E
-
-      //*==========================================================================================*
-      //* Free regular expression handles.
-      //*==========================================================================================*
-
-     P freeRegEx       B
-     D                 PI
-
-     D LIIDX           S             10I 0 inz
-      /free
-
-         For LIIDX = 1 to %elem(gregex);
-            If (gregex(LIIDX).isInit);
-               regfree(gregex(LIIDX).handle);
-               gregex(LIIDX).isInit = *OFF;
-               gregex(LIIDX).isError = *OFF;
-               gregex(LIIDX).handle = *ALLx'00';
-            EndIf;
-         EndFor;
-
-      /end-free
-     P                 E
-
-      //*==========================================================================================*
-      //* Converts a given string to the CCSID of the current locale.                              *
-      //*==========================================================================================*
-
-     P*cvtCcsid_lc     B
-     D*                PI                        like(searchArgument_t.string)
-     D* i_string                           value like(searchArgument_t.string)
-
-     D*from            DS                  likeds(QtqCode_t)
-     D*to              DS                  likeds(QtqCode_t)
-     D*rc              S             10I 0 inz
-
-     D*ic              DS                  likeds(iconv_t)
-     D*bufferSize      S             10U 0 inz
-     D*inBytesLeft     S             10U 0 inz
-     D*outBytesLeft    S             10U 0 inz
-     D*string          DS                  qualified
-     D* length                        5I 0
-     D* value                              like(i_string) overlay(string)
-     D*pInBuf          S               *   inz
-     D*pOutBuf         S               *   inz
-
-     D*DIGITS          C                   const(%len(to.ccsid))
-     D*DECPOS          C                   const(%decpos(to.ccsid))
-
-      //*------------------------------------------------------------------------------------------*
-
-      //Free
-
-      // from.CCSID = 0;
-      // from.ConvAlt = 0;
-      // from.SubsAlt = 0;
-      // from.ShiftAlt = 1;
-      // from.InpLenOp = 0;
-      // from.ErrorOpt = 1;
-      // from.Reserved = *ALLx'00';
-
-      // to.CCSID = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
-      // to.ConvAlt = 0;
-      // to.SubsAlt = 0;
-      // to.ShiftAlt = 1;
-      // to.InpLenOp = 0;
-      // to.ErrorOpt = 1;
-      // to.Reserved = *ALLx'00';
-
-      // ic = QtqIconvOpen(to: from);
-
-      // bufferSize = %size(string.value) - 2;
-      // inBytesLeft = %len(%trimR(i_string));
-      // outBytesLeft = bufferSize;
-      // pInBuf = %addr(i_string) + 2;
-      // pOutBuf= %addr(string.value) + 2;
-      // rc = iconv(ic: pInBuf: inBytesLeft: pOutBuf: outBytesLeft);
-
-      // string.length = bufferSize - outBytesLeft;
-
-      // iconv_close(ic);
-
-      // return %trimR(string.value);
-
-      //End-Free
-     p*                E
 
