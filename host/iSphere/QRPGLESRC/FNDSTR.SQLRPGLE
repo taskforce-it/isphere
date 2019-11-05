@@ -48,6 +48,10 @@
      d/define fileInfDS_DB
      d/Copy QCPYSRC,INFDS
 
+      // Common type definitions
+
+     d/Copy QCPYSRC,TYPES
+
       // Procedure prototypes for modul 'FNDSTR'
 
      d/Copy QCPYSRC,FNDSTR
@@ -76,6 +80,10 @@
 
      d/Copy QCPYSRC,QUSLMBR
 
+      // Procedure prototype for procedure 'QUSRJOBI'
+
+     d/Copy QCPYSRC,QUSRJOBI
+
       // Data structure for format 'ERRC0100' for error code
 
      d/Copy QCPYSRC,ERRC0100
@@ -91,6 +99,18 @@
       // Data structure for format 'MBRD0300' for procedure 'QUSRMBRD'
 
      d/Copy QCPYSRC,MBRD0300
+
+      // Regular expression functions
+
+     d/Copy QCPYSRC,REGEX
+
+      // Character translation functions
+
+     d/Copy QCPYSRC,ICONV
+
+      // Locale functions
+
+     d/Copy QCPYSRC,LOCALE
 
       // Record format for file FNDSTRI
 
@@ -112,6 +132,26 @@
      dGILO             C                   'abcdefghijklmnopqrstuvwxyz'         Lower case
 
      dNULL             C                   -1
+
+      // iconv() handle
+     d giconv          DS                  qualified
+     d  isInit                         N   inz(*off)
+     d  job_ccsid                          like(CCSID) inz(-1)
+     d  nl_ccsid                           like(CCSID) inz(-1)
+     d  hIconv                             likeds(iconv_t) inz
+
+      // This array has a 1:1 relation to
+      // the LSARGS input array of procedure FNDSTR_search().
+     d gregex          DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d                                     Qualified
+     d                                     Inz
+     d  isInit                         N   Inz(*OFF)
+     d  isError                        N   Inz(*OFF)
+      /if defined(*V5R4M0)
+     d  handle                             Likeds(regex_t) inz
+      /else
+     d  handle                             Like(regex_t) inz(*ALLx'00')
+      /endif
 
       // Caching of member attributes
 
@@ -143,6 +183,19 @@
      d                 PR                  Extproc('updateStatus')
      d  i_handle                     10S 0 Const
      d  i_status                     10I 0 Const
+
+     d freeRegEx       PR                  Extproc('freeRegEx')
+
+     d initIconv       PR                  Extproc('initIconv')
+
+     d freeIconv       PR                  Extproc('freeIconv')
+
+     d cvtCcsid        PR                        like(searchArgument_t.string)
+     d                                     Extproc('cvtCcsid')
+     d  i_string                           value like(searchArgument_t.string)
+
+     d retrieveJobCcsid...
+     d                 PR            10I 0 Extproc('retrieveJobCcsid')
 
       //*==========================================================================================*
       //* Get Handle                                                                               *
@@ -185,6 +238,12 @@
               0,
               '*NO'
              );
+
+       // Free regular expression handles
+       freeRegEx();
+
+       // Free iconv() handle
+       freeIconv();
 
        // Leave procedure
        Return LIHDL;
@@ -454,12 +513,15 @@
      d  mustBeFound                    N
      d  hasBeenFound                   N
 
+     d rc              S             10I 0
+     d cflags          S             10I 0
+     d nmatch          S             10U 0 Inz(1)
+     d regmatch        DS                  Likeds(regmatch_t) inz
+     d error           S            256A
+
      d searchArgFound  S               N
      d recordFound     S               N
      d memberFound     S               N
-
-     d flags           S             10A   varying
-     d count           S             10I 0
 
       //*------------------------------------------------------------------------------------------*
 
@@ -469,6 +531,9 @@
          updateStatus(LPHDL: -1);
          Return;
        EndIf;
+
+       // Initialize character translation
+       initIconv();
 
        // Initialize counter
        LICNT = *Zero;
@@ -661,7 +726,7 @@
              LISTG = LSARGS(LIIDX).string;
 
              // Initialize regular expression search
-             flags = 'c'; // Specifies that matching is case sensitive.
+             cflags = REG_EXTENDED;
 
              // Ignore upper/lower case
              If LSARGS(LIIDX).case = SRCHOPTS_CASE_IGNORE;
@@ -669,7 +734,7 @@
                  LISTG = %XLate(GILO:GIUP:LISTG);
                  LILINE = %XLate(GILO:GIUP:LILINE);
                Else;
-                 flags = 'i'; // Specifies that matching is case insensitive.
+                 cflags = cflags + REG_ICASE;
                Endif;
              EndIf;
 
@@ -678,10 +743,38 @@
 
              // Match!
              If LSARGS(LIIDX).regex = SRCHOPTS_ARG_REGEX;
-               Exec SQL
-                 SET :count = REGEXP_COUNT(:LILINE, :LISTG, :flags);
-               searchArgFound = count > *Zero;
+               // Perform regular expression search:
+               // Compile regular expression
+               If not gregex(LIIDX).isInit and not gregex(LIIDX).isError;
+                 LISTG = cvtCcsid(LISTG);
+                 rc = regcomp(gregex(LIIDX).handle: LISTG: cflags);
+                 If rc = 0;
+                   gregex(LIIDX).isInit = *ON;
+                 Else;
+                   gregex(LIIDX).isInit = *OFF;
+                   gregex(LIIDX).isError = *ON;
+                   regerror(
+                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
+                 Endif;
+               Endif;
+               // Match regular expression
+               If gregex(LIIDX).isInit and not gregex(LIIDX).isError;
+                 LILINE = cvtCcsid(LILINE);
+                 rc = regexec(
+                        gregex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
+                 Select;
+                 When rc = 0;             // found!
+                   searchArgFound = *ON;
+                 When rc = REG_NOMATCH;   // not found
+                   searchArgFound = *OFF;
+                 Other;                   // error!
+                   gregex(LIIDX).isError = *ON;
+                   regerror(
+                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
+                 Endsl;
+               Endif;
              Else;
+               // Perform standard string search:
                searchArgFound = %Scan(%TrimR(LISTG) : LILINE) > *Zero;
              Endif;
 
@@ -789,6 +882,12 @@
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+       // Free regular expression handles
+       freeRegEx();
+
+       // Free iconv handle
+       freeIconv();
 
        // Clear file 'Status'
        Exec SQL
@@ -953,6 +1052,156 @@
                  XSCNT = :i_status
               WHERE
                  XSHDL = :i_handle;
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Free regular expression handles.
+      //*==========================================================================================*
+
+     P freeRegEx       B
+     D                 PI
+
+     D LIIDX           S             10I 0 inz
+      /free
+
+         For LIIDX = 1 to %elem(gregex);
+            If (gregex(LIIDX).isInit);
+               regfree(gregex(LIIDX).handle);
+               gregex(LIIDX).isInit = *OFF;
+               gregex(LIIDX).isError = *OFF;
+               gregex(LIIDX).handle = *ALLx'00';
+            EndIf;
+         EndFor;
+
+      /end-free
+     P                 E
+
+      //*==========================================================================================*
+      //* Initialize character translation.
+      //*==========================================================================================*
+
+     P initIconv       B
+     D                 PI
+
+     D from            DS                  likeds(QtqCode_t)
+     D to              DS                  likeds(QtqCode_t)
+     D rc              S             10I 0 inz
+
+     D DIGITS          C                   const(%len(giconv.nl_ccsid))
+     D DECPOS          C                   const(%decpos(giconv.nl_ccsid))
+      /free
+
+         // Free iconv() handle
+         freeIconv(); // Just in case ...
+
+         giconv.job_ccsid = retrieveJobCcsid();
+         giconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
+
+         If (giconv.job_ccsid = giconv.nl_ccsid);
+            giconv.isInit = *off;
+            Return;
+         EndIf;
+
+         from.CCSID = giconv.job_ccsid;
+         from.ConvAlt = 0;    // Conversion alternative
+         from.SubsAlt = 0;    // Substitution alternative
+         from.ShiftAlt = 1;   // Shift-state alternative
+         from.InpLenOp = 0;   // Input length option
+         from.ErrorOpt = 1;   // Error option for mixed data
+         from.Reserved = *ALLx'00';
+
+         to.CCSID = giconv.nl_ccsid;
+         to.ConvAlt = 0;      // Conversion alternative
+         to.SubsAlt = 0;      // Substitution alternative
+         to.ShiftAlt = 1;     // Shift-state alternative
+         to.InpLenOp = 0;     // Input length option
+         to.ErrorOpt = 1;     // Error option for mixed data
+         to.Reserved = *ALLx'00';
+
+         // Cache iconv() handle
+         giconv.isInit = *on;
+         giconv.hIconv = QtqIconvOpen(to: from);
+
+      /end-free
+     P                 E
+
+      //*==========================================================================================*
+      //* Free iconv handle.
+      //*==========================================================================================*
+
+     P freeIConv       B
+     D                 PI
+      /free
+
+         If (not giconv.isInit);
+            Return;
+         EndIf;
+
+         iconv_close(giconv.hIconv);
+
+         Clear giconv;
+         giconv.isInit = *off;
+
+      /end-free
+     P                 E
+
+      //*==========================================================================================*
+      //* Retrieve job ccsid.
+      //*==========================================================================================*
+
+     P retrieveJobCcsid...
+     P                 B
+     D                 PI            10I 0
+
+     D qJob            DS                  likeds(qJob_t) inz
+     D jobi0400        DS                  likeds(jobi0400_t) inz
+      /free
+
+         Clear qJob;
+         qJob.name = '*';
+
+         QUSRJOBI(jobi0400: %size(jobi0400): 'JOBI0400': qJob: '');
+
+         return jobi0400.ccsid;
+
+      /end-free
+     P                 E
+
+      //*==========================================================================================*
+      //* Converts a given string to the CCSID of the current locale.                              *
+      //*==========================================================================================*
+
+     P cvtCcsid        B
+     D                 PI                        like(searchArgument_t.string)
+     D  i_string                           value like(searchArgument_t.string)
+
+     D rc              S             10I 0 inz
+
+     D bufferSize      S             10U 0 inz
+     D inBytesLeft     S             10U 0 inz
+     D outBytesLeft    S             10U 0 inz
+     D outBuffer       S            512A
+     D outLength       S             10I 0
+     D pInBuf          S               *   inz
+     D pOutBuf         S               *   inz
+      /Free
+
+         If (not giconv.isInit);
+            Return i_string;
+         EndIf;
+
+         bufferSize = %size(outBuffer);
+         inBytesLeft = %len(%trimR(i_string));
+         outBytesLeft = bufferSize;
+         pInBuf = %addr(i_string: *data);
+         pOutBuf= %addr(outBuffer);
+         rc = iconv(giconv.hIconv: pInBuf: inBytesLeft: pOutBuf: outBytesLeft);
+
+         outLength = bufferSize - outBytesLeft;
+
+         return %subst(outBuffer: 1: outLength);
 
       /End-Free
      p                 E
