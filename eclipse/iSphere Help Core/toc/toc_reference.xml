@@ -53,6 +53,7 @@
     <topic label="Preferences" href="html/compare/preferences/preferences.html" />
   </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
+    <topic label="Regular Expressions" href="html/search/regularexpressions/regularexpressions.html" />
     <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
   <topic label="Spooled File Subsystem" href="html/spooledfilesubsystem/spooledfilesubsystem.html" >
