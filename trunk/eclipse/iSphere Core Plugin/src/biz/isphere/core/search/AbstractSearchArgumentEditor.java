@@ -9,6 +9,8 @@
 package biz.isphere.core.search;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -16,8 +18,11 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -73,9 +78,18 @@ public abstract class AbstractSearchArgumentEditor {
         btnCaseSensitive.setToolTipText(Messages.Specify_whether_case_should_be_considered_during_search);
 
         if (regularExpressionsOption) {
-            btnRegularExpression = WidgetFactory.createCheckbox(searchOptions);
+            GridLayout regularExpressionLayout = new GridLayout(2, false);
+            regularExpressionLayout.marginHeight = 0;
+            regularExpressionLayout.marginWidth = 0;
+            Composite regularExpressionPanel = new Composite(searchOptions, SWT.NONE);
+            regularExpressionPanel.setLayout(regularExpressionLayout);
+            btnRegularExpression = WidgetFactory.createCheckbox(regularExpressionPanel);
             btnRegularExpression.setText(Messages.Regular_expression);
             btnRegularExpression.setToolTipText(Messages.Specify_whether_you_want_to_use_a_regular_expression_for_the_search_argument);
+            Label helpItem = new Label(regularExpressionPanel, SWT.NONE);
+            helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
+            helpItem.addMouseListener(new DisplayRegularExpressionHelpListener());
+            helpItem.setToolTipText(Messages.Opens_the_IBM_regular_expressions_help_page);
         }
 
         btnAdd = WidgetFactory.createPushButton(container);
@@ -203,5 +217,13 @@ public abstract class AbstractSearchArgumentEditor {
 
     public void setConditionEnabled(boolean enabled) {
         cboCondition.setEnabled(enabled);
+    }
+
+    private class DisplayRegularExpressionHelpListener extends MouseAdapter {
+        @Override
+        public void mouseUp(MouseEvent event) {
+            PlatformUI.getWorkbench().getHelpSystem()
+                .displayHelpResource("/biz.isphere.core.help/html/search/regularexpressions/regularexpressions.html");
+        }
     }
 }

@@ -1546,6 +1546,8 @@ public class Messages extends NLS {
 
     public static String Tooltip_SqlEditor_Text;
 
+    public static String Opens_the_IBM_regular_expressions_help_page;
+
     /*
      * Warning messages
      */
