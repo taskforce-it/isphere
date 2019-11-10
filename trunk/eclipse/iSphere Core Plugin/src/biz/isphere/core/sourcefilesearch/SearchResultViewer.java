@@ -128,28 +128,27 @@ public class SearchResultViewer {
 
     private class SorterTableViewerMembers extends ViewerSorter {
 
-        public static final int BY_MEMBER = 1;
-        public static final int BY_DATE = 2;
-        public static final int BY_COUNT = 3;
-        public static final int ASCENDING = 1;
-        public static final int DESCENDING = 2;
+        private TableViewer tableViewer;
 
-        private int column = BY_MEMBER;
-        private int order = ASCENDING;
+        public SorterTableViewerMembers(TableViewer tableViewer, TableColumn column, int direction) {
+            this.tableViewer = tableViewer;
+            this.tableViewer.getTable().setSortColumn(column);
+            this.tableViewer.getTable().setSortDirection(direction);
+        }
 
-        public void setOrder(int column) {
+        public void setOrder(TableColumn column) {
 
-            if (column == this.column) {
-                if (order == ASCENDING) {
-                    order = DESCENDING;
+            if (column == tableViewer.getTable().getSortColumn()) {
+                if (tableViewer.getTable().getSortDirection() == SWT.UP) {
+                    tableViewer.getTable().setSortDirection(SWT.DOWN);
                 } else {
-                    order = ASCENDING;
+                    tableViewer.getTable().setSortDirection(SWT.UP);
                 }
             } else {
-                order = ASCENDING;
+                tableViewer.getTable().setSortDirection(SWT.UP);
             }
 
-            this.column = column;
+            this.tableViewer.getTable().setSortColumn(column);
         }
 
         @Override
@@ -157,24 +156,18 @@ public class SearchResultViewer {
 
             int result;
 
-            switch (column) {
-            case BY_MEMBER:
+            TableColumn column = tableViewer.getTable().getSortColumn();
+            if (Messages.Member.equals(column.getText())) {
                 result = sortByMember(viewer, e1, e2);
-                break;
-
-            case BY_DATE:
+            } else if (Messages.Last_changed.equals(column.getText())) {
                 result = sortByLastChangedDate(viewer, e1, e2);
-                break;
-
-            case BY_COUNT:
+            } else if (Messages.StatementsCount.equals(column.getText())) {
                 result = sortByStatementsCount(viewer, e1, e2);
-                break;
-
-            default:
+            } else {
                 result = sortByMember(viewer, e1, e2);
             }
 
-            if (order == DESCENDING) {
+            if (tableViewer.getTable().getSortDirection() == SWT.DOWN) {
                 result = result * -1;
             }
 
@@ -554,9 +547,6 @@ public class SearchResultViewer {
             }
         });
 
-        final SorterTableViewerMembers sorterTableViewerMembers = new SorterTableViewerMembers();
-
-        tableViewerMembers.setSorter(sorterTableViewerMembers);
         tableViewerMembers.setLabelProvider(new LabelProviderTableViewerMembers());
         tableViewerMembers.setContentProvider(new ContentProviderTableViewerMembers());
 
@@ -602,21 +592,14 @@ public class SearchResultViewer {
         menuTableMembers.addMenuListener(new TableMembersMenuAdapter(menuTableMembers));
         tableMembers.setMenu(menuTableMembers);
 
+        final SorterTableViewerMembers sorterTableViewerMembers = new SorterTableViewerMembers(tableViewerMembers, tableColumnMember, SWT.UP);
+        tableViewerMembers.setSorter(sorterTableViewerMembers);
+
         Listener sortListener = new Listener() {
             public void handleEvent(Event e) {
                 TableColumn column = (TableColumn)e.widget;
-                if (Messages.Member.equals(column.getText())) {
-                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_MEMBER);
-                    tableViewerMembers.refresh();
-                }
-                if (Messages.Last_changed.equals(column.getText())) {
-                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_DATE);
-                    tableViewerMembers.refresh();
-                }
-                if (Messages.StatementsCount.equals(column.getText())) {
-                    sorterTableViewerMembers.setOrder(SorterTableViewerMembers.BY_COUNT);
-                    tableViewerMembers.refresh();
-                }
+                sorterTableViewerMembers.setOrder(column);
+                tableViewerMembers.refresh();
             }
         };
         tableColumnMember.addListener(SWT.Selection, sortListener);
