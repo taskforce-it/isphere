@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public class SearchResultViewer {
 
     static ColumnSizeUpdateJob columnSizeUpdateJob;
     static int columnMemberSize = Preferences.getInstance().getSourceFileSearchMemberColumnWidth();
+    static int columnSrcTypeSize = Preferences.getInstance().getSourceFileSearchSrcTypeColumnWidth();
     static int columnLastChangedDateSize = Preferences.getInstance().getSourceFileSearchLastChangedDateColumnWidth();
     static int columnStatementsCountSize = Preferences.getInstance().getSourceFileSearchStatementsCountColumnWidth();
 
@@ -98,9 +99,11 @@ public class SearchResultViewer {
                 return searchResult.getLibrary() + "-" + searchResult.getFile() + "(" + searchResult.getMember() + ")" + " - \"" //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$ //$NON-NLS-4$
                     + searchResult.getDescription() + "\""; //$NON-NLS-1$
             } else if (columnIndex == 1) {
+                return searchResult.getSrcType();
+            } else if (columnIndex == 2) {
                 Timestamp lastChangedDate = searchResult.getLastChangedDate();
                 return DateTimeHelper.getTimestampFormatted(lastChangedDate);
-            } else if (columnIndex == 2) {
+            } else if (columnIndex == 3) {
                 return Integer.toString(searchResult.getStatementsCount());
             }
             return UNKNOWN;
@@ -159,6 +162,8 @@ public class SearchResultViewer {
             TableColumn column = tableViewer.getTable().getSortColumn();
             if (Messages.Member.equals(column.getText())) {
                 result = sortByMember(viewer, e1, e2);
+            } else if (Messages.SrcType.equals(column.getText())) {
+                result = sortBySrcType(viewer, e1, e2);
             } else if (Messages.Last_changed.equals(column.getText())) {
                 result = sortByLastChangedDate(viewer, e1, e2);
             } else if (Messages.StatementsCount.equals(column.getText())) {
@@ -182,6 +187,18 @@ public class SearchResultViewer {
                 if (result == 0) {
                     result = ((SearchResult)e1).getMember().compareTo(((SearchResult)e2).getMember());
                 }
+            }
+
+            return result;
+        }
+
+        private int sortBySrcType(Viewer viewer, Object e1, Object e2) {
+
+            int result;
+
+            result = ((SearchResult)e1).getSrcType().compareTo(((SearchResult)e2).getSrcType());
+            if (result == 0) {
+                result = sortByMember(viewer, e1, e2);
             }
 
             return result;
@@ -233,12 +250,14 @@ public class SearchResultViewer {
     private class ColumnSizeUpdateJob extends Job {
 
         private int memberColumnWidth = -1;
+        private int srcTypeColumnSize = -1;
         private int lastChangedDateColumnWidth = -1;
         private int statementsCountColumnWidth = -1;
 
-        public ColumnSizeUpdateJob(int memberColumnWidth, int lastChangedDateColumnWidth, int statementsCountColumnWidth) {
+        public ColumnSizeUpdateJob(int memberColumnWidth, int srcTypeColumnSize, int lastChangedDateColumnWidth, int statementsCountColumnWidth) {
             super("Update column width");
             this.memberColumnWidth = memberColumnWidth;
+            this.srcTypeColumnSize = srcTypeColumnSize;
             this.lastChangedDateColumnWidth = lastChangedDateColumnWidth;
             this.statementsCountColumnWidth = statementsCountColumnWidth;
         }
@@ -246,9 +265,8 @@ public class SearchResultViewer {
         @Override
         protected IStatus run(IProgressMonitor arg0) {
 
-            System.out.println("Updating column sizes ..."); //$NON-NLS-1$
-
             Preferences.getInstance().setSourceFileSearchMemberColumnWidth(memberColumnWidth);
+            Preferences.getInstance().setSourceFileSearchSrcTypeColumnWidth(srcTypeColumnSize);
             Preferences.getInstance().setSourceFileSearchLastChangedDateColumnWidth(lastChangedDateColumnWidth);
             Preferences.getInstance().setSourceFileSearchStatementsCountColumnWidth(statementsCountColumnWidth);
 
@@ -566,6 +584,17 @@ public class SearchResultViewer {
             }
         });
 
+        final TableColumn tableColumnSrcType = new TableColumn(tableMembers, SWT.NONE);
+        tableColumnSrcType.setWidth(columnSrcTypeSize);
+        tableColumnSrcType.setText(Messages.SrcType);
+        tableColumnSrcType.addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                columnSrcTypeSize = tableColumnSrcType.getWidth();
+                saveColumnSizes();
+            }
+        });
+
         final TableColumn tableColumnLastChangedDate = new TableColumn(tableMembers, SWT.NONE);
         tableColumnLastChangedDate.setWidth(columnLastChangedDateSize);
         tableColumnLastChangedDate.setText(Messages.Last_changed);
@@ -603,6 +632,7 @@ public class SearchResultViewer {
             }
         };
         tableColumnMember.addListener(SWT.Selection, sortListener);
+        tableColumnSrcType.addListener(SWT.Selection, sortListener);
         tableColumnLastChangedDate.addListener(SWT.Selection, sortListener);
         tableColumnStatementsCount.addListener(SWT.Selection, sortListener);
 
@@ -676,7 +706,7 @@ public class SearchResultViewer {
             columnSizeUpdateJob = null;
         }
 
-        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnLastChangedDateSize, columnStatementsCountSize);
+        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnSrcTypeSize, columnLastChangedDateSize, columnStatementsCountSize);
         columnSizeUpdateJob.schedule(500);
     }
 

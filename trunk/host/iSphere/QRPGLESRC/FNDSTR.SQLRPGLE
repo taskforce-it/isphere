@@ -159,6 +159,7 @@
      d   file                        10A
      d   lib                         10A
      d   mbr                         10A
+     d   srcType                     10A
      d   lastChgData                   Z
 
       // Local procedures
@@ -998,6 +999,7 @@
              memberAttrs.file = i_file;
              memberAttrs.lib = i_lib;
              memberAttrs.mbr = i_mbr;
+             memberAttrs.srcType = mbrd0100.srcType;
              memberAttrs.lastChgData = %date(apiTimestamp.date: *CYMD0)
                                        + %time(apiTimestamp.time: *HMS0);
            EndIf;
@@ -1012,6 +1014,7 @@
                   XOLIB,
                   XOFILE,
                   XOMBR,
+                  XOTYPE,
                   XOSTMT,
                   XOLINE,
                   XOFLCD
@@ -1022,6 +1025,7 @@
                   :i_lib,
                   :i_file,
                   :i_mbr,
+                  :memberAttrs.srcType,
                   :i_stmt,
                   :i_srcdta,
                   :memberAttrs.lastChgData

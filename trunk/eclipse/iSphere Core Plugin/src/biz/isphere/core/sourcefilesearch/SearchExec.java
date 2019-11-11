@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,6 +211,7 @@ public class SearchExec {
                 String library;
                 String file;
                 String member;
+                String srcType;
                 Timestamp lastChangedDate;
 
                 SearchResult _searchResult = null;
@@ -221,6 +222,7 @@ public class SearchExec {
                     library = resultSet.getString("XOLIB").trim(); //$NON-NLS-1$
                     file = resultSet.getString("XOFILE").trim(); //$NON-NLS-1$
                     member = resultSet.getString("XOMBR").trim(); //$NON-NLS-1$
+                    srcType = resultSet.getString("XOTYPE").trim(); //$NON-NLS-1$
                     lastChangedDate = resultSet.getTimestamp("XOFLCD"); //$NON-NLS-1$
 
                     if (!_library.equals(library) || !_file.equals(file) || !_member.equals(member)) {
@@ -244,6 +246,7 @@ public class SearchExec {
                         _searchResult.setLibrary(library);
                         _searchResult.setFile(file);
                         _searchResult.setMember(member);
+                        _searchResult.setSrcType(srcType);
                         _searchResult.setLastChangedDate(lastChangedDate);
 
                         alStatements = new ArrayList<SearchResultStatement>();
