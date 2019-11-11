@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,8 @@ public final class Preferences {
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
+
+    private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
 
@@ -346,6 +348,10 @@ public final class Preferences {
 
     public int getSourceFileSearchMemberColumnWidth() {
         return preferenceStore.getInt(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH);
+    }
+
+    public int getSourceFileSearchSrcTypeColumnWidth() {
+        return preferenceStore.getInt(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH);
     }
 
     public int getSourceFileSearchLastChangedDateColumnWidth() {
@@ -666,6 +672,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
     }
 
+    public void setSourceFileSearchSrcTypeColumnWidth(int width) {
+        preferenceStore.setValue(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH, width);
+    }
+
     public void setSourceFileSearchLastChangedDateColumnWidth(int width) {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, width);
     }
@@ -885,6 +895,7 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_ADJUST_FONT_SIZE, getDefaultSpooledFileAdjustFontSize());
 
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, getDefaultSourceFileSearchMemberColumnWidth());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH, getDefaultSourceFileSearchSrcTypeColumnWidth());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, getDefaultSourceFileSearchLastChangedDateColumnWidth());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH, getDefaultSourceFileSearchStatementsCountColumnWidth());
 
@@ -1058,6 +1069,16 @@ public final class Preferences {
      */
     public int getDefaultSourceFileSearchMemberColumnWidth() {
         return 800;
+    }
+
+    /**
+     * Returns the default width of the 'type' column of SearchResultViewer of
+     * the iSphere Source File Search.
+     * 
+     * @return default column width
+     */
+    public int getDefaultSourceFileSearchSrcTypeColumnWidth() {
+        return 100;
     }
 
     /**

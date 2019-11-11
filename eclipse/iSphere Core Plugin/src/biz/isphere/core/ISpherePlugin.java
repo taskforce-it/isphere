@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // WDSCi 7.0 = Eclipse 3.2
     private static final Version WDSCI70 = new Version(3, 2, 0);
 
-    private static final String MIN_SERVER_VERSION = "3.5.0"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "3.6.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;

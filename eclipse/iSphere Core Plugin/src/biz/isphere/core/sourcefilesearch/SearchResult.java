@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ public class SearchResult implements Serializable {
     private String library;
     private String file;
     private String member;
+    private String srcType;
     private String description;
     private Timestamp lastChangedDate;
     private SearchResultStatement[] statements;
@@ -25,6 +26,7 @@ public class SearchResult implements Serializable {
         library = ""; //$NON-NLS-1$
         file = ""; //$NON-NLS-1$
         member = ""; //$NON-NLS-1$
+        srcType = ""; //$NON-NLS-1$
         description = ""; //$NON-NLS-1$
         statements = null;
     }
@@ -51,6 +53,14 @@ public class SearchResult implements Serializable {
 
     public void setMember(String member) {
         this.member = member;
+    }
+
+    public String getSrcType() {
+        return srcType;
+    }
+
+    public void setSrcType(String srcType) {
+        this.srcType = srcType;
     }
 
     public String getDescription() {

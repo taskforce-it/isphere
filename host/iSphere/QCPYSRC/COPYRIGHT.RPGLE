@@ -1,11 +1,11 @@
-     hCopyright('v3.5.5 - xx.xx.xxxx - +
+     hCopyright('v3.6.0 - xx.xx.xxxx - +
      h           Copyright (c) 2012-xxxx iSphere Project Team')
 
       /if defined(VERSION_INFO)
      D ISPHERE_SERVER_VERSION...
-     D                 c                   '3.5.7'
+     D                 c                   '3.6.0'
      D ISPHERE_MIN_CLIENT_VERSION...
-     D                 c                   '3.4.0'
+     D                 c                   '3.6.0'
 
      D ISPHERE_DATE...
      D                 c                   'xxxx-xx-xx'
