@@ -24,6 +24,8 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Timestamp extends PostfixCommand {
 
+    public static final String ID = "timestamp";
+
     @Override
     final public int getNumberOfParameters() {
         return -1;

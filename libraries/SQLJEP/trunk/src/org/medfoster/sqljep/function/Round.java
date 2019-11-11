@@ -45,6 +45,8 @@ import org.medfoster.sqljep.function.AbstractOracleDateTimeFormat.YYYY;
 @JUnitTest
 public class Round extends PostfixCommand {
 
+    public static final String ID = "round";
+
     @Override
     final public int getNumberOfParameters() {
         return -1;

@@ -19,6 +19,8 @@ import org.medfoster.sqljep.datatypes.Days;
 
 @JUnitTest
 public class Day extends AbstractDatePortion<Days> {
+    
+    public static final String ID = "day";
 
     public Day() {
         super(Calendar.DAY_OF_MONTH);

@@ -20,6 +20,8 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 @JUnitTest
 public class Concat extends PostfixCommand {
 
+    public static final String ID = "concat";
+
     @Override
     final public int getNumberOfParameters() {
         return 2;

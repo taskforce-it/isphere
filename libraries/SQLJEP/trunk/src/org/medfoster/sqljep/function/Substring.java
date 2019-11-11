@@ -24,6 +24,9 @@ import org.medfoster.sqljep.exceptions.WrongValueException;
 @JUnitTest
 public class Substring extends PostfixCommand {
 
+    public static final String ID1 = "substr";
+    public static final String ID2 = "substring";
+
     @Override
     final public int getNumberOfParameters() {
         return -1;

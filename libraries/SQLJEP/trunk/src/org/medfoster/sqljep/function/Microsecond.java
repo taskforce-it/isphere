@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Microseconds;
 @JUnitTest
 public class Microsecond extends AbstractTimePortion<Microseconds> {
 
+    public static final String ID = "microsecond";
+
     public Microsecond() {
         super(Calendar.MILLISECOND);
     }

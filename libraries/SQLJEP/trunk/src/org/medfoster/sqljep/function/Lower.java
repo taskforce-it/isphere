@@ -20,6 +20,8 @@ import org.medfoster.sqljep.annotations.JUnitTest;
 @JUnitTest
 public class Lower extends AbstractLowerUpper {
 
+    public static final String ID = "lower";
+
     @Override
     public void evaluate(ASTFunNode node, JepRuntime runtime) throws ParseException {
         node.childrenAccept(runtime.ev, null);

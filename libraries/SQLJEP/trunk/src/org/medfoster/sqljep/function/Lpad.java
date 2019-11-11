@@ -22,6 +22,8 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Lpad extends PostfixCommand {
 
+    public static final String ID = "lpad";
+
     @Override
     final public int getNumberOfParameters() {
         return -1;

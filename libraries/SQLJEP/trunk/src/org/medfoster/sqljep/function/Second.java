@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Seconds;
 @JUnitTest
 public class Second extends AbstractTimePortion<Seconds> {
 
+    public static final String ID = "second";
+
     public Second() {
         super(Calendar.SECOND);
     }

@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Minutes;
 @JUnitTest
 public class Minute extends AbstractTimePortion<Minutes> {
 
+    public static final String ID = "minute";
+
     public Minute() {
         super(Calendar.MINUTE);
     }

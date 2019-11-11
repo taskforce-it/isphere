@@ -22,6 +22,8 @@ import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 @JUnitTest
 public class Replace extends PostfixCommand {
 
+    public static final String ID = "replace";
+
     @Override
     final public int getNumberOfParameters() {
         return -1;

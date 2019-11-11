@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Months;
 @JUnitTest
 public class Month extends AbstractDatePortion<Months> {
 
+    public static final String ID = "month";
+
     public Month() {
         super(Calendar.MONTH);
     }

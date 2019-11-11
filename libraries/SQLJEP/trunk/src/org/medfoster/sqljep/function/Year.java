@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Years;
 @JUnitTest
 public class Year extends AbstractDatePortion<Years> {
 
+    public static final String ID = "year";
+
     public Year() {
         super(Calendar.YEAR);
     }

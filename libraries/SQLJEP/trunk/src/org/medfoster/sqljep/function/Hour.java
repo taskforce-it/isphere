@@ -20,6 +20,8 @@ import org.medfoster.sqljep.datatypes.Hours;
 @JUnitTest
 public class Hour extends AbstractTimePortion<Hours> {
 
+    public static final String ID = "hour";
+
     public Hour() {
         super(Calendar.HOUR_OF_DAY);
     }

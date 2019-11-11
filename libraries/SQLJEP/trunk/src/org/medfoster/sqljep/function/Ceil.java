@@ -23,6 +23,8 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Ceil extends PostfixCommand {
 
+    public static final String ID = "ceil";
+
     @Override
     final public int getNumberOfParameters() {
         return 1;

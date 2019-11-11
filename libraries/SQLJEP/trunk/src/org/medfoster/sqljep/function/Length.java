@@ -21,6 +21,8 @@ import org.medfoster.sqljep.exceptions.WrongTypeException;
 @JUnitTest
 public class Length extends PostfixCommand {
 
+    public static final String ID = "length";
+
     @Override
     final public int getNumberOfParameters() {
         return 1;

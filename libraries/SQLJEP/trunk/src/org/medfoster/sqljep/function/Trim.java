@@ -20,6 +20,8 @@ import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 @JUnitTest
 public class Trim extends PostfixCommand {
 
+    public static final String ID = "trim";
+
     private Rtrim rtrim = new Rtrim();
     private Ltrim ltrim = new Ltrim();
 

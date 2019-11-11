@@ -21,6 +21,8 @@ import org.medfoster.sqljep.exceptions.WrongNumberOfParametersException;
 @JUnitTest
 public class Ltrim extends PostfixCommand {
 
+    public static final String ID = "ltrim";
+    
     @Override
     final public int getNumberOfParameters() {
         return -1;
