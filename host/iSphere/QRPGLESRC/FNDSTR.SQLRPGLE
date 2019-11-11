@@ -134,7 +134,7 @@
      dNULL             C                   -1
 
       // iconv() handle
-     d giconv          DS                  qualified
+     d GIconv          DS                  qualified
      d  isInit                         N   inz(*off)
      d  job_ccsid                          like(CCSID) inz(-1)
      d  nl_ccsid                           like(CCSID) inz(-1)
@@ -142,7 +142,7 @@
 
       // This array has a 1:1 relation to
       // the LSARGS input array of procedure FNDSTR_search().
-     d gregex          DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d GRegex          DS                  Dim(SRCHOPTS_ARGUMENTS_SIZE)
      d                                     Qualified
      d                                     Inz
      d  isInit                         N   Inz(*OFF)
@@ -155,18 +155,34 @@
 
       // Caching of member attributes
 
-     d  memberAttrs    DS                  Qualified Inz
-     d   file                        10A
-     d   lib                         10A
-     d   mbr                         10A
-     d   srcType                     10A
-     d   lastChgData                   Z
+     d GCMemberAttrs   DS                  Qualified Inz
+     d  file                         10A
+     d  lib                          10A
+     d  mbr                          10A
+     d  srcType                      10A
+     d  lastChgData                    Z
+
+      // Tape Def for caching member attributes
+
+     d memberAttrs_t   DS                  Qualified Based(pDummy)
+     d  file                         10A
+     d  lib                          10A
+     d  mbr                          10A
+     d  srcType                      10A
+     d  lastChgData                    Z
 
       // Local procedures
 
      d removeMember...
      d                 PR                  Extproc('removeMember')
      d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+
+     d resolveMemberAttrs...
+     d                 PR                  Likeds(memberAttrs_t)
+     d                                     Extproc('resolveMemberAttrs')
      d  i_file                       10A   Const
      d  i_lib                        10A   Const
      d  i_mbr                        10A   Const
@@ -533,6 +549,9 @@
          Return;
        EndIf;
 
+       // Clear cache of member attributes
+       Clear GCMemberAttrs;
+
        // Initialize character translation
        initIconv();
 
@@ -746,32 +765,32 @@
              If LSARGS(LIIDX).regex = SRCHOPTS_ARG_REGEX;
                // Perform regular expression search:
                // Compile regular expression
-               If not gregex(LIIDX).isInit and not gregex(LIIDX).isError;
+               If not GRegex(LIIDX).isInit and not GRegex(LIIDX).isError;
                  LISTG = cvtCcsid(LISTG);
-                 rc = regcomp(gregex(LIIDX).handle: LISTG: cflags);
+                 rc = regcomp(GRegex(LIIDX).handle: LISTG: cflags);
                  If rc = 0;
-                   gregex(LIIDX).isInit = *ON;
+                   GRegex(LIIDX).isInit = *ON;
                  Else;
-                   gregex(LIIDX).isInit = *OFF;
-                   gregex(LIIDX).isError = *ON;
+                   GRegex(LIIDX).isInit = *OFF;
+                   GRegex(LIIDX).isError = *ON;
                    regerror(
-                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
+                     rc: GRegex(LIIDX).handle: %addr(error): %size(error));
                  Endif;
                Endif;
                // Match regular expression
-               If gregex(LIIDX).isInit and not gregex(LIIDX).isError;
+               If GRegex(LIIDX).isInit and not GRegex(LIIDX).isError;
                  LILINE = cvtCcsid(LILINE);
                  rc = regexec(
-                        gregex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
+                        GRegex(LIIDX).handle: LILINE: nmatch: regmatch: 0);
                  Select;
                  When rc = 0;             // found!
                    searchArgFound = *ON;
                  When rc = REG_NOMATCH;   // not found
                    searchArgFound = *OFF;
                  Other;                   // error!
-                   gregex(LIIDX).isError = *ON;
+                   GRegex(LIIDX).isError = *ON;
                    regerror(
-                     rc: gregex(LIIDX).handle: %addr(error): %size(error));
+                     rc: GRegex(LIIDX).handle: %addr(error): %size(error));
                  Endsl;
                Endif;
              Else;
@@ -951,18 +970,15 @@
      p                 E
 
       //*==========================================================================================*
-      //* Adds a member from the output file.                                                      *
+      //* Resolves the attributes of a given member.                                               *
       //*==========================================================================================*
 
-     p addMember...
+     p resolveMemberAttributes...
      p                 B                   Export
-     d                 PI
-     d  i_handle                     10S 0 Const
+     d                 PI                  Likeds(memberAttrs_t)
      d  i_file                       10A   Const
      d  i_lib                        10A   Const
      d  i_mbr                        10A   Const
-     d  i_stmt                        6S 0 Const
-     d  i_srcdta                    228A   Const
 
      d mbrd0100        DS                  Likeds(mbrd0100_t) inz
      d qFile           DS                  Qualified
@@ -977,9 +993,9 @@
       /Free
 
            // Retrieve member attributes
-           If (i_file <> memberAttrs.file or
-               i_lib <> memberAttrs.lib or
-               i_mbr <> memberAttrs.mbr);
+           If (i_file <> GCMemberAttrs.file or
+               i_lib <> GCMemberAttrs.lib or
+               i_mbr <> GCMemberAttrs.mbr);
 
              Clear qFile;
              qFile.name = i_file;
@@ -996,13 +1012,40 @@
 
              apiTimestamp = mbrd0100.srcChgDatTim;
 
-             memberAttrs.file = i_file;
-             memberAttrs.lib = i_lib;
-             memberAttrs.mbr = i_mbr;
-             memberAttrs.srcType = mbrd0100.srcType;
-             memberAttrs.lastChgData = %date(apiTimestamp.date: *CYMD0)
-                                       + %time(apiTimestamp.time: *HMS0);
+             GCMemberAttrs.file = i_file;
+             GCMemberAttrs.lib = i_lib;
+             GCMemberAttrs.mbr = i_mbr;
+             GCMemberAttrs.srcType = mbrd0100.srcType;
+             GCMemberAttrs.lastChgData = %date(apiTimestamp.date: *CYMD0)
+                                         + %time(apiTimestamp.time: *HMS0);
            EndIf;
+
+           Return GCMemberAttrs;
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Adds a member from the output file.                                                      *
+      //*==========================================================================================*
+
+     p addMember...
+     p                 B                   Export
+     d                 PI
+     d  i_handle                     10S 0 Const
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+     d  i_mbr                        10A   Const
+     d  i_stmt                        6S 0 Const
+     d  i_srcdta                    228A   Const
+
+     d memberAttrs     DS                  Likeds(memberAttrs_t) Inz
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           // Retrieve member attributes
+           memberAttrs = resolveMemberAttributes(i_file: i_lib: i_mbr);
 
            // Write file 'Output'
            Exec SQL
@@ -1070,12 +1113,12 @@
      D LIIDX           S             10I 0 inz
       /free
 
-         For LIIDX = 1 to %elem(gregex);
-            If (gregex(LIIDX).isInit);
-               regfree(gregex(LIIDX).handle);
-               gregex(LIIDX).isInit = *OFF;
-               gregex(LIIDX).isError = *OFF;
-               gregex(LIIDX).handle = *ALLx'00';
+         For LIIDX = 1 to %elem(GRegex);
+            If (GRegex(LIIDX).isInit);
+               regfree(GRegex(LIIDX).handle);
+               GRegex(LIIDX).isInit = *OFF;
+               GRegex(LIIDX).isError = *OFF;
+               GRegex(LIIDX).handle = *ALLx'00';
             EndIf;
          EndFor;
 
@@ -1093,22 +1136,22 @@
      D to              DS                  likeds(QtqCode_t)
      D rc              S             10I 0 inz
 
-     D DIGITS          C                   const(%len(giconv.nl_ccsid))
-     D DECPOS          C                   const(%decpos(giconv.nl_ccsid))
+     D DIGITS          C                   const(%len(GIconv.nl_ccsid))
+     D DECPOS          C                   const(%decpos(GIconv.nl_ccsid))
       /free
 
          // Free iconv() handle
          freeIconv(); // Just in case ...
 
-         giconv.job_ccsid = retrieveJobCcsid();
-         giconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
+         GIconv.job_ccsid = retrieveJobCcsid();
+         GIconv.nl_ccsid = %dec(%str(nl_langinfo(CODESET)): DIGITS: DECPOS);
 
-         If (giconv.job_ccsid = giconv.nl_ccsid);
-            giconv.isInit = *off;
+         If (GIconv.job_ccsid = GIconv.nl_ccsid);
+            GIconv.isInit = *off;
             Return;
          EndIf;
 
-         from.CCSID = giconv.job_ccsid;
+         from.CCSID = GIconv.job_ccsid;
          from.ConvAlt = 0;    // Conversion alternative
          from.SubsAlt = 0;    // Substitution alternative
          from.ShiftAlt = 1;   // Shift-state alternative
@@ -1116,7 +1159,7 @@
          from.ErrorOpt = 1;   // Error option for mixed data
          from.Reserved = *ALLx'00';
 
-         to.CCSID = giconv.nl_ccsid;
+         to.CCSID = GIconv.nl_ccsid;
          to.ConvAlt = 0;      // Conversion alternative
          to.SubsAlt = 0;      // Substitution alternative
          to.ShiftAlt = 1;     // Shift-state alternative
@@ -1125,8 +1168,8 @@
          to.Reserved = *ALLx'00';
 
          // Cache iconv() handle
-         giconv.isInit = *on;
-         giconv.hIconv = QtqIconvOpen(to: from);
+         GIconv.isInit = *on;
+         GIconv.hIconv = QtqIconvOpen(to: from);
 
       /end-free
      P                 E
@@ -1139,14 +1182,14 @@
      D                 PI
       /free
 
-         If (not giconv.isInit);
+         If (not GIconv.isInit);
             Return;
          EndIf;
 
-         iconv_close(giconv.hIconv);
+         iconv_close(GIconv.hIconv);
 
-         Clear giconv;
-         giconv.isInit = *off;
+         Clear GIconv;
+         GIconv.isInit = *off;
 
       /end-free
      P                 E
@@ -1192,7 +1235,7 @@
      D pOutBuf         S               *   inz
       /Free
 
-         If (not giconv.isInit);
+         If (not GIconv.isInit);
             Return i_string;
          EndIf;
 
