@@ -3,52 +3,95 @@ package org.medfoster.sqljep;
 
 public interface ParserConstants {
 
-    int EOF = 0;
-    int MULTI_LINE_COMMENT = 5;
-    int CONCAT = 6;
-    int PLUS = 7;
-    int MINUS = 8;
-    int MUL = 9;
-    int DIV = 10;
-    int MOD = 11;
-    int GT = 12;
-    int LT = 13;
-    int EQ = 14;
-    int LE = 15;
-    int GE = 16;
-    int NE = 17;
-    int NE_2 = 18;
-    int AND = 19;
-    int OR = 20;
-    int NOT = 21;
-    int IS_NULL = 22;
-    int IS_NOT_NULL = 23;
-    int IN = 24;
-    int BETWEEN = 25;
-    int NOT_BETWEEN = 26;
-    int LIKE = 27;
-    int NOT_LIKE = 28;
-    int REGEXP_LIKE = 29;
-    int NOT_REGEXP_LIKE = 30;
-    int NULL_LITERAL = 31;
-    int TRUE_LITERAL = 32;
-    int FALSE_LITERAL = 33;
-    int INTEGER_LITERAL = 34;
-    int DECIMAL_LITERAL = 35;
-    int FLOATING_POINT_LITERAL = 36;
-    int EXPONENT = 37;
-    int STRING_LITERAL = 38;
-    int IDENTIFIER = 39;
-    int LETTER = 40;
-    int DIGIT = 41;
-    int OTHER_LETTER = 42;
+  int EOF = 0;
+  int MULTI_LINE_COMMENT = 5;
+  int CONCAT = 6;
+  int PLUS = 7;
+  int MINUS = 8;
+  int MUL = 9;
+  int DIV = 10;
+  int MOD = 11;
+  int GT = 12;
+  int LT = 13;
+  int EQ = 14;
+  int LE = 15;
+  int GE = 16;
+  int NE = 17;
+  int NE_2 = 18;
+  int AND = 19;
+  int OR = 20;
+  int NOT = 21;
+  int IS_NULL = 22;
+  int IS_NOT_NULL = 23;
+  int IN = 24;
+  int BETWEEN = 25;
+  int NOT_BETWEEN = 26;
+  int LIKE = 27;
+  int NOT_LIKE = 28;
+  int REGEXP_LIKE = 29;
+  int NOT_REGEXP_LIKE = 30;
+  int NULL_LITERAL = 31;
+  int TRUE_LITERAL = 32;
+  int FALSE_LITERAL = 33;
+  int INTEGER_LITERAL = 34;
+  int DECIMAL_LITERAL = 35;
+  int FLOATING_POINT_LITERAL = 36;
+  int EXPONENT = 37;
+  int STRING_LITERAL = 38;
+  int IDENTIFIER = 39;
+  int LETTER = 40;
+  int DIGIT = 41;
+  int OTHER_LETTER = 42;
 
-    int DEFAULT = 0;
+  int DEFAULT = 0;
 
-    String[] tokenImage = { "<EOF>", "\" \"", "\"\\t\"", "\"\\n\"", "\"\\r\"", "<MULTI_LINE_COMMENT>", "\"||\"", "\"+\"", "\"-\"", "\"*\"", "\"/\"",
-        "\"mod\"", "\">\"", "\"<\"", "\"=\"", "\"<=\"", "\">=\"", "\"!=\"", "\"<>\"", "\"and\"", "\"or\"", "\"not\"", "\"is null\"",
-        "\"is not null\"", "\"in\"", "\"between\"", "\"not between\"", "\"like\"", "\"not like\"", "\"regexp_like\"", "\"not regexp_like\"",
-        "\"null\"", "\"true\"", "\"false\"", "<INTEGER_LITERAL>", "<DECIMAL_LITERAL>", "<FLOATING_POINT_LITERAL>", "<EXPONENT>", "<STRING_LITERAL>",
-        "<IDENTIFIER>", "<LETTER>", "<DIGIT>", "<OTHER_LETTER>", "\"(\"", "\")\"", "\",\"", };
+  String[] tokenImage = {
+    "<EOF>",
+    "\" \"",
+    "\"\\t\"",
+    "\"\\n\"",
+    "\"\\r\"",
+    "<MULTI_LINE_COMMENT>",
+    "\"||\"",
+    "\"+\"",
+    "\"-\"",
+    "\"*\"",
+    "\"/\"",
+    "\"mod\"",
+    "\">\"",
+    "\"<\"",
+    "\"=\"",
+    "\"<=\"",
+    "\">=\"",
+    "\"!=\"",
+    "\"<>\"",
+    "\"and\"",
+    "\"or\"",
+    "\"not\"",
+    "\"is null\"",
+    "\"is not null\"",
+    "\"in\"",
+    "\"between\"",
+    "\"not between\"",
+    "\"like\"",
+    "\"not like\"",
+    "\"regexp_like\"",
+    "\"not regexp_like\"",
+    "\"null\"",
+    "\"true\"",
+    "\"false\"",
+    "<INTEGER_LITERAL>",
+    "<DECIMAL_LITERAL>",
+    "<FLOATING_POINT_LITERAL>",
+    "<EXPONENT>",
+    "<STRING_LITERAL>",
+    "<IDENTIFIER>",
+    "<LETTER>",
+    "<DIGIT>",
+    "<OTHER_LETTER>",
+    "\"(\"",
+    "\")\"",
+    "\",\"",
+  };
 
 }

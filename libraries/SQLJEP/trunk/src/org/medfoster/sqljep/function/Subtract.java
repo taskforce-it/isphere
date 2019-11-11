@@ -18,9 +18,9 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.annotations.JUnitTest;
 
 @JUnitTest
-public final class Substract extends AbstractLineCalculation {
+public final class Subtract extends AbstractLineCalculation {
 
-    public Substract() {
+    public Subtract() {
         this.sign = new Integer(-1);
     }
 
