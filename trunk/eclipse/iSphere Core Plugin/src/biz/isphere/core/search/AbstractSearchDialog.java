@@ -11,9 +11,11 @@ package biz.isphere.core.search;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -54,10 +56,15 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private int maxColumns;
     private boolean regularExpressionsOption;
     private SearchOptionConfig[] searchOptionConfig;
+    private SashForm sashForm;
+    private int[] sashFormWeights;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
     private static final String FROM_COLUMN = "fromColumn";
+    private static final String SASH_FORM_WEIGHTS = "sashFormWeights";
+    private static final String SASH_FORM_WEIGHTS_UPPER = "sashFormWeights.upper";
+    private static final String SASH_FORM_WEIGHTS_LOWER = "sashFormWeights.lower";
 
     @CMOne(info = "CMOne settings")
     private static final String TEXT_STRING = "textString";
@@ -82,21 +89,28 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         }
         this.regularExpressionsOption = regularExpressionsOption;
         this.searchOptionConfig = searchOptionConfig;
+        this.sashFormWeights = new int[] { 50, 50 };
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
         Composite container = (Composite)super.createDialogArea(parent);
-        container.setLayout(new GridLayout(1, false));
+        container.setLayout(new FillLayout());
+
+        sashForm = new SashForm(container, SWT.VERTICAL);
+        Composite upperArea = new Composite(sashForm, SWT.NONE);
+        upperArea.setLayout(new GridLayout(1, false));
+        Composite lowerArea = new Composite(sashForm, SWT.NONE);
+        lowerArea.setLayout(new GridLayout(1, false));
 
         if (_editor) {
-            createSearchStringEditorGroup(container);
+            createSearchStringEditorGroup(upperArea);
         }
 
-        createColumnsGroup(container);
-        createOptionsGroup(container);
+        createColumnsGroup(upperArea);
+        createOptionsGroup(upperArea);
 
-        Group groupArea = new Group(container, SWT.NONE);
+        Group groupArea = new Group(lowerArea, SWT.NONE);
         groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         groupArea.setText(Messages.Area);
         groupArea.setLayout(new GridLayout());
@@ -110,13 +124,15 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
         loadScreenValues();
 
+        sashForm.setWeights(sashFormWeights);
+
         return container;
     }
 
     private void createSearchStringEditorGroup(Composite container) {
 
         Composite _searchArguments = new Composite(container, SWT.NONE);
-        _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         _searchArguments.setLayout(new GridLayout());
 
         _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
@@ -128,7 +144,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
         Group groupAttributes = new Group(container, SWT.NONE);
         groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        groupAttributes.setText(Messages.Attributes);
+        groupAttributes.setText(Messages.Columns);
         groupAttributes.setLayout(new GridLayout(2, false));
 
         if (!_editor) {
@@ -393,6 +409,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
      * Restores the screen values of the last search search.
      */
     private void loadScreenValues() {
+
         if (_editor) {
             _listEditor.loadScreenValues(getDialogBoundsSettings());
         } else {
@@ -404,11 +421,19 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         loadColumnButtonsSelection();
 
         loadElementValues();
+
+        loadSashFormWeights();
     }
 
     private void loadColumnButtonsSelection() {
         textFromColumn.setText(loadValue(FROM_COLUMN, "*START"));
         textToColumn.setText(loadValue(TO_COLUMN, "*END"));
+    }
+
+    private void loadSashFormWeights() {
+        sashFormWeights = new int[2];
+        sashFormWeights[0] = loadIntValue(SASH_FORM_WEIGHTS_UPPER, 50);
+        sashFormWeights[1] = loadIntValue(SASH_FORM_WEIGHTS_LOWER, 50);
     }
 
     /**
@@ -426,11 +451,19 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         saveColumnButtonsSelection();
 
         saveElementValues();
+
+        saveSashFormWeights();
     }
 
     private void saveColumnButtonsSelection() {
         storeValue(FROM_COLUMN, textFromColumn.getText());
         storeValue(TO_COLUMN, textToColumn.getText());
+    }
+
+    private void saveSashFormWeights() {
+        sashFormWeights = sashForm.getWeights();
+        storeValue(SASH_FORM_WEIGHTS_UPPER, sashFormWeights[0]);
+        storeValue(SASH_FORM_WEIGHTS_LOWER, sashFormWeights[1]);
     }
 
     public abstract String getTitle();
