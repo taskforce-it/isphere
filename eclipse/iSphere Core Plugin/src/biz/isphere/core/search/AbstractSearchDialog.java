@@ -58,11 +58,12 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
     private SearchOptionConfig[] searchOptionConfig;
     private SashForm sashForm;
     private int[] sashFormWeights;
+    private List listArea;
+    private Label labelNumElem;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
     private static final String FROM_COLUMN = "fromColumn";
-    private static final String SASH_FORM_WEIGHTS = "sashFormWeights";
     private static final String SASH_FORM_WEIGHTS_UPPER = "sashFormWeights.upper";
     private static final String SASH_FORM_WEIGHTS_LOWER = "sashFormWeights.lower";
 
@@ -109,18 +110,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
 
         createColumnsGroup(upperArea);
         createOptionsGroup(upperArea);
-
-        Group groupArea = new Group(lowerArea, SWT.NONE);
-        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        groupArea.setText(Messages.Area);
-        groupArea.setLayout(new GridLayout());
-
-        List listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        listArea.setItems(getItems());
-
-        Label labelNumElem = new Label(groupArea, SWT.NONE);
-        labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
+        createListArea(lowerArea);
 
         loadScreenValues();
 
@@ -195,6 +185,19 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
                 setOKButtonEnablement();
             }
         });
+    }
+
+    private void createListArea(Composite lowerArea) {
+        Group groupArea = new Group(lowerArea, SWT.NONE);
+        groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        groupArea.setText(Messages.Area);
+        groupArea.setLayout(new GridLayout());
+
+        listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        labelNumElem = new Label(groupArea, SWT.NONE);
+
+        refreshListArea();
     }
 
     @CMOne(info = "Create dialog for CMOne")
@@ -464,6 +467,11 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         sashFormWeights = sashForm.getWeights();
         storeValue(SASH_FORM_WEIGHTS_UPPER, sashFormWeights[0]);
         storeValue(SASH_FORM_WEIGHTS_LOWER, sashFormWeights[1]);
+    }
+
+    protected void refreshListArea() {
+        listArea.setItems(getItems());
+        labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
     }
 
     public abstract String getTitle();
