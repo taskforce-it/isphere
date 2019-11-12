@@ -9,8 +9,8 @@
 package biz.isphere.core.sourcefilesearch;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -46,17 +46,17 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
 
-    private Map<String, SearchElement> searchElements;
+    private HashMap<String, SearchElement> searchElements;
     private Button showAllRecordsButton;
     private Combo filterSrcTypeCombo;
     private RefreshJob refreshJob = new RefreshJob();
 
-    public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
+    public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, false, false);
         this.searchElements = searchElements;
     }
 
-    public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
+    public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true);
         this.searchElements = searchElements;
     }
@@ -147,6 +147,17 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
         showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+    }
+
+    @Override
+    protected void okPressed() {
+
+        if (refreshJob != null) {
+            refreshJob.cancel();
+            refreshJob = null;
+        }
+
+        super.okPressed();
     }
 
     @Override

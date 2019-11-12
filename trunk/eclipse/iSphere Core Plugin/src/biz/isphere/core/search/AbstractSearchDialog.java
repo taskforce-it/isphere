@@ -62,6 +62,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     private int[] sashFormWeights;
     private List listArea;
     private Label labelNumElem;
+    private boolean isClosing;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
@@ -93,6 +94,8 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         this.regularExpressionsOption = regularExpressionsOption;
         this.searchOptionConfig = searchOptionConfig;
         this.sashFormWeights = new int[] { 50, 50 };
+
+        this.isClosing = false;
     }
 
     @Override
@@ -298,10 +301,16 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
 
         updateSearchOptions();
 
+        isClosing = true;
+
         super.okPressed();
     }
 
     private void updateSearchOptions() {
+
+        if (isClosing) {
+            return;
+        }
 
         if (_editor) {
 
