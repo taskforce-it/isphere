@@ -72,6 +72,8 @@ public class Messages extends NLS {
 
     public static String Enter_or_select_a_simple_or_generic_member_name;
 
+    public static String Enter_or_select_a_simple_or_generic_member_type;
+
     public static String Library;
     
     public static String Message_file;
@@ -99,6 +101,10 @@ public class Messages extends NLS {
     public static String Source_Member; 
 
     public static String Options;
+
+    public static String Member_type_colon;
+
+    public static String Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search;
     
     public static String ShowAllRecords;
 
