@@ -232,8 +232,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                    new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(_searchElements
-                        .values()), postRun);
+                    new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), dialog.getSelectedElements(), postRun);
 
                 }
 
@@ -278,6 +277,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
             _searchElement.setLibrary(iSeriesMember.getLibrary());
             _searchElement.setFile(iSeriesMember.getFile());
             _searchElement.setMember(iSeriesMember.getName());
+            _searchElement.setType(iSeriesMember.getType());
             _searchElement.setDescription(iSeriesMember.getDescription());
             _searchElements.put(key, _searchElement);
 

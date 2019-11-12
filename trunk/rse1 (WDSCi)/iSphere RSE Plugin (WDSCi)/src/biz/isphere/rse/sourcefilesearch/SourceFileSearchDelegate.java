@@ -79,6 +79,10 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         return ISeriesDataElementHelpers.getName((DataElement)resource);
     }
 
+    protected String getMemberResourceType(Object resource) {
+        return ISeriesDataElementHelpers.getType((DataElement)resource);
+    }
+
     protected String getMemberResourceDescription(Object resource) {
         return ISeriesDataElementHelpers.getDescription((DataElement)resource);
     }
