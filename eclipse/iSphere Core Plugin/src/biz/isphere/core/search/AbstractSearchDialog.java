@@ -296,6 +296,13 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
 
         storeScreenValues();
 
+        updateSearchOptions();
+
+        super.okPressed();
+    }
+
+    private void updateSearchOptions() {
+
         if (_editor) {
 
             _searchOptions = new SearchOptions(_listEditor.getMatchOption(), true);
@@ -334,8 +341,6 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
             setElementsSearchOptions(_searchOptions);
 
         }
-
-        super.okPressed();
     }
 
     @Override
@@ -351,14 +356,15 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     }
 
     public SearchOptions getSearchOptions() {
+        updateSearchOptions();
         return _searchOptions;
     }
 
-    public String getString() {
+    public String getCombinedSearchString() {
         return _string;
     }
 
-    public String getCase() {
+    private String getCase() {
         return _case;
     }
 
