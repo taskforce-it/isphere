@@ -1,4 +1,12 @@
 
+Changelog: iSphere 3.6.0.b001
+-----------------------------
+ • Changed iSphere Source File Search to filter by member type.
+ • Changed result view of iSphere Source File Search to display the member source type.
+ • Changed source file search dialog and made member list area resizable.
+ • Fixed iSphere Source File Search (regular expression option) to properly support locales (CCSIDs).
+ • Fixed result view of iSphere Source File Search to display the sort order in the column header of the members table.
+
 Changelog: iSphere 3.5.6.r
 --------------------------
  • Added preferences options to enable/disable loading previous

@@ -126,7 +126,7 @@ public class Messages extends NLS {
 
     public static String Member;
 
-    public static String SrcType;
+    public static String Member_type_short;
 
     public static String Member_colon;
 
@@ -1378,6 +1378,8 @@ public class Messages extends NLS {
 
     public static String GenericSearchOption_MsgF_IncludeMessageId;
 
+    public static String GenericSearchOption_SrcMbr_SourceType;
+
     public static String GenericSearchOption_MsgF_IncludeFirstLevelText;
 
     public static String GenericSearchOption_MsgF_IncludeSecondLevelText;
@@ -1513,6 +1515,10 @@ public class Messages extends NLS {
     public static String Cannot_load_the_selected_repository_Duplicate_commands;
 
     public static String Cannot_load_the_selected_repository_Duplicate_user_actions;
+
+    public static String Member_type_colon;
+
+    public static String Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search;
 
     public static String ShowAllRecords;
 

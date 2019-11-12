@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 
@@ -23,6 +24,7 @@ public class SearchElement {
     private String library;
     private String file;
     private String member;
+    private String type;
     private String description;
     private Object data;
 
@@ -30,6 +32,7 @@ public class SearchElement {
         library = "";
         file = "";
         member = "";
+        type = "";
         description = "";
         data = null;
     }
@@ -62,8 +65,15 @@ public class SearchElement {
     }
 
     public void setMember(String member) {
-        this.member = "DEMO*";
         this.member = member;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getDescription() {
@@ -152,6 +162,15 @@ public class SearchElement {
 
         }
 
+    }
+
+    @Override
+    public String toString() {
+        if (StringHelper.isNullOrEmpty(getType())) {
+            return String.format("%s/%s(%s) - \"%s\"", getLibrary(), getFile(), getMember(), getDescription());
+        } else {
+            return String.format("%s/%s(%s.%s) - \"%s\"", getLibrary(), getFile(), getMember(), getType().toLowerCase(), getDescription());
+        }
     }
 
 }

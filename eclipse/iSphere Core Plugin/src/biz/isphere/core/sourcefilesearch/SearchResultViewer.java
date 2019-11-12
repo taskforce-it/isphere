@@ -162,7 +162,7 @@ public class SearchResultViewer {
             TableColumn column = tableViewer.getTable().getSortColumn();
             if (Messages.Member.equals(column.getText())) {
                 result = sortByMember(viewer, e1, e2);
-            } else if (Messages.SrcType.equals(column.getText())) {
+            } else if (Messages.Member_type_short.equals(column.getText())) {
                 result = sortBySrcType(viewer, e1, e2);
             } else if (Messages.Last_changed.equals(column.getText())) {
                 result = sortByLastChangedDate(viewer, e1, e2);
@@ -586,7 +586,7 @@ public class SearchResultViewer {
 
         final TableColumn tableColumnSrcType = new TableColumn(tableMembers, SWT.NONE);
         tableColumnSrcType.setWidth(columnSrcTypeSize);
-        tableColumnSrcType.setText(Messages.SrcType);
+        tableColumnSrcType.setText(Messages.Member_type_short);
         tableColumnSrcType.addControlListener(new ControlAdapter() {
             @Override
             public void controlResized(ControlEvent e) {

@@ -43,7 +43,7 @@ public class SearchOptions implements Serializable {
     private String matchOption;
     private boolean showAllItems;
     private List<SearchArgument> searchArguments;
-    private Map<String, GenericSearchOption> genericOptions;
+    private Map<GenericSearchOption.Key, GenericSearchOption> genericOptions;
 
     public SearchOptions() {
         this(MATCH_ALL, true);
@@ -82,11 +82,15 @@ public class SearchOptions implements Serializable {
         searchArguments = aSearchArguments;
     }
 
-    public void setGenericOption(String anOption, Boolean aValue) {
+    public void setGenericOption(GenericSearchOption.Key anOption, Boolean aValue) {
         getOrCreateGenericOptions().put(anOption, new GenericSearchOption(anOption, aValue));
     }
 
-    public boolean isGenericOption(String anOption) {
+    public void setGenericOption(GenericSearchOption.Key anOption, String aValue) {
+        getOrCreateGenericOptions().put(anOption, new GenericSearchOption(anOption, aValue));
+    }
+
+    public boolean isGenericOption(GenericSearchOption.Key anOption) {
         if (!getOrCreateGenericOptions().containsKey(anOption)) {
             return false;
         }
@@ -106,11 +110,20 @@ public class SearchOptions implements Serializable {
         return false;
     }
 
+    public boolean hasGenericOption(GenericSearchOption.Key key) {
+
+        if (hasGenericOptions()) {
+            return getOrCreateGenericOptions().containsKey(key);
+        }
+
+        return false;
+    }
+
     public GenericSearchOption[] getGenericOptions() {
 
         List<GenericSearchOption> list = new LinkedList<GenericSearchOption>();
 
-        Collection<GenericSearchOption> values = genericOptions.values();
+        Collection<GenericSearchOption> values = getOrCreateGenericOptions().values();
         for (GenericSearchOption genericSearchOption : values) {
             list.add(genericSearchOption);
         }
@@ -118,9 +131,19 @@ public class SearchOptions implements Serializable {
         return list.toArray(new GenericSearchOption[list.size()]);
     }
 
-    private Map<String, GenericSearchOption> getOrCreateGenericOptions() {
+    public String getGenericStringOption(GenericSearchOption.Key key, String defaultValue) {
+
+        if (hasGenericOption(key)) {
+            GenericSearchOption genericSearchOption = getOrCreateGenericOptions().get(key);
+            return (String)genericSearchOption.getValue();
+        }
+
+        return defaultValue;
+    }
+
+    private Map<GenericSearchOption.Key, GenericSearchOption> getOrCreateGenericOptions() {
         if (genericOptions == null) {
-            genericOptions = new HashMap<String, GenericSearchOption>();
+            genericOptions = new HashMap<GenericSearchOption.Key, GenericSearchOption>();
         }
         return genericOptions;
     }
