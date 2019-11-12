@@ -224,7 +224,7 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
                     SearchPostRun postRun = new SearchPostRun();
                     postRun.setConnection(_connection);
                     postRun.setConnectionName(connectionName);
-                    postRun.setSearchString(dialog.getString());
+                    postRun.setSearchString(dialog.getCombinedSearchString());
                     postRun.setSearchElements(_searchElements);
                     postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
