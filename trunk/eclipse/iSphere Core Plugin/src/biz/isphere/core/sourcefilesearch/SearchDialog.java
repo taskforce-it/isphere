@@ -9,7 +9,6 @@
 package biz.isphere.core.sourcefilesearch;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
@@ -35,7 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
@@ -51,7 +49,6 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     private Map<String, SearchElement> searchElements;
     private Button showAllRecordsButton;
     private Combo filterSrcTypeCombo;
-    private String filterSrcType;
     private RefreshJob refreshJob = new RefreshJob();
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
@@ -72,58 +69,33 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     @Override
     protected String[] getItems() {
 
-        filterSrcType = filterSrcTypeCombo.getText();
+        SourceFileSearchFilter filter = new SourceFileSearchFilter();
+        SearchOptions searchOptions = getSearchOptions();
 
-        ArrayList<String> items = new ArrayList<String>();
+        ArrayList<String> selectedItems = new ArrayList<String>();
         SortedSet<String> keys = new TreeSet<String>(searchElements.keySet());
+
         Iterator<String> _iterator = keys.iterator();
         while (_iterator.hasNext()) {
             String key = _iterator.next();
             SearchElement value = searchElements.get(key);
-            if (isItemSelected(value, filterSrcType)) {
-                items.add(value.toString());
+            if (filter.isItemSelected(value, searchOptions)) {
+                selectedItems.add(value.toString());
             }
         }
-        String[] _items = new String[items.size()];
-        items.toArray(_items);
+
+        String[] _items = new String[selectedItems.size()];
+        selectedItems.toArray(_items);
+
         return _items;
     }
 
     @Override
     public ArrayList<SearchElement> getSelectedElements() {
 
-        ArrayList<SearchElement> selectedSearchElements = new ArrayList<SearchElement>();
+        SourceFileSearchFilter filter = new SourceFileSearchFilter();
 
-        Collection<SearchElement> allSearchElements = searchElements.values();
-        for (SearchElement searchElement : allSearchElements) {
-            if (isItemSelected(searchElement, filterSrcType)) {
-                selectedSearchElements.add(searchElement);
-            }
-        }
-
-        return selectedSearchElements;
-    }
-
-    private boolean isItemSelected(SearchElement item, String srcType) {
-
-        if (StringHelper.isNullOrEmpty(srcType)) {
-            return true;
-        }
-
-        String itemSrcType = item.getType();
-        if (StringHelper.isNullOrEmpty(itemSrcType)) {
-            return true;
-        }
-
-        try {
-            if (StringHelper.matchesGeneric(itemSrcType, srcType)) {
-                return true;
-            }
-        } catch (Throwable e) {
-            // Ignore pattern syntax errors
-        }
-
-        return false;
+        return filter.applyFilter(searchElements.values(), getSearchOptions());
     }
 
     @Override
