@@ -208,8 +208,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                         postRun.setSearchElements(_searchElements);
                         postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                        new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), new ArrayList<SearchElement>(
-                            _searchElements.values()), postRun);
+                        new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), dialog.getSelectedElements(), postRun);
 
                     }
 
@@ -254,6 +253,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             _searchElement.setLibrary(element.getLibrary());
             _searchElement.setFile(((IQSYSMember)element).getFile());
             _searchElement.setMember(element.getName());
+            _searchElement.setType(element.getType());
             _searchElement.setDescription(((IQSYSMember)element).getDescription());
             _searchElements.put(key, _searchElement);
 

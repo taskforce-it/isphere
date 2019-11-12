@@ -29,14 +29,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
-
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
@@ -47,6 +39,14 @@ import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
+import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 
 public class MessageFileSearchAction implements IObjectActionDelegate {
 
@@ -87,8 +87,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                         _selectedElements.add(element);
 
-                        checkIfMultipleConnections(IBMiConnection
-                            .getConnection(((IRemoteObjectContextProvider)element).getRemoteObjectContext().getObjectSubsystem().getHost()));
+                        checkIfMultipleConnections(IBMiConnection.getConnection(((IRemoteObjectContextProvider)element).getRemoteObjectContext()
+                            .getObjectSubsystem().getHost()));
 
                     }
 
@@ -102,8 +102,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(
-                        IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost()));
+                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
+                        .getHost()));
 
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
@@ -115,8 +115,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(
-                        IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost()));
+                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
+                        .getHost()));
 
                 }
 
@@ -203,8 +203,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                         postRun.setSearchElements(_searchElements);
                         postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                        new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(),
-                            new ArrayList<SearchElement>(_searchElements.values()), postRun);
+                        new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(), dialog.getSelectedElements(),
+                            postRun);
 
                     }
 

@@ -8,6 +8,8 @@
 
 package biz.isphere.core.search;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -36,7 +38,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-public abstract class AbstractSearchDialog extends XDialog implements Listener {
+public abstract class AbstractSearchDialog<M> extends XDialog implements Listener {
 
     private boolean _editor;
     private SearchArgumentsListEditor _listEditor;
@@ -381,7 +383,7 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(800, 600, true);
+        return getShell().computeSize(650, 650, true);
     }
 
     /**
@@ -474,28 +476,30 @@ public abstract class AbstractSearchDialog extends XDialog implements Listener {
         labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
     }
 
-    public abstract String getTitle();
+    protected abstract String getTitle();
 
-    public abstract String[] getItems();
+    protected abstract String[] getItems();
 
-    public abstract String getSearchArgument();
+    public abstract ArrayList<M> getSelectedElements();
 
-    public abstract void setSearchArgument(String argument);
+    protected abstract String getSearchArgument();
 
-    public void createOptionsGroup(Composite container) {
+    protected abstract void setSearchArgument(String argument);
+
+    protected void createOptionsGroup(Composite container) {
     };
 
-    public void loadElementValues() {
+    protected void loadElementValues() {
     };
 
-    public void saveElementValues() {
+    protected void saveElementValues() {
     };
 
-    public boolean checkElements() {
+    protected boolean checkElements() {
         return true;
     }
 
-    public void setElementsSearchOptions(SearchOptions _searchOptions) {
+    protected void setElementsSearchOptions(SearchOptions _searchOptions) {
     };
 
 }

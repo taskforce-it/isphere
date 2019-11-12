@@ -64,19 +64,19 @@ public class XFNDSTR_search {
             // }
             pcml.setValue("XFNDSTR_search.matchOption", _searchOptions.getMatchOption());
 
-            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_FIRST_LEVEL_TEXT)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.Key.MSGF_INCLUDE_FIRST_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.firstLvlText", "0");
             }
 
-            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.Key.MSGF_INCLUDE_SECOND_LEVEL_TEXT)) {
                 pcml.setValue("XFNDSTR_search.secLvlText", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.secLvlText", "0");
             }
 
-            if (_searchOptions.isGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID)) {
+            if (_searchOptions.isGenericOption(GenericSearchOption.Key.MSGF_INCLUDE_MESSAGE_ID)) {
                 pcml.setValue("XFNDSTR_search.messageId", "1");
             } else {
                 pcml.setValue("XFNDSTR_search.messageId", "0");
