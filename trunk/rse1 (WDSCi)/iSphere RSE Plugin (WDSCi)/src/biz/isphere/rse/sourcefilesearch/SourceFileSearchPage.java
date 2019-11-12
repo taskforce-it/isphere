@@ -48,11 +48,13 @@ import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
+import biz.isphere.core.sourcefilesearch.SourceFileSearchFilter;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -107,6 +109,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     private Button betweenColumnsButton;
     private Text startColumnText;
     private Text endColumnText;
+    private Combo filterSrcTypeCombo;
     private Button showAllRecordsButton;
     private SearchArgumentsListEditor searchArgumentsListEditor;
 
@@ -204,6 +207,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         sourceFilePrompt.setSystemConnection(connectionCombo.getSystemConnection());
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
         sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
+        sourceFilePrompt.getMemberCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_member_name);
         sourceFilePrompt.getLibraryPromptLabel().setText(Messages.Library);
         sourceFilePrompt.setObjectPromptLabel(Messages.Source_File);
         sourceFilePrompt.setMemberPromptLabel(Messages.Source_Member);
@@ -255,7 +259,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
     private void createOptionsGroup(Composite aMainPanel) {
         Group tOptionsGroup = createGroup(aMainPanel, Messages.Options);
-        GridLayout tOptionsGroupLayout = new GridLayout(1, false);
+        GridLayout tOptionsGroupLayout = new GridLayout(2, false);
         tOptionsGroupLayout.marginWidth = 5;
         tOptionsGroupLayout.marginHeight = 5;
         tOptionsGroup.setLayout(tOptionsGroupLayout);
@@ -263,14 +267,26 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         tGridData.horizontalAlignment = GridData.FILL;
         tGridData.grabExcessHorizontalSpace = true;
         tGridData.widthHint = 250;
+        tGridData.horizontalSpan = 2;
         tOptionsGroup.setLayoutData(tGridData);
+
+        Label filterSrcTypeLabel = new Label(tOptionsGroup, SWT.NONE);
+        filterSrcTypeLabel.setLayoutData(new GridData());
+        filterSrcTypeLabel.setText(Messages.Member_type_colon);
+        filterSrcTypeLabel.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
+
+        filterSrcTypeCombo = WidgetFactory.createCombo(tOptionsGroup);
+        GridData filterSrcTypeGridData = new GridData();
+        filterSrcTypeGridData.widthHint = 100;
+        filterSrcTypeCombo.setLayoutData(filterSrcTypeGridData);
+        filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
+        filterSrcTypeCombo.setItems(new String[] { "*" }); //$NON-NLS-1$
+        filterSrcTypeCombo.select(0);
 
         showAllRecordsButton = WidgetFactory.createCheckbox(tOptionsGroup);
         showAllRecordsButton.setText(Messages.ShowAllRecords);
         showAllRecordsButton.setToolTipText(Messages.Specify_whether_all_matching_records_are_returned);
-        tGridData = new GridData(SWT.HORIZONTAL);
-        tGridData.grabExcessHorizontalSpace = false;
-        showAllRecordsButton.setLayoutData(tGridData);
+        showAllRecordsButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
     }
 
     private void loadFilterPoolsOfConnection(String connectionName) {
@@ -456,7 +472,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         }
 
         int i;
-        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, ""));
+        i = findFilterPoolIndex(loadValue(FILTER_POOL_NAME, "")); //$NON-NLS-1$
         if (i >= 0) {
             debugPrint("loadScreenValues(): setting filter pool"); //$NON-NLS-1$
             filterPoolCombo.select(i);
@@ -471,7 +487,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             }
         }
 
-        i = findFilterIndex(loadValue(FILTER_NAME, ""));
+        i = findFilterIndex(loadValue(FILTER_NAME, "")); //$NON-NLS-1$
         if (i >= 0) {
             debugPrint("loadScreenValues(): setting filter"); //$NON-NLS-1$
             filterCombo.select(i);
@@ -671,6 +687,16 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
+     * Returns the *generic* source member type of the members that are included
+     * in the search.
+     * 
+     * @return simple or generic source type of the members that are searched
+     */
+    private String getSourceType() {
+        return filterSrcTypeCombo.getText();
+    }
+
+    /**
      * Returns the status of the "show records" check box.
      * 
      * @return status of the "show records" check box
@@ -717,6 +743,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (StringHelper.isNullOrEmpty(getSourceMember())) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_name);
                 sourceFilePrompt.getMemberCombo().setFocus();
+                return false;
+            }
+
+            if (StringHelper.isNullOrEmpty(getSourceType())) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_type);
+                filterSrcTypeCombo.setFocus();
                 return false;
             }
         }
@@ -768,11 +800,15 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                     searchOptions.addSearchArgument(searchArgument);
                 }
             }
+            
+            searchOptions.setGenericOption(GenericSearchOption.Key.SRCMBR_SRC_TYPE, getSourceType());
 
             Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
 
-            new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions, new ArrayList<SearchElement>(searchElements
-                .values()), postRun);
+            SourceFileSearchFilter filter = new SourceFileSearchFilter();
+            ArrayList<SearchElement> selectedElements = filter.applyFilter(searchElements.values(), searchOptions);
+
+            new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions, selectedElements, postRun);
 
         } catch (Exception e) {
             ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
