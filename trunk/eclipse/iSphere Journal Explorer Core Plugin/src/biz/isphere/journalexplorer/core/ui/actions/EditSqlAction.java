@@ -14,13 +14,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 
 public abstract class EditSqlAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_EDIT_SQL;
 
     public EditSqlAction(Shell shell) {
-        super("Edit SQL", SWT.TOGGLE);
+        super(Messages.JournalEntryView_Edit_SQL, SWT.TOGGLE);
 
         setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
