@@ -44,6 +44,7 @@ public class Messages extends NLS {
     public static String JournalEntryView_CollapseAll;
     public static String JournalEntryView_CompareEntries;
     public static String JournalEntryView_ConfigureParsers;
+    public static String JournalEntryView_Edit_SQL;
     public static String JournalEntryView_ReloadEntries;
     public static String JournalEntryView_CompareSideBySide;
     public static String JournalEntryView_UncomparableEntries;
