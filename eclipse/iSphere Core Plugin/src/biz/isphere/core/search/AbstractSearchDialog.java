@@ -364,11 +364,17 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         newShell.setText(getTitle());
     }
 
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
     public SearchOptions getSearchOptions() {
         updateSearchOptions();
         return _searchOptions;
     }
 
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    public String getString() {
+        return _string;
+    }
+    
     public String getCombinedSearchString() {
         return _string;
     }
