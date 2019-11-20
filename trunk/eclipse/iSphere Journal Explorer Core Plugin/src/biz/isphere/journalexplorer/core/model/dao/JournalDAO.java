@@ -33,8 +33,12 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
  */
 public class JournalDAO {
 
-    private static final int BUFFER_INCREMENT_SIZE = Buffer.size("64k");
-    private static final int BUFFER_MAXIMUM_SIZE = Buffer.size("16MB");
+    /*
+     * com.ibm.as400.access.ErrorCompletingRequestException: Length is not
+     * valid. ==> Reducing length to 15.5 MB.
+     */
+    private static final int BUFFER_MAXIMUM_SIZE = IntHelper.align16Bytes((int)(1024 * 1024 * 15.5)); // 15.5MB;
+    private static final int BUFFER_INCREMENT_SIZE = IntHelper.align16Bytes(Buffer.size("64k"));
 
     private JrneToRtv jrneToRtv;
     private OutputFile outputFile;
@@ -67,20 +71,15 @@ public class JournalDAO {
         do {
 
             boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
-            /*
-             * com.ibm.as400.access.ErrorCompletingRequestException: Length is
-             * not valid. ==> Reducing length to 15.5 MB.
-             */
-            final int MAX_BUFFER_SIZE = (int)(1024 * 1024 * 15.5);
-            int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), MAX_BUFFER_SIZE);
+            int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), BUFFER_MAXIMUM_SIZE);
             bufferSize = IntHelper.align16Bytes(bufferSize);
 
             do {
                 rjne0200 = tRetriever.execute(bufferSize);
-                if (isBufferTooSmall(rjne0200)) {
-                    bufferSize = BUFFER_INCREMENT_SIZE;
+                if (isBufferTooSmall(rjne0200) && isDynamicBufferSize) {
+                    bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
                 }
-            } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(rjne0200));
+            } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize));
 
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
@@ -134,9 +133,9 @@ public class JournalDAO {
         return false;
     }
 
-    private boolean isBufferTooBig(RJNE0200 rjne0200) {
+    private boolean isBufferTooBig(int bufferSize) {
 
-        if (rjne0200 != null && rjne0200.getBufferSize() >= BUFFER_MAXIMUM_SIZE) {
+        if (bufferSize >= BUFFER_MAXIMUM_SIZE) {
             return true;
         }
 
