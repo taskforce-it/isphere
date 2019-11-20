@@ -67,7 +67,13 @@ public class JournalDAO {
         do {
 
             boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
-            int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
+            /*
+             * com.ibm.as400.access.ErrorCompletingRequestException: Length is
+             * not valid. ==> Reducing length to 15.5 MB.
+             */
+            final int MAX_BUFFER_SIZE = (int)(1024 * 1024 * 15.5);
+            int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), MAX_BUFFER_SIZE);
+            bufferSize = IntHelper.align16Bytes(bufferSize);
 
             do {
                 rjne0200 = tRetriever.execute(bufferSize);
