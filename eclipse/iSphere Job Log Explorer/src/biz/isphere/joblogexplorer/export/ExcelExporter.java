@@ -48,7 +48,7 @@ public class ExcelExporter {
         }
 
         Preferences.getInstance().setExportFolder(dialog.getFilterPath());
-        
+
         File file = new File(fileName);
         Display display = PlatformUI.getWorkbench().getDisplay();
 

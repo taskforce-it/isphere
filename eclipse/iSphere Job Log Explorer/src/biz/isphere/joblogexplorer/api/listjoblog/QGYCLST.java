@@ -8,12 +8,12 @@
 
 package biz.isphere.joblogexplorer.api.listjoblog;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
 
 /**
  * Close List (QGYCLST) API

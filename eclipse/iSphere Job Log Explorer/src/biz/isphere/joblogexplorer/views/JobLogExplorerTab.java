@@ -26,8 +26,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.progress.UIJob;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -59,6 +57,8 @@ import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 import biz.isphere.joblogexplorer.model.JobLogParser;
 import biz.isphere.joblogexplorer.model.JobLogReader;
+
+import com.ibm.as400.access.AS400;
 
 public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatusChangedListener {
 
@@ -371,12 +371,12 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
                 new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
 
             } catch (JobNotFoundException e) {
-                handleDataLoadException(Messages.bind(Messages.Job_C_B_A_not_found,
-                    new Object[] { jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber() }), e);
+                handleDataLoadException(Messages.bind(Messages.Job_C_B_A_not_found, new Object[] { jobInput.getJobName(), jobInput.getUserName(),
+                    jobInput.getJobNumber() }), e);
             } catch (JobLogNotLoadedException e) {
-                handleDataLoadException(Messages.bind(Messages.Could_not_load_job_log_of_job_C_B_A_Reason_D,
-                    new Object[] { jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber(), ExceptionHelper.getLocalizedMessage(e) }),
-                    e);
+                handleDataLoadException(
+                    Messages.bind(Messages.Could_not_load_job_log_of_job_C_B_A_Reason_D, new Object[] { jobInput.getJobName(),
+                        jobInput.getUserName(), jobInput.getJobNumber(), ExceptionHelper.getLocalizedMessage(e) }), e);
             } catch (Throwable e) {
                 handleDataLoadException("*** Failed to retrieve job log ***", e, true);
             }
@@ -460,8 +460,8 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
                 filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
                 filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
-                filterPanel.setSeverityFilterItems(
-                    addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL, AbstractStringFilter.UI_SPCVAL_BLANK));
+                filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
+                    AbstractStringFilter.UI_SPCVAL_BLANK));
 
                 filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
                 filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));

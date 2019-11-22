@@ -230,7 +230,7 @@ public class JobLogParserConfiguration {
             }
 
             pathName = path.getAbsolutePath();
-            
+
             Properties properties = new Properties();
             properties.load(new FileInputStream(path));
 
@@ -245,7 +245,7 @@ public class JobLogParserConfiguration {
             OS_RELEASE = getProperty(properties, "global.os.release", OS_RELEASE); //$NON-NLS-1$
 
             SPACES = getProperty(properties, "global.spaces", SPACES); //$NON-NLS-1$
-            
+
             TIMEZONE = getProperty(properties, "global.timezone", TIMEZONE); //$NON-NLS-1$
             SYSTEM_NAME = getProperty(properties, "global.system.name", SYSTEM_NAME); //$NON-NLS-1$
             STMT = getProperty(properties, "global.stmt", STMT); //$NON-NLS-1$
@@ -315,7 +315,7 @@ public class JobLogParserConfiguration {
             }
 
             final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
-            
+
             reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder out = new StringBuilder();
             String line;

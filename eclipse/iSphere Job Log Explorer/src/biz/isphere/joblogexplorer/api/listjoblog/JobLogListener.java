@@ -11,5 +11,5 @@ package biz.isphere.joblogexplorer.api.listjoblog;
 public interface JobLogListener {
 
     public void addNewEntry(OLJL0100 oljl0100);
-    
+
 }

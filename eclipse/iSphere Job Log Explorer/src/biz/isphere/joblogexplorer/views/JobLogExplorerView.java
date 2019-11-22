@@ -298,8 +298,7 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
         new UIJob("") { //$NON-NLS-1$
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                DoNotAskMeAgainDialog.openInformation(getShell(),
-                    DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
+                DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
                     Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
                 return Status.OK_STATUS;
             }

@@ -23,8 +23,8 @@ public class ResetColumnSizeAction extends Action {
     public ResetColumnSizeAction() {
         super(Messages.Reset_Column_Size, Action.AS_PUSH_BUTTON);
         setToolTipText(Messages.Reset_Column_Size);
-        setImageDescriptor(
-            ISphereJobLogExplorerPlugin.getDefault().getImageRegistry().getDescriptor(ISphereJobLogExplorerPlugin.IMAGE_RESET_COLUMN_SIZE));
+        setImageDescriptor(ISphereJobLogExplorerPlugin.getDefault().getImageRegistry()
+            .getDescriptor(ISphereJobLogExplorerPlugin.IMAGE_RESET_COLUMN_SIZE));
         setId(ID);
     }
 

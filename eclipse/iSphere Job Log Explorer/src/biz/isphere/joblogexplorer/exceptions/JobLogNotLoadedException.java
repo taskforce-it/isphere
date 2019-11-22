@@ -15,5 +15,5 @@ public class JobLogNotLoadedException extends Exception {
     public JobLogNotLoadedException(String message) {
         super(message);
     }
-    
+
 }
