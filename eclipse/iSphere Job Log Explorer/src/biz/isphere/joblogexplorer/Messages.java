@@ -14,8 +14,6 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.joblogexplorer.messages"; //$NON-NLS-1$
 
-    public static String Dropped_object_does_not_match_expected_type;
-
     public static String Job_Parsing_job_log;
     public static String Job_Loading_job_log;
     public static String Job_Log_Explorer;

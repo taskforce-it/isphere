@@ -69,8 +69,6 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new FillLayout(SWT.HORIZONTAL));
 
-        // disableDropSupportOnComposite(container);
-
         tabFolder = new CTabFolder(container, SWT.TOP | SWT.CLOSE);
         tabFolder.addSelectionListener(this);
         tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
