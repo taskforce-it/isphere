@@ -110,11 +110,13 @@ public class Messages extends NLS {
     public static String MsgType_Reply;
 
     public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
-    
+
+    public static String Refresh;
     public static String Exort_to_Excel;
+    public static String Reset_Column_Size;
     public static String SaveDialog_Excel_Workbook;
     public static String SaveDialog_All_Files;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

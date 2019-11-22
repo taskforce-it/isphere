@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
     public static final String SEARCH_UP = "search_up_small.png"; //$NON-NLS-1$
     public static final String SEARCH_DOWN = "search_down_small.png"; //$NON-NLS-1$
     public static final String EXCEL = "excel.png"; //$NON-NLS-1$
+    public static final String IMAGE_REFRESH = "refresh.gif"; //$NON-NLS-1$
+    public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png"; //$NON-NLS-1$
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
@@ -47,9 +49,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+     * BundleContext )
      */
     @Override
     public void start(BundleContext context) throws Exception {
@@ -57,15 +58,14 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
 
         plugin = this;
         installURL = context.getBundle().getEntry("/"); //$NON-NLS-1$
-        
+
         new JobLogParserConfiguration().createSampleConfigurationFile();
     }
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+     * BundleContext )
      */
     @Override
     public void stop(BundleContext context) throws Exception {
@@ -98,6 +98,8 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
         reg.put(SEARCH_UP, getImageDescriptor(SEARCH_UP));
         reg.put(SEARCH_DOWN, getImageDescriptor(SEARCH_DOWN));
         reg.put(EXCEL, getImageDescriptor(EXCEL));
+        reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
+        reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
     }
 
     public ImageDescriptor getImageDescriptor(String name) {

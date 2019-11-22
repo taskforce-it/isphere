@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
+      	
       	<!--
       	  ==========================================
-      	    iSphere Editors
+      	    iSphere Views
       	  ==========================================
       	-->
 
-	<extension
-		point="org.eclipse.ui.editors">
-		<editor
-			name=""
-			icon="icons/joblog_explorer.png"
-			class="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"
-			contributorClass="biz.isphere.joblogexplorer.editor.JobLogExplorerEditorActionBarContributor"
-			id="biz.isphere.joblogexplorer.editor.JobLogExplorerEditor"/>
-	</extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="iSphere"
+            id="biz.isphere.core.views.categories">
+      </category>
+      <view
+            icon="icons/joblog_explorer.png"
+            class="biz.isphere.joblogexplorer.views.JobLogExplorerView"
+            category="biz.isphere.core.views.categories"
+            name="%Job_Log_Explorer"
+            id="biz.isphere.joblogexplorer.views.JobLogExplorerView">
+      </view>
+   </extension>
 
       	<!--
       	  ==========================================
