@@ -13,7 +13,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.joblogexplorer.rse.messages"; //$NON-NLS-1$
-    
+
     public static String menu_Job_Log_Explorer;
 
     static {
