@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class DialogSettingsManager {
+
+    public static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
+    public static final String COLUMN_NAME = "COLUMN_NAME";
 
     private IDialogSettings dialogSettings;
     private Class<?> section;
 
     private SimpleDateFormat dateFormatter;
+    private ControlAdapter columnResizeListener;
 
     public DialogSettingsManager(IDialogSettings aDialogSettings) {
         this(aDialogSettings, null);
@@ -102,6 +110,7 @@ public class DialogSettingsManager {
      */
     public void storeValue(String aKey, int aValue) {
         getDialogSettings().put(aKey, aValue);
+        IntHelper.tryParseInt(getDialogSettings().get(aKey), -1);
     }
 
     /**
@@ -137,6 +146,105 @@ public class DialogSettingsManager {
     public void storeValue(String aKey, Date aValue) {
         String value = dateFormatter.format(aValue);
         getDialogSettings().put(aKey, value);
+    }
+
+    /**
+     * Produces a resizable table given for a given table.
+     * 
+     * @param table - Table, the column is added to.
+     * @param style - The style of column to construct.
+     * @param index - The zero-relative index to store the column in the table.
+     * @param name - The name of the table column.
+     * @param width - The initial width of the table column.
+     * @return
+     */
+    public TableColumn createResizableTableColumn(Table table, int style, int index, String name, int width) {
+
+        TableColumn tableColumn = new TableColumn(table, style, index);
+        tableColumn.setResizable(true);
+        tableColumn.setData(COLUMN_NAME, name);
+        tableColumn.setData(COLUMN_WIDTH, new Integer(width));
+
+        int effectiveWidth = loadIntValue(produceColumnWidthKey(tableColumn), width);
+        tableColumn.setWidth(effectiveWidth);
+
+        tableColumn.addControlListener(getColumnResizeListener());
+
+        return tableColumn;
+    }
+
+    public void resetColumnWidths(Table table) {
+
+        table.setVisible(false);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            TableColumn column = table.getColumn(i);
+            column.setWidth(getDefaultColumnWidth(column));
+        }
+
+        table.setVisible(true);
+    }
+
+    private ControlAdapter getColumnResizeListener() {
+
+        if (columnResizeListener == null) {
+            columnResizeListener = new ControlAdapter() {
+                @Override
+                public void controlResized(ControlEvent event) {
+                    TableColumn column = (TableColumn)event.getSource();
+                    String key = produceColumnWidthKey(column);
+                    if (key != null) {
+                        storeValue(key, column.getWidth());
+                    }
+                }
+            };
+        }
+
+        return columnResizeListener;
+    }
+
+    private String produceColumnWidthKey(TableColumn column) {
+
+        if (column == null) {
+            return null;
+        }
+
+        String columnName = getColumnName(column);
+        if (columnName == null) {
+            return null;
+        }
+
+        return COLUMN_WIDTH + columnName;
+    }
+
+    private String getColumnName(TableColumn column) {
+
+        if (column == null) {
+            return null;
+        }
+
+        Object objectName = column.getData(COLUMN_NAME);
+        if (objectName instanceof String) {
+            return (String)objectName;
+        }
+
+        return null;
+    }
+
+    private int getDefaultColumnWidth(TableColumn column) {
+
+        if (column == null) {
+            return -1;
+        }
+
+        Object data = column.getData(COLUMN_WIDTH);
+        if (data == null) {
+            return -1;
+        }
+
+        int width = IntHelper.tryParseInt(data.toString(), -1);
+
+        return width;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
@@ -94,7 +95,7 @@ public abstract class AbstractTypeViewerFactory {
         return names;
     }
 
-    public TableViewer createTableViewer(Composite container) {
+    public TableViewer createTableViewer(Composite container, DialogSettingsManager dialogSettingsManager) {
 
         TableViewer tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
         Table table = tableViewer.getTable();
@@ -111,14 +112,10 @@ public abstract class AbstractTypeViewerFactory {
         for (JournalEntryColumn column : columns) {
             if (columnNames.contains(column.getName())) {
                 fieldIdMapping[i] = column.getColumnDef();
-                newColumn = new TableColumn(table, column.getStyle());
+                newColumn = dialogSettingsManager.createResizableTableColumn(table, column.getStyle(), i, column.getName(), column.getWidth());
                 newColumn.setText(column.getColumnHeading());
                 newColumn.setToolTipText(column.getTooltipText());
-                newColumn.setWidth(column.getWidth());
-                newColumn.setResizable(column.isResizable());
                 newColumn.setMoveable(column.isMovebale());
-                newColumn.setData(NAME, column.getName());
-                newColumn.setData(DEFAULT_WIDTH, column.getWidth());
                 usedColumns.add(column);
                 i++;
             }
@@ -210,8 +207,8 @@ public abstract class AbstractTypeViewerFactory {
         // Entry specific data
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOESD, Messages.Tooltip_JOESD, 350));
 
-        return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JournalEntryColumn[columns.size()]), Preferences.getInstance()
-            .getSortedJournalEntryAppearancesAttributes());
+        return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JournalEntryColumn[columns.size()]),
+            Preferences.getInstance().getSortedJournalEntryAppearancesAttributes());
     }
 
     private static JournalEntryColumn[] sortColumnsAndApplyAppearanceAttributes(JournalEntryColumn[] journalEntryColumns,
