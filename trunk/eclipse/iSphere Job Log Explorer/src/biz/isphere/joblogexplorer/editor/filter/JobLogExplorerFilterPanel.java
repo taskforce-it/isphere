@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
@@ -85,6 +87,10 @@ public class JobLogExplorerFilterPanel {
         createTextSearchControls(filterArea);
 
         createButtons(filterArea);
+    }
+
+    public void setEnabled(boolean enabled) {
+        filterArea.setEnabled(enabled);
     }
 
     private void createFilterControls(Composite parent) {
@@ -184,6 +190,36 @@ public class JobLogExplorerFilterPanel {
         return button;
     }
 
+    public void applyFilter() {
+
+        Event event = new Event();
+        event.display = Display.getCurrent();
+        event.widget = buttonApplyFilters;
+        SelectionEvent selectionEvent = new SelectionEvent(event);
+
+        applyFilterInternally(selectionEvent);
+    }
+
+    private void applyFilterInternally(SelectionEvent event) {
+
+        FilterData filterData = new FilterData();
+
+        filterData.id = comboIdFilter.getText();
+        filterData.type = comboTypeFilter.getText();
+        filterData.severity = comboSeverityFilter.getText();
+        filterData.fromLibrary = comboFromLibraryFilter.getText();
+        filterData.fromProgram = comboFromProgramFilter.getText();
+        filterData.fromStmt = comboFromStmtFilter.getText();
+        filterData.toLibrary = comboToLibraryFilter.getText();
+        filterData.toProgram = comboToProgramFilter.getText();
+        filterData.toStmt = comboToStmtFilter.getText();
+        filterData.text = textSearch.getText();
+
+        event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
+        event.data = filterData;
+        notifyFilterChangedListeners(event);
+    }
+
     public void addFilterChangedListener(SelectionListener listener) {
 
         filterChangedListeners.add(listener);
@@ -206,57 +242,58 @@ public class JobLogExplorerFilterPanel {
     }
 
     public void setIdFilterItems(String[] idFilterItems) {
-
-        comboIdFilter.setItems(idFilterItems);
-        comboIdFilter.select(0);
+        setComboItems(comboIdFilter, idFilterItems);
     }
 
     public void setTypeFilterItems(String[] typeFilterItems) {
-
-        comboTypeFilter.setItems(typeFilterItems);
-        comboTypeFilter.select(0);
+        setComboItems(comboTypeFilter, typeFilterItems);
     }
 
     public void setSeverityFilterItems(String[] typeFilterItems) {
 
-        comboSeverityFilter.setItems(typeFilterItems);
-        comboSeverityFilter.select(0);
+        setComboItems(comboSeverityFilter, typeFilterItems);
     }
 
     public void setFromLibraryFilterItems(String[] fromLibraryFilterItems) {
-
-        comboFromLibraryFilter.setItems(fromLibraryFilterItems);
-        comboFromLibraryFilter.select(0);
+        setComboItems(comboFromLibraryFilter, fromLibraryFilterItems);
     }
 
     public void setFromProgramFilterItems(String[] fromProgramFilterItems) {
-
-        comboFromProgramFilter.setItems(fromProgramFilterItems);
-        comboFromProgramFilter.select(0);
+        setComboItems(comboFromProgramFilter, fromProgramFilterItems);
     }
 
     public void setFromStmtFilterItems(String[] fromStmtFilterItems) {
-
-        comboFromStmtFilter.setItems(fromStmtFilterItems);
-        comboFromStmtFilter.select(0);
+        setComboItems(comboFromStmtFilter, fromStmtFilterItems);
     }
 
     public void setToLibraryFilterItems(String[] toLibraryFilterItems) {
-
-        comboToLibraryFilter.setItems(toLibraryFilterItems);
-        comboToLibraryFilter.select(0);
+        setComboItems(comboToLibraryFilter, toLibraryFilterItems);
     }
 
     public void setToProgramFilterItems(String[] toProgramFilterItems) {
-
-        comboToProgramFilter.setItems(toProgramFilterItems);
-        comboToProgramFilter.select(0);
+        setComboItems(comboToProgramFilter, toProgramFilterItems);
     }
 
     public void setToStmtFilterItems(String[] toStmtFilterItems) {
+        setComboItems(comboToStmtFilter, toStmtFilterItems);
+    }
 
-        comboToStmtFilter.setItems(toStmtFilterItems);
-        comboToStmtFilter.select(0);
+    private void setComboItems(Combo combo, String[] items) {
+
+        String selectedItemValue = combo.getText();
+        combo.setItems(items);
+
+        if (!StringHelper.isNullOrEmpty(selectedItemValue)) {
+            String[] comboItems = combo.getItems();
+            for (int i = 0; i < comboItems.length; i++) {
+                if (selectedItemValue.equals(comboItems[i])) {
+                    combo.select(i);
+                    return;
+                }
+            }
+        }
+
+        combo.select(0);
     }
 
     public void clearFilters() {
@@ -287,23 +324,7 @@ public class JobLogExplorerFilterPanel {
 
         @Override
         public void widgetSelected(SelectionEvent event) {
-
-            FilterData filterData = new FilterData();
-
-            filterData.id = comboIdFilter.getText();
-            filterData.type = comboTypeFilter.getText();
-            filterData.severity = comboSeverityFilter.getText();
-            filterData.fromLibrary = comboFromLibraryFilter.getText();
-            filterData.fromProgram = comboFromProgramFilter.getText();
-            filterData.fromStmt = comboFromStmtFilter.getText();
-            filterData.toLibrary = comboToLibraryFilter.getText();
-            filterData.toProgram = comboToProgramFilter.getText();
-            filterData.toStmt = comboToStmtFilter.getText();
-            filterData.text = textSearch.getText();
-
-            event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
-            event.data = filterData;
-            notifyFilterChangedListeners(event);
+            applyFilterInternally(event);
         }
     }
 

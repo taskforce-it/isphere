@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,10 @@
 
 package biz.isphere.joblogexplorer.jobs.rse;
 
-import org.eclipse.ui.PlatformUI;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 
-import biz.isphere.joblogexplorer.editor.JobLogExplorerEditor;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerEditorJobInput;
-
-public abstract class AbstractLoadRemoteJobLogJob {
+public abstract class AbstractLoadRemoteJobLogJob extends AbstractLoadInputJob {
 
     public void run() {
 
@@ -24,11 +22,11 @@ public abstract class AbstractLoadRemoteJobLogJob {
             String userName = getUserName();
             String jobNumber = getJobNumber();
 
-            JobLogExplorerEditorJobInput editorInput = new JobLogExplorerEditorJobInput(connectionName, jobName, userName, jobNumber);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, JobLogExplorerEditor.ID);
+            JobLogExplorerJobInput editorInput = new JobLogExplorerJobInput(connectionName, jobName, userName, jobNumber);
+            openJobLogExplorerView(editorInput);
 
         } catch (Throwable e) {
-            e.printStackTrace();
+            ISpherePlugin.logError("*** Failed to open job log explorer with active job input ***", e); //$NON-NLS-1$
         }
     }
 

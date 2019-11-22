@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.medfoster.sqljep.ParseException;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
-import biz.isphere.joblogexplorer.editor.StatusLineData;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 import biz.isphere.joblogexplorer.editor.filter.FilterData;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanelEvents;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractMessagePropertyFilter;
@@ -53,48 +54,9 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
 
-public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, SelectionListener, ISelectionProvider {
+public class JobLogExplorerTableViewer implements SelectionListener, ISelectionProvider {
 
     private static final String NEGATED_MARKER = AbstractMessagePropertyFilter.NEGATED_MARKER;
-
-    public enum Columns {
-        SELECTED ("selected", COLUMN_SELECTED), //$NON-NLS-1$
-        DATE ("date", COLUMN_DATE), //$NON-NLS-1$
-        TIME ("time", COLUMN_TIME), //$NON-NLS-1$
-        ID ("id", COLUMN_ID), //$NON-NLS-1$
-        TYPE ("type", COLUMN_TYPE), //$NON-NLS-1$
-        SEVERITY ("severity", COLUMN_SEVERITY), //$NON-NLS-1$
-        TEXT ("text", COLUMN_TEXT), //$NON-NLS-1$
-        FROM_LIBRARY ("fromLibrary", COLUMN_FROM_LIBRARY), //$NON-NLS-1$
-        FROM_PROGRAM ("fromProgram", COLUMN_FROM_PROGRAM), //$NON-NLS-1$
-        FROM_STATEMENT ("fromStatement", COLUMN_FROM_STATEMENT), //$NON-NLS-1$
-        TO_LIBRARY ("toLibrary", COLUMN_TO_LIBRARY), //$NON-NLS-1$
-        TO_PROGRAM ("toProgram", COLUMN_TO_PROGRAM), //$NON-NLS-1$
-        TO_STATEMENT ("toStatement", COLUMN_TO_STATEMENT), //$NON-NLS-1$
-        FROM_MODULE ("fromModule", COLUMN_FROM_MODULE), //$NON-NLS-1$
-        TO_MODULE ("toModule", COLUMN_TO_MODULE), //$NON-NLS-1$
-        FROM_PROCEDURE ("fromProcedure", COLUMN_FROM_PROCEDURE), //$NON-NLS-1$
-        TO_PROCEDURE ("toProcedure", COLUMN_TO_PROCEDURE); //$NON-NLS-1$
-
-        public final String name;
-        public final int columnNumber;
-
-        private Columns(String name, int columnNumber) {
-            this.name = name;
-            this.columnNumber = columnNumber;
-        }
-
-        public static String[] names() {
-
-            List<String> names = new ArrayList<String>();
-            for (Columns column : Columns.values()) {
-                names.add(column.name);
-            }
-
-            return names.toArray(new String[names.size()]);
-        }
-
-    }
 
     private Table table;
     private TableViewer tableViewer;
@@ -103,8 +65,11 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
     private MasterFilter masterFilter;
 
     private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
+    private DialogSettingsManager dialogSettingsManager;
 
-    public JobLogExplorerTableViewer() {
+    public JobLogExplorerTableViewer(DialogSettingsManager dialogSettingsManager) {
+
+        this.dialogSettingsManager = dialogSettingsManager;
         this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
     }
 
@@ -116,11 +81,15 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         viewerArea.setEnabled(enabled);
     }
 
+    public boolean hasInputData() {
+        if (tableViewer != null && tableViewer.getInput() != null) {
+            return true;
+        }
+        return false;
+    }
+
     public void setInputData(JobLog jobLog) {
-
         tableViewer.setInput(jobLog);
-
-        notifyStatusChangedListeners(new StatusLineData(tableViewer.getTable().getItemCount()));
     }
 
     public JobLogMessage[] getItems() {
@@ -160,6 +129,10 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
          * Ugly hack to enforce a selection changed event
          */
         tableViewer.setSelection(tableViewer.getSelection());
+    }
+
+    public void resetColumnSize() {
+        dialogSettingsManager.resetColumnWidths(tableViewer.getTable());
     }
 
     public void createViewer(Composite parent) {
@@ -202,16 +175,14 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
+        TableColumn column;
+
         // 1. column with image/checkboxes - NOTE: The SWT.CENTER has no
         // effect!!
-        TableColumn column = new TableColumn(table, SWT.CENTER, Columns.SELECTED.columnNumber);
-        column.setText(""); //$NON-NLS-1$
-        column.setWidth(WIDTH_SELECTED);
+        createColumn(table, Columns.SELECTED, "", SWT.CENTER); //$NON-NLS-1$
 
         // 2. column with date sent
-        column = new TableColumn(table, SWT.LEFT, Columns.DATE.columnNumber);
-        column.setText(Messages.Column_Date_sent);
-        column.setWidth(WIDTH_DATE);
+        column = createColumn(table, Columns.DATE, Messages.Column_Date_sent);
         // Add listener to column so tasks are sorted by description when
         // clicked
         column.addSelectionListener(new SelectionAdapter() {
@@ -224,9 +195,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 3. column with time sent
-        column = new TableColumn(table, SWT.LEFT, Columns.TIME.columnNumber);
-        column.setText(Messages.Column_Time_sent);
-        column.setWidth(WIDTH_TIME);
+        column = createColumn(table, Columns.TIME, Messages.Column_Time_sent);
         // Add listener to column so tasks are sorted by owner when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -238,9 +207,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 4. column with message id
-        column = new TableColumn(table, SWT.LEFT, Columns.ID.columnNumber);
-        column.setText(Messages.Column_ID);
-        column.setWidth(WIDTH_ID);
+        column = createColumn(table, Columns.ID, Messages.Column_ID);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -252,9 +219,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 5. column with message type
-        column = new TableColumn(table, SWT.LEFT, Columns.TYPE.columnNumber);
-        column.setText(Messages.Column_Type);
-        column.setWidth(WIDTH_TYPE);
+        column = createColumn(table, Columns.TYPE, Messages.Column_Type);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -266,9 +231,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 6. column with message severity
-        column = new TableColumn(table, SWT.CENTER, Columns.SEVERITY.columnNumber);
-        column.setText(Messages.Column_Severity);
-        column.setWidth(WIDTH_SEVERITY);
+        column = createColumn(table, Columns.SEVERITY, Messages.Column_Severity, SWT.CENTER);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -280,9 +243,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 7. column with message text
-        column = new TableColumn(table, SWT.LEFT, Columns.TEXT.columnNumber);
-        column.setText(Messages.Column_Text);
-        column.setWidth(WIDTH_TEXT);
+        column = createColumn(table, Columns.TEXT, Messages.Column_Text);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -294,9 +255,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 8. column with from library
-        column = new TableColumn(table, SWT.LEFT, Columns.FROM_LIBRARY.columnNumber);
-        column.setText(Messages.Column_From_Library);
-        column.setWidth(WIDTH_FROM_LIBRARY);
+        column = createColumn(table, Columns.FROM_LIBRARY, Messages.Column_From_Library);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -308,9 +267,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 9. column with from program
-        column = new TableColumn(table, SWT.LEFT, Columns.FROM_PROGRAM.columnNumber);
-        column.setText(Messages.Column_From_Program);
-        column.setWidth(WIDTH_FROM_PROGRAM);
+        column = createColumn(table, Columns.FROM_PROGRAM, Messages.Column_From_Program);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -322,9 +279,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 10. column with from statement
-        column = new TableColumn(table, SWT.LEFT, Columns.FROM_STATEMENT.columnNumber);
-        column.setText(Messages.Column_From_Stmt);
-        column.setWidth(WIDTH_FROM_STATEMENT);
+        column = createColumn(table, Columns.FROM_STATEMENT, Messages.Column_From_Stmt);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -336,9 +291,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 11. column with to library
-        column = new TableColumn(table, SWT.LEFT, Columns.TO_LIBRARY.columnNumber);
-        column.setText(Messages.Column_To_Library);
-        column.setWidth(WIDTH_TO_LIBRARY);
+        column = createColumn(table, Columns.TO_LIBRARY, Messages.Column_To_Library);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -350,9 +303,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 12. column with to program
-        column = new TableColumn(table, SWT.LEFT, Columns.TO_PROGRAM.columnNumber);
-        column.setText(Messages.Column_To_Program);
-        column.setWidth(WIDTH_TO_PROGRAM);
+        column = createColumn(table, Columns.TO_PROGRAM, Messages.Column_To_Program);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -364,9 +315,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 13. column with to statement
-        column = new TableColumn(table, SWT.LEFT, Columns.TO_STATEMENT.columnNumber);
-        column.setText(Messages.Column_To_Stmt);
-        column.setWidth(WIDTH_TO_STATEMENT);
+        column = createColumn(table, Columns.TO_STATEMENT, Messages.Column_To_Stmt);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -378,9 +327,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 14. column with from module
-        column = new TableColumn(table, SWT.LEFT, Columns.FROM_MODULE.columnNumber);
-        column.setText(Messages.Column_From_Module);
-        column.setWidth(WIDTH_FROM_MODULE);
+        column = createColumn(table, Columns.FROM_MODULE, Messages.Column_From_Module);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -392,9 +339,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 15. column with to module
-        column = new TableColumn(table, SWT.LEFT, Columns.TO_MODULE.columnNumber);
-        column.setText(Messages.Column_To_Module);
-        column.setWidth(WIDTH_TO_MODULE);
+        column = createColumn(table, Columns.TO_MODULE, Messages.Column_To_Module);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -406,9 +351,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         });
 
         // 16. column with from module
-        column = new TableColumn(table, SWT.LEFT, Columns.FROM_PROCEDURE.columnNumber);
-        column.setText(Messages.Column_From_Procedure);
-        column.setWidth(WIDTH_FROM_PROCEDURE);
+        column = createColumn(table, Columns.FROM_PROCEDURE, Messages.Column_From_Procedure);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -419,10 +362,8 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
             }
         });
 
-        // 17. column with to module
-        column = new TableColumn(table, SWT.LEFT, Columns.TO_PROCEDURE.columnNumber);
-        column.setText(Messages.Column_To_Procedure);
-        column.setWidth(WIDTH_TO_PROCEDURE);
+        // 17. column with to procedure
+        column = createColumn(table, Columns.TO_PROCEDURE, Messages.Column_To_Procedure);
         // Add listener to column so tasks are sorted by percent when clicked
         column.addSelectionListener(new SelectionAdapter() {
 
@@ -432,6 +373,18 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
             }
         });
+    }
+
+    private TableColumn createColumn(Table table, Columns column, String text) {
+        return createColumn(table, column, text, SWT.LEFT);
+    }
+
+    private TableColumn createColumn(Table table, Columns column, String text, int style) {
+
+        TableColumn tableColumn = dialogSettingsManager.createResizableTableColumn(table, style, column.index, column.name, column.width);
+        tableColumn.setText(text);
+
+        return tableColumn;
     }
 
     /**
@@ -444,10 +397,6 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         tableViewer.setColumnProperties(Columns.names());
 
         enableEditing(tableViewer);
-
-        // Set the default sorter for the viewer
-        // tableViewer.setSorter(new
-        // ExampleTaskSorter(ExampleTaskSorter.DESCRIPTION));
     }
 
     private void enableEditing(TableViewer tableViewer) {
@@ -597,7 +546,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         } catch (ParseException e) {
             MessageDialogAsync.displayError(e.getLocalizedMessage());
         } finally {
-            notifyStatusChangedListeners();
+            notifyStatusChangedListeners(JobLogExplorerStatusChangedEvent.EventType.FILTER_CHANGED);
         }
     }
 
@@ -611,7 +560,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         return jobLog.haveSelectedMessages();
     }
 
-    private int getTotalNumberOfMessages() {
+    public int getTotalNumberOfMessages() {
 
         JobLog jobLog = getInput();
         if (jobLog == null) {
@@ -621,9 +570,9 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         return jobLog.getMessages().size();
     }
 
-    private int getNumberOfDisplayedMessages() {
+    public int getNumberOfDisplayedMessages() {
 
-        return tableViewer.getTable().getItemCount();
+        return getItemCount();
     }
 
     private void doSetSelection(boolean selected) {
@@ -650,7 +599,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
-        if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
+        if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
             searchArg = searchArg.substring(1);
             isNegated = true;
         }
@@ -691,7 +640,7 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
 
         boolean isNegated = false;
         String searchArg = text.toLowerCase();
-        if (searchArg.startsWith(NEGATED_MARKER)) { //$NON-NLS-1$
+        if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
             searchArg = searchArg.substring(1);
             isNegated = true;
         }
@@ -767,18 +716,14 @@ public class JobLogExplorerTableViewer implements JobLogExplorerTableColumns, Se
         statusChangedListeners.remove(listener);
     }
 
-    private void notifyStatusChangedListeners() {
+    private void notifyStatusChangedListeners(JobLogExplorerStatusChangedEvent.EventType eventType) {
 
-        StatusLineData data = new StatusLineData();
+        JobLogExplorerStatusChangedEvent data = new JobLogExplorerStatusChangedEvent(eventType, null);
         data.setNumberOfMessages(getTotalNumberOfMessages());
         data.setNumberOfMessagesSelected(getNumberOfDisplayedMessages());
-        notifyStatusChangedListeners(data);
-    }
-
-    private void notifyStatusChangedListeners(StatusLineData status) {
 
         for (IJobLogExplorerStatusChangedListener listener : statusChangedListeners) {
-            listener.statusChanged(status);
+            listener.statusChanged(data);
         }
     }
 }

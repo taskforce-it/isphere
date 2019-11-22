@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,9 @@ import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 public class JobLogMessage {
 
     public static final int SEVERITY_BLANK = AbstractIntegerFilter.NULL_VALUE;
+
+    public static final String EMPTY = ""; //$NON-NLS-1$
+    public static final String ZERO = "0"; //$NON-NLS-1$
 
     private int pageNumber;
     private boolean selected;
@@ -114,6 +117,31 @@ public class JobLogMessage {
         setSeverity(null);
     }
 
+    public static JobLogMessage createEmpty() {
+
+        JobLogMessage jobLogMessage = new JobLogMessage(0);
+
+        jobLogMessage.setId(EMPTY);
+        jobLogMessage.setType(EMPTY);
+        jobLogMessage.setSeverity(ZERO);
+        jobLogMessage.setDate(EMPTY);
+        jobLogMessage.setTime(EMPTY);
+
+        jobLogMessage.setFromLibrary(EMPTY);
+        jobLogMessage.setFromProgram(EMPTY);
+        jobLogMessage.setFromModule(EMPTY);
+        jobLogMessage.setFromProcedure(EMPTY);
+        jobLogMessage.setFromStatement(EMPTY);
+
+        jobLogMessage.setToLibrary(EMPTY);
+        jobLogMessage.setToProgram(EMPTY);
+        jobLogMessage.setToModule(EMPTY);
+        jobLogMessage.setToProcedure(EMPTY);
+        jobLogMessage.setToStatement(EMPTY);
+
+        return jobLogMessage;
+    }
+
     public int getPageNumber() {
         return this.pageNumber;
     }
@@ -158,11 +186,7 @@ public class JobLogMessage {
     }
 
     public void setSeverity(String severity) {
-        // if (severity == null) {
-        //            this.severity = "";//$NON-NLS-1$
-        // } else {
         this.severity = severity;
-        // }
         setSeverityIntValue(this.severity);
         notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SEVERITY, this.severity));
     }

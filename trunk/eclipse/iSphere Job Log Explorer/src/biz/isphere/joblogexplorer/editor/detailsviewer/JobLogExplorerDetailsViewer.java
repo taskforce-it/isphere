@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@ package biz.isphere.joblogexplorer.editor.detailsviewer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -20,8 +19,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -45,7 +42,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
     private final static String SASH_WEIGHTS = "SASH_WEIGHTS_"; //$NON-NLS-1$
 
     private static final String EMPTY = ""; //$NON-NLS-1$
-    private static final String NEW_LINE = "\n"; //$NON-NLS-1$ 
+    private static final String NEW_LINE = "\n"; //$NON-NLS-1$
 
     private JobLogMessage jobLogMessage;
 
@@ -83,9 +80,10 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private Text textMessage;
 
-    public JobLogExplorerDetailsViewer(IDialogSettings dialogSettings) {
+    private SashForm sashForm;
 
-        this.dialogSettingsManager = new DialogSettingsManager(dialogSettings, getClass());
+    public JobLogExplorerDetailsViewer() {
+
         this.preferences = Preferences.getInstance();
 
         initializeColors();
@@ -94,16 +92,9 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     public void createViewer(Composite parent) {
 
-        SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+        sashForm = new SashForm(parent, SWT.VERTICAL);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
         sashForm.setLayoutData(sashFormLayoutData);
-        sashForm.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent event) {
-                SashForm sashForm = (SashForm)event.getSource();
-                int[] weights = sashForm.getWeights();
-                storeWeights(weights);
-            }
-        });
 
         ScrolledComposite messageDetailsScrollableArea = new ScrolledComposite(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.NONE);
         messageDetailsScrollableArea.setLayout(new GridLayout(1, false));
@@ -162,6 +153,12 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         sashForm.setWeights(loadWeights());
     }
 
+    public void dispose() {
+
+        int[] weights = sashForm.getWeights();
+        storeWeights(weights);
+    }
+
     private void createSeparator(Composite detailsArea) {
         WidgetFactory.createSeparator(detailsArea).setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
     }
@@ -196,31 +193,32 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
             IStructuredSelection selection = (IStructuredSelection)event.getSelection();
             Object element = selection.getFirstElement();
             if (element instanceof JobLogMessage) {
-
                 jobLogMessage = (JobLogMessage)element;
-
-                updateValue(textID, jobLogMessage.getId());
-                updateValue(textType, jobLogMessage.getType());
-                updateValue(textSeverity, jobLogMessage.getSeverity());
-                updateValue(textDate, jobLogMessage.getDate());
-                updateValue(textTime, jobLogMessage.getTime());
-
-                updateValue(textFromLibrary, jobLogMessage.getFromLibrary());
-                updateValue(textFromProgram, jobLogMessage.getFromProgram());
-                updateValue(textFromModule, jobLogMessage.getFromModule());
-                updateValue(textFromProcedure, jobLogMessage.getFromProcedure());
-                updateValue(textFromStatement, jobLogMessage.getFromStatement());
-
-                updateValue(textToLibrary, jobLogMessage.getToLibrary());
-                updateValue(textToProgram, jobLogMessage.getToProgram());
-                updateValue(textToModule, jobLogMessage.getToModule());
-                updateValue(textToProcedure, jobLogMessage.getToProcedure());
-                updateValue(textToStatement, jobLogMessage.getToStatement());
-
-                updateValue(textMessage, getCompleteMessageText());
-
-                updateColor(jobLogMessage);
+            } else {
+                jobLogMessage = JobLogMessage.createEmpty();
             }
+
+            updateValue(textID, jobLogMessage.getId());
+            updateValue(textType, jobLogMessage.getType());
+            updateValue(textSeverity, jobLogMessage.getSeverity());
+            updateValue(textDate, jobLogMessage.getDate());
+            updateValue(textTime, jobLogMessage.getTime());
+
+            updateValue(textFromLibrary, jobLogMessage.getFromLibrary());
+            updateValue(textFromProgram, jobLogMessage.getFromProgram());
+            updateValue(textFromModule, jobLogMessage.getFromModule());
+            updateValue(textFromProcedure, jobLogMessage.getFromProcedure());
+            updateValue(textFromStatement, jobLogMessage.getFromStatement());
+
+            updateValue(textToLibrary, jobLogMessage.getToLibrary());
+            updateValue(textToProgram, jobLogMessage.getToProgram());
+            updateValue(textToModule, jobLogMessage.getToModule());
+            updateValue(textToProcedure, jobLogMessage.getToProcedure());
+            updateValue(textToStatement, jobLogMessage.getToStatement());
+
+            updateValue(textMessage, getCompleteMessageText());
+
+            updateColor(jobLogMessage);
         }
     }
 
@@ -331,9 +329,10 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
     private int[] loadWeights() {
 
-        int[] weights = new int[2];
-        weights[0] = dialogSettingsManager.loadIntValue(SASH_WEIGHTS + "0", 11);
-        weights[1] = dialogSettingsManager.loadIntValue(SASH_WEIGHTS + "1", 3);
+        int[] weights = new int[] { 11, 3 };
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = getDialogSettingsManager().loadIntValue(SASH_WEIGHTS + i, weights[i]);
+        }
 
         return weights;
     }
@@ -342,8 +341,16 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
 
         int count = 0;
         for (int weight : weights) {
-            dialogSettingsManager.storeValue(SASH_WEIGHTS + count, weight);
+            getDialogSettingsManager().storeValue(SASH_WEIGHTS + count, weight);
             count++;
         }
+    }
+
+    private DialogSettingsManager getDialogSettingsManager() {
+
+        if (dialogSettingsManager == null) {
+            dialogSettingsManager = new DialogSettingsManager(ISphereJobLogExplorerPlugin.getDefault().getDialogSettings(), getClass());
+        }
+        return dialogSettingsManager;
     }
 }

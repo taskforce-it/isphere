@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
 import biz.isphere.joblogexplorer.preferences.Preferences;
 import biz.isphere.joblogexplorer.preferences.SeverityColor;
 
-public class JobLogExplorerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider, JobLogExplorerTableColumns {
+public class JobLogExplorerLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 
     private TableViewer tableViewer;
 
@@ -95,54 +95,54 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
         JobLogMessage jobLogMessage = (JobLogMessage)element;
 
         switch (columnIndex) {
-        case JobLogExplorerTableColumns.COLUMN_SELECTED:
+        case Columns.Index.SELECTED:
             break;
-        case JobLogExplorerTableColumns.COLUMN_DATE:
+        case Columns.Index.DATE:
             result = jobLogMessage.getDate();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TIME:
+        case Columns.Index.TIME:
             result = jobLogMessage.getTime();
             break;
-        case JobLogExplorerTableColumns.COLUMN_ID:
+        case Columns.Index.ID:
             result = jobLogMessage.getId();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TYPE:
+        case Columns.Index.TYPE:
             result = jobLogMessage.getType();
             break;
-        case JobLogExplorerTableColumns.COLUMN_SEVERITY:
+        case Columns.Index.SEVERITY:
             result = jobLogMessage.getSeverity();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TEXT:
+        case Columns.Index.TEXT:
             result = jobLogMessage.getText();
             break;
-        case JobLogExplorerTableColumns.COLUMN_FROM_LIBRARY:
+        case Columns.Index.FROM_LIBRARY:
             result = jobLogMessage.getFromLibrary();
             break;
-        case JobLogExplorerTableColumns.COLUMN_FROM_PROGRAM:
+        case Columns.Index.FROM_PROGRAM:
             result = jobLogMessage.getFromProgram();
             break;
-        case JobLogExplorerTableColumns.COLUMN_FROM_STATEMENT:
+        case Columns.Index.FROM_STATEMENT:
             result = jobLogMessage.getFromStatement();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TO_LIBRARY:
+        case Columns.Index.TO_LIBRARY:
             result = jobLogMessage.getToLibrary();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TO_PROGRAM:
+        case Columns.Index.TO_PROGRAM:
             result = jobLogMessage.getToProgram();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TO_STATEMENT:
+        case Columns.Index.TO_STATEMENT:
             result = jobLogMessage.getToStatement();
             break;
-        case JobLogExplorerTableColumns.COLUMN_FROM_MODULE:
+        case Columns.Index.FROM_MODULE:
             result = jobLogMessage.getFromModule();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TO_MODULE:
+        case Columns.Index.TO_MODULE:
             result = jobLogMessage.getToModule();
             break;
-        case JobLogExplorerTableColumns.COLUMN_FROM_PROCEDURE:
+        case Columns.Index.FROM_PROCEDURE:
             result = jobLogMessage.getFromProcedure();
             break;
-        case JobLogExplorerTableColumns.COLUMN_TO_PROCEDURE:
+        case Columns.Index.TO_PROCEDURE:
             result = jobLogMessage.getToProcedure();
             break;
         default:
@@ -154,7 +154,7 @@ public class JobLogExplorerLabelProvider extends LabelProvider implements ITable
 
     public Image getColumnImage(Object element, int columnIndex) {
 
-        if (columnIndex != JobLogExplorerTableColumns.COLUMN_SELECTED) {
+        if (columnIndex != Columns.Index.SELECTED) {
             return null;
         }
 

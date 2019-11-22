@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import biz.isphere.joblogexplorer.model.JobLogMessage;
  * user modifes a cell in the tableViewer
  */
 
-public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorerTableColumns {
+public class JobLogExplorerCellModifier implements ICellModifier {
 
     private List<Object> columnNames;
     private TableViewer tableViewer;
@@ -49,7 +49,7 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
         int columnIndex = columnNames.indexOf(property);
 
         switch (columnIndex) {
-        case JobLogExplorerTableColumns.COLUMN_SELECTED:
+        case Columns.Index.SELECTED:
             return true;
         default:
             return false;
@@ -65,17 +65,14 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
         // Find the index of the column
         int columnIndex = columnNames.indexOf(property);
 
-        Object result = null;
         JobLogMessage jobLogMessage = (JobLogMessage)element;
 
         switch (columnIndex) {
-        case JobLogExplorerTableColumns.COLUMN_SELECTED:
-            result = new Boolean(jobLogMessage.isSelected());
-            break;
+        case Columns.Index.SELECTED:
+            return new Boolean(jobLogMessage.isSelected());
         default:
-            result = ""; //$NON-NLS-1$
+            return ""; //$NON-NLS-1$
         }
-        return result;
     }
 
     /**
@@ -91,7 +88,7 @@ public class JobLogExplorerCellModifier implements ICellModifier, JobLogExplorer
         JobLogMessage jobLogMessages = (JobLogMessage)item.getData();
 
         switch (columnIndex) {
-        case JobLogExplorerTableColumns.COLUMN_SELECTED:
+        case Columns.Index.SELECTED:
             jobLogMessages.setSelected(((Boolean)value).booleanValue());
             break;
         default:
