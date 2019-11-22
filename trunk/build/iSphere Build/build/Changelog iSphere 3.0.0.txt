@@ -2,6 +2,8 @@
 Changelog: iSphere 3.6.0.b003
 -----------------------------
  • Fixed initializing the image registry (journal explorer plug-in).
+ • Changed journal explorer plug-in to use the DialogSettingsManager
+   for creating the table viewer and resetting column widths.
 
 Changelog: iSphere 3.6.0.b002
 -----------------------------

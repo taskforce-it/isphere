@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionListener;
@@ -40,7 +38,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
@@ -64,7 +61,6 @@ import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContent
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
-import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
@@ -77,11 +73,10 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewer extends CTabItem
+    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
-
-    private static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
 
     private OutputFile outputFile;
     private Composite container;
@@ -121,19 +116,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     private ContentAssistProposal[] getContentAssistProposals() {
 
-        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
-
         List<ContentAssistProposal> proposals = JournalEntry.getContentAssistProposals();
-
-        // MetaTable metaData = getMetaData();
-        // if (metaData != null) {
-        // for (MetaColumn column : metaData.getColumns()) {
-        // if (columnMapping.containsKey(column.getName())) {
-        // proposals.add(new ContentAssistProposal(column.getName(),
-        // column.getFormattedType() + " - " + column.getText()));
-        // }
-        // }
-        // }
 
         return proposals.toArray(new ContentAssistProposal[proposals.size()]);
     }
@@ -256,34 +239,11 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tableViewer = createTableViewer(container);
-        setColumnSizes(tableViewer);
         container.layout(true);
         setControl(container);
     }
 
-    private void setColumnSizes(TableViewer tableViewer) {
-
-        ControlAdapter columnResizeListener = new ControlAdapter() {
-            @Override
-            public void controlResized(ControlEvent event) {
-                TableColumn column = (TableColumn)event.getSource();
-                getDialogSettingsManager().storeValue(produceColumnWidthKey(column), column.getWidth());
-            }
-        };
-
-        for (int i = 0; i < tableViewer.getTable().getColumnCount(); i++) {
-            TableColumn column = tableViewer.getTable().getColumn(i);
-            int width = getDialogSettingsManager().loadIntValue(produceColumnWidthKey(column), getDefaultColumnSize(column));
-            column.setWidth(width);
-            column.addControlListener(columnResizeListener);
-        }
-    }
-
-    private String produceColumnWidthKey(TableColumn column) {
-        return COLUMN_WIDTH + Type5ViewerFactory.getColumnName(column);
-    }
-
-    private DialogSettingsManager getDialogSettingsManager() {
+    protected DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings(),
@@ -297,19 +257,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     }
 
     public void resetColumnSizes() {
-
-        tableViewer.getTable().setVisible(false);
-
-        for (int i = 0; i < tableViewer.getTable().getColumnCount(); i++) {
-            TableColumn column = tableViewer.getTable().getColumn(i);
-            column.setWidth(getDefaultColumnSize(column));
-        }
-
-        tableViewer.getTable().setVisible(true);
-    }
-
-    private int getDefaultColumnSize(TableColumn column) {
-        return Type5ViewerFactory.getDefaultColumnSize(column);
+        dialogSettingsManager.resetColumnWidths(tableViewer.getTable());
     }
 
     public boolean hasSqlEditor() {
