@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.6.0.b003
+-----------------------------
+ • Fixed initializing the image registry (journal explorer plug-in).
+
 Changelog: iSphere 3.6.0.b002
 -----------------------------
  • Fixed java.lang.ClassCastException when opening a member from the

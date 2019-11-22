@@ -99,29 +99,29 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_DETAILS, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_HIGHLIGHT, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_HORIZONTAL_RESULTS_VIEW, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_JOURNAL_EXPLORER, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_CONFIGURE_PARSERS, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_SEGMENT_EDIT, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_OPEN_JOURNAL_OUTFILE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_COMPARE));
+        reg.put(IMAGE_DETAILS, getImageDescriptor(IMAGE_DETAILS));
+        reg.put(IMAGE_HIGHLIGHT, getImageDescriptor(IMAGE_HIGHLIGHT));
+        reg.put(IMAGE_HORIZONTAL_RESULTS_VIEW, getImageDescriptor(IMAGE_HORIZONTAL_RESULTS_VIEW));
+        reg.put(IMAGE_JOURNAL_EXPLORER, getImageDescriptor(IMAGE_JOURNAL_EXPLORER));
+        reg.put(IMAGE_CONFIGURE_PARSERS, getImageDescriptor(IMAGE_CONFIGURE_PARSERS));
+        reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
+        reg.put(IMAGE_SEGMENT_EDIT, getImageDescriptor(IMAGE_SEGMENT_EDIT));
+        reg.put(IMAGE_OPEN_JOURNAL_OUTFILE, getImageDescriptor(IMAGE_OPEN_JOURNAL_OUTFILE));
+        reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_COLLAPSE_ALL));
+        reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_EDIT_SQL));
+        reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
         reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
 
         reg.put(IMAGE_CHECKED, getImageDescriptor(IMAGE_CHECKED));
         reg.put(IMAGE_UNCHECKED, getImageDescriptor(IMAGE_UNCHECKED));
 
-        reg.put(IMAGE_WARNING_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_ERROR_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_LOADED_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_CHECKED_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_DIRTY_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
-        reg.put(IMAGE_NULL_OV, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_WARNING_OV, getImageDescriptor(IMAGE_WARNING_OV));
+        reg.put(IMAGE_ERROR_OV, getImageDescriptor(IMAGE_ERROR_OV));
+        reg.put(IMAGE_LOADED_OV, getImageDescriptor(IMAGE_LOADED_OV));
+        reg.put(IMAGE_CHECKED_OV, getImageDescriptor(IMAGE_CHECKED_OV));
+        reg.put(IMAGE_DIRTY_OV, getImageDescriptor(IMAGE_DIRTY_OV));
+        reg.put(IMAGE_NULL_OV, getImageDescriptor(IMAGE_NULL_OV));
     }
 
     /**
