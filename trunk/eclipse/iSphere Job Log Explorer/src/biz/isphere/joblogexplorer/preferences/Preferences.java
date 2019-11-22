@@ -103,12 +103,12 @@ public final class Preferences {
     }
 
     public String getExportFolder() {
-        
+
         String directory = preferenceStore.getString(EXPORT_FOLDER);
         if (StringHelper.isNullOrEmpty(directory)) {
             directory = FileHelper.getDefaultRootDirectory();
         }
-        
+
         return directory;
     }
 

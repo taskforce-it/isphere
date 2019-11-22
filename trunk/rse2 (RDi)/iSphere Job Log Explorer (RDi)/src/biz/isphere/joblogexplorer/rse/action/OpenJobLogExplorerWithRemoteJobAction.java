@@ -8,11 +8,11 @@
 
 package biz.isphere.joblogexplorer.rse.action;
 
-import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
-import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
-
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
 import biz.isphere.joblogexplorer.rse.jobs.LoadRemoteJobLogJob;
+
+import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
+import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
 
 public class OpenJobLogExplorerWithRemoteJobAction extends AbstractOpenJobLogExplorerAction {
 

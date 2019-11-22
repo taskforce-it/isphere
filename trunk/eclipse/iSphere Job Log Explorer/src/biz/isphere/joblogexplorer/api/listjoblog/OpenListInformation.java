@@ -20,7 +20,7 @@ public class OpenListInformation extends APIFormat {
     public static String INFORMATION_COMPLETE = "C"; //$NON-NLS-1$
     public static String INFORMATION_INCOMPLETE = "I"; //$NON-NLS-1$
     public static String INFORMATION_PARTIAL = "P"; //$NON-NLS-1$
-    
+
     public static String STATUS_PENDING = "0"; //$NON-NLS-1$
     public static String STATUS_BUILDING = "1"; //$NON-NLS-1$
     public static String STATUS_COMPLETE = "2"; //$NON-NLS-1$
@@ -45,15 +45,15 @@ public class OpenListInformation extends APIFormat {
 
         createStructure();
     }
-    
+
     public int getTotalRecords() {
         return getInt4Value(TOTAL_RECORDS);
     }
-    
+
     public int getRecordsReturned() {
         return getInt4Value(RECORDS_RETURNED);
     }
-    
+
     public String getRequestHandle() throws UnsupportedEncodingException {
         return getCharValue(REQUEST_HANDLE);
     }
@@ -61,7 +61,7 @@ public class OpenListInformation extends APIFormat {
     public int getRecordLength() {
         return getInt4Value(RECORD_LENGTH);
     }
-    
+
     public String getInformationCompleteIndicator() throws UnsupportedEncodingException {
         return getCharValue(INFORMATION_COMPLETE_INDICATOR);
     }
@@ -69,7 +69,7 @@ public class OpenListInformation extends APIFormat {
     public String getDateAndTimeCreated() throws UnsupportedEncodingException {
         return getCharValue(DATE_AND_TIME_CREATED);
     }
-    
+
     public String getListStatusIndicator() throws UnsupportedEncodingException {
         return getCharValue(LIST_STATUS_INDICATOR);
     }
@@ -81,7 +81,7 @@ public class OpenListInformation extends APIFormat {
     public int getFirstRecordInReceiverVariable() {
         return getInt4Value(FIRST_RECORD_IN_RECEIVER_VARIABLE);
     }
-    
+
     /**
      * Creates the PRDI0100 structure.
      */
