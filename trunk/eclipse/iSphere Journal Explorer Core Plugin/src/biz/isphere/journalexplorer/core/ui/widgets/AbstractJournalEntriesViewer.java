@@ -73,8 +73,7 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewer extends CTabItem
-    implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 

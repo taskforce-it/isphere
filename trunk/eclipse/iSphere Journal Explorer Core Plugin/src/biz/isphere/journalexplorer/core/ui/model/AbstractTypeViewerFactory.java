@@ -207,8 +207,8 @@ public abstract class AbstractTypeViewerFactory {
         // Entry specific data
         columns.add(new JournalEntryColumn(JournalEntryColumnUI.JOESD, Messages.Tooltip_JOESD, 350));
 
-        return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JournalEntryColumn[columns.size()]),
-            Preferences.getInstance().getSortedJournalEntryAppearancesAttributes());
+        return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JournalEntryColumn[columns.size()]), Preferences.getInstance()
+            .getSortedJournalEntryAppearancesAttributes());
     }
 
     private static JournalEntryColumn[] sortColumnsAndApplyAppearanceAttributes(JournalEntryColumn[] journalEntryColumns,
