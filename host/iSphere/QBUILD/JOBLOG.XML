@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate=" 2/13/2017">
+<upload  appname="JOBLOG"  appauthor="Thomas Raddatz"  appblddate="11/26/2019">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -77,6 +77,8 @@
 ]]>  </install_instructions>
 <install_program><![CDATA[
       * /// START OF INSTALL PGM HERE   ************************** ///
+      *---------------------------------------------------------------------------------------
+      * CRTBNDRPG PGM(QTEMP/XMLINST) SRCFILE(ISPHERE/QBUILD) SRCMBR(*PGM)
       *---------------------------------------------------------------------------------------
       * Parse / Install from xml text into source members and objects.
       * Copyright (C) 2001    Craig Rutledge    <craig_rutledge@mohawkind.com>
@@ -442,6 +444,15 @@
       *
       * Set variable &TGTRLS
      C                   callp     setVariable('tgtrls': TgtRls)
+      *
+      * Set variable &XMLFILE
+     C                   callp     setVariable('xmlfile': ParseSrcFile)
+      *
+      * Set variable &XMLLIB
+     C                   callp     setVariable('xmllib': ParseSrcFile)
+      *
+      * Set variable &XMLMBR
+     C                   callp     setVariable('xmlmbr': ParseSrcFile)
       *
       * Override Input file to uploaded text file
      C                   eval      bldexc = 'OVRDBF FILE(XMLINPUT) TOFILE(' +
@@ -841,8 +852,7 @@
       *--------------------------------------------------------------------
      P readElement...
      P                 B
-      *
-     D readElement     PI                        like(bldexc)
+     D                 PI                        like(bldexc)
      D  i_element                     9A   value varying
       *
      D i               S             10I 0 inz
@@ -859,15 +869,13 @@
       *
      C                   Return    value
       *
-     P readElement...
      P                 E
       *--------------------------------------------------------------------
       * Double quotes
       *--------------------------------------------------------------------
      P dblQuotes...
      P                 B
-      *
-     D dblQuotes       PI          2048A         varying
+     D                 PI          2048A         varying
      D  i_string                   2048A   value varying
       *
      D x               S             10I 0         inz
@@ -882,15 +890,12 @@
       *
      C                   Return    string
       *
-     P dblQuotes...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Get Attribute Data from String
       *---------------------------------------------------------------------------------------------
      P getAttrData...
      P                 B
-      *
-     D getAttrData...
      D                 PI          2000A          varying                       like(string_t)
      D  i_attr                       10a   value
      D  i_string                   2000A   value  varying                       like(string_t)
@@ -926,15 +931,12 @@
       *
      C                   Return    attrData
       *
-     P getAttrData...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Load condition array
       *---------------------------------------------------------------------------------------------
      P loadConditions...
      P                 B
-      *
-     D loadConditions...
      D                 PI                  dim(32) like(condition)
      D  i_conditions                128A   value
       *
@@ -942,26 +944,42 @@
      D cnd_array       s                   dim(32) inz like(condition)
      D pValue          s               *   inz
      D x               s             10i 0 inz
+     D i               s             10i 0 inz
+     D cnd_value       s            128a   varying
+     D var_name        s             64a   varying
+     D var_value       s             64a   varying
       *-------------------------------------------------------------------*
-     C                   eval      i_conditions = uCase(i_conditions)
-      *
-     C                   eval      pValue = strtok(i_conditions: ';')
-     C                   dow       pValue <> *null
-     C                   eval      x = x + 1
-     C                   eval      cnd_array(x) = %str(pValue)
-     C                   eval      pValue = strtok(*null: ';')
-     C                   enddo
-      *
-     C                   Return    cnd_array
-     P loadConditions...
+      /FREE
+
+         i_conditions = uCase(i_conditions);
+
+         pValue = strtok(i_conditions: ';');
+         dow (pValue <> *null);
+            x = x + 1;
+            cnd_value = %str(pValue);
+            i = %scan('=': cnd_value);
+            if (i = 0);
+               cnd_array(x) = cnd_value;
+            else;
+               var_name = %subst(cnd_value: 1: i-1);
+               if (%subst(var_name: 1: 1) = '&');
+                  var_name = %subst(var_name: 2);
+               endif;
+               var_value = %subst(cnd_value: i+1);
+               setVariable(var_name: var_value);
+               cnd_array(x) = var_value;
+            endif;
+            pValue = strtok(*null: ';');
+         enddo;
+
+         return cnd_array;
+      /END-FREE
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Check for a condition
       *---------------------------------------------------------------------------------------------
      P isCondition...
      P                 B
-      *
-     D isCondition...
      D                 PI              n
      D  i_condList                 2000A   value
       *
@@ -970,6 +988,7 @@
      D pValue          S               *   inz
      D aCondition      S             10a   inz
       *-------------------------------------------------------------------*
+      *
      C                   eval      i_condList = uCase(i_condList)
       *
      C                   if        (i_condList = '*NONE')  or
@@ -996,15 +1015,12 @@
      C                   endif
       *
      C                   Return    isCondition
-     P isCondition...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Get the current release level of the operation system
       *---------------------------------------------------------------------------------------------
      P getCurrentRelease...
      P                 B
-      *
-     D getCurrentRelease...
      D                 PI            10A
       *
       *  QSZRTVPR API
@@ -1033,18 +1049,17 @@
      D  bytPrv                       10i 0 inz(0)
      D  bytAvl                       10i 0 inz(0)
       *-------------------------------------------------------------------*
+      *
      C                   Callp     QSZRTVPR(prdr0100: %size(prdr0100):
      C                                      'PRDR0100': prdi0100: errCode)
      C                   Return    prdr0100.releaseLvl
-     P getCurrentRelease...
+      *
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Check the release level
       *---------------------------------------------------------------------------------------------
      P isRelease...
      P                 B
-      *
-     D isRelease...
      D                 PI              n
      D  i_os_release                  6A   value
      D  i_release                    10A   value
@@ -1057,6 +1072,7 @@
      D  r_space                4      4a
      D  r_level                5     10a
       *-------------------------------------------------------------------*
+      *
      C                   If        i_release = '*CURRENT'
      C                   Eval      isRelease = *on
      C                   Else
@@ -1083,15 +1099,13 @@
      C                   Endif
       *
      C                   Return    isRelease
-     P isRelease...
+      *
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Replaces the value of a given keyword.
       *---------------------------------------------------------------------------------------------
      P setTargetRelease...
      P                 B
-      *
-     D setTargetRelease...
      D                 PI          2000A          varying
      D  i_keyword                    10A   value  varying
      D  i_string                   2000A   value  varying
@@ -1108,6 +1122,7 @@
      D tmpCmd          S             10A   inz
       *-------------------------------------------------------------------*
       /FREE
+
          tmpKeyword = uCase(%trimR(i_keyword));
          tmpString  = uCase(%trimR(i_string ));
          x = %scan(' ': tmpString);
@@ -1146,49 +1161,47 @@
          string = %replace(tmpKeyword + '(' + %trimR(i_value) + ')'
                            : i_string: x: l);
          Return string;
+
       /END-FREE
-      *
-     P setTargetRelease...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  Store field value.
       *---------------------------------------------------------------------------------------------
      P setVariable...
      P                 B
-      *
-     D setVariable...
      D                 PI
      D  i_fldName                    10A   value  varying
      D  i_value                      64A   value  varying
      D i               s             10I 0 inz
       *-------------------------------------------------------------------*
       /FREE
+
          if (i_fldName = '');
             return;
          endif;
+
          for i = 1 to fld_x;
-            if (uCase('&' + %trim(i_fldName)) = uCase(fld_name(fld_x)));
-               fld_value(fld_x) = i_value;
-               leave;
+            if (uCase('&' + %trim(i_fldName)) = uCase(fld_name(i)));
+               fld_value(i) = i_value;
+               return;
             endif;
          endfor;
+
          if (fld_x >= %elem(fld_name));
             return;
          endif;
+
          fld_x = fld_x + 1;
          fld_name(fld_x)  = uCase('&' + %trim(i_fldName));
          fld_value(fld_x) = i_value;
+
       /END-FREE
-      *
-     P setVariable...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  get variable name from statement.
       *---------------------------------------------------------------------------------------------
      P getVarName...
      P                 B
-      *
-     D getVarName...
      D                 PI            11a          varying
      D  i_bldexc                           value  like(bldexc)
      D  i_pos                        10i 0 value
@@ -1198,47 +1211,47 @@
      D                                      1234567890_'
       *-------------------------------------------------------------------*
       /FREE
+
          dow (i_pos<=%len(i_bldexc) and
               %check(CHARS:%subst(i_bldexc:i_pos:1))=0);
             name = name+%subst(i_bldexc:i_pos:1);
             i_pos=i_pos+1;
          enddo;
+
          return name;
+
       /END-FREE
       *
-     P getVarName...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  get variable value.
       *---------------------------------------------------------------------------------------------
      P getVarValue...
      P                 B
-      *
-     D getVarValue...
      D                 PI            64a          varying
      D  i_name                       11a   value  varying
      D i               s             10i 0 inz
      D value           s             64a   varying inz('?')
       *-------------------------------------------------------------------*
       /FREE
+
          for i=1 to fld_x;
             if (ucase(fld_name(i))=uCase(i_name));
                value=%trimR(fld_value(i));
                leave;
             endif;
          endfor;
+
          return value;
+
       /END-FREE
       *
-     P getVarValue...
      P                 E
       *---------------------------------------------------------------------------------------------
       *  convert to upper case
       *---------------------------------------------------------------------------------------------
      P uCase...
      P                 B
-      *
-     D uCase...
      D                 PI          2000A          varying
      D  i_string                   2000A   value  varying
      D uCase           s           2000A   inz varying
@@ -1246,11 +1259,12 @@
      D UC              C                   CONST('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
       *-------------------------------------------------------------------*
       /FREE
+
          uCase = %xlate(LC:UC:i_string);
+
          return uCase;
+
       /END-FREE
-      *
-     P uCase...
      P                 E
       * /// END   OF INSTALL PGM HERE   ****************************************** ///
       * /// do not copy past this point ///
@@ -1401,6 +1415,39 @@ srccssid=  "00273">
              DLTMOD     MODULE(&TOLIB/JOBLOG1)
 
              ENDPGM
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing A_README  type TXT - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "A_README  "
+mbrtype =  "TXT       "
+mbrtext =  "JOBLOG Readme                                     "
+srcfile =  "QJOBLOG   "
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "00273">
+<copysrc><![CDATA[
+JOBLOG - A Tools/400 Service Program
+------------------------------------
+
+JOBLOG is service program that offers services for reading messages
+from job logs.
+
+Dependencies: BASICS1
+
+Compile members with the following PDM option:
+
+   STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) OPTION(*EVENTF) CHGOBJD(*NO)
+     LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) USER0(&X)
+     USER1(*LIST) USER2(*FULL)
+
+Members of type MAKPGM or BND are used for linking programs (MAKPGM)
+and service programs (BND).
+
+2018, Thomas Raddatz
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -2431,13 +2478,13 @@ srclen  =  "00112"
 srccssid=  "00273">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     H COPYRIGHT('V1.0.0 - 09.02.2017 - mailto:thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.0.2 - 26.11.2019 - mailto:thomas.raddatz@tools400.de')
       /eof
       /endif
      D JOBLOG_VERSION...
-     D                 C                   '1.0.0'
+     D                 C                   '1.0.2'
      D JOBLOG_DATE...
-     D                 C                   '09.02.2017'
+     D                 C                   '26.04.2019'
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -2527,7 +2574,7 @@ srccssid=  "00273">
      /*     >>PARM<< ALWLIBUPD(*YES);                                         */
      /*     >>PARM<< BNDSRVPGM(&LI/BASICS1);                                  */
      /*     >>PARM<< TEXT('Job Log API');                                     */
-     /*     >>PARM<< TGTRLS(V6R1M0  );                                        */
+     /*     >>PARM<< TGTRLS(V7R1M0  );                                        */
      /*     >>PARM<< DETAIL(*BASIC);                                          */
      /*   >>END-LINK<<                                                        */
      /*   >>EXECUTE<<                                                         */
@@ -2635,9 +2682,11 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                  extpgm('JOBLOGT1')
+     D  gi_job                       28A   const options(*nopass)
       *
      D main...
      D                 PR                         extproc('main')
+     D  i_qJob                             const likeds(qJob_t)
       *
       *  Logs a message to the job log or appends it to a spooled file
      D logMsg...
@@ -2659,11 +2708,25 @@ srccssid=  "00273">
       *===============================================================*
      D PGM_ENTRY_POINT...
      D                 PI
+     D  gi_job                       28A   const options(*nopass)
       *
+     D g_s1            s             10i 0
+     D g_s2            s             10i 0
+     D g_qJob          ds                  likeds(qJob_t)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main();
+         if (%parms() >= %parmnum(gi_job) and gi_job <> '*');
+           g_s1 = %scan('/': gi_job: 1);
+           g_s2 = %scan('/': gi_job: g_s1+1);
+           g_qJob.nbr = %subst(gi_job: 1: g_s1-1);
+           g_qJob.user = %subst(gi_job: g_s1+1: g_s2-(g_s1+1));
+           g_qJob.name = %subst(gi_job: g_s2+1);
+         else;
+           g_qJob.name = '*';
+         endif;
+
+         main(g_qJob);
 
          if (%open(QSYSPRT));
             close QSYSPRT;
@@ -2786,6 +2849,7 @@ srccssid=  "00273">
       *
      D main...
      D                 PI
+     D  i_qJob                             const likeds(qJob_t)
       *
       *  Helper fields
      D hJobLog         s                   like(JobLog_handle_t)
@@ -2795,21 +2859,21 @@ srccssid=  "00273">
 
          // Retrieve first (oldest) job log entry.
          logMsg('Retrieving first (oldest) job log entry');
-         JobLog_getOldest(*omit: jobLogEntry);
+         JobLog_getOldest(i_qJob: jobLogEntry);
          logMsg(jobLogEntry.msgID + ' - ' + jobLogEntry.msgText);
          logMsg();
 
          // Retrieve last (newest) job log entry.
          logMsg('Retrieving last (newest) job log entry');
-         JobLog_getNewest(*omit: jobLogEntry);
+         JobLog_getNewest(i_qJob: jobLogEntry);
          logMsg(jobLogEntry.msgID + ' - ' + jobLogEntry.msgText);
          logMsg();
 
          // Open the job log
          logMsg('Retrieving job log entries from newest to oldest entry');
-         hJobLog = JobLog_open(*omit: JOBLOG_OPTION_MSG +
-                                      JOBLOG_OPTION_REPLACE_VARS +
-                                      JOBLOG_OPTION_SENDER);
+         hJobLog = JobLog_open(i_qJob: JOBLOG_OPTION_MSG +
+                                       JOBLOG_OPTION_REPLACE_VARS +
+                                       JOBLOG_OPTION_SENDER);
 
          // Spin through the job log entries from oldest to newest.
          dow (JobLog_getEntry(hJobLog: jobLogEntry));
@@ -2822,10 +2886,10 @@ srccssid=  "00273">
 
          // Open the job log
          logMsg('Retrieving job log entries from oldest to newest entry');
-         hJobLog = JobLog_open(*omit: JOBLOG_OPTION_MSG +
-                                      JOBLOG_OPTION_REPLACE_VARS +
-                                      JOBLOG_OPTION_SENDER
-                                    : JOBLOG_NEXT);
+         hJobLog = JobLog_open(i_qJob: JOBLOG_OPTION_MSG +
+                                       JOBLOG_OPTION_REPLACE_VARS +
+                                       JOBLOG_OPTION_SENDER
+                                     : JOBLOG_NEXT);
 
          // Spin through the job log entries from oldest to newest.
          dow (JobLog_getEntry(hJobLog: jobLogEntry));
@@ -2880,6 +2944,11 @@ srccssid=  "00273">
       *                                                                     *
       *  Date        Name          Description                              *
       *  ----------  ------------  ---------------------------------------  *
+      *  19.04.2019  Th.Raddatz    Fixed unexpected error because size of   *
+      *                            buffer 'oljl0100_buffer' was too small.  *
+      *                                                                     *
+      *  26.11.2019  Th.Raddatz    Fixed problem, that QGYGTLE crashed with *
+      *                            CPF3C53 (Job not found).                 *
       *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
@@ -2889,7 +2958,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0  );                                    *
+      *       >>PARM<< TGTRLS(V7R1M0  );                                    *
       *       >>PARM<< OPTION(*EVENTF);                                     *
       *     >>END-COMPILE<<                                                 *
       *     >>EXECUTE<<                                                     *
@@ -3101,17 +3170,21 @@ srccssid=  "00273">
 
          clear handle;
          handle.isOpen = cFalse;
-         handle.isEOF = cFalse;
+         handle.isEOF = cTrue;
          handle.qJob = qJob;
          handle.direction = direction;
          handle.strMsgKey = strMsgKey;
          handle.rcdNbr = 0;
-         handle.listInf = *ALLx'00';
+         clear handle.listInf;
 
          handle.isOpen = openJobLog(
                             handle.qJob: options: handle.direction
                             : handle.strMsgKey: handle.listInf
                             : handle.options: errCode);
+
+         if (handle.isOpen);
+            handle.isEOF = cFalse;
+         endif;
 
          return hJobLog;
 
@@ -3183,6 +3256,10 @@ srccssid=  "00273">
       /FREE
 
          pHandle = HANDLE_getPointer(i_hJobLog);
+
+         if (not handle.isOpen);
+            return cFalse;
+         endif;
 
          if (handle.isEOF);
             return cFalse;
@@ -3587,6 +3664,9 @@ srccssid=  "00273">
          memcpy(pBuffer + offs: %addr(callMsgQ): sizeCallMsgQ);
          offs = offs + sizeCallMsgQ;
 
+         clear o_errCode;
+         o_errCode.bytAvl = %size(o_errCode);
+
          QGYOLJBL(oljl0100_buffer: %size(oljl0100_buffer): o_listInf: 0
                   : %subst(buffer: 1: buffSize)
                   : buffSize
@@ -3625,7 +3705,7 @@ srccssid=  "00273">
       *
       *  Local fields
      D oljl0100_buffer...
-     D                 s           8192
+     D                 s          24576
      D  oljl0100       ds                  likeds(oljl0100_t)
      D                                     based(pOljl0100)
      D pOljl0100       s               *   inz(%addr(oljl0100_buffer))
@@ -3636,6 +3716,11 @@ srccssid=  "00273">
                  : i_hRequest: o_listInf: 1: i_rcdNbr: o_errCode);
 
          clear jobLogEntry;
+
+         if (o_errCode.bytAvl > 0);
+            return jobLogEntry;
+         endif;
+
          jobLogEntry.msgSeverity = oljl0100.msgSeverity;
          jobLogEntry.msgID = oljl0100.msgID;
          jobLogEntry.msgType = oljl0100.msgType;
@@ -3837,11 +3922,18 @@ srccssid=  "00273">
 
          dow (fieldInf.fieldId <> i_fieldId and fieldInf.ofsNxtFldInf <> 0);
             pFieldInf = pOljl0100 + fieldInf.ofsNxtFldInf;
+            if (pFieldInf > pOljl0100 + i_buffLen);
+               return '*ERR';
+            endif;
          enddo;
 
          if (fieldInf.fieldId = i_fieldId);
             pData = pFieldInf + %size(fieldInf);
-            fieldData = %subst(data: 1: fieldInf.lenData);
+            if (fieldInf.lenData <= %len(data));
+               fieldData = %subst(data: 1: fieldInf.lenData);
+            else;
+               fieldData = %subst(data: 1: %len(data));
+            endif;
          else;
             fieldData = '';
          endif;
