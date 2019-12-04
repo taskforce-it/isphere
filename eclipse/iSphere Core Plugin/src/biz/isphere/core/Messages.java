@@ -1540,6 +1540,8 @@ public class Messages extends NLS {
 
     public static String SqlEditor_History_Tooltip;
 
+    public static String Error_in_SQL_WHERE_CLAUSE_A;
+
     public static String ButtonLabel_AddField;
 
     public static String ButtonTooltip_AddField;

@@ -8,6 +8,9 @@
 
 package biz.isphere.core.swt.widgets.sqleditor;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
@@ -63,6 +66,8 @@ public class SqlEditor extends Composite {
     private String historyKey;
     private DialogSettingsManager dialogSettings;
 
+    private List<SelectionListener> btnExecuteSelectionListeners;
+
     public SqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
         super(parent, style);
 
@@ -80,6 +85,8 @@ public class SqlEditor extends Composite {
 
         this.historyKey = historyKey;
         this.dialogSettings = dialogSettingsManager;
+
+        this.btnExecuteSelectionListeners = new LinkedList<SelectionListener>();
 
         createContentArea();
     }
@@ -161,8 +168,6 @@ public class SqlEditor extends Composite {
     private void createContentArea() {
 
         GridLayout layout = new GridLayout(3, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
         setLayout(layout);
 
         Composite wherePanel = new Composite(this, SWT.NONE);
@@ -225,8 +230,8 @@ public class SqlEditor extends Composite {
         cboHistory = WidgetFactory.createReadOnlyHistoryCombo(editorPanel);
         cboHistory.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         cboHistory.addSelectionListener(selectionListener);
-        cboHistory.load(dialogSettings, historyKey);
         cboHistory.setToolTipText(Messages.SqlEditor_History_Tooltip);
+        refreshHistory();
 
         textSqlEditor = WidgetFactory.createContentAssistText(editorPanel);
         textSqlEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -316,6 +321,17 @@ public class SqlEditor extends Composite {
 
         btnExecute.setVisible(isButtonExecuteVisible);
         btnExecute.setEnabled(isButtonExecuteVisible);
+
+        btnExecute.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                event.data = getWhereClause();
+                notifySelectionListeners(event);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
     }
 
     public void setBtnExecuteLabel(String label) {
@@ -327,15 +343,26 @@ public class SqlEditor extends Composite {
     }
 
     public void addSelectionListener(SelectionListener listener) {
-        btnExecute.addSelectionListener(listener);
+        btnExecuteSelectionListeners.add(listener);
     }
 
     public void removeSelectionListener(SelectionListener listener) {
-        btnExecute.removeSelectionListener(listener);
+        btnExecuteSelectionListeners.remove(listener);
+    }
+
+    private void notifySelectionListeners(SelectionEvent event) {
+        event.data = textSqlEditor.getText();
+        for (SelectionListener listener : btnExecuteSelectionListeners) {
+            listener.widgetSelected(event);
+        }
     }
 
     public void setContentAssistProposals(ContentAssistProposal[] contentAssistProposals) {
         textSqlEditor.setContentAssistProposals(contentAssistProposals);
+    }
+
+    public void refreshHistory() {
+        cboHistory.load(dialogSettings, historyKey);
     }
 
     public void storeHistory() {
