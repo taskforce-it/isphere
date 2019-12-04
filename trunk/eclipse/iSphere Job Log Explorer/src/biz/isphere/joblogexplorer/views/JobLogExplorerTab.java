@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -29,9 +28,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
 import org.medfoster.sqljep.ParseException;
@@ -90,7 +89,8 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
     private SashForm sashForm;
     private JobLogExplorerDetailsViewer detailsPanel;
 
-    private Shell shell;
+    SelectionListener sqlEditorSelectionListener;
+
     private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
 
     private AbstractJobLogExplorerInput jobLogExplorerInput;
@@ -100,10 +100,11 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
     private SqlEditor sqlEditor;
     private String filterClause;
 
-    public JobLogExplorerTab(Shell shell, CTabFolder parent) {
+    public JobLogExplorerTab(CTabFolder parent, SelectionListener sqlEditorSelectionListener) {
         super(parent, SWT.NONE);
 
-        this.shell = shell;
+        this.sqlEditorSelectionListener = sqlEditorSelectionListener;
+
         this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
 
         initializeComponents(parent);
@@ -275,7 +276,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
                     setFilterClause(sqlEditor.getWhereClause().trim());
                 }
             });
-            sqlEditor.addSelectionListener(new SQLStatementChangeListener());
+            sqlEditor.addSelectionListener(sqlEditorSelectionListener);
         }
 
         container.layout(true);
@@ -425,18 +426,17 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         notifyStatusChangedListeners(status);
     }
 
-    private void storeSqlEditorHistory() {
+    public void storeSqlEditorHistory() {
         sqlEditor.storeHistory();
-        for (CTabItem tabItem : ((CTabFolder)getParent()).getItems()) {
-            ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
-        }
     }
 
-    private void refreshSqlEditorHistory() {
+    public void refreshSqlEditorHistory() {
         sqlEditor.refreshHistory();
     }
 
-    private void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
+    public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
+
+        String whereClause = sqlEditor.getWhereClause();
 
         if (StringHelper.isNullOrEmpty(whereClause)) {
             return;
@@ -454,10 +454,6 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     }
 
-    private Shell getShell() {
-        return shell;
-    }
-
     public void setFocusOnSqlEditor() {
 
         if (isSqlEditorVisible()) {
@@ -465,51 +461,18 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         }
     }
 
-    private void performFilterJobLogMessages(SelectionEvent event) {
+    public void filterJobLogMessages() {
+
+        String whereClause = sqlEditor.getWhereClause();
 
         FilterData filterData = new FilterData();
-        filterData.whereClause = (String)event.data;
+        filterData.whereClause = whereClause;
+        Event event = new Event();
+        event.widget = this;
         event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
         event.data = filterData;
-        tableViewerPanel.widgetSelected(event);
-    }
-
-    private class SQLStatementChangeListener implements SelectionListener {
-
-        public void widgetSelected(SelectionEvent event) {
-            Object source = event.getSource();
-            if (source instanceof Button) {
-                Button button = (Button)event.getSource();
-                SqlEditor sqlEditor = getSqlEditor(button.getParent());
-                if (sqlEditor != null) {
-                    storeSqlEditorHistory();
-
-                    try {
-                        validateWhereClause(getShell(), (String)event.data);
-                        performFilterJobLogMessages(event);
-                    } catch (SQLSyntaxErrorException e) {
-                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-                        setFocusOnSqlEditor();
-                    }
-
-                }
-            }
-        }
-
-        private SqlEditor getSqlEditor(Composite parent) {
-
-            if (parent instanceof SqlEditor) {
-                return (SqlEditor)parent;
-            } else if (parent instanceof Composite) {
-                return getSqlEditor(parent.getParent());
-            }
-
-            return null;
-        }
-
-        public void widgetDefaultSelected(SelectionEvent event) {
-            widgetDefaultSelected(event);
-        }
+        SelectionEvent selectionEvent = new SelectionEvent(event);
+        tableViewerPanel.widgetSelected(selectionEvent);
     }
 
     private void setFilterPanelOptions() {
