@@ -119,7 +119,7 @@
    
       <perspective 
 	       id="biz.isphere.joblogexplorer.rse.perspective.JobLogExplorerPerspectiveLayout" 
-	       name="Job Log Explorer"
+	       name="%Perspective_Job_Log_Explorer"
 	       class="biz.isphere.joblogexplorer.rse.perspective.JobLogExplorerPerspectiveLayout"
 	       icon="icons/joblog_explorer.png">
       </perspective>
