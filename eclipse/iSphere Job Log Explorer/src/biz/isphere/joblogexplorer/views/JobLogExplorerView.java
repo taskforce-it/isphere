@@ -26,6 +26,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -33,8 +34,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
+import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.action.EditSqlAction;
 import biz.isphere.joblogexplorer.action.ExportToExcelAction;
@@ -140,7 +145,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
         JobLogExplorerTab jobLogExplorerTab = findExplorerTab(input);
         if (jobLogExplorerTab == null) {
-            jobLogExplorerTab = new JobLogExplorerTab(getShell(), getTabFolder());
+            jobLogExplorerTab = new JobLogExplorerTab(getTabFolder(), new SqlEditorSelectionListener());
             jobLogExplorerTab.setSqlEditorVisibility(false);
             jobLogExplorerTab.addStatusChangedListener(this);
             jobLogExplorerTab.setInput(input);
@@ -382,6 +387,56 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             return null;
         }
         return (JobLogExplorerTab)tabFolder.getSelection();
+    }
+
+    private void performFilterJobLogEntries(JobLogExplorerTab tabItem) throws SQLSyntaxErrorException {
+
+        tabItem.validateWhereClause(getShell());
+        tabItem.filterJobLogMessages();
+    }
+
+    private class SqlEditorSelectionListener implements SelectionListener {
+
+        public void widgetSelected(SelectionEvent event) {
+            Object source = event.getSource();
+            if (source instanceof Button) {
+                Button button = (Button)event.getSource();
+
+                try {
+                    getCurrentViewer().storeSqlEditorHistory();
+                    refreshSqlEditorHistory();
+                    performFilterJobLogEntries(getCurrentViewer());
+                } catch (SQLSyntaxErrorException e) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                    getCurrentViewer().setFocusOnSqlEditor();
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                }
+
+            }
+        }
+
+        private void refreshSqlEditorHistory() {
+            for (CTabItem tabItem : tabFolder.getItems()) {
+                ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
+            }
+        }
+
+        private SqlEditor getSqlEditor(Composite parent) {
+
+            if (parent instanceof SqlEditor) {
+                return (SqlEditor)parent;
+            } else if (parent instanceof Composite) {
+                return getSqlEditor(parent.getParent());
+            }
+
+            return null;
+        }
+
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetDefaultSelected(event);
+        }
     }
 
 }
