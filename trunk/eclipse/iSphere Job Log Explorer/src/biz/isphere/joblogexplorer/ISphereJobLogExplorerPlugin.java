@@ -32,6 +32,7 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
     public static final String EXCEL = "excel.png"; //$NON-NLS-1$
     public static final String IMAGE_REFRESH = "refresh.gif"; //$NON-NLS-1$
     public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png"; //$NON-NLS-1$
+    public static final String IMAGE_EDIT_SQL = "edit_sql.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$

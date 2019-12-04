@@ -10,10 +10,13 @@ package biz.isphere.joblogexplorer.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractIntegerFilter;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
@@ -54,27 +57,29 @@ public class JobLogMessage {
     private String lowerCaseText;
 
     public static enum Fields {
-        ID ("ID", 0),
-        TYPE ("TYPE", 1),
-        SEVERITY ("SEVERITY", 2),
-        FROM_LIBRARY ("FROM_LIBRARY", 3),
-        FROM_PROGRAM ("FROM_PROGRAM", 4),
-        FROM_MODULE ("FROM_MODULE", 5),
-        FROM_PROCEDURE ("FROM_PROCEDURE", 6),
-        FROM_STATEMENT ("FROM_STATEMENT", 7),
-        TO_LIBRARY ("TO_LIBRARY", 8),
-        TO_PROGRAM ("TO_PROGRAM", 9),
-        TO_MODULE ("TO_MODULE", 10),
-        TO_PROCEDURE ("TO_PROCEDURE", 11),
-        TO_STATEMENT ("TO_STATEMENT", 12),
-        TEXT ("TEXT", 13);
+        ID ("ID", 0, "CHAR(7)"),
+        TYPE ("TYPE", 1, "CHAR(10)"),
+        SEVERITY ("SEVERITY", 2, "INTEGER"),
+        FROM_LIBRARY ("FROM_LIBRARY", 3, "CHAR(10)"),
+        FROM_PROGRAM ("FROM_PROGRAM", 4, "CHAR(10)"),
+        FROM_MODULE ("FROM_MODULE", 5, "CHAR(10)"),
+        FROM_PROCEDURE ("FROM_PROCEDURE", 6, "CHAR(*)"),
+        FROM_STATEMENT ("FROM_STATEMENT", 7, "CHAR(10)"),
+        TO_LIBRARY ("TO_LIBRARY", 8, "CHAR(10)"),
+        TO_PROGRAM ("TO_PROGRAM", 9, "CHAR(10)"),
+        TO_MODULE ("TO_MODULE", 10, "CHAR(10)"),
+        TO_PROCEDURE ("TO_PROCEDURE", 11, "CHAR(*)"),
+        TO_STATEMENT ("TO_STATEMENT", 12, "CHAR(10)"),
+        TEXT ("TEXT", 13, "CHAR(*)");
 
         private String fieldName;
         private int fieldIndex;
+        private String sqlType;
 
-        private Fields(String fieldName, int fieldIndex) {
+        private Fields(String fieldName, int fieldIndex, String sqlType) {
             this.fieldName = fieldName;
             this.fieldIndex = fieldIndex;
+            this.sqlType = sqlType;
         }
 
         public String fieldName() {
@@ -83,6 +88,10 @@ public class JobLogMessage {
 
         public int fieldIndex() {
             return fieldIndex;
+        }
+
+        public String sqltype() {
+            return sqlType;
         }
     }
 
@@ -107,6 +116,34 @@ public class JobLogMessage {
 
     private static void addColumnMappingEntry(Map<String, Integer> columnMappings, Fields field) {
         columnMappings.put(field.fieldName(), field.fieldIndex());
+    }
+
+    private static List<ContentAssistProposal> proposals;
+    static {
+        proposals = new LinkedList<ContentAssistProposal>();
+        proposals.add(new ContentAssistProposal(Fields.ID.fieldName(), Fields.ID.sqltype() + " - " + Messages.LongFieldName_ID));
+        proposals.add(new ContentAssistProposal(Fields.TYPE.fieldName(), Fields.TYPE.sqltype() + " - " + Messages.LongFieldName_TYPE));
+        proposals.add(new ContentAssistProposal(Fields.SEVERITY.fieldName(), Fields.SEVERITY.sqltype() + " - " + Messages.LongFieldName_SEVERITY));
+        proposals.add(new ContentAssistProposal(Fields.FROM_LIBRARY.fieldName(), Fields.FROM_LIBRARY.sqltype() + " - "
+            + Messages.LongFieldName_FROM_LIBRARY));
+        proposals.add(new ContentAssistProposal(Fields.FROM_PROGRAM.fieldName(), Fields.FROM_PROGRAM.sqltype() + " - "
+            + Messages.LongFieldName_FROM_PROGRAM));
+        proposals.add(new ContentAssistProposal(Fields.FROM_MODULE.fieldName(), Fields.FROM_MODULE.sqltype() + " - "
+            + Messages.LongFieldName_FROM_MODULE));
+        proposals.add(new ContentAssistProposal(Fields.FROM_PROCEDURE.fieldName(), Fields.FROM_PROCEDURE.sqltype() + " - "
+            + Messages.LongFieldName_FROM_PROCEDURE));
+        proposals.add(new ContentAssistProposal(Fields.FROM_STATEMENT.fieldName(), Fields.FROM_STATEMENT.sqltype() + " - "
+            + Messages.LongFieldName_FROM_STATEMENT));
+        proposals.add(new ContentAssistProposal(Fields.TO_LIBRARY.fieldName(), Fields.TO_LIBRARY.sqltype() + " - "
+            + Messages.LongFieldName_TO_LIBRARY));
+        proposals.add(new ContentAssistProposal(Fields.TO_PROGRAM.fieldName(), Fields.TO_PROGRAM.sqltype() + " - "
+            + Messages.LongFieldName_TO_PROGRAM));
+        proposals.add(new ContentAssistProposal(Fields.TO_MODULE.fieldName(), Fields.TO_MODULE.sqltype() + " - " + Messages.LongFieldName_TO_MODULE));
+        proposals.add(new ContentAssistProposal(Fields.TO_PROCEDURE.fieldName(), Fields.TO_PROCEDURE.sqltype() + " - "
+            + Messages.LongFieldName_TO_PROCEDURE));
+        proposals.add(new ContentAssistProposal(Fields.TO_STATEMENT.fieldName(), Fields.TO_STATEMENT.sqltype() + " - "
+            + Messages.LongFieldName_TO_STATEMENT));
+        proposals.add(new ContentAssistProposal(Fields.TEXT.fieldName(), Fields.TEXT.sqltype() + " - " + Messages.LongFieldName_TEXT));
     }
 
     public JobLogMessage(int pageNumber) {
@@ -368,6 +405,10 @@ public class JobLogMessage {
         // + ", Timestamp: " + row[JOTSTP]);
 
         return row;
+    }
+
+    public static List<ContentAssistProposal> getContentAssistProposals() {
+        return proposals;
     }
 
     @Override

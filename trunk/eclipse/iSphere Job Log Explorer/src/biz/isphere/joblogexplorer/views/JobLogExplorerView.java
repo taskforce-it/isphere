@@ -36,6 +36,7 @@ import org.eclipse.ui.progress.UIJob;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.action.EditSqlAction;
 import biz.isphere.joblogexplorer.action.ExportToExcelAction;
 import biz.isphere.joblogexplorer.action.RefreshAction;
 import biz.isphere.joblogexplorer.action.ResetColumnSizeAction;
@@ -43,12 +44,11 @@ import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 
-public class JobLogExplorerView extends ViewPart implements SelectionListener, IJobLogExplorerStatusChangedListener {
+public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener {
 
     public static final String ID = "biz.isphere.joblogexplorer.views.JobLogExplorerView"; //$NON-NLS-1$
 
-    // TODO: enable SQL editor
-    // private EditSqlAction editSqlAction;
+    private EditSqlAction editSqlAction;
     private RefreshAction reloadEntriesAction;
     private ExportToExcelAction exportToExcelAction;
     private ResetColumnSizeAction resetColumnSizeAction;
@@ -56,6 +56,7 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
     private CTabFolder tabFolder;
 
     public JobLogExplorerView() {
+        super();
     }
 
     /**
@@ -125,14 +126,7 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
      */
     private void createActions() {
 
-        // TODO: enable SQL editor
-        // editSqlAction = new EditSqlAction(getSite().getShell()) {
-        // @Override
-        // public void postRunAction() {
-        // performEditSQL();
-        // }
-        // };
-
+        editSqlAction = new EditSqlAction();
         reloadEntriesAction = new RefreshAction();
         exportToExcelAction = new ExportToExcelAction();
         resetColumnSizeAction = new ResetColumnSizeAction();
@@ -146,7 +140,8 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
 
         JobLogExplorerTab jobLogExplorerTab = findExplorerTab(input);
         if (jobLogExplorerTab == null) {
-            jobLogExplorerTab = new JobLogExplorerTab(getTabFolder());
+            jobLogExplorerTab = new JobLogExplorerTab(getShell(), getTabFolder());
+            jobLogExplorerTab.setSqlEditorVisibility(false);
             jobLogExplorerTab.addStatusChangedListener(this);
             jobLogExplorerTab.setInput(input);
         }
@@ -200,8 +195,7 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
     private void initializeToolBar() {
 
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        // TODO: enable SQL editor
-        // toolBarManager.add(editSqlAction);
+        toolBarManager.add(editSqlAction);
         toolBarManager.add(exportToExcelAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(resetColumnSizeAction);
@@ -249,15 +243,6 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
      */
     private void setActionEnablement(JobLogExplorerTab tabItem) {
 
-        // TODO: enable SQL editor
-        // if (viewer == null) {
-        // editSqlAction.setEnabled(false);
-        // editSqlAction.setChecked(false);
-        // } else {
-        // editSqlAction.setEnabled(viewer.hasSqlEditor());
-        // editSqlAction.setChecked(viewer.isSqlEditorVisible());
-        // }
-
         if (tabItem != null && tabItem.getItemsCount() > 0) {
             exportToExcelAction.setEnabled(true);
             exportToExcelAction.setTabItem(tabItem);
@@ -275,9 +260,15 @@ public class JobLogExplorerView extends ViewPart implements SelectionListener, I
         }
 
         if (tabItem != null) {
+            editSqlAction.setEnabled(true);
+            editSqlAction.setChecked(tabItem.isSqlEditorVisible());
+            editSqlAction.setTabItem(tabItem);
             resetColumnSizeAction.setEnabled(true);
             resetColumnSizeAction.setTabItem(tabItem);
         } else {
+            editSqlAction.setEnabled(false);
+            editSqlAction.setChecked(false);
+            editSqlAction.setTabItem(null);
             resetColumnSizeAction.setEnabled(false);
             resetColumnSizeAction.setTabItem(null);
         }

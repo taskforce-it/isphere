@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -32,7 +33,7 @@ import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 
-public class JobLogExplorerFilterPanel {
+public class JobLogExplorerFilterPanel extends Composite {
 
     private Composite filterArea;
 
@@ -57,9 +58,12 @@ public class JobLogExplorerFilterPanel {
     private Button buttonSelectAll;
     private Button buttonDeselectAll;
 
-    public JobLogExplorerFilterPanel() {
+    public JobLogExplorerFilterPanel(Composite parent, int style) {
+        super(parent, style);
 
         this.filterChangedListeners = new ArrayList<SelectionListener>();
+
+        createContentArea();
     }
 
     private GridLayout createGridLayout(int numColumns, boolean makeColumnsEqual) {
@@ -73,49 +77,49 @@ public class JobLogExplorerFilterPanel {
         return gridLayout;
     }
 
-    public void createViewer(Composite parent) {
+    private void createContentArea() {
 
-        filterArea = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = createGridLayout(2, false);
         gridLayout.marginTop = 5;
-        filterArea.setLayout(gridLayout);
-        filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        setLayout(gridLayout);
+
+        // filterArea = new Composite(this, SWT.NONE);
+        // GridLayout filterAreaLayout = new GridLayout(2, false);
+        // filterAreaLayout.marginHeight = 0;
+        // filterAreaLayout.marginWidth = 0;
+        // filterArea.setLayout(filterAreaLayout);
+        // filterArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Create controls
-        createFilterControls(filterArea);
+        createFilterControls(this);
 
-        createTextSearchControls(filterArea);
+        createTextSearchControls(this);
 
-        createButtons(filterArea);
+        createButtons(this);
     }
 
-    public void setEnabled(boolean enabled) {
-        filterArea.setEnabled(enabled);
-    }
+    // public void setEnabled(boolean enabled) {
+    // filterArea.setEnabled(enabled);
+    // }
 
     private void createFilterControls(Composite parent) {
 
         Composite combosArea = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = createGridLayout(6, true);
+        GridLayout gridLayout = createGridLayout(6, false);
         combosArea.setLayout(gridLayout);
         combosArea.setLayoutData(new GridData(GridData.BEGINNING));
-
-        int horizontalSpan = 1;
 
         comboIdFilter = createCombo(combosArea, Messages.Label_ID, MessageModifyEvent.ID);
         comboTypeFilter = createCombo(combosArea, Messages.Label_Type, MessageModifyEvent.TYPE);
         comboSeverityFilter = createCombo(combosArea, Messages.Label_Severity, MessageModifyEvent.SEVERITY);
-        comboSeverityFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
 
         comboFromLibraryFilter = createCombo(combosArea, Messages.Label_From_Library, MessageModifyEvent.FROM_LIBRARY);
         comboFromProgramFilter = createCombo(combosArea, Messages.Label_From_Program, MessageModifyEvent.FROM_PROGRAM);
         comboFromStmtFilter = createCombo(combosArea, Messages.Label_From_Stmt, MessageModifyEvent.FROM_STMT);
-        comboFromStmtFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
 
         comboToLibraryFilter = createCombo(combosArea, Messages.Label_To_Library, MessageModifyEvent.TO_LIBRARY);
         comboToProgramFilter = createCombo(combosArea, Messages.Label_To_Program, MessageModifyEvent.TO_PROGRAM);
         comboToStmtFilter = createCombo(combosArea, Messages.Label_To_Stmt, MessageModifyEvent.TO_STMT);
-        comboToStmtFilter.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, horizontalSpan, 1));
     }
 
     private Combo createCombo(Composite filterArea, String label, int messageEventType) {
@@ -124,6 +128,9 @@ public class JobLogExplorerFilterPanel {
         labelText.setText(label);
 
         Combo combo = WidgetFactory.createCombo(filterArea);
+        GridData layoutData = new GridData();
+        layoutData.widthHint = 100;
+        combo.setLayoutData(layoutData);
 
         return combo;
     }
@@ -237,9 +244,9 @@ public class JobLogExplorerFilterPanel {
         }
     }
 
-    public boolean isDisposed() {
-        return filterArea.isDisposed();
-    }
+    // public boolean isDisposed() {
+    // return filterArea.isDisposed();
+    // }
 
     public void setIdFilterItems(String[] idFilterItems) {
         setComboItems(comboIdFilter, idFilterItems);
@@ -318,6 +325,24 @@ public class JobLogExplorerFilterPanel {
         textSearch.setText(""); //$NON-NLS-1$
 
         notifyFilterChangedListeners(event);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+
+        super.setEnabled(enabled);
+        setChildrenEnabled(getChildren(), enabled);
+    }
+
+    private void setChildrenEnabled(Control[] children, boolean enabled) {
+
+        for (Control child : children) {
+            if (child instanceof Composite) {
+                Composite composite = (Composite)child;
+                composite.setEnabled(enabled);
+                setChildrenEnabled(composite.getChildren(), enabled);
+            }
+        }
     }
 
     private class ApplyFiltersSelectionListener extends SelectionAdapter {

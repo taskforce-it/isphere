@@ -9,30 +9,30 @@
 package biz.isphere.joblogexplorer.action;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
 
-public abstract class EditSqlAction extends Action {
+import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
+import biz.isphere.joblogexplorer.Messages;
+import biz.isphere.joblogexplorer.views.JobLogExplorerTab;
 
-    // private static final String IMAGE =
-    // ISphereJournalExplorerCorePlugin.IMAGE_EDIT_SQL;
+public class EditSqlAction extends Action {
 
-    public EditSqlAction(Shell shell) {
-        super("Edit SQL", SWT.TOGGLE);
+    public static final String ID = "biz.isphere.joblogexplorer.action.EditSqlAction"; //$NON-NLS-1$
 
-        // setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
-    }
+    private JobLogExplorerTab tabItem;
 
-    public Image getImage() {
-        // return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
-        return null;
+    public EditSqlAction() {
+        super(Messages.Edit_SQL, Action.AS_CHECK_BOX);
+        setToolTipText(Messages.Edit_SQL);
+        setImageDescriptor(ISphereJobLogExplorerPlugin.getDefault().getImageDescriptor(ISphereJobLogExplorerPlugin.IMAGE_EDIT_SQL));
+        setId(ID);
     }
 
     @Override
     public void run() {
-        postRunAction();
+        tabItem.setSqlEditorVisibility(isChecked());
     }
 
-    protected abstract void postRunAction();
+    public void setTabItem(JobLogExplorerTab tabItem) {
+        this.tabItem = tabItem;
+    }
 }
