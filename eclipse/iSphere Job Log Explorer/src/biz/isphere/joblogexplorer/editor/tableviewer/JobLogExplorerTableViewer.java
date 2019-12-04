@@ -45,6 +45,7 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromProgramFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromStatementFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.IdFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.MasterFilter;
+import biz.isphere.joblogexplorer.editor.tableviewer.filters.NativeSQLFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.SeverityFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TextFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToLibraryFilter;
@@ -90,6 +91,10 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
 
     public void setInputData(JobLog jobLog) {
         tableViewer.setInput(jobLog);
+    }
+
+    public JobLog getInputData() {
+        return (JobLog)tableViewer.getInput();
     }
 
     public JobLogMessage[] getItems() {
@@ -525,6 +530,9 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
                 }
                 if (isFilterValue(filterData.text)) {
                     masterFilter.addFilter(new TextFilter(filterData.text));
+                }
+                if (isFilterValue(filterData.whereClause)) {
+                    masterFilter.addFilter(new NativeSQLFilter(filterData.whereClause));
                 }
             }
 

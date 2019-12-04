@@ -10,6 +10,7 @@ package biz.isphere.joblogexplorer.views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -17,21 +18,36 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
+import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
@@ -41,7 +57,9 @@ import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 import biz.isphere.joblogexplorer.editor.detailsviewer.JobLogExplorerDetailsViewer;
+import biz.isphere.joblogexplorer.editor.filter.FilterData;
 import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanel;
+import biz.isphere.joblogexplorer.editor.filter.JobLogExplorerFilterPanelEvents;
 import biz.isphere.joblogexplorer.editor.tableviewer.JobLogExplorerTableViewer;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractStringFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.FromLibraryFilter;
@@ -72,15 +90,20 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
     private SashForm sashForm;
     private JobLogExplorerDetailsViewer detailsPanel;
 
+    private Shell shell;
     private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
 
     private AbstractJobLogExplorerInput jobLogExplorerInput;
 
     private DialogSettingsManager dialogSettingsManager = null;
+    private boolean isSqlEditorVisible;
+    private SqlEditor sqlEditor;
+    private String filterClause;
 
-    public JobLogExplorerTab(CTabFolder parent) {
+    public JobLogExplorerTab(Shell shell, CTabFolder parent) {
         super(parent, SWT.NONE);
 
+        this.shell = shell;
         this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
 
         initializeComponents(parent);
@@ -88,7 +111,12 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     public void setEnabled(boolean enabled) {
         tableViewerPanel.setEnabled(enabled);
-        filterPanel.setEnabled(enabled);
+        if (isSqlEditorVisible()) {
+            filterPanel.setEnabled(false);
+            sqlEditor.setEnabled(enabled);
+        } else {
+            filterPanel.setEnabled(enabled);
+        }
     }
 
     public void setInput(AbstractJobLogExplorerInput input) {
@@ -119,6 +147,35 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     public AbstractJobLogExplorerInput getInput() {
         return jobLogExplorerInput;
+    }
+
+    public boolean isSqlEditorVisible() {
+        return isSqlEditorVisible;
+    }
+
+    public void setSqlEditorVisibility(boolean visible) {
+        this.isSqlEditorVisible = visible;
+        setSqlEditorEnablement();
+    }
+
+    private void setSqlEditorEnablement() {
+
+        if (isSqlEditorVisible()) {
+            createSqlEditor();
+            filterPanel.setEnabled(false);
+        } else {
+            destroySqlEditor();
+            filterPanel.setEnabled(true);
+        }
+    }
+
+    private boolean isAvailable(Control control) {
+
+        if (control != null && !control.isDisposed()) {
+            return true;
+        }
+
+        return false;
     }
 
     private void prepareLoadingJobLog(AbstractJobLogExplorerInput editorInput) {
@@ -155,30 +212,41 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     private void initializeComponents(CTabFolder parent) {
 
-        this.container = new Composite(parent, SWT.BORDER);
+        this.container = new Composite(parent, SWT.NONE);
         container.setLayout(createGridLayoutNoMargin());
         container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        JobLogExplorerFilterPanel filterPanel = createTopPanel(container);
-        JobLogExplorerTableViewer tableViewer = createMainPanel(container, filterPanel);
+        createFilterPanel();
+        createMainPanel(filterPanel);
+
+        filterPanel.addFilterChangedListener(tableViewerPanel);
 
         container.layout(true);
         setControl(container);
 
-        tableViewer.addStatusChangedListener(this);
     }
 
-    private JobLogExplorerFilterPanel createTopPanel(Composite parent) {
+    private void createFilterPanel() {
 
-        filterPanel = new JobLogExplorerFilterPanel();
-        filterPanel.createViewer(parent);
-
-        return filterPanel;
+        if (!isAvailable(filterPanel)) {
+            filterPanel = new JobLogExplorerFilterPanel(container, SWT.NONE);
+            filterPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            setFilterPanelOptions();
+            container.layout(true);
+        }
     }
 
-    private JobLogExplorerTableViewer createMainPanel(Composite parent, JobLogExplorerFilterPanel filterPanel) {
+    private void destroyFilterPanel() {
 
-        sashForm = new SashForm(parent, SWT.NONE);
+        if (isAvailable(filterPanel)) {
+            filterPanel.dispose();
+            container.layout(true);
+        }
+    }
+
+    private void createMainPanel(JobLogExplorerFilterPanel filterPanel) {
+
+        sashForm = new SashForm(container, SWT.NONE);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
         sashForm.setLayoutData(sashFormLayoutData);
 
@@ -187,9 +255,56 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         sashForm.setWeights(loadWeights());
 
         tableViewerPanel.addMessageSelectionChangedListener(detailsPanel);
-        filterPanel.addFilterChangedListener(tableViewerPanel);
+        tableViewerPanel.addStatusChangedListener(this);
+    }
 
-        return tableViewerPanel;
+    private void createSqlEditor() {
+
+        if (!isAvailable(sqlEditor)) {
+            sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager());
+            sqlEditor.setContentAssistProposals(getContentAssistProposals());
+            sqlEditor.setWhereClause(getFilterClause());
+            GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+            gd.heightHint = 120;
+            sqlEditor.setLayoutData(gd);
+            sqlEditor.setFocus();
+            sqlEditor.setBtnExecuteLabel(Messages.Label_Filter);
+            sqlEditor.setBtnExecuteToolTipText(Messages.Label_Filter_tooltip);
+            sqlEditor.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent event) {
+                    setFilterClause(sqlEditor.getWhereClause().trim());
+                }
+            });
+            sqlEditor.addSelectionListener(new SQLStatementChangeListener());
+        }
+
+        container.layout(true);
+    }
+
+    private void destroySqlEditor() {
+
+        if (isAvailable(sqlEditor)) {
+            // Important, must be called to ensure the SqlEditor is removed from
+            // the list of preferences listeners.
+            sqlEditor.removeSelectionListener(tableViewerPanel);
+            sqlEditor.dispose();
+            container.layout(true);
+        }
+    }
+
+    private ContentAssistProposal[] getContentAssistProposals() {
+
+        List<ContentAssistProposal> proposals = JobLogMessage.getContentAssistProposals();
+
+        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    }
+
+    private void setFilterClause(String whereClause) {
+        this.filterClause = whereClause;
+    }
+
+    public String getFilterClause() {
+        return filterClause;
     }
 
     @Override
@@ -308,6 +423,138 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             this);
         status.setException(message, e);
         notifyStatusChangedListeners(status);
+    }
+
+    private void storeSqlEditorHistory() {
+        sqlEditor.storeHistory();
+        for (CTabItem tabItem : ((CTabFolder)getParent()).getItems()) {
+            ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
+        }
+    }
+
+    private void refreshSqlEditorHistory() {
+        sqlEditor.refreshHistory();
+    }
+
+    private void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
+
+        if (StringHelper.isNullOrEmpty(whereClause)) {
+            return;
+        }
+
+        try {
+
+            HashMap<String, Integer> columnMapping = JobLogMessage.getColumnMapping();
+            RowJEP sqljep = new RowJEP(whereClause);
+            sqljep.parseExpression(columnMapping);
+
+        } catch (ParseException e) {
+            throw new SQLSyntaxErrorException(e);
+        }
+
+    }
+
+    private Shell getShell() {
+        return shell;
+    }
+
+    public void setFocusOnSqlEditor() {
+
+        if (isSqlEditorVisible()) {
+            sqlEditor.setFocus();
+        }
+    }
+
+    private void performFilterJobLogMessages(SelectionEvent event) {
+
+        FilterData filterData = new FilterData();
+        filterData.whereClause = (String)event.data;
+        event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
+        event.data = filterData;
+        tableViewerPanel.widgetSelected(event);
+    }
+
+    private class SQLStatementChangeListener implements SelectionListener {
+
+        public void widgetSelected(SelectionEvent event) {
+            Object source = event.getSource();
+            if (source instanceof Button) {
+                Button button = (Button)event.getSource();
+                SqlEditor sqlEditor = getSqlEditor(button.getParent());
+                if (sqlEditor != null) {
+                    storeSqlEditorHistory();
+
+                    try {
+                        validateWhereClause(getShell(), (String)event.data);
+                        performFilterJobLogMessages(event);
+                    } catch (SQLSyntaxErrorException e) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                        setFocusOnSqlEditor();
+                    }
+
+                }
+            }
+        }
+
+        private SqlEditor getSqlEditor(Composite parent) {
+
+            if (parent instanceof SqlEditor) {
+                return (SqlEditor)parent;
+            } else if (parent instanceof Composite) {
+                return getSqlEditor(parent.getParent());
+            }
+
+            return null;
+        }
+
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetDefaultSelected(event);
+        }
+    }
+
+    private void setFilterPanelOptions() {
+
+        if (tableViewerPanel == null) {
+            return;
+        }
+
+        JobLog jobLog = tableViewerPanel.getInputData();
+        if (jobLog == null) {
+            return;
+        }
+
+        filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
+        filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
+        filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
+            AbstractStringFilter.UI_SPCVAL_BLANK));
+
+        filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
+        filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));
+        filterPanel.setFromStmtFilterItems(addSpecialTypes(jobLog.getMessageFromStatements(), FromStatementFilter.UI_SPCVAL_ALL));
+
+        filterPanel.setToLibraryFilterItems(addSpecialTypes(jobLog.getMessageToLibraries(), TypeFilter.UI_SPCVAL_ALL));
+        filterPanel.setToProgramFilterItems(addSpecialTypes(jobLog.getMessageToPrograms(), TypeFilter.UI_SPCVAL_ALL));
+        filterPanel.setToStmtFilterItems(addSpecialTypes(jobLog.getMessageToStatements(), TypeFilter.UI_SPCVAL_ALL));
+    }
+
+    protected String[] addSpecialTypes(String[] messageTypes, String... spcval) {
+
+        if (spcval == null || spcval.length == 0) {
+            return messageTypes;
+        }
+
+        List<String> items = new ArrayList<String>();
+
+        for (String value : spcval) {
+            items.add(value);
+        }
+
+        Arrays.sort(messageTypes);
+        for (String value : messageTypes) {
+            items.add(value);
+        }
+
+        return items.toArray(new String[items.size()]);
     }
 
     private class ParseSpooledFileJob extends Job {
@@ -458,18 +705,9 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
                 viewer.setInputData(jobLog);
 
-                filterPanel.setIdFilterItems(addSpecialTypes(jobLog.getMessageIds(), IdFilter.UI_SPCVAL_ALL));
-                filterPanel.setTypeFilterItems(addSpecialTypes(jobLog.getMessageTypes(), TypeFilter.UI_SPCVAL_ALL));
-                filterPanel.setSeverityFilterItems(addSpecialTypes(jobLog.getMessageSeverities(), SeverityFilter.UI_SPCVAL_ALL,
-                    AbstractStringFilter.UI_SPCVAL_BLANK));
-
-                filterPanel.setFromLibraryFilterItems(addSpecialTypes(jobLog.getMessageFromLibraries(), FromLibraryFilter.UI_SPCVAL_ALL));
-                filterPanel.setFromProgramFilterItems(addSpecialTypes(jobLog.getMessageFromPrograms(), FromProgramFilter.UI_SPCVAL_ALL));
-                filterPanel.setFromStmtFilterItems(addSpecialTypes(jobLog.getMessageFromStatements(), FromStatementFilter.UI_SPCVAL_ALL));
-
-                filterPanel.setToLibraryFilterItems(addSpecialTypes(jobLog.getMessageToLibraries(), TypeFilter.UI_SPCVAL_ALL));
-                filterPanel.setToProgramFilterItems(addSpecialTypes(jobLog.getMessageToPrograms(), TypeFilter.UI_SPCVAL_ALL));
-                filterPanel.setToStmtFilterItems(addSpecialTypes(jobLog.getMessageToStatements(), TypeFilter.UI_SPCVAL_ALL));
+                if (isAvailable(filterPanel)) {
+                    setFilterPanelOptions();
+                }
 
                 if (viewer.getItemCount() != 0) {
                     viewer.setSelection(0);
@@ -487,26 +725,6 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             notifyStatusChangedListeners(status);
 
             return Status.OK_STATUS;
-        }
-
-        protected String[] addSpecialTypes(String[] messageTypes, String... spcval) {
-
-            if (spcval == null || spcval.length == 0) {
-                return messageTypes;
-            }
-
-            List<String> items = new ArrayList<String>();
-
-            for (String value : spcval) {
-                items.add(value);
-            }
-
-            Arrays.sort(messageTypes);
-            for (String value : messageTypes) {
-                items.add(value);
-            }
-
-            return items.toArray(new String[items.size()]);
         }
 
     }

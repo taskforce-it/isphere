@@ -18,7 +18,7 @@
             icon="icons/joblog_explorer.png"
             class="biz.isphere.joblogexplorer.views.JobLogExplorerView"
             category="biz.isphere.core.views.categories"
-            name="%Job_Log_Explorer"
+            name="%View_Job_Log_Explorer"
             id="biz.isphere.joblogexplorer.views.JobLogExplorerView">
       </view>
    </extension>

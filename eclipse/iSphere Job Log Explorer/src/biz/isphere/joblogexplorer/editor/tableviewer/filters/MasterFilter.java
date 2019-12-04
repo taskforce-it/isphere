@@ -31,6 +31,20 @@ public class MasterFilter extends ViewerFilter {
         this.filters = new ArrayList<IMessagePropertyFilter>();
     }
 
+    private void prepareSql() throws ParseException {
+
+        StringBuilder whereClause = new StringBuilder();
+
+        for (IMessagePropertyFilter filter : filters) {
+            if (whereClause.length() > 0) {
+                whereClause.append(" AND ");
+            }
+            whereClause.append(filter.getWhereClause());
+        }
+
+        setWhereCondition(whereClause.toString());
+    }
+
     private void setWhereCondition(String whereClause) throws ParseException {
 
         isLogError = true;
@@ -47,6 +61,14 @@ public class MasterFilter extends ViewerFilter {
 
     public void addFilter(IMessagePropertyFilter filter) throws ParseException {
 
+        if (filters.size() > 0 && (filters.get(0) instanceof NativeSQLFilter)) {
+            throw new IllegalArgumentException("No filters allowed, when NativeSQLFilter is set."); //$NON-NLS-1$
+        }
+
+        if (filter instanceof NativeSQLFilter) {
+            removeAllFilters();
+        }
+
         filters.add(filter);
 
         prepareSql();
@@ -58,20 +80,6 @@ public class MasterFilter extends ViewerFilter {
 
     public int countFilters() {
         return filters.size();
-    }
-
-    private void prepareSql() throws ParseException {
-
-        StringBuilder whereClause = new StringBuilder();
-
-        for (IMessagePropertyFilter filter : filters) {
-            if (whereClause.length() > 0) {
-                whereClause.append(" AND ");
-            }
-            whereClause.append(filter.getWhereClause());
-        }
-
-        setWhereCondition(whereClause.toString());
     }
 
     @Override

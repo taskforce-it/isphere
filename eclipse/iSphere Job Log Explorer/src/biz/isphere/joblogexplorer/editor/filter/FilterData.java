@@ -26,6 +26,8 @@ public class FilterData {
 
     public String text;
 
+    public String whereClause;
+
     public FilterData() {
         this.id = EMPTY;
         this.type = EMPTY;
@@ -37,6 +39,7 @@ public class FilterData {
         this.toProgram = EMPTY;
         this.toStmt = EMPTY;
         this.text = EMPTY;
+        this.whereClause = EMPTY;
     }
 
 }

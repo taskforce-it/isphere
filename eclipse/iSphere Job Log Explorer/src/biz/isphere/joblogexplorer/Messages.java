@@ -54,6 +54,24 @@ public class Messages extends NLS {
     public static String Label_Text;
     public static String Label_Text_tooltip;
 
+    public static String Label_Filter;
+    public static String Label_Filter_tooltip;
+
+    public static String LongFieldName_ID;
+    public static String LongFieldName_TYPE;
+    public static String LongFieldName_SEVERITY;
+    public static String LongFieldName_FROM_LIBRARY;
+    public static String LongFieldName_FROM_PROGRAM;
+    public static String LongFieldName_FROM_MODULE;
+    public static String LongFieldName_FROM_PROCEDURE;
+    public static String LongFieldName_FROM_STATEMENT;
+    public static String LongFieldName_TO_LIBRARY;
+    public static String LongFieldName_TO_PROGRAM;
+    public static String LongFieldName_TO_MODULE;
+    public static String LongFieldName_TO_PROCEDURE;
+    public static String LongFieldName_TO_STATEMENT;
+    public static String LongFieldName_TEXT;
+
     public static String Message_details;
     public static String Number_of_messages_A;
     public static String Number_of_messages_B_slash_A;
@@ -110,6 +128,7 @@ public class Messages extends NLS {
     public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
 
     public static String Refresh;
+    public static String Edit_SQL;
     public static String Exort_to_Excel;
     public static String Reset_Column_Size;
     public static String SaveDialog_Excel_Workbook;
