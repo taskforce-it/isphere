@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,10 +39,10 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
-import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -504,6 +505,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         public void widgetSelected(SelectionEvent event) {
             try {
                 getSelectedViewer().storeSqlEditorHistory();
+                refreshSqlEditorHistory();
                 performFilterJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
@@ -511,6 +513,12 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
                 MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+        }
+
+        private void refreshSqlEditorHistory() {
+            for (CTabItem tabItem : tabs.getItems()) {
+                ((AbstractJournalEntriesViewer)tabItem).refreshSqlEditorHistory();
             }
         }
 

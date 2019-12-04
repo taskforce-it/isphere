@@ -46,10 +46,10 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.exceptions.SQLSyntaxErrorException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -168,6 +168,10 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
     public void storeSqlEditorHistory() {
         sqlEditor.storeHistory();
+    }
+
+    public void refreshSqlEditorHistory() {
+        sqlEditor.refreshHistory();
     }
 
     protected void setSelectClause(String whereClause) {
