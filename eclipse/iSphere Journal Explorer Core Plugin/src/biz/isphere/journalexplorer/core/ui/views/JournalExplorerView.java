@@ -31,6 +31,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
@@ -137,11 +138,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      */
     private void createActions() {
 
-        resetColumnSizeAction = new ResetColumnSizeAction(getSite().getShell());
+        resetColumnSizeAction = new ResetColumnSizeAction(getShell());
 
-        exportToExcelAction = new ExportToExcelAction(getSite().getShell());
+        exportToExcelAction = new ExportToExcelAction(getShell());
 
-        openJournalOutputFileAction = new OpenJournalOutfileAction(getSite().getShell()) {
+        openJournalOutputFileAction = new OpenJournalOutfileAction(getShell()) {
             @Override
             public void postRunAction() {
                 OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
@@ -152,7 +153,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        editSqlAction = new EditSqlAction(getSite().getShell()) {
+        editSqlAction = new EditSqlAction(getShell()) {
             @Override
             public void postRunAction() {
                 AbstractJournalEntriesViewer viewer = getSelectedViewer();
@@ -161,11 +162,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        compareSideBySideAction = new CompareSideBySideAction(getSite().getShell());
+        compareSideBySideAction = new CompareSideBySideAction(getShell());
 
         toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction();
 
-        configureParsersAction = new ConfigureParsersAction(getSite().getShell()) {
+        configureParsersAction = new ConfigureParsersAction(getShell()) {
             @Override
             public void run() {
                 super.run();
@@ -226,7 +227,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         } catch (Throwable e) {
 
             ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab ***", e);
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
 
             if (journalEntriesViewer != null) {
                 journalEntriesViewer.removeAsSelectionProvider(selectionProviderIntermediate);
@@ -240,18 +241,18 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         updateStatusLine();
 
         if (e instanceof ParseException) {
-            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof BufferTooSmallException) {
-            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof NoJournalEntriesLoadedException) {
-            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
         } else if (e instanceof SQLSyntaxErrorException) {
-            MessageDialog.openInformation(getSite().getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
         } else {
             ISpherePlugin.logError("*** Error in method JournalExplorerView.handleDataLoadException() ***", e);
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
 
         if (journalEntriesViewer != null) {
@@ -274,7 +275,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         } catch (Exception e) {
             ISpherePlugin.logError("*** Error in method JournalExplorerView.performReloadJournalEntries() ***", e);
-            MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
@@ -469,6 +470,10 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         compareSideBySideAction.setSelectedItems(selectedJournalEntries);
     }
 
+    private Shell getShell() {
+        return getSite().getShell();
+    }
+
     /**
      * Called by the viewer, when items are selected by the user.
      */
@@ -508,11 +513,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
                 refreshSqlEditorHistory();
                 performFilterJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
-                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
                 getSelectedViewer().setFocusOnSqlEditor();
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
-                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
 
