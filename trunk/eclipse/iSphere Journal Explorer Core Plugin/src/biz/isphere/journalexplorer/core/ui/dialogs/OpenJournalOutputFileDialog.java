@@ -35,7 +35,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -111,9 +110,6 @@ public class OpenJournalOutputFileDialog extends XDialog {
     protected Control createDialogArea(Composite parent) {
 
         Composite container = (Composite)super.createDialogArea(parent);
-        GridLayout gridLayout = (GridLayout)container.getLayout();
-        gridLayout.numColumns = 2;
-        gridLayout.verticalSpacing = 5;
 
         Label lblConnections = new Label(container, SWT.NONE);
         lblConnections.setText(Messages.AddJournalDialog_Conection);
