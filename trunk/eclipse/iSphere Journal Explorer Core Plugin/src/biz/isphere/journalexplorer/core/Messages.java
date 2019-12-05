@@ -166,6 +166,7 @@ public class Messages extends NLS {
 
     public static String Warning_Not_all_journal_entries_loaded;
     public static String Warning_Not_all_journal_entries_loaded_unknown_size;
+    public static String Warning_Loading_journal_entries_has_been_canceled_by_the_user;
 
     public static String ColLabel_OutputFile_Rrn;
     public static String ColLabel_JournalEntry_Table_A;
@@ -227,6 +228,7 @@ public class Messages extends NLS {
     public static String Title_Journal_A;
     public static String Title_File_A;
     public static String Title_Files_A;
+    public static String Title_Load_Journal_Entries;
 
     public static String Colors;
     public static String Enable_coloring;

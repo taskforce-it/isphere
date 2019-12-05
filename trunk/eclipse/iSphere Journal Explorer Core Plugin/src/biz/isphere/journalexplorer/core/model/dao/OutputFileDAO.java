@@ -11,6 +11,8 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 
@@ -64,8 +66,8 @@ public class OutputFileDAO extends DAOBase {
         this.whereClause = whereClause;
     }
 
-    public JournalEntries getJournalData(String whereClause) throws Exception {
+    public JournalEntries getJournalData(String whereClause, IProgressMonitor monitor) throws Exception {
         setWhereClause(whereClause);
-        return typeDAO.load(getWhereClause());
+        return typeDAO.load(getWhereClause(), monitor);
     }
 }

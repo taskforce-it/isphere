@@ -308,18 +308,23 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         if (viewer != null) {
             JournalEntries journalEntries = viewer.getInput();
             if (journalEntries != null) {
-                int numItemsDownloaded = journalEntries.getNumberOfRowsDownloaded();
-                if (journalEntries.isOverflow() && !isFilter) {
-                    String messageText;
-                    int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
-                    if (numItemsAvailable < 0) {
-                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable,
-                            numItemsDownloaded);
-                    } else {
-                        messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItemsDownloaded);
+                if (journalEntries.isCanceled()) {
+                    MessageDialog.openWarning(getShell(), Messages.Title_Load_Journal_Entries,
+                        Messages.Warning_Loading_journal_entries_has_been_canceled_by_the_user);
+                } else {
+                    int numItemsDownloaded = journalEntries.getNumberOfRowsDownloaded();
+                    if (journalEntries.isOverflow() && !isFilter) {
+                        String messageText;
+                        int numItemsAvailable = journalEntries.getNumberOfRowsAvailable();
+                        if (numItemsAvailable < 0) {
+                            messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded_unknown_size, numItemsAvailable,
+                                numItemsDownloaded);
+                        } else {
+                            messageText = Messages.bind(Messages.Warning_Not_all_journal_entries_loaded, numItemsAvailable, numItemsDownloaded);
+                        }
+                        DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED,
+                            messageText);
                     }
-                    DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOURNAL_ENTRIES_LOADED,
-                        messageText);
                 }
             }
         }

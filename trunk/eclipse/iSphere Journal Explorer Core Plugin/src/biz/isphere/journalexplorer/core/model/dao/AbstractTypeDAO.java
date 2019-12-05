@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
@@ -39,7 +41,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         this.outputFile = outputFile;
     }
 
-    public JournalEntries load(String whereClause) throws Exception {
+    public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
 
         JournalEntries journalEntries = new JournalEntries(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
 
@@ -71,7 +73,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                 JournalEntry journalEntry = null;
 
-                while (resultSet.next()) {
+                while (!isCanceled(monitor, journalEntries) && resultSet.next()) {
 
                     if (journalEntries.getNumberOfRowsDownloaded() >= maxNumRows) {
                         handleOverflowError(journalEntries);
@@ -103,6 +105,14 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         }
 
         return journalEntries;
+    }
+
+    private boolean isCanceled(IProgressMonitor monitor, JournalEntries journalEntries) {
+        if (monitor.isCanceled()) {
+            journalEntries.setCanceled(true);
+            return true;
+        }
+        return false;
     }
 
     /**
