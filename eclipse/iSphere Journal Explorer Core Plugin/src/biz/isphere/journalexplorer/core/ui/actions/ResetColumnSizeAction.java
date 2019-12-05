@@ -14,14 +14,14 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
 
 public class ResetColumnSizeAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_RESET_COLUMN_SIZE;
 
     private Shell shell;
-    private AbstractJournalEntriesViewer viewer;
+    private AbstractJournalEntriesViewerTab viewer;
 
     public ResetColumnSizeAction(Shell shell) {
         super(Messages.JournalExplorerView_ResetColumnSize);
@@ -36,7 +36,7 @@ public class ResetColumnSizeAction extends Action {
         return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
-    public void setViewer(AbstractJournalEntriesViewer viewer) {
+    public void setViewer(AbstractJournalEntriesViewerTab viewer) {
         this.viewer = viewer;
     }
 

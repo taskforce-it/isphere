@@ -73,7 +73,7 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewer extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 
@@ -89,7 +89,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
     private String filterClause;
     private String selectClause;
 
-    public AbstractJournalEntriesViewer(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
+    public AbstractJournalEntriesViewerTab(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
@@ -250,7 +250,7 @@ public abstract class AbstractJournalEntriesViewer extends CTabItem implements I
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings(),
-                AbstractJournalEntriesViewer.class);
+                AbstractJournalEntriesViewerTab.class);
         }
         return dialogSettingsManager;
     }

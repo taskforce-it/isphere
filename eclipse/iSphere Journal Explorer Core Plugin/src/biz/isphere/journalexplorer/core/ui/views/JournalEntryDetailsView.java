@@ -33,7 +33,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
-import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
+import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 /**
@@ -102,7 +102,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
 
             if (viewPart instanceof JournalExplorerView) {
-                AbstractJournalEntriesViewer currentViewer = ((JournalExplorerView)viewPart).getCurrentViewer();
+                AbstractJournalEntriesViewerTab currentViewer = ((JournalExplorerView)viewPart).getCurrentViewer();
                 if (currentViewer != null) {
                     JournalEntry[] selectedItems = currentViewer.getSelectedItems();
                     selection = new StructuredSelection(new StructuredSelection(selectedItems));
