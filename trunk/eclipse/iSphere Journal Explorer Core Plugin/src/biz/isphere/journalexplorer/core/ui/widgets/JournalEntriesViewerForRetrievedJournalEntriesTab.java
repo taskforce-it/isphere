@@ -24,38 +24,39 @@ import org.eclipse.swt.widgets.Composite;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
+import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
+import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
+import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
+import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type1ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type2ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type3ViewerFactory;
-import biz.isphere.journalexplorer.core.ui.model.Type4ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.model.Type5ViewerFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 /**
- * This widget is a viewer for the journal entries of an output file of the
- * DSPJRN command. It is created by a sub-class of the
- * {@link AbstractTypeViewerFactory}. It is used by the "Journal Explorer" view
- * to create the tabs for the opened output files of the DSPJRN command.
+ * This widget is a viewer for the journal entries retrieved by the
+ * <i>QjoRetrieveJournalEntries</i> API. It is used by the "Journal Explorer"
+ * view when creating a tab for retrieved journal entries.
  * 
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesViewer {
+public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJournalEntriesViewerTab {
 
+    private JrneToRtv jrneToRtv;
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForOutputFiles(CTabFolder parent, OutputFile outputFile, String whereClause,
+    public JournalEntriesViewerForRetrievedJournalEntriesTab(CTabFolder parent, JrneToRtv jrneToRtv,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, outputFile, loadJournalEntriesSelectionListener);
+        super(parent, JournalDAO.getOutputFile(jrneToRtv.getConnectionName()), loadJournalEntriesSelectionListener);
 
-        setSelectClause(whereClause);
+        this.jrneToRtv = jrneToRtv;
+
+        setSelectClause(null);
         setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -65,22 +66,31 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
     protected String getLabel() {
 
-        StringBuilder buffer = new StringBuilder();
+        String[] files = jrneToRtv.getFiles();
+        if (files.length == 1) {
+            return jrneToRtv.getConnectionName() + ": " + files[0];
+        }
 
-        buffer.append(getOutputFile().getConnectionName());
-        buffer.append(": ");
-        buffer.append(getOutputFile().getQualifiedName());
-
-        return buffer.toString();
+        return jrneToRtv.getConnectionName() + ": " + jrneToRtv.getQualifiedJournalName();
     }
 
     protected String getTooltip() {
 
+        String[] files = jrneToRtv.getFiles();
+
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(Messages.bind(Messages.Title_Connection_A, getOutputFile().getConnectionName()));
+        buffer.append(Messages.bind(Messages.Title_Connection_A, jrneToRtv.getConnectionName()));
         buffer.append("\n");
-        buffer.append(Messages.bind(Messages.Title_File_A, getOutputFile().getQualifiedName()));
+
+        buffer.append(Messages.bind(Messages.Title_Journal_A, jrneToRtv.getQualifiedJournalName()));
+        buffer.append("\n");
+
+        if (files.length == 1) {
+            buffer.append(Messages.bind(Messages.Title_File_A, files[0]));
+        } else {
+            buffer.append(Messages.bind(Messages.Title_Files_A, "*SELECTION"));
+        }
 
         return buffer.toString();
     }
@@ -89,24 +99,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
         try {
 
-            AbstractTypeViewerFactory factory = null;
-            switch (getOutputFile().getType()) {
-            case TYPE5:
-                factory = new Type5ViewerFactory();
-                break;
-            case TYPE4:
-                factory = new Type4ViewerFactory();
-                break;
-            case TYPE3:
-                factory = new Type3ViewerFactory();
-                break;
-            case TYPE2:
-                factory = new Type2ViewerFactory();
-                break;
-            default:
-                factory = new Type1ViewerFactory();
-                break;
-            }
+            AbstractTypeViewerFactory factory = new Type5ViewerFactory();
 
             tableViewer = factory.createTableViewer(container, getDialogSettingsManager());
             tableViewer.addSelectionChangedListener(this);
@@ -115,7 +108,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
             return tableViewer;
 
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Error in method JournalEntriesViewerForOutputFiles.createTableViewer() ***", e);
+            ISpherePlugin.logError("*** Error in method JournalEntriesViewerForRetrievedJournalEntriesTab.createTableViewer() ***", e);
             MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return null;
         }
@@ -136,10 +129,9 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
     public void openJournal(final JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception {
 
-        setFocusOnSqlEditor();
+        setSqlEditorEnabled(false);
 
         Job loadJournalDataJob = new OpenJournalJob(view, whereClause, filterWhereClause);
-
         loadJournalDataJob.schedule();
     }
 
@@ -173,8 +165,11 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
 
             try {
 
-                OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
+                // Clone the selection arguments to start with the original
+                // values when the view is refreshed.
+                JrneToRtv tJrneToRtv = jrneToRtv.clone();
 
+                JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
                 final JournalEntries data = journalDAO.getJournalData(whereClause);
                 data.applyFilter(filterWhereClause);
 
@@ -182,9 +177,22 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setInputData(data);
-                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this, false);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntriesTab.this, false);
                         }
                     });
+                }
+
+                IBMiMessage[] messages = data.getMessages();
+                if (messages.length != 0) {
+                    if (isBufferTooSmallException(messages)) {
+                        throw new BufferTooSmallException();
+                    } else if (isNoDataLoadedException(messages)) {
+                        throw new NoJournalEntriesLoadedException(tJrneToRtv.getJournalLibraryName(), tJrneToRtv.getJournalName());
+                    } else {
+                        throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
+                    }
                 }
 
             } catch (Throwable e) {
@@ -193,7 +201,9 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                     final Throwable e1 = e;
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
-                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntriesTab.this, e1);
                         }
                     });
                 }
@@ -203,7 +213,29 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
             return Status.OK_STATUS;
         }
 
-    }
+        private boolean isBufferTooSmallException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (BufferTooSmallException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean isNoDataLoadedException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (NoJournalEntriesLoadedException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+    };
 
     private class FilterJournalJob extends Job {
 
@@ -231,7 +263,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                             setInputData(data);
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.finishDataLoading(JournalEntriesViewerForOutputFiles.this, true);
+                            view.finishDataLoading(JournalEntriesViewerForRetrievedJournalEntriesTab.this, true);
                         }
                     });
                 }
@@ -244,7 +276,7 @@ public class JournalEntriesViewerForOutputFiles extends AbstractJournalEntriesVi
                         public void run() {
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.handleDataLoadException(JournalEntriesViewerForOutputFiles.this, e1);
+                            view.handleDataLoadException(JournalEntriesViewerForRetrievedJournalEntriesTab.this, e1);
                         }
                     });
                 }

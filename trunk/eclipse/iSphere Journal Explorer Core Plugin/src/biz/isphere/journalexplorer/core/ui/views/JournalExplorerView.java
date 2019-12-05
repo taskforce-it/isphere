@@ -60,9 +60,9 @@ import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.ResetColumnSizeAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
-import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewer;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFiles;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntries;
+import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntriesTab;
 
 public class JournalExplorerView extends ViewPart implements ISelectionChangedListener, SelectionListener {
 
@@ -112,8 +112,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
 
             public void close(CTabFolderEvent event) {
-                if (event.item instanceof AbstractJournalEntriesViewer) {
-                    cleanupClosedTab((AbstractJournalEntriesViewer)event.item);
+                if (event.item instanceof AbstractJournalEntriesViewerTab) {
+                    cleanupClosedTab((AbstractJournalEntriesViewerTab)event.item);
                     setActionEnablement(null);
                     clearStatusLine();
                 }
@@ -156,7 +156,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         editSqlAction = new EditSqlAction(getShell()) {
             @Override
             public void postRunAction() {
-                AbstractJournalEntriesViewer viewer = getSelectedViewer();
+                AbstractJournalEntriesViewerTab viewer = getSelectedViewer();
                 viewer.setSqlEditorVisibility(editSqlAction.isChecked());
                 return;
             }
@@ -187,11 +187,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     public void createJournalTab(JrneToRtv jrneToRtv) {
 
-        JournalEntriesViewerForRetrievedJournalEntries journalEntriesViewer = null;
+        JournalEntriesViewerForRetrievedJournalEntriesTab journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntries(tabs, jrneToRtv, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntriesTab(tabs, jrneToRtv, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -209,11 +209,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private void createJournalTab(OutputFile outputFile, String whereClause) {
 
-        JournalEntriesViewerForOutputFiles journalEntriesViewer = null;
+        JournalEntriesViewerForOutputFilesTab journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForOutputFiles(tabs, outputFile, whereClause, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForOutputFilesTab(tabs, outputFile, whereClause, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -236,7 +236,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    public void handleDataLoadException(AbstractJournalEntriesViewer journalEntriesViewer, Throwable e) {
+    public void handleDataLoadException(AbstractJournalEntriesViewerTab journalEntriesViewer, Throwable e) {
 
         updateStatusLine();
 
@@ -261,7 +261,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    private void cleanupClosedTab(AbstractJournalEntriesViewer viewer) {
+    private void cleanupClosedTab(AbstractJournalEntriesViewerTab viewer) {
 
         viewer.removeAsSelectionProvider(selectionProviderIntermediate);
     }
@@ -270,7 +270,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            AbstractJournalEntriesViewer viewer = getSelectedViewer();
+            AbstractJournalEntriesViewerTab viewer = getSelectedViewer();
             performLoadJournalEntries(viewer);
 
         } catch (Exception e) {
@@ -279,11 +279,11 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    private AbstractJournalEntriesViewer getSelectedViewer() {
-        return (AbstractJournalEntriesViewer)tabs.getSelection();
+    private AbstractJournalEntriesViewerTab getSelectedViewer() {
+        return (AbstractJournalEntriesViewerTab)tabs.getSelection();
     }
 
-    private void performLoadJournalEntries(AbstractJournalEntriesViewer viewer) throws Exception {
+    private void performLoadJournalEntries(AbstractJournalEntriesViewerTab viewer) throws Exception {
 
         String initialWhereClause = viewer.getSelectClause();
         String filterWhereClause = viewer.getFilterClause();
@@ -296,14 +296,14 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         viewer.openJournal(this, initialWhereClause, filterWhereClause);
     }
 
-    private void performFilterJournalEntries(AbstractJournalEntriesViewer viewer) throws Exception {
+    private void performFilterJournalEntries(AbstractJournalEntriesViewerTab viewer) throws Exception {
 
         viewer.validateWhereClause(getViewSite().getShell(), viewer.getFilterClause());
 
         viewer.filterJournal(this, viewer.getFilterClause());
     }
 
-    public void finishDataLoading(AbstractJournalEntriesViewer viewer, boolean isFilter) {
+    public void finishDataLoading(AbstractJournalEntriesViewerTab viewer, boolean isFilter) {
 
         if (viewer != null) {
             JournalEntries journalEntries = viewer.getInput();
@@ -336,7 +336,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         String message = null;
 
         IActionBars bars = getViewSite().getActionBars();
-        AbstractJournalEntriesViewer viewer = getSelectedViewer();
+        AbstractJournalEntriesViewerTab viewer = getSelectedViewer();
         if (viewer != null) {
 
             if (viewer.isLoading()) {
@@ -399,7 +399,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      * 
      * @param viewer - the selected viewer (tab)
      */
-    private void setActionEnablement(AbstractJournalEntriesViewer viewer) {
+    private void setActionEnablement(AbstractJournalEntriesViewerTab viewer) {
 
         if (viewer == null || viewer.getInput() == null) {
             editSqlAction.setEnabled(false);
@@ -502,7 +502,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      * 
      * @return selected viewer
      */
-    public AbstractJournalEntriesViewer getCurrentViewer() {
+    public AbstractJournalEntriesViewerTab getCurrentViewer() {
         return getSelectedViewer();
     }
 
@@ -523,7 +523,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         private void refreshSqlEditorHistory() {
             for (CTabItem tabItem : tabs.getItems()) {
-                ((AbstractJournalEntriesViewer)tabItem).refreshSqlEditorHistory();
+                ((AbstractJournalEntriesViewerTab)tabItem).refreshSqlEditorHistory();
             }
         }
 
