@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.Messages;
@@ -54,7 +56,7 @@ public class JournalDAO {
         return new OutputFile(connectionName, "QSYS", "QADSPJR5");
     }
 
-    public JournalEntries getJournalData(String whereClause) throws Exception {
+    public JournalEntries getJournalData(String whereClause, IProgressMonitor monitor) throws Exception {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
@@ -79,7 +81,7 @@ public class JournalDAO {
                 if (isBufferTooSmall(rjne0200) && isDynamicBufferSize) {
                     bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
                 }
-            } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize));
+            } while (!isCanceled(monitor, journalEntries) && isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize));
 
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
@@ -87,7 +89,7 @@ public class JournalDAO {
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
                         Messages.Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences));
                 } else {
-                    while (journalEntries.getNumberOfRowsDownloaded() < maxNumRows && rjne0200.nextEntry()) {
+                    while (!isCanceled(monitor, journalEntries) && journalEntries.getNumberOfRowsDownloaded() < maxNumRows && rjne0200.nextEntry()) {
 
                         id++;
 
@@ -106,7 +108,8 @@ public class JournalDAO {
                 messages = tRetriever.getMessages();
             }
 
-        } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.getNumberOfRowsDownloaded() < maxNumRows);
+        } while (!isCanceled(monitor, journalEntries) && rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null
+            && journalEntries.getNumberOfRowsDownloaded() < maxNumRows);
 
         // System.out.println("mSecs total: " + timeElapsed(startTime) +
         // ", WHERE-CLAUSE: " + whereClause);
@@ -122,6 +125,14 @@ public class JournalDAO {
 
     private long timeElapsed(Date startTime) {
         return (new Date().getTime() - startTime.getTime());
+    }
+
+    private boolean isCanceled(IProgressMonitor monitor, JournalEntries journalEntries) {
+        if (monitor.isCanceled()) {
+            journalEntries.setCanceled(true);
+            return true;
+        }
+        return false;
     }
 
     private boolean isBufferTooSmall(RJNE0200 rjne0200) {

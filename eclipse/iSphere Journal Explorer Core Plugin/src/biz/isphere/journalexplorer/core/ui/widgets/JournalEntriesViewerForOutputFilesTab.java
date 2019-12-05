@@ -173,9 +173,11 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
             try {
 
+                monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
+
                 OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
 
-                final JournalEntries data = journalDAO.getJournalData(whereClause);
+                final JournalEntries data = journalDAO.getJournalData(whereClause, monitor);
                 data.applyFilter(filterWhereClause);
 
                 if (!isDisposed()) {
@@ -198,6 +200,8 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
                     });
                 }
 
+            } finally {
+                monitor.done();
             }
 
             return Status.OK_STATUS;

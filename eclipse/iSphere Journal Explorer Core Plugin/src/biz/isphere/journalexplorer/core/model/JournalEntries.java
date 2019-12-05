@@ -26,6 +26,7 @@ public class JournalEntries {
     private boolean isOverflow;
     private int numAvailableRows;
     private List<IBMiMessage> messages;
+    private boolean isCanceled;
 
     public JournalEntries(int initialCapacity) {
 
@@ -67,6 +68,14 @@ public class JournalEntries {
 
     public void removeFilter() {
         this.filteredJournalEntries = null;
+    }
+
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(boolean isCanceled) {
+        this.isCanceled = isCanceled;
     }
 
     public void add(JournalEntry journalEntry) {

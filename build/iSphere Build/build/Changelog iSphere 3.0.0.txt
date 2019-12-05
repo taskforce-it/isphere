@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.6.0.b004
+-----------------------------
+ • Added option to cancel loading journal entries to Journal Explorer
+   view.
+
 Changelog: iSphere 3.6.0.b003
 -----------------------------
  • Refactored the Job Log Explorer plug-in to align the UI with the

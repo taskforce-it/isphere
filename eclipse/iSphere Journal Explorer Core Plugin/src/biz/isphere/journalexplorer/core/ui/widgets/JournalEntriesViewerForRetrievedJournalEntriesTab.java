@@ -165,12 +165,14 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
             try {
 
+                monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
+
                 // Clone the selection arguments to start with the original
                 // values when the view is refreshed.
                 JrneToRtv tJrneToRtv = jrneToRtv.clone();
 
                 JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
-                final JournalEntries data = journalDAO.getJournalData(whereClause);
+                final JournalEntries data = journalDAO.getJournalData(whereClause, monitor);
                 data.applyFilter(filterWhereClause);
 
                 if (!isDisposed()) {
@@ -208,6 +210,8 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
                     });
                 }
 
+            } finally {
+                monitor.done();
             }
 
             return Status.OK_STATUS;
