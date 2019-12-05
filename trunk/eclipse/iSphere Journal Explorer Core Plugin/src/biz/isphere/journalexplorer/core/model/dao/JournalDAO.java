@@ -81,7 +81,7 @@ public class JournalDAO {
                 if (isBufferTooSmall(rjne0200) && isDynamicBufferSize) {
                     bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
                 }
-            } while (!isCanceled(monitor, journalEntries) && isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize));
+            } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize) && !isCanceled(monitor, journalEntries));
 
             if (rjne0200 != null) {
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
@@ -89,7 +89,7 @@ public class JournalDAO {
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
                         Messages.Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences));
                 } else {
-                    while (!isCanceled(monitor, journalEntries) && journalEntries.getNumberOfRowsDownloaded() < maxNumRows && rjne0200.nextEntry()) {
+                    while (journalEntries.getNumberOfRowsDownloaded() < maxNumRows && rjne0200.nextEntry() && !isCanceled(monitor, journalEntries)) {
 
                         id++;
 
@@ -108,8 +108,8 @@ public class JournalDAO {
                 messages = tRetriever.getMessages();
             }
 
-        } while (!isCanceled(monitor, journalEntries) && rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null
-            && journalEntries.getNumberOfRowsDownloaded() < maxNumRows);
+        } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.getNumberOfRowsDownloaded() < maxNumRows
+            && !isCanceled(monitor, journalEntries));
 
         // System.out.println("mSecs total: " + timeElapsed(startTime) +
         // ", WHERE-CLAUSE: " + whereClause);
