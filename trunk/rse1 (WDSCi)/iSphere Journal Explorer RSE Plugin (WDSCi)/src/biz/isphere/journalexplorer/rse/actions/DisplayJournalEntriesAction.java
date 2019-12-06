@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,10 @@ import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
+/**
+ * This action is used when the user requests loading journal entries from a
+ * file or member.
+ */
 public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
     private List<DataElement> selectedObjectsList;
