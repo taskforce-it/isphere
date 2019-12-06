@@ -31,8 +31,8 @@
                 enablesFor="*"
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
-                icon="icons/display_journal_entries2.gif"
-                menubarPath="additions">
+                icon="icons/display_journal_entries.gif"
+                menubarPath="group.browsewith">
 	         </action>
       	</objectContribution>
       	
@@ -46,7 +46,7 @@
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
                 icon="icons/display_journal_entries.gif"
-                menubarPath="additions">
+                menubarPath="group.browsewith">
 	         </action>
       	</objectContribution>
       	
