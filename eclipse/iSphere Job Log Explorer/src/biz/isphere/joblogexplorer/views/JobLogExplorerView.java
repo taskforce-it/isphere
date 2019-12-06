@@ -26,7 +26,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -39,7 +38,6 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
-import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.action.EditSqlAction;
 import biz.isphere.joblogexplorer.action.ExportToExcelAction;
@@ -92,129 +90,37 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
             public void close(CTabFolderEvent event) {
                 if (event.item instanceof JobLogExplorerTab) {
-                    CTabItem activeTab = tabFolder.getSelection();
-                    CTabItem closedTab = (CTabItem)event.item;
-                    if (closedTab.equals(activeTab)) {
-                        int closedTabIndex = tabFolder.getSelectionIndex();
-                        int newTabIndex;
-                        int maxTabIndex = tabFolder.getItemCount() - 1;
-                        if (closedTabIndex < maxTabIndex) {
-                            newTabIndex = closedTabIndex + 1;
-                        } else {
-                            newTabIndex = closedTabIndex - 1;
-                        }
-                        if (newTabIndex >= 0) {
-                            tabFolder.setSelection(newTabIndex);
-                            updateViewerStatus(getCurrentViewer());
-                        } else {
-                            clearViewerStatus();
-                        }
-                    }
+                    JobLogExplorerTab closedTab = (JobLogExplorerTab)event.item;
+                    selectNextTab(closedTab);
                 }
 
+            }
+
+            private void selectNextTab(CTabItem closedTab) {
+                CTabItem activeTab = getSelectedViewer();
+                if (closedTab.equals(activeTab)) {
+                    int closedTabIndex = tabFolder.getSelectionIndex();
+                    int newTabIndex;
+                    int maxTabIndex = tabFolder.getItemCount() - 1;
+                    if (closedTabIndex < maxTabIndex) {
+                        newTabIndex = closedTabIndex + 1;
+                    } else {
+                        newTabIndex = closedTabIndex - 1;
+                    }
+                    if (newTabIndex >= 0) {
+                        tabFolder.setSelection(newTabIndex);
+                        updateStatusLine();
+                    } else {
+                        clearStatusLine();
+                    }
+                }
             }
         });
 
         createActions();
         initializeToolBar();
 
-        clearViewerStatus();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
-    /**
-     * Creates the actions of the view.
-     */
-    private void createActions() {
-
-        editSqlAction = new EditSqlAction();
-        reloadEntriesAction = new RefreshAction();
-        exportToExcelAction = new ExportToExcelAction();
-        resetColumnSizeAction = new ResetColumnSizeAction();
-    }
-
-    public void openExplorerTab(AbstractJobLogExplorerInput input) {
-
-        if (input == null) {
-            throw new IllegalArgumentException("Parameter 'input' must not be [null]."); //$NON-NLS-1$
-        }
-
-        JobLogExplorerTab jobLogExplorerTab = findExplorerTab(input);
-        if (jobLogExplorerTab == null) {
-            jobLogExplorerTab = new JobLogExplorerTab(getTabFolder(), new SqlEditorSelectionListener());
-            jobLogExplorerTab.setSqlEditorVisibility(false);
-            jobLogExplorerTab.addStatusChangedListener(this);
-            jobLogExplorerTab.setInput(input);
-        }
-
-        tabFolder.setSelection(jobLogExplorerTab);
-    }
-
-    private JobLogExplorerTab findExplorerTab(AbstractJobLogExplorerInput input) {
-
-        CTabItem[] tabItems = getTabFolder().getItems();
-        for (CTabItem tabItem : tabItems) {
-            JobLogExplorerTab jobLogTab = (JobLogExplorerTab)tabItem;
-            AbstractJobLogExplorerInput tabInput = jobLogTab.getInput();
-            if (tabInput == null || input.isSameInput(tabInput)) {
-                return jobLogTab;
-            }
-        }
-
-        return null;
-    }
-
-    private void handleDataLoadException(final Object object, final String message, final Throwable e) {
-
-        if (Display.getCurrent() != null) {
-            disposeJobLogExplorerTabChecked(object);
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
-        } else {
-            new UIJob("") {
-                @Override
-                public IStatus runInUIThread(IProgressMonitor var1) {
-                    if (object != null) {
-                        disposeJobLogExplorerTabChecked(object);
-                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
-                    }
-                    return Status.OK_STATUS;
-                }
-            }.schedule();
-        }
-    }
-
-    private void disposeJobLogExplorerTabChecked(Object object) {
-        if (object instanceof JobLogExplorerTab) {
-            JobLogExplorerTab tabItem = (JobLogExplorerTab)object;
-            tabItem.dispose();
-        }
-    }
-
-    /**
-     * Initialize the toolbar.
-     */
-    private void initializeToolBar() {
-
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        toolBarManager.add(editSqlAction);
-        toolBarManager.add(exportToExcelAction);
-        toolBarManager.add(new Separator());
-        toolBarManager.add(resetColumnSizeAction);
-        toolBarManager.add(new Separator());
-        toolBarManager.add(reloadEntriesAction);
-    }
-
-    /*
-     * View settings.
-     */
-
-    @Override
-    public void setFocus() {
-        updateViewerStatus(getCurrentViewer());
+        clearStatusLine();
     }
 
     @Override
@@ -241,6 +147,180 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
         getShell().setCursor(null);
     }
 
+    private void disposeJobLogExplorerTabChecked(Object object) {
+        if (object instanceof JobLogExplorerTab) {
+            JobLogExplorerTab tabItem = (JobLogExplorerTab)object;
+            tabItem.dispose();
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+
+    /**
+     * Create view actions.
+     */
+    private void createActions() {
+
+        editSqlAction = new EditSqlAction();
+        reloadEntriesAction = new RefreshAction();
+        exportToExcelAction = new ExportToExcelAction();
+        resetColumnSizeAction = new ResetColumnSizeAction();
+    }
+
+    public void createExplorerTab(AbstractJobLogExplorerInput input) {
+
+        if (input == null) {
+            throw new IllegalArgumentException("Parameter 'input' must not be [null]."); //$NON-NLS-1$
+        }
+
+        JobLogExplorerTab jobLogExplorerTab = findExplorerTab(input);
+        if (jobLogExplorerTab == null) {
+            jobLogExplorerTab = new JobLogExplorerTab(tabFolder, new SqlEditorSelectionListener());
+            jobLogExplorerTab.setSqlEditorVisibility(false);
+            jobLogExplorerTab.addStatusChangedListener(this);
+            jobLogExplorerTab.setInput(input);
+        }
+
+        tabFolder.setSelection(jobLogExplorerTab);
+    }
+
+    private JobLogExplorerTab findExplorerTab(AbstractJobLogExplorerInput input) {
+
+        CTabItem[] tabItems = tabFolder.getItems();
+        for (CTabItem tabItem : tabItems) {
+            JobLogExplorerTab jobLogTab = (JobLogExplorerTab)tabItem;
+            AbstractJobLogExplorerInput tabInput = jobLogTab.getInput();
+            if (tabInput == null || input.isSameInput(tabInput)) {
+                return jobLogTab;
+            }
+        }
+
+        return null;
+    }
+
+    private void handleDataLoadException(final Object object, final String message, final Throwable e) {
+
+        if (Display.getCurrent() != null) {
+            disposeJobLogExplorerTabChecked(object);
+            updateStatusLine();
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
+        } else {
+            new UIJob("") {
+                @Override
+                public IStatus runInUIThread(IProgressMonitor var1) {
+                    disposeJobLogExplorerTabChecked(object);
+                    updateStatusLine();
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
+        }
+    }
+
+    /**
+     * Returns the tab folder.
+     * 
+     * @return tab folder
+     */
+    private CTabFolder getTabFolder() {
+        if (tabFolder == null || tabFolder.isDisposed()) {
+            return null;
+        }
+        return tabFolder;
+    }
+
+    /**
+     * Returns the currently selected viewer (tab).
+     * 
+     * @return selected viewer
+     */
+    private JobLogExplorerTab getSelectedViewer() {
+        CTabFolder tabFolder = getTabFolder();
+        if (tabFolder == null) {
+            return null;
+        }
+        return (JobLogExplorerTab)tabFolder.getSelection();
+    }
+
+    private void performFilterJobLogEntries(JobLogExplorerTab tabItem) throws SQLSyntaxErrorException {
+
+        tabItem.validateWhereClause(getShell());
+        tabItem.filterJobLogMessages();
+    }
+
+    public void finishedDataLoading(JobLogExplorerTab tabItem) {
+
+        tabFolder.setSelection(tabItem);
+
+        new UIJob("") { //$NON-NLS-1$
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
+                    Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
+                return Status.OK_STATUS;
+            }
+        }.schedule();
+    }
+
+    private Shell getShell() {
+        return getSite().getShell();
+    }
+
+    private void updateStatusLine() {
+
+        JobLogExplorerTab tabItem = getSelectedViewer();
+
+        if (tabItem == null) {
+            clearStatusLine();
+            return;
+        }
+
+        String message;
+
+        if (tabItem.getItemsCount() == tabItem.getTotalItemsCount()) {
+            message = Messages.bind(Messages.Number_of_messages_A, tabItem.getTotalItemsCount());
+        } else {
+            message = Messages.bind(Messages.Number_of_messages_B_slash_A, tabItem.getTotalItemsCount(), tabItem.getItemsCount());
+        }
+
+        setStatusLineText(message);
+        setActionEnablement(tabItem);
+    }
+
+    private void clearStatusLine() {
+
+        setStatusLineText(""); //$NON-NLS-1$
+        setActionEnablement(null);
+    }
+
+    private void setStatusLineText(String message) {
+
+        IActionBars bars = getViewSite().getActionBars();
+        bars.getStatusLineManager().setMessage(message);
+    }
+
+    /**
+     * Initialize the toolbar.
+     */
+    private void initializeToolBar() {
+
+        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(editSqlAction);
+        toolBarManager.add(exportToExcelAction);
+        toolBarManager.add(new Separator());
+        toolBarManager.add(resetColumnSizeAction);
+        toolBarManager.add(new Separator());
+        toolBarManager.add(reloadEntriesAction);
+    }
+
+    @Override
+    public void setFocus() {
+        updateStatusLine();
+    }
+
     /**
      * Enables the actions for the current viewer,
      * 
@@ -256,7 +336,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             exportToExcelAction.setTabItem(null);
         }
 
-        if (tabItem != null && tabItem.getTotalItemsCount() > 0) {
+        if (tabItem != null && tabItem.getInput() != null) {
             reloadEntriesAction.setEnabled(true);
             reloadEntriesAction.setTabItem(tabItem);
         } else {
@@ -279,75 +359,20 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
         }
     }
 
-    private Shell getShell() {
-        return getSite().getShell();
-    }
+    public void statusChanged(JobLogExplorerStatusChangedEvent data) {
 
-    /**
-     * Called by the viewer, when items are selected by the user.
-     */
-    public void finishedDataLoading(JobLogExplorerTab tabItem) {
-        tabFolder.setSelection(tabItem);
-
-        new UIJob("") { //$NON-NLS-1$
-            @Override
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                DoNotAskMeAgainDialog.openInformation(getShell(), DoNotAskMeAgain.INFORMATION_USAGE_JOB_LOG_EXPLORER,
-                    Messages.Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion);
-                return Status.OK_STATUS;
-            }
-        }.schedule();
-
-    }
-
-    public CTabFolder getTabFolder() {
-        if (tabFolder == null || tabFolder.isDisposed()) {
-            return null;
-        }
-        return tabFolder;
-    }
-
-    private void updateViewerStatusChecked(Object object) {
-        if (object instanceof JobLogExplorerTab) {
-            updateViewerStatus((JobLogExplorerTab)object);
-        }
-    }
-
-    private void updateViewerStatus(JobLogExplorerTab tabItem) {
-
-        if (tabItem == null) {
-            clearViewerStatus();
-            setActionEnablement(tabItem);
+        if (!(data.getSource() instanceof JobLogExplorerTab)) {
             return;
         }
 
-        String message;
+        JobLogExplorerTab selectedTabItem = getSelectedViewer();
+        JobLogExplorerTab statusTabItem = (JobLogExplorerTab)data.getSource();
 
-        if (tabItem.getItemsCount() == tabItem.getTotalItemsCount()) {
-            message = Messages.bind(Messages.Number_of_messages_A, tabItem.getTotalItemsCount());
-        } else {
-            message = Messages.bind(Messages.Number_of_messages_B_slash_A, tabItem.getTotalItemsCount(), tabItem.getItemsCount());
+        if (selectedTabItem != null && !selectedTabItem.equals(statusTabItem)) {
+            return;
         }
 
-        updateViewerStatus(message);
-        setActionEnablement(tabItem);
-    }
-
-    private void clearViewerStatus() {
-
-        setActionEnablement(null);
-        updateViewerStatus(""); //$NON-NLS-1$
-    }
-
-    private void updateViewerStatus(String message) {
-
-        IActionBars bars = getViewSite().getActionBars();
-        bars.getStatusLineManager().setMessage(message);
-    }
-
-    public void statusChanged(JobLogExplorerStatusChangedEvent data) {
-
-        updateViewerStatusChecked(data.getSource());
+        updateStatusLine();
 
         if (data.getEventType() == JobLogExplorerStatusChangedEvent.EventType.STARTED_DATA_LOADING) {
             showBusy(true);
@@ -364,56 +389,27 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
      * Called by the UI, when the user selects a different viewer (tab).
      */
     public void widgetSelected(SelectionEvent event) {
-
-        Object source = event.getSource();
-        if (source instanceof CTabFolder) {
-            JobLogExplorerTab tabItem = getCurrentViewer();
-            updateViewerStatus(tabItem);
-        }
+        updateStatusLine();
     }
 
     public void widgetDefaultSelected(SelectionEvent event) {
         widgetSelected(event);
     }
 
-    /**
-     * Returns the currently selected viewer (tab).
-     * 
-     * @return selected viewer
-     */
-    public JobLogExplorerTab getCurrentViewer() {
-        CTabFolder tabFolder = getTabFolder();
-        if (tabFolder == null) {
-            return null;
-        }
-        return (JobLogExplorerTab)tabFolder.getSelection();
-    }
-
-    private void performFilterJobLogEntries(JobLogExplorerTab tabItem) throws SQLSyntaxErrorException {
-
-        tabItem.validateWhereClause(getShell());
-        tabItem.filterJobLogMessages();
-    }
-
     private class SqlEditorSelectionListener implements SelectionListener {
 
         public void widgetSelected(SelectionEvent event) {
-            Object source = event.getSource();
-            if (source instanceof Button) {
-                Button button = (Button)event.getSource();
 
-                try {
-                    getCurrentViewer().storeSqlEditorHistory();
-                    refreshSqlEditorHistory();
-                    performFilterJobLogEntries(getCurrentViewer());
-                } catch (SQLSyntaxErrorException e) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-                    getCurrentViewer().setFocusOnSqlEditor();
-                } catch (Exception e) {
-                    ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-                }
-
+            try {
+                getSelectedViewer().storeSqlEditorHistory();
+                refreshSqlEditorHistory();
+                performFilterJobLogEntries(getSelectedViewer());
+            } catch (SQLSyntaxErrorException e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                getSelectedViewer().setFocusOnSqlEditor();
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
 
@@ -421,17 +417,6 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             for (CTabItem tabItem : tabFolder.getItems()) {
                 ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
             }
-        }
-
-        private SqlEditor getSqlEditor(Composite parent) {
-
-            if (parent instanceof SqlEditor) {
-                return (SqlEditor)parent;
-            } else if (parent instanceof Composite) {
-                return getSqlEditor(parent.getParent());
-            }
-
-            return null;
         }
 
         public void widgetDefaultSelected(SelectionEvent event) {
