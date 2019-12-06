@@ -3,6 +3,8 @@ Changelog: iSphere 3.6.0.b004
 -----------------------------
  • Added option to cancel loading journal entries to Journal Explorer
    view.
+ • Fixed error when parsing a job log when the time separator is a
+   space.
 
 Changelog: iSphere 3.6.0.b003
 -----------------------------
