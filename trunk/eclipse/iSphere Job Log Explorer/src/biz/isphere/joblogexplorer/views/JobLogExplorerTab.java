@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
@@ -420,10 +421,22 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             }
         }
 
-        JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(JobLogExplorerStatusChangedEvent.EventType.DATA_LOAD_ERROR,
-            this);
+        final JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(
+            JobLogExplorerStatusChangedEvent.EventType.DATA_LOAD_ERROR, this);
         status.setException(message, e);
-        notifyStatusChangedListeners(status);
+
+        if (Display.getCurrent() == null) {
+            UIJob job = new UIJob("") {
+                @Override
+                public IStatus runInUIThread(IProgressMonitor arg0) {
+                    notifyStatusChangedListeners(status);
+                    return Status.OK_STATUS;
+                }
+            };
+            job.schedule();
+        } else {
+            notifyStatusChangedListeners(status);
+        }
     }
 
     public void storeSqlEditorHistory() {
