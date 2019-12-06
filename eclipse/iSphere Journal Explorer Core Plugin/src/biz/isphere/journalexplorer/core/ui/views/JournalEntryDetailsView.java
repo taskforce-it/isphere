@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         if (viewPart instanceof JournalExplorerView || viewPart instanceof JournalEntryViewerView) {
 
             if (viewPart instanceof JournalExplorerView) {
-                AbstractJournalEntriesViewerTab currentViewer = ((JournalExplorerView)viewPart).getCurrentViewer();
+                AbstractJournalEntriesViewerTab currentViewer = ((JournalExplorerView)viewPart).getSelectedViewer();
                 if (currentViewer != null) {
                     JournalEntry[] selectedItems = currentViewer.getSelectedItems();
                     selection = new StructuredSelection(new StructuredSelection(selectedItems));
