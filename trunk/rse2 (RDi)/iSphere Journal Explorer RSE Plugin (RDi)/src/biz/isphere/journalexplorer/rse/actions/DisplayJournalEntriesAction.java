@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,10 @@ import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IS
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile;
 
+/**
+ * This action is used when the user requests loading journal entries from a
+ * file or member.
+ */
 public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
     private Shell shell;
