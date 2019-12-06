@@ -56,7 +56,7 @@ public class JobLogParserConfiguration {
     private String PAGE_NUMBER_LABEL = "[a-zA-Z.]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[0-9]{1,4}"; //$NON-NLS-1$
     private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
-    private String PAGE_TIME = "[0-9:.,]{8}"; //$NON-NLS-1$
+    private String PAGE_TIME = "[0-9:. ,]{8}"; //$NON-NLS-1$
 
     // Page header properties
     private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+"; //$NON-NLS-1$
@@ -67,7 +67,7 @@ public class JobLogParserConfiguration {
     private String MESSAGE_TYPE = "[A-Z][a-z]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
     private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
-    private String MESSAGE_TIME = "[0-9:.,]{15}"; //$NON-NLS-1$
+    private String MESSAGE_TIME = "[0-9:. ,]{6,15}"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
 
     private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+"; //$NON-NLS-1$
