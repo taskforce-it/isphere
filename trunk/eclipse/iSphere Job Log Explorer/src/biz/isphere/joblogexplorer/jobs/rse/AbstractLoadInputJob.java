@@ -26,7 +26,7 @@ public abstract class AbstractLoadInputJob {
 
         if (view instanceof JobLogExplorerView) {
             JobLogExplorerView jobLogExplorerView = (JobLogExplorerView)view;
-            jobLogExplorerView.openExplorerTab(input);
+            jobLogExplorerView.createExplorerTab(input);
         }
     }
 
