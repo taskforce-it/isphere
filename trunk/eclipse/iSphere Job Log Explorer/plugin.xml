@@ -73,7 +73,7 @@
       <page
             class="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage"
             category="biz.isphere.base.preferencepages.General"
-            name="%Job_Log_Explorer"
+            name="%Preferences_Job_Log_Explorer"
             id="biz.isphere.joblogexplorer.preferencepages.JobLogExplorerPreferencesPage" >
          <keywordReference id="biz.isphere.joblogexplorer.preferences.general"/>
       </page>
