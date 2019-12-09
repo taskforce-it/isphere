@@ -38,6 +38,19 @@ public final class FileHelper {
         return file.getName();
     }
 
+    public static String getBaseName(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        if (index == -1) {
+            return fileName;
+        } else {
+            return fileName.substring(0, index);
+        }
+    }
+
+    public static String getBaseName(File file) {
+        return getBaseName(file.getName());
+    }
+
     public static boolean ensureDirectory(String path) {
         File directoryPath = new File(path).getAbsoluteFile();
         if (!path.endsWith(File.separator)) {
