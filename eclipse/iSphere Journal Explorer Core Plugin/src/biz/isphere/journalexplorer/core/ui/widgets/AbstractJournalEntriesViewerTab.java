@@ -73,7 +73,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements ISelectionChangedListener, ISelectionProvider,
+    IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 
@@ -201,6 +202,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
             RowJEP sqljep = new RowJEP(whereClause);
             sqljep.parseExpression(columnMapping);
+            sqljep.getValue(JournalEntry.getSampleRow());
 
         } catch (ParseException e) {
             throw new SQLSyntaxErrorException(e);
