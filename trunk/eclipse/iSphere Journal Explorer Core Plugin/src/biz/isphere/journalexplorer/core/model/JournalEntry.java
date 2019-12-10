@@ -278,6 +278,32 @@ public class JournalEntry {
         return proposals;
     }
 
+    public static Comparable[] getSampleRow() {
+
+        long now = new java.util.Date().getTime();
+
+        JournalEntry journalEntry = new JournalEntry(null);
+        journalEntry.setJournalCode("R");
+        journalEntry.setEntryType("DL");
+        journalEntry.setJobName("TRADDATZA1");
+        journalEntry.setJobUserName("RADDATZ");
+        journalEntry.setJobNumber(939207);
+        journalEntry.setObjectLibrary("ISPHEREDVP");
+        journalEntry.setObjectName("TYPES_SQL");
+        journalEntry.setMemberName("TYPES_SQL");
+        journalEntry.setTimestamp(new java.sql.Timestamp(now));
+        journalEntry.setProgramName("CRTTSTDTA");
+        journalEntry.setProgramLibrary("*OMITTED");
+        journalEntry.setObjectType("*QDDS");
+        journalEntry.setFileTypeIndicator("");
+        journalEntry.setSystemName("GFD400");
+        journalEntry.setReceiverName("JRN003");
+        journalEntry.setReceiverLibraryName("ISPHEREDVP");
+        journalEntry.setUserProfile("RADDATZ");
+
+        return journalEntry.getRow();
+    }
+
     public Comparable[] getRow() {
 
         Comparable[] row = new Comparable[columnMappings.size()];
@@ -301,9 +327,6 @@ public class JournalEntry {
         row[JORCV] = getReceiver();
         row[JORCVLIB] = getReceiverLibrary();
         row[JOUSPF] = getUserProfile();
-
-        // System.out.println("Date: " + row[JODATE] + ", Time: " + row[JOTIME]
-        // + ", Timestamp: " + row[JOTSTP]);
 
         return row;
     }
