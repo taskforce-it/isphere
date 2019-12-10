@@ -7,7 +7,7 @@
   	Add sub topics here:
     <topic label="..." href="html/tasktags/..." />
     -->
-    <topic label="SQL Reference" href="html/journalexplorer/sql_reference.html" />
+    <topic label="SQL Reference" href="/biz.isphere.base.help/html/sql/sql_reference.html" />
     <topic label="Preferences" href="html/journalexplorer/preferences/preferences.html" />
   </topic>
 </toc> 
