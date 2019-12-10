@@ -9,11 +9,14 @@
 package biz.isphere.joblogexplorer.api.listjoblog;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.joblogexplorer.Messages;
@@ -57,16 +60,30 @@ public class OLJL0100 extends APIFormat {
     private SimpleDateFormat timeFormatter;
     private SimpleDateFormat dateFormatter;
 
+    private Timestamp timestamp;
+    private DecimalFormat mSecsFormatter = new DecimalFormat("000000");
+
     public OLJL0100(AS400 system) {
         super(system, "OLJL0100"); //$NON-NLS-1$
-
-        // this.timeFormatter = new SimpleDateFormat("HH:mm:ss");
-        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
         this.timeFormatter = Preferences.getInstance().getTimeFormatter();
         this.dateFormatter = Preferences.getInstance().getDateFormatter();
 
         createStructure();
+    }
+
+    @Override
+    public void setBytes(byte[] bytes) {
+        super.setBytes(bytes);
+
+        timestamp = null;
+    }
+
+    @Override
+    public void setOffset(int offset) {
+        super.setOffset(offset);
+
+        timestamp = null;
     }
 
     public OLJL0100_Field getField(int key) {
@@ -188,6 +205,18 @@ public class OLJL0100 extends APIFormat {
         return getFormattedTime();
     }
 
+    public Timestamp getTimestampSent() throws UnsupportedEncodingException {
+
+        if (timestamp == null) {
+            Date time = IBMiHelper.hhmmssToTime(getCharValue(TIME_SENT));
+            Date date = IBMiHelper.cyymmddToDate(getCharValue(DATE_SENT));
+            timestamp = new Timestamp(DateTimeHelper.combineDateTime(date, time).getTime());
+            timestamp.setNanos(Integer.parseInt(getMicroseconds()) * 1000);
+        }
+
+        return timestamp;
+    }
+
     public String getMicroseconds() throws UnsupportedEncodingException {
         return getCharValue(MICROSECONDS);
     }
@@ -227,19 +256,11 @@ public class OLJL0100 extends APIFormat {
     }
 
     private String getFormattedTime() throws UnsupportedEncodingException {
-
-        String rawTime = getCharValue(TIME_SENT);
-        Date time = IBMiHelper.hhmmssToTime(rawTime);
-        String mSecs = getMicroseconds();
-
-        return timeFormatter.format(time) + "." + mSecs; //$NON-NLS-1$
+        Timestamp timestampSent = getTimestampSent();
+        return timeFormatter.format(timestampSent) + "." + mSecsFormatter.format(timestampSent.getNanos()); //$NON-NLS-1$
     }
 
     private String getFormattedDate() throws UnsupportedEncodingException {
-
-        String rawDate = getCharValue(DATE_SENT);
-        Date date = IBMiHelper.cyymmddToDate(rawDate);
-
-        return dateFormatter.format(date);
+        return dateFormatter.format(getTimestampSent());
     }
 }

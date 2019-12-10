@@ -8,6 +8,7 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.AbstractIntegerFilter;
@@ -38,6 +40,7 @@ public class JobLogMessage {
     private String severity;
     private String date;
     private String time;
+    private Timestamp timestamp;
     private String text;
     private String help;
 
@@ -70,7 +73,9 @@ public class JobLogMessage {
         TO_MODULE ("TO_MODULE", 10, "CHAR(10)"),
         TO_PROCEDURE ("TO_PROCEDURE", 11, "CHAR(*)"),
         TO_STATEMENT ("TO_STATEMENT", 12, "CHAR(10)"),
-        TEXT ("TEXT", 13, "CHAR(*)");
+        TEXT ("TEXT", 13, "CHAR(*)"),
+        HELP ("HELP", 14, "CHAR(*)"),
+        TIMESTAMP ("TIMESTAMP_SENT", 15, "TIMESTAMP()");
 
         private String fieldName;
         private int fieldIndex;
@@ -112,6 +117,8 @@ public class JobLogMessage {
         addColumnMappingEntry(columnMappings, Fields.TO_PROCEDURE);
         addColumnMappingEntry(columnMappings, Fields.TO_STATEMENT);
         addColumnMappingEntry(columnMappings, Fields.TEXT);
+        addColumnMappingEntry(columnMappings, Fields.HELP);
+        addColumnMappingEntry(columnMappings, Fields.TIMESTAMP);
     }
 
     private static void addColumnMappingEntry(Map<String, Integer> columnMappings, Fields field) {
@@ -144,6 +151,8 @@ public class JobLogMessage {
         proposals.add(new ContentAssistProposal(Fields.TO_STATEMENT.fieldName(), Fields.TO_STATEMENT.sqltype() + " - "
             + Messages.LongFieldName_TO_STATEMENT));
         proposals.add(new ContentAssistProposal(Fields.TEXT.fieldName(), Fields.TEXT.sqltype() + " - " + Messages.LongFieldName_TEXT));
+        proposals.add(new ContentAssistProposal(Fields.HELP.fieldName(), Fields.HELP.sqltype() + " - " + Messages.LongFieldName_HELP));
+        proposals.add(new ContentAssistProposal(Fields.TIMESTAMP.fieldName(), Fields.TIMESTAMP.sqltype() + " - " + Messages.LongFieldName_TIMESTAMP));
     }
 
     public JobLogMessage(int pageNumber) {
@@ -179,6 +188,31 @@ public class JobLogMessage {
         return jobLogMessage;
     }
 
+    public static Comparable[] getSampleRow() {
+
+        long now = new java.util.Date().getTime();
+
+        JobLogMessage message = new JobLogMessage(0);
+        message.setId("CPF9897");
+        message.setType("Information");
+        message.setSeverity("40");
+        message.setFromLibrary("RADDATZ");
+        message.setFromProgram("LIBL#LOAD");
+        message.setFromModule("LIBL#LOAD");
+        message.setFromProcedure("LIBL#LOAD");
+        message.setFromStatement("5500");
+        message.setToLibrary("RADDATZ");
+        message.setToProgram("START#RZ");
+        message.setToModule("START#RZ");
+        message.setToProcedure("START#RZ");
+        message.setToStatement("5300");
+        message.setText("This is the message text.");
+        message.setHelp("This is the message help text.");
+        message.setTimestamp(new java.sql.Timestamp(now));
+
+        return message.getRow();
+    }
+
     public int getPageNumber() {
         return this.pageNumber;
     }
@@ -210,7 +244,7 @@ public class JobLogMessage {
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type = type.trim();
         notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TYPE, this.type));
     }
 
@@ -242,6 +276,14 @@ public class JobLogMessage {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getText() {
@@ -352,7 +394,7 @@ public class JobLogMessage {
     }
 
     private void setSeverityIntValue(String severity) {
-        if (severity == null || severity.length() == 0) {
+        if (StringHelper.isNullOrEmpty(severity)) {
             severityInt = SEVERITY_BLANK;
         } else {
             severityInt = IntHelper.tryParseInt(severity, SEVERITY_BLANK);
@@ -399,10 +441,8 @@ public class JobLogMessage {
         row[Fields.TO_PROCEDURE.fieldIndex()] = getToProcedure();
         row[Fields.TO_STATEMENT.fieldIndex()] = getToStatement();
         row[Fields.TEXT.fieldIndex()] = getText();
-
-        // System.out.println("Date: " + row[TO_STATEMENT] + ", Time: " +
-        // row[TEXT]
-        // + ", Timestamp: " + row[JOTSTP]);
+        row[Fields.HELP.fieldIndex()] = getHelp();
+        row[Fields.TIMESTAMP.fieldIndex()] = getTimestamp();
 
         return row;
     }

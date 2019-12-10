@@ -151,6 +151,10 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         return jobLogExplorerInput;
     }
 
+    public JobLog getJobLog() {
+        return tableViewerPanel.getInputData();
+    }
+
     public boolean isSqlEditorVisible() {
         return isSqlEditorVisible;
     }
@@ -326,7 +330,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         leftMainPanel.setLayout(createGridLayoutWithMargin());
         leftMainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        JobLogExplorerTableViewer tableViewer = new JobLogExplorerTableViewer(getDialogSettingsManager());
+        JobLogExplorerTableViewer tableViewer = new JobLogExplorerTableViewer(this, getDialogSettingsManager());
         tableViewer.createViewer(leftMainPanel);
 
         return tableViewer;
@@ -444,7 +448,9 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
     }
 
     public void refreshSqlEditorHistory() {
-        sqlEditor.refreshHistory();
+        if (isSqlEditorVisible) {
+            sqlEditor.refreshHistory();
+        }
     }
 
     public void validateWhereClause(Shell shell) throws SQLSyntaxErrorException {
@@ -460,6 +466,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             HashMap<String, Integer> columnMapping = JobLogMessage.getColumnMapping();
             RowJEP sqljep = new RowJEP(whereClause);
             sqljep.parseExpression(columnMapping);
+            sqljep.getValue(JobLogMessage.getSampleRow());
 
         } catch (ParseException e) {
             throw new SQLSyntaxErrorException(e);

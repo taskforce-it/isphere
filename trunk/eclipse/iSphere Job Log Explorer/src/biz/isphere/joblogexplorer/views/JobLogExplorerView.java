@@ -13,10 +13,16 @@ package biz.isphere.joblogexplorer.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
@@ -47,7 +53,7 @@ import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 
-public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener {
+public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener, ISelectionProvider {
 
     public static final String ID = "biz.isphere.joblogexplorer.views.JobLogExplorerView"; //$NON-NLS-1$
 
@@ -57,9 +63,12 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
     private ResetColumnSizeAction resetColumnSizeAction;
 
     private CTabFolder tabFolder;
+    private ListenerList selectionChangedListeners;
 
     public JobLogExplorerView() {
         super();
+
+        this.selectionChangedListeners = new ListenerList();
     }
 
     /**
@@ -116,6 +125,8 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
                 }
             }
         });
+
+        getSite().setSelectionProvider(this);
 
         createActions();
         initializeToolBar();
@@ -288,6 +299,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
         setStatusLineText(message);
         setActionEnablement(tabItem);
+        fireSelectionChanged();
     }
 
     private void clearStatusLine() {
@@ -330,10 +342,12 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
         if (tabItem != null && tabItem.getItemsCount() > 0) {
             exportToExcelAction.setEnabled(true);
-            exportToExcelAction.setTabItem(tabItem);
+            exportToExcelAction.setTabTitle(tabItem.getText());
+            exportToExcelAction.setSelectedItems(new StructuredSelection(tabItem.getItems()));
         } else {
             exportToExcelAction.setEnabled(false);
-            exportToExcelAction.setTabItem(null);
+            exportToExcelAction.setTabTitle(null);
+            exportToExcelAction.setSelectedItems(null);
         }
 
         if (tabItem != null && tabItem.getInput() != null) {
@@ -394,6 +408,36 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
     public void widgetDefaultSelected(SelectionEvent event) {
         widgetSelected(event);
+    }
+
+    private void fireSelectionChanged() {
+
+        SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+
+        Object[] listeners = selectionChangedListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
+            listener.selectionChanged(event);
+        }
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.add(listener);
+    }
+
+    public ISelection getSelection() {
+        if (getSelectedViewer() == null || getSelectedViewer().getJobLog() == null) {
+            return new StructuredSelection(new Object[0]);
+        }
+        return new StructuredSelection(getSelectedViewer().getJobLog());
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.remove(listener);
+    }
+
+    public void setSelection(ISelection selection) {
+        return;
     }
 
     private class SqlEditorSelectionListener implements SelectionListener {

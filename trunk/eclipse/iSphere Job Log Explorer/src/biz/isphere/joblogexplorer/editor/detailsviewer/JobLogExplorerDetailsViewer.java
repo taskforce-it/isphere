@@ -192,7 +192,7 @@ public class JobLogExplorerDetailsViewer implements ISelectionChangedListener {
         if (event.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection)event.getSelection();
             Object element = selection.getFirstElement();
-            if (element instanceof JobLogMessage) {
+            if ((element instanceof JobLogMessage) && selection.size() == 1) {
                 jobLogMessage = (JobLogMessage)element;
             } else {
                 jobLogMessage = JobLogMessage.createEmpty();
