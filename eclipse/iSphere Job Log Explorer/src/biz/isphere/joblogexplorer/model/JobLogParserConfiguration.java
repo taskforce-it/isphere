@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,10 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -33,6 +36,9 @@ import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 
 public class JobLogParserConfiguration {
+
+    private static final String FIELD_DATE = "${date}"; //$NON-NLS-1$
+    private static final String FIELD_VERSION = "${version}"; //$NON-NLS-1$
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
@@ -56,21 +62,21 @@ public class JobLogParserConfiguration {
     private String PAGE_NUMBER_LABEL = "[a-zA-Z.]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[0-9]{1,4}"; //$NON-NLS-1$
     private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
-    private String PAGE_TIME = "[0-9:. ,]{8}"; //$NON-NLS-1$
+    private String PAGE_TIME = "[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2}"; //$NON-NLS-1$
 
     // Page header properties
-    private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z ]+"; //$NON-NLS-1$
+    private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z][a-zA-Z ]+"; //$NON-NLS-1$
     private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}" + "|" + "&{JOB_NUMBER}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
     // Message properties
     private String MESSAGE_ID = "\\*NONE|[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
-    private String MESSAGE_TYPE = "[A-Z][a-z]+"; //$NON-NLS-1$
+    private String MESSAGE_TYPE = "[A-Z][a-z ]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
     private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
-    private String MESSAGE_TIME = "[0-9:. ,]{6,15}"; //$NON-NLS-1$
+    private String MESSAGE_TIME = "(?:[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2})(?:,[0-9]{3,6})?"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
 
-    private String MESSAGE_ATTRIBUTE_NAME = "([a-zA-Z ]+)[. ]+"; //$NON-NLS-1$
+    private String MESSAGE_ATTRIBUTE_NAME = "[a-zA-Z][a-zA-Z ]+"; //$NON-NLS-1$
     private String MESSAGE_ATTRIBUTE_VALUE = "(.+)"; //$NON-NLS-1$
 
     // Default regular expressions
@@ -268,6 +274,9 @@ public class JobLogParserConfiguration {
             MESSAGE_TIME = getProperty(properties, "message.time", MESSAGE_TIME); //$NON-NLS-1$
             MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, "message.continuation.line.indention", MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
 
+            HEADER_ATTRIBUTE_NAME = getProperty(properties, "message.attribute.name", MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_VALUE = getProperty(properties, "message.attribute.value", MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
+
             produceRegularExpressions();
 
             // Override default expressions
@@ -306,7 +315,7 @@ public class JobLogParserConfiguration {
             String directory = getConfigurationDirectory();
             File outFile = new File(directory, EXAMPLE_CONFIGURATION_FILE); //$NON-NLS-1$
             if (outFile.exists()) {
-                return;
+                outFile.delete();
             }
 
             in = getClass().getResourceAsStream(DEFAULT_CONFIGURATION_FILE);
@@ -314,12 +323,29 @@ public class JobLogParserConfiguration {
                 return;
             }
 
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy - HH:mm:ss");
+
+            Date now = Calendar.getInstance().getTime();
+            String version = ISpherePlugin.getDefault().getVersion();
+            String date = formatter.format(now);
+
             final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
             reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder out = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
+
+                if (version != null && line.indexOf(FIELD_VERSION) >= 0) {
+                    line = line.replace(FIELD_VERSION, version);
+                    version = null;
+                }
+
+                if (date != null && line.indexOf(FIELD_DATE) >= 0) {
+                    line = line.replace(FIELD_DATE, date);
+                    date = null;
+                }
+
                 out.append(line);
                 out.append(NEW_LINE); //$NON-NLS-1$
             }
@@ -359,11 +385,11 @@ public class JobLogParserConfiguration {
     private void produceRegularExpressions() {
 
         regex_startOfPage = replaceVariables("^&{SPACES}(&{LICENSED_PROGRAM})&{SPACES}(&{RELEASE}).+&{SPACES}(&{SYSTEM_NAME})&{SPACES}(&{PAGE_DATE})&{SPACES}(&{PAGE_TIME})&{SPACES}(&{TIMEZONE})?&{SPACES}(&{PAGE_NUMBER_LABEL})&{SPACES}(&{PAGE_NUMBER_VALUE})"); //$NON-NLS-1$
-        regex_headerAttribute = replaceVariables("&{SPACES}(&{HEADER_ATTRIBUTE_NAME})[. ]*:&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})"); //$NON-NLS-1$
+        regex_headerAttribute = replaceVariables("&{SPACES}(?:(&{HEADER_ATTRIBUTE_NAME})[. ]*:)&{SPACES}(&{HEADER_ATTRIBUTE_VALUE})"); //$NON-NLS-1$
         regex_messageFirstLine = replaceVariables("^(&{MESSAGE_ID})&{SPACES}(&{MESSAGE_TYPE})&{SPACES}(&{MESSAGE_SEVERITY})?&{SPACES}(&{MESSAGE_DATE})&{SPACES}(&{MESSAGE_TIME})" //$NON-NLS-1$
             + "&{SPACES}(&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}(&{STMT})" //$NON-NLS-1$
             + "&{SPACES}(\\*EXT|&{PROGRAM})&{SPACES}(&{LIBRARY})?&{SPACES}(&{STMT})(.*)?$"); //$NON-NLS-1$
-        regex_messageContinuationLine = replaceVariables("^&{MESSAGE_CONTINUATION_LINE_INDENTION}&{MESSAGE_ATTRIBUTE_NAME}:&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}"); //$NON-NLS-1$
+        regex_messageContinuationLine = replaceVariables("^&{MESSAGE_CONTINUATION_LINE_INDENTION}(?:(&{MESSAGE_ATTRIBUTE_NAME})[. ]*:)&{SPACES}&{MESSAGE_ATTRIBUTE_VALUE}"); //$NON-NLS-1$
     }
 
     /**

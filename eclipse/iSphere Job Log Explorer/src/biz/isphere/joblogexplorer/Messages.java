@@ -71,6 +71,8 @@ public class Messages extends NLS {
     public static String LongFieldName_TO_PROCEDURE;
     public static String LongFieldName_TO_STATEMENT;
     public static String LongFieldName_TEXT;
+    public static String LongFieldName_HELP;
+    public static String LongFieldName_TIMESTAMP;
 
     public static String Message_details;
     public static String Number_of_messages_A;

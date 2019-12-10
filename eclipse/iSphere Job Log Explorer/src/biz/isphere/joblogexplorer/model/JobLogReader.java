@@ -10,6 +10,7 @@ package biz.isphere.joblogexplorer.model;
 
 import java.io.UnsupportedEncodingException;
 
+import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.joblogexplorer.api.listjoblog.JobLogListener;
 import biz.isphere.joblogexplorer.api.listjoblog.MessageSelectionInformation;
@@ -115,7 +116,7 @@ public class JobLogReader implements JobLogListener {
                 jobLog.setSystemName("*ERROR");//$NON-NLS-1$
             }
 
-            rc = qgyljbl.execute(4096);
+            rc = qgyljbl.execute(Buffer.size("64k"));
             if (!rc) {
                 String errorID = qusrjobi.getErrorMessageID();
                 if (JOB_NOT_FOUND_MSGID.equals(errorID)) {
@@ -187,6 +188,7 @@ public class JobLogReader implements JobLogListener {
 
             message.setDate(oljl0100.getDateSent());
             message.setTime(oljl0100.getTimeSent());
+            message.setTimestamp(oljl0100.getTimestampSent());
 
             message.setToLibrary(oljl0100.getFieldData(MessageSelectionInformation.KEY_RECEIVING_PROGRAM_LIBRARY));
             message.setToProgram(oljl0100.getFieldData(MessageSelectionInformation.KEY_RECEIVING_PROGRAM_NAME));

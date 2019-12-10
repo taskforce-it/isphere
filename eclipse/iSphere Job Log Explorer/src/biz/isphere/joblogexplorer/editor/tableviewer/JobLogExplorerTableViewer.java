@@ -13,10 +13,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,6 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -54,8 +52,10 @@ import biz.isphere.joblogexplorer.editor.tableviewer.filters.ToStatementFilter;
 import biz.isphere.joblogexplorer.editor.tableviewer.filters.TypeFilter;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogMessage;
+import biz.isphere.joblogexplorer.views.JobLogExplorerTab;
+import biz.isphere.joblogexplorer.views.JobLogMessageMenuAdapter;
 
-public class JobLogExplorerTableViewer implements SelectionListener, ISelectionProvider {
+public class JobLogExplorerTableViewer implements SelectionListener {
 
     private static final String NEGATED_MARKER = AbstractMessagePropertyFilter.NEGATED_MARKER;
 
@@ -65,11 +65,13 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
 
     private MasterFilter masterFilter;
 
-    private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
+    private JobLogExplorerTab parent;
     private DialogSettingsManager dialogSettingsManager;
+    private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
 
-    public JobLogExplorerTableViewer(DialogSettingsManager dialogSettingsManager) {
+    public JobLogExplorerTableViewer(JobLogExplorerTab parent, DialogSettingsManager dialogSettingsManager) {
 
+        this.parent = parent;
         this.dialogSettingsManager = dialogSettingsManager;
         this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
     }
@@ -150,9 +152,6 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
         viewerArea.setLayout(gridLayout);
         viewerArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        // Create the table
-        createTable(viewerArea);
-
         // Create and setup the TableViewer
         createTableViewer();
         tableViewer.setContentProvider(new JobLogExplorerContentProvider());
@@ -170,13 +169,12 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
     /**
      * Create the Table
      */
-    private void createTable(Composite parent) {
+    private Table createTable(Composite parent) {
 
-        int style = SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
+        int style = SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.HIDE_SELECTION;
 
         table = new Table(parent, style);
         table.setLayoutData(new GridData(GridData.FILL_BOTH));
-
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
@@ -378,6 +376,8 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
                 // ExampleTaskSorter(ExampleTaskSorter.PERCENT_COMPLETE));
             }
         });
+
+        return table;
     }
 
     private TableColumn createColumn(Table table, Columns column, String text) {
@@ -397,9 +397,17 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
      */
     private void createTableViewer() {
 
+        Table table = createTable(viewerArea);
         tableViewer = new TableViewer(table);
         tableViewer.setUseHashlookup(true);
         tableViewer.setColumnProperties(Columns.names());
+
+        final Menu menuTableMembers = new Menu(table);
+        JobLogMessageMenuAdapter menuAdapter = new JobLogMessageMenuAdapter(menuTableMembers, parent);
+        menuTableMembers.addMenuListener(menuAdapter);
+        table.setMenu(menuTableMembers);
+
+        tableViewer.addSelectionChangedListener(menuAdapter);
 
         enableEditing(tableViewer);
     }
@@ -693,25 +701,6 @@ public class JobLogExplorerTableViewer implements SelectionListener, ISelectionP
         }
 
         return !StringHelper.isNullOrEmpty(value);
-    }
-
-    public void addSelectionChangedListener(ISelectionChangedListener arg0) {
-        return;
-    }
-
-    public ISelection getSelection() {
-        if (tableViewer.getInput() == null) {
-            return null;
-        }
-        return new StructuredSelection(tableViewer.getInput());
-    }
-
-    public void removeSelectionChangedListener(ISelectionChangedListener arg0) {
-        return;
-    }
-
-    public void setSelection(ISelection arg0) {
-        return;
     }
 
     public void addStatusChangedListener(IJobLogExplorerStatusChangedListener listener) {

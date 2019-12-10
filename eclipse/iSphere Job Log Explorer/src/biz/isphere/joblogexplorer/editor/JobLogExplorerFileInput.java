@@ -10,6 +10,8 @@ package biz.isphere.joblogexplorer.editor;
 
 import java.io.File;
 
+import biz.isphere.base.internal.FileHelper;
+
 public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
 
     private static final String INPUT_TYPE = "file://"; //$NON-NLS-1$
@@ -49,7 +51,7 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
             return ""; //$NON-NLS-1$
         }
 
-        return file.getName();
+        return FileHelper.getBaseName(file);
     }
 
     public String getToolTipText() {
