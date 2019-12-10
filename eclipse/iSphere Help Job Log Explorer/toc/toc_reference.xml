@@ -7,8 +7,9 @@
   	Add sub topics here:
     <topic label="..." href="html/tasktags/..." />
     -->
+    <topic label="SQL Reference" href="/biz.isphere.base.help/html/sql/sql_reference.html" />
     <topic label="Preferences" href="html/joblogexplorer/preferences/preferences.html" />
     <topic label="Configuration" href="html/joblogexplorer/configuration/configuration.html" />
-    <topic label="Functioning" href="html/joblogexplorer/functioning/functioning.html" />
+    <topic label="How it Works" href="html/joblogexplorer/functioning/functioning.html" />
   </topic>
 </toc> 

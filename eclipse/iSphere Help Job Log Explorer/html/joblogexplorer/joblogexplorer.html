@@ -12,20 +12,38 @@
 <a href="https://sourceforge.net/projects/isphere/" target="_blank">
 <img src="assets/joblogexplorer.png" 
      style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
-The Job Log Explorer is used for analyzing job logs. It lets you view and filter the job log messages 
-quick and easily. You can open it from the context menus of:
+The Job Log Explorer is supposed to be used for viewing and filtering the job log
+messages fast and easily. You can open it from the context menus of:
 <ul>
+<li><a href="#filtering_job_log_messages">Filtering job log messages</a></li>
 <li><a href="#opening_job_log_of_remote_job">Jobs of the <i>Jobs</i> subsystem</a></li>
 <li><a href="#opening_spooled_file_job_log">QPJOBLOG spooled files</a></li>
 <li><a href="#opening_local_file_job_log">Local files</a></li>
 </ul> 
 <p>
-Messages can be colored depending on their severity to get your attention and there is a 
-special <i>Job Log Explorer</i> perspective available.
+Messages can be colored depending on their severity to get your attention.
 <p>
-<img src="assets/joblogexplorer_editor.png" align="middle">
+Use the <i>Job Log Explorer</i> perspective to get the best user experience.
 <p>
-Use the drop down combo boxes and the text field at the top of the editor to adjust your filters. Then 
+<img src="assets/joblogexplorer_view.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job log entries.<br>(Local operation that does not contact the host system.)</td></tr>
+<tr><td valign="middle"><img src="assets/export_to_excel.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Exports all job log entries to Excel.</td></tr>
+<tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+The properties of the job log are displayed in the Eclipse <i>Properties</i> view:
+<p>
+<img src="assets/joblogexplorer_properties.png" align="middle">
+<p>
+<a id="filtering_job_log_messages"></a>
+<h2>Filtering job log messages</h2>
+<p>
+Use the drop down combo boxes and the text field at the top of the view to set your filters. Then 
 press the [Apply filters] button to apply the filters to the job log. Each search argument can be negated
 with a preceding exclamation mark (!): 
 <p>
@@ -39,9 +57,46 @@ does not include the <i>second level text</i>.
 <p>
 <img src="assets/text_field.png" align="middle">
 <p>
-The Eclipse <i>Properties</i> view displays the properties of the job log:
+For more advanced queries you can use the SQL editor. Click the <i>Edit SQL</i> button at the top of 
+the <i>Job Log Explorer</i> view to open the SQL editor:
 <p>
-<img src="assets/joblogexplorer_properties.png" align="middle">
+<img src="assets/edit_sql.png" align="middle">
+<p>
+The <i>SQL Editor</i> is used to enter a SQL WHERE condition for selecting a subset of the available job log entries 
+entries. Enter the WHERE condition and then click the <i>Execute</i> button or press <i>Ctrl+Enter</i> to execute
+the query. Refer to the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html"><i>SQL Reference</i></a> to see the list of available functions.
+<p>
+<img src="assets/sql_editor.png" align="middle">
+<p>
+Use Ctrl+SPACE for content assistance.
+<p>
+<img src="assets/content_assistance.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Ctrl+SPACE</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Add Field</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Clear</td><td valign="top">-</td><td valign="top">Clears the where condition.</td></tr>
+<tr><td valign="top">Ctrl+ENTER</td><td valign="top">-</td><td valign="top">See: Filter</td></tr>
+<tr><td valign="top">Filter</td><td valign="top">-</td><td valign="top">Executes the query with the current where condition to create a subsetted list of the available job log entries entries.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Filtering job log entries is a local task, which does not reload the
+		                                  job log from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause is applied to the records that have been downloaded to the PC. It must be specified in
+		                   the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html">iSphere SQL</a> syntax, which in most cases
+		                   matches the IBM i SQL syntax.
+		</td>
+	</tr>
+</table>
 <p>
 <a id="opening_job_log_of_remote_job"></a>
 <h2>Opening Job Log of Remote Job</h2>
@@ -71,14 +126,6 @@ The file name must not necessarily start with QPJOBLOG. If the job log parser ca
 format, an error message is displayed: 
 <p>
 <img src="assets/error_invalid_format.png" align="middle">
-<p>
-<a id="opening_local_file_job_log"></a>
-<h2>Exporting Job Log to Excel</h2>
-<p>
-The messages that are currently displayed in the table view can be exported to Excel. Click the
-<i>Export to Excel</i> icon of the toolbar to open the export dialog:
-<p>
-<img src="assets/export_to_excel.png" align="middle">
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
