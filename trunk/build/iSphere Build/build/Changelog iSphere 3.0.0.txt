@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.6.0.b004
 -----------------------------
+ • Improved error checking of WHERE clauses when filtering journal
+   entries.
  • Added option to cancel loading journal entries to Journal Explorer
    view.
  • Fixed error when parsing a job log when the time separator is a
