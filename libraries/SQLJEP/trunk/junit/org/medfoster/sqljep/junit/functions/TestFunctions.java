@@ -791,6 +791,22 @@ public class TestFunctions extends AbstractJUnitTestCase {
             Assert.fail("Wrong exception: " + e.getClass());
         }
     }
+    
+    @Test
+    public void testTimestampCompare() throws ParseException {
+
+        SimpleDateFormat formatter;
+        String expected;
+
+        formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0, 123));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00') < '" + expected + "'"));
+
+        formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0));
+        assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.456') > '" + expected + "'"));
+        
+    }
 
     @Test
     public void testSign() throws ParseException {
