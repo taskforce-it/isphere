@@ -24,7 +24,7 @@
 	<property name="junit.lib"      location="lib/junit"/>
 	<property name="build.doc"      location="${build}/doc"/>
 	<property name="build.javadoc"  location="${build.doc}/javadoc"/>
-	<property name="build.disttemp" location="${build}/disttemp"/>
+	<property name="build.temp"     location="${build}/temp"/>
 	
 	<property name="version"     value="0.2.2.r"/>
 	<property name="jar"         value="${app.name}-${version}.jar"/>
@@ -166,6 +166,7 @@
 		
 		<!-- Create the distribution directory -->
 		<mkdir dir="${build.dist}"/>
+		<delete dir="${build.dist}" includes="*"/>
 
 		<!-- Put everything in ${build.compile} into the sqljep-${DSTAMP}.jar file -->
 		<jar jarfile="${build.dist}/sqljep-${version}.jar"
@@ -181,10 +182,10 @@
         </jar>
 		
 		<!-- Create a temp dir for contents of packages-->
-		<mkdir dir="${disttemp}/sqljep-${version}"/>
+		<mkdir dir="${build.temp}/sqljep-${version}"/>
 
 		<!-- Copy jar -->
-		<copy file="${build.dist}/sqljep-${version}.jar" todir="${disttemp}/sqljep-${version}"/>
+		<copy file="${build.dist}/sqljep-${version}.jar" todir="${build.temp}/sqljep-${version}"/>
 
 		<!-- Copy src files -->
 		<!-- define filterset -->
@@ -197,7 +198,7 @@
 			<filter token="SQLJEPCOPYRIGHT3" value="     (c) Copyright 2002, Nathan Funk"/>
 			<filter token="SQLJEPLICENSE" value="See LICENSE.txt for license information."/>
 		</filterset>
-		<copy todir="${disttemp}/sqljep-${version}">
+		<copy todir="${build.temp}/sqljep-${version}">
 			<fileset dir="."
 					includes="
 					 ${src}/org/medfoster/sqljep/**"/>
@@ -205,7 +206,7 @@
 		</copy>
 
 		<!-- Copy doc, build, and single files -->
-		<copy todir="${disttemp}/sqljep-${version}">
+		<copy todir="${build.temp}/sqljep-${version}">
 			<fileset dir="."
 					includes="
 					 ${build.doc}/**,
@@ -218,14 +219,14 @@
 		<!-- zip file -->
 		<delete file="${build.dist}/sqljep-${version}.zip"/>
 		<zip zipfile="${build.dist}/sqljep-${version}.zip"
-		     basedir="${disttemp}"
+		     basedir="${build.temp}"
 		     >
 		</zip>
 
 		<!-- tar.gz file -->
 		<delete file="${build.dist}/sqljep-${version}.tar.gz"/>
 		<tar tarfile="${build.dist}/sqljep-${version}.tar"
-		     basedir="${disttemp}"
+		     basedir="${build.temp}"
 		     >
 		</tar>
 		<gzip zipfile="${build.dist}/sqljep-${version}.tar.gz"
@@ -233,7 +234,7 @@
 
 		<!-- clean up temporary files -->
 		<delete file="${build.dist}/sqljep-${version}.tar"/>
-		<delete dir="${disttemp}" />
+		<delete dir="${build.temp}" />
 	</target>
 
 
