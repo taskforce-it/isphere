@@ -9,7 +9,7 @@ Bundle-ClassPath: .,
  activation.jar,
  mail.jar,
  jxl.jar,
- sqljep-0.2.2.r.jar
+ sqljep-0.2.3.r.jar
 Bundle-Vendor: iSphere Project Team
 Export-Package: com.sun.activation.registries,
  com.sun.activation.viewers,
