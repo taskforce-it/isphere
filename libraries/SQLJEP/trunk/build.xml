@@ -26,7 +26,7 @@
 	<property name="build.javadoc"  location="${build.doc}/javadoc"/>
 	<property name="build.temp"     location="${build}/temp"/>
 	
-	<property name="version"     value="0.2.2.r"/>
+	<property name="version"     value="0.2.3.r"/>
 	<property name="jar"         value="${app.name}-${version}.jar"/>
 	<property name="src.zip"     value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
