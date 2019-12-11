@@ -111,10 +111,6 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         return calendar.getTimeInMillis();
     }
 
-    public boolean hasMilliSeconds() {
-        return calendar.isSet(MILLISECOND);
-    }
-
     @Override
     public String toString() {
         if (format != null) {
@@ -141,16 +137,6 @@ public abstract class AbstractOracleDateTimeFormat extends Format {
         }
         OracleTimestampFormat other = (OracleTimestampFormat)obj;
         return (format != null) ? format.equals(other.format) : false;
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected java.util.Date stripMilliSeconds(Comparable time) {
-
-        calendar.clear();
-        calendar.setTime((Date)time);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        return new java.sql.Timestamp(calendar.getTimeInMillis());
     }
 
     private void eatNumbers(String source, ParsePosition pos, int digits) throws ParseException {

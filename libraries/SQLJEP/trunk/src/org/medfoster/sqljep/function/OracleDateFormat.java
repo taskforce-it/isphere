@@ -37,10 +37,4 @@ public final class OracleDateFormat extends AbstractOracleDateTimeFormat {
     public java.sql.Date parseObject(String source, ParsePosition pos) {
         return new java.sql.Date(parseInMillis(source, pos));
     }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected java.sql.Date stripMilliSeconds(Comparable time) {
-        throw new IllegalAccessError("stripMilliSeconds() is not allowed for " + getClass().getSimpleName());
-    }
 }

@@ -102,15 +102,9 @@ public final class ComparativeEQ extends PostfixCommand {
             if (s1 instanceof java.sql.Timestamp && s2 instanceof String) {
                 OracleTimestampFormat format = new OracleTimestampFormat(ParserUtils.getTimestampFormat((String)s2));
                 s2 = format.parseObject((String)s2);
-                if (!format.hasMilliSeconds()) {
-                    s1 = format.stripMilliSeconds(s1);
-                }
             } else if (s1 instanceof java.sql.Time && s2 instanceof String) {
                 OracleTimeFormat format = new OracleTimeFormat(ParserUtils.getTimeFormat((String)s2));
                 s2 = format.parseObject((String)s2);
-                if (!format.hasMilliSeconds()) {
-                    s1 = format.stripMilliSeconds(s1);
-                }
             } else if (s1 instanceof java.sql.Date && s2 instanceof String) {
                 OracleDateFormat format = new OracleDateFormat(ParserUtils.getDateFormat((String)s2));
                 s2 = format.parseObject((String)s2);
