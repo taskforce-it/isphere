@@ -131,7 +131,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIME('15.10.30') - MICROSECOND(65) = '15:10:29'"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Substract", "Time", "Microseconds"), message);
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Subtract", "Time", "Microseconds"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
@@ -724,7 +724,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:15:25') = Date('2018-12-05') - Time('12:15:25')"));
         } catch (WrongTypeException e) {
             String message = e.getLocalizedMessage();
-            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Substract", "Date", "Time"), message);
+            assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Subtract", "Date", "Time"), message);
         } catch (Throwable e) {
             Assert.fail("Wrong exception: " + e.getClass());
         }
