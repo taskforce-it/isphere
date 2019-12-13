@@ -377,7 +377,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     private void debugPrint(String message) {
-        System.out.println(message);
+        // Xystem.out.println(message);
     }
 
     private String addSourceMember(String connectionName, String libraryName, String fileName, String memberName) {
