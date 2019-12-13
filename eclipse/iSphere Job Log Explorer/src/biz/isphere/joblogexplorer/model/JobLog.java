@@ -8,14 +8,18 @@
 
 package biz.isphere.joblogexplorer.model;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyEvent;
 import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
@@ -23,6 +27,7 @@ import biz.isphere.joblogexplorer.model.listeners.MessageModifyListener;
 public class JobLog implements MessageModifyListener, IAdaptable {
 
     private String systemName;
+    private Map<String, JobLogMessage> errors;
 
     private String jobName;
     private String userName;
@@ -65,6 +70,29 @@ public class JobLog implements MessageModifyListener, IAdaptable {
         this.messageToPrograms = new HashSet<String>();
         this.messageToStmts = new HashSet<String>();
         this.numMessagesSelected = 0;
+
+        this.errors = new LinkedHashMap<String, JobLogMessage>();
+    }
+
+    public int getErrorCount() {
+        return errors.size();
+    }
+
+    public String[] getErrors() {
+
+        Collection<JobLogMessage> messages = errors.values();
+
+        List<String> errors = new LinkedList<String>();
+
+        for (JobLogMessage message : messages) {
+            errors.add(message.getError());
+        }
+
+        return errors.toArray(new String[errors.size()]);
+    }
+
+    public void addError(Throwable e, JobLogMessage message) {
+        errors.put(ExceptionHelper.getLocalizedMessage(e), message);
     }
 
     public String getSystemName() {

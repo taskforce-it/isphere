@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
@@ -41,6 +42,7 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dialog.ConfirmErrorsDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.spooledfiles.SpooledFile;
@@ -430,7 +432,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         status.setException(message, e);
 
         if (Display.getCurrent() == null) {
-            UIJob job = new UIJob("") {
+            UIJob job = new UIJob(EMPTY) {
                 @Override
                 public IStatus runInUIThread(IProgressMonitor arg0) {
                     notifyStatusChangedListeners(status);
@@ -483,16 +485,27 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     public void filterJobLogMessages() {
 
-        String whereClause = sqlEditor.getWhereClause();
+        boolean enabled = sqlEditor.getEnabled();
 
-        FilterData filterData = new FilterData();
-        filterData.whereClause = whereClause;
-        Event event = new Event();
-        event.widget = this;
-        event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
-        event.data = filterData;
-        SelectionEvent selectionEvent = new SelectionEvent(event);
-        tableViewerPanel.widgetSelected(selectionEvent);
+        try {
+
+            sqlEditor.setEnabled(true);
+
+            String whereClause = sqlEditor.getWhereClause();
+
+            FilterData filterData = new FilterData();
+            filterData.whereClause = whereClause;
+            Event event = new Event();
+            event.widget = this;
+            event.detail = JobLogExplorerFilterPanelEvents.APPLY_FILTERS;
+            event.data = filterData;
+
+            SelectionEvent selectionEvent = new SelectionEvent(event);
+            tableViewerPanel.widgetSelected(selectionEvent);
+
+        } finally {
+            sqlEditor.setEnabled(enabled);
+        }
     }
 
     private void setFilterPanelOptions() {
@@ -567,7 +580,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             } catch (InvalidJobLogFormatException e) {
                 handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to parse spooled file ***", e, true);
+                handleDataLoadException("*** Failed to parse spooled file ***", e, true); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -608,7 +621,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
                     Messages.bind(Messages.Could_not_load_job_log_of_job_C_B_A_Reason_D, new Object[] { jobInput.getJobName(),
                         jobInput.getUserName(), jobInput.getJobNumber(), ExceptionHelper.getLocalizedMessage(e) }), e);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to retrieve job log ***", e, true);
+                handleDataLoadException("*** Failed to retrieve job log ***", e, true); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -655,7 +668,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
             } catch (InvalidJobLogFormatException e) {
                 handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to parse job log from spooled file ***", e, true);
+                handleDataLoadException("*** Failed to parse job log from spooled file ***", e, true); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -669,7 +682,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         private JobLogExplorerFilterPanel filterPanel;
 
         public SetEditorInputJob(JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
-            super(""); //$NON-NLS-1$
+            super(EMPTY);
 
             this.jobLog = jobLog;
             this.viewer = viewer;
@@ -699,8 +712,13 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
                 }
                 viewer.setFocus();
 
+                if (jobLog.getErrorCount() > 0) {
+                    ConfirmErrorsDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
+                        Messages.Job_Log_Explorer, jobLog.getErrors());
+                }
+
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to set job log data ***", e, true);
+                handleDataLoadException("*** Failed to set job log data ***", e, true); //$NON-NLS-1$
             }
 
             JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(

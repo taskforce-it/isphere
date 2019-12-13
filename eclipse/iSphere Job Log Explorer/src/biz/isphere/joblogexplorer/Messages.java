@@ -92,6 +92,10 @@ public class Messages extends NLS {
     public static String Severity_BLANK_tooltip;
     public static String Severity_A_to_B_tooltip;
 
+    public static String Parser_settings;
+    public static String Date_format_colon;
+    public static String Date_format_tooltip;
+
     public static String Apply_filters;
     public static String Clear_filters;
     public static String Select_all;
@@ -135,6 +139,9 @@ public class Messages extends NLS {
     public static String Reset_Column_Size;
     public static String SaveDialog_Excel_Workbook;
     public static String SaveDialog_All_Files;
+
+    public static String ParserError_Could_not_parse_time_A;
+    public static String ParserError_Could_not_parse_date_A;
 
     static {
         // initialize resource bundle

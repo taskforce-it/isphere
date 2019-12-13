@@ -59,6 +59,9 @@ public class JobLogMessage {
     private int severityInt;
     private String lowerCaseText;
 
+    private String error;
+    private Exception exception;
+
     public static enum Fields {
         ID ("ID", 0, "CHAR(7)"),
         TYPE ("TYPE", 1, "CHAR(10)"),
@@ -211,6 +214,19 @@ public class JobLogMessage {
         message.setTimestamp(new java.sql.Timestamp(now));
 
         return message.getRow();
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(Exception e) {
+        setError(e.getLocalizedMessage(), e);
+    }
+
+    private void setError(String error, Exception e) {
+        this.error = error;
+        this.exception = e;
     }
 
     public int getPageNumber() {

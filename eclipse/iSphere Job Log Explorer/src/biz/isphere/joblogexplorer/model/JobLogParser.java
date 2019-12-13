@@ -11,13 +11,22 @@ package biz.isphere.joblogexplorer.model;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import org.medfoster.sqljep.ParseException;
+
+import biz.isphere.base.internal.IBMiDateFormat;
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.internal.DateTimeHelper;
+import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
+import biz.isphere.joblogexplorer.preferences.Preferences;
 
 public class JobLogParser {
 
@@ -249,10 +258,52 @@ public class JobLogParser {
             if (matcher.group(3) != null) {
                 jobLogMessage.setSeverity(matcher.group(3));
             } else {
-                jobLogMessage.setSeverity(null);
+                jobLogMessage.setSeverity("0"); //$NON-NLS-1$
             }
+
+            try {
+
+                String timeWithoutDelimiters = removeTimeDelimiters(matcher.group(5));
+                Date time = IBMiHelper.hhmmssToTime(timeWithoutDelimiters);
+
+                String dateWithoutDelimiters = removeDateDelimiters(matcher.group(4));
+                Date date;
+
+                String dateFormat = Preferences.getInstance().getJobLogDateFormat();
+                if (IBMiDateFormat.JUL.label().equals(dateFormat) || dateWithoutDelimiters.length() == 5) {
+                    date = IBMiHelper.julianToDate(dateWithoutDelimiters);
+                } else {
+                    if (IBMiDateFormat.YMD.label().equals(dateFormat)) {
+                        date = IBMiHelper.ymdToDate(dateWithoutDelimiters);
+                    } else if (IBMiDateFormat.DMY.label().equals(dateFormat)) {
+                        date = IBMiHelper.dmyToDate(dateWithoutDelimiters);
+                    } else if (IBMiDateFormat.MDY.label().equals(dateFormat)) {
+                        date = IBMiHelper.mdyToDate(dateWithoutDelimiters);
+                    } else {
+                        date = null;
+                    }
+                }
+
+                if (time == null) {
+                    Exception e = new ParseException(Messages.bind(Messages.ParserError_Could_not_parse_time_A, matcher.group(5)));
+                    jobLogMessage.setError(e);
+                    jobLog.addError(e, jobLogMessage);
+                } else if (date == null) {
+                    Exception e = new ParseException(Messages.bind(Messages.ParserError_Could_not_parse_date_A, matcher.group(4)));
+                    jobLogMessage.setError(e);
+                    jobLog.addError(e, jobLogMessage);
+                } else {
+                    jobLogMessage.setTimestamp(new Timestamp(DateTimeHelper.combineDateTime(date, time).getTime()));
+                }
+
+            } catch (Exception e) {
+                jobLogMessage.setError(e);
+                jobLog.addError(e, jobLogMessage);
+            }
+
             jobLogMessage.setDate(matcher.group(4));
             jobLogMessage.setTime(matcher.group(5));
+
             jobLogMessage.setFromProgram(matcher.group(6));
             jobLogMessage.setFromLibrary(matcher.group(7));
             jobLogMessage.setFromStatement(matcher.group(8));
@@ -292,6 +343,14 @@ public class JobLogParser {
         }
 
         return mode;
+    }
+
+    private String removeTimeDelimiters(String timeString) {
+        return timeString.replaceAll("[:. ,]", "").trim();
+    }
+
+    private String removeDateDelimiters(String dateString) {
+        return dateString.replaceAll("[-. ,/]", "").trim();
     }
 
     /**
