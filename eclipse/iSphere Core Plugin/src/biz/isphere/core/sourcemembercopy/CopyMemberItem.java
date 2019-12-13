@@ -304,11 +304,19 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
             String message = null;
 
+            debugPrint("\nProcessing member: " + getFromMember());
+
+            long startTime = System.currentTimeMillis();
+            long startTime2 = startTime;
+
             Member fromSourceMember = IBMiHostContributionsHandler.getMember(fromConnectionName, getFromLibrary(), getFromFile(), getFromMember());
             if (fromSourceMember == null) {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
                     getFromMember() });
             }
+
+            debugPrint("Retrieving the source member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+            startTime = System.currentTimeMillis();
 
             SourceLine[] sourceLines = fromSourceMember.downloadSourceMember(null);
 
@@ -317,10 +325,17 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
                     getFromMember() });
             }
 
+            debugPrint("Downloading the source member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+            startTime = System.currentTimeMillis();
+
             if (!IBMiHostContributionsHandler.checkMember(toConnectionName, getToLibrary(), getToFile(), getToMember())) {
                 message = addSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+                debugPrint("Adding the target member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+                startTime = System.currentTimeMillis();
             } else {
                 message = prepareSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
+                debugPrint("Preparing the target member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+                startTime = System.currentTimeMillis();
             }
 
             if (message != null) {
@@ -332,15 +347,26 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
                 return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getToLibrary(), getToFile(), getToMember() });
             }
 
+            debugPrint("Retrieving the target member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+            startTime = System.currentTimeMillis();
+
             message = toSourceMember.uploadSourceMember(sourceLines, null);
             if (message != null) {
                 return message;
             }
 
+            debugPrint("Uploading the source member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+            startTime = System.currentTimeMillis();
+
             message = setToMemberAttributes(fromSourceMember, toSourceMember);
             if (message != null) {
                 return message;
             }
+
+            debugPrint("Changing the text of the target source member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
+            startTime = System.currentTimeMillis();
+
+            debugPrint("Total time used: " + (System.currentTimeMillis() - startTime2) + " mSecs.");
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Unexpected error when copying member ***", e); //$NON-NLS-1$
@@ -348,6 +374,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         }
 
         return null;
+    }
+
+    private void debugPrint(String message) {
+        System.out.println(message);
     }
 
     private String addSourceMember(String connectionName, String libraryName, String fileName, String memberName) {
