@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.6.0.b004
 -----------------------------
+ • Enhanced the job log parser to understand the different IBM I date
+   and time formats.
  • Improved error checking of WHERE clauses when filtering journal
    entries.
  • Added option to cancel loading journal entries to Journal Explorer
