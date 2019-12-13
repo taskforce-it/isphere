@@ -28,6 +28,8 @@ import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
 public abstract class Member {
 
+    private static final int BLOCKING_SIZE = 5000;
+
     /** Record field */
     public static final int SRCSEQ_INDEX = 0;
     /** Record field */
@@ -116,7 +118,7 @@ public abstract class Member {
             AS400FileRecordDescription recordDescription = new AS400FileRecordDescription(file.getSystem(), file.getPath());
             RecordFormat[] format = recordDescription.retrieveRecordFormat();
             file.setRecordFormat(format[0]);
-            file.open(AS400File.READ_ONLY, 1000, AS400File.COMMIT_LOCK_LEVEL_NONE);
+            file.open(AS400File.READ_ONLY, 0, AS400File.COMMIT_LOCK_LEVEL_NONE);
 
             List<SourceLine> sourceLines = new LinkedList<SourceLine>();
 
@@ -151,21 +153,37 @@ public abstract class Member {
             AS400FileRecordDescription recordDescription = new AS400FileRecordDescription(file.getSystem(), file.getPath());
             RecordFormat[] format = recordDescription.retrieveRecordFormat();
             file.setRecordFormat(format[0]);
-            file.open(AS400File.WRITE_ONLY, 1000, AS400File.COMMIT_LOCK_LEVEL_CHANGE);
+            file.open(AS400File.WRITE_ONLY, 0, AS400File.COMMIT_LOCK_LEVEL_CHANGE);
 
             int targetDataLength = format[0].getFieldDescription(SRCDTA_INDEX).getLength();
 
+            int countRemaining = sourceLines.length;
+            Record[] records = createBlockingBuffer(countRemaining);
+
+            int i = 0;
             Record record;
-            for (SourceLine sourceLine : sourceLines) {
+            while (countRemaining > 0) {
+
                 record = new Record(format[0]);
-                record.setField(SRCSEQ_INDEX, sourceLine.getSourceSequence());
-                record.setField(SRCDAT_INDEX, sourceLine.getSourceDate());
-                if (targetDataLength < sourceLine.getSourceData().length()) {
-                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData().substring(0, targetDataLength));
+                record.setField(SRCSEQ_INDEX, sourceLines[i].getSourceSequence());
+                record.setField(SRCDAT_INDEX, sourceLines[i].getSourceDate());
+
+                if (targetDataLength < sourceLines[i].getSourceData().length()) {
+                    record.setField(SRCDTA_INDEX, sourceLines[i].getSourceData().substring(0, targetDataLength));
                 } else {
-                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData());
+                    record.setField(SRCDTA_INDEX, sourceLines[i].getSourceData());
                 }
-                file.write(record);
+
+                records[i] = record;
+
+                if (i == records.length - 1) {
+                    file.write(records);
+                    countRemaining = countRemaining - records.length;
+                    records = createBlockingBuffer(countRemaining);
+                    i = 0;
+                } else {
+                    i++;
+                }
             }
 
             file.commit();
@@ -177,6 +195,10 @@ public abstract class Member {
         }
 
         return null;
+    }
+
+    private Record[] createBlockingBuffer(int countRemaining) {
+        return new Record[Math.min(countRemaining, BLOCKING_SIZE)];
     }
 
     private SequentialFile getSequentialFile(String sourceLibrary, String sourceFile, String sourceMember, String connectionName) {
