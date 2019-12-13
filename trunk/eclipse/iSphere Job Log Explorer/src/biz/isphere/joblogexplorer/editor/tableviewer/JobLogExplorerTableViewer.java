@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -486,84 +487,94 @@ public class JobLogExplorerTableViewer implements SelectionListener {
 
     }
 
-    private void doApplyFilters(Object object) {
+    private void doApplyFilters(final Object object) {
 
-        try {
+        BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 
-            if (object == null) {
-                if (masterFilter != null) {
-                    tableViewer.removeFilter(masterFilter);
-                    masterFilter = null;
-                }
-                return;
-            }
+            public void run() {
 
-            boolean updateMasterAddFilter;
-            if (masterFilter == null) {
-                updateMasterAddFilter = false;
-                masterFilter = new MasterFilter();
-            } else {
-                updateMasterAddFilter = true;
-                masterFilter.removeAllFilters();
-            }
+                try {
 
-            if (object instanceof FilterData) {
-                FilterData filterData = (FilterData)object;
-                if (isFilterValue(filterData.id)) {
-                    masterFilter.addFilter(new IdFilter(filterData.id));
-                }
-                if (isFilterValue(filterData.type)) {
-                    masterFilter.addFilter(new TypeFilter(filterData.type));
-                }
-                if (isFilterValue(filterData.severity)) {
-                    masterFilter.addFilter(new SeverityFilter(filterData.severity));
-                }
-                if (isFilterValue(filterData.fromLibrary)) {
-                    masterFilter.addFilter(new FromLibraryFilter(filterData.fromLibrary));
-                }
-                if (isFilterValue(filterData.fromProgram)) {
-                    masterFilter.addFilter(new FromProgramFilter(filterData.fromProgram));
-                }
-                if (isFilterValue(filterData.fromStmt)) {
-                    masterFilter.addFilter(new FromStatementFilter(filterData.fromStmt));
-                }
-                if (isFilterValue(filterData.toLibrary)) {
-                    masterFilter.addFilter(new ToLibraryFilter(filterData.toLibrary));
-                }
-                if (isFilterValue(filterData.toProgram)) {
-                    masterFilter.addFilter(new ToProgramFilter(filterData.toProgram));
-                }
-                if (isFilterValue(filterData.toStmt)) {
-                    masterFilter.addFilter(new ToStatementFilter(filterData.toStmt));
-                }
-                if (isFilterValue(filterData.text)) {
-                    masterFilter.addFilter(new TextFilter(filterData.text));
-                }
-                if (isFilterValue(filterData.whereClause)) {
-                    masterFilter.addFilter(new NativeSQLFilter(filterData.whereClause));
-                }
-            }
+                    tableViewer.getTable().setLinesVisible(false);
 
-            if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
-                tableViewer.removeFilter(masterFilter);
-                masterFilter = null;
-            } else {
-                if (updateMasterAddFilter) {
-                    tableViewer.refresh();
-                } else {
-                    tableViewer.addFilter(masterFilter);
-                }
-                if (getItemCount() > 0) {
-                    if (tableViewer.getTable().getSelection().length == 0) {
-                        setSelection(0);
+                    if (object == null) {
+                        if (masterFilter != null) {
+                            tableViewer.removeFilter(masterFilter);
+                            masterFilter = null;
+                        }
+                        return;
                     }
+
+                    boolean updateMasterAddFilter;
+                    if (masterFilter == null) {
+                        updateMasterAddFilter = false;
+                        masterFilter = new MasterFilter();
+                    } else {
+                        updateMasterAddFilter = true;
+                        masterFilter.removeAllFilters();
+                    }
+
+                    if (object instanceof FilterData) {
+                        FilterData filterData = (FilterData)object;
+                        if (isFilterValue(filterData.id)) {
+                            masterFilter.addFilter(new IdFilter(filterData.id));
+                        }
+                        if (isFilterValue(filterData.type)) {
+                            masterFilter.addFilter(new TypeFilter(filterData.type));
+                        }
+                        if (isFilterValue(filterData.severity)) {
+                            masterFilter.addFilter(new SeverityFilter(filterData.severity));
+                        }
+                        if (isFilterValue(filterData.fromLibrary)) {
+                            masterFilter.addFilter(new FromLibraryFilter(filterData.fromLibrary));
+                        }
+                        if (isFilterValue(filterData.fromProgram)) {
+                            masterFilter.addFilter(new FromProgramFilter(filterData.fromProgram));
+                        }
+                        if (isFilterValue(filterData.fromStmt)) {
+                            masterFilter.addFilter(new FromStatementFilter(filterData.fromStmt));
+                        }
+                        if (isFilterValue(filterData.toLibrary)) {
+                            masterFilter.addFilter(new ToLibraryFilter(filterData.toLibrary));
+                        }
+                        if (isFilterValue(filterData.toProgram)) {
+                            masterFilter.addFilter(new ToProgramFilter(filterData.toProgram));
+                        }
+                        if (isFilterValue(filterData.toStmt)) {
+                            masterFilter.addFilter(new ToStatementFilter(filterData.toStmt));
+                        }
+                        if (isFilterValue(filterData.text)) {
+                            masterFilter.addFilter(new TextFilter(filterData.text));
+                        }
+                        if (isFilterValue(filterData.whereClause)) {
+                            masterFilter.addFilter(new NativeSQLFilter(filterData.whereClause));
+                        }
+                    }
+
+                    if (masterFilter.countFilters() == 0 && !haveSelectedMessages()) {
+                        tableViewer.removeFilter(masterFilter);
+                        masterFilter = null;
+                    } else {
+                        if (updateMasterAddFilter) {
+                            tableViewer.refresh();
+                        } else {
+                            tableViewer.addFilter(masterFilter);
+                        }
+                        if (getItemCount() > 0) {
+                            if (tableViewer.getTable().getSelection().length == 0) {
+                                setSelection(0);
+                            }
+                        }
+                    }
+                } catch (ParseException e) {
+                    MessageDialogAsync.displayError(e.getLocalizedMessage());
+                } finally {
+                    tableViewer.getTable().setLinesVisible(true);
+                    notifyStatusChangedListeners(JobLogExplorerStatusChangedEvent.EventType.FILTER_CHANGED);
                 }
+
             }
-        } catch (ParseException e) {
-            MessageDialogAsync.displayError(e.getLocalizedMessage());
-        } finally {
-            notifyStatusChangedListeners(JobLogExplorerStatusChangedEvent.EventType.FILTER_CHANGED);
-        }
+        });
     }
 
     private boolean haveSelectedMessages() {
