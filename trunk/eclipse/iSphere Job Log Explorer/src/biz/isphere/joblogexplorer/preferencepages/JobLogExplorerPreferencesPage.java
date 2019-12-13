@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -40,6 +41,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
     private ColorSelector buttonSeverity20;
     private ColorSelector buttonSeverity30;
     private ColorSelector buttonSeverity40;
+    private Combo comboDateFormat;
 
     public JobLogExplorerPreferencesPage() {
         super();
@@ -59,6 +61,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
 
         createSectionCommon(main);
         createGroupColors(main);
+        createGroupParserSettings(main);
 
         setScreenToValues();
 
@@ -82,8 +85,9 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
     private void createGroupColors(Composite parent) {
 
         groupColors = new Group(parent, SWT.NONE);
-        groupColors.setText(Messages.Colors);
+        groupColors.setText("Messages.Parser_Settings");
         groupColors.setLayout(new GridLayout(2, false));
+        groupColors.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         buttonSeverityBL = createColorSelector(groupColors, Messages.Severity_BL_colon);
         buttonSeverityBL.getButton().setToolTipText(Messages.Severity_BLANK_tooltip);
@@ -97,6 +101,25 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         buttonSeverity30.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "30", "39" })); //$NON-NLS-1$ //$NON-NLS-2$
         buttonSeverity40 = createColorSelector(groupColors, Messages.Severity_40_colon);
         buttonSeverity40.getButton().setToolTipText(Messages.bind(Messages.Severity_A_to_B_tooltip, new String[] { "40", "99" })); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    private void createGroupParserSettings(Composite parent) {
+
+        Group groupParserSettings = new Group(parent, SWT.NONE);
+        groupParserSettings.setText(Messages.Parser_settings);
+        groupParserSettings.setLayout(new GridLayout(2, false));
+        groupParserSettings.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label labelDateFormat = new Label(groupParserSettings, SWT.NONE);
+        labelDateFormat.setText(Messages.Date_format_colon);
+        labelDateFormat.setToolTipText(Messages.Date_format_tooltip);
+
+        comboDateFormat = WidgetFactory.createReadOnlyCombo(groupParserSettings);
+        comboDateFormat.setItems(Preferences.getInstance().getJobLogDateFormats());
+        GridData comboDateFormatLayoutData = new GridData();
+        comboDateFormatLayoutData.widthHint = 80;
+        comboDateFormat.setLayoutData(comboDateFormatLayoutData);
+        comboDateFormat.setToolTipText(Messages.Date_format_tooltip);
     }
 
     private ColorSelector createColorSelector(Group parent, String label) {
@@ -141,6 +164,8 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         preferences.setColorSeverity(SeverityColor.SEVERITY_20, buttonSeverity20.getColorValue());
         preferences.setColorSeverity(SeverityColor.SEVERITY_30, buttonSeverity30.getColorValue());
         preferences.setColorSeverity(SeverityColor.SEVERITY_40, buttonSeverity40.getColorValue());
+
+        preferences.setJobLogDateFormat(comboDateFormat.getText());
     }
 
     protected void setScreenToValues() {
@@ -157,6 +182,8 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         buttonSeverity30.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_30).getRGB());
         buttonSeverity40.setColorValue(preferences.getColorSeverity(SeverityColor.SEVERITY_40).getRGB());
 
+        comboDateFormat.setText(preferences.getJobLogDateFormat());
+
         validateAll();
         setControlsEnablement();
     }
@@ -172,6 +199,8 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
         buttonSeverity20.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_20));
         buttonSeverity30.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_30));
         buttonSeverity40.setColorValue(preferences.getDefaultColorSeverity(SeverityColor.SEVERITY_40));
+
+        comboDateFormat.setText(preferences.getDefaultJobLogDateFormat());
 
         validateAll();
         setControlsEnablement();

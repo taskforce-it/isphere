@@ -8,12 +8,15 @@
 
 package biz.isphere.joblogexplorer.preferences;
 
+import java.util.Locale;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.IBMiDateFormat;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.ColorHelper;
@@ -51,6 +54,7 @@ public final class Preferences {
     private static final String COLORS = DOMAIN + "COLORS."; //$NON-NLS-1$
     private static final String ENABLED = COLORS + "ENABLED"; //$NON-NLS-1$
     private static final String EXPORT_FOLDER = DOMAIN + "EXPORT_FOLDER"; //$NON-NLS-1$
+    private static final String DATE_FORMAT = DOMAIN + "DATE_FORMAT"; //$NON-NLS-1$
 
     private ColorRegistry colorRegistry;
 
@@ -112,6 +116,14 @@ public final class Preferences {
         return directory;
     }
 
+    public String getJobLogDateFormat() {
+        return preferenceStore.getString(DATE_FORMAT);
+    }
+
+    public String[] getJobLogDateFormats() {
+        return IBMiDateFormat.getFormats();
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -132,6 +144,10 @@ public final class Preferences {
         preferenceStore.setValue(EXPORT_FOLDER, folderPath);
     }
 
+    public void setJobLogDateFormat(String dateFormat) {
+        preferenceStore.setValue(DATE_FORMAT, dateFormat);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -147,6 +163,7 @@ public final class Preferences {
         preferenceStore.setDefault(getColorKey(SeverityColor.SEVERITY_40), rgbToString(getDefaultColorSeverity(SeverityColor.SEVERITY_40)));
         preferenceStore.setDefault(LANGUAGE, getDefaultLanguage());
         preferenceStore.setDefault(EXPORT_FOLDER, getDefaultExportFolder());
+        preferenceStore.setDefault(DATE_FORMAT, getDefaultJobLogDateFormat());
     }
 
     /*
@@ -179,6 +196,15 @@ public final class Preferences {
 
     private String getDefaultExportFolder() {
         return FileHelper.getDefaultRootDirectory();
+    }
+
+    public String getDefaultJobLogDateFormat() {
+
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase("de")) {
+            return IBMiDateFormat.DMY.label();
+        } else {
+            return IBMiDateFormat.MDY.label();
+        }
     }
 
     /*

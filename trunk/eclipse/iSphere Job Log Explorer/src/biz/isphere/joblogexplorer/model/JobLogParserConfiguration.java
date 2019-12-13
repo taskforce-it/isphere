@@ -71,7 +71,7 @@ public class JobLogParserConfiguration {
     // Message properties
     private String MESSAGE_ID = "\\*NONE|[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
     private String MESSAGE_TYPE = "[A-Z][a-z ]+"; //$NON-NLS-1$
-    private String MESSAGE_SEVERITY = "[0-9]{2}"; //$NON-NLS-1$
+    private String MESSAGE_SEVERITY = "[ ]{2,}[0-9]{2}[ ]{1,}"; //$NON-NLS-1$
     private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
     private String MESSAGE_TIME = "(?:[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2})(?:,[0-9]{3,6})?"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
