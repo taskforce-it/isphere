@@ -66,7 +66,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public void setToFile(String toFile) {
         this.toFile = toFile;
-        notifyModifiedListeners("toMember");
+        notifyModifiedListeners();
     }
 
     public String getToLibrary() {
@@ -75,7 +75,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public void setToLibrary(String toLibrary) {
         this.toLibrary = toLibrary;
-        notifyModifiedListeners("toMember");
+        notifyModifiedListeners();
     }
 
     public String getToMember() {
@@ -84,7 +84,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public void setToMember(String toMember) {
         this.toMember = toMember;
-        notifyModifiedListeners("toMember");
+        notifyModifiedListeners();
     }
 
     public String getErrorMessage() {
@@ -93,7 +93,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public void setErrorMessage(String message) {
         this.errorMessage = message;
-        notifyModifiedListeners("errorMessage");
+        notifyModifiedListeners();
     }
 
     public boolean isCopied() {
@@ -513,17 +513,18 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         }
     }
 
-    private void notifyModifiedListeners(String property) {
+    private void notifyModifiedListeners() {
+
         if (modifiedListeners == null) {
             return;
         }
 
         for (int i = 0; i < modifiedListeners.size(); ++i) {
-            modifiedListeners.get(i).modified(this, property);
+            modifiedListeners.get(i).modified(this);
         }
     }
 
     public interface ModifiedListener {
-        public void modified(CopyMemberItem item, String property);
+        public void modified(CopyMemberItem item);
     }
 }

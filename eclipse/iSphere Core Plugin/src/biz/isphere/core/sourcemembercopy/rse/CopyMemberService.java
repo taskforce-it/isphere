@@ -345,7 +345,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
      * Copy member item has been modified. Forward notification to listeners of
      * this service.
      */
-    public void modified(CopyMemberItem item, String property) {
+    public void modified(CopyMemberItem item) {
         notifyModifiedListeners(item);
     }
 
