@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2019 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,16 @@ import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributions
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class MembersToExcelExporter {
+
+    private static final int COLUMN_LIBRARY = 0;
+    private static final int COLUMN_SOURCE_FILE = 1;
+    private static final int COLUMN_MEMBER = 2;
+    private static final int COLUMN_SOURCE_TYPE = 3;
+    private static final int COLUMN_LAST_CHANGED = 4;
+    private static final int COLUMN_DESCRIPTION = 5;
+    private static final int COLUMN_STMTS_COUNT = 6;
+    private static final int COLUMN_LINE = 7;
+    private static final int COLUMN_STATEMENT = 8;
 
     private static final int COLUMN_WIDTH_NAME = 15;
     private static final int COLUMN_WIDTH_DATE_TIME = 20;
@@ -101,34 +111,37 @@ public class MembersToExcelExporter {
         WritableSheet sheet = workbook.createSheet(Messages.Members, 0);
 
         // Add headline
-        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
-        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-        sheet.addCell(new jxl.write.Label(3, 0, Messages.Last_changed));
-        sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
-        sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
+        sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, 0, Messages.Source_file));
+        sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, 0, Messages.Member));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
+        sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, 0, Messages.Description));
+        sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
 
         // Add data
         int line = 1;
 
         for (int index = 0; index < searchResults.length; index++) {
 
-            sheet.addCell(new jxl.write.Label(0, line, searchResults[index].getLibrary()));
-            sheet.addCell(new jxl.write.Label(1, line, searchResults[index].getFile()));
-            sheet.addCell(new jxl.write.Label(2, line, searchResults[index].getMember()));
-            sheet.addCell(new jxl.write.DateTime(3, line, searchResults[index].getLastChangedDate()));
-            sheet.addCell(new jxl.write.Label(4, line, searchResults[index].getDescription()));
-            sheet.addCell(new jxl.write.Number(5, line, searchResults[index].getStatementsCount()));
+            sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, line, searchResults[index].getLibrary()));
+            sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, line, searchResults[index].getFile()));
+            sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, line, searchResults[index].getMember()));
+            sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, line, searchResults[index].getSrcType()));
+            sheet.addCell(new jxl.write.DateTime(COLUMN_LAST_CHANGED, line, searchResults[index].getLastChangedDate()));
+            sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, line, searchResults[index].getDescription()));
+            sheet.addCell(new jxl.write.Number(COLUMN_STMTS_COUNT, line, searchResults[index].getStatementsCount()));
 
             line++;
         }
 
-        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(2, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
-        sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
-        sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
+        sheet.setColumnView(COLUMN_LIBRARY, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_SOURCE_FILE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MEMBER, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_SOURCE_TYPE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_LAST_CHANGED, COLUMN_WIDTH_DATE_TIME);
+        sheet.setColumnView(COLUMN_DESCRIPTION, COLUMN_WIDTH_DESCRIPTION);
+        sheet.setColumnView(COLUMN_STMTS_COUNT, COLUMN_WIDTH_COUNT);
 
         addPartialNotice(sheet);
     }
@@ -138,14 +151,15 @@ public class MembersToExcelExporter {
         WritableSheet sheet = workbook.createSheet(Messages.Members_with_statements, 0);
 
         // Add headline
-        sheet.addCell(new jxl.write.Label(0, 0, Messages.Library));
-        sheet.addCell(new jxl.write.Label(1, 0, Messages.Source_file));
-        sheet.addCell(new jxl.write.Label(2, 0, Messages.Member));
-        sheet.addCell(new jxl.write.Label(3, 0, Messages.Last_changed));
-        sheet.addCell(new jxl.write.Label(4, 0, Messages.Description));
-        sheet.addCell(new jxl.write.Label(5, 0, Messages.StatementsCount));
-        sheet.addCell(new jxl.write.Label(6, 0, Messages.Line));
-        sheet.addCell(new jxl.write.Label(7, 0, Messages.Statement));
+        sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, 0, Messages.Library));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, 0, Messages.Source_file));
+        sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, 0, Messages.Member));
+        sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, 0, Messages.Member_type_short));
+        sheet.addCell(new jxl.write.Label(COLUMN_LAST_CHANGED, 0, Messages.Last_changed));
+        sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, 0, Messages.Description));
+        sheet.addCell(new jxl.write.Label(COLUMN_STMTS_COUNT, 0, Messages.StatementsCount));
+        sheet.addCell(new jxl.write.Label(COLUMN_LINE, 0, Messages.Line));
+        sheet.addCell(new jxl.write.Label(COLUMN_STATEMENT, 0, Messages.Statement));
 
         // Add data
         int line = 1;
@@ -156,14 +170,15 @@ public class MembersToExcelExporter {
 
             for (int index2 = 0; index2 < statements.length; index2++) {
 
-                sheet.addCell(new jxl.write.Label(0, line, searchResults[index1].getLibrary()));
-                sheet.addCell(new jxl.write.Label(1, line, searchResults[index1].getFile()));
-                sheet.addCell(new jxl.write.Label(2, line, searchResults[index1].getMember()));
-                sheet.addCell(new jxl.write.DateTime(3, line, searchResults[index1].getLastChangedDate()));
-                sheet.addCell(new jxl.write.Label(4, line, searchResults[index1].getDescription()));
-                sheet.addCell(new jxl.write.Number(5, line, searchResults[index1].getStatementsCount()));
-                sheet.addCell(new jxl.write.Number(6, line, statements[index2].getStatement()));
-                sheet.addCell(new jxl.write.Label(7, line, statements[index2].getLine()));
+                sheet.addCell(new jxl.write.Label(COLUMN_LIBRARY, line, searchResults[index1].getLibrary()));
+                sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_FILE, line, searchResults[index1].getFile()));
+                sheet.addCell(new jxl.write.Label(COLUMN_MEMBER, line, searchResults[index1].getMember()));
+                sheet.addCell(new jxl.write.Label(COLUMN_SOURCE_TYPE, line, searchResults[index1].getSrcType()));
+                sheet.addCell(new jxl.write.DateTime(COLUMN_LAST_CHANGED, line, searchResults[index1].getLastChangedDate()));
+                sheet.addCell(new jxl.write.Label(COLUMN_DESCRIPTION, line, searchResults[index1].getDescription()));
+                sheet.addCell(new jxl.write.Number(COLUMN_STMTS_COUNT, line, searchResults[index1].getStatementsCount()));
+                sheet.addCell(new jxl.write.Number(COLUMN_LINE, line, statements[index2].getStatement()));
+                sheet.addCell(new jxl.write.Label(COLUMN_STATEMENT, line, statements[index2].getLine()));
 
                 line++;
 
@@ -176,14 +191,16 @@ public class MembersToExcelExporter {
             line++;
         }
 
-        sheet.setColumnView(0, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(1, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(2, COLUMN_WIDTH_NAME);
-        sheet.setColumnView(3, COLUMN_WIDTH_DATE_TIME);
-        sheet.setColumnView(4, COLUMN_WIDTH_DESCRIPTION);
-        sheet.setColumnView(5, COLUMN_WIDTH_COUNT);
-        sheet.setColumnView(6, COLUMN_WIDTH_LINE_NUMBER);
-        sheet.setColumnView(7, COLUMN_WIDTH_STATEMENT);
+        sheet.setColumnView(COLUMN_LIBRARY, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_SOURCE_FILE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_MEMBER, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_SOURCE_TYPE, COLUMN_WIDTH_NAME);
+        sheet.setColumnView(COLUMN_LAST_CHANGED, COLUMN_WIDTH_DATE_TIME);
+        sheet.setColumnView(COLUMN_DESCRIPTION, COLUMN_WIDTH_DESCRIPTION);
+        sheet.setColumnView(COLUMN_STMTS_COUNT, COLUMN_WIDTH_COUNT);
+        sheet.setColumnView(COLUMN_LINE, COLUMN_WIDTH_LINE_NUMBER);
+        sheet.setColumnView(COLUMN_STATEMENT, COLUMN_WIDTH_STATEMENT);
+
         sheet.getColumnView(7);
 
         addPartialNotice(sheet);
