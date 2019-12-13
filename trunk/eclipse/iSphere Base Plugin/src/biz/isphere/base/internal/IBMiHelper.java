@@ -31,6 +31,9 @@ public final class IBMiHelper {
     private static final SimpleDateFormat cyymmddFormatter = new SimpleDateFormat("yyyyMMdd");
     private static final SimpleDateFormat hhmmssFormatter = new SimpleDateFormat("HHmmss");
     private static final SimpleDateFormat yymmddFormatter = new SimpleDateFormat("yyMMdd");
+    private static final SimpleDateFormat ddmmyyFormatter = new SimpleDateFormat("ddMMyy");
+    private static final SimpleDateFormat mmddyyFormatter = new SimpleDateFormat("MMddyy");
+    private static final SimpleDateFormat julianFormatter = new SimpleDateFormat("yyDDD");
 
     public static String quote(String text) {
 
@@ -50,10 +53,31 @@ public final class IBMiHelper {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(date);
 
-            if (calendar.get(Calendar.YEAR) >= 2000) {
-                cyymmdd = "1" + yymmddFormatter.format(calendar.getTime());
+            int year = calendar.get(Calendar.YEAR);
+
+            if (year >= 2800) {
+                cyymmdd = "9" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2700) {
+                cyymmdd = "8" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2600) {
+                cyymmdd = "7" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2500) {
+                cyymmdd = "6" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2400) {
+                cyymmdd = "5" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2300) {
+                cyymmdd = "4" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2200) {
+                cyymmdd = "3" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2100) {
+                cyymmdd = "2" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 2000) {
+                cyymmdd = "1" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
+            } else if (year >= 1900) {
+                cyymmdd = "0" + yymmddFormatter.format(calendar.getTime()); //$NON-NLS-1$
             } else {
-                cyymmdd = "0" + yymmddFormatter.format(calendar.getTime());
+                // Illegal parameter value
+                return defaultValue;
             }
         } catch (Exception e) {
             return defaultValue;
@@ -64,10 +88,42 @@ public final class IBMiHelper {
 
     public static Date cyymmddToDate(String cyymmdd) {
 
-        if ("1".equals(cyymmdd.substring(0, 1))) {
-            cyymmdd = "20" + cyymmdd.substring(1);
-        } else {
-            cyymmdd = "19" + cyymmdd.substring(1);
+        int century = Integer.parseInt(cyymmdd.substring(0, 1));
+        String date6 = cyymmdd.substring(1);
+
+        switch (century) {
+        case 0:
+            cyymmdd = "19" + date6; //$NON-NLS-1$
+            break;
+        case 1:
+            cyymmdd = "20" + date6; //$NON-NLS-1$
+            break;
+        case 2:
+            cyymmdd = "21" + date6; //$NON-NLS-1$
+            break;
+        case 3:
+            cyymmdd = "22" + date6; //$NON-NLS-1$
+            break;
+        case 4:
+            cyymmdd = "23" + date6; //$NON-NLS-1$
+            break;
+        case 5:
+            cyymmdd = "24" + date6; //$NON-NLS-1$
+            break;
+        case 6:
+            cyymmdd = "25" + date6; //$NON-NLS-1$
+            break;
+        case 7:
+            cyymmdd = "26" + date6; //$NON-NLS-1$
+            break;
+        case 8:
+            cyymmdd = "27" + date6; //$NON-NLS-1$
+            break;
+        case 9:
+            cyymmdd = "28" + date6; //$NON-NLS-1$
+            break;
+        default:
+            throw new IllegalArgumentException("Parameter 'century' of 'cyymmdd' is out of range 0-9: " + century); //$NON-NLS-1$
         }
 
         Date date;
@@ -78,6 +134,156 @@ public final class IBMiHelper {
         }
 
         return date;
+    }
+
+    public static String dateToYMD(Date date, String defaultValue) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int year = calendar.get(Calendar.YEAR);
+        if (!isValid4DigitYear(year)) {
+            // Illegal parameter value
+            return defaultValue;
+        }
+
+        String yymmdd;
+        try {
+            yymmdd = yymmddFormatter.format(date);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
+        return yymmdd;
+    }
+
+    public static Date ymdToDate(String ymd) {
+
+        int year = get2DigitInt(ymd, 0);
+        if (!isValid2DigitYear(year)) {
+            throw new IllegalArgumentException("Parameter 'ymd' is out of range 1940-2039: " + ymd); //$NON-NLS-1$
+        }
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.YEAR, get4DigitYear(year));
+            calendar.set(Calendar.MONTH, get2DigitInt(ymd, 2) - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, get2DigitInt(ymd, 4));
+            return calendar.getTime();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String dateToDMY(Date date, String defaultValue) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int year = calendar.get(Calendar.YEAR);
+        if (!isValid4DigitYear(year)) {
+            // Illegal parameter value
+            return defaultValue;
+        }
+
+        String ddmmyy;
+        try {
+            ddmmyy = ddmmyyFormatter.format(date);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
+        return ddmmyy;
+    }
+
+    public static Date dmyToDate(String dmy) {
+
+        int year = get2DigitInt(dmy, 4);
+        if (!isValid2DigitYear(year)) {
+            throw new IllegalArgumentException("Parameter 'dmy' is out of range 1940-2039: " + dmy); //$NON-NLS-1$
+        }
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.YEAR, get4DigitYear(year));
+            calendar.set(Calendar.MONTH, get2DigitInt(dmy, 2) - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, get2DigitInt(dmy, 0));
+            return calendar.getTime();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String dateToMDY(Date date, String defaultValue) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        int year = calendar.get(Calendar.YEAR);
+        if (!isValid4DigitYear(year)) {
+            // Illegal parameter value
+            return defaultValue;
+        }
+
+        String mmssyy;
+        try {
+            mmssyy = mmddyyFormatter.format(date);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
+        return mmssyy;
+    }
+
+    public static Date mdyToDate(String mdy) {
+
+        int year = get2DigitInt(mdy, 4);
+        if (!isValid2DigitYear(year)) {
+            throw new IllegalArgumentException("Parameter 'mdy' is out of range 1940-2039: " + mdy); //$NON-NLS-1$
+        }
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.YEAR, get4DigitYear(year));
+            calendar.set(Calendar.MONTH, get2DigitInt(mdy, 0) - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, get2DigitInt(mdy, 2));
+            return calendar.getTime();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String dateToJulian(Date date, String defaultValue) {
+
+        String julian;
+        try {
+            julian = julianFormatter.format(date);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
+        return julian;
+    }
+
+    public static Date julianToDate(String julian) {
+
+        int year = get2DigitInt(julian, 0);
+        if (!isValid2DigitYear(year)) {
+            throw new IllegalArgumentException("Parameter 'julian' is out of range 1940-2039: " + julian); //$NON-NLS-1$
+        }
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.YEAR, get4DigitYear(year));
+            calendar.set(Calendar.DAY_OF_YEAR, get2DigitInt(julian, 2));
+            return calendar.getTime();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String timeToHhmmss(Date time, String defaultValue) {
@@ -102,6 +308,27 @@ public final class IBMiHelper {
         }
 
         return time;
+    }
+
+    private static boolean isValid4DigitYear(int year) {
+        return year >= 1940 && year <= 2039;
+    }
+
+    private static boolean isValid2DigitYear(int year) {
+        return true;
+    }
+
+    private static int get4DigitYear(int year2Digit) {
+
+        if (year2Digit <= 39) {
+            return 2000 + year2Digit;
+        }
+
+        return 1900 + year2Digit;
+    }
+
+    private static int get2DigitInt(String value, int offset) {
+        return Integer.parseInt(value.substring(offset, offset + 2));
     }
 
     private static TimeZone callIBMDateTimeConverter(AS400 system) {
