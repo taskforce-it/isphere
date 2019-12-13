@@ -259,7 +259,17 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
     private void performFilterJobLogEntries(JobLogExplorerTab tabItem) throws SQLSyntaxErrorException {
 
         tabItem.validateWhereClause(getShell());
+
+        tabItem.storeSqlEditorHistory();
+        refreshSqlEditorHistory();
+
         tabItem.filterJobLogMessages();
+    }
+
+    private void refreshSqlEditorHistory() {
+        for (CTabItem tabItem : tabFolder.getItems()) {
+            ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
+        }
     }
 
     public void finishedDataLoading(JobLogExplorerTab tabItem) {
@@ -445,8 +455,6 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
         public void widgetSelected(SelectionEvent event) {
 
             try {
-                getSelectedViewer().storeSqlEditorHistory();
-                refreshSqlEditorHistory();
                 performFilterJobLogEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
@@ -454,12 +462,6 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-            }
-        }
-
-        private void refreshSqlEditorHistory() {
-            for (CTabItem tabItem : tabFolder.getItems()) {
-                ((JobLogExplorerTab)tabItem).refreshSqlEditorHistory();
             }
         }
 
