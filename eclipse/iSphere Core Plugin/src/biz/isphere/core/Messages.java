@@ -1562,6 +1562,8 @@ public class Messages extends NLS {
 
     public static String Operation_has_been_canceled_by_the_user;
 
+    public static String Operation_in_progress_Cannot_close_dialog;
+
     /*
      * Warning messages
      */
