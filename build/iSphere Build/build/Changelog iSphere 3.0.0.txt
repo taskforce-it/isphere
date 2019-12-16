@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.6.0.b005
+-----------------------------
+ • Fixed NPE when attempting to execute "Copy Members to..." for an
+   empty filter reference.
+
 Changelog: iSphere 3.6.0.b004
 -----------------------------
  • Improved performance of copying members between different IBM i

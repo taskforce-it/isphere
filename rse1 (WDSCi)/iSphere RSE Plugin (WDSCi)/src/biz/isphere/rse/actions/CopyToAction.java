@@ -182,6 +182,7 @@ public class CopyToAction extends ISeriesSystemBaseAction implements ISystemDyna
                 Object firstObject = children[0];
                 if ((firstObject instanceof SystemMessageObject)) {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
+                    return false;
                 } else {
                     for (int idx2 = 0; idx2 < children.length; idx2++) {
                         DataElement dataElement = (DataElement)children[idx2];
