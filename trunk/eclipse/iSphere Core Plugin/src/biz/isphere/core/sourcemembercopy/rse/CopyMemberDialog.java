@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -124,15 +125,21 @@ public class CopyMemberDialog extends XDialog {
 
     protected boolean canHandleShellCloseEvent() {
 
+        boolean canCloseDialog;
+
         if (isValidating) {
-            return false;
+            canCloseDialog = false;
+        } else if (copyMemberService != null && copyMemberService.isActive()) {
+            canCloseDialog = false;
+        } else {
+            canCloseDialog = true;
         }
 
-        if (copyMemberService != null && copyMemberService.isActive()) {
-            return false;
+        if (!canCloseDialog) {
+            MessageDialog.openInformation(getShell(), Messages.E_R_R_O_R, Messages.Operation_in_progress_Cannot_close_dialog);
         }
 
-        return true;
+        return canCloseDialog;
     }
 
     private boolean validateUserInput() {
