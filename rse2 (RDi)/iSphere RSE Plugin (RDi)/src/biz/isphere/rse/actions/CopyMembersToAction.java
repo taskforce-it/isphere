@@ -69,7 +69,7 @@ public class CopyMembersToAction implements IObjectActionDelegate {
                 }
             }
 
-            if (jobDescription.getItems().length > 0) {
+            if (jobDescription != null && jobDescription.getItems().length > 0) {
                 CopyMemberDialog dialog = new CopyMemberDialog(shell);
                 dialog.setContent(jobDescription);
                 dialog.open();
@@ -126,6 +126,7 @@ public class CopyMembersToAction implements IObjectActionDelegate {
                 Object firstObject = children[0];
                 if ((firstObject instanceof SystemMessageObject)) {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
+                    return false;
                 } else {
                     for (int idx2 = 0; idx2 < children.length; idx2++) {
                         IQSYSResource element = (IQSYSResource)children[idx2];
