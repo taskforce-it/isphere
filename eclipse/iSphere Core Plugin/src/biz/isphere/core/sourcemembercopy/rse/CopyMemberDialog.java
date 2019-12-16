@@ -8,6 +8,9 @@
 
 package biz.isphere.core.sourcemembercopy.rse;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -27,20 +30,22 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.Validator;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
+import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
 import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
@@ -49,7 +54,11 @@ public class CopyMemberDialog extends XDialog {
 
     private static final String SINGLE_QUOTE = "'";
 
-    private CopyMemberService jobDescription;
+    private static int BUTTON_COPY_ID = IDialogConstants.OK_ID;
+    private static int BUTTON_RESET_ID = IDialogConstants.RETRY_ID;
+    private static int BUTTON_CLOSE_CANCEL = IDialogConstants.CANCEL_ID;
+
+    private CopyMemberService copyMemberService;
 
     private Combo comboToConnection;
     private Text textToFile;
@@ -59,8 +68,7 @@ public class CopyMemberDialog extends XDialog {
     private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
 
-    private boolean isValidated;
-    private boolean isExecuted;
+    private boolean isValidating;
 
     private static final int COLUMN_FROM_LIBRARY = 0;
     private static final int COLUMN_FROM_FILE = 1;
@@ -78,7 +86,7 @@ public class CopyMemberDialog extends XDialog {
 
     public void setContent(CopyMemberService jobDescription) {
 
-        this.jobDescription = jobDescription;
+        this.copyMemberService = jobDescription;
 
         setControlEnablement();
     }
@@ -88,114 +96,86 @@ public class CopyMemberDialog extends XDialog {
 
         storeScreenValues();
 
-        setErrorMessage(null);
-        mainArea.update();
+        copyMemberService.setToConnection(getToConnectionName());
+        copyMemberService.setToLibrary(getToLibraryName());
+        copyMemberService.setToFile(getToFileName());
 
-        try {
-
-            setStatusMessage(Messages.Validating_dots);
-            if (!validateUserInput()) {
-                return;
-            }
-
-            setStatusMessage(Messages.Copying_dots);
-            if (!executeCopyOperations()) {
-                return;
-            }
-
-        } finally {
-            setStatusMessage(Messages.EMPTY);
+        if (validateUserInput()) {
+            copyMemberService.execute();
         }
-
-        // super.okPressed();
     }
 
     @Override
     protected void cancelPressed() {
+
+        if (isValidating) {
+            return;
+        }
+
+        if (copyMemberService != null && copyMemberService.isActive()) {
+            copyMemberService.cancel();
+            return;
+        }
 
         storeScreenValues();
 
         super.cancelPressed();
     }
 
-    private boolean validateUserInput() {
+    protected boolean canHandleShellCloseEvent() {
 
-        Runnable validator = new Runnable() {
+        if (isValidating) {
+            return false;
+        }
 
-            public void run() {
+        if (copyMemberService != null && copyMemberService.isActive()) {
+            return false;
+        }
 
-                // TODO: fix library name validator (pass CCSID) - DONE
-                Validator nameValidator = Validator.getNameInstance(jobDescription.getToConnectionCcsid());
-
-                String fileName = getFileName();
-                if (!nameValidator.validate(fileName)) {
-                    setErrorMessage(Messages.bind(Messages.Invalid_file_name, fileName));
-                    textToFile.setFocus();
-                    isValidated = false;
-                    return;
-                }
-
-                String libraryName = getLibraryName();
-                if (!nameValidator.validate(libraryName)) {
-                    setErrorMessage(Messages.bind(Messages.Invalid_library_name, libraryName));
-                    textToLibrary.setFocus();
-                    isValidated = false;
-                    return;
-                }
-
-                String connectionName = getToConnectionName();
-                if (!IBMiHostContributionsHandler.checkLibrary(connectionName, libraryName)) {
-                    setErrorMessage(Messages.bind(Messages.Library_A_not_found, libraryName));
-                    textToLibrary.setFocus();
-                    isValidated = false;
-                    return;
-                }
-
-                if (!IBMiHostContributionsHandler.checkFile(connectionName, libraryName, fileName)) {
-                    setErrorMessage(Messages.bind(Messages.File_A_not_found, fileName));
-                    textToFile.setFocus();
-                    isValidated = false;
-                    return;
-                }
-
-                jobDescription.setToConnection(connectionName);
-                jobDescription.setToLibrary(libraryName);
-                jobDescription.setToFile(fileName);
-
-                if (!jobDescription.validate(chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection())) {
-                    setErrorMessage(Messages.Validation_ended_with_errors_Request_canceled);
-                    isValidated = false;
-                    return;
-                }
-
-                isValidated = true;
-            }
-        };
-
-        BusyIndicator.showWhile(getShell().getDisplay(), validator);
-
-        return isValidated;
+        return true;
     }
 
-    private boolean executeCopyOperations() {
+    private boolean validateUserInput() {
 
-        Runnable executor = new Runnable() {
+        CopyMemberValidator validator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(),
+            chkBoxIgnoreDataLostError.getSelection());
 
-            public void run() {
+        try {
 
-                if (!jobDescription.execute()) {
-                    setErrorMessage(Messages.Failed_to_copy_one_or_more_items);
-                    isExecuted = false;
-                    return;
-                }
+            isValidating = true;
+            setControlEnablement();
 
-                isExecuted = true;
+            BusyIndicator.showWhile(getShell().getDisplay(), validator);
+
+        } finally {
+            isValidating = false;
+            setControlEnablement();
+        }
+
+        if (validator.getErrorMessage() != null) {
+            setErrorMessage(validator.getErrorMessage());
+            switch (validator.getErrorItem()) {
+            case CopyMemberValidator.ERROR_TO_CONNECTION:
+                comboToConnection.setFocus();
+                break;
+
+            case CopyMemberValidator.ERROR_TO_LIBRARY:
+                textToLibrary.setFocus();
+                break;
+
+            case CopyMemberValidator.ERROR_TO_FILE:
+                textToFile.setFocus();
+                break;
+
+            default:
+                break;
             }
-        };
+        } else {
+            setErrorMessage(null);
+            getButton(BUTTON_COPY_ID).setFocus();
+        }
 
-        BusyIndicator.showWhile(getShell().getDisplay(), executor);
-
-        return isExecuted;
+        return validator.isValidated();
     }
 
     @Override
@@ -262,8 +242,8 @@ public class CopyMemberDialog extends XDialog {
         labelNumElem = new Label(mainArea, SWT.NONE);
         labelNumElem.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, ((GridLayout)mainArea.getLayout()).numColumns, 1));
         int numItems;
-        if (jobDescription != null) {
-            numItems = jobDescription.getItems().length;
+        if (copyMemberService != null) {
+            numItems = copyMemberService.getItems().length;
         } else {
             numItems = 0;
         }
@@ -283,27 +263,15 @@ public class CopyMemberDialog extends XDialog {
 
         loadScreenValues();
 
-        setControlEnablement();
-
         return mainArea;
     }
 
     @Override
-    protected Control createContents(Composite parent) {
-
-        Control control = super.createContents(parent);
-
-        setControlEnablement();
-
-        return control;
-    }
-
-    @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        Button btnReset = createButton(parent, IDialogConstants.RETRY_ID, Messages.Reset, false);
+        Button btnReset = createButton(parent, BUTTON_RESET_ID, Messages.Reset, false);
         btnReset.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
-                jobDescription.reset();
+                copyMemberService.reset();
                 setControlEnablement();
                 setFocus();
             }
@@ -314,7 +282,18 @@ public class CopyMemberDialog extends XDialog {
         });
 
         super.createButtonsForButtonBar(parent);
-        getButton(IDialogConstants.OK_ID).setText(Messages.Copy);
+        getButton(BUTTON_COPY_ID).setText(Messages.Copy);
+    }
+
+    @Override
+    protected Control createContents(Composite parent) {
+
+        Control control = super.createContents(parent);
+
+        // Enable control after dialog area and buttons have been created.
+        setControlEnablement();
+
+        return control;
     }
 
     @Override
@@ -337,22 +316,22 @@ public class CopyMemberDialog extends XDialog {
     private void loadScreenValues() {
 
         if (comboToConnection != null) {
-            comboToConnection.setText(jobDescription.getToConnectionName());
+            comboToConnection.setText(copyMemberService.getToConnectionName());
         }
 
-        if (jobDescription.getFromLibraryNamesCount() == 1) {
-            textToLibrary.setText(jobDescription.getFromLibraryNames()[0]);
+        if (copyMemberService.getFromLibraryNamesCount() == 1) {
+            textToLibrary.setText(copyMemberService.getFromLibraryNames()[0]);
         } else {
             textToLibrary.setText(Messages.EMPTY);
         }
 
-        if (jobDescription.getFromFileNamesCount() == 1) {
-            textToFile.setText(jobDescription.getFromFileNames()[0]);
+        if (copyMemberService.getFromFileNamesCount() == 1) {
+            textToFile.setText(copyMemberService.getFromFileNames()[0]);
         } else {
             textToFile.setText(Messages.EMPTY);
         }
 
-        tableViewer.setInput(jobDescription);
+        tableViewer.setInput(copyMemberService);
 
         loadColumnWidth(COLUMN_FROM_LIBRARY, 120);
         loadColumnWidth(COLUMN_FROM_FILE, 120);
@@ -412,18 +391,18 @@ public class CopyMemberDialog extends XDialog {
         return column;
     }
 
-    private String getFileName() {
+    private String getToFileName() {
         return textToFile.getText();
     }
 
-    private String getLibraryName() {
+    private String getToLibraryName() {
         return textToLibrary.getText();
     }
 
     private String getToConnectionName() {
 
         if (comboToConnection == null) {
-            return jobDescription.getToConnectionName();
+            return copyMemberService.getToConnectionName();
         }
 
         return comboToConnection.getText();
@@ -431,22 +410,72 @@ public class CopyMemberDialog extends XDialog {
 
     private void setControlEnablement() {
 
-        if (jobDescription == null || !jobDescription.haveItemsToCopy() || jobDescription.isActive()) {
-            setButtonEnablement(getButton(IDialogConstants.OK_ID), false);
-            setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CLOSE_LABEL);
-            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), true);
+        if (copyMemberService == null) {
+            setButtonEnablement(getButton(BUTTON_COPY_ID), false);
+            setButtonEnablement(getButton(BUTTON_RESET_ID), false);
+            setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
+            setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CLOSE_LABEL);
+            setControlsEnables(true);
         } else {
-            setButtonEnablement(getButton(IDialogConstants.OK_ID), true);
-            setButtonLabel(getButton(IDialogConstants.CANCEL_ID), IDialogConstants.CANCEL_LABEL);
-            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), false);
+
+            if (isValidating) {
+                setButtonEnablement(getButton(BUTTON_COPY_ID), false);
+                setButtonEnablement(getButton(BUTTON_RESET_ID), false);
+                setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), false);
+                setControlsEnables(false);
+                setStatusMessage(Messages.Validating_dots);
+            } else if (copyMemberService.isActive()) {
+                setButtonEnablement(getButton(BUTTON_COPY_ID), false);
+                setButtonEnablement(getButton(BUTTON_RESET_ID), false);
+                setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
+                setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CANCEL_LABEL);
+                setControlsEnables(false);
+                setStatusMessage(Messages.Copying_dots);
+            } else {
+
+                if (copyMemberService.hasItemsToCopy()) {
+                    setButtonEnablement(getButton(BUTTON_COPY_ID), true);
+                } else {
+                    setButtonEnablement(getButton(BUTTON_COPY_ID), false);
+                }
+
+                if (copyMemberService.getItemsCopiedCount() > 0) {
+                    setButtonEnablement(getButton(BUTTON_RESET_ID), true);
+                    setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
+                } else {
+                    setButtonEnablement(getButton(BUTTON_RESET_ID), false);
+                    setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
+                }
+
+                if (copyMemberService.getItemsCopiedCount() > 0 && copyMemberService.hasItemsToCopy()) {
+                    setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CANCEL_LABEL);
+                } else {
+                    setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CLOSE_LABEL);
+                }
+
+                setControlsEnables(true);
+
+                if (copyMemberService.isCanceled()) {
+                    setStatusMessage(Messages.Operation_has_been_canceled_by_the_user);
+                } else {
+                    setStatusMessage(Messages.EMPTY);
+                }
+            }
+        }
+    }
+
+    private void setControlsEnables(boolean enabled) {
+
+        if (mainArea == null) {
+            return;
         }
 
-        if (jobDescription.isActive()) {
-            setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), false);
-            setButtonEnablement(getButton(IDialogConstants.RETRY_ID), false);
-        } else {
-            setButtonEnablement(getButton(IDialogConstants.CANCEL_ID), true);
-        }
+        comboToConnection.setEnabled(enabled);
+        textToFile.setEnabled(enabled);
+        textToLibrary.setEnabled(enabled);
+        tableViewer.getTable().setEnabled(enabled);
+        chkBoxReplace.setEnabled(enabled);
+        chkBoxIgnoreDataLostError.setEnabled(enabled);
     }
 
     private void setButtonEnablement(Button button, boolean enabled) {
@@ -520,14 +549,31 @@ public class CopyMemberDialog extends XDialog {
             }
         }
 
-        public void modified(CopyMemberItem item) {
+        public void modified(final CopyMemberItem item) {
+
+            if (Display.getCurrent() == null) {
+                UIJob job = new UIJob("") {
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor arg0) {
+                        updateStatus(item);
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.schedule();
+            } else {
+                updateStatus(item);
+            }
+        }
+
+        private void updateStatus(CopyMemberItem item) {
+
             if (item == null) {
                 viewer.refresh(true);
             } else {
                 viewer.update(item, null);
             }
-            mainArea.update();
             setControlEnablement();
+            mainArea.update();
         }
     }
 

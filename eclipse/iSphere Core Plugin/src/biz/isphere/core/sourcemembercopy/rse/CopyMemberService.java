@@ -15,17 +15,13 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.Messages;
-import biz.isphere.core.file.description.RecordFormatDescription;
-import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
+import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.FieldDescription;
 
 /**
  * This class copies a given list of members to another library, file or member
@@ -33,28 +29,32 @@ import com.ibm.as400.access.FieldDescription;
  * <p>
  * Today 'fromConnection' must equal 'toConnection'.
  */
-public class CopyMemberService implements CopyMemberItem.ModifiedListener {
+public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopyMembersPostRun {
 
     private String fromConnectionName;
     private String toConnectionName;
+    private String toLibrary;
+    private String toFile;
     private SortedSet<CopyMemberItem> members;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
 
-    private boolean hasDataLostError;
-
     private Shell shell;
     private List<ModifiedListener> modifiedListeners;
     private int copiedCount;
     private boolean isActive;
+    private boolean isCanceled;
+
+    private CopyMembersJob copyMembersJob;
 
     public CopyMemberService(Shell shell, String fromConnectionName) {
         this.shell = shell;
         this.fromConnectionName = fromConnectionName;
         this.toConnectionName = fromConnectionName;
+        this.toLibrary = null;
+        this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
-        this.hasDataLostError = false;
     }
 
     public CopyMemberItem addItem(String file, String library, String member) {
@@ -103,6 +103,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return fromLibraryNames.toArray(new String[fromLibraryNames.size()]);
     }
 
+    public String getToLibrary() {
+        return toLibrary;
+    }
+
     public int getFromFileNamesCount() {
         return fromFileNames.size();
     }
@@ -111,51 +115,24 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return fromFileNames.toArray(new String[fromFileNames.size()]);
     }
 
+    public String getToFile() {
+        return toFile;
+    }
+
     public CopyMemberItem[] getItems() {
         return members.toArray(new CopyMemberItem[members.size()]);
     }
 
     public void setToConnection(String connectionName) {
-
-        startProcess();
-
-        try {
-
-            this.toConnectionName = connectionName;
-
-        } finally {
-            endProcess();
-        }
+        this.toConnectionName = connectionName;
     }
 
     public void setToLibrary(String libraryName) {
-
-        startProcess();
-
-        try {
-
-            for (CopyMemberItem member : members) {
-                member.setToLibrary(libraryName);
-            }
-
-        } finally {
-            endProcess();
-        }
+        this.toLibrary = libraryName;
     }
 
     public void setToFile(String fileName) {
-
-        startProcess();
-
-        try {
-
-            for (CopyMemberItem member : members) {
-                member.setToFile(fileName);
-            }
-
-        } finally {
-            endProcess();
-        }
+        this.toFile = fileName;
     }
 
     public CopyMemberItem[] getCopiedItems() {
@@ -184,7 +161,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return toCopy.toArray(new CopyMemberItem[toCopy.size()]);
     }
 
-    public boolean haveItemsToCopy() {
+    public boolean hasItemsToCopy() {
 
         if (copiedCount < members.size()) {
             return true;
@@ -193,132 +170,54 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         return false;
     }
 
+    public int getItemsCopiedCount() {
+        return copiedCount;
+    }
+
     public boolean isActive() {
         return isActive;
     }
 
+    public boolean isCanceled() {
+        return isCanceled;
+    }
+
     /**
-     * Validates the job description.
-     * 
-     * @return <code>true</code> on success, else <code>false</code>.
+     * Copies the members.
      */
-    public boolean validate(boolean replace, boolean ignoreDataLostError) {
+    public void execute() {
+
+        isCanceled = false;
+
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, this);
+        copyMembersJob.start();
+    }
+
+    public void prepareValidation() {
 
         startProcess();
 
-        boolean isError = false;
-
         try {
 
-            hasDataLostError = false;
-            boolean isSeriousError = false;
-
-            AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
-            AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
-
-            RecordFormatDescriptionsStore fromSourceFiles = new RecordFormatDescriptionsStore(fromSystem);
-            RecordFormatDescriptionsStore toSourceFiles = new RecordFormatDescriptionsStore(toSystem);
-
-            Set<String> targetMembers = new HashSet<String>();
-
             for (CopyMemberItem member : members) {
-                if (member.isCopied()) {
-                    continue;
-                }
-
-                if (isSeriousError) {
-                    member.setErrorMessage(Messages.Canceled_due_to_previous_error);
-                    continue;
-                }
-
-                String from = member.getFromQSYSName();
-                String to = member.getToQSYSName();
-
-                member.setErrorMessage(null);
-
-                if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-                    member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
-                    isError = true;
-                } else if (targetMembers.contains(to)) {
-                    member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
-                    isError = true;
-                } else if (!IBMiHostContributionsHandler.checkMember(getFromConnectionName(), member.getFromLibrary(), member.getFromFile(),
-                    member.getFromMember())) {
-                    member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
-                    isError = true;
-                } else if (!replace
-                    && IBMiHostContributionsHandler.checkMember(getToConnectionName(), member.getToLibrary(), member.getToFile(),
-                        member.getToMember())) {
-                    member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
-                    isError = true;
-                } else if (!ignoreDataLostError) {
-
-                    RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
-                    RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
-
-                    FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
-                    if (fromSrcDta == null) {
-                        member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A, new String[] {
-                            member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
-                        isError = true;
-                        isSeriousError = true;
-                    } else {
-
-                        FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
-                        if (toSrcDta == null) {
-                            member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A, new String[] {
-                                member.getToFile(), member.getToLibrary(), "SRCDTA" }));
-                            isError = true;
-                            isSeriousError = true;
-                        } else {
-
-                            if (fromSrcDta.getLength() > toSrcDta.getLength()) {
-                                member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
-                                hasDataLostError = true;
-                                isError = true;
-                            }
-                        }
-                    }
-                }
-
-                targetMembers.add(to);
+                member.setToLibrary(this.toLibrary);
+                member.setToFile(this.toFile);
             }
 
         } finally {
             endProcess();
         }
 
-        return !isError;
     }
 
-    public boolean hasDataLostError() {
-        return hasDataLostError;
-    }
+    public void returnResult(boolean isError, int countMembersCopied) {
 
-    /**
-     * Copies the members.
-     * 
-     * @return <code>true</code> on success, else <code>false</code>.
-     */
-    public boolean execute() {
+        this.copiedCount = this.copiedCount + countMembersCopied;
+        this.copyMembersJob = null;
 
-        startProcess();
-
-        boolean isError = false;
-
-        try {
-
-            CopyMembersJob copyMembersJob = new CopyMembersJob();
-            BusyIndicator.showWhile(shell.getDisplay(), copyMembersJob);
-
-            isError = copyMembersJob.isError();
-            copiedCount = copiedCount + copyMembersJob.getCopiedCount();
-
-        } finally {
-            endProcess();
+        if (isCanceled && !hasItemsToCopy()) {
+            isCanceled = false;
         }
-
-        return !isError;
     }
 
     public void reset() {
@@ -328,7 +227,15 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         }
 
         copiedCount = 0;
-        hasDataLostError = false;
+        isCanceled = false;
+    }
+
+    public void cancel() {
+
+        if (copyMembersJob != null) {
+            copyMembersJob.cancel();
+            isCanceled = true;
+        }
     }
 
     private void startProcess() {
@@ -394,17 +301,73 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
         public void modified(CopyMemberItem item);
     }
 
-    private class CopyMembersJob implements Runnable {
+    private class CopyMembersJob extends Thread {
 
+        private DoCopyMembers doCopyMembers;
+        private ICopyMembersPostRun postRun;
+
+        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, ICopyMembersPostRun postRun) {
+            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members);
+            this.postRun = postRun;
+        }
+
+        @Override
+        public void run() {
+
+            startProcess();
+
+            try {
+
+                doCopyMembers.start();
+
+                while (doCopyMembers.isAlive()) {
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                    }
+                }
+
+            } finally {
+                postRun.returnResult(doCopyMembers.isError(), doCopyMembers.getMembersCopiedCount());
+                endProcess();
+            }
+        }
+
+        public void cancel() {
+            doCopyMembers.cancel();
+        }
+    }
+
+    private class DoCopyMembers extends Thread {
+
+        private String fromConnectionName;
+        private String toConnectionName;
+        private SortedSet<CopyMemberItem> members;
+
+        private boolean isCanceled;
         private boolean isError;
         private int copiedCount;
 
+        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members) {
+            this.fromConnectionName = fromConnectionName;
+            this.toConnectionName = toConnectionName;
+            this.members = members;
+            this.isCanceled = false;
+        }
+
+        @Override
         public void run() {
 
             isError = false;
             copiedCount = 0;
 
             for (CopyMemberItem member : members) {
+
+                if (isCanceled) {
+                    break;
+                }
+
                 if (member.isCopied()) {
                     continue;
                 }
@@ -417,11 +380,15 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener {
             }
         }
 
+        public void cancel() {
+            isCanceled = true;
+        }
+
         public boolean isError() {
             return isError;
         }
 
-        public int getCopiedCount() {
+        public int getMembersCopiedCount() {
             return copiedCount;
         }
     }

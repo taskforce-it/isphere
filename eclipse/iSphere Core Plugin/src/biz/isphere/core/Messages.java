@@ -1204,6 +1204,8 @@ public class Messages extends NLS {
 
     public static String Failed_to_get_connection_A_colon;
 
+    public static String Connection_A_not_found;
+
     public static String Cannot_allocate_object_B_A_C;
 
     public static String Reset_warning_messages;
@@ -1557,6 +1559,8 @@ public class Messages extends NLS {
     public static String Tooltip_SqlEditor_Text;
 
     public static String Opens_the_IBM_regular_expressions_help_page;
+
+    public static String Operation_has_been_canceled_by_the_user;
 
     /*
      * Warning messages
