@@ -65,8 +65,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     public void setToFile(String toFile) {
-        this.toFile = toFile;
-        notifyModifiedListeners();
+        if (hasChanged(this.toFile, toFile)) {
+            this.toFile = toFile;
+            notifyModifiedListeners();
+        }
     }
 
     public String getToLibrary() {
@@ -74,8 +76,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     public void setToLibrary(String toLibrary) {
-        this.toLibrary = toLibrary;
-        notifyModifiedListeners();
+        if (hasChanged(this.toLibrary, toLibrary)) {
+            this.toLibrary = toLibrary;
+            notifyModifiedListeners();
+        }
     }
 
     public String getToMember() {
@@ -83,8 +87,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     public void setToMember(String toMember) {
-        this.toMember = toMember;
-        notifyModifiedListeners();
+        if (hasChanged(this.toMember, toMember)) {
+            this.toMember = toMember;
+            notifyModifiedListeners();
+        }
     }
 
     public String getErrorMessage() {
@@ -92,8 +98,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     public void setErrorMessage(String message) {
-        this.errorMessage = message;
-        notifyModifiedListeners();
+        if (hasChanged(this.errorMessage, message)) {
+            this.errorMessage = message;
+            notifyModifiedListeners();
+        }
     }
 
     public boolean isCopied() {
@@ -101,8 +109,11 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     }
 
     private void setCopyStatus(boolean copied) {
-        this.copied = copied;
-        setErrorMessage(null);
+        if (hasChanged(this.copied, copied)) {
+            this.copied = copied;
+            this.errorMessage = null;
+            notifyModifiedListeners();
+        }
     }
 
     public String getFromQSYSName() {
@@ -125,6 +136,26 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         buffer.append(")"); //$NON-NLS-1$
 
         return buffer.toString();
+    }
+
+    private boolean hasChanged(String currentValue, String newValue) {
+
+        if (currentValue == null && newValue == null) {
+            return false;
+        } else if (currentValue != null && currentValue.equals(newValue)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean hasChanged(boolean currentValue, boolean newValue) {
+
+        if (currentValue == newValue) {
+            return false;
+        }
+
+        return true;
     }
 
     public int compareTo(CopyMemberItem item) {
