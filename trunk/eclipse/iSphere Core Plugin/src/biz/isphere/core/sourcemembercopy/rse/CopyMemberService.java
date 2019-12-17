@@ -193,7 +193,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         copyMembersJob.start();
     }
 
-    public void prepareValidation() {
+    public void updateMembersWithTargetSourceFile() {
 
         startProcess();
 
@@ -202,6 +202,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
             for (CopyMemberItem member : members) {
                 member.setToLibrary(this.toLibrary);
                 member.setToFile(this.toFile);
+                member.setErrorMessage(null);
             }
 
         } finally {
@@ -212,8 +213,9 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
     public void returnResult(boolean isError, int countMembersCopied) {
 
-        this.copiedCount = this.copiedCount + countMembersCopied;
         this.copyMembersJob = null;
+
+        this.copiedCount = this.copiedCount + countMembersCopied;
 
         if (isCanceled && !hasItemsToCopy()) {
             isCanceled = false;
