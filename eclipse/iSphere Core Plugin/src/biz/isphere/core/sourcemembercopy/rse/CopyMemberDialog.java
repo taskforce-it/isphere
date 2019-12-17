@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -47,11 +46,12 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
+import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
 import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
-public class CopyMemberDialog extends XDialog {
+public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun {
 
     private static final String SINGLE_QUOTE = "'";
 
@@ -60,6 +60,7 @@ public class CopyMemberDialog extends XDialog {
     private static int BUTTON_CLOSE_CANCEL = IDialogConstants.CANCEL_ID;
 
     private CopyMemberService copyMemberService;
+    private CopyMemberValidator copyMemberValidator;
 
     private Combo comboToConnection;
     private Text textToFile;
@@ -68,8 +69,6 @@ public class CopyMemberDialog extends XDialog {
     private Button chkBoxReplace;
     private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
-
-    private boolean isValidating;
 
     private static final int COLUMN_FROM_LIBRARY = 0;
     private static final int COLUMN_FROM_FILE = 1;
@@ -97,23 +96,18 @@ public class CopyMemberDialog extends XDialog {
 
         storeScreenValues();
 
-        copyMemberService.setToConnection(getToConnectionName());
-        copyMemberService.setToLibrary(getToLibraryName());
-        copyMemberService.setToFile(getToFileName());
-
-        if (validateUserInput()) {
-            copyMemberService.execute();
-        }
+        validateUserInputAndPerformCopyOperation();
     }
 
     @Override
     protected void cancelPressed() {
 
-        if (isValidating) {
+        if (isValidating()) {
+            copyMemberValidator.cancel();
             return;
         }
 
-        if (copyMemberService != null && copyMemberService.isActive()) {
+        if (isCopying()) {
             copyMemberService.cancel();
             return;
         }
@@ -127,7 +121,7 @@ public class CopyMemberDialog extends XDialog {
 
         boolean canCloseDialog;
 
-        if (isValidating) {
+        if (isValidating()) {
             canCloseDialog = false;
         } else if (copyMemberService != null && copyMemberService.isActive()) {
             canCloseDialog = false;
@@ -142,47 +136,80 @@ public class CopyMemberDialog extends XDialog {
         return canCloseDialog;
     }
 
-    private boolean validateUserInput() {
+    private boolean isValidating() {
 
-        CopyMemberValidator validator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(),
-            chkBoxIgnoreDataLostError.getSelection());
-
-        try {
-
-            isValidating = true;
-            setControlEnablement();
-
-            BusyIndicator.showWhile(getShell().getDisplay(), validator);
-
-        } finally {
-            isValidating = false;
-            setControlEnablement();
+        if (copyMemberValidator != null && copyMemberValidator.isActive()) {
+            return true;
         }
 
-        if (validator.getErrorMessage() != null) {
-            setErrorMessage(validator.getErrorMessage());
-            switch (validator.getErrorItem()) {
-            case CopyMemberValidator.ERROR_TO_CONNECTION:
-                comboToConnection.setFocus();
-                break;
+        return false;
+    }
 
-            case CopyMemberValidator.ERROR_TO_LIBRARY:
-                textToLibrary.setFocus();
-                break;
+    private boolean isCopying() {
 
-            case CopyMemberValidator.ERROR_TO_FILE:
-                textToFile.setFocus();
-                break;
+        if (copyMemberService != null && copyMemberService.isActive()) {
+            return true;
+        }
 
-            default:
-                break;
+        return false;
+    }
+
+    private void validateUserInputAndPerformCopyOperation() {
+
+        copyMemberService.setToConnection(getToConnectionName());
+        copyMemberService.setToLibrary(getToLibraryName());
+        copyMemberService.setToFile(getToFileName());
+
+        copyMemberValidator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection(), this);
+
+        setControlEnablement();
+        copyMemberValidator.start();
+    }
+
+    public void returnResult(final int errorItem, final String errorMessage) {
+
+        copyMemberValidator = null;
+
+        new UIJob(Messages.EMPTY) {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+
+                if (errorMessage != null) {
+
+                    setErrorMessage(errorMessage);
+
+                    switch (errorItem) {
+                    case CopyMemberValidator.ERROR_TO_CONNECTION:
+                        comboToConnection.setFocus();
+                        break;
+
+                    case CopyMemberValidator.ERROR_TO_LIBRARY:
+                        textToLibrary.setFocus();
+                        break;
+
+                    case CopyMemberValidator.ERROR_TO_FILE:
+                        textToFile.setFocus();
+                        break;
+
+                    case CopyMemberValidator.ERROR_CANCELED:
+                        textToFile.setFocus();
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    setControlEnablement();
+
+                } else {
+                    setErrorMessage(null);
+                    copyMemberService.execute();
+                }
+
+                return Status.OK_STATUS;
             }
-        } else {
-            setErrorMessage(null);
-            getButton(BUTTON_COPY_ID).setFocus();
-        }
-
-        return validator.isValidated();
+        }.schedule();
     }
 
     @Override
@@ -425,18 +452,21 @@ public class CopyMemberDialog extends XDialog {
             setControlsEnables(true);
         } else {
 
-            if (isValidating) {
-                setButtonEnablement(getButton(BUTTON_COPY_ID), false);
-                setButtonEnablement(getButton(BUTTON_RESET_ID), false);
-                setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), false);
-                setControlsEnables(false);
-                setStatusMessage(Messages.Validating_dots);
-            } else if (copyMemberService.isActive()) {
+            if (isValidating()) {
                 setButtonEnablement(getButton(BUTTON_COPY_ID), false);
                 setButtonEnablement(getButton(BUTTON_RESET_ID), false);
                 setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
                 setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CANCEL_LABEL);
                 setControlsEnables(false);
+                setErrorMessage(null);
+                setStatusMessage(Messages.Validating_dots);
+            } else if (isCopying()) {
+                setButtonEnablement(getButton(BUTTON_COPY_ID), false);
+                setButtonEnablement(getButton(BUTTON_RESET_ID), false);
+                setButtonEnablement(getButton(BUTTON_CLOSE_CANCEL), true);
+                setButtonLabel(getButton(BUTTON_CLOSE_CANCEL), IDialogConstants.CANCEL_LABEL);
+                setControlsEnables(false);
+                setErrorMessage(null);
                 setStatusMessage(Messages.Copying_dots);
             } else {
 
@@ -463,7 +493,7 @@ public class CopyMemberDialog extends XDialog {
                 setControlsEnables(true);
 
                 if (copyMemberService.isCanceled()) {
-                    setStatusMessage(Messages.Operation_has_been_canceled_by_the_user);
+                    setErrorMessage(Messages.Operation_has_been_canceled_by_the_user);
                 } else {
                     setStatusMessage(Messages.EMPTY);
                 }
