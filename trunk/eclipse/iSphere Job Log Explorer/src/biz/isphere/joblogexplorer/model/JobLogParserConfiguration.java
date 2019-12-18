@@ -37,12 +37,43 @@ import biz.isphere.joblogexplorer.Messages;
 
 public class JobLogParserConfiguration {
 
+    private static final String PROPERTY_GLOBAL_JOB_NUMBER = "global.job.number"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_OBJECT_NAME = "global.object.name"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_LICENSED_PROGRAM = "global.licensed.program"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_OS_RELEASE = "global.os.release"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_SPACES = "global.spaces"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_TIMEZONE = "global.timezone"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_SYSTEM_NAME = "global.system.name"; //$NON-NLS-1$
+    private static final String PROPERTY_GLOBAL_STMT = "global.stmt"; //$NON-NLS-1$
+
+    private static final String PROPERTY_PAGE_NUMBER_LABEL = "page.number.label"; //$NON-NLS-1$
+    private static final String PROPERTY_PAGE_NUMBER_VALUE = "page.number.value"; //$NON-NLS-1$
+    private static final String PROPERTY_PAGE_DATE = "page.date"; //$NON-NLS-1$
+    private static final String PROPERTY_PAGE_TIME = "page.time"; //$NON-NLS-1$
+
+    private static final String PROPERTY_HEADER_ATTRIBUTE_NAME = "header.attribute.name"; //$NON-NLS-1$
+    private static final String PROPERTY_HEADER_ATTRIBUTE_VALUE = "header.attribute.value"; //$NON-NLS-1$
+
+    private static final String PROPERTY_MESSAGE_ID = "message.id"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_TYPE = "message.type"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_SEVERITY = "message.severity"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_DATE = "message.date"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_TIME = "message.time"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_CONTINUATION_LINE_INDENTION = "message.continuation.line.indention"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_ATTRIBUTE_NAME = "message.attribute.name"; //$NON-NLS-1$
+    private static final String PROPERTY_MESSAGE_ATTRIBUTE_VALUE = "message.attribute.value"; //$NON-NLS-1$
+
+    private static final String PROPERTY_REGEX_START_OF_PAGE = "regex.startOfPage"; //$NON-NLS-1$
+    private static final String PROPERTY_REGEX_HEADER_ATTRIBUTE = "regex.headerAttribute"; //$NON-NLS-1$
+    private static final String PROPERTY_REGEX_MESSAGE_FIRST_LINE = "regex.messageFirstLine"; //$NON-NLS-1$
+    private static final String PROPERTY_REGEX_MESSAGE_CONTINUATION_LINE = "regex.messageContinuationLine"; //$NON-NLS-1$
+
     private static final String FIELD_DATE = "${date}"; //$NON-NLS-1$
     private static final String FIELD_VERSION = "${version}"; //$NON-NLS-1$
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
-    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser.properties";//$NON-NLS-1$
+    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser_v3.6.properties";//$NON-NLS-1$
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
@@ -61,18 +92,18 @@ public class JobLogParserConfiguration {
     // Page number properties
     private String PAGE_NUMBER_LABEL = "[a-zA-Z.]+"; //$NON-NLS-1$
     private String PAGE_NUMBER_VALUE = "[0-9]{1,4}"; //$NON-NLS-1$
-    private String PAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
+    private String PAGE_DATE = "[0-9]{2}[/\\\\-. ,][0-9]{2}[/\\\\-. ,][0-9]{2}|[0-9]{2}[/\\\\-. ,][0-9]{3}"; //$NON-NLS-1$
     private String PAGE_TIME = "[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2}"; //$NON-NLS-1$
 
     // Page header properties
     private String HEADER_ATTRIBUTE_NAME = "[a-zA-Z][a-zA-Z ]+"; //$NON-NLS-1$
-    private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}" + "|" + "&{JOB_NUMBER}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    private String HEADER_ATTRIBUTE_VALUE = "&{OBJECT_NAME}|&{JOB_NUMBER}"; //$NON-NLS-1$
 
     // Message properties
     private String MESSAGE_ID = "\\*NONE|[A-Z][A-Z0-9]{2}[A-F0-9]{4}"; //$NON-NLS-1$
     private String MESSAGE_TYPE = "[A-Z][a-z ]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[ ]{2,}[0-9]{2}[ ]{1,}"; //$NON-NLS-1$
-    private String MESSAGE_DATE = "[0-9/\\\\-. ,]{6,8}"; //$NON-NLS-1$
+    private String MESSAGE_DATE = "[0-9]{2}[/\\\\-. ,][0-9]{2}[/\\\\-. ,][0-9]{2}|[0-9]{2}[/\\\\-. ,][0-9]{3}"; //$NON-NLS-1$
     private String MESSAGE_TIME = "(?:[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2})(?:,[0-9]{3,6})?"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
 
@@ -241,49 +272,51 @@ public class JobLogParserConfiguration {
             properties.load(new FileInputStream(path));
 
             // Global values
-            JOB_NUMBER = getProperty(properties, "global.job.number", JOB_NUMBER); //$NON-NLS-1$
-            OBJECT_NAME = getProperty(properties, "global.object.name", OBJECT_NAME); //$NON-NLS-1$
+            JOB_NUMBER = getProperty(properties, PROPERTY_GLOBAL_JOB_NUMBER, JOB_NUMBER); //$NON-NLS-1$
+            OBJECT_NAME = getProperty(properties, PROPERTY_GLOBAL_OBJECT_NAME, OBJECT_NAME); //$NON-NLS-1$
 
             PROGRAM = OBJECT_NAME;
             LIBRARY = OBJECT_NAME;
 
-            LICENSED_PROGRAM = getProperty(properties, "global.licensed.program", LICENSED_PROGRAM); //$NON-NLS-1$
-            OS_RELEASE = getProperty(properties, "global.os.release", OS_RELEASE); //$NON-NLS-1$
+            LICENSED_PROGRAM = getProperty(properties, PROPERTY_GLOBAL_LICENSED_PROGRAM, LICENSED_PROGRAM); //$NON-NLS-1$
+            OS_RELEASE = getProperty(properties, PROPERTY_GLOBAL_OS_RELEASE, OS_RELEASE); //$NON-NLS-1$
 
-            SPACES = getProperty(properties, "global.spaces", SPACES); //$NON-NLS-1$
+            SPACES = getProperty(properties, PROPERTY_GLOBAL_SPACES, SPACES); //$NON-NLS-1$
 
-            TIMEZONE = getProperty(properties, "global.timezone", TIMEZONE); //$NON-NLS-1$
-            SYSTEM_NAME = getProperty(properties, "global.system.name", SYSTEM_NAME); //$NON-NLS-1$
-            STMT = getProperty(properties, "global.stmt", STMT); //$NON-NLS-1$
+            TIMEZONE = getProperty(properties, PROPERTY_GLOBAL_TIMEZONE, TIMEZONE); //$NON-NLS-1$
+            SYSTEM_NAME = getProperty(properties, PROPERTY_GLOBAL_SYSTEM_NAME, SYSTEM_NAME); //$NON-NLS-1$
+            STMT = getProperty(properties, PROPERTY_GLOBAL_STMT, STMT); //$NON-NLS-1$
 
             // Page number properties
-            PAGE_NUMBER_LABEL = getProperty(properties, "page.number.label", PAGE_NUMBER_LABEL); //$NON-NLS-1$
-            PAGE_NUMBER_VALUE = getProperty(properties, "page.number.value", PAGE_NUMBER_VALUE); //$NON-NLS-1$
-            PAGE_DATE = getProperty(properties, "page.date", PAGE_DATE); //$NON-NLS-1$
-            PAGE_TIME = getProperty(properties, "page.time", PAGE_TIME); //$NON-NLS-1$
+            PAGE_NUMBER_LABEL = getProperty(properties, PROPERTY_PAGE_NUMBER_LABEL, PAGE_NUMBER_LABEL); //$NON-NLS-1$
+            PAGE_NUMBER_VALUE = getProperty(properties, PROPERTY_PAGE_NUMBER_VALUE, PAGE_NUMBER_VALUE); //$NON-NLS-1$
+            PAGE_DATE = getProperty(properties, PROPERTY_PAGE_DATE, PAGE_DATE); //$NON-NLS-1$
+            PAGE_TIME = getProperty(properties, PROPERTY_PAGE_TIME, PAGE_TIME); //$NON-NLS-1$
 
             // Page header properties
-            HEADER_ATTRIBUTE_NAME = getProperty(properties, "header.attribute.name", HEADER_ATTRIBUTE_NAME); //$NON-NLS-1$
-            HEADER_ATTRIBUTE_VALUE = getProperty(properties, "header.attribute.value", HEADER_ATTRIBUTE_VALUE); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_HEADER_ATTRIBUTE_NAME, PAGE_NUMBER_LABEL); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_VALUE = getProperty(properties, PROPERTY_HEADER_ATTRIBUTE_VALUE, HEADER_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
             // Message properties
-            MESSAGE_ID = getProperty(properties, "message.id", MESSAGE_ID); //$NON-NLS-1$
-            MESSAGE_TYPE = getProperty(properties, "message.type", MESSAGE_TYPE); //$NON-NLS-1$
-            MESSAGE_SEVERITY = getProperty(properties, "message.severity", MESSAGE_SEVERITY); //$NON-NLS-1$
-            MESSAGE_DATE = getProperty(properties, "message.date", MESSAGE_DATE); //$NON-NLS-1$
-            MESSAGE_TIME = getProperty(properties, "message.time", MESSAGE_TIME); //$NON-NLS-1$
-            MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, "message.continuation.line.indention", MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
+            MESSAGE_ID = getProperty(properties, PROPERTY_MESSAGE_ID, MESSAGE_ID); //$NON-NLS-1$
+            MESSAGE_TYPE = getProperty(properties, PROPERTY_MESSAGE_TYPE, MESSAGE_TYPE); //$NON-NLS-1$
+            MESSAGE_SEVERITY = getProperty(properties, PROPERTY_MESSAGE_SEVERITY, MESSAGE_SEVERITY); //$NON-NLS-1$
+            MESSAGE_DATE = getProperty(properties, PROPERTY_MESSAGE_DATE, MESSAGE_DATE); //$NON-NLS-1$
+            MESSAGE_TIME = getProperty(properties, PROPERTY_MESSAGE_TIME, MESSAGE_TIME); //$NON-NLS-1$
+            MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, PROPERTY_MESSAGE_CONTINUATION_LINE_INDENTION,
+                MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
 
-            HEADER_ATTRIBUTE_NAME = getProperty(properties, "message.attribute.name", MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
-            HEADER_ATTRIBUTE_VALUE = getProperty(properties, "message.attribute.value", MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_NAME, MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_VALUE = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_VALUE, MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
             produceRegularExpressions();
 
             // Override default expressions
-            regex_startOfPage = replaceVariables(getProperty(properties, "regex.startOfPage", regex_startOfPage)); //$NON-NLS-1$
-            regex_headerAttribute = replaceVariables(getProperty(properties, "regex.headerAttribute", regex_headerAttribute)); //$NON-NLS-1$
-            regex_messageFirstLine = replaceVariables(getProperty(properties, "regex.messageFirstLine", regex_messageFirstLine)); //$NON-NLS-1$
-            regex_messageContinuationLine = replaceVariables(getProperty(properties, "regex.messageContinuationLine", regex_messageContinuationLine)); //$NON-NLS-1$
+            regex_startOfPage = replaceVariables(getProperty(properties, PROPERTY_REGEX_START_OF_PAGE, regex_startOfPage)); //$NON-NLS-1$
+            regex_headerAttribute = replaceVariables(getProperty(properties, PROPERTY_REGEX_HEADER_ATTRIBUTE, regex_headerAttribute)); //$NON-NLS-1$
+            regex_messageFirstLine = replaceVariables(getProperty(properties, PROPERTY_REGEX_MESSAGE_FIRST_LINE, regex_messageFirstLine)); //$NON-NLS-1$
+            regex_messageContinuationLine = replaceVariables(getProperty(properties, PROPERTY_REGEX_MESSAGE_CONTINUATION_LINE,
+                regex_messageContinuationLine)); //$NON-NLS-1$
 
             compilePattern();
 
@@ -315,7 +348,8 @@ public class JobLogParserConfiguration {
             String directory = getConfigurationDirectory();
             File outFile = new File(directory, EXAMPLE_CONFIGURATION_FILE); //$NON-NLS-1$
             if (outFile.exists()) {
-                outFile.delete();
+                // outFile.delete();
+                return;
             }
 
             in = getClass().getResourceAsStream(DEFAULT_CONFIGURATION_FILE);
@@ -346,7 +380,7 @@ public class JobLogParserConfiguration {
                     date = null;
                 }
 
-                out.append(line);
+                out.append(replaceDefaultValues(line));
                 out.append(NEW_LINE); //$NON-NLS-1$
             }
 
@@ -441,6 +475,60 @@ public class JobLogParserConfiguration {
 
     private String fixEscapeCharacters(String value) {
         return value.replaceAll("\\*", "\\\\*"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    /**
+     * Replaces the default values when writing an example configuration file.
+     * 
+     * @param line - line of configuration file.
+     * @return line with default values
+     */
+    private String replaceDefaultValues(String line) {
+
+        String result = line;
+
+        while (result.indexOf("${") >= 0) { //$NON-NLS-1$
+            result = result.replace(attribute(PROPERTY_GLOBAL_JOB_NUMBER), fixBackslashes(JOB_NUMBER));
+            result = result.replace(attribute(PROPERTY_GLOBAL_OBJECT_NAME), fixBackslashes(OBJECT_NAME));
+            result = result.replace(attribute(PROPERTY_GLOBAL_LICENSED_PROGRAM), fixBackslashes(LICENSED_PROGRAM));
+            result = result.replace(attribute(PROPERTY_GLOBAL_OS_RELEASE), fixBackslashes(OS_RELEASE));
+            result = result.replace(attribute(PROPERTY_GLOBAL_SPACES), fixBackslashes(SPACES));
+            result = result.replace(attribute(PROPERTY_GLOBAL_TIMEZONE), fixBackslashes(TIMEZONE));
+            result = result.replace(attribute(PROPERTY_GLOBAL_SYSTEM_NAME), fixBackslashes(SYSTEM_NAME));
+            result = result.replace(attribute(PROPERTY_GLOBAL_STMT), fixBackslashes(STMT));
+
+            result = result.replace(attribute(PROPERTY_PAGE_NUMBER_LABEL), fixBackslashes(PAGE_NUMBER_LABEL));
+            result = result.replace(attribute(PROPERTY_PAGE_NUMBER_VALUE), fixBackslashes(PAGE_NUMBER_VALUE));
+            result = result.replace(attribute(PROPERTY_PAGE_DATE), fixBackslashes(PAGE_DATE));
+            result = result.replace(attribute(PROPERTY_PAGE_TIME), fixBackslashes(PAGE_TIME));
+
+            result = result.replace(attribute(PROPERTY_HEADER_ATTRIBUTE_NAME), fixBackslashes(HEADER_ATTRIBUTE_NAME));
+            result = result.replace(attribute(PROPERTY_HEADER_ATTRIBUTE_VALUE), fixBackslashes(HEADER_ATTRIBUTE_VALUE));
+
+            result = result.replace(attribute(PROPERTY_MESSAGE_ID), fixBackslashes(MESSAGE_ID));
+            result = result.replace(attribute(PROPERTY_MESSAGE_TYPE), fixBackslashes(MESSAGE_TYPE));
+            result = result.replace(attribute(PROPERTY_MESSAGE_SEVERITY), fixBackslashes(MESSAGE_SEVERITY));
+            result = result.replace(attribute(PROPERTY_MESSAGE_DATE), fixBackslashes(MESSAGE_DATE));
+            result = result.replace(attribute(PROPERTY_MESSAGE_TIME), fixBackslashes(MESSAGE_TIME));
+            result = result.replace(attribute(PROPERTY_MESSAGE_CONTINUATION_LINE_INDENTION), fixBackslashes(MESSAGE_CONTINUATION_LINE_INDENTION));
+            result = result.replace(attribute(PROPERTY_MESSAGE_ATTRIBUTE_NAME), fixBackslashes(MESSAGE_ATTRIBUTE_NAME));
+            result = result.replace(attribute(PROPERTY_MESSAGE_ATTRIBUTE_VALUE), fixBackslashes(MESSAGE_ATTRIBUTE_VALUE));
+
+            result = result.replace(attribute(PROPERTY_REGEX_START_OF_PAGE), fixBackslashes(regex_startOfPage));
+            result = result.replace(attribute(PROPERTY_REGEX_HEADER_ATTRIBUTE), fixBackslashes(regex_headerAttribute));
+            result = result.replace(attribute(PROPERTY_REGEX_MESSAGE_FIRST_LINE), fixBackslashes(regex_messageFirstLine));
+            result = result.replace(attribute(PROPERTY_REGEX_MESSAGE_CONTINUATION_LINE), fixBackslashes(regex_messageContinuationLine));
+        }
+
+        return result;
+    }
+
+    private String attribute(String attribute) {
+        return String.format("${%s}", attribute);
+    }
+
+    private CharSequence fixBackslashes(String value) {
+        return value.replaceAll("\\\\", "\\\\\\\\");
     }
 
     /**
