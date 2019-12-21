@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,13 +27,12 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
 
     // Contributor logos
     public static final String IMAGE_ISPHERE = "isphere.gif";
-
     public static final String IMAGE_TASKFORCE = "TaskForce.png";
-
     public static final String IMAGE_TOOLS400 = "Tools400.bmp";
-    
+
     // Other iamges
     public static final String IMAGE_ERROR = "error.gif";
+    public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png";
 
     // The shared instance
     private static ISphereBasePlugin plugin;
@@ -108,6 +107,7 @@ public class ISphereBasePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_TOOLS400, getImageDescriptor(IMAGE_TOOLS400));
         reg.put(IMAGE_ISPHERE, getImageDescriptor(IMAGE_ISPHERE));
         reg.put(IMAGE_ERROR, getImageDescriptor(IMAGE_ERROR));
+        reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
     }
 
     private ImageDescriptor getImageDescriptor(String name) {
