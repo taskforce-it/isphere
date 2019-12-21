@@ -149,7 +149,7 @@ public class DialogSettingsManager {
     }
 
     /**
-     * Produces a resizable table given for a given table.
+     * Produces a resizable table column for a given table.
      * 
      * @param table - Table, the column is added to.
      * @param style - The style of column to construct.
@@ -173,6 +173,16 @@ public class DialogSettingsManager {
         return tableColumn;
     }
 
+    /**
+     * Resets the columns sizes of a given table to their original widths. The
+     * table columns must have been created with
+     * {@link #createResizableTableColumn(Table, int, int, String, int)}.
+     * Objects should use the
+     * {@link biz.isphere.base.internal.actions.ResetColumnSizeAction} action
+     * for resetting the column sizes.
+     * 
+     * @param table
+     */
     public void resetColumnWidths(Table table) {
 
         table.setVisible(false);
@@ -183,6 +193,27 @@ public class DialogSettingsManager {
         }
 
         table.setVisible(true);
+    }
+
+    /**
+     * Returns the name of a resizable table column created with
+     * {@link #createResizableTableColumn(Table, int, int, String, int)}.
+     * 
+     * @param column - table column
+     * @return name of the table column
+     */
+    public String getColumnName(TableColumn column) {
+
+        if (column == null) {
+            return null;
+        }
+
+        Object objectName = column.getData(COLUMN_NAME);
+        if (objectName instanceof String) {
+            return (String)objectName;
+        }
+
+        return null;
     }
 
     private ControlAdapter getColumnResizeListener() {
@@ -215,20 +246,6 @@ public class DialogSettingsManager {
         }
 
         return COLUMN_WIDTH + columnName;
-    }
-
-    private String getColumnName(TableColumn column) {
-
-        if (column == null) {
-            return null;
-        }
-
-        Object objectName = column.getData(COLUMN_NAME);
-        if (objectName instanceof String) {
-            return (String)objectName;
-        }
-
-        return null;
     }
 
     private int getDefaultColumnWidth(TableColumn column) {
