@@ -6,21 +6,22 @@ Prerequisites:
 --------------
 
 Installed IBM Rational Developer for Power Systems Software (RDP 8.0).
-For WDSCi 7.0 and RDP 8.0 it is recommended to install the SVN plug-in
+For WDSCi 7.0 it is recommended to install the SVN plug-in
 from:
 
-   subclipse-local-update-site-1.10.13.zip 
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-local-update-site-1.10.13.zip
 
-You need to download the zip from the iSphere project at SourceForge at:
+For RDP 8.0 it is recommended to install the SVN plug-in
+from:
 
-   /trunk/eclipse/iSphere Eclipse Setup/plug-ins/
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-local-update-site-1.12.xx.zip
 
 		
 Repository Location:
 --------------------
 
    https://svn.code.sf.net/p/isphere/code/trunk
-   
+
    Password: Your SourceForge password.
 
 	
@@ -32,11 +33,11 @@ project from:
 
    plug-ins\iSphere_Ant_Contribution.zip
 
-Install the "Java Scoped Template Variables Plugin", which is required 
-if you work on the iSphere and Rapid Fire plug-in in the same workspace 
+Install the "Java Scoped Template Variables Plugin", which is required
+if you work on the iSphere and Rapid Fire plug-in in the same workspace
 project from:
 
-   plug-ins\Java_Scoped_Template_Variables.zip
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\Java_Scoped_Template_Variables.zip
 
 For WDSCi set the Ant home diretory to:
 
@@ -45,37 +46,46 @@ For WDSCi set the Ant home diretory to:
 For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
 
    Preferences - Java - Build path - Classpath variables
-   
+
    ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
 
-Optionally:
+Optionally install HTML editor:
+
+   Name:     Helios Milestone Repository
+   Location: http://download.eclipse.org/releases/helios
 
    'Eclipse Update Site', 'Web, XML, and Java EE Development':
-   
-      Web Page Editor Plug-in
+
+      Web Page Editor (Optional)
 
 Eclipse Settings:
 -----------------
 
 a) Preferences -> Java -> Installed JREs (
 
+   For WDSC 7.0:
+   -------------
+
    JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
    JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
-   
-   Flagged as "Default JRE". (WDSC 7.0)
+
+   Flagged as "Default JRE".
+
+   RDP 8.0 and RDi 9.1+:
+   ---------------------
 
    JRE home:   C:\Programme_x86\IBM\SDP_080\jdk   (example path)
    JRE name:   JRE 1.6.0 IBM J9                   (must be spelled as shown)
 
-   Flagged as "Default JRE". (RDP 8.0 and RDi 9.1+)
+   Flagged as "Default JRE".
 
 b) Preferences - Java -> Code Style -> Clean Up
-   
+
    Import: Preferences_Java_CodeStyle_CleanUp (iSphere)_3.6.xml
-   
+
    Alternatively import and enable the cleanup profile for
    each iSphere project.
-   
+
    WDSCi: Restore default values for all "Clean Up" tabs.
           Uncheck "Change all accesses through subtypes"
           on "Member Accesses" tab.
@@ -83,16 +93,16 @@ b) Preferences - Java -> Code Style -> Clean Up
 c) Preferences - Java -> Code Style -> Formatter
 
    Import: Preferences_Java_CodeStyle_Formatter (iSphere)_3.6.xml
-   
+
    Alternatively import and enable the formatter profile for
    each iSphere project.
 
 d) Preferences - Java -> Code Style -> Code Templates
 
    Import: Preferences_Java_CodeStyle_Code_Template (iSphere)_3.6.xml
-   
+
    or, if the "Java Scoped Template Variables" plug-in has been installed:
-   
+
    Import: Preferences_Java_CodeStyle_Code_Template (iSphere with Java Scoped Template Variables Plugin)_3.6.xml
 
 e) Preferences - Java -> Editor -> Save Actions:
@@ -107,7 +117,7 @@ e) Preferences - Java -> Editor -> Save Actions:
 f) For RDi and WDSCi add classpath variable IBM_SHARED_PLUGINS to the Java build path:
 
    Preferences - Java - Build path - Classpath variables
-   
+
    IBM_SHARED_PLUGINS:   c:/Program Files (x86)/IBM/SDP_Shared/plugins
 
 g) Preferences - General - Editors - Text Editors - Spelling:
@@ -129,15 +139,15 @@ b) Preferences -> General -> Editors -> Text Editors -> Spelling (disable for sl
 
 c) Preferences -> General -> Keys:
 
-   Filter for UNDO and copy entry "Ctrl+Z" to "Ctrl+Backspace".
-   
+   Filter for UNDO and copy entry "Ctrl+Z" to "Alt+Backspace".
+
    Filter for GRAPH and remove entry "Show Revision graph" of category "SVN" [Unbind Command].
    (Otherwise CTRL-ALT-Q does not work to get the '@'.)
 
 d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
 
    File:    {name} {revision} {author}
-   Folder:  {name} {revision} {author}
+   Folder:  {name} {revision}
    Project: {name} {revision} [{location_label}]{root_prefix}: {first_branchOrTag_child}
 
 e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
@@ -162,7 +172,7 @@ a) Map the [Enter] key to "splittLine":
 Usefull plug-ins:
 =================
 
-WindowBuilder Pro Update Site: 
+WindowBuilder Pro Update Site:
 
 RDi 8.0:
 --------
@@ -191,15 +201,32 @@ Name:     Eclipse PDE Plug-in Developer Resources
 Location: Eclipse Neon (4.6) Update Site - http://download.eclipse.org/eclipse/updates/4.6
 
 Window Spy: Alt-Shift-F1
-Menu Spy:   Alt-Shift-F2 
+Menu Spy:   Alt-Shift-F2
 
-Enhanced Class Decompiler
+Java Decompiler
 
-RDi 8.0:
---------
+RDi 8.0 and WDSCi 7.0:
+----------------------
 
-Name:     ???
-Location: ???
+Name:     JD-Eclipse Decompiler Local Update Site
+Location: ${workspace_loc}\iSphere Eclipse Setup\plug-ins\jd-eclipse-site-1.0.1.zip
+
+Version 1.0.1 has been created from 1.0.0-RC2 and can be installed in WDSCi 7.0.
+
+Configuration:
+
+   General -> Editors -> File Associations
+
+      a) Add file type '*.class'
+      b) associate editor 'JD Class File Viewer'
+      c) Make 'JD Class File Viewer' the default editor
+
+   Eventually you should have the following editors associated to *.class:
+
+      JD Class File Viewer (default)
+      Class File Viewer (locked by 'Java Class File' content type)
+
+   See also: https://github.com/java-decompiler/jd-eclipse
 
 RDi 9.0/9.1:
 ------------
