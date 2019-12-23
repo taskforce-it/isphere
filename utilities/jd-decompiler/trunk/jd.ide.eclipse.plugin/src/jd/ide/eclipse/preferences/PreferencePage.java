@@ -29,6 +29,13 @@ public class PreferencePage
 		super(SWT.NONE);
 		setDescription("JD-Eclipse preference page");
 	}
+    @Override
+    protected void initialize() {
+        super.initialize();
+        
+        // CHANGED: Rz, 23.12.2019 - 1.0.1
+        setTitle(getTitle() + " " + JavaDecompilerPlugin.VERSION_JD_ECLIPSE); // new
+    }
 
 	/**
 	 * Creates the field editors. Field editors are abstractions of

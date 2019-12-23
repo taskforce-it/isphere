@@ -2,7 +2,7 @@
 <feature
       id="jd.ide.eclipse.feature"
       label="JD-Eclipse Plug-in"
-      version="1.0.0"
+      version="1.0.1"
       provider-name="Java Decompiler"
       plugin="jd.ide.eclipse.plugin">
 
@@ -87,7 +87,7 @@ Public License instead of this License.  But first, please read
          id="jd.ide.eclipse.plugin"
          download-size="0"
          install-size="0"
-         version="1.0.0"
+         version="1.0.1"
          unpack="false"/>
 
 </feature>
