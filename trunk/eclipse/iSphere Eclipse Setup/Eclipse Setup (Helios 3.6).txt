@@ -58,6 +58,7 @@ Optionally install HTML editor:
 
       Web Page Editor (Optional)
 
+
 Eclipse Settings:
 -----------------
 
@@ -124,6 +125,7 @@ g) Preferences - General - Editors - Text Editors - Spelling:
 
    User defined dictionary:  ${workspace_loc}\iSphere Eclipse Setup\Spelling\dictionary_en.txt
 
+
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
 
@@ -149,10 +151,13 @@ d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
    File:    {name} {revision} {author}
    Folder:  {name} {revision}
    Project: {name} {revision} [{location_label}]{root_prefix}: {first_branchOrTag_child}
+      or
+           {name} {revision} [{url_short}]
 
 e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
+
 
 Useful LPEX Editor Settings (no more required for RDi 9.6+):
 ------------------------------------------------------------
