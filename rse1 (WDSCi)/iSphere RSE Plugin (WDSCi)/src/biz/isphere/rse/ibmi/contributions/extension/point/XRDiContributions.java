@@ -72,7 +72,35 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns <i>true</i> when Kerberos authentication is enabled on the
+     * Returns <i>true</i> when the RSE sub-system has been initialized.
+     * 
+     * @return <i>true</i>, if RSE sub-system has been initialized, else
+     *         <i>false</i>
+     */
+    public boolean isRseSubsystemInitialized(String connectionName) {
+
+        final int sleepTime = 500;
+        int waitTime = 30000;
+
+        while (getConnection(null, connectionName) == null) {
+            try {
+                Thread.sleep(waitTime);
+                waitTime = waitTime - sleepTime;
+            } catch (InterruptedException e) {
+            }
+        }
+        
+        ISeriesConnection connection = getConnection(null, connectionName);
+        if (connection!=null ){
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * 
+     * /** Returns <i>true</i> when Kerberos authentication is enabled on the
      * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
      * 
      * @return <i>true</i>, if Kerberos authentication is selected, else
@@ -95,6 +123,22 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return isKerberosAuthentication;
+    }
+
+    /**
+     * Returns <i>true</i> when the subsystem of a given connection is in
+     * offline mode.
+     * 
+     * @return <i>true</i>, subsystem is offline, else <i>false</i>
+     */
+    public boolean isSubSystemOffline(String connectionName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        if (connection == null || connection.isOffline()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
