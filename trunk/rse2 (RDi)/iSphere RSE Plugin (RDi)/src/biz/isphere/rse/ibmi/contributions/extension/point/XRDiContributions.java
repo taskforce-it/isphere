@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,6 +71,22 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Returns <i>true</i> when the RSE sub-system has been initialized.
+     * 
+     * @return <i>true</i>, if RSE sub-system has been initialized, else
+     *         <i>false</i>
+     */
+    public boolean isRseSubsystemInitialized(String connectionName) {
+
+        try {
+            RSECorePlugin.waitForInitCompletion();
+            return true;
+        } catch (InterruptedException e) {
+            return false;
+        }
+    }
+
+    /**
      * Returns <i>true</i> when Kerberos authentication is enabled on the
      * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
      * 
@@ -94,6 +110,22 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return isKerberosAuthentication;
+    }
+
+    /**
+     * Returns <i>true</i> when the subsystem of a given connection is in
+     * offline mode.
+     * 
+     * @return <i>true</i>, subsystem is offline, else <i>false</i>
+     */
+    public boolean isSubSystemOffline(String connectionName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        if (connection == null || connection.isOffline()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -60,8 +60,6 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private boolean isLoadingView;
 
-    private boolean hasPinnedView;
-
     private IPageService pageService;
 
     private IPerspectiveListener perspectiveListener;
@@ -75,6 +73,11 @@ public abstract class AbstractViewManager implements IViewManager {
      *        constants defined in {@link IViewManager}.
      */
     protected AbstractViewManager(String name) {
+
+        if (!IViewManager.DATA_SPACE_MONITOR_VIEWS.equals(name) && !IViewManager.DATA_QUEUE_MONITOR_VIEWS.equals(name)
+            && !IViewManager.TN5250J_SESSION_VIEWS.equals(name) && !IViewManager.SPOOLED_FILES_VIEWS.equals(name)) {
+            throw new RuntimeException("'name' does not match one of the constants of IViewManager"); //$NON-NLS-1$
+        }
 
         this.name = name;
         this.monitorViews = new HashSet<IPinnableView>();
@@ -244,10 +247,6 @@ public abstract class AbstractViewManager implements IViewManager {
     public void remove(IPinnableView view) {
 
         saveViewStatus(view);
-        if (isPinned(view)) {
-            hasPinnedView = true;
-        }
-
         monitorViews.remove(view);
     }
 
@@ -324,15 +323,6 @@ public abstract class AbstractViewManager implements IViewManager {
         }
     }
 
-    public void clearViewStatus(IPinnableView view) {
-
-        IDialogSettings workbenchSettings = ISpherePlugin.getDefault().getDialogSettings();
-        settings = workbenchSettings.getSection(name);
-        if (settings != null) {
-            settings = workbenchSettings.addNewSection(name);
-        }
-    }
-
     /**
      * Returns the final key that is required to get a value from
      * 'dialog_settings.xml'.
@@ -362,11 +352,6 @@ public abstract class AbstractViewManager implements IViewManager {
     }
 
     public void dispose() {
-
-        if (!hasPinnedView) {
-            // clearViewStatus(null);
-        }
-
         removeListeners();
     }
 }

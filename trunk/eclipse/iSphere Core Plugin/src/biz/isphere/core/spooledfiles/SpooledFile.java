@@ -459,6 +459,10 @@ public class SpooledFile {
         return null;
     }
 
+    public void refresh() {
+        refreshSpooledFile();
+    }
+
     private void refreshSpooledFile() {
         if (toolboxSpooledFile == null) {
             toolboxSpooledFile = getToolboxSpooledFile();

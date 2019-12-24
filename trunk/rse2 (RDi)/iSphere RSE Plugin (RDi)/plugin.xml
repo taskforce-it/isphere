@@ -601,6 +601,25 @@
                 menubarPath="group.importexport">
 	         </action>
       	</objectContribution>
+
+        <!--
+      	  ==========================================
+      	    Spooled File Filter: Work With Spooled Files
+      	  ==========================================
+        -->
+      	<objectContribution
+            objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
+            id="biz.isphere.core.menu.wrksplf">
+            
+	         <action
+                class="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
+                label="%iSphere_Work_With_Spooled_Files"
+	            icon="icons/spooled_files.gif"
+                menubarPath="group.expandto">
+	         </action>
+      	</objectContribution>
       	
    </extension>
       	
@@ -674,6 +693,13 @@
             category="biz.isphere.core.views.categories"
             name="%iSphere_Data_Queue_Monitor"
             id="biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"
+            allowMultiple="true"/>
+      <view
+            icon="icons/spooled_files.gif"
+            class="biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Work_With_Spooled_Files"
+            id="biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"
             allowMultiple="true"/>
    </extension> 
 
