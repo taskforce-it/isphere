@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,11 +33,11 @@ import com.ibm.as400.access.QSYSObjectPathName;
 
 public class ISphereHelper {
 
-    private static final String ASP_GROUP_NONE_VALUE = "*NONE";
-    
+    private static final String ASP_GROUP_NONE_VALUE = "*NONE"; //$NON-NLS-1$
+
     public static String getISphereLibraryVersion(AS400 as400, String library) {
 
-        String dataAreaISphereContent = readISphereDataArea(null, as400, library);
+        String dataAreaISphereContent = readISphereDataAreaChecked(as400, library);
         if (dataAreaISphereContent == null) {
             return null;
         }
@@ -52,7 +52,7 @@ public class ISphereHelper {
 
     public static String getISphereLibraryBuildDate(AS400 as400, String library) {
 
-        String dataAreaISphereContent = readISphereDataArea(null, as400, library);
+        String dataAreaISphereContent = readISphereDataAreaChecked(as400, library);
         if (dataAreaISphereContent == null) {
             return null;
         }
@@ -65,7 +65,22 @@ public class ISphereHelper {
         return buildDate;
     }
 
+    public static String checkISphereLibrary(String connectionName) {
+        if (IBMiHostContributionsHandler.isSubSystemOffline(connectionName)) {
+            return Messages.bind(Messages.The_connection_A_is_currently_offline_and_cannot_be_connected, connectionName);
+        }
+        AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        return checkISphereLibraryWithMessage(as400, ISpherePlugin.getISphereLibrary(connectionName));
+    }
+
     public static boolean checkISphereLibrary(Shell shell, String connectionName) {
+        if (IBMiHostContributionsHandler.isSubSystemOffline(connectionName)) {
+            if (shell != null) {
+                new DisplayMessage(shell, Messages.Error, Messages.bind(Messages.The_connection_A_is_currently_offline_and_cannot_be_connected,
+                    connectionName)).start();
+            }
+            return false;
+        }
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
         return checkISphereLibrary(shell, as400, ISpherePlugin.getISphereLibrary(connectionName));
     }
@@ -77,13 +92,29 @@ public class ISphereHelper {
 
     public static boolean checkISphereLibrary(Shell shell, AS400 as400, String library) {
 
-        if (as400 == null) {
+        String message = checkISphereLibraryWithMessage(as400, library);
+        if (message != null) {
+            if (shell != null && message.length() > 0) {
+                new DisplayMessage(shell, Messages.E_R_R_O_R, message).start();
+            }
             return false;
         }
 
-        String dataAreaISphereContent = readISphereDataArea(shell, as400, library);
-        if (dataAreaISphereContent == null) {
-            return false;
+        return true;
+    }
+
+    private static String checkISphereLibraryWithMessage(AS400 as400, String library) {
+
+        if (as400 == null) {
+            return Messages.The_connection_is_currently_offline_and_cannot_be_connected;
+        }
+
+        String dataAreaISphereContent;
+
+        try {
+            dataAreaISphereContent = readISphereDataArea(as400, library);
+        } catch (Exception e) {
+            return e.getMessage();
         }
 
         String serverProvided = retrieveServerVersion(dataAreaISphereContent);
@@ -94,29 +125,25 @@ public class ISphereHelper {
 
         if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
-            String text = Messages.E_R_R_O_R;
             String message = Messages
                 .bind(
                     Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
                     new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided), getVersionFormatted(clientNeedsServer) });
-            new DisplayMessage(shell, text, message).start();
 
-            return false;
+            return message;
         }
 
         if (clientProvided.compareTo(serverNeedsClient) < 0) {
 
-            String text = Messages.E_R_R_O_R;
             String message = Messages
                 .bind(
                     Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client,
                     new String[] { getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient) });
-            new DisplayMessage(shell, text, message).start();
 
-            return false;
+            return message;
         }
 
-        return true;
+        return null;
     }
 
     private static String retrieveServerVersion(String dataAreaISphereContent) {
@@ -131,22 +158,29 @@ public class ISphereHelper {
         return dataAreaISphereContent.substring(39, 49);
     }
 
-    private static String readISphereDataArea(Shell shell, AS400 as400, String library) {
+    private static String readISphereDataAreaChecked(AS400 as400, String library) {
 
-        if (!checkLibrary(as400, library)) {
-
-            if (shell != null) {
-                String text = Messages.E_R_R_O_R;
-                String message = Messages.bind(Messages.iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B,
-                    new String[] { library, as400.getSystemName() });
-                new DisplayMessage(shell, text, message).start();
-            }
-
+        try {
+            return readISphereDataArea(as400, library);
+        } catch (Exception e) {
             return null;
         }
 
+    }
+
+    private static String readISphereDataArea(AS400 as400, String library) throws Exception {
+
+        if (!checkLibrary(as400, library)) {
+
+            String message = Messages.bind(Messages.iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B,
+                new String[] { library, as400.getSystemName() });
+
+            throw new Exception(message);
+        }
+
         String dataAreaISphereContent = null;
-        CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + library + ".LIB/ISPHERE.DTAARA");
+        CharacterDataArea dataAreaISphere = new CharacterDataArea(as400, "/QSYS.LIB/" + library + ".LIB/ISPHERE.DTAARA"); //$NON-NLS-1$ //$NON-NLS-2$
+
         try {
             dataAreaISphereContent = dataAreaISphere.read();
         } catch (AS400SecurityException e) {
@@ -164,21 +198,17 @@ public class ISphereHelper {
         }
         if (dataAreaISphereContent == null) {
 
-            if (shell != null) {
-                String text = Messages.E_R_R_O_R;
-                String message = Messages.bind(Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library, new String[] { library,
-                    as400.getSystemName() });
-                new DisplayMessage(shell, text, message).start();
-            }
+            String message = Messages.bind(Messages.Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library,
+                new String[] { library, as400.getSystemName() });
 
-            return null;
+            throw new Exception(message);
         }
 
         return dataAreaISphereContent;
     }
 
     private static String getVersionFormatted(String aVersionNumber) {
-        return Integer.parseInt(aVersionNumber.substring(0, 2)) + "." + Integer.parseInt(aVersionNumber.substring(2, 4)) + "."
+        return Integer.parseInt(aVersionNumber.substring(0, 2)) + "." + Integer.parseInt(aVersionNumber.substring(2, 4)) + "." //$NON-NLS-1$ //$NON-NLS-2$
             + Integer.parseInt(aVersionNumber.substring(4, 6));
     }
 
@@ -194,7 +224,7 @@ public class ISphereHelper {
                 }
             }
         }
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     public static String getCurrentLibrary(AS400 _as400) throws Exception {
@@ -206,7 +236,7 @@ public class ISphereHelper {
         if (jobs.length == 1) {
 
             if (!jobs[0].getCurrentLibraryExistence()) {
-                currentLibrary = "*CRTDFT";
+                currentLibrary = "*CRTDFT"; //$NON-NLS-1$
             } else {
                 currentLibrary = jobs[0].getCurrentLibrary();
             }
@@ -219,7 +249,7 @@ public class ISphereHelper {
 
     public static boolean setCurrentLibrary(AS400 _as400, String currentLibrary) throws Exception {
 
-        String command = "CHGCURLIB CURLIB(" + currentLibrary + ")";
+        String command = "CHGCURLIB CURLIB(" + currentLibrary + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         CommandCall commandCall = new CommandCall(_as400);
 
         if (commandCall.run(command)) {
@@ -240,8 +270,8 @@ public class ISphereHelper {
     public static String comparableVersion(String version) {
         String comparableVersion = version;
         String[] parts = new String[3];
-        parts = comparableVersion.split("\\.");
-        DecimalFormat formatter = new DecimalFormat("00");
+        parts = comparableVersion.split("\\."); //$NON-NLS-1$
+        DecimalFormat formatter = new DecimalFormat("00"); //$NON-NLS-1$
         for (int i = 0; i < parts.length; i++) {
             if (parts[i] == null) {
                 parts[i] = formatter.format(0L);

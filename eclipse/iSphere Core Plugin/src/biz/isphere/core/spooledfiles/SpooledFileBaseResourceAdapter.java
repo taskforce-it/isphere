@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,23 +20,23 @@ import biz.isphere.core.preferences.Preferences;
 
 public class SpooledFileBaseResourceAdapter {
 
-    private static final String FILE = "File";
-    private static final String FILE_NUMBER = "File_number";
-    private static final String JOB_NAME = "Job_name";
-    private static final String JOB_USER = "Job_user";
-    private static final String JOB_NUMBER = "Job_number";
-    private static final String JOB_SYSTEM = "Job_system";
-    private static final String CREATION_DATE = "Creation_date";
-    private static final String CREATION_TIME = "Creation_time";
-    private static final String STATUS = "Status";
-    private static final String OUTPUT_QUEUE = "Output_queue";
-    private static final String OUTPUT_PRIORITY = "Output_priority";
-    private static final String USER_DATA = "User_data";
-    private static final String FORM_TYPE = "Form_type";
-    private static final String COPIES = "Copies";
-    private static final String PAGES = "Pages";
-    private static final String CURRENT_PAGE = "Current_page";
-    private static final String CREATION_TIMESTAMP = "Creation_timestamp";
+    public static final String FILE = "File";
+    public static final String FILE_NUMBER = "File_number";
+    public static final String JOB_NAME = "Job_name";
+    public static final String JOB_USER = "Job_user";
+    public static final String JOB_NUMBER = "Job_number";
+    public static final String JOB_SYSTEM = "Job_system";
+    public static final String CREATION_DATE = "Creation_date";
+    public static final String CREATION_TIME = "Creation_time";
+    public static final String STATUS = "Status";
+    public static final String OUTPUT_QUEUE = "Output_queue";
+    public static final String OUTPUT_PRIORITY = "Output_priority";
+    public static final String USER_DATA = "User_data";
+    public static final String FORM_TYPE = "Form_type";
+    public static final String COPIES = "Copies";
+    public static final String PAGES = "Pages";
+    public static final String CURRENT_PAGE = "Current_page";
+    public static final String CREATION_TIMESTAMP = "Creation_timestamp";
 
     public ImageDescriptor getImageDescriptor(SpooledFile splf) {
         return ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SPOOLED_FILE);

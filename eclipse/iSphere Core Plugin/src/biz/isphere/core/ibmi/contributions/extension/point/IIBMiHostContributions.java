@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,14 @@ import com.ibm.as400.access.AS400Message;
 public interface IIBMiHostContributions {
 
     /**
+     * Returns <i>true</i> when the RSE sub-system has been initialized.
+     * 
+     * @return <i>true</i>, if RSE sub-system has been initialized, else
+     *         <i>false</i>
+     */
+    public boolean isRseSubsystemInitialized(String connectionName);
+
+    /**
      * Returns <i>true</i> when Kerberos authentication is enabled on the
      * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
      * 
@@ -29,6 +37,14 @@ public interface IIBMiHostContributions {
      *         <i>false</i>
      */
     public boolean isKerberosAuthentication();
+
+    /**
+     * Returns <i>true</i> when the subsystem of a given connection is in
+     * offline mode.
+     * 
+     * @return <i>true</i>, subsystem is offline, else <i>false</i>
+     */
+    public boolean isSubSystemOffline(String connectionName);
 
     /**
      * Executes a given command for a given connection.
@@ -56,8 +72,7 @@ public interface IIBMiHostContributions {
      * @param connectionName - connection that is checked for a given library
      * @param libraryName - library that should contain the file
      * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else
-     *         <code>false</code>.
+     * @return <code>true</code>, when the file exists, else <code>false</code>.
      */
     public boolean checkFile(String connectionName, String libraryName, String fileName);
 

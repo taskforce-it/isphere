@@ -78,6 +78,12 @@ public class Messages extends NLS {
 
     public static String Delete;
 
+    public static String Hold;
+
+    public static String Release;
+
+    public static String Messages;
+
     public static String Deselect_all;
 
     public static String Display;
@@ -193,6 +199,10 @@ public class Messages extends NLS {
     public static String Severity_colon;
 
     public static String Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
+
+    public static String The_connection_A_is_currently_offline_and_cannot_be_connected;
+
+    public static String The_connection_is_currently_offline_and_cannot_be_connected;
 
     public static String Statement;
 
@@ -696,6 +706,8 @@ public class Messages extends NLS {
 
     public static String Refresh_the_contents_of_this_view;
 
+    public static String Could_not_get_RSE_connection_A;
+
     public static String Stop_watching;
 
     public static String Start_watching;
@@ -1138,6 +1150,8 @@ public class Messages extends NLS {
 
     public static String Loading_spooled_file;
 
+    public static String Waiting_for_RSE_connection;
+
     public static String PageSize_colon;
 
     public static String Adjust_font_size;
@@ -1563,6 +1577,22 @@ public class Messages extends NLS {
     public static String Operation_has_been_canceled_by_the_user;
 
     public static String Operation_in_progress_Cannot_close_dialog;
+
+    public static String OpenAs;
+
+    public static String OpenAsText;
+
+    public static String OpenAsPDF;
+
+    public static String OpenAsHTML;
+
+    public static String SaveAs;
+
+    public static String SaveAsText;
+
+    public static String SaveAsPDF;
+
+    public static String SaveAsHTML;
 
     /*
      * Warning messages

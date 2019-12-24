@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.6.0.b006
+-----------------------------
+ • Added pinnable "Spooled File Filter" view.
+
 Changelog: iSphere 3.6.0.b005
 -----------------------------
  • Added option to cancel the copy operation of the "Copy Members"

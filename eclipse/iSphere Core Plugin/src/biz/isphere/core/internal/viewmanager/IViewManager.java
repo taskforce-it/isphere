@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,9 @@ public interface IViewManager {
     public static final String DATA_SPACE_MONITOR_VIEWS = "DataSpaceMonitorViews";
     public static final String DATA_QUEUE_MONITOR_VIEWS = "DataQueueMonitorViews";
     public static final String TN5250J_SESSION_VIEWS = "TN5250JSessionsViews";
+    public static final String SPOOLED_FILES_VIEWS = "SpooledFilesViews";
 
     public void add(IPinnableView view);
-
-    public void clearViewStatus(IPinnableView view);
 
     public void remove(IPinnableView view);
 

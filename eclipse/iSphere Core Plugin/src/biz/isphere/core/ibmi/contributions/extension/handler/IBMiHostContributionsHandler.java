@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,17 @@ public class IBMiHostContributionsHandler {
         return true;
     }
 
+    public static boolean isRseSubsystemInitialized(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isRseSubsystemInitialized(connectionName);
+    }
+
     public static boolean isKerberosAuthentication() {
 
         IIBMiHostContributions factory = getContributionsFactory();
@@ -58,6 +69,17 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.isKerberosAuthentication();
+    }
+
+    public static boolean isSubSystemOffline(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isSubSystemOffline(connectionName);
     }
 
     public static String executeCommand(String connectionName, String command) {
