@@ -10,7 +10,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Adapter Plugin (WDSCi)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin (WDSCi)"/>
 	<classpathentry kind="lib" path="lib/swt-debug.jar"/>
-	<classpathentry kind="var" path="IBM_SHARED_PLUGINS/org.eclipse.osgi_3.6.3.R36x_v20110629.jar"/>
+	<classpathentry kind="var" path="IBM_SHARED_PLUGINS/org.eclipse.osgi_3.2.3.R32x_v20071108.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere STRPREPRC Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator Core Plugin"/>
