@@ -129,7 +129,7 @@ g) Preferences - General - Editors - Text Editors - Spelling:
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
 
-Add argument "-en" to the "VM arguments" field to enable Java assertions.
+Add argument "-enableassertions" to the "VM arguments" field to enable Java assertions.
 
 
 Useful Eclipse Settings:
