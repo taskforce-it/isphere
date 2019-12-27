@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2019 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,6 @@ import com.ibm.as400.access.SequentialFile;
 import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
 public abstract class Member {
-
-    private static final int BLOCKING_SIZE = 10; // 5000;
 
     /** Record field */
     public static final int SRCSEQ_INDEX = 0;
@@ -157,36 +155,24 @@ public abstract class Member {
 
             int targetDataLength = format[0].getFieldDescription(SRCDTA_INDEX).getLength();
 
-            int countRemaining = sourceLines.length;
-            Record[] records = createBlockingBuffer(countRemaining);
+            Record[] records = new Record[sourceLines.length];
 
-            int bufferIndex = 0;
-            Record record;
             for (int i = 0; i < sourceLines.length; i++) {
+
                 SourceLine sourceLine = sourceLines[i];
 
-                record = new Record(format[0]);
-                record.setField(SRCSEQ_INDEX, sourceLine.getSourceSequence());
-                record.setField(SRCDAT_INDEX, sourceLine.getSourceDate());
+                records[i] = new Record(format[0]);
+                records[i].setField(SRCSEQ_INDEX, sourceLine.getSourceSequence());
+                records[i].setField(SRCDAT_INDEX, sourceLine.getSourceDate());
 
                 if (targetDataLength < sourceLine.getSourceData().length()) {
-                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData().substring(0, targetDataLength));
+                    records[i].setField(SRCDTA_INDEX, sourceLine.getSourceData().substring(0, targetDataLength));
                 } else {
-                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData());
-                }
-
-                records[bufferIndex] = record;
-
-                if (bufferIndex == records.length - 1) {
-                    file.write(records);
-                    countRemaining = countRemaining - records.length;
-                    records = createBlockingBuffer(countRemaining);
-                    bufferIndex = 0;
-                } else {
-                    bufferIndex++;
+                    records[i].setField(SRCDTA_INDEX, sourceLine.getSourceData());
                 }
             }
 
+            file.write(records);
             file.commit();
 
         } finally {
@@ -196,10 +182,6 @@ public abstract class Member {
         }
 
         return null;
-    }
-
-    private Record[] createBlockingBuffer(int countRemaining) {
-        return new Record[Math.min(countRemaining, BLOCKING_SIZE)];
     }
 
     private SequentialFile getSequentialFile(String sourceLibrary, String sourceFile, String sourceMember, String connectionName) {
