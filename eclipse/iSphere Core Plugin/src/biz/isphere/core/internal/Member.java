@@ -28,7 +28,7 @@ import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 
 public abstract class Member {
 
-    private static final int BLOCKING_SIZE = 5000;
+    private static final int BLOCKING_SIZE = 10; // 5000;
 
     /** Record field */
     public static final int SRCSEQ_INDEX = 0;
@@ -160,29 +160,30 @@ public abstract class Member {
             int countRemaining = sourceLines.length;
             Record[] records = createBlockingBuffer(countRemaining);
 
-            int i = 0;
+            int bufferIndex = 0;
             Record record;
-            while (countRemaining > 0) {
+            for (int i = 0; i < sourceLines.length; i++) {
+                SourceLine sourceLine = sourceLines[i];
 
                 record = new Record(format[0]);
-                record.setField(SRCSEQ_INDEX, sourceLines[i].getSourceSequence());
-                record.setField(SRCDAT_INDEX, sourceLines[i].getSourceDate());
+                record.setField(SRCSEQ_INDEX, sourceLine.getSourceSequence());
+                record.setField(SRCDAT_INDEX, sourceLine.getSourceDate());
 
-                if (targetDataLength < sourceLines[i].getSourceData().length()) {
-                    record.setField(SRCDTA_INDEX, sourceLines[i].getSourceData().substring(0, targetDataLength));
+                if (targetDataLength < sourceLine.getSourceData().length()) {
+                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData().substring(0, targetDataLength));
                 } else {
-                    record.setField(SRCDTA_INDEX, sourceLines[i].getSourceData());
+                    record.setField(SRCDTA_INDEX, sourceLine.getSourceData());
                 }
 
-                records[i] = record;
+                records[bufferIndex] = record;
 
-                if (i == records.length - 1) {
+                if (bufferIndex == records.length - 1) {
                     file.write(records);
                     countRemaining = countRemaining - records.length;
                     records = createBlockingBuffer(countRemaining);
-                    i = 0;
+                    bufferIndex = 0;
                 } else {
-                    i++;
+                    bufferIndex++;
                 }
             }
 
