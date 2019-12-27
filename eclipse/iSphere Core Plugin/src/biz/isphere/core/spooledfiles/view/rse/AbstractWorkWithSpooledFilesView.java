@@ -97,7 +97,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
 
-        setPartName(Messages.Spooled_File_Filter);
+        setPartName(Messages.Spooled_Files_View);
         initializePinProperties();
     }
 
