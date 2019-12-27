@@ -388,6 +388,8 @@ public class Messages extends NLS {
 
     public static String Spooled_file_resource;
 
+    public static String Spooled_Files_View;
+    
     public static String Status;
 
     public static String Page;

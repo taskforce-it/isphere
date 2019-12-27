@@ -615,7 +615,7 @@
                 class="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
                 enablesFor="1"
                 id="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
-                label="%iSphere_Work_With_Spooled_Files"
+                label="%iSphere_Show_in_view"
 	            icon="icons/spooled_files.gif"
                 menubarPath="group.expandto">
 	         </action>
@@ -698,7 +698,7 @@
             icon="icons/spooled_files.gif"
             class="biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"
             category="biz.isphere.core.views.categories"
-            name="%iSphere_Work_With_Spooled_Files"
+            name="%iSphere_Spooled_Files_View"
             id="biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"
             allowMultiple="true"/>
    </extension> 
