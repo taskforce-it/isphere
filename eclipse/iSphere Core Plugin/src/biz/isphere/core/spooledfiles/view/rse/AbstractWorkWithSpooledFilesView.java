@@ -8,13 +8,18 @@
 
 package biz.isphere.core.spooledfiles.view.rse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -24,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
@@ -39,6 +45,7 @@ import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.view.IAutoRefreshView;
 import biz.isphere.core.spooledfiles.view.ILoadSpooledFilesPostRun;
 import biz.isphere.core.spooledfiles.view.IWaitForRseConnectionPostRun;
 import biz.isphere.core.spooledfiles.view.LoadSpooledFilesJob;
@@ -46,12 +53,15 @@ import biz.isphere.core.spooledfiles.view.WaitForRseConnectionJob;
 import biz.isphere.core.spooledfiles.view.WorkWithSpooledFilesMenuAdapter;
 import biz.isphere.core.spooledfiles.view.WorkWithSpooledFilesPanel;
 import biz.isphere.core.spooledfiles.view.actions.RefreshViewAction;
+import biz.isphere.core.spooledfiles.view.actions.RefreshViewIntervalAction;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType;
+import biz.isphere.core.spooledfiles.view.job.AutoRefreshJob;
+import biz.isphere.core.spooledfiles.view.listener.AutoRefreshViewCloseListener;
 
 public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinnableView, IWaitForRseConnectionPostRun,
-    ILoadSpooledFilesPostRun, ITableItemChangeListener {
+    ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView {
 
     public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$ 
 
@@ -73,6 +83,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     private RefreshViewAction refreshViewAction;
     private PinViewAction pinViewAction;
     private ResetColumnSizeAction resetColumnSizeAction;
+
+    private RefreshViewIntervalAction disableRefreshViewAction;
+    private List<RefreshViewIntervalAction> refreshIntervalActions;
+    private AutoRefreshJob autoRefreshJob;
 
     private Map<String, String> pinProperties;
 
@@ -104,6 +118,8 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     @Override
     public void createPartControl(Composite parent) {
 
+        parent.addDisposeListener(new AutoRefreshViewCloseListener(this));
+
         mainArea = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
@@ -121,6 +137,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         createActions();
         initializeToolBar();
+        initializeViewMenu();
 
         if (getViewManager().isPinned(this)) {
             if (!getViewManager().isLoadingView()) {
@@ -172,6 +189,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         resetColumnSizeAction = new ResetColumnSizeAction(workWithSpooledFilesPanel);
 
+        disableRefreshViewAction = new RefreshViewIntervalAction(this, -1);
+
+        refreshIntervalActions = new ArrayList<RefreshViewIntervalAction>();
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 1));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 3));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 10));
+        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
+
         refreshActionsEnablement();
     }
 
@@ -182,6 +207,26 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         toolbarManager.add(new Separator());
         toolbarManager.add(pinViewAction);
         toolbarManager.add(refreshViewAction);
+    }
+
+    private void initializeViewMenu() {
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+
+        viewMenu.add(createAuoRefreshSubMenu());
+    }
+
+    private MenuManager createAuoRefreshSubMenu() {
+
+        MenuManager autoRefreshSubMenu = new MenuManager(Messages.Auto_refresh_menu_item);
+        autoRefreshSubMenu.add(disableRefreshViewAction);
+
+        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
+            autoRefreshSubMenu.add(refreshAction);
+        }
+
+        return autoRefreshSubMenu;
     }
 
     /**
@@ -424,13 +469,13 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         return workWithSpooledFilesPanel;
     }
 
-    private Shell getShell() {
+    public Shell getShell() {
         return getSite().getShell();
     }
 
     private void refreshActionsEnablement() {
 
-        if (noObjectAvailable()) {
+        if (noObjectAvailable() || isAutoRefreshOn()) {
             refreshViewAction.setEnabled(false);
         } else {
             refreshViewAction.setEnabled(true);
@@ -443,6 +488,69 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
 
         resetColumnSizeAction.setEnabled(true);
+
+        if (isAutoRefreshOn()) {
+            disableRefreshViewAction.setEnabled(true);
+        } else {
+            disableRefreshViewAction.setEnabled(false);
+        }
+
+        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
+            if (isAutoRefreshOn()) {
+                if (autoRefreshJob.getInterval() == refreshAction.getInterval()) {
+                    refreshAction.setEnabled(false);
+                } else {
+                    refreshAction.setEnabled(true);
+                }
+            } else {
+                if (noObjectAvailable()) {
+                    refreshAction.setEnabled(false);
+                } else {
+                    refreshAction.setEnabled(true);
+                }
+            }
+        }
+    }
+
+    private boolean isAutoRefreshOn() {
+
+        if (autoRefreshJob != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setRefreshInterval(int seconds) {
+
+        try {
+
+            if (noObjectAvailable()) {
+                seconds = RefreshViewIntervalAction.REFRESH_OFF;
+                return;
+            }
+
+            if (autoRefreshJob != null) {
+                if (seconds == RefreshViewIntervalAction.REFRESH_OFF) {
+                    autoRefreshJob.cancel();
+                } else {
+                    autoRefreshJob.setInterval(seconds);
+                }
+            } else {
+                autoRefreshJob = new AutoRefreshJob(this, seconds);
+                autoRefreshJob.schedule();
+            }
+
+        } finally {
+            refreshActionsEnablement();
+        }
+    }
+
+    public void jobFinished(Job job) {
+        if (job == autoRefreshJob) {
+            System.out.println("Auto-refresh job finished.");
+            autoRefreshJob = null;
+            refreshActionsEnablement();
+        }
     }
 
     private boolean noObjectAvailable() {
