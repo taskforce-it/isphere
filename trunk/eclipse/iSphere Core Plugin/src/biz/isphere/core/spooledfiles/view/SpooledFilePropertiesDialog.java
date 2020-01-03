@@ -42,7 +42,7 @@ public class SpooledFilePropertiesDialog extends Dialog {
         if (spooledFile == null) {
             getShell().setText(Messages.EMPTY);
         } else {
-            getShell().setText(String.format("Properties for %s - %s", spooledFile.getFile(), spooledFile.getStatus()));
+            getShell().setText(Messages.bind(Messages.Properties_for_A_B, spooledFile.getFile(), spooledFile.getStatus()));
         }
     }
 
@@ -108,8 +108,8 @@ public class SpooledFilePropertiesDialog extends Dialog {
 
         Label lblHeadline = new Label(leftArea, SWT.SHADOW_ETCHED_OUT);
         lblHeadline.setLayoutData(new GridData(GridData.FILL_BOTH));
-        lblHeadline.setText("General Information");
-        lblHeadline.setFont(JFaceResources.getFontRegistry().getBold("org.eclipse.jface.dialogfont"));
+        lblHeadline.setText(Messages.Properties);
+        lblHeadline.setFont(JFaceResources.getFontRegistry().getBold("org.eclipse.jface.dialogfont")); //$NON-NLS-1$
         lblHeadline.setBackground(ColorHelper.getDefaultBackgroundColor());
     }
 

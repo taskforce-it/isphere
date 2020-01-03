@@ -168,7 +168,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
             menuItemSeparator = new MenuItem(parentMenu, SWT.SEPARATOR);
 
             menuItemProperties = new MenuItem(parentMenu, SWT.PUSH);
-            menuItemProperties.setText("Properties");
+            menuItemProperties.setText(Messages.Properties);
             menuItemProperties.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
