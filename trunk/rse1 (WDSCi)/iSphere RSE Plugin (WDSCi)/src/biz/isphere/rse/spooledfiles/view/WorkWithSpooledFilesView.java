@@ -61,7 +61,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
 
         int eventType = event.getType();
 
-        if (eventType == ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE) {
+        if (eventType == ISystemResourceChangeEvents.EVENT_REFRESH) {
             if (event.getSource() instanceof SystemFilterReference) {
                 SystemFilterReference filterReference = (SystemFilterReference)event.getSource();
                 if (getSubSystem(filterReference) instanceof SpooledFileSubSystem) {
