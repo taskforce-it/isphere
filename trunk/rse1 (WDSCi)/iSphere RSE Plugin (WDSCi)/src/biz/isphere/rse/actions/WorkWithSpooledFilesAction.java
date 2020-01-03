@@ -113,9 +113,10 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
 
             SubSystem subSystem = getSubSystem(filterReference);
             String connectionName = getConnectionName(subSystem);
+            String filterPoolName = filterReference.getReferencedFilter().getParentFilterPool().getName();
             String filterName = filterReference.getReferencedFilter().getName();
 
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterName);
+            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
             inputData.setFilterStrings(filterReference.getReferencedFilter().getFilterStrings());
 
             String contentId = inputData.getContentId();
