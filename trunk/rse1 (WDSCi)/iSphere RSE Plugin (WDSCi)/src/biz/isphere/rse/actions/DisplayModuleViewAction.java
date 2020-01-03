@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.DisplayModuleViewHandler;
 
@@ -44,7 +43,7 @@ public class DisplayModuleViewAction extends ISeriesSystemBaseAction implements 
         setContextMenuGroup("group.generate");
         allowOnMultipleSelection(true);
         setHelp("");
-        setImageDescriptor(ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereRSEPlugin.IMAGE_DISPLAY_MODULE_VIEW));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_DISPLAY_MODULE_VIEW));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {

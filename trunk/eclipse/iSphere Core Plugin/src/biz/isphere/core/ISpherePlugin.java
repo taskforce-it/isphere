@@ -136,6 +136,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_LOCKED = "locked.png";
     public static final String IMAGE_UNLOCKED = "unlocked.png";
     public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
+    public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -315,6 +316,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_LOCKED, getImageDescriptor(IMAGE_LOCKED));
         reg.put(IMAGE_UNLOCKED, getImageDescriptor(IMAGE_UNLOCKED));
         reg.put(IMAGE_DISPLAY_MODULE_VIEW, getImageDescriptor(IMAGE_DISPLAY_MODULE_VIEW));
+        reg.put(IMAGE_RETRIEVE_BINDER_SOURCE, getImageDescriptor(IMAGE_RETRIEVE_BINDER_SOURCE));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")

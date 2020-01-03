@@ -55,9 +55,6 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
 
     private Map<String, IViewManager> viewManagers;
 
-    public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
-    public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
-
     public ISphereRSEPlugin() {
         super();
         plugin = this;
@@ -106,8 +103,6 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
-        reg.put(IMAGE_RETRIEVE_BINDER_SOURCE, getImageDescriptor(IMAGE_RETRIEVE_BINDER_SOURCE));
-        reg.put(IMAGE_DISPLAY_MODULE_VIEW, getImageDescriptor(IMAGE_DISPLAY_MODULE_VIEW));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
