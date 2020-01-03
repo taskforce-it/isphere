@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
 
 package biz.isphere.core.spooledfiles.view.rse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,16 +19,17 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -50,15 +49,14 @@ import biz.isphere.core.spooledfiles.view.ILoadSpooledFilesPostRun;
 import biz.isphere.core.spooledfiles.view.IWaitForRseConnectionPostRun;
 import biz.isphere.core.spooledfiles.view.LoadSpooledFilesJob;
 import biz.isphere.core.spooledfiles.view.WaitForRseConnectionJob;
-import biz.isphere.core.spooledfiles.view.WorkWithSpooledFilesMenuAdapter;
 import biz.isphere.core.spooledfiles.view.WorkWithSpooledFilesPanel;
+import biz.isphere.core.spooledfiles.view.actions.AutoRefreshRefreshIntervalAction;
 import biz.isphere.core.spooledfiles.view.actions.RefreshViewAction;
-import biz.isphere.core.spooledfiles.view.actions.RefreshViewIntervalAction;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType;
-import biz.isphere.core.spooledfiles.view.job.AutoRefreshJob;
-import biz.isphere.core.spooledfiles.view.listener.AutoRefreshViewCloseListener;
+import biz.isphere.core.spooledfiles.view.jobs.AutoRefreshJob;
+import biz.isphere.core.spooledfiles.view.listeners.AutoRefreshViewCloseListener;
 
 public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinnableView, IWaitForRseConnectionPostRun,
     ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView {
@@ -69,6 +67,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * View pin properties
      */
     private static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
+    private static final String FILTER_POOL_NAME = "filterPoolName"; //$NON-NLS-1$
     private static final String FILTER_NAME = "filterName"; //$NON-NLS-1$
     private static final String FILTER_STRING = "filterString_"; //$NON-NLS-1$
     private static final String FILTER_STRING_DELIMITER = "\\|"; //$NON-NLS-1$
@@ -84,8 +83,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     private PinViewAction pinViewAction;
     private ResetColumnSizeAction resetColumnSizeAction;
 
-    private RefreshViewIntervalAction disableRefreshViewAction;
-    private List<RefreshViewIntervalAction> refreshIntervalActions;
+    private AutoRefreshSubMenu autoRefreshSubMenu;
     private AutoRefreshJob autoRefreshJob;
 
     private Map<String, String> pinProperties;
@@ -132,12 +130,17 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         labelHeadline.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         workWithSpooledFilesPanel = new WorkWithSpooledFilesPanel(mainArea, SWT.NONE);
+        workWithSpooledFilesPanel.setChangedListener(this);
         workWithSpooledFilesPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
         workWithSpooledFilesPanel.setPinProperties(pinProperties);
+
+        getSite().setSelectionProvider(workWithSpooledFilesPanel);
 
         createActions();
         initializeToolBar();
         initializeViewMenu();
+
+        refreshActionsEnablement();
 
         if (getViewManager().isPinned(this)) {
             if (!getViewManager().isLoadingView()) {
@@ -150,6 +153,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         pinProperties = new HashMap<String, String>();
         pinProperties.put(CONNECTION_NAME, null);
+        pinProperties.put(FILTER_POOL_NAME, null);
         pinProperties.put(FILTER_NAME, null);
         pinProperties.put(FILTER_STRING, null);
     }
@@ -161,6 +165,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
 
         pinProperties.put(CONNECTION_NAME, inputData.getConnectionName());
+        pinProperties.put(FILTER_POOL_NAME, inputData.getFilterPoolName());
         pinProperties.put(FILTER_NAME, inputData.getFilterName());
 
         String[] filterStrings = inputData.getFilterStrings();
@@ -188,16 +193,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         pinViewAction.setChecked(getViewManager().isPinned(this));
 
         resetColumnSizeAction = new ResetColumnSizeAction(workWithSpooledFilesPanel);
-
-        disableRefreshViewAction = new RefreshViewIntervalAction(this, -1);
-
-        refreshIntervalActions = new ArrayList<RefreshViewIntervalAction>();
-        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 1));
-        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 3));
-        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 10));
-        refreshIntervalActions.add(new RefreshViewIntervalAction(this, 30));
-
-        refreshActionsEnablement();
     }
 
     private void initializeToolBar() {
@@ -219,14 +214,18 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     private MenuManager createAuoRefreshSubMenu() {
 
-        MenuManager autoRefreshSubMenu = new MenuManager(Messages.Auto_refresh_menu_item);
-        autoRefreshSubMenu.add(disableRefreshViewAction);
+        this.autoRefreshSubMenu = new AutoRefreshSubMenu(this, 10, 30, 60, 300, 900);
 
-        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
-            autoRefreshSubMenu.add(refreshAction);
+        return this.autoRefreshSubMenu;
+    }
+
+    protected boolean isSameFilter(String connectionName, String filterPoolName, String filterName) {
+
+        if (inputData == null) {
+            return false;
         }
 
-        return autoRefreshSubMenu;
+        return inputData.referencesFilter(connectionName, filterPoolName, filterName);
     }
 
     /**
@@ -254,6 +253,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         new WaitForRseConnectionJob(getShell(), connectionName, this).schedule();
     }
 
+    /**
+     * Called when the RSE connection is available. This method does the actual
+     * job of restoring a pinned view.
+     */
     public void setWaitForRseConnectionPostRunData(Shell shell, String connectionName, boolean isAvailable) {
 
         if (!isAvailable) {
@@ -268,6 +271,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
 
         String filterName = pinProperties.get(FILTER_NAME);
+        String filterPoolName = pinProperties.get(FILTER_POOL_NAME);
         String filterString = pinProperties.get(FILTER_STRING);
         String[] filterStrings;
         if (!StringHelper.isNullOrEmpty(filterString)) {
@@ -276,10 +280,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             filterStrings = new String[0];
         }
 
-        final WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterName);
+        final WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
         inputData.setFilterStrings(filterStrings);
 
-        setInputDataInternally(shell, inputData, -1);
+        setInputDataInternally(shell, inputData);
     }
 
     /**
@@ -288,17 +292,12 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * messages.
      */
     public void refreshData() {
-        // refreshData(getWorkWithSpooledFilesPanel().getViewer().getTable().getSelectionIndex());
-        refreshData(-1);
-    }
-
-    public void refreshData(int itemIndex) {
 
         if (!ISphereHelper.checkISphereLibrary(getShell(), inputData.getConnectionName())) {
             return;
         }
 
-        setInputDataInternally(getShell(), this.inputData, itemIndex);
+        setInputDataInternally(getShell(), this.inputData);
     }
 
     /**
@@ -314,7 +313,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             return;
         }
 
-        setInputDataInternally(getShell(), inputData, -1);
+        setInputDataInternally(getShell(), inputData);
     }
 
     /**
@@ -323,7 +322,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * @param shell - Shell for displaying messages
      * @param inputData - WorkWithSpooledFilesInputData
      */
-    private void setInputDataInternally(Shell shell, WorkWithSpooledFilesInputData inputData, int itemIndex) {
+    private void setInputDataInternally(Shell shell, WorkWithSpooledFilesInputData inputData) {
 
         if (loadSpooledFilesJob != null || !inputData.isValid()) {
             setPinned(false);
@@ -333,12 +332,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         this.inputData = inputData;
 
         loadSpooledFilesJob = new LoadSpooledFilesJob(inputData.getConnectionName(), inputData.getFilterName(), inputData.getFilterStrings(), this);
-        loadSpooledFilesJob.setItemIndex(itemIndex);
         loadSpooledFilesJob.schedule();
     }
 
-    public void setLoadSpooledFilesPostRunData(final String connectionName, final String filterName, final SpooledFile[] spooledFiles,
-        final int itemIndex) {
+    /**
+     * Called, when the spooled files have been loaded. This method starts a UI
+     * job for loading the spooled files into the viewer.
+     */
+    public void setLoadSpooledFilesPostRunData(final String connectionName, final String filterName, final SpooledFile[] spooledFiles) {
 
         new UIJob(Messages.EMPTY) {
 
@@ -347,8 +348,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
                 setHeadline();
                 setInputData();
-                setPosition();
-                setMenu();
 
                 if (isPinned()) {
                     updatePinProperties();
@@ -362,43 +361,30 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             }
 
             private void setHeadline() {
+
+                if (isDisposed(labelHeadline)) {
+                    return;
+                }
+
                 labelHeadline.setText(connectionName + ":" + filterName); //$NON-NLS-1$
             }
 
             private void setInputData() {
 
+                if (isDisposed(workWithSpooledFilesPanel)) {
+                    return;
+                }
+
                 if (spooledFiles.length == 0) {
                     setPinned(false);
                 }
 
-                workWithSpooledFilesPanel.setInput(spooledFiles);
+                workWithSpooledFilesPanel.setInput(connectionName, spooledFiles);
                 refreshActionsEnablement();
             }
 
-            private void setPosition() {
-
-                if (itemIndex < 0) {
-                    return;
-                } else if (itemIndex > spooledFiles.length - 1) {
-                    workWithSpooledFilesPanel.getViewer().getTable().setSelection(spooledFiles.length - 1);
-                } else {
-                    workWithSpooledFilesPanel.getViewer().getTable().setSelection(itemIndex);
-                }
-            }
-
-            private void setMenu() {
-
-                String connectionName = inputData.getConnectionName();
-                Table table = workWithSpooledFilesPanel.getViewer().getTable();
-
-                Menu menu = new Menu(table);
-                WorkWithSpooledFilesMenuAdapter menuAdapter = new WorkWithSpooledFilesMenuAdapter(menu, connectionName,
-                    workWithSpooledFilesPanel.getViewer());
-                menuAdapter.addChangedListener(AbstractWorkWithSpooledFilesView.this);
-                menu.addMenuListener(menuAdapter);
-
-                workWithSpooledFilesPanel.setMenu(menu);
-                workWithSpooledFilesPanel.setDoubleClickListener(menuAdapter);
+            private boolean isDisposed(Widget widget) {
+                return widget.isDisposed();
             }
 
         }.schedule();
@@ -422,10 +408,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
          */
 
         if (event.isEvent(EventType.DELETED)) {
-            refreshData(event.getItemIndex());
+            refreshData();
         } else if (event.isEvent(EventType.CHANGED)) {
             event.getSpooledFile().refresh();
-            getWorkWithSpooledFilesPanel().getViewer().update(event.getSpooledFile(), null);
+            getWorkWithSpooledFilesPanel().update(event.getSpooledFile());
         }
     }
 
@@ -462,82 +448,32 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     /*
-     * Private and protected methods
+     * IAutoRefreshView methods
      */
-
-    protected WorkWithSpooledFilesPanel getWorkWithSpooledFilesPanel() {
-        return workWithSpooledFilesPanel;
-    }
 
     public Shell getShell() {
         return getSite().getShell();
-    }
-
-    private void refreshActionsEnablement() {
-
-        if (noObjectAvailable() || isAutoRefreshOn()) {
-            refreshViewAction.setEnabled(false);
-        } else {
-            refreshViewAction.setEnabled(true);
-        }
-
-        if (noObjectAvailable()) {
-            pinViewAction.setEnabled(false);
-        } else {
-            pinViewAction.setEnabled(true);
-        }
-
-        resetColumnSizeAction.setEnabled(true);
-
-        if (isAutoRefreshOn()) {
-            disableRefreshViewAction.setEnabled(true);
-        } else {
-            disableRefreshViewAction.setEnabled(false);
-        }
-
-        for (RefreshViewIntervalAction refreshAction : refreshIntervalActions) {
-            if (isAutoRefreshOn()) {
-                if (autoRefreshJob.getInterval() == refreshAction.getInterval()) {
-                    refreshAction.setEnabled(false);
-                } else {
-                    refreshAction.setEnabled(true);
-                }
-            } else {
-                if (noObjectAvailable()) {
-                    refreshAction.setEnabled(false);
-                } else {
-                    refreshAction.setEnabled(true);
-                }
-            }
-        }
-    }
-
-    private boolean isAutoRefreshOn() {
-
-        if (autoRefreshJob != null) {
-            return true;
-        }
-        return false;
     }
 
     public void setRefreshInterval(int seconds) {
 
         try {
 
-            if (noObjectAvailable()) {
-                seconds = RefreshViewIntervalAction.REFRESH_OFF;
-                return;
+            if (!hasInputData()) {
+                seconds = AutoRefreshRefreshIntervalAction.REFRESH_OFF;
             }
 
             if (autoRefreshJob != null) {
-                if (seconds == RefreshViewIntervalAction.REFRESH_OFF) {
+                if (seconds == AutoRefreshRefreshIntervalAction.REFRESH_OFF) {
                     autoRefreshJob.cancel();
                 } else {
                     autoRefreshJob.setInterval(seconds);
                 }
             } else {
-                autoRefreshJob = new AutoRefreshJob(this, seconds);
-                autoRefreshJob.schedule();
+                if (seconds != AutoRefreshRefreshIntervalAction.REFRESH_OFF) {
+                    autoRefreshJob = new AutoRefreshJob(this, seconds);
+                    autoRefreshJob.schedule();
+                }
             }
 
         } finally {
@@ -553,8 +489,60 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
     }
 
-    private boolean noObjectAvailable() {
-        return inputData == null;
+    /*
+     * ISelectionListener methods
+     */
+
+    public void selectionChanged(IWorkbenchPart workbenchPart, ISelection selection) {
+        return;
+    }
+
+    /*
+     * Private and protected methods
+     */
+
+    protected WorkWithSpooledFilesPanel getWorkWithSpooledFilesPanel() {
+        return workWithSpooledFilesPanel;
+    }
+
+    private void refreshActionsEnablement() {
+
+        if (!hasInputData() || isAutoRefreshOn()) {
+            refreshViewAction.setEnabled(false);
+        } else {
+            refreshViewAction.setEnabled(true);
+        }
+
+        if (hasInputData()) {
+            pinViewAction.setEnabled(true);
+        } else {
+            pinViewAction.setEnabled(false);
+        }
+
+        resetColumnSizeAction.setEnabled(true);
+
+        if (isAutoRefreshOn()) {
+            autoRefreshSubMenu.setEnabled(autoRefreshJob.getInterval());
+        } else {
+            if (hasInputData()) {
+                autoRefreshSubMenu.setEnabled(AutoRefreshRefreshIntervalAction.REFRESH_OFF);
+            } else {
+                autoRefreshSubMenu.setEnabled(false);
+            }
+        }
+    }
+
+    private boolean isAutoRefreshOn() {
+
+        if (autoRefreshJob != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasInputData() {
+        return inputData != null;
     }
 
     protected abstract IViewManager getViewManager();

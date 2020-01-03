@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ public class TableItemChangedEvent {
 
     private SpooledFile spooledFile;
     private EventType eventType;
-    private int itemIndex;
 
     public TableItemChangedEvent(SpooledFile spooledFile, EventType eventType) {
         this(spooledFile, eventType, -1);
@@ -31,15 +30,10 @@ public class TableItemChangedEvent {
     public TableItemChangedEvent(SpooledFile spooledFile, EventType eventType, int itemIndex) {
         this.spooledFile = spooledFile;
         this.eventType = eventType;
-        this.itemIndex = itemIndex;
     }
 
     public SpooledFile getSpooledFile() {
         return spooledFile;
-    }
-
-    public int getItemIndex() {
-        return itemIndex;
     }
 
     public boolean isEvent(EventType eventType) {

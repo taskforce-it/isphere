@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.spooledfiles.view.job;
+package biz.isphere.core.spooledfiles.view.jobs;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +26,7 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
 
     final int MILLI_SECONDS = 1000;
 
-    private AutoRefreshUIJob updateDataUIJob;
+    private AutoRefreshUIJob autoRefreshUIJob;
     private IAutoRefreshView view;
     private int interval;
 
@@ -53,12 +53,12 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
                 /*
                  * Create a UI job to update the view with the new data.
                  */
-                updateDataUIJob = new AutoRefreshUIJob(view);
-                updateDataUIJob.setJobFinishedListener(this);
-                updateDataUIJob.schedule();
+                autoRefreshUIJob = new AutoRefreshUIJob(view);
+                autoRefreshUIJob.setJobFinishedListener(this);
+                autoRefreshUIJob.schedule();
 
                 waitTime = interval;
-                while ((!monitor.isCanceled() && waitTime > 0) || updateDataUIJob != null) {
+                while ((!monitor.isCanceled() && waitTime > 0) || autoRefreshUIJob != null) {
                     Thread.sleep(SLEEP_INTERVAL);
                     if (waitTime > interval) {
                         waitTime = interval;
@@ -95,9 +95,9 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
 
     public void jobFinished(Job job) {
 
-        if (job == updateDataUIJob) {
+        if (job == autoRefreshUIJob) {
             System.out.println("... updating UI finished.");
-            updateDataUIJob = null;
+            autoRefreshUIJob = null;
         }
     }
 }

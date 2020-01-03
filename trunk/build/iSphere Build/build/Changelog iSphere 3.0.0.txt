@@ -1,7 +1,7 @@
 
 Changelog: iSphere 3.6.0.b006
 -----------------------------
- • Added pinnable "Spooled File Filter" view.
+ • Added pinnable "Spooled Files" view.
 
 Changelog: iSphere 3.6.0.b005
 -----------------------------

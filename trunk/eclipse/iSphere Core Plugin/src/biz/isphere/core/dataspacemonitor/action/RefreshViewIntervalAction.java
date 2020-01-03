@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class RefreshViewIntervalAction extends Action {
 
     public RefreshViewIntervalAction(IDialogView view, int seconds) {
         super("");
-        
+
         this.view = view;
         this.seconds = seconds;
 
@@ -32,10 +32,10 @@ public class RefreshViewIntervalAction extends Action {
             setToolTipText(Messages.Auto_refresh_menu_item_stop_tooltip);
             setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_AUTO_REFRESH_OFF));
         } else {
-            setText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_seconds, seconds));
-            setToolTipText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_seconds_tooltip, seconds));
+            setText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_B, seconds, Messages.Seconds));
+            setToolTipText(Messages.bind(Messages.Auto_refresh_menu_item_every_A_B_tooltip, seconds, Messages.Seconds));
         }
-        
+
         setEnabled(false);
     }
 

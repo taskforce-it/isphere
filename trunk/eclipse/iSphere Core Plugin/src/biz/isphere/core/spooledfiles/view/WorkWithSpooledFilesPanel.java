@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@ package biz.isphere.core.spooledfiles.view;
 import java.util.Map;
 
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
@@ -30,8 +34,10 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
+import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
 
-public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, ControlListener {
+public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, ControlListener, IPostSelectionProvider {
 
     /*
      * View pin properties
@@ -52,30 +58,67 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
 
     private Map<String, String> pinProperties;
 
+    private IDoubleClickListener doubleClickListener;
+    private ITableItemChangeListener listener;
+
     public WorkWithSpooledFilesPanel(Composite parent, int style) {
         super(parent, style);
 
         createContentArea();
     }
 
-    public void setInput(SpooledFile[] spooledFiles) {
-        tableViewer.setInput(spooledFiles);
+    public void setChangedListener(ITableItemChangeListener listener) {
+        this.listener = listener;
+    }
+
+    public void setInput(String connectionName, SpooledFile[] spooledFiles) {
+
+        this.tableViewer.setInput(spooledFiles);
+
+        Menu menu = new Menu(table);
+        WorkWithSpooledFilesMenuAdapter menuAdapter = new WorkWithSpooledFilesMenuAdapter(menu, connectionName, tableViewer);
+        menuAdapter.addChangedListener(listener);
+        menu.addMenuListener(menuAdapter);
+
+        table.setMenu(menu);
+        setDoubleClickListener(menuAdapter);
+    }
+
+    public int getSelectionCount() {
+        return tableViewer.getTable().getSelectionCount();
+    }
+
+    public SpooledFile[] getSelectedItems() {
+
+        SpooledFile[] spooledFiles = new SpooledFile[tableViewer.getTable().getSelectionCount()];
+        TableItem[] tableItems = tableViewer.getTable().getSelection();
+        for (int i = 0; i < tableItems.length; i++) {
+            spooledFiles[i] = (SpooledFile)tableItems[i].getData();
+        }
+
+        return spooledFiles;
+    }
+
+    public void update(SpooledFile spooledFile) {
+        tableViewer.update(spooledFile, null);
     }
 
     @Override
     public void setLayout(Layout layout) {
     }
 
-    public TableViewer getViewer() {
-        return tableViewer;
-    }
-
     public void setMenu(Menu menu) {
-        table.setMenu(menu);
+        throw new IllegalAccessError("Do not use setMenu()."); //$NON-NLS-1$
     }
 
     public void setDoubleClickListener(IDoubleClickListener listener) {
-        tableViewer.addDoubleClickListener(listener);
+
+        if (doubleClickListener != null) {
+            tableViewer.removeDoubleClickListener(doubleClickListener);
+        }
+
+        doubleClickListener = listener;
+        tableViewer.addDoubleClickListener(doubleClickListener);
     }
 
     public void resetColumnSizes() {
@@ -100,6 +143,7 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
 
         tableSorter = new WorkWithSpooledFilesSorter(tableViewer);
         tableViewer.setSorter(tableSorter);
+        tableViewer.setUseHashlookup(true);
 
         Listener sortListener = new Listener() {
             public void handleEvent(Event e) {
@@ -246,5 +290,33 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
     public void controlResized(ControlEvent event) {
         TableColumn column = (TableColumn)event.getSource();
         updateColumnPinProperties(column);
+    }
+
+    /*
+     * ISelectionProvider methods
+     */
+
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.addPostSelectionChangedListener(listener);
+    }
+
+    public ISelection getSelection() {
+        return tableViewer.getSelection();
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.removeSelectionChangedListener(listener);
+    }
+
+    public void setSelection(ISelection selection) {
+        tableViewer.setSelection(selection);
+    }
+
+    public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.addPostSelectionChangedListener(listener);
+    }
+
+    public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
+        tableViewer.removePostSelectionChangedListener(listener);
     }
 }

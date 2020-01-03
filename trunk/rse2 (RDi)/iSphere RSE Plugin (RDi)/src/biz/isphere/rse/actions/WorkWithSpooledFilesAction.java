@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,9 +68,10 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
             ISubSystem subSystem = filterReference.getSubSystem();
             String connectionName = getConnectionName(subSystem);
+            String filterPoolName = filterReference.getReferencedFilter().getParentFilterPool().getName();
             String filterName = filterReference.getReferencedFilter().getName();
 
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterName);
+            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
             inputData.setFilterStrings(filterReference.getReferencedFilter().getFilterStrings());
 
             String contentId = inputData.getContentId();

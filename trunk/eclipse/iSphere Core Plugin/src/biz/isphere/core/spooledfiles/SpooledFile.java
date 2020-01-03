@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.ExceptionHelper;
@@ -58,7 +60,7 @@ import com.ibm.as400.access.IFSFileInputStream;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.RequestNotSupportedException;
 
-public class SpooledFile {
+public class SpooledFile implements IPropertySource {
 
     private static final String ISPHERE_SPOOLED_FILE_NAME_PREFIX = "iSphere_Spooled_File_"; //$NON-NLS-1$
 
@@ -136,6 +138,8 @@ public class SpooledFile {
     private com.ibm.as400.access.SpooledFile toolboxSpooledFile;
 
     private String connectionName;
+
+    private SpooledFileBaseResourceAdapter resourceAdapter;
 
     public SpooledFile() {
         as400 = null;
@@ -1146,5 +1150,36 @@ public class SpooledFile {
         // @formatter:on
 
         return true;
+    }
+
+    public Object getEditableValue() {
+        return this;
+    }
+
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        return getResourceAdapter().internalGetPropertyDescriptors();
+    }
+
+    public Object getPropertyValue(Object propKey) {
+        return getResourceAdapter().internalGetPropertyValue(this, propKey);
+    }
+
+    public boolean isPropertySet(Object paramObject) {
+        return false;
+    }
+
+    public void resetPropertyValue(Object paramObject) {
+    }
+
+    public void setPropertyValue(Object paramObject1, Object paramObject2) {
+    }
+
+    private SpooledFileBaseResourceAdapter getResourceAdapter() {
+
+        if (resourceAdapter == null) {
+            resourceAdapter = new SpooledFileBaseResourceAdapter();
+        }
+
+        return resourceAdapter;
     }
 }
