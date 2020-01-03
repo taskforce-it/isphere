@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.core.spooledfiles.SpooledFile;
@@ -124,13 +123,5 @@ public class SpooledFilePropertiesDialog extends Dialog {
         // layout of the parent composite.
         rightArea.setLayout(layout);
         rightArea.setLayoutData(new GridData(GridData.FILL_BOTH));
-    }
-
-    /**
-     * Overridden make this dialog resizable {@link XDialog}.
-     */
-    @Override
-    protected boolean isResizable() {
-        return false;
     }
 }
