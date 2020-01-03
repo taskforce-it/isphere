@@ -326,6 +326,8 @@ public class Messages extends NLS {
 
     public static String Change_Spooled_File_Filter;
 
+    public static String Properties_for_A_B;
+
     public static String Completion;
 
     public static String Copies;
