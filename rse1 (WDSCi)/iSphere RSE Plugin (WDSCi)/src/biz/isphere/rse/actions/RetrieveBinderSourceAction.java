@@ -24,6 +24,7 @@ import org.eclipse.ui.progress.IProgressService;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -72,7 +73,7 @@ public class RetrieveBinderSourceAction extends ISeriesSystemBaseAction implemen
         setContextMenuGroup("group.generate");
         allowOnMultipleSelection(false);
         setHelp("");
-        setImageDescriptor(ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(ISphereRSEPlugin.IMAGE_RETRIEVE_BINDER_SOURCE));
+        setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_RETRIEVE_BINDER_SOURCE));
     }
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
