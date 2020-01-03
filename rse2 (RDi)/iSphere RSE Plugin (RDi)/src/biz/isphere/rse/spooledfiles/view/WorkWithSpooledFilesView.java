@@ -91,7 +91,6 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
         String filterName = systemFilter.getName();
 
         if (isSameFilter(connectionName, filterPoolName, filterName)) {
-            System.out.println("Refreshing view data ...");
 
             WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
             inputData.setFilterStrings(systemFilter.getFilterStrings());
