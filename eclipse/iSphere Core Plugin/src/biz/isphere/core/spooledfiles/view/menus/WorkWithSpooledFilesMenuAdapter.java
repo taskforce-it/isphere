@@ -59,6 +59,8 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
     private MenuItem menuItemMessages;
     private MenuItem menuItemOpenAs;
     private MenuItem menuItemSaveAs;
+    private MenuItem menuItemSeparator;
+    private MenuItem menuItemProperties;
 
     public WorkWithSpooledFilesMenuAdapter(Menu parentMenu, String connectionName, TableViewer tableViewer) {
         this.parentMenu = parentMenu;
@@ -96,6 +98,8 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         dispose(menuItemMessages);
         dispose(menuItemOpenAs);
         dispose(menuItemSaveAs);
+        dispose(menuItemSeparator);
+        dispose(menuItemProperties);
     }
 
     private void dispose(MenuItem menuItem) {
@@ -158,6 +162,20 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemSaveAs = new MenuItem(parentMenu, SWT.CASCADE);
         menuItemSaveAs.setText(Messages.SaveAs);
         menuItemSaveAs.setMenu(createSaveAsSubMenu());
+
+        if (table.getSelectionCount() == 1) {
+
+            menuItemSeparator = new MenuItem(parentMenu, SWT.SEPARATOR);
+
+            menuItemProperties = new MenuItem(parentMenu, SWT.PUSH);
+            menuItemProperties.setText("Properties");
+            menuItemProperties.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    performDisplaySpooledFileProperties(e);
+                }
+            });
+        }
     }
 
     private Menu createOpenAsSubMenu() {
@@ -407,6 +425,19 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
             if (tableItem.getData() instanceof SpooledFile) {
                 SpooledFile spooledFile = (SpooledFile)tableItem.getData();
                 if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_PDF))) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void performDisplaySpooledFileProperties(SelectionEvent e) {
+
+        TableItem[] tableItems = table.getSelection();
+        for (TableItem tableItem : tableItems) {
+            if (tableItem.getData() instanceof SpooledFile) {
+                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
+                if (handleErrorMessage(spooledFile.displayProperties(getShell()))) {
                     break;
                 }
             }

@@ -46,6 +46,7 @@ import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.ReadOnlyEditor;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.spooledfiles.view.SpooledFilePropertiesDialog;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
@@ -1102,6 +1103,16 @@ public class SpooledFile implements IPropertySource {
 
         return null;
 
+    }
+
+    public String displayProperties(Shell shell) {
+        try {
+            SpooledFilePropertiesDialog dialog = new SpooledFilePropertiesDialog(shell, this);
+            dialog.open();
+            return null;
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     private String getSaveDirectory() {
