@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ public class LoadSpooledFilesJob extends Job {
     private String connectionName;
     private String filterName;
     private String[] filterStrings;
-    private int itemIndex;
     private ILoadSpooledFilesPostRun postRun;
 
     public LoadSpooledFilesJob(String connectionName, String filterName, String[] filterStrings, ILoadSpooledFilesPostRun postRun) {
@@ -41,10 +40,6 @@ public class LoadSpooledFilesJob extends Job {
         this.filterName = filterName;
         this.filterStrings = filterStrings;
         this.postRun = postRun;
-    }
-
-    public void setItemIndex(int itemIndex) {
-        this.itemIndex = itemIndex;
     }
 
     @Override
@@ -70,7 +65,7 @@ public class LoadSpooledFilesJob extends Job {
         }
 
         SpooledFile[] spooledFiles = spooledFilesList.toArray(new SpooledFile[spooledFilesList.size()]);
-        postRun.setLoadSpooledFilesPostRunData(connectionName, filterName, spooledFiles, itemIndex);
+        postRun.setLoadSpooledFilesPostRunData(connectionName, filterName, spooledFiles);
 
         return Status.OK_STATUS;
     }

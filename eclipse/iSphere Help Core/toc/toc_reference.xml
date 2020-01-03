@@ -57,6 +57,7 @@
     <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
   <topic label="Spooled File Subsystem" href="html/spooledfilesubsystem/spooledfilesubsystem.html" >
+  	<topic label="Work With Spooled Files" href="html/spooledfilesubsystem/workwithspooledfiles/workwithspooledfiles.html" />
     <topic label="Preferences" href="html/spooledfilesubsystem/preferences/preferences.html" />
   </topic>
   <topic label="User Space Editor"  href="html/userspaceeditor/userspaceeditor.html"> 

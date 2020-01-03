@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -389,7 +389,7 @@ public class Messages extends NLS {
     public static String Spooled_file_resource;
 
     public static String Spooled_Files_View;
-    
+
     public static String Status;
 
     public static String Page;
@@ -746,9 +746,13 @@ public class Messages extends NLS {
 
     public static String Auto_refresh_menu_item_stop_tooltip;
 
-    public static String Auto_refresh_menu_item_every_A_seconds;
+    public static String Auto_refresh_menu_item_every_A_B;
 
-    public static String Auto_refresh_menu_item_every_A_seconds_tooltip;
+    public static String Auto_refresh_menu_item_every_A_B_tooltip;
+
+    public static String Seconds;
+
+    public static String Minutes;
 
     public static String Label_is_missing_Please_specify_a_label;
 

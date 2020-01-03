@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,6 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 
 public interface ILoadSpooledFilesPostRun {
 
-    public void setLoadSpooledFilesPostRunData(String connectionName, String filterName, SpooledFile[] spooledFiles, int itemIndex);
+    public void setLoadSpooledFilesPostRunData(String connectionName, String filterName, SpooledFile[] spooledFiles);
 
 }

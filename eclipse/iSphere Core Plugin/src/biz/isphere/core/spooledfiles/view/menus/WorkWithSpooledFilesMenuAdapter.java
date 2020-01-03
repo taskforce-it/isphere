@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.spooledfiles.view;
+package biz.isphere.core.spooledfiles.view.menus;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -33,6 +35,7 @@ import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
@@ -44,6 +47,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
     private Menu parentMenu;
     private String connectionName;
+    private TableViewer tableViewer;
     private Table table;
 
     private List<ITableItemChangeListener> changedListeners;
@@ -59,6 +63,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
     public WorkWithSpooledFilesMenuAdapter(Menu parentMenu, String connectionName, TableViewer tableViewer) {
         this.parentMenu = parentMenu;
         this.connectionName = connectionName;
+        this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
         this.changedListeners = new LinkedList<ITableItemChangeListener>();
     }
@@ -257,6 +262,10 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
     private void performDeleteSpooledFile(SelectionEvent event) {
 
+        if (!isConfirmed(table.getSelection())) {
+            return;
+        }
+
         int[] selectionIndices = table.getSelectionIndices();
         for (int index : selectionIndices) {
             TableItem tableItem = table.getItem(index);
@@ -266,6 +275,22 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
                 notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.DELETED, index));
             }
         }
+    }
+
+    private boolean isConfirmed(TableItem[] items) {
+
+        List<SpooledFile> spooledFiles = new ArrayList<SpooledFile>();
+        for (TableItem item : items) {
+            SpooledFile spooledFile = (SpooledFile)item.getData();
+            spooledFiles.add(spooledFile);
+        }
+
+        ConfirmDeletionSpooledFiles dialog = new ConfirmDeletionSpooledFiles(getShell(), spooledFiles.toArray(new SpooledFile[spooledFiles.size()]));
+        if (dialog.open() == Dialog.OK) {
+            return true;
+        }
+
+        return false;
     }
 
     private void performHoldSpooledFile(SelectionEvent event) {
