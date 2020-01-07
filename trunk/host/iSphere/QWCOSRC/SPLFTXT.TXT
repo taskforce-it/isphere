@@ -14,11 +14,11 @@
      /*     >>EXECUTE<<                                                       */
      /*   >>END-PRE-COMPILER<<                                                */
      /*-----------------------------------------------------------------------*/
-:WSCST DEVCLASS=TRANSFORM.                                                    
-                                                                              
-  :TRNSFRMTBL.       
-  
-    :PRTDTASTRM    
+:WSCST DEVCLASS=TRANSFORM.
+
+  :TRNSFRMTBL.
+
+    :PRTDTASTRM
       DATASTREAM = NULL.
 
     :RASTERMODE
@@ -76,7 +76,7 @@
       EBCDICCP = 284
       ASCIICP = 850
       DATA = ''X.
- 
+
     :EBCASCTBLE
       EBCDICCP = 285
       ASCIICP = 850
@@ -147,28 +147,28 @@
       ASCIICP = 857
       DATA = ''X.
     :EEBCASCTBL.
-                                                             
-    :INITPRT                /* Initialize Printer */                          
+
+    :INITPRT                /* Initialize Printer */
       DATA =''X.
 
     :RESETPRT               /* Reset Printer */
       DATA =''X.
-                                                                    
-    :CARRTN                 /* Carrier Return */                              
+
+    :CARRTN                 /* Carrier Return */
       DATA ='11'x.          /* transformed to DC1 */
-                                                                    
-    :SPACE                  /* Space */                                       
+
+    :SPACE                  /* Space */
       DATA ='20'X.
-                                                                  
-    :LINEFEED               /* Linefeed */                          
+
+    :LINEFEED               /* Linefeed */
       DATA ='0A'X.
-                                                        
-    :FORMFEED               
-                            /* Formfeed: '-- New Page --' */        
+
+    :FORMFEED
+                            /* Formfeed: '-- New Page --' */
     /*DATA ='202020202020202020202D2D204E65772050616765202D2D0A'X.*/
-                            /* Formfeed: '%FORMFEED%' */        
+                            /* Formfeed: '%FORMFEED%' */
     /*DATA ='6CC6D6D9D4C6C5C5C46C'X.*/
                             /* FF */
       DATA ='0C0A'X.
-                                                                    
-:EWSCST.                                                            
+
+:EWSCST.

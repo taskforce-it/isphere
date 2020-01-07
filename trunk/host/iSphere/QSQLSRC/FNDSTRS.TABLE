@@ -20,24 +20,24 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE FNDSTRS
 (
  XSHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
  XSCNT DECIMAL(6, 0) NOT NULL WITH DEFAULT,
  XSCNL CHAR(10) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE FNDSTRS
  IS 'Find String in Source File (Status)';
- 
+
 LABEL ON COLUMN FNDSTRS
 (
  XSHDL IS 'Handle' ,
  XSCNT IS 'Counter',
  XSCNL IS 'Cancel'
 );
- 
+
 LABEL ON COLUMN FNDSTRS
 (
  XSHDL TEXT IS 'Handle' ,

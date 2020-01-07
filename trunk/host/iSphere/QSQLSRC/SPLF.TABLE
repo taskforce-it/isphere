@@ -20,7 +20,7 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE SPLF
 (
  SFHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
@@ -44,10 +44,10 @@ CREATE TABLE SPLF
  SFCOPIES DECIMAL(3, 0) NOT NULL WITH DEFAULT,
  SFFORMTYPE CHAR(10) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE SPLF
  IS 'Spooled Files';
- 
+
 LABEL ON COLUMN SPLF
 (
  SFHDL IS 'Handle' ,
@@ -71,7 +71,7 @@ LABEL ON COLUMN SPLF
  SFCOPIES IS 'Copies',
  SFFORMTYPE IS 'Form type'
 );
- 
+
 LABEL ON COLUMN SPLF
 (
  SFHDL TEXT IS 'Handle' ,

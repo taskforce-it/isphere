@@ -27,40 +27,40 @@
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure prototyp for procedure 'DESIGNERW'
- 
+
      dDESIGNERW        PR
- 
+
       // Procedure interface for procedure 'DESIGNERW'
- 
+
      dDESIGNERW        PI
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       // Procedure prototyp for procedure 'HANDLER'
- 
+
      dHANDLER          PR                  ExtPgm(g_PGM)
      d                               10A   Const                                --> Programm
- 
+
       // Program status data structure
- 
+
      dg_PSDS          SDS           429
      d g_LIB                  81     90A
- 
+
       // Program
- 
+
      dg_PGM            S             21A
- 
+
       //*------------------------------------------------------------------------------------------*
- 
+
       /Free
- 
+
        // Call programm
        g_PGM = %Trim(g_LIB) + '/HANDLER';
        HANDLER('DESIGNER');
- 
+
        // Leave procedure
        *INLR = *On;
- 
+
       /End-Free

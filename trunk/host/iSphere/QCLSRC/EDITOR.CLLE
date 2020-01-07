@@ -26,7 +26,7 @@
 /*       >>EXECUTE<<                                                          */
 /*   >>END-PRE-COMPILER<<                                                     */
 /*----------------------------------------------------------------------------*/
- 
+
              PGM        PARM(&LIB &SRCF &MBR &MODE)
              DCLF       FILE(EDITOR)
              RTVJOBA    USRLIBL(&LIBL) CURLIB(&CURLIB)

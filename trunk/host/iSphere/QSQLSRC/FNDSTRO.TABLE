@@ -20,7 +20,7 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE FNDSTRO
 (
  XOHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
@@ -32,10 +32,10 @@ CREATE TABLE FNDSTRO
  XOLINE CHAR(228) NOT NULL WITH DEFAULT,
  XOFLCD TIMESTAMP NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE FNDSTRO
  IS 'Find String in Source File (Output)';
- 
+
 LABEL ON COLUMN FNDSTRO
 (
  XOHDL IS 'Handle' ,
@@ -47,7 +47,7 @@ LABEL ON COLUMN FNDSTRO
  XOLINE IS 'Line',
  XOFLCD IS 'File Last Changed'
 );
- 
+
 LABEL ON COLUMN FNDSTRO
 (
  XOHDL TEXT IS 'Handle' ,

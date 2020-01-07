@@ -20,7 +20,7 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE XFNDSTRO
 (
  XOHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
@@ -29,10 +29,10 @@ CREATE TABLE XFNDSTRO
  XOMSGID CHAR(7) NOT NULL WITH DEFAULT,
  XOMSG CHAR(132) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE XFNDSTRO
  IS 'Find String in Message File (Output)';
- 
+
 LABEL ON COLUMN XFNDSTRO
 (
  XOHDL IS 'Handle' ,
@@ -41,7 +41,7 @@ LABEL ON COLUMN XFNDSTRO
  XOMSGID IS 'Message id.',
  XOMSG IS 'Message'
 );
- 
+
 LABEL ON COLUMN XFNDSTRO
 (
  XOHDL TEXT IS 'Handle' ,
