@@ -20,24 +20,24 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE XFNDSTRI
 (
  XIHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
  XILIB CHAR(10) NOT NULL WITH DEFAULT,
  XIMSGF CHAR(10) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE XFNDSTRI
  IS 'Find String in Message File (Input)';
- 
+
 LABEL ON COLUMN XFNDSTRI
 (
  XIHDL IS 'Handle' ,
  XILIB IS 'Library',
  XIMSGF IS 'Message file'
 );
- 
+
 LABEL ON COLUMN XFNDSTRI
 (
  XIHDL TEXT IS 'Handle' ,

@@ -20,7 +20,7 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE FNDSTRI
 (
  XIHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
@@ -28,10 +28,10 @@ CREATE TABLE FNDSTRI
  XIFILE CHAR(10) NOT NULL WITH DEFAULT,
  XIMBR CHAR(10) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE FNDSTRI
  IS 'Find String in Source File (Input)';
- 
+
 LABEL ON COLUMN FNDSTRI
 (
  XIHDL IS 'Handle' ,
@@ -39,7 +39,7 @@ LABEL ON COLUMN FNDSTRI
  XIFILE IS 'File',
  XIMBR IS 'Member'
 );
- 
+
 LABEL ON COLUMN FNDSTRI
 (
  XIHDL TEXT IS 'Handle' ,

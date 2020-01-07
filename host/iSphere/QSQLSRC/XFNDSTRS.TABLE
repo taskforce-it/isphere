@@ -20,24 +20,24 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE XFNDSTRS
 (
  XSHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
  XSCNT DECIMAL(6, 0) NOT NULL WITH DEFAULT,
  XSCNL CHAR(10) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE XFNDSTRS
  IS 'Find String in Message File (Status)';
- 
+
 LABEL ON COLUMN XFNDSTRS
 (
  XSHDL IS 'Handle' ,
  XSCNT IS 'Counter',
  XSCNL IS 'Cancel'
 );
- 
+
 LABEL ON COLUMN XFNDSTRS
 (
  XSHDL TEXT IS 'Handle' ,

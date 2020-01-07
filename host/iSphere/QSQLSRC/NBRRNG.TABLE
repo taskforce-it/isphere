@@ -20,22 +20,22 @@
 -- *       >>EXECUTE<<                                                      *
 -- *   >>END-PRE-COMPILER<<                                                 *
 -- *------------------------------------------------------------------------*
- 
+
 CREATE TABLE NBRRNG
 (
  NRRNG CHAR(10) NOT NULL WITH DEFAULT,
  NRNBR DECIMAL(10, 0) NOT NULL WITH DEFAULT
 );
- 
+
 LABEL ON TABLE NBRRNG
  IS 'Number Range';
- 
+
 LABEL ON COLUMN NBRRNG
 (
  NRRNG IS 'Number Range' ,
  NRNBR IS 'Number'
 );
- 
+
 LABEL ON COLUMN NBRRNG
 (
  NRRNG TEXT IS 'Number Range' ,
