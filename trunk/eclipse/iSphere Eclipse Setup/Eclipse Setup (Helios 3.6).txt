@@ -125,6 +125,16 @@ g) Preferences - General - Editors - Text Editors - Spelling:
 
    User defined dictionary:  ${workspace_loc}\iSphere Eclipse Setup\Spelling\dictionary_en.txt
 
+h) Preferences - i Projects:
+
+    [x] Remove sequence numbers and date fields on download
+    [ ] Generate sequence number warnings
+    [x] Limit sequence number warnings: 10
+    [x] Enable add and remove sequence number actions 
+
+i) Preferences - i Projects - Build and Compile (optionally):
+
+    [ ] Run compiles as batch job
 
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
