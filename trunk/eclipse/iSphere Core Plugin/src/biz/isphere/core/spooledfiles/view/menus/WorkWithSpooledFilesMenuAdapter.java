@@ -47,7 +47,6 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
     private Menu parentMenu;
     private String connectionName;
-    private TableViewer tableViewer;
     private Table table;
 
     private List<ITableItemChangeListener> changedListeners;
@@ -65,7 +64,6 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
     public WorkWithSpooledFilesMenuAdapter(Menu parentMenu, String connectionName, TableViewer tableViewer) {
         this.parentMenu = parentMenu;
         this.connectionName = connectionName;
-        this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
         this.changedListeners = new LinkedList<ITableItemChangeListener>();
     }
@@ -290,8 +288,11 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
             if (tableItem.getData() instanceof SpooledFile) {
                 SpooledFile spooledFile = (SpooledFile)tableItem.getData();
                 spooledFile.delete();
-                notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.DELETED, index));
             }
+        }
+
+        if (selectionIndices.length > 0) {
+            notifyChangedListener(new TableItemChangedEvent(null, EventType.DELETED, -1));
         }
     }
 
