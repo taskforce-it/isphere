@@ -65,11 +65,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
             if (event.getSource() instanceof SystemFilterReference) {
                 SystemFilterReference filterReference = (SystemFilterReference)event.getSource();
                 if (getSubSystem(filterReference) instanceof SpooledFileSubSystem) {
-
-                    SubSystem subSystem = getSubSystem(filterReference);
-                    SystemFilter systemFilter = filterReference.getReferencedFilter();
-
-                    setInputData(subSystem, systemFilter);
+                    refreshData();
                 }
             }
         } else if (eventType == ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE) {
