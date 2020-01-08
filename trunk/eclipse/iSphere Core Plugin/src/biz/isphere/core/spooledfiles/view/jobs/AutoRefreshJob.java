@@ -44,8 +44,6 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
 
         final int SLEEP_INTERVAL = 50;
 
-        System.out.println("Auto-refresh job started.");
-
         while (!monitor.isCanceled()) {
 
             try {
@@ -96,7 +94,6 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
     public void jobFinished(Job job) {
 
         if (job == autoRefreshUIJob) {
-            System.out.println("... updating UI finished.");
             autoRefreshUIJob = null;
         }
     }

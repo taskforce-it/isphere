@@ -31,7 +31,6 @@ public class AutoRefreshUIJob extends UIJob {
 
     @Override
     public IStatus runInUIThread(IProgressMonitor arg0) {
-        System.out.println("Updating UI ...");
         view.refreshData();
         listener.jobFinished(this);
         return Status.OK_STATUS;
