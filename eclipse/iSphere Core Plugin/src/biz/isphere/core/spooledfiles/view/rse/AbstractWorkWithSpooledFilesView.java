@@ -61,7 +61,7 @@ import biz.isphere.core.spooledfiles.view.listeners.AutoRefreshViewCloseListener
 public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinnableView, IWaitForRseConnectionPostRun,
     ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView {
 
-    public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$ 
+    public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$
 
     /*
      * View pin properties
@@ -313,6 +313,12 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             return;
         }
 
+        /*
+         * Clear input data to disable selecting new spooled files in
+         * "WorkWithSpooledFilesPanel".
+         */
+        workWithSpooledFilesPanel.setInput(null, null);
+
         setInputDataInternally(getShell(), inputData);
     }
 
@@ -324,12 +330,16 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      */
     private void setInputDataInternally(Shell shell, WorkWithSpooledFilesInputData inputData) {
 
-        if (loadSpooledFilesJob != null || !inputData.isValid()) {
+        if (!inputData.isValid()) {
             setPinned(false);
             return;
         }
 
         this.inputData = inputData;
+
+        if (loadSpooledFilesJob != null) {
+            return;
+        }
 
         loadSpooledFilesJob = new LoadSpooledFilesJob(inputData.getConnectionName(), inputData.getFilterName(), inputData.getFilterStrings(), this);
         loadSpooledFilesJob.schedule();
@@ -483,7 +493,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     public void jobFinished(Job job) {
         if (job == autoRefreshJob) {
-            System.out.println("Auto-refresh job finished.");
             autoRefreshJob = null;
             refreshActionsEnablement();
         }
