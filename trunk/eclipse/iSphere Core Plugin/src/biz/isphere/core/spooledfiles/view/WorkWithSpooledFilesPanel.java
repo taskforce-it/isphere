@@ -8,12 +8,18 @@
 
 package biz.isphere.core.spooledfiles.view;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -73,15 +79,40 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
 
     public void setInput(String connectionName, SpooledFile[] spooledFiles) {
 
+        SpooledFile[] oldInput = (SpooledFile[])this.tableViewer.getInput();
+
         this.tableViewer.setInput(spooledFiles);
+
+        if (connectionName == null || spooledFiles == null) {
+            setMenuAndDoubleClickListener(null, null);
+            return;
+        }
+
+        /*
+         * Select new spooled files.
+         */
+        if (oldInput != null) {
+            Set<SpooledFile> oldSet = new HashSet<SpooledFile>(Arrays.asList(oldInput));
+            List<SpooledFile> newSpooledFiles = new ArrayList<SpooledFile>();
+            for (SpooledFile spooledFile : spooledFiles) {
+                if (!oldSet.contains(spooledFile)) {
+                    newSpooledFiles.add(spooledFile);
+                }
+            }
+            if (!newSpooledFiles.isEmpty()) {
+                ISelection selection = new StructuredSelection(newSpooledFiles);
+                tableViewer.setSelection(selection);
+            } else {
+                tableViewer.setSelection(null);
+            }
+        }
 
         Menu menu = new Menu(table);
         WorkWithSpooledFilesMenuAdapter menuAdapter = new WorkWithSpooledFilesMenuAdapter(menu, connectionName, tableViewer);
         menuAdapter.addChangedListener(listener);
         menu.addMenuListener(menuAdapter);
 
-        table.setMenu(menu);
-        setDoubleClickListener(menuAdapter);
+        setMenuAndDoubleClickListener(menu, menuAdapter);
     }
 
     public int getSelectionCount() {
@@ -111,14 +142,19 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         throw new IllegalAccessError("Do not use setMenu()."); //$NON-NLS-1$
     }
 
-    public void setDoubleClickListener(IDoubleClickListener listener) {
+    public void setMenuAndDoubleClickListener(Menu menu, IDoubleClickListener listener) {
+
+        table.setMenu(menu);
 
         if (doubleClickListener != null) {
             tableViewer.removeDoubleClickListener(doubleClickListener);
         }
 
         doubleClickListener = listener;
-        tableViewer.addDoubleClickListener(doubleClickListener);
+
+        if (doubleClickListener != null) {
+            tableViewer.addDoubleClickListener(doubleClickListener);
+        }
     }
 
     public void resetColumnSizes() {

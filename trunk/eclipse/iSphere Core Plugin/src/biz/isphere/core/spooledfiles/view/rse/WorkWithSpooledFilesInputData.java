@@ -29,14 +29,15 @@ public class WorkWithSpooledFilesInputData {
 
     public boolean referencesFilter(String connectionName, String filterPoolName, String filterName) {
 
-        if (equals(connectionName, getConnectionName()) && equals(filterPoolName, getFilterPoolName()) && equals(filterName, getFilterName())) {
+        if (isSameValue(connectionName, getConnectionName()) && isSameValue(filterPoolName, getFilterPoolName())
+            && isSameValue(filterName, getFilterName())) {
             return true;
         }
 
         return false;
     }
 
-    private boolean equals(String value1, String value2) {
+    private boolean isSameValue(String value1, String value2) {
 
         if (value1 != null) {
             return value1.equals(value2);
