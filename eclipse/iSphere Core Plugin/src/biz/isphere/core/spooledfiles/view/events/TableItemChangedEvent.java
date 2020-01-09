@@ -20,19 +20,23 @@ public class TableItemChangedEvent {
         DELETED;
     }
 
-    private SpooledFile spooledFile;
+    private SpooledFile[] spooledFile;
     private EventType eventType;
 
     public TableItemChangedEvent(SpooledFile spooledFile, EventType eventType) {
-        this(spooledFile, eventType, -1);
+        this(new SpooledFile[] { spooledFile }, eventType);
     }
 
-    public TableItemChangedEvent(SpooledFile spooledFile, EventType eventType, int itemIndex) {
-        this.spooledFile = spooledFile;
+    public TableItemChangedEvent(SpooledFile[] spooledFiles, EventType eventType) {
+        this.spooledFile = spooledFiles;
         this.eventType = eventType;
     }
 
     public SpooledFile getSpooledFile() {
+        return spooledFile[0];
+    }
+
+    public SpooledFile[] getSpooledFiles() {
         return spooledFile;
     }
 

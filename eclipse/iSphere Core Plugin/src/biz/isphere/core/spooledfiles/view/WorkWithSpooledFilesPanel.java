@@ -115,6 +115,21 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         setMenuAndDoubleClickListener(menu, menuAdapter);
     }
 
+    public int getItemCount() {
+        return tableViewer.getTable().getItemCount();
+    }
+
+    public SpooledFile[] getItems() {
+
+        SpooledFile[] spooledFiles = new SpooledFile[tableViewer.getTable().getItemCount()];
+        TableItem[] tableItems = tableViewer.getTable().getItems();
+        for (int i = 0; i < tableItems.length; i++) {
+            spooledFiles[i] = (SpooledFile)tableItems[i].getData();
+        }
+
+        return spooledFiles;
+    }
+
     public int getSelectionCount() {
         return tableViewer.getTable().getSelectionCount();
     }
@@ -132,6 +147,11 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
 
     public void update(SpooledFile spooledFile) {
         tableViewer.update(spooledFile, null);
+    }
+
+    public void remove(SpooledFile[] spooledFiles) {
+        tableViewer.remove(spooledFiles);
+        table.update();
     }
 
     @Override

@@ -8,12 +8,6 @@
 
 package biz.isphere.core.spooledfiles.view.menus;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
@@ -22,34 +16,24 @@ import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.Messages;
-import biz.isphere.core.clcommands.ICLPrompter;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.preferencepages.IPreferences;
-import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.spooledfiles.ConfirmDeletionSpooledFiles;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
-import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
-import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType;
-
-import com.ibm.as400.ui.util.CommandPrompter;
 
 public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDoubleClickListener {
 
     private Menu parentMenu;
-    private String connectionName;
+    private TableViewer tableViewer;
     private Table table;
 
-    private List<ITableItemChangeListener> changedListeners;
+    private WorkWithSpooledFilesHelper workWithSpooledFilesHelper;
 
     private MenuItem menuItemChange;
     private MenuItem menuItemDelete;
@@ -63,23 +47,18 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
     public WorkWithSpooledFilesMenuAdapter(Menu parentMenu, String connectionName, TableViewer tableViewer) {
         this.parentMenu = parentMenu;
-        this.connectionName = connectionName;
+        this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
-        this.changedListeners = new LinkedList<ITableItemChangeListener>();
+
+        this.workWithSpooledFilesHelper = new WorkWithSpooledFilesHelper(parentMenu.getShell(), connectionName);
     }
 
     public void addChangedListener(ITableItemChangeListener modifyListener) {
-        changedListeners.add(modifyListener);
+        workWithSpooledFilesHelper.addChangedListener(modifyListener);
     }
 
     public void removeChangedListener(ITableItemChangeListener modifyListener) {
-        changedListeners.remove(modifyListener);
-    }
-
-    public void notifyChangedListener(TableItemChangedEvent event) {
-        for (ITableItemChangeListener listener : changedListeners) {
-            listener.itemChanged(event);
-        }
+        workWithSpooledFilesHelper.removeChangedListener(modifyListener);
     }
 
     @Override
@@ -113,7 +92,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemChange.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performChangeSpooledFile(e);
+                workWithSpooledFilesHelper.performChangeSpooledFile(getSelectedItems());
             }
         });
 
@@ -122,7 +101,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemDelete.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performDeleteSpooledFile(e);
+                workWithSpooledFilesHelper.performDeleteSpooledFile(getSelectedItems());
             }
         });
 
@@ -131,7 +110,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemHold.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performHoldSpooledFile(e);
+                workWithSpooledFilesHelper.performHoldSpooledFile(getSelectedItems());
             }
         });
 
@@ -140,7 +119,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemRelease.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performReleaseSpooledFile(e);
+                workWithSpooledFilesHelper.performReleaseSpooledFile(getSelectedItems());
             }
         });
 
@@ -149,7 +128,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemMessages.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performShowMessages(e);
+                workWithSpooledFilesHelper.performShowMessages(getSelectedItems());
             }
         });
 
@@ -170,7 +149,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
             menuItemProperties.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    performDisplaySpooledFileProperties(e);
+                    workWithSpooledFilesHelper.performDisplaySpooledFileProperties(getSelectedItems());
                 }
             });
         }
@@ -185,7 +164,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemOpenAsText.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performOpenAsText(e);
+                workWithSpooledFilesHelper.performOpenAsText(getSelectedItems());
             }
         });
 
@@ -194,7 +173,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemOpenAsHtml.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performOpenAsHtml(e);
+                workWithSpooledFilesHelper.performOpenAsHtml(getSelectedItems());
             }
         });
 
@@ -203,7 +182,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemOpenAsPdf.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performOpenAsPdf(e);
+                workWithSpooledFilesHelper.performOpenAsPdf(getSelectedItems());
             }
         });
 
@@ -219,7 +198,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemSaveAsText.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performSaveAsText(e);
+                workWithSpooledFilesHelper.performSaveAsText(getSelectedItems());
             }
         });
 
@@ -228,7 +207,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemSaveAsHtml.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performSaveAsHtml(e);
+                workWithSpooledFilesHelper.performSaveAsHtml(getSelectedItems());
             }
         });
 
@@ -237,230 +216,26 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         menuItemSaveAsPdf.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                performSaveAsPdf(e);
+                workWithSpooledFilesHelper.performSaveAsPdf(getSelectedItems());
             }
         });
 
         return subMenuSaveAs;
     }
 
-    private void performChangeSpooledFile(SelectionEvent event) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-
-                try {
-
-                    ICLPrompter command = IBMiHostContributionsHandler.getCLPrompter(connectionName);
-                    command.setCommandString(spooledFile.getCommandChangeAttribute());
-                    command.setParent(Display.getCurrent().getActiveShell());
-                    if (command.showDialog() == CommandPrompter.OK) {
-
-                        String message = spooledFile.changeAttribute(command.getCommandString());
-                        if (handleErrorMessage(message)) {
-                            break;
-                        } else {
-                            notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.CHANGED));
-                        }
-
-                    }
-                } catch (Exception e) {
-                    if (handleException(e)) {
-                        break;
-                    }
-                }
-
-            }
-        }
-    }
-
-    private void performDeleteSpooledFile(SelectionEvent event) {
-
-        if (!isConfirmed(table.getSelection())) {
-            return;
-        }
-
-        int[] selectionIndices = table.getSelectionIndices();
-        for (int index : selectionIndices) {
-            TableItem tableItem = table.getItem(index);
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                spooledFile.delete();
-            }
-        }
-
-        if (selectionIndices.length > 0) {
-            notifyChangedListener(new TableItemChangedEvent(null, EventType.DELETED, -1));
-        }
-    }
-
-    private boolean isConfirmed(TableItem[] items) {
-
-        List<SpooledFile> spooledFiles = new ArrayList<SpooledFile>();
-        for (TableItem item : items) {
-            SpooledFile spooledFile = (SpooledFile)item.getData();
-            spooledFiles.add(spooledFile);
-        }
-
-        ConfirmDeletionSpooledFiles dialog = new ConfirmDeletionSpooledFiles(getShell(), spooledFiles.toArray(new SpooledFile[spooledFiles.size()]));
-        if (dialog.open() == Dialog.OK) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private void performHoldSpooledFile(SelectionEvent event) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.hold())) {
-                    break;
-                }
-                notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.HOLD));
-            }
-        }
-    }
-
-    private void performReleaseSpooledFile(SelectionEvent event) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.release())) {
-                    break;
-                }
-                notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.RELEASED));
-            }
-        }
-    }
-
-    private void performShowMessages(SelectionEvent event) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.replyMessage())) {
-                    break;
-                }
-                notifyChangedListener(new TableItemChangedEvent(spooledFile, EventType.MESSAGE));
-            }
-        }
-    }
-
-    private void performOpenAsText(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.open(IPreferences.OUTPUT_FORMAT_TEXT))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performOpenAsHtml(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.open(IPreferences.OUTPUT_FORMAT_HTML))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performOpenAsPdf(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.open(IPreferences.OUTPUT_FORMAT_PDF))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performSaveAsText(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_TEXT))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performSaveAsHtml(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_HTML))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performSaveAsPdf(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_PDF))) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private void performDisplaySpooledFileProperties(SelectionEvent e) {
-
-        TableItem[] tableItems = table.getSelection();
-        for (TableItem tableItem : tableItems) {
-            if (tableItem.getData() instanceof SpooledFile) {
-                SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                if (handleErrorMessage(spooledFile.displayProperties(getShell()))) {
-                    break;
-                }
-            }
-        }
-    }
-
     private Shell getShell() {
         return parentMenu.getShell();
     }
 
-    private boolean handleErrorMessage(String message) {
+    private SpooledFile[] getSelectedItems() {
 
-        if (message != null) {
-            MessageDialog.openError(getShell(), Messages.Error, message);
-            return true;
+        SpooledFile[] spooledFiles = new SpooledFile[tableViewer.getTable().getSelectionCount()];
+        TableItem[] tableItems = table.getSelection();
+        for (int i = 0; i < tableItems.length; i++) {
+            spooledFiles[i] = (SpooledFile)tableItems[i].getData();
         }
 
-        return false;
-    }
-
-    private boolean handleException(Exception e) {
-        return handleErrorMessage(ExceptionHelper.getLocalizedMessage(e));
+        return spooledFiles;
     }
 
     public void doubleClick(DoubleClickEvent e) {
@@ -469,8 +244,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
             TableItem tableItem = table.getItem(index);
             if (tableItem.getData() instanceof SpooledFile) {
                 SpooledFile spooledFile = (SpooledFile)tableItem.getData();
-                String openFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
-                handleErrorMessage(spooledFile.open(openFormat));
+                workWithSpooledFilesHelper.performOpen(new SpooledFile[] { spooledFile });
             }
         }
     }

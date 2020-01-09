@@ -113,6 +113,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_RENAME = "rename.gif";
     public static final String IMAGE_PIN = "pin.gif";
     public static final String IMAGE_REMOVE = "remove.gif";
+    public static final String IMAGE_REMOVE_ALL = "removeAll.gif";
     public static final String IMAGE_INVERT_SELECTION = "invert_selection.gif";
     public static final String IMAGE_TRANSFER_LIBRARY_32 = "transfer_library_32.gif";
     public static final String IMAGE_KEY = "key.gif";
@@ -293,6 +294,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_RENAME, getImageDescriptor(IMAGE_RENAME));
         reg.put(IMAGE_PIN, getImageDescriptor(IMAGE_PIN));
         reg.put(IMAGE_REMOVE, getImageDescriptor(IMAGE_REMOVE));
+        reg.put(IMAGE_REMOVE_ALL, getImageDescriptor(IMAGE_REMOVE_ALL));
         reg.put(IMAGE_INVERT_SELECTION, getImageDescriptor(IMAGE_INVERT_SELECTION));
         reg.put(IMAGE_TRANSFER_LIBRARY_32, getImageDescriptor(IMAGE_TRANSFER_LIBRARY_32));
         reg.put(IMAGE_KEY, getImageDescriptor(IMAGE_KEY));
