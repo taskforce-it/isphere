@@ -792,6 +792,8 @@ public class Messages extends NLS {
 
     public static String Tooltip_Remove;
 
+    public static String Tooltip_Remove_all;
+
     public static String Invert_selection;
 
     public static String Tooltip_Invert_selection;

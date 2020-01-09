@@ -20,6 +20,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,6 +46,7 @@ import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.IAutoRefreshView;
 import biz.isphere.core.spooledfiles.view.ILoadSpooledFilesPostRun;
 import biz.isphere.core.spooledfiles.view.IWaitForRseConnectionPostRun;
@@ -51,7 +54,10 @@ import biz.isphere.core.spooledfiles.view.LoadSpooledFilesJob;
 import biz.isphere.core.spooledfiles.view.WaitForRseConnectionJob;
 import biz.isphere.core.spooledfiles.view.WorkWithSpooledFilesPanel;
 import biz.isphere.core.spooledfiles.view.actions.AutoRefreshRefreshIntervalAction;
+import biz.isphere.core.spooledfiles.view.actions.DisableAutoRefreshViewAction;
 import biz.isphere.core.spooledfiles.view.actions.RefreshViewAction;
+import biz.isphere.core.spooledfiles.view.actions.RemoveAction;
+import biz.isphere.core.spooledfiles.view.actions.RemoveAllAction;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType;
@@ -59,7 +65,7 @@ import biz.isphere.core.spooledfiles.view.jobs.AutoRefreshJob;
 import biz.isphere.core.spooledfiles.view.listeners.AutoRefreshViewCloseListener;
 
 public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinnableView, IWaitForRseConnectionPostRun,
-    ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView {
+    ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView, ISelectionChangedListener {
 
     public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$
 
@@ -80,27 +86,39 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     private LoadSpooledFilesJob loadSpooledFilesJob;
 
     private RefreshViewAction refreshViewAction;
+    private DisableAutoRefreshViewAction disableAutoRefreshViewAction;
     private PinViewAction pinViewAction;
     private ResetColumnSizeAction resetColumnSizeAction;
+    private RemoveAction deleteSelectedSpooledFilesAction;
+    private RemoveAllAction deleteAllSpooledFilesAction;
 
     private AutoRefreshSubMenu autoRefreshSubMenu;
     private AutoRefreshJob autoRefreshJob;
 
+    private WorkWithSpooledFilesHelper workWithSpooledFilesHelper;
+
     private Map<String, String> pinProperties;
+
+    public AbstractWorkWithSpooledFilesView() {
+
+        this.workWithSpooledFilesHelper = new WorkWithSpooledFilesHelper(null, null);
+        this.workWithSpooledFilesHelper.addChangedListener(this);
+
+        getViewManager().add(this);
+    }
 
     public static String produceContentId(String connectionName, String filterName) {
         String contentId = connectionName + ":" + filterName; //$NON-NLS-1$
         return contentId;
     }
 
-    public AbstractWorkWithSpooledFilesView() {
-        getViewManager().add(this);
-    }
-
     @Override
     public void dispose() {
 
         getViewManager().remove(this);
+
+        workWithSpooledFilesPanel.removeSelectionChangedListener(this);
+        workWithSpooledFilesHelper.removeChangedListener(this);
 
         super.dispose();
     }
@@ -133,6 +151,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         workWithSpooledFilesPanel.setChangedListener(this);
         workWithSpooledFilesPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
         workWithSpooledFilesPanel.setPinProperties(pinProperties);
+        workWithSpooledFilesPanel.addSelectionChangedListener(this);
 
         getSite().setSelectionProvider(workWithSpooledFilesPanel);
 
@@ -189,18 +208,36 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         refreshViewAction.setToolTipText(Messages.Refresh_the_contents_of_this_view);
         refreshViewAction.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_REFRESH));
 
+        disableAutoRefreshViewAction = new DisableAutoRefreshViewAction(this);
+
         pinViewAction = new PinViewAction(this);
         pinViewAction.setChecked(getViewManager().isPinned(this));
 
         resetColumnSizeAction = new ResetColumnSizeAction(workWithSpooledFilesPanel);
+
+        deleteSelectedSpooledFilesAction = new RemoveAction() {
+            public void run() {
+                workWithSpooledFilesHelper.performDeleteSpooledFile(workWithSpooledFilesPanel.getSelectedItems());
+            }
+        };
+
+        deleteAllSpooledFilesAction = new RemoveAllAction() {
+            public void run() {
+                workWithSpooledFilesHelper.performDeleteSpooledFile(workWithSpooledFilesPanel.getItems());
+            }
+        };
     }
 
     private void initializeToolBar() {
 
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(deleteSelectedSpooledFilesAction);
+        toolbarManager.add(deleteAllSpooledFilesAction);
+        toolbarManager.add(new Separator());
         toolbarManager.add(resetColumnSizeAction);
         toolbarManager.add(new Separator());
         toolbarManager.add(pinViewAction);
+        toolbarManager.add(disableAutoRefreshViewAction);
         toolbarManager.add(refreshViewAction);
     }
 
@@ -390,6 +427,8 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                 }
 
                 workWithSpooledFilesPanel.setInput(connectionName, spooledFiles);
+                workWithSpooledFilesHelper.setShell(getShell());
+                workWithSpooledFilesHelper.setConnection(connectionName);
                 refreshActionsEnablement();
             }
 
@@ -406,6 +445,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     /*
+     * ISelectionChangedListener methods
+     */
+
+    public void selectionChanged(SelectionChangedEvent event) {
+        refreshActionsEnablement();
+    }
+
+    /*
      * ITableItemChangedListener methods
      */
 
@@ -418,11 +465,13 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
          */
 
         if (event.isEvent(EventType.DELETED)) {
-            refreshData();
-        } else if (event.isEvent(EventType.CHANGED)) {
+            getWorkWithSpooledFilesPanel().remove(event.getSpooledFiles());
+        } else {
             event.getSpooledFile().refresh();
             getWorkWithSpooledFilesPanel().update(event.getSpooledFile());
         }
+
+        refreshActionsEnablement();
     }
 
     /*
@@ -532,12 +581,26 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         if (isAutoRefreshOn()) {
             autoRefreshSubMenu.setEnabled(autoRefreshJob.getInterval());
+            disableAutoRefreshViewAction.setEnabled(true);
         } else {
             if (hasInputData()) {
                 autoRefreshSubMenu.setEnabled(AutoRefreshRefreshIntervalAction.REFRESH_OFF);
             } else {
                 autoRefreshSubMenu.setEnabled(false);
             }
+            disableAutoRefreshViewAction.setEnabled(false);
+        }
+
+        if (workWithSpooledFilesPanel.getSelection().isEmpty()) {
+            deleteSelectedSpooledFilesAction.setEnabled(false);
+        } else {
+            deleteSelectedSpooledFilesAction.setEnabled(true);
+        }
+
+        if (workWithSpooledFilesPanel.getItemCount() == 0) {
+            deleteAllSpooledFilesAction.setEnabled(false);
+        } else {
+            deleteAllSpooledFilesAction.setEnabled(true);
         }
     }
 

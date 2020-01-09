@@ -1,3 +1,8 @@
+Changelog: iSphere 3.6.0.b007
+-----------------------------
+ • Fixed issue when deleting spooled files (deleted wrong spooled
+   file) and added additional options to button bar of "Spooled
+   Files" view.
 
 Changelog: iSphere 3.6.0.b006
 -----------------------------
