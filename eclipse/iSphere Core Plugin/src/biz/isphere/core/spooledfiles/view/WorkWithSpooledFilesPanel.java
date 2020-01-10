@@ -241,7 +241,7 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
     }
 
     private TableColumn createColumn(Table table, Columns column, String text, Listener sortListener, int style) {
-        TableColumn tableColumn = getDialogSettingsManager().createResizableTableColumn(table, style, column.index, column.name, column.width);
+        TableColumn tableColumn = getDialogSettingsManager().createResizableTableColumn(table, style, column.name, column.width);
         tableColumn.setText(text);
 
         tableColumn.addListener(SWT.Selection, sortListener);

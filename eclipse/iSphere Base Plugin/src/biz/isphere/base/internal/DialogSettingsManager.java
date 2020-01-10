@@ -153,14 +153,13 @@ public class DialogSettingsManager {
      * 
      * @param table - Table, the column is added to.
      * @param style - The style of column to construct.
-     * @param index - The zero-relative index to store the column in the table.
      * @param name - The name of the table column.
      * @param width - The initial width of the table column.
      * @return
      */
-    public TableColumn createResizableTableColumn(Table table, int style, int index, String name, int width) {
+    public TableColumn createResizableTableColumn(Table table, int style, String name, int width) {
 
-        TableColumn tableColumn = new TableColumn(table, style, index);
+        TableColumn tableColumn = new TableColumn(table, style);
         tableColumn.setResizable(true);
         tableColumn.setData(COLUMN_NAME, name);
         tableColumn.setData(COLUMN_WIDTH, new Integer(width));
@@ -176,8 +175,8 @@ public class DialogSettingsManager {
     /**
      * Resets the columns sizes of a given table to their original widths. The
      * table columns must have been created with
-     * {@link #createResizableTableColumn(Table, int, int, String, int)}.
-     * Objects should use the
+     * {@link #createResizableTableColumn(Table, int, String, int)}. Objects
+     * should use the
      * {@link biz.isphere.base.internal.actions.ResetColumnSizeAction} action
      * for resetting the column sizes.
      * 
@@ -197,7 +196,7 @@ public class DialogSettingsManager {
 
     /**
      * Returns the name of a resizable table column created with
-     * {@link #createResizableTableColumn(Table, int, int, String, int)}.
+     * {@link #createResizableTableColumn(Table, int, String, int)}.
      * 
      * @param column - table column
      * @return name of the table column
