@@ -112,7 +112,7 @@ public abstract class AbstractTypeViewerFactory {
         for (JournalEntryColumn column : columns) {
             if (columnNames.contains(column.getName())) {
                 fieldIdMapping[i] = column.getColumnDef();
-                newColumn = dialogSettingsManager.createResizableTableColumn(table, column.getStyle(), i, column.getName(), column.getWidth());
+                newColumn = dialogSettingsManager.createResizableTableColumn(table, column.getStyle(), column.getName(), column.getWidth());
                 newColumn.setText(column.getColumnHeading());
                 newColumn.setToolTipText(column.getTooltipText());
                 newColumn.setMoveable(column.isMovebale());

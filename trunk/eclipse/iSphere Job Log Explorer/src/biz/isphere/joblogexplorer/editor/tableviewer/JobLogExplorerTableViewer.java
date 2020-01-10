@@ -387,7 +387,7 @@ public class JobLogExplorerTableViewer implements SelectionListener {
 
     private TableColumn createColumn(Table table, Columns column, String text, int style) {
 
-        TableColumn tableColumn = dialogSettingsManager.createResizableTableColumn(table, style, column.index, column.name, column.width);
+        TableColumn tableColumn = dialogSettingsManager.createResizableTableColumn(table, style, column.name, column.width);
         tableColumn.setText(text);
 
         return tableColumn;
