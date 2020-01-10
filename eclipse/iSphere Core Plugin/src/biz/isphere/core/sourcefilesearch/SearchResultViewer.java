@@ -833,6 +833,8 @@ public class SearchResultViewer {
                 list.append("\t");
                 list.append(Messages.Member);
                 list.append("\t");
+                list.append(Messages.Type);
+                list.append("\t");
                 list.append(Messages.Description);
                 list.append("\t");
                 list.append(Messages.Last_changed);
@@ -846,6 +848,8 @@ public class SearchResultViewer {
                     list.append(searchResult.getFile());
                     list.append("\t");
                     list.append(searchResult.getMember());
+                    list.append("\t");
+                    list.append(searchResult.getSrcType());
                     list.append("\t");
                     list.append(searchResult.getDescription());
                     list.append("\t");
