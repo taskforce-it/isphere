@@ -8,6 +8,8 @@
 
 package biz.isphere.base.internal;
 
+import java.util.Arrays;
+
 public final class IntHelper {
 
     public static final String BYTE = "bytes"; //$NON-NLS-1$
@@ -182,6 +184,34 @@ public final class IntHelper {
         }
 
         return -1;
+    }
+
+    public static int[] toIntArray(String arrayOfInt) {
+
+        if (arrayOfInt == null || arrayOfInt.length() < 2) {
+            return new int[0];
+        }
+
+        if (arrayOfInt.startsWith("[") && arrayOfInt.endsWith("]")) {
+            arrayOfInt = arrayOfInt.substring(1, arrayOfInt.length() - 1);
+        }
+
+        // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        String[] values = arrayOfInt.split(",");
+
+        int[] intValues = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            intValues[i] = IntHelper.tryParseInt(values[i].trim(), -1);
+            if (intValues[i] < 0) {
+                return new int[0];
+            }
+        }
+
+        return intValues;
+    }
+
+    public static String toString(int[] intArray) {
+        return Arrays.toString(intArray);
     }
 
 }
