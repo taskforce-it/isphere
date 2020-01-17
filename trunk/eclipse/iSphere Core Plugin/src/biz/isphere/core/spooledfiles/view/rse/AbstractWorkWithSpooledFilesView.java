@@ -9,7 +9,9 @@
 package biz.isphere.core.spooledfiles.view.rse;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -75,7 +77,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     private static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$
     private static final String FILTER_POOL_NAME = "filterPoolName"; //$NON-NLS-1$
     private static final String FILTER_NAME = "filterName"; //$NON-NLS-1$
-    private static final String FILTER_STRING = "filterString_"; //$NON-NLS-1$
+    private static final String FILTER_STRING = "filterString"; //$NON-NLS-1$
     private static final String FILTER_STRING_DELIMITER = "\\|"; //$NON-NLS-1$
 
     private Composite mainArea;
@@ -103,6 +105,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         this.workWithSpooledFilesHelper = new WorkWithSpooledFilesHelper(null, null);
         this.workWithSpooledFilesHelper.addChangedListener(this);
+        this.pinProperties = new HashMap<String, String>();
 
         getViewManager().add(this);
     }
@@ -128,7 +131,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         super.init(site);
 
         setPartName(Messages.Spooled_Files_View);
-        initializePinProperties();
     }
 
     @Override
@@ -150,7 +152,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         workWithSpooledFilesPanel = new WorkWithSpooledFilesPanel(mainArea, SWT.NONE);
         workWithSpooledFilesPanel.setChangedListener(this);
         workWithSpooledFilesPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
-        workWithSpooledFilesPanel.setPinProperties(pinProperties);
         workWithSpooledFilesPanel.addSelectionChangedListener(this);
 
         getSite().setSelectionProvider(workWithSpooledFilesPanel);
@@ -166,15 +167,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                 restoreData();
             }
         }
-    }
-
-    private void initializePinProperties() {
-
-        pinProperties = new HashMap<String, String>();
-        pinProperties.put(CONNECTION_NAME, null);
-        pinProperties.put(FILTER_POOL_NAME, null);
-        pinProperties.put(FILTER_NAME, null);
-        pinProperties.put(FILTER_STRING, null);
     }
 
     private void updatePinProperties() {
@@ -278,8 +270,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      */
     private void restoreData() {
 
-        pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, pinProperties.keySet());
-        workWithSpooledFilesPanel.restorePinProperties(pinProperties);
+        Set<String> keySet = new HashSet<String>();
+        keySet.add(CONNECTION_NAME);
+        keySet.add(FILTER_POOL_NAME);
+        keySet.add(FILTER_NAME);
+        keySet.add(FILTER_STRING);
+
+        pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, keySet);
+        // workWithSpooledFilesPanel.restoreData(pinProperties);
 
         String connectionName = pinProperties.get(CONNECTION_NAME);
         if (StringHelper.isNullOrEmpty(connectionName)) {
@@ -398,8 +396,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
                 if (isPinned()) {
                     updatePinProperties();
-                } else {
-                    initializePinProperties();
                 }
 
                 loadSpooledFilesJob = null;
@@ -488,8 +484,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         if (pinned) {
             updatePinProperties();
-        } else {
-            initializePinProperties();
         }
     }
 
@@ -503,6 +497,12 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     public Map<String, String> getPinProperties() {
+
+        Map<String, String> panelPinProperties = workWithSpooledFilesPanel.getPinProperties();
+        if (panelPinProperties != null) {
+            pinProperties.putAll(panelPinProperties);
+        }
+
         return pinProperties;
     }
 

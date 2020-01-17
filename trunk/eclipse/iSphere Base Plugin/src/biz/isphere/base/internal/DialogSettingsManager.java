@@ -12,21 +12,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 public class DialogSettingsManager {
 
-    public static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
     public static final String COLUMN_NAME = "COLUMN_NAME";
+    public static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
+    public static final String COLUMN_ORDER = "COLUMN_ORDER";
 
     private IDialogSettings dialogSettings;
     private Class<?> section;
 
     private SimpleDateFormat dateFormatter;
     private ControlAdapter columnResizeListener;
+    private Listener columnMoveListener;
 
     public DialogSettingsManager(IDialogSettings aDialogSettings) {
         this(aDialogSettings, null);
@@ -90,7 +95,7 @@ public class DialogSettingsManager {
     }
 
     /**
-     * Retrieves the the value that is assigned to a given key.
+     * Retrieves the value that is assigned to a given key.
      * 
      * @param aKey - key, that is used to retrieve the value from the store
      * @param aDefault - default value, that is returned if then key does not
@@ -99,6 +104,20 @@ public class DialogSettingsManager {
      */
     public int loadIntValue(String aKey, int aDefault) {
         return IntHelper.tryParseInt(getDialogSettings().get(aKey), aDefault);
+    }
+
+    /**
+     * Retrieves the integer array that is assigned to a given key.
+     * 
+     * @param aKey - key, that is used to retrieve the value from the store
+     * @return the integer array that is assigned to the key
+     */
+    public int[] loadIntValues(String aKey) {
+        String arrayOfInt = getDialogSettings().get(aKey);
+        if (StringHelper.isNullOrEmpty(arrayOfInt)) {
+            return new int[0];
+        }
+        return IntHelper.toIntArray(arrayOfInt);
     }
 
     /**
@@ -114,7 +133,18 @@ public class DialogSettingsManager {
     }
 
     /**
-     * Retrieves the the value that is assigned to a given key.
+     * Stores a given integer array to preserve it for the next time the dialog
+     * is shown.
+     * 
+     * @param aKey - key, the value is assigned to
+     * @param aValue - the screen value that is stored
+     */
+    public void storeValue(String aKey, int[] aValue) {
+        storeValue(aKey, IntHelper.toString(aValue));
+    }
+
+    /**
+     * Retrieves the value that is assigned to a given key.
      * 
      * @param aKey - key, that is used to retrieve the value from the store
      * @param aDefault - default value, that is returned if then key does not
@@ -173,6 +203,55 @@ public class DialogSettingsManager {
     }
 
     /**
+     * Produces a resizable table column for a given table.
+     * 
+     * @param table - Table, the column is added to.
+     * @param style - The style of column to construct.
+     * @param name - The name of the table column.
+     * @param width - The initial width of the table column.
+     * @param index - initial index of the column in the table.
+     * @return
+     */
+    public TableColumn createResizableTableColumn(Table table, int style, String name, int width, int index) {
+
+        TableColumn tableColumn = createResizableTableColumn(table, style, name, width);
+        tableColumn.setMoveable(true);
+
+        tableColumn.setData(COLUMN_ORDER, new Integer(index));
+
+        tableColumn.addListener(SWT.Move, getColumnMoveListener());
+
+        int[] columnOrder = loadIntValues(COLUMN_ORDER);
+        if (columnOrder.length == table.getColumnCount()) {
+            table.setColumnOrder(columnOrder);
+        }
+
+        return tableColumn;
+    }
+
+    /**
+     * Resets the order of the table columns to their default order.
+     * 
+     * @param table - table, whose columns are set back to their default order
+     */
+    // public void resetColumnOrder(Table table) {
+    //
+    // TableColumn[] tableColumns = table.getColumns();
+    // int[] columnOrder = new int[tableColumns.length];
+    //
+    // for (int i = 0; i < tableColumns.length; i++) {
+    // int index = getColumnIndex(tableColumns[i]);
+    // if (index >= 0 && index < tableColumns.length) {
+    // columnOrder[i] = index;
+    // } else {
+    // return;
+    // }
+    // }
+    //
+    // table.setColumnOrder(columnOrder);
+    // }
+
+    /**
      * Resets the columns sizes of a given table to their original widths. The
      * table columns must have been created with
      * {@link #createResizableTableColumn(Table, int, String, int)}. Objects
@@ -215,6 +294,26 @@ public class DialogSettingsManager {
         return null;
     }
 
+    /**
+     * Returns default index of a given resizable and moveable table column.
+     * 
+     * @param column - table column
+     * @return index of the table column
+     */
+    public int getColumnIndex(TableColumn column) {
+
+        if (column == null) {
+            return -1;
+        }
+
+        Object objectName = column.getData(COLUMN_ORDER);
+        if (objectName instanceof Integer) {
+            return (Integer)objectName;
+        }
+
+        return -1;
+    }
+
     private ControlAdapter getColumnResizeListener() {
 
         if (columnResizeListener == null) {
@@ -231,6 +330,22 @@ public class DialogSettingsManager {
         }
 
         return columnResizeListener;
+    }
+
+    private Listener getColumnMoveListener() {
+
+        if (columnMoveListener == null) {
+            columnMoveListener = new Listener() {
+                public void handleEvent(Event event) {
+                    TableColumn column = (TableColumn)event.widget;
+                    Table table = column.getParent();
+                    int[] columnOrder = table.getColumnOrder();
+                    storeValue(COLUMN_ORDER, columnOrder);
+                }
+            };
+        }
+
+        return columnMoveListener;
     }
 
     private String produceColumnWidthKey(TableColumn column) {
