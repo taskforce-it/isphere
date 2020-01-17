@@ -9,51 +9,99 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.spooledfiles.SpooledFile;
 
+/**
+ * This table sorter automatically stores the sort properties in
+ * "dialog_settings.xml". Previously stored properties can be re-applied by
+ * calling {@link #setPreviousSortOrder()}.
+ */
 public class WorkWithSpooledFilesSorter extends ViewerSorter {
+
+    private static final String SORT_COLUMN_INDEX = "sortColumnIndex"; //$NON-NLS-1$
+    private static final String SORT_DIRECTION = "sortDirection"; //$NON-NLS-1$
+
+    private static final String SORT_UP = "Up"; //$NON-NLS-1$
+    private static final String SORT_DOWN = "Down"; //$NON-NLS-1$
+    private static final String SORT_NONE = "None"; //$NON-NLS-1$
 
     private TableViewer tableViewer;
     private Table table;
+    private DialogSettingsManager dialogSettingsManager;
 
     private int columnIndex;
     private boolean isReverseOrder;
 
-    public WorkWithSpooledFilesSorter(TableViewer tableViewer) {
+    public WorkWithSpooledFilesSorter(TableViewer tableViewer, DialogSettingsManager dialogSettingsManager) {
         this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
-
-        setSortColumn(null);
-    }
-
-    public void refresh() {
-        tableViewer.refresh();
+        this.dialogSettingsManager = dialogSettingsManager;
     }
 
     public int getSortColumnIndex() {
         return columnIndex;
     }
 
-    public int getSortDirection() {
-        return table.getSortDirection();
+    public String getSortDirection() {
+
+        int sortDirection = table.getSortDirection();
+        if (sortDirection == SWT.UP) {
+            return SORT_UP;
+        } else if (sortDirection == SWT.DOWN) {
+            return SORT_DOWN;
+        } else {
+            return SORT_NONE;
+        }
     }
 
     public void setSortColumn(TableColumn column) {
-        setSortProperties(column, getSortDirection(column));
+        setSortProperties(column, changeSortDirection(column));
     }
 
-    public void setSortColumn(TableColumn column, int direction) {
+    public void setSortColumn(TableColumn column, String direction) {
 
-        if (column == null || direction == SWT.NONE) {
+        if (column == null) {
             setSortProperties(null, SWT.NONE);
         } else {
-            if (direction == SWT.UP || direction == SWT.DOWN) {
-                setSortProperties(column, direction);
+            if (SORT_UP.equals(direction)) {
+                setSortProperties(column, SWT.UP);
+            } else if (SORT_DOWN.equals(direction)) {
+                setSortProperties(column, SWT.DOWN);
+            } else {
+                setSortProperties(column, SWT.NONE);
             }
         }
     }
 
-    private int getSortDirection(TableColumn column) {
+    public void setPreviousSortOrder() {
+
+        if (dialogSettingsManager == null) {
+            return;
+        }
+
+        String sortColumnIndex = dialogSettingsManager.loadValue(SORT_COLUMN_INDEX, null);
+        if (sortColumnIndex == null) {
+            return;
+        }
+
+        String sortOrder = dialogSettingsManager.loadValue(SORT_DIRECTION, null);
+        if (sortOrder == null) {
+            return;
+        }
+
+        int columnIndex = IntHelper.tryParseInt(sortColumnIndex, -1);
+        if (columnIndex >= 0 && columnIndex < table.getColumnCount()) {
+            setSortColumn(table.getColumn(columnIndex), sortOrder);
+        }
+    }
+
+    public void refresh() {
+        tableViewer.refresh();
+    }
+
+    private int changeSortDirection(TableColumn column) {
 
         if (column == table.getSortColumn()) {
             if (table.getSortDirection() == SWT.NONE) {
@@ -84,6 +132,11 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
             isReverseOrder = true;
         } else {
             isReverseOrder = false;
+        }
+
+        if (dialogSettingsManager != null) {
+            dialogSettingsManager.storeValue(SORT_COLUMN_INDEX, Integer.toString(getSortColumnIndex()));
+            dialogSettingsManager.storeValue(SORT_DIRECTION, getSortDirection());
         }
     }
 
@@ -134,39 +187,39 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
     public Object getColumnValue(SpooledFile spooledFile, int columnIndex) {
 
-        if (columnIndex == Columns.STATUS.index) {
+        if (columnIndex == Columns.STATUS.ordinal()) {
             return spooledFile.getStatus();
-        } else if (columnIndex == Columns.FILE.index) {
+        } else if (columnIndex == Columns.FILE.ordinal()) {
             return spooledFile.getFile();
-        } else if (columnIndex == Columns.FILE_NUMBER.index) {
+        } else if (columnIndex == Columns.FILE_NUMBER.ordinal()) {
             return spooledFile.getFileNumber();
-        } else if (columnIndex == Columns.JOB_NAME.index) {
+        } else if (columnIndex == Columns.JOB_NAME.ordinal()) {
             return spooledFile.getJobName();
-        } else if (columnIndex == Columns.JOB_USER.index) {
+        } else if (columnIndex == Columns.JOB_USER.ordinal()) {
             return spooledFile.getJobUser();
-        } else if (columnIndex == Columns.JOB_NUMBER.index) {
+        } else if (columnIndex == Columns.JOB_NUMBER.ordinal()) {
             return spooledFile.getJobNumber();
-        } else if (columnIndex == Columns.JOB_SYSTEM.index) {
+        } else if (columnIndex == Columns.JOB_SYSTEM.ordinal()) {
             return spooledFile.getJobSystem();
-        } else if (columnIndex == Columns.CREATION_DATE.index) {
+        } else if (columnIndex == Columns.CREATION_DATE.ordinal()) {
             return spooledFile.getCreationDateAsDate();
-        } else if (columnIndex == Columns.CREATION_TIME.index) {
+        } else if (columnIndex == Columns.CREATION_TIME.ordinal()) {
             return spooledFile.getCreationTimeAsDate();
-        } else if (columnIndex == Columns.OUTPUT_QUEUE.index) {
+        } else if (columnIndex == Columns.OUTPUT_QUEUE.ordinal()) {
             return spooledFile.getOutputQueue();
-        } else if (columnIndex == Columns.OUTPUT_PRIORITY.index) {
+        } else if (columnIndex == Columns.OUTPUT_PRIORITY.ordinal()) {
             return spooledFile.getOutputPriority();
-        } else if (columnIndex == Columns.USER_DATE.index) {
+        } else if (columnIndex == Columns.USER_DATA.ordinal()) {
             return spooledFile.getUserData();
-        } else if (columnIndex == Columns.FORM_TYPE.index) {
+        } else if (columnIndex == Columns.FORM_TYPE.ordinal()) {
             return spooledFile.getFormType();
-        } else if (columnIndex == Columns.COPIES.index) {
+        } else if (columnIndex == Columns.COPIES.ordinal()) {
             return spooledFile.getCopies();
-        } else if (columnIndex == Columns.PAGES.index) {
+        } else if (columnIndex == Columns.PAGES.ordinal()) {
             return spooledFile.getPages();
-        } else if (columnIndex == Columns.CURRENT_PAGE.index) {
+        } else if (columnIndex == Columns.CURRENT_PAGE.ordinal()) {
             return spooledFile.getCurrentPage();
-        } else if (columnIndex == Columns.CREATION_TIMESTAMP.index) {
+        } else if (columnIndex == Columns.CREATION_TIMESTAMP.ordinal()) {
             return spooledFile.getCreationTimestamp();
         }
 
