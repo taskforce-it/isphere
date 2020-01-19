@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,10 @@ public abstract class Member {
     public abstract boolean download(IProgressMonitor monitor) throws Exception;
 
     public abstract String upload(IProgressMonitor monitor) throws Exception;
+
+    public abstract String upload(IProgressMonitor monitor, Member fromMember) throws Exception;
+
+    public abstract String getDownloadPath();
 
     public abstract IFile getLocalResource();
 

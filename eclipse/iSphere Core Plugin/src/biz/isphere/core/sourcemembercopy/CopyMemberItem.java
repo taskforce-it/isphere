@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,14 +235,14 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return buffer.toString();
     }
 
-    public boolean performCopyOperation(String fromConnectionName, String toConnectionName) {
+    public boolean performCopyOperation(String fromConnectionName, String toConnectionName, boolean isInterSystemFastCopy) {
 
         String message;
 
         if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
             message = performLocalCopy(fromConnectionName);
         } else {
-            message = performCopyBetweenConnections(fromConnectionName, toConnectionName);
+            message = performCopyBetweenConnections(fromConnectionName, toConnectionName, isInterSystemFastCopy);
         }
 
         if (message != null) {
@@ -329,7 +329,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return null;
     }
 
-    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName) {
+    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName, boolean isInterSystemFastCopy) {
 
         try {
 
@@ -349,7 +349,16 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             debugPrint("Retrieving the source member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            SourceLine[] sourceLines = fromSourceMember.downloadSourceMember(null);
+            Object[] sourceLines;
+
+            if (!isInterSystemFastCopy) {
+                sourceLines = fromSourceMember.downloadSourceMember(null);
+            } else {
+                sourceLines = new String[0];
+                if (fromSourceMember.download(null)) {
+                    sourceLines = fromSourceMember.getContents();
+                }
+            }
 
             if (sourceLines.length == 0) {
                 return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0, new Object[] { getFromLibrary(), getFromFile(),
@@ -381,7 +390,12 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             debugPrint("Retrieving the target member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            message = toSourceMember.uploadSourceMember(sourceLines, null);
+            if (!isInterSystemFastCopy) {
+                message = toSourceMember.uploadSourceMember((SourceLine[])sourceLines, null);
+            } else {
+                message = toSourceMember.upload(null, fromSourceMember);
+            }
+
             if (message != null) {
                 return message;
             }
