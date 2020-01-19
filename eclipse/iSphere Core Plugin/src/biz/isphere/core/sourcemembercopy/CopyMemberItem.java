@@ -14,6 +14,7 @@ import java.util.List;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -91,6 +92,13 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             this.toMember = toMember;
             notifyModifiedListeners();
         }
+    }
+
+    public boolean isError() {
+        if (!StringHelper.isNullOrEmpty(getErrorMessage())) {
+            return true;
+        }
+        return false;
     }
 
     public String getErrorMessage() {
