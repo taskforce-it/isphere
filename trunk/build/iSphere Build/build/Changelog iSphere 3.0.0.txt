@@ -1,8 +1,16 @@
-Changelog: iSphere 3.6.0.b007
+
+Changelog: iSphere 3.6.0.b008
 -----------------------------
  • Improved speed when copying members between systems by using
    cached local files. Added option to select "fast copy" to
    "Copy Members" dialog.
+ • Added "source type" when copying the search result to the
+   clipboard (iSphere Source File Search).
+ • Changed "Spooled Files" view to automatically store "Column size",
+   "Column order" and "Sort order".
+
+Changelog: iSphere 3.6.0.b007
+-----------------------------
  • Fixed issue when deleting spooled files (deleted wrong spooled
    file) and added additional options to button bar of "Spooled
    Files" view.
