@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -157,6 +158,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     }
 
     private void validateUserInputAndPerformCopyOperation() {
+
+        tableViewer.setSelection(null);
 
         copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setToLibrary(getToLibraryName());
@@ -627,6 +630,15 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
                 viewer.refresh(true);
             } else {
                 viewer.update(item, null);
+                if (isCopying()) {
+                    viewer.reveal(item);
+                    viewer.setSelection(new StructuredSelection(item));
+                } else if (isValidating()) {
+                    if (item.isError() && viewer.getSelection().isEmpty()) {
+                        viewer.reveal(item);
+                        viewer.setSelection(new StructuredSelection(item));
+                    }
+                }
             }
             setControlEnablement();
             mainArea.update();
