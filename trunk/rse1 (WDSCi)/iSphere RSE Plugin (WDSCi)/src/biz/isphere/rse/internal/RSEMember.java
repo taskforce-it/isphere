@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,11 @@ public class RSEMember extends Member {
 
     @Override
     public String upload(IProgressMonitor monitor) throws Exception {
+        return upload(monitor, null);
+    }
+
+    @Override
+    public String upload(IProgressMonitor monitor, Member fromMember) throws Exception {
 
         _editableMember.connect();
         if (!_editableMember.isConnected()) {
@@ -104,7 +109,12 @@ public class RSEMember extends Member {
         }
         _editableMember.closeStream();
 
-        String localPath = _editableMember.getDownloadPath();
+        String localPath;
+        if (fromMember != null) {
+            localPath = fromMember.getDownloadPath();
+        } else {
+            localPath = _editableMember.getDownloadPath();
+        }
 
         ISeriesMemberTransfer.acquireLock(localPath);
 
@@ -143,6 +153,11 @@ public class RSEMember extends Member {
         }
 
         return null;
+    }
+
+    @Override
+    public String getDownloadPath() {
+        return _editableMember.getDownloadPath();
     }
 
     @Override
