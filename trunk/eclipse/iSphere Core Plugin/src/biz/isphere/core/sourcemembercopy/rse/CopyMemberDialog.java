@@ -306,7 +306,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
         chkBoxInterSystemFastCopy = WidgetFactory.createCheckbox(mainArea);
-        chkBoxInterSystemFastCopy.setText("Inter system fast copy (uncommitted feature)");
+        chkBoxInterSystemFastCopy.setText("Use local cache (uncommitted feature)");
         chkBoxInterSystemFastCopy.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
         createStatusLine(mainArea);
