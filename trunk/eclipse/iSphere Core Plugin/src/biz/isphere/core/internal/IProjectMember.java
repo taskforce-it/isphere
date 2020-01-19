@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,11 +90,21 @@ public class IProjectMember extends Member {
         throw produceUnsupportedOperationException();
     }
 
+    @Override
+    public String upload(IProgressMonitor monitor, Member fromMember) throws Exception {
+        throw produceUnsupportedOperationException();
+    }
+
     public ISeriesHostObjectLock queryLocks() throws Exception {
         throw produceUnsupportedOperationException();
     }
 
     public String getMemberLockedMessages(ISeriesHostObjectLock lock) {
+        throw produceUnsupportedOperationException();
+    }
+
+    @Override
+    public String getDownloadPath() {
         throw produceUnsupportedOperationException();
     }
 

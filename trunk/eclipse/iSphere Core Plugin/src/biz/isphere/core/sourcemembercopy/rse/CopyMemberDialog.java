@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -68,6 +69,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private TableViewer tableViewer;
     private Button chkBoxReplace;
     private Button chkBoxIgnoreDataLostError;
+    private Button chkBoxInterSystemFastCopy;
     private Label labelNumElem;
 
     private static final int COLUMN_FROM_LIBRARY = 0;
@@ -159,6 +161,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setToLibrary(getToLibraryName());
         copyMemberService.setToFile(getToFileName());
+        copyMemberService.setInterSystemFastCopy(chkBoxInterSystemFastCopy.getSelection());
 
         copyMemberValidator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection(), this);
 
@@ -242,6 +245,12 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
             comboToConnection = WidgetFactory.createReadOnlyCombo(mainArea);
             comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
             comboToConnection.setItems(connections);
+            comboToConnection.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    setControlEnablement();
+                }
+            });
         } else {
             comboToConnection = null;
         }
@@ -292,6 +301,10 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+
+        chkBoxInterSystemFastCopy = WidgetFactory.createCheckbox(mainArea);
+        chkBoxInterSystemFastCopy.setText("Inter system fast copy (uncommitted feature)");
+        chkBoxInterSystemFastCopy.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
         createStatusLine(mainArea);
 
@@ -513,6 +526,12 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         tableViewer.getTable().setEnabled(enabled);
         chkBoxReplace.setEnabled(enabled);
         chkBoxIgnoreDataLostError.setEnabled(enabled);
+
+        if (enabled) {
+            chkBoxInterSystemFastCopy.setEnabled(!comboToConnection.getText().equals(copyMemberService.getFromConnectionName()));
+        } else {
+            chkBoxInterSystemFastCopy.setEnabled(enabled);
+        }
     }
 
     private void setButtonEnablement(Button button, boolean enabled) {

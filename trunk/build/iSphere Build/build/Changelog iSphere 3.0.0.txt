@@ -1,5 +1,8 @@
 Changelog: iSphere 3.6.0.b007
 -----------------------------
+ • Improved speed when copying members between systems by using
+   cached local files. Added option to select "fast copy" to
+   "Copy Members" dialog.
  • Fixed issue when deleting spooled files (deleted wrong spooled
    file) and added additional options to button bar of "Spooled
    Files" view.

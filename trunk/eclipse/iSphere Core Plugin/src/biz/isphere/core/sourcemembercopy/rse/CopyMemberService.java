@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toLibrary;
     private String toFile;
     private SortedSet<CopyMemberItem> members;
+    private boolean isInterSystemFastCopy;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -55,6 +56,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toLibrary = null;
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
+        this.isInterSystemFastCopy = true;
     }
 
     public CopyMemberItem addItem(String file, String library, String member) {
@@ -135,6 +137,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toFile = fileName;
     }
 
+    public void setInterSystemFastCopy(boolean isInterSystemFastCopy) {
+        this.isInterSystemFastCopy = isInterSystemFastCopy;
+    }
+
     public CopyMemberItem[] getCopiedItems() {
 
         SortedSet<CopyMemberItem> copied = new TreeSet<CopyMemberItem>();
@@ -189,7 +195,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         isCanceled = false;
 
-        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, this);
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, isInterSystemFastCopy, this);
         copyMembersJob.start();
     }
 
@@ -211,7 +217,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
     }
 
-    public void returnResult(boolean isError, int countMembersCopied) {
+    public void returnResult(boolean isError, int countMembersCopied, long averageTime) {
 
         this.copyMembersJob = null;
 
@@ -308,8 +314,9 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         private DoCopyMembers doCopyMembers;
         private ICopyMembersPostRun postRun;
 
-        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, ICopyMembersPostRun postRun) {
-            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members);
+        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean isInterSystemFastCopy,
+            ICopyMembersPostRun postRun) {
+            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members, isInterSystemFastCopy);
             this.postRun = postRun;
         }
 
@@ -331,7 +338,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                 }
 
             } finally {
-                postRun.returnResult(doCopyMembers.isError(), doCopyMembers.getMembersCopiedCount());
+                postRun.returnResult(doCopyMembers.isError(), doCopyMembers.getMembersCopiedCount(), doCopyMembers.getAverageTime());
                 endProcess();
             }
         }
@@ -345,15 +352,18 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         private String fromConnectionName;
         private String toConnectionName;
+        private boolean isInterSystemFastCopy;
         private SortedSet<CopyMemberItem> members;
 
         private boolean isCanceled;
         private boolean isError;
         private int copiedCount;
+        private long averageTime;
 
-        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members) {
+        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean isInterSystemFastCopy) {
             this.fromConnectionName = fromConnectionName;
             this.toConnectionName = toConnectionName;
+            this.isInterSystemFastCopy = isInterSystemFastCopy;
             this.members = members;
             this.isCanceled = false;
         }
@@ -363,6 +373,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
             isError = false;
             copiedCount = 0;
+
+            long startTime = System.currentTimeMillis();
 
             for (CopyMemberItem member : members) {
 
@@ -374,12 +386,16 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                     continue;
                 }
 
-                if (!member.performCopyOperation(fromConnectionName, toConnectionName)) {
+                if (!member.performCopyOperation(fromConnectionName, toConnectionName, isInterSystemFastCopy)) {
                     isError = true;
                 } else {
                     copiedCount++;
                 }
             }
+
+            averageTime = (System.currentTimeMillis() - startTime) / copiedCount;
+            // System.out.println("\nAverage time used: " + averageTime +
+            // " mSecs.");
         }
 
         public void cancel() {
@@ -392,6 +408,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         public int getMembersCopiedCount() {
             return copiedCount;
+        }
+
+        public long getAverageTime() {
+            return averageTime;
         }
     }
 }
