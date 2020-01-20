@@ -243,14 +243,14 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return buffer.toString();
     }
 
-    public boolean performCopyOperation(String fromConnectionName, String toConnectionName, boolean isInterSystemFastCopy) {
+    public boolean performCopyOperation(String fromConnectionName, String toConnectionName, boolean useLocalCache) {
 
         String message;
 
         if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
             message = performLocalCopy(fromConnectionName);
         } else {
-            message = performCopyBetweenConnections(fromConnectionName, toConnectionName, isInterSystemFastCopy);
+            message = performCopyBetweenConnections(fromConnectionName, toConnectionName, useLocalCache);
         }
 
         if (message != null) {
@@ -337,7 +337,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return null;
     }
 
-    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName, boolean isInterSystemFastCopy) {
+    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName, boolean useLocalCache) {
 
         try {
 
@@ -359,7 +359,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
             Object[] sourceLines;
 
-            if (!isInterSystemFastCopy) {
+            if (!useLocalCache) {
                 sourceLines = fromSourceMember.downloadSourceMember(null);
             } else {
                 sourceLines = new String[0];
@@ -398,7 +398,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             debugPrint("Retrieving the target member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            if (!isInterSystemFastCopy) {
+            if (!useLocalCache) {
                 message = toSourceMember.uploadSourceMember((SourceLine[])sourceLines, null);
             } else {
                 message = toSourceMember.upload(null, fromSourceMember);

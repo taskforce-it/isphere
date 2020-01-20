@@ -36,7 +36,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toLibrary;
     private String toFile;
     private SortedSet<CopyMemberItem> members;
-    private boolean isInterSystemFastCopy;
+    private boolean useLocalCache;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -56,7 +56,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toLibrary = null;
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
-        this.isInterSystemFastCopy = true;
+        this.useLocalCache = true;
     }
 
     public CopyMemberItem addItem(String file, String library, String member) {
@@ -137,8 +137,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toFile = fileName;
     }
 
-    public void setInterSystemFastCopy(boolean isInterSystemFastCopy) {
-        this.isInterSystemFastCopy = isInterSystemFastCopy;
+    public void setUseLocalCache(boolean useLocalCache) {
+        this.useLocalCache = useLocalCache;
     }
 
     public CopyMemberItem[] getCopiedItems() {
@@ -195,7 +195,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         isCanceled = false;
 
-        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, isInterSystemFastCopy, this);
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, useLocalCache, this);
         copyMembersJob.start();
     }
 
@@ -314,9 +314,9 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         private DoCopyMembers doCopyMembers;
         private ICopyMembersPostRun postRun;
 
-        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean isInterSystemFastCopy,
+        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean useLocalCache,
             ICopyMembersPostRun postRun) {
-            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members, isInterSystemFastCopy);
+            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members, useLocalCache);
             this.postRun = postRun;
         }
 
@@ -352,7 +352,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         private String fromConnectionName;
         private String toConnectionName;
-        private boolean isInterSystemFastCopy;
+        private boolean useLocalCache;
         private SortedSet<CopyMemberItem> members;
 
         private boolean isCanceled;
@@ -360,10 +360,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         private int copiedCount;
         private long averageTime;
 
-        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean isInterSystemFastCopy) {
+        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean useLocalCache) {
             this.fromConnectionName = fromConnectionName;
             this.toConnectionName = toConnectionName;
-            this.isInterSystemFastCopy = isInterSystemFastCopy;
+            this.useLocalCache = useLocalCache;
             this.members = members;
             this.isCanceled = false;
         }
@@ -386,7 +386,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                     continue;
                 }
 
-                if (!member.performCopyOperation(fromConnectionName, toConnectionName, isInterSystemFastCopy)) {
+                if (!member.performCopyOperation(fromConnectionName, toConnectionName, useLocalCache)) {
                     isError = true;
                 } else {
                     copiedCount++;
