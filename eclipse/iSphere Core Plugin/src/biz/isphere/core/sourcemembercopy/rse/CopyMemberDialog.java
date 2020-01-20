@@ -45,6 +45,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.sourcemembercopy.Columns;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
@@ -61,6 +62,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private static int BUTTON_RESET_ID = IDialogConstants.RETRY_ID;
     private static int BUTTON_CLOSE_CANCEL = IDialogConstants.CANCEL_ID;
 
+    private static String USE_LOCAL_CACHE = "useLocalCache"; //$NON-NLS-1$
+
     private CopyMemberService copyMemberService;
     private CopyMemberValidator copyMemberValidator;
 
@@ -70,16 +73,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private TableViewer tableViewer;
     private Button chkBoxReplace;
     private Button chkBoxIgnoreDataLostError;
-    private Button chkBoxInterSystemFastCopy;
+    private Button chkBoxUseLocalCache;
     private Label labelNumElem;
-
-    private static final int COLUMN_FROM_LIBRARY = 0;
-    private static final int COLUMN_FROM_FILE = 1;
-    private static final int COLUMN_FROM_MEMBER = 2;
-    private static final int COLUMN_TO_MEMBER = 3;
-    private static final int COLUMN_ERROR_MESSAGE = 4;
-
-    private static final String TABLE_COLUMN = "TABLE_COLUMN_";
 
     private Composite mainArea;
 
@@ -164,7 +159,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setToLibrary(getToLibraryName());
         copyMemberService.setToFile(getToFileName());
-        copyMemberService.setInterSystemFastCopy(chkBoxInterSystemFastCopy.getSelection());
+        copyMemberService.setUseLocalCache(chkBoxUseLocalCache.getSelection());
 
         copyMemberValidator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection(), this);
 
@@ -272,11 +267,11 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
-        addTableColumn(tableViewer, Messages.Library);
-        addTableColumn(tableViewer, Messages.File);
-        addTableColumn(tableViewer, Messages.Member);
-        addTableColumn(tableViewer, Messages.To_member_colhdg);
-        addTableColumn(tableViewer, Messages.Result, 400);
+        addTableColumn(tableViewer.getTable(), Columns.FROM_LIBRARY);
+        addTableColumn(tableViewer.getTable(), Columns.FROM_FILE);
+        addTableColumn(tableViewer.getTable(), Columns.FROM_MEMBER);
+        addTableColumn(tableViewer.getTable(), Columns.TO_MEMBER);
+        addTableColumn(tableViewer.getTable(), Columns.ERROR_MESSAGE, 400);
 
         tableViewer.setCellModifier(new CopyMemberItemTableCellModifier(tableViewer));
         tableViewer.setContentProvider(new ContentProviderMemberItems());
@@ -305,9 +300,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
-        chkBoxInterSystemFastCopy = WidgetFactory.createCheckbox(mainArea);
-        chkBoxInterSystemFastCopy.setText("Use local cache (uncommitted feature)");
-        chkBoxInterSystemFastCopy.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+        chkBoxUseLocalCache = WidgetFactory.createCheckbox(mainArea);
+        chkBoxUseLocalCache.setText("Use local cache (uncommitted feature)");
+        chkBoxUseLocalCache.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
         createStatusLine(mainArea);
 
@@ -383,19 +378,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         tableViewer.setInput(copyMemberService);
 
-        loadColumnWidth(COLUMN_FROM_LIBRARY, 120);
-        loadColumnWidth(COLUMN_FROM_FILE, 120);
-        loadColumnWidth(COLUMN_FROM_MEMBER, 120);
-        loadColumnWidth(COLUMN_TO_MEMBER, 120);
-        loadColumnWidth(COLUMN_ERROR_MESSAGE, 400);
-    }
-
-    private void loadColumnWidth(int tableColumnIndex, int defaultWidth) {
-
-        int width = loadIntValue(TABLE_COLUMN + tableColumnIndex, defaultWidth);
-
-        Table table = tableViewer.getTable();
-        table.getColumn(tableColumnIndex).setWidth(width);
+        boolean useLocalCache = getDialogSettingsManager().loadBooleanValue(USE_LOCAL_CACHE, false);
+        chkBoxUseLocalCache.setSelection(useLocalCache);
     }
 
     /**
@@ -403,19 +387,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
      */
     private void storeScreenValues() {
 
-        storeColumnWidth(COLUMN_FROM_LIBRARY);
-        storeColumnWidth(COLUMN_FROM_FILE);
-        storeColumnWidth(COLUMN_FROM_MEMBER);
-        storeColumnWidth(COLUMN_TO_MEMBER);
-        storeColumnWidth(COLUMN_ERROR_MESSAGE);
-    }
-
-    private void storeColumnWidth(int tableColumnIndex) {
-
-        Table table = tableViewer.getTable();
-        int width = table.getColumn(tableColumnIndex).getWidth();
-
-        storeValue(TABLE_COLUMN + tableColumnIndex, width);
+        getDialogSettingsManager().storeValue(USE_LOCAL_CACHE, chkBoxUseLocalCache.getSelection());
     }
 
     private Text createNameField(Composite mainArea, String label) {
@@ -429,16 +401,16 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         return text;
     }
 
-    private TableColumn addTableColumn(TableViewer table, String label) {
-        return addTableColumn(table, label, 120);
+    private TableColumn addTableColumn(Table table, Columns column) {
+        return addTableColumn(table, column, column.width);
     }
 
-    private TableColumn addTableColumn(TableViewer tableViewer, String label, int width) {
-        TableColumn column = new TableColumn(tableViewer.getTable(), SWT.NONE);
-        column.setWidth(width);
-        column.setText(label);
+    private TableColumn addTableColumn(Table table, Columns column, int width) {
 
-        return column;
+        TableColumn tableColumn = getDialogSettingsManager().createResizableTableColumn(tableViewer.getTable(), SWT.LEFT, column.name, width);
+        tableColumn.setText(column.label);
+
+        return tableColumn;
     }
 
     private String getToFileName() {
@@ -531,9 +503,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError.setEnabled(enabled);
 
         if (enabled) {
-            chkBoxInterSystemFastCopy.setEnabled(!comboToConnection.getText().equals(copyMemberService.getFromConnectionName()));
+            chkBoxUseLocalCache.setEnabled(!comboToConnection.getText().equals(copyMemberService.getFromConnectionName()));
         } else {
-            chkBoxInterSystemFastCopy.setEnabled(enabled);
+            chkBoxUseLocalCache.setEnabled(enabled);
         }
     }
 
@@ -654,19 +626,17 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
             CopyMemberItem member = (CopyMemberItem)element;
 
-            switch (columnIndex) {
-            case COLUMN_FROM_LIBRARY:
+            if (columnIndex == Columns.FROM_LIBRARY.ordinal()) {
                 return member.getFromLibrary();
-            case COLUMN_FROM_FILE:
+            } else if (columnIndex == Columns.FROM_FILE.ordinal()) {
                 return member.getFromFile();
-            case COLUMN_FROM_MEMBER:
+            } else if (columnIndex == Columns.FROM_MEMBER.ordinal()) {
                 return member.getFromMember();
-            case COLUMN_TO_MEMBER:
+            } else if (columnIndex == Columns.TO_MEMBER.ordinal()) {
                 return member.getToMember();
-            case COLUMN_ERROR_MESSAGE:
+            } else if (columnIndex == Columns.ERROR_MESSAGE.ordinal()) {
                 return getErrorMessage(member);
-
-            default:
+            } else {
                 return Messages.EMPTY;
             }
         }
@@ -679,10 +649,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
             CopyMemberItem member = (CopyMemberItem)element;
 
-            switch (columnIndex) {
-            case COLUMN_ERROR_MESSAGE:
+            if (columnIndex == Columns.ERROR_MESSAGE.ordinal()) {
                 return getErrorMessage(member);
-            default:
+            } else {
                 return null;
             }
         }
