@@ -46,11 +46,14 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
 import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
+import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
+import com.ibm.etools.iseries.subsystems.qsys.objects.RemoteObjectContext;
 import com.ibm.etools.systems.editor.IRemoteResourceProperties;
 import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
@@ -563,5 +566,24 @@ public class XRDiContributions implements IIBMiHostContributions {
         } else {
             handler.handleReadOnlySourceCompare(members.toArray(new Member[members.size()]));
         }
+    }
+
+    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception {
+
+        IBMiConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        QSYSRemoteMember qsysMember = new QSYSRemoteMember();
+        qsysMember.setLibrary(libraryName);
+        qsysMember.setFile(fileName);
+        qsysMember.setName(memberName);
+        qsysMember.setType(srcType);
+        RemoteObjectContext remoteContext = new RemoteObjectContext(connection.getQSYSObjectSubSystem());
+        qsysMember.setRemoteObjectContext(remoteContext);
+        QSYSEditableRemoteSourceFileMember editableMember = new QSYSEditableRemoteSourceFileMember(qsysMember);
+
+        return editableMember.getLocalResource();
     }
 }

@@ -96,11 +96,20 @@ public class RSEMember extends Member {
 
     @Override
     public String upload(IProgressMonitor monitor) throws Exception {
-        return upload(monitor, null);
+        return uploadMember(monitor, null);
+    }
+
+    public IFile downloadMember(IProgressMonitor monitor) throws Exception {
+
+        if (!download(monitor)) {
+            return null;
+        }
+
+        return getLocalResource();
     }
 
     @Override
-    public String upload(IProgressMonitor monitor, Member fromMember) throws Exception {
+    public String uploadMember(IProgressMonitor monitor, IFile localResource) throws Exception {
 
         _editableMember.connect();
         if (!_editableMember.isConnected()) {
@@ -109,10 +118,10 @@ public class RSEMember extends Member {
         _editableMember.closeStream();
 
         String localPath;
-        if (fromMember != null) {
-            localPath = fromMember.getDownloadPath();
-        } else {
+        if (localResource == null) {
             localPath = _editableMember.getDownloadPath();
+        } else {
+            localPath = localResource.getLocation().toString();
         }
 
         QSYSRemoteMemberTransfer.acquireLock(localPath);
@@ -154,11 +163,6 @@ public class RSEMember extends Member {
         }
 
         return null;
-    }
-
-    @Override
-    public String getDownloadPath() {
-        return _editableMember.getDownloadPath();
     }
 
     @Override

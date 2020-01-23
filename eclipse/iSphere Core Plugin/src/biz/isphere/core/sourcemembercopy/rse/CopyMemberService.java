@@ -15,8 +15,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
@@ -36,7 +42,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toLibrary;
     private String toFile;
     private SortedSet<CopyMemberItem> members;
-    private boolean useLocalCache;
+    // TODO: remove obsolete stmt
+    // private boolean useLocalCache;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -56,12 +63,13 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toLibrary = null;
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
-        this.useLocalCache = true;
+        // TODO: remove obsolete stmt
+        // this.useLocalCache = true;
     }
 
-    public CopyMemberItem addItem(String file, String library, String member) {
+    public CopyMemberItem addItem(String file, String library, String member, String srcType) {
 
-        CopyMemberItem copyMemberItem = new CopyMemberItem(file, library, member);
+        CopyMemberItem copyMemberItem = new CopyMemberItem(file, library, member, srcType);
         copyMemberItem.addModifiedListener(this);
 
         members.add(copyMemberItem);
@@ -137,9 +145,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toFile = fileName;
     }
 
-    public void setUseLocalCache(boolean useLocalCache) {
-        this.useLocalCache = useLocalCache;
-    }
+    // TODO: remove obsolete stmt
+    // public void setUseLocalCache(boolean useLocalCache) {
+    // this.useLocalCache = useLocalCache;
+    // }
 
     public CopyMemberItem[] getCopiedItems() {
 
@@ -195,8 +204,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         isCanceled = false;
 
-        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, useLocalCache, this);
-        copyMembersJob.start();
+        // TODO: remove obsolete stmt
+        // copyMembersJob = new CopyMembersJob(fromConnectionName,
+        // toConnectionName, members, useLocalCache, this);
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, this);
+        copyMembersJob.schedule();
     }
 
     public void updateMembersWithTargetSourceFile() {
@@ -241,7 +253,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     public void cancel() {
 
         if (copyMembersJob != null) {
-            copyMembersJob.cancel();
+            copyMembersJob.cancelOperation();
             isCanceled = true;
         }
     }
@@ -309,25 +321,25 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         public void modified(CopyMemberItem item);
     }
 
-    private class CopyMembersJob extends Thread {
+    private class CopyMembersJob extends Job {
 
         private DoCopyMembers doCopyMembers;
         private ICopyMembersPostRun postRun;
 
-        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean useLocalCache,
-            ICopyMembersPostRun postRun) {
-            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members, useLocalCache);
+        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, ICopyMembersPostRun postRun) {
+            super(Messages.Copying_dots);
+            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members);
             this.postRun = postRun;
         }
 
         @Override
-        public void run() {
+        public IStatus run(IProgressMonitor monitor) {
 
             startProcess();
 
             try {
 
-                doCopyMembers.start();
+                doCopyMembers.start(monitor);
 
                 while (doCopyMembers.isAlive()) {
 
@@ -341,10 +353,14 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                 postRun.returnResult(doCopyMembers.isError(), doCopyMembers.getMembersCopiedCount(), doCopyMembers.getAverageTime());
                 endProcess();
             }
+
+            return Status.OK_STATUS;
         }
 
-        public void cancel() {
-            doCopyMembers.cancel();
+        public void cancelOperation() {
+            if (doCopyMembers != null) {
+                doCopyMembers.cancel();
+            }
         }
     }
 
@@ -352,54 +368,78 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         private String fromConnectionName;
         private String toConnectionName;
-        private boolean useLocalCache;
         private SortedSet<CopyMemberItem> members;
+        private IProgressMonitor monitor;
 
-        private boolean isCanceled;
         private boolean isError;
         private int copiedCount;
         private long averageTime;
 
-        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, boolean useLocalCache) {
+        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members) {
             this.fromConnectionName = fromConnectionName;
             this.toConnectionName = toConnectionName;
-            this.useLocalCache = useLocalCache;
             this.members = members;
-            this.isCanceled = false;
+        }
+
+        public void start(IProgressMonitor monitor) {
+            if (monitor != null) {
+                this.monitor = monitor;
+            } else {
+                this.monitor = new NullProgressMonitor();
+            }
+            this.start();
         }
 
         @Override
         public void run() {
 
-            isError = false;
-            copiedCount = 0;
+            monitor.beginTask(Messages.Copying_dots, members.size());
 
-            long startTime = System.currentTimeMillis();
+            try {
 
-            for (CopyMemberItem member : members) {
+                isError = false;
+                copiedCount = 0;
 
-                if (isCanceled) {
-                    break;
+                long startTime = System.currentTimeMillis();
+
+                int count = 0;
+                for (CopyMemberItem member : members) {
+
+                    count++;
+
+                    if (monitor.isCanceled()) {
+                        break;
+                    }
+
+                    if (member.isCopied()) {
+                        monitor.worked(count);
+                        continue;
+                    }
+
+                    if (monitor != null) {
+                        monitor.setTaskName(Messages.bind(Messages.Copying_A_B_of_C, new Object[] { member.getFromMember(), count, members.size() }));
+                    }
+
+                    if (!member.performCopyOperation(fromConnectionName, toConnectionName)) {
+                        isError = true;
+                    } else {
+                        copiedCount++;
+                    }
+
+                    monitor.worked(count);
                 }
 
-                if (member.isCopied()) {
-                    continue;
-                }
+                averageTime = (System.currentTimeMillis() - startTime) / copiedCount;
+                // System.out.println("\nAverage time used: " + averageTime +
+                // " mSecs.");
 
-                if (!member.performCopyOperation(fromConnectionName, toConnectionName, useLocalCache)) {
-                    isError = true;
-                } else {
-                    copiedCount++;
-                }
+            } finally {
+                monitor.done();
             }
-
-            averageTime = (System.currentTimeMillis() - startTime) / copiedCount;
-            // System.out.println("\nAverage time used: " + averageTime +
-            // " mSecs.");
         }
 
         public void cancel() {
-            isCanceled = true;
+            monitor.setCanceled(true);
         }
 
         public boolean isError() {

@@ -62,7 +62,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private static int BUTTON_RESET_ID = IDialogConstants.RETRY_ID;
     private static int BUTTON_CLOSE_CANCEL = IDialogConstants.CANCEL_ID;
 
-    private static String USE_LOCAL_CACHE = "useLocalCache"; //$NON-NLS-1$
+    // TODO: remove obsolete stmt
+    // private static String USE_LOCAL_CACHE = "useLocalCache"; //$NON-NLS-1$
 
     private CopyMemberService copyMemberService;
     private CopyMemberValidator copyMemberValidator;
@@ -73,7 +74,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private TableViewer tableViewer;
     private Button chkBoxReplace;
     private Button chkBoxIgnoreDataLostError;
-    private Button chkBoxUseLocalCache;
+    // TODO: remove obsolete stmt
+    // private Button chkBoxUseLocalCache;
     private Label labelNumElem;
 
     private Composite mainArea;
@@ -159,7 +161,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setToLibrary(getToLibraryName());
         copyMemberService.setToFile(getToFileName());
-        copyMemberService.setUseLocalCache(chkBoxUseLocalCache.getSelection());
+        // TODO: remove obsolete stmt
+        // copyMemberService.setUseLocalCache(chkBoxUseLocalCache.getSelection());
 
         copyMemberValidator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection(), this);
 
@@ -300,9 +303,11 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
 
-        chkBoxUseLocalCache = WidgetFactory.createCheckbox(mainArea);
-        chkBoxUseLocalCache.setText("Use local cache (uncommitted feature)");
-        chkBoxUseLocalCache.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+        // TODO: remove obsolete stmt
+        // chkBoxUseLocalCache = WidgetFactory.createCheckbox(mainArea);
+        // chkBoxUseLocalCache.setText("Use local cache (uncommitted feature)");
+        // chkBoxUseLocalCache.setLayoutData(new GridData(SWT.BEGINNING,
+        // SWT.DEFAULT, false, false, 3, 1));
 
         createStatusLine(mainArea);
 
@@ -378,8 +383,10 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         tableViewer.setInput(copyMemberService);
 
-        boolean useLocalCache = getDialogSettingsManager().loadBooleanValue(USE_LOCAL_CACHE, false);
-        chkBoxUseLocalCache.setSelection(useLocalCache);
+        // TODO: remove obsolete stmt
+        // boolean useLocalCache =
+        // getDialogSettingsManager().loadBooleanValue(USE_LOCAL_CACHE, false);
+        // chkBoxUseLocalCache.setSelection(useLocalCache);
     }
 
     /**
@@ -387,7 +394,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
      */
     private void storeScreenValues() {
 
-        getDialogSettingsManager().storeValue(USE_LOCAL_CACHE, chkBoxUseLocalCache.getSelection());
+        // TODO: remove obsolete stmt
+        // getDialogSettingsManager().storeValue(USE_LOCAL_CACHE,
+        // chkBoxUseLocalCache.getSelection());
     }
 
     private Text createNameField(Composite mainArea, String label) {
@@ -502,11 +511,12 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxReplace.setEnabled(enabled);
         chkBoxIgnoreDataLostError.setEnabled(enabled);
 
-        if (enabled) {
-            chkBoxUseLocalCache.setEnabled(!comboToConnection.getText().equals(copyMemberService.getFromConnectionName()));
-        } else {
-            chkBoxUseLocalCache.setEnabled(enabled);
-        }
+        // TODO: remove obsolete stmt
+        // if (enabled) {
+        // chkBoxUseLocalCache.setEnabled(!comboToConnection.getText().equals(copyMemberService.getFromConnectionName()));
+        // } else {
+        // chkBoxUseLocalCache.setEnabled(enabled);
+        // }
     }
 
     private void setButtonEnablement(Button button, boolean enabled) {

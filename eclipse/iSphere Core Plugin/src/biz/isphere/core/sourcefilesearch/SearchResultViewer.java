@@ -877,7 +877,7 @@ public class SearchResultViewer {
 
         for (int idx = 0; idx < selectedItemsMembers.length; idx++) {
             SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
-            jobDescription.addItem(_searchResult.getFile(), _searchResult.getLibrary(), _searchResult.getMember());
+            jobDescription.addItem(_searchResult.getFile(), _searchResult.getLibrary(), _searchResult.getMember(), _searchResult.getSrcType());
         }
 
         CopyMemberDialog dialog = new CopyMemberDialog(getShell());

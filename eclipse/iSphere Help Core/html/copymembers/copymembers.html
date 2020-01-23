@@ -61,6 +61,53 @@
 		</tr>
 	</table>
 	<p>
+	The copy members process uses the <i>Remote Systems - File Cache</i> to get the <i>From Member</i>
+	from the cache before downloading it from the remote system. That works the same as dragging and
+	dropping members, which is an IBM supplied process. 
+	<p>
+	The problem is, that the Lpex editor also uses the local cache and in ceratin cases it can happen,
+	that you change a remote member while editing it in RDi.
+	<p>
+	Usually that does not happen, because the remote member is locked. But when you close RDi without
+	closing the member, the member is not locked again when starting RDi (next morning). That is the
+	point when a member can be change locally <u>and</u> remotely. Drag & Drop just copies the member
+	and hence updates the cache with the remote changes while the member is open for editing in the
+	Lpex editor.
+	<p>
+	<u>Assume the following situation:</u> 
+	<p>
+	You closed RDi last evening and restart editing a member next morning. Keep in mind, that the
+	member is not locked on the remote system, now. Unfortunately Mary changed the member on the
+	IBM i without telling you about it: 
+	<p>
+	<img src="assets/mary_changes.png">
+	<p>
+	Your changes:
+	<p>
+	<img src="assets/joe_changes.png">
+	<p>
+	Now you want to save the old member before saving your changes and you want to drag & drop
+	the old member to a save place. Doing that works fine but of course you:
+	<ul>
+	<li>Copied Mary's changes</li>
+	<li>The local cache on your PC is refreshed with Mary's changes</li>
+	</ul>
+	When you get the focus back to your member in the Lpex editor, the following dialog pops up:
+	<p>
+	<img src="assets/file_changed_warning.png">
+	<p>
+	Now carefully think about how to answer that question:
+	<ul>
+	<li>Yes - Replaces your changes and your work is lost!</li>
+	<li>No - Keeps your changes but overwrites Mary's changes when the file is saved!</li>
+	</ul>
+	Both options are dangerous!
+	<p>
+	In order to avoid that situation, iSphere disallows copying members that are being edited
+	and that have unsaved changes:
+	<p>
+	<img src="assets/file_being_edited_warning.png">
+	<p>
 		<iframe src="../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
 </body>
