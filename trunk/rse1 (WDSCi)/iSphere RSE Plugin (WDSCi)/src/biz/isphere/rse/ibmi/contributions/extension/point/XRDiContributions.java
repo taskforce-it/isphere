@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,9 +42,11 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesFile;
 import com.ibm.etools.iseries.comm.interfaces.IISeriesMember;
+import com.ibm.etools.iseries.core.ISeriesSystemDataStore;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesLibrary;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
+import com.ibm.etools.iseries.core.resources.ISeriesEditableSrcPhysicalFileMember;
 import com.ibm.etools.iseries.core.util.clprompter.CLPrompter;
 import com.ibm.etools.iseries.perspective.ISeriesModelConstants;
 import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
@@ -53,7 +55,10 @@ import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
 import com.ibm.etools.systems.core.SystemIFileProperties;
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
+import com.ibm.etools.systems.dstore.core.model.DataElement;
+import com.ibm.etools.systems.dstore.core.model.DataStore;
 import com.ibm.etools.systems.model.SystemRegistry;
+import com.ibm.etools.systems.subsystems.ISystem;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
 /**
@@ -89,12 +94,12 @@ public class XRDiContributions implements IIBMiHostContributions {
             } catch (InterruptedException e) {
             }
         }
-        
+
         ISeriesConnection connection = getConnection(null, connectionName);
-        if (connection!=null ){
+        if (connection != null) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -587,5 +592,30 @@ public class XRDiContributions implements IIBMiHostContributions {
         } else {
             handler.handleReadOnlySourceCompare(members.toArray(new Member[members.size()]));
         }
+    }
+
+    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception {
+
+        ISeriesConnection connection = getConnection(null, connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        ISystem system = connection.getISeriesCmdSubSystem().getObjectSubSystem().getSystem();
+        DataStore dataStore = ((ISeriesSystemDataStore)system).getDataStoreObject();
+
+        DataElement element = new DataElement();
+        element.setDataStore(dataStore);
+        String[] attributes = new String[8];
+        attributes[0] = srcType; // Typ
+        attributes[2] = memberName; // Name
+        attributes[3] = "_SRC"; // Subtype
+        attributes[4] = libraryName + "/" + fileName; // Source
+        element.reInit(null, attributes);
+
+        ISeriesMember qsysMember = new ISeriesMember(element);
+        ISeriesEditableSrcPhysicalFileMember editableMember = new ISeriesEditableSrcPhysicalFileMember(qsysMember);
+
+        return editableMember.getLocalResource();
     }
 }
