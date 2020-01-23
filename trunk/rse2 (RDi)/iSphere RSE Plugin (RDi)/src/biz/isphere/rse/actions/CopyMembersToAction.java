@@ -97,7 +97,7 @@ public class CopyMembersToAction implements IObjectActionDelegate {
                     return false;
                 }
             }
-            jobDescription.addItem(object.getFile(), object.getLibrary(), object.getName());
+            jobDescription.addItem(object.getFile(), object.getLibrary(), object.getName(), object.getType());
         }
 
         return true;

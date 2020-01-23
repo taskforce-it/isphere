@@ -91,7 +91,12 @@ public class IProjectMember extends Member {
     }
 
     @Override
-    public String upload(IProgressMonitor monitor, Member fromMember) throws Exception {
+    public IFile downloadMember(IProgressMonitor monitor) throws Exception {
+        throw produceUnsupportedOperationException();
+    }
+
+    @Override
+    public String uploadMember(IProgressMonitor monitor, IFile localResource) throws Exception {
         throw produceUnsupportedOperationException();
     }
 
@@ -100,11 +105,6 @@ public class IProjectMember extends Member {
     }
 
     public String getMemberLockedMessages(ISeriesHostObjectLock lock) {
-        throw produceUnsupportedOperationException();
-    }
-
-    @Override
-    public String getDownloadPath() {
         throw produceUnsupportedOperationException();
     }
 
@@ -226,16 +226,6 @@ public class IProjectMember extends Member {
 
     @Override
     public void setArchiveTime(String archiveTime) {
-        throw produceUnsupportedOperationException();
-    }
-
-    @Override
-    public SourceLine[] downloadSourceMember(IProgressMonitor monitor) throws Exception {
-        throw produceUnsupportedOperationException();
-    }
-
-    @Override
-    public String uploadSourceMember(SourceLine[] sourceLines, IProgressMonitor monitor) throws Exception {
         throw produceUnsupportedOperationException();
     }
 

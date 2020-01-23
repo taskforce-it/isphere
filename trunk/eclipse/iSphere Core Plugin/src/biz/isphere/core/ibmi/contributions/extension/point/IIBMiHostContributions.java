@@ -11,6 +11,7 @@ package biz.isphere.core.ibmi.contributions.extension.point;
 import java.sql.Connection;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.core.clcommands.ICLPrompter;
@@ -207,4 +208,16 @@ public interface IIBMiHostContributions {
      * @throws Exception
      */
     public void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception;
+
+    /**
+     * Returns the local resource of given member.
+     * 
+     * @param connectionName - Connection used to locate the member.
+     * @param libraryName - Name of the library that contains the source file.
+     * @param fileName - Name of the source file that contains the member.
+     * @param memberName - Name of the member.
+     * @param srcType - Source type of the member.
+     * @return IFile local resource of the member
+     */
+    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception;
 }

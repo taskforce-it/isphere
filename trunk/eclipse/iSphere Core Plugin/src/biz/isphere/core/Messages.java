@@ -1168,6 +1168,8 @@ public class Messages extends NLS {
 
     public static String Invalid_member_name;
 
+    public static String Member_is_open_in_editor_and_has_unsaved_changes;
+
     public static String Cannot_copy_A_to_the_same_name;
 
     public static String From_member_A_not_found;
@@ -1205,6 +1207,8 @@ public class Messages extends NLS {
     public static String Validating_dots;
 
     public static String Copying_dots;
+
+    public static String Copying_A_B_of_C;
 
     public static String Go_to_location_headline;
 

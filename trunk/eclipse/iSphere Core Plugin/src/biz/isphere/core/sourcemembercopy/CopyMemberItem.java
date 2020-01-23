@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -19,7 +21,6 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.Member;
-import biz.isphere.core.internal.SourceLine;
 
 import com.ibm.as400.access.AS400Message;
 
@@ -28,23 +29,27 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     private String fromFile;
     private String fromLibrary;
     private String fromMember;
+    private String fromSrcType;
 
     private String toFile;
     private String toLibrary;
     private String toMember;
+    private String toSrcType;
 
     private String errorMessage;
     private boolean copied;
 
     private List<ModifiedListener> modifiedListeners;
 
-    public CopyMemberItem(String fromFile, String fromLibrary, String fromMember) {
+    public CopyMemberItem(String fromFile, String fromLibrary, String fromMember, String fromSrcType) {
         this.fromFile = fromFile;
         this.fromLibrary = fromLibrary;
         this.fromMember = fromMember;
+        this.fromSrcType = fromSrcType;
         this.toFile = fromFile;
         this.toLibrary = fromLibrary;
         this.toMember = fromMember;
+        this.toSrcType = fromSrcType;
         this.errorMessage = null;
         this.copied = false;
     }
@@ -59,6 +64,10 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public String getFromMember() {
         return fromMember;
+    }
+
+    public String getFromSrcType() {
+        return fromSrcType;
     }
 
     public String getToFile() {
@@ -90,6 +99,17 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     public void setToMember(String toMember) {
         if (hasChanged(this.toMember, toMember)) {
             this.toMember = toMember;
+            notifyModifiedListeners();
+        }
+    }
+
+    public String getToSrcType() {
+        return toSrcType;
+    }
+
+    public void setToSrcType(String toSrcType) {
+        if (hasChanged(this.toSrcType, toSrcType)) {
+            this.toSrcType = toSrcType;
             notifyModifiedListeners();
         }
     }
@@ -222,35 +242,56 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             }
         }
 
+        result = getFromMember().compareTo(item.getFromMember());
+        if (result != 0) {
+            return result;
+        }
+
+        if (getToSrcType() == null) {
+            return -1;
+        } else if (item.getToSrcType() == null) {
+            return 1;
+        } else {
+            result = getToSrcType().compareTo(item.getToSrcType());
+            if (result != 0) {
+                return result;
+            }
+        }
+
         return 0;
     }
 
     @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(fromLibrary); //$NON-NLS-1$
+        buffer.append(fromLibrary); // $NON-NLS-1$
         buffer.append("/"); //$NON-NLS-1$
-        buffer.append(fromFile); //$NON-NLS-1$
+        buffer.append(fromFile); // $NON-NLS-1$
         buffer.append("("); //$NON-NLS-1$
-        buffer.append(fromMember); //$NON-NLS-1$
-        buffer.append(") -> "); //$NON-NLS-1$
-        buffer.append(toLibrary); //$NON-NLS-1$
-        buffer.append("/"); //$NON-NLS-1$
-        buffer.append(toFile); //$NON-NLS-1$
-        buffer.append("("); //$NON-NLS-1$
-        buffer.append(toMember); //$NON-NLS-1$
+        buffer.append(fromMember); // $NON-NLS-1$
         buffer.append(")"); //$NON-NLS-1$
+        buffer.append(".");
+        buffer.append(fromSrcType);
+        buffer.append(" -> ");
+        buffer.append(toLibrary); // $NON-NLS-1$
+        buffer.append("/"); //$NON-NLS-1$
+        buffer.append(toFile); // $NON-NLS-1$
+        buffer.append("("); //$NON-NLS-1$
+        buffer.append(toMember); // $NON-NLS-1$
+        buffer.append(")"); //$NON-NLS-1$
+        buffer.append("."); //$NON-NLS-1$
+        buffer.append(toSrcType);
         return buffer.toString();
     }
 
-    public boolean performCopyOperation(String fromConnectionName, String toConnectionName, boolean useLocalCache) {
+    public boolean performCopyOperation(String fromConnectionName, String toConnectionName) {
 
         String message;
 
         if (fromConnectionName.equalsIgnoreCase(toConnectionName)) {
             message = performLocalCopy(fromConnectionName);
         } else {
-            message = performCopyBetweenConnections(fromConnectionName, toConnectionName, useLocalCache);
+            message = performCopyBetweenConnections(fromConnectionName, toConnectionName);
         }
 
         if (message != null) {
@@ -337,7 +378,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         return null;
     }
 
-    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName, boolean useLocalCache) {
+    private String performCopyBetweenConnections(String fromConnectionName, String toConnectionName) {
 
         try {
 
@@ -357,18 +398,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             debugPrint("Retrieving the source member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            Object[] sourceLines;
-
-            if (!useLocalCache) {
-                sourceLines = fromSourceMember.downloadSourceMember(null);
-            } else {
-                sourceLines = new String[0];
-                if (fromSourceMember.download(null)) {
-                    sourceLines = fromSourceMember.getContents();
-                }
-            }
-
-            if (sourceLines.length == 0) {
+            IFile localResource = fromSourceMember.downloadMember(null);
+            if (localResource == null) {
                 return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0, new Object[] { getFromLibrary(), getFromFile(),
                     getFromMember() });
             }
@@ -398,12 +429,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             debugPrint("Retrieving the target member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            if (!useLocalCache) {
-                message = toSourceMember.uploadSourceMember((SourceLine[])sourceLines, null);
-            } else {
-                message = toSourceMember.upload(null, fromSourceMember);
-            }
-
+            message = toSourceMember.uploadMember(null, localResource);
             if (message != null) {
                 return message;
             }

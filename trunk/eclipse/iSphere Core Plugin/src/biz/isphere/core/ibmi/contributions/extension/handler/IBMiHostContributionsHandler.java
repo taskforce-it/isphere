@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -341,6 +342,17 @@ public class IBMiHostContributionsHandler {
         }
 
         factory.compareSourceMembers(connectionName, members, enableEditMode);
+    }
+
+    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getLocalResource(connectionName, libraryName, fileName, memberName, srcType);
     }
 
     /**
