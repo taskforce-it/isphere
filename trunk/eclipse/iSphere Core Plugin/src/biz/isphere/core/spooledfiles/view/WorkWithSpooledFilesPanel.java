@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -39,6 +41,7 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
 
@@ -51,6 +54,8 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
     private static final String COLUMN_ORDER = "columnOrder"; //$NON-NLS-1$
     private static final String SORT_COLUMN_INDEX = "sortColumnIndex"; //$NON-NLS-1$
     private static final String SORT_DIRECTION = "sortDirection"; //$NON-NLS-1$
+
+    private WorkWithSpooledFilesHelper workWithSpooledFilesHelper;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -109,6 +114,9 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         menu.addMenuListener(menuAdapter);
 
         setMenuAndDoubleClickListener(menu, menuAdapter);
+
+        workWithSpooledFilesHelper = new WorkWithSpooledFilesHelper(getShell(), connectionName);
+        workWithSpooledFilesHelper.addChangedListener(listener);
     }
 
     public int getItemCount() {
@@ -205,6 +213,23 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         table = tableViewer.getTable();
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
+
+        table.addKeyListener(new KeyListener() {
+            public void keyReleased(KeyEvent event) {
+            }
+
+            public void keyPressed(KeyEvent event) {
+                if ((event.stateMask & SWT.CTRL) == SWT.CTRL) {
+                    if (event.keyCode == 'a') {
+                        table.selectAll();
+                    }
+                } else if (event.stateMask == 0) {
+                    if (event.keyCode == SWT.DEL) {
+                        workWithSpooledFilesHelper.performDeleteSpooledFile(getSelectedItems());
+                    }
+                }
+            }
+        });
 
         Columns[] columns = Columns.values();
         for (Columns column : columns) {
