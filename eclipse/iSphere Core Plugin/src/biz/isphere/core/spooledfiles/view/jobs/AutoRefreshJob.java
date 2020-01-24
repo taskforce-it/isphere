@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -37,6 +38,7 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
 
         this.view = view;
         setInterval(seconds);
+        setSystem(true);
     }
 
     @Override
@@ -76,7 +78,13 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
             }
         }
 
-        view.jobFinished(this);
+        new UIJob(Messages.EMPTY) {
+            @Override
+            public IStatus runInUIThread(IProgressMonitor paramIProgressMonitor) {
+                view.jobFinished(AutoRefreshJob.this);
+                return Status.OK_STATUS;
+            }
+        }.schedule();
 
         return Status.OK_STATUS;
     }
