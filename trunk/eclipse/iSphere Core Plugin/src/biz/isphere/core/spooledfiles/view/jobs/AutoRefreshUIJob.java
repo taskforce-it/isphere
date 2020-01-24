@@ -22,7 +22,7 @@ public class AutoRefreshUIJob extends UIJob {
     private IAutoRefreshView view;
 
     public AutoRefreshUIJob(IAutoRefreshView view) {
-        super(Messages.EMPTY);
+        super(Messages.Loading_spooled_files);
 
         this.view = view;
     }

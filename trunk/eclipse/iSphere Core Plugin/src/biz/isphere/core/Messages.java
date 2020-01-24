@@ -1160,6 +1160,8 @@ public class Messages extends NLS {
 
     public static String Loading_spooled_file;
 
+    public static String Loading_spooled_files;
+
     public static String Waiting_for_RSE_connection;
 
     public static String PageSize_colon;
