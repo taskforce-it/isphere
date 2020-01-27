@@ -9,24 +9,27 @@
 package biz.isphere.joblogexplorer.jobs.rse;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.spooledfiles.SpooledFile;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
 
-public abstract class AbstractLoadRemoteSpooledFileJob extends AbstractLoadInputJob {
+public class LoadIRemoteFileJob extends AbstractLoadInputJob {
+
+    private String originalFileName;
+    private String filePath;
+
+    public LoadIRemoteFileJob(String fileName, String absolutePath) {
+        this.originalFileName = fileName;
+        this.filePath = absolutePath;
+    }
 
     public void run() {
 
         try {
 
-            SpooledFile spooledFile = getSpooledFile();
-
-            JobLogExplorerSpooledFileInput editorInput = new JobLogExplorerSpooledFileInput(spooledFile);
+            JobLogExplorerFileInput editorInput = new JobLogExplorerFileInput(filePath, originalFileName);
             openJobLogExplorerView(editorInput);
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Failed to open job log explorer with spooled file input ***", e); //$NON-NLS-1$
+            ISpherePlugin.logError("*** Failed to open job log explorer with file input ***", e); //$NON-NLS-1$
         }
     }
-
-    protected abstract SpooledFile getSpooledFile();
 }
