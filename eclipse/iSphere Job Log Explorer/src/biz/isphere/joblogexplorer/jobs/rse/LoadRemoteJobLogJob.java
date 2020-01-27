@@ -11,16 +11,23 @@ package biz.isphere.joblogexplorer.jobs.rse;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 
-public abstract class AbstractLoadRemoteJobLogJob extends AbstractLoadInputJob {
+public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
+
+    private String connectionName;
+    private String jobName;
+    private String userName;
+    private String jobNumber;
+
+    public LoadRemoteJobLogJob(String connectionName, String jobName, String userName, String jobNumber) {
+        this.connectionName = connectionName;
+        this.jobName = jobName;
+        this.userName = userName;
+        this.jobNumber = jobNumber;
+    }
 
     public void run() {
 
         try {
-
-            String connectionName = getConnectionName();
-            String jobName = getJobName();
-            String userName = getUserName();
-            String jobNumber = getJobNumber();
 
             JobLogExplorerJobInput editorInput = new JobLogExplorerJobInput(connectionName, jobName, userName, jobNumber);
             openJobLogExplorerView(editorInput);
@@ -29,13 +36,4 @@ public abstract class AbstractLoadRemoteJobLogJob extends AbstractLoadInputJob {
             ISpherePlugin.logError("*** Failed to open job log explorer with active job input ***", e); //$NON-NLS-1$
         }
     }
-
-    protected abstract String getConnectionName();
-
-    protected abstract String getJobName();
-
-    protected abstract String getUserName();
-
-    protected abstract String getJobNumber();
-
 }
