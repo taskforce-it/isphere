@@ -9,7 +9,7 @@
 package biz.isphere.joblogexplorer.rse.action;
 
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
-import biz.isphere.joblogexplorer.rse.jobs.LoadRemoteSpooledFileJob;
+import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteSpooledFileJob;
 import biz.isphere.rse.spooledfiles.SpooledFileResource;
 
 public class OpenJobLogExplorerWithSpooledFileAction extends AbstractOpenJobLogExplorerAction {
@@ -20,7 +20,7 @@ public class OpenJobLogExplorerWithSpooledFileAction extends AbstractOpenJobLogE
     protected void execute(Object object) {
         if (object instanceof SpooledFileResource) {
             SpooledFileResource spooledFileResource = (SpooledFileResource)object;
-            LoadRemoteSpooledFileJob job = new LoadRemoteSpooledFileJob(spooledFileResource);
+            LoadRemoteSpooledFileJob job = new LoadRemoteSpooledFileJob(spooledFileResource.getSpooledFile());
             job.run();
         }
     }
