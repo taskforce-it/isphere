@@ -9,7 +9,7 @@
 package biz.isphere.joblogexplorer.rse.action;
 
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
-import biz.isphere.joblogexplorer.rse.jobs.LoadRemoteJobLogJob;
+import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteJobLogJob;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.core.api.ISeriesJob;
@@ -26,7 +26,7 @@ public class OpenJobLogExplorerWithRemoteJobAction extends AbstractOpenJobLogExp
             ISeriesJob remoteJob = new ISeriesJob(dataElement);
             String connectionName = remoteJob.getCommandSubSystem().getSystemConnectionName();
             ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
-            LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, jobName);
+            LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
             job.run();
         }
     }
