@@ -1,6 +1,7 @@
 
 Changelog: iSphere 3.6.0.b008
 -----------------------------
+ • Added "Job Log Explorer" menu option to "Spooled Files" view.
  • Fixed illegal access exception when auto-refreshing the iSphere
    spooled files view.
  • Hid the auto-load spooled files job.

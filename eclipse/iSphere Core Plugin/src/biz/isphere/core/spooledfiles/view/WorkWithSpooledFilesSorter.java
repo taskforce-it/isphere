@@ -38,6 +38,8 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
         this.dialogSettingsManager = dialogSettingsManager;
+
+        setSortColumn(null, SORT_NONE);
     }
 
     public int getSortColumnIndex() {
