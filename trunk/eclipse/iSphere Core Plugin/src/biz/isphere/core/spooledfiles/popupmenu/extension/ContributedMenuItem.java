@@ -33,7 +33,8 @@ public class ContributedMenuItem {
 
         this.menuItem = new MenuItem(parent, SWT.PUSH);
         this.menuItem.setText(contributionItem.getText());
-        this.menuItem.setToolTipText(contributionItem.getTooltipText());
+        // Not available in WDSCi 7.0
+        // this.menuItem.setToolTipText(contributionItem.getTooltipText());
         this.menuItem.setImage(contributionItem.getImage());
         this.menuItem.setData(CONTRIBUTION_ITEM, contributionItem);
     }
