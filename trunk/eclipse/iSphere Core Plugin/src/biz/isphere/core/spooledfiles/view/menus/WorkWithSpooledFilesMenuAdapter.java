@@ -25,6 +25,9 @@ import org.eclipse.swt.widgets.TableItem;
 import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
+import biz.isphere.core.spooledfiles.popupmenu.extension.ContributedMenuItem;
+import biz.isphere.core.spooledfiles.popupmenu.extension.handler.SpooledFilePopupMenuHandler;
+import biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributionItem;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 
 public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDoubleClickListener {
@@ -35,6 +38,8 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
     private WorkWithSpooledFilesHelper workWithSpooledFilesHelper;
 
+    private ContributedMenuItem[] contributedMenuItems;
+    private MenuItem menuItemSeparator1;
     private MenuItem menuItemChange;
     private MenuItem menuItemDelete;
     private MenuItem menuItemHold;
@@ -42,7 +47,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
     private MenuItem menuItemMessages;
     private MenuItem menuItemOpenAs;
     private MenuItem menuItemSaveAs;
-    private MenuItem menuItemSeparator;
+    private MenuItem menuItemSeparator2;
     private MenuItem menuItemProperties;
 
     public WorkWithSpooledFilesMenuAdapter(Menu parentMenu, String connectionName, TableViewer tableViewer) {
@@ -68,6 +73,8 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
     }
 
     public void destroyMenuItems() {
+        dispose(contributedMenuItems);
+        dispose(menuItemSeparator1);
         dispose(menuItemChange);
         dispose(menuItemDelete);
         dispose(menuItemHold);
@@ -75,7 +82,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         dispose(menuItemMessages);
         dispose(menuItemOpenAs);
         dispose(menuItemSaveAs);
-        dispose(menuItemSeparator);
+        dispose(menuItemSeparator2);
         dispose(menuItemProperties);
     }
 
@@ -85,7 +92,41 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         }
     }
 
+    private void dispose(ContributedMenuItem[] contributedMenuItems) {
+
+        if (contributedMenuItems == null) {
+            return;
+        }
+
+        for (ContributedMenuItem menuItem : contributedMenuItems) {
+            if (!((menuItem == null) || (menuItem.isDisposed()))) {
+                menuItem.dispose();
+            }
+        }
+
+    }
+
     public void createMenuItems() {
+
+        ISpooledFilePopupMenuContributionItem[] contributionItems = new SpooledFilePopupMenuHandler().getContributionItems();
+        contributedMenuItems = new ContributedMenuItem[contributionItems.length];
+
+        for (int i = 0; i < contributedMenuItems.length; i++) {
+            contributedMenuItems[i] = new ContributedMenuItem(parentMenu, contributionItems[i]);
+            contributedMenuItems[i].setSelection(getSelectedItems());
+            contributedMenuItems[i].setSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    MenuItem menuItem = (MenuItem)e.getSource();
+                    ISpooledFilePopupMenuContributionItem contributionItem = ContributedMenuItem.getContributionItem(menuItem);
+                    contributionItem.execute();
+                }
+            });
+        }
+
+        if (contributedMenuItems.length > 0) {
+            menuItemSeparator1 = new MenuItem(parentMenu, SWT.SEPARATOR);
+        }
 
         menuItemChange = new MenuItem(parentMenu, SWT.PUSH);
         menuItemChange.setText(Messages.Change);
@@ -142,7 +183,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
 
         if (table.getSelectionCount() == 1) {
 
-            menuItemSeparator = new MenuItem(parentMenu, SWT.SEPARATOR);
+            menuItemSeparator2 = new MenuItem(parentMenu, SWT.SEPARATOR);
 
             menuItemProperties = new MenuItem(parentMenu, SWT.PUSH);
             menuItemProperties.setText(Messages.Properties);

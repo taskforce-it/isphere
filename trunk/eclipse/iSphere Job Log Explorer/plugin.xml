@@ -61,7 +61,7 @@
         contextId="org.eclipse.ui.contexts.window"/>
 
    </extension>
-      	
+
       	<!--
       	  ==========================================
       	    iSphere Preferences
@@ -79,14 +79,14 @@
       </page>
 
    </extension>
-   
+
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
             class="biz.isphere.joblogexplorer.preferences.PreferencesInitializer">
       </initializer>
    </extension>
-      	
+
       	<!--
       	  ==========================================
       	    iSphere Keywords
@@ -98,6 +98,19 @@
       <keyword
             label="%preferenceKeywords.general"
             id="biz.isphere.joblogexplorer.preferences.general"/>
+   </extension>
+
+      	<!--
+      	  ==========================================
+      	    iSphere Spooled File Popup Menu Items
+      	  ==========================================
+      	-->
+
+   <extension
+         point="biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributions">
+         <client
+            class="biz.isphere.joblogexplorer.spooledfiles.popupmenu.extension.point.SpooledFilePopupMenuContributions">
+         </client>
    </extension>
    
 </plugin>

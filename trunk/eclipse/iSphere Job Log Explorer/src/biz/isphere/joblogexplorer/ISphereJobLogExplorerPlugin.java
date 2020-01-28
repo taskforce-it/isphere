@@ -33,6 +33,7 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
     public static final String IMAGE_REFRESH = "refresh.gif"; //$NON-NLS-1$
     public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png"; //$NON-NLS-1$
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
+    public static final String IMAGE_JOB_LOG_EXPLORER = "joblog_explorer.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.joblogexplorer"; //$NON-NLS-1$
@@ -101,6 +102,7 @@ public class ISphereJobLogExplorerPlugin extends AbstractUIPlugin {
         reg.put(EXCEL, getImageDescriptor(EXCEL));
         reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
         reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
+        reg.put(IMAGE_JOB_LOG_EXPLORER, getImageDescriptor(IMAGE_JOB_LOG_EXPLORER));
     }
 
     public ImageDescriptor getImageDescriptor(String name) {

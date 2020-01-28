@@ -220,4 +220,15 @@
    		 schema="schema/biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions.xsd">
    </extension-point>
 
+      	<!--
+      	  ==========================================
+      	    Extension point: Spooled File Context Menu
+      	  ==========================================
+      	-->
+
+   <extension-point id="biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributions" 
+   		 name="Spooled File Popup Menu Contributions: ISpooledFilePopupMenuContribution" 
+   		 schema="schema/biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributions.xsd">
+   </extension-point>
+
 </plugin>
