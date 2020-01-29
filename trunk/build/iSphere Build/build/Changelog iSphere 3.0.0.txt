@@ -1,5 +1,5 @@
 
-Changelog: iSphere 3.6.0.b008
+Changelog: iSphere 3.6.0.b009
 -----------------------------
  • Added "Job Log Explorer" menu option to "Spooled Files" view.
  • Fixed illegal access exception when auto-refreshing the iSphere
@@ -7,6 +7,9 @@ Changelog: iSphere 3.6.0.b008
  • Hid the auto-load spooled files job.
  • Added DEL key to iSphere "Spooled Files" view.
  • Added Ctrl+A key to iSphere "Spooled Files" view.
+
+Changelog: iSphere 3.6.0.b008
+-----------------------------
  • Improved speed when copying members between systems by using
    cached local files. Added option to select "fast copy" to
    "Copy Members" dialog.
