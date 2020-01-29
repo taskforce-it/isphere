@@ -40,7 +40,7 @@ public class SpooledFileFactory {
         return new SpooledFile[0];
     }
 
-    public static SpooledFile[] getSpooledFiles(String connectionName, Connection jdbcConnection, SpooledFileFilter filter) {
+    public static synchronized SpooledFile[] getSpooledFiles(String connectionName, Connection jdbcConnection, SpooledFileFilter filter) {
 
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
         String iSphereLibrary = ISpherePlugin.getISphereLibrary(connectionName);
@@ -143,17 +143,6 @@ public class SpooledFileFactory {
                                         }
                                     });
 
-                                    // Display.getDefault().syncExec(new
-                                    // Runnable() {
-                                    // public void run() {
-                                    // MessageDialog.openError(Display.getDefault().getActiveShell(),
-                                    // title, message);
-                                    // }
-                                    // });
-
-                                    // MessageDialogAsync.displayError(Messages.bind(
-                                    // Messages.Number_of_spooled_files_exceeds_maximum_number_of_spooled_files_to_load_A,
-                                    // maxNumSpooledFilesToLoad));
                                     break;
                                 }
 
