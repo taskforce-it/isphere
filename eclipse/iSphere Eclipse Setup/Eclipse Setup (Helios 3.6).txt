@@ -136,6 +136,10 @@ i) Preferences - i Projects - Build and Compile (optionally):
 
     [ ] Run compiles as batch job
 
+j) Preferences - Run/Debug - IBM i Debug:
+
+    [x] Update production files
+
 Strongly Recommended Run Configuration Settings:
 ------------------------------------------------
 
