@@ -155,21 +155,14 @@
 
       // Caching of member attributes
 
-     d GCMemberAttrs   DS                  Qualified Inz
-     d  file                         10A
-     d  lib                          10A
-     d  mbr                          10A
-     d  srcType                      10A
-     d  lastChgData                    Z
-
-      // Tape Def for caching member attributes
-
      d memberAttrs_t   DS                  Qualified Based(pDummy)
      d  file                         10A
      d  lib                          10A
      d  mbr                          10A
      d  srcType                      10A
      d  lastChgData                    Z
+
+     d GCMemberAttrs   DS                  likeds(memberAttrs_t) inz
 
       // Local procedures
 
