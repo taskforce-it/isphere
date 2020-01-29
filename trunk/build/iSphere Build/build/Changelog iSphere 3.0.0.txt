@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.6.0.b009
 -----------------------------
+ • Fixed problem that loading spooled files with two or more
+   threads running parallel did not work.
  • Added "Job Log Explorer" menu option to "Spooled Files" view.
  • Fixed illegal access exception when auto-refreshing the iSphere
    spooled files view.
