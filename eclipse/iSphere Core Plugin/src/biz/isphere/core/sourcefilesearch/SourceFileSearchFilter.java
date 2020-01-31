@@ -64,15 +64,21 @@ public class SourceFileSearchFilter {
             return true;
         }
 
+        // ISeriesPDMPatternMatch matcher = new
+        // ISeriesPDMPatternMatch(srcType.toUpperCase(), true);
+        // if (matcher.matches(itemSrcType.toUpperCase())){
+        // return true;
+        // }
+
         try {
             if (StringHelper.matchesGeneric(itemSrcType, srcType)) {
                 return true;
             }
         } catch (Throwable e) {
             // Ignore pattern syntax errors
+            return true;
         }
 
         return false;
     }
-
 }
