@@ -55,6 +55,10 @@ public class SourceFileSearchFilter {
             return true;
         }
 
+        if ("*".equals(srcType)) {
+            return true;
+        }
+
         String itemSrcType = item.getType();
         if (StringHelper.isNullOrEmpty(itemSrcType)) {
             return true;
