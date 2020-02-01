@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.6.0.b010
+-----------------------------
+ • Implemented setFocus() of "Spooled Files" view.
+
 Changelog: iSphere 3.6.0.b009
 -----------------------------
  • Fixed problem that loading spooled files with two or more
