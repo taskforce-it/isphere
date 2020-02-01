@@ -438,6 +438,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     @Override
     public void setFocus() {
+        workWithSpooledFilesPanel.setFocus();
     }
 
     /*

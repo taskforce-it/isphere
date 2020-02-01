@@ -74,6 +74,16 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         createContentArea();
     }
 
+    @Override
+    public boolean setFocus() {
+        boolean hasFocus = tableViewer.getTable().setFocus();
+        if (tableViewer.getSelection().isEmpty() && tableViewer.getTable().getItemCount() > 0) {
+            tableViewer.getTable().setSelection(0);
+
+        }
+        return hasFocus;
+    }
+
     public void setChangedListener(ITableItemChangeListener listener) {
         this.listener = listener;
     }
