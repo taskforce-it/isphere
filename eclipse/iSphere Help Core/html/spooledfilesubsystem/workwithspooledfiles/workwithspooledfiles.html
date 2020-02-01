@@ -10,7 +10,10 @@
 <body>
 	<h1>Work With Spooled Files</h1>
 	<p>Use the iSphere <i>Spooled Files</i> view to view and manage the
-		spooled files on an IBM i server.
+		spooled files on an IBM i server. This view can be pinned so that
+		it is restored when RDi is restarted. The pin option also allows
+		pinning multiple instances of the view. To do so, open a view and
+		pin it, then open a second view and pin it and so on.
 	<p>
 	Use the context menu of an iSphere spooled file filter to open
 	the view with the <i>Work With Spooled Files</i> option.
@@ -20,7 +23,26 @@
 		<img src="assets/work_with_spooled_files_view.png" align="middle">
 	<p>
 	The content of the view may be refreshed manually, or the display may be set to refresh
-	automatically after a specified interval between 10 seconds and 15 minutes. 
+	automatically after a specified interval between 10 seconds and 15 minutes. The refresh
+	menu options are available from the view menu.
+	<p>
+		<img src="assets/auto_refresh_menu.png" align="middle">
+	<p>
+	The view is also refreshed when the associated filter is refresh, but refreshing
+	the view does not refresh the filter.
+	<p>
+	The available toolbar buttons from left to right are:
+	<p>
+		<img src="assets/toolbar_buttons.png" align="middle">
+	<p>
+	<ul>
+	<li>Remove selected items</li>
+	<li>Remove all items</li>
+	<li>Reset table columns width</li>
+	<li>Pin view</li>
+	<li>Disable auto-refresh</li>
+	<li>Refresh list of spooled files</li>
+	</ul>
 	<p>
 	Use the context menu (right click) of a spooled file to perform actions on it:
 	<p>
