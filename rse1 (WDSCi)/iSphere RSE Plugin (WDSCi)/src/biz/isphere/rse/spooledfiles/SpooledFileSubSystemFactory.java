@@ -75,7 +75,7 @@ public class SpooledFileSubSystemFactory extends DefaultSubSystemFactoryImpl {
         SystemNewFilterAction filterAction = (SystemNewFilterAction)super.getNewFilterPoolFilterAction(selectedPool, shell);
         filterAction.setWizardPageTitle(Messages.Spooled_File_Filter);
         filterAction.setPage1Description(Messages.Create_a_new_spooled_file_filter);
-        filterAction.setType(Messages.Spooled_File_Filter);
+        filterAction.setType(SpooledFileSubSystemFactory.TYPE);
         filterAction.setText(Messages.Spooled_file_filter + "...");
         filterAction.setFilterStringEditPane(new SpooledFileFilterStringEditPane(shell));
         IAction[] actions = new IAction[1];
