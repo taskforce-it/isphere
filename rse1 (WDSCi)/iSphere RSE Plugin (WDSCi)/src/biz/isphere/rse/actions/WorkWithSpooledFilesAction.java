@@ -21,11 +21,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
@@ -43,9 +43,9 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
     private ArrayList<Object> _selectedElements;
 
     public WorkWithSpooledFilesAction() {
-        super("Work With Spooled Files", "", null); //$NON-NLS-1$
+        super(Messages.iSphere_Work_With_Spooled_Files, "", null); //$NON-NLS-1$
         setContextMenuGroup("additions"); //$NON-NLS-1$
-        allowOnMultipleSelection(true);
+        allowOnMultipleSelection(false);
         setHelp(""); //$NON-NLS-1$
         setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SOURCE_FILE_SEARCH));
     }
