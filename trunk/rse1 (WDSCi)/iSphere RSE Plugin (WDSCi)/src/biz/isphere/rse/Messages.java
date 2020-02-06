@@ -35,6 +35,8 @@ public class Messages extends NLS {
     public static String iSphere_Compare_Message_File_Editor;
     
     public static String iSphere_CopyMembersTo;
+    
+    public static String iSphere_Work_With_Spooled_Files;
 
     public static String Right;
 
