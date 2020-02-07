@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Shell;
@@ -27,11 +28,12 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
-import biz.isphere.core.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
+import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystem;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 
 public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
@@ -67,12 +69,9 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
         try {
 
             ISubSystem subSystem = filterReference.getSubSystem();
-            String connectionName = getConnectionName(subSystem);
-            String filterPoolName = filterReference.getReferencedFilter().getParentFilterPool().getName();
-            String filterName = filterReference.getReferencedFilter().getName();
+            ISystemFilter systemFilter = filterReference.getReferencedFilter();
 
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
-            inputData.setFilterStrings(filterReference.getReferencedFilter().getFilterStrings());
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(subSystem, systemFilter);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
