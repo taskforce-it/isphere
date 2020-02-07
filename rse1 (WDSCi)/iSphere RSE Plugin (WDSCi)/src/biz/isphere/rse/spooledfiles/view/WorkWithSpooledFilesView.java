@@ -100,7 +100,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
         return (SubSystem)filterReference.getFilterPoolReferenceManager().getProvider();
     }
 
-    public String getConnectionName(SubSystem subSystem) {
+    private String getConnectionName(SubSystem subSystem) {
         return ConnectionManager.getConnectionName(subSystem.getSystemConnection());
     }
 }
