@@ -95,7 +95,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
         }
     }
 
-    public String getConnectionName(ISubSystem subSystem) {
+    private String getConnectionName(ISubSystem subSystem) {
         return ConnectionManager.getConnectionName(subSystem.getHost());
     }
 }
