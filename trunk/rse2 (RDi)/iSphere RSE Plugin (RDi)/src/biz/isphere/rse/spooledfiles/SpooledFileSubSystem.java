@@ -42,6 +42,8 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem, ISpooledFileSubSystem {
 
+    public static final String ID = "biz.isphere.core.spooledfiles.subsystems.factory";
+
     private SpooledFileBaseSubSystem base = new SpooledFileBaseSubSystem();
     private SpooledFileSubSystemAttributes spooledFileSubsystemAttributes;
 

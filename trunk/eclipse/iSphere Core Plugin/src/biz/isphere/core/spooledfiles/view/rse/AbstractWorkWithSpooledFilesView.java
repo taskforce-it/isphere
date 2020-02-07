@@ -84,7 +84,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     private Label labelHeadline;
     private WorkWithSpooledFilesPanel workWithSpooledFilesPanel;
 
-    private WorkWithSpooledFilesInputData inputData;
+    private AbstractWorkWithSpooledFilesInputData inputData;
     private LoadSpooledFilesJob loadSpooledFilesJob;
 
     private RefreshViewAction refreshViewAction;
@@ -248,15 +248,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         return this.autoRefreshSubMenu;
     }
 
-    protected boolean isSameFilter(String connectionName, String filterPoolName, String filterName) {
-
-        if (inputData == null) {
-            return false;
-        }
-
-        return inputData.referencesFilter(connectionName, filterPoolName, filterName);
-    }
-
     /**
      * Restore the view data without blocking the UI. Waits until the RSE
      * connection is available.<br>
@@ -307,18 +298,12 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         String filterName = pinProperties.get(FILTER_NAME);
         String filterPoolName = pinProperties.get(FILTER_POOL_NAME);
-        String filterString = pinProperties.get(FILTER_STRING);
-        String[] filterStrings;
-        if (!StringHelper.isNullOrEmpty(filterString)) {
-            filterStrings = filterString.split(FILTER_STRING_DELIMITER);
-        } else {
-            filterStrings = new String[0];
+
+        final AbstractWorkWithSpooledFilesInputData inputData = produceInputData(connectionName, filterPoolName, filterName);
+
+        if (inputData != null) {
+            setInputDataInternally(shell, inputData);
         }
-
-        final WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
-        inputData.setFilterStrings(filterStrings);
-
-        setInputDataInternally(shell, inputData);
     }
 
     /**
@@ -336,13 +321,20 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     /**
+     * Returns the input data of the view.
+     */
+    protected AbstractWorkWithSpooledFilesInputData getInputData() {
+        return inputData;
+    }
+
+    /**
      * Sets the input data for the view. <br>
      * Must be called from the UI thread to get the 'Shell' for displaying error
      * messages.
      * 
      * @param inputData - WorkWithSpooledFilesInputData
      */
-    public void setInputData(WorkWithSpooledFilesInputData inputData) {
+    public void setInputData(AbstractWorkWithSpooledFilesInputData inputData) {
 
         if (!ISphereHelper.checkISphereLibrary(getShell(), inputData.getConnectionName())) {
             return;
@@ -363,7 +355,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * @param shell - Shell for displaying messages
      * @param inputData - WorkWithSpooledFilesInputData
      */
-    private void setInputDataInternally(Shell shell, WorkWithSpooledFilesInputData inputData) {
+    private void setInputDataInternally(Shell shell, AbstractWorkWithSpooledFilesInputData inputData) {
 
         if (!inputData.isValid()) {
             setPinned(false);
@@ -619,4 +611,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     protected abstract IViewManager getViewManager();
+
+    protected abstract AbstractWorkWithSpooledFilesInputData produceInputData(String connectionName, String filterPoolName, String filterName);
 }
