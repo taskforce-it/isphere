@@ -8,17 +8,21 @@
 
 package biz.isphere.rse.spooledfiles.view;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.widgets.Composite;
 
 import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesView;
-import biz.isphere.core.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
-import biz.isphere.rse.connection.ConnectionManager;
+import biz.isphere.rse.ibm.helper.ISeriesRSEHelper;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystem;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 
+import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.filters.SystemFilter;
+import com.ibm.etools.systems.filters.SystemFilterPoolReference;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.model.ISystemResourceChangeEvent;
 import com.ibm.etools.systems.model.ISystemResourceChangeEvents;
@@ -61,38 +65,29 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
 
         int eventType = event.getType();
 
-        if (eventType == ISystemResourceChangeEvents.EVENT_REFRESH) {
+        if (eventType == ISystemResourceChangeEvents.EVENT_REFRESH || eventType == ISystemResourceChangeEvents.EVENT_RENAME) {
             if (event.getSource() instanceof SystemFilterReference) {
                 SystemFilterReference filterReference = (SystemFilterReference)event.getSource();
-                if (getSubSystem(filterReference) instanceof SpooledFileSubSystem) {
-                    refreshData();
+                SubSystem subSystem = getSubSystem(filterReference);
+                if (subSystem instanceof SpooledFileSubSystem) {
+                    SystemFilter systemFilter = filterReference.getReferencedFilter();
+                    WorkWithSpooledFilesInputData inputData = (WorkWithSpooledFilesInputData)getInputData();
+                    if (inputData.referencesFilter(subSystem, systemFilter)) {
+                        refreshData();
+                    }
                 }
             }
         } else if (eventType == ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE) {
             if (event.getGrandParent() instanceof SpooledFileSubSystem) {
                 if (event.getSource() instanceof SystemFilter) {
-
                     SubSystem subSystem = (SpooledFileSubSystem)event.getGrandParent();
                     SystemFilter systemFilter = (SystemFilter)event.getSource();
-
-                    setInputData(subSystem, systemFilter);
+                    WorkWithSpooledFilesInputData inputData = (WorkWithSpooledFilesInputData)getInputData();
+                    if (inputData.referencesFilter(subSystem, systemFilter)) {
+                        setInputData(inputData);
+                    }
                 }
             }
-        }
-    }
-
-    private void setInputData(SubSystem subSystem, SystemFilter systemFilter) {
-
-        String connectionName = getConnectionName(subSystem);
-        String filterPoolName = systemFilter.getParentFilterPool().getName();
-        String filterName = systemFilter.getName();
-
-        if (isSameFilter(connectionName, filterPoolName, filterName)) {
-
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
-            inputData.setFilterStrings(systemFilter.getFilterStrings());
-
-            setInputData(inputData);
         }
     }
 
@@ -100,7 +95,46 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
         return (SubSystem)filterReference.getFilterPoolReferenceManager().getProvider();
     }
 
-    private String getConnectionName(SubSystem subSystem) {
-        return ConnectionManager.getConnectionName(subSystem.getSystemConnection());
+    protected SystemFilter findFilter(String connectionName, String filterPoolName, String filterName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, SpooledFileSubSystem.ID);
+        SystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
+        for (SystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
+            if (filterPoolName != null && filterPoolName.equals(systemFilterPoolReference.getReferencedFilterPool().getName())) {
+                EList eList = systemFilterPoolReference.getReferencedFilterPool().getFilters();
+                for (int i = 0; i < eList.size(); i++) {
+                    SystemFilter filter = (SystemFilter)eList.get(i);
+                    if (filterName != null && filterName.equals(filter.getName())) {
+                        return filter;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    protected AbstractWorkWithSpooledFilesInputData produceInputData(String connectionName, String filterPoolName, String filterName) {
+
+        ISeriesConnection connection = ISeriesConnection.getConnection(connectionName);
+        if (connection == null) {
+            return null;
+        }
+
+        SubSystem subSystem = ISeriesRSEHelper.getSubSystemByClass(connection, SpooledFileSubSystem.ID);
+        if (subSystem == null) {
+            return null;
+        }
+
+        SystemFilter systemFilter = findFilter(connectionName, filterPoolName, filterName);
+        if (systemFilter == null) {
+            return null;
+        }
+
+        WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(subSystem, systemFilter);
+
+        return inputData;
     }
 }

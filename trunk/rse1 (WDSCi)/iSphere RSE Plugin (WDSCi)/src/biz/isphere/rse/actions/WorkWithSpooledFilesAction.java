@@ -23,16 +23,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.viewmanager.IPinnableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
-import biz.isphere.core.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
+import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
@@ -112,12 +113,9 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
         try {
 
             SubSystem subSystem = getSubSystem(filterReference);
-            String connectionName = getConnectionName(subSystem);
-            String filterPoolName = filterReference.getReferencedFilter().getParentFilterPool().getName();
-            String filterName = filterReference.getReferencedFilter().getName();
+            SystemFilter systemFilter = filterReference.getReferencedFilter();
 
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(connectionName, filterPoolName, filterName);
-            inputData.setFilterStrings(filterReference.getReferencedFilter().getFilterStrings());
+            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(subSystem, systemFilter);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
