@@ -281,6 +281,9 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     public void setWaitForRseConnectionPostRunData(Shell shell, String connectionName, boolean isAvailable) {
 
         if (!isAvailable) {
+            if (isPinned()) {
+                setPinned(false);
+            }
             MessageDialogAsync.displayError(shell, Messages.bind(Messages.Could_not_get_RSE_connection_A, connectionName));
             return;
         }
@@ -301,13 +304,30 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
     }
 
-    public void refreshTitle() {
+    /**
+     * Sets the title of the view.
+     */
+    public void setTitle() {
 
         if (inputData == null) {
+            labelHeadline.setText(Messages.EMPTY);
             return;
         }
 
         labelHeadline.setText(inputData.getConnectionName() + ":" + inputData.getFilterName()); //$NON-NLS-1$
+    }
+
+    /**
+     * Refreshs the view title and updates the pin properties.<br>
+     * Is called when a system resource (connection or filter) has been renamed.
+     */
+    public void refreshTitle() {
+
+        setTitle();
+
+        if (isPinned()) {
+            updatePinProperties();
+        }
     }
 
     /**
@@ -387,8 +407,8 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
 
-                setHeadline();
                 setInputData();
+                setHeadline();
 
                 if (isPinned()) {
                     updatePinProperties();
@@ -405,7 +425,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                     return;
                 }
 
-                AbstractWorkWithSpooledFilesView.this.refreshTitle();
+                setTitle();
             }
 
             private void setInputData() {
