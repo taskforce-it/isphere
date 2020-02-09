@@ -9,6 +9,7 @@
 package biz.isphere.rse.spooledfiles.view.rse;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
+import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
@@ -19,9 +20,9 @@ public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesI
     private ISubSystem subSystem;
     private ISystemFilter systemFilter;
 
-    public WorkWithSpooledFilesInputData(ISubSystem subSystem, ISystemFilter systemFilter) {
-        this.subSystem = subSystem;
-        this.systemFilter = systemFilter;
+    public WorkWithSpooledFilesInputData(ISystemFilterReference filterReference) {
+        this.subSystem = filterReference.getSubSystem();
+        this.systemFilter = filterReference.getReferencedFilter();
     }
 
     @Override
