@@ -14,7 +14,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Shell;
@@ -68,10 +67,7 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
         try {
 
-            ISubSystem subSystem = filterReference.getSubSystem();
-            ISystemFilter systemFilter = filterReference.getReferencedFilter();
-
-            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(subSystem, systemFilter);
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(filterReference);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);

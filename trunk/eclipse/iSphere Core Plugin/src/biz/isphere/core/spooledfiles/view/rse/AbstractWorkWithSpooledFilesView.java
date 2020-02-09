@@ -110,11 +110,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         getViewManager().add(this);
     }
 
-    public static String produceContentId(String connectionName, String filterName) {
-        String contentId = connectionName + ":" + filterName; //$NON-NLS-1$
-        return contentId;
-    }
-
     @Override
     public void dispose() {
 
@@ -306,6 +301,15 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
     }
 
+    public void refreshTitle() {
+
+        if (inputData == null) {
+            return;
+        }
+
+        labelHeadline.setText(inputData.getConnectionName() + ":" + inputData.getFilterName()); //$NON-NLS-1$
+    }
+
     /**
      * Reloads the spooled files when refreshing the view data. <br>
      * Must be called from the UI thread to get the 'Shell' for displaying error
@@ -401,7 +405,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                     return;
                 }
 
-                labelHeadline.setText(connectionName + ":" + filterName); //$NON-NLS-1$
+                AbstractWorkWithSpooledFilesView.this.refreshTitle();
             }
 
             private void setInputData() {
