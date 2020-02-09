@@ -87,9 +87,9 @@ public class XRDiContributions implements IIBMiHostContributions {
         final int sleepTime = 500;
         int waitTime = 30000;
 
-        while (getConnection(null, connectionName) == null) {
+        while (waitTime > 0 && getConnection(null, connectionName) == null) {
             try {
-                Thread.sleep(waitTime);
+                Thread.sleep(sleepTime);
                 waitTime = waitTime - sleepTime;
             } catch (InterruptedException e) {
             }
