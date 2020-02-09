@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
-import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
@@ -112,10 +111,7 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
 
         try {
 
-            SubSystem subSystem = getSubSystem(filterReference);
-            SystemFilter systemFilter = filterReference.getReferencedFilter();
-
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(subSystem, systemFilter);
+            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(filterReference);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);

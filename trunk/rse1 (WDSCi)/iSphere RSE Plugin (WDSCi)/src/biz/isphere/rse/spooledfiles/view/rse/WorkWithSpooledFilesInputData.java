@@ -12,6 +12,7 @@ import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputD
 import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.systems.filters.SystemFilter;
+import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
 public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesInputData {
@@ -19,9 +20,9 @@ public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesI
     private SubSystem subSystem;
     private SystemFilter systemFilter;
 
-    public WorkWithSpooledFilesInputData(SubSystem subSystem, SystemFilter systemFilter) {
-        this.subSystem = subSystem;
-        this.systemFilter = systemFilter;
+    public WorkWithSpooledFilesInputData(SystemFilterReference filterReference) {
+        this.subSystem = (SubSystem)filterReference.getFilterPoolReferenceManager().getProvider();
+        this.systemFilter = filterReference.getReferencedFilter();
     }
 
     @Override
