@@ -9,9 +9,7 @@
 package biz.isphere.core.spooledfiles.view;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -67,12 +65,7 @@ public class SpooledFilePropertiesDialog extends Dialog {
         container.setLayout(layout);
         container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        ScrolledComposite scrollable = new ScrolledComposite(container, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NONE);
-        scrollable.setLayout(new GridLayout(1, false));
-        scrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
-        scrollable.setExpandHorizontal(true);
-        scrollable.setExpandVertical(true);
-        scrollable.setContent(createMainArea(scrollable));
+        createMainArea(container);
 
         setDialogTitle();
 
@@ -81,7 +74,7 @@ public class SpooledFilePropertiesDialog extends Dialog {
 
     private Composite createMainArea(Composite parent) {
 
-        Composite mainArea = new Composite(parent, SWT.BORDER);
+        Composite mainArea = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -99,29 +92,43 @@ public class SpooledFilePropertiesDialog extends Dialog {
 
     private void createLeftArea(Composite parent) {
 
-        Composite leftArea = new Composite(parent, SWT.NONE);
+        Composite leftArea = new Composite(parent, SWT.BORDER);
         GridLayout layout = new GridLayout();
+        layout.marginTop = 0;
+        layout.marginBottom = 0;
+        layout.marginLeft = 25;
+        layout.marginRight = 60;
         leftArea.setLayout(layout);
-        leftArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gridData = new GridData(GridData.FILL_BOTH);
+        gridData.verticalIndent = 0;
+        gridData.horizontalIndent = -1;
+        leftArea.setLayoutData(gridData);
         leftArea.setBackground(ColorHelper.getDefaultBackgroundColor());
 
         Label lblHeadline = new Label(leftArea, SWT.SHADOW_ETCHED_OUT);
         lblHeadline.setLayoutData(new GridData(GridData.FILL_BOTH));
         lblHeadline.setText(Messages.Properties);
-        lblHeadline.setFont(JFaceResources.getFontRegistry().getBold("org.eclipse.jface.dialogfont")); //$NON-NLS-1$
         lblHeadline.setBackground(ColorHelper.getDefaultBackgroundColor());
     }
 
     private void createRightArea(Composite parent) {
 
-        Composite rightArea = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
+        Composite rightArea = new Composite(parent, SWT.BORDER);
 
         new SpooledFileProperties(rightArea, spooledFile);
 
         // Set layout afterwards, because SpooledFileProperties changes the
         // layout of the parent composite.
+        GridLayout layout = new GridLayout();
+        layout.marginTop = 0;
+        layout.marginBottom = 50;
+        layout.marginLeft = 15;
+        layout.marginRight = 100;
         rightArea.setLayout(layout);
-        rightArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        GridData gridData = new GridData(GridData.FILL_BOTH);
+        gridData.verticalIndent = 0;
+        gridData.horizontalIndent = -1;
+        rightArea.setLayoutData(gridData);
     }
 }
