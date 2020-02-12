@@ -435,7 +435,7 @@ public class SpooledFileBaseFilterStringEditPane {
     }
 
     public void resetFields() {
-        userText.setText("*");
+        userText.setText("*CURRENT");
         outqText.setText("*");
         outqLibText.setText("*");
         userDataText.setText("*");
