@@ -78,10 +78,14 @@ public class SpooledFileFactory {
 
                     if (filter.getOutputQueue() != null) {
                         String library;
-                        if (filter.getOutputQueueLibrary() != null) {
-                            library = filter.getOutputQueueLibrary();
+                        if ("*ALL".equals(filter.getOutputQueue())) {
+                            library = "";
                         } else {
-                            library = "*LIBL";
+                            if (filter.getOutputQueueLibrary() != null) {
+                                library = filter.getOutputQueueLibrary();
+                            } else {
+                                library = "*LIBL";
+                            }
                         }
                         new SPLF_setOutputQueue().run(as400, filter.getOutputQueue(), library);
                     }
