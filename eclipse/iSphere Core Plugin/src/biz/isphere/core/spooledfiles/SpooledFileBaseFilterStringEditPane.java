@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,17 @@ import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 
 public class SpooledFileBaseFilterStringEditPane {
 
-    private Text userText;
-    private Text outqText;
-    private Text outqLibText;
-    private Text userDataText;
-    private Text formTypeText;
+    private static final String[] SPECIAL_VALUES_USER = { "*", "*ALL", "*CURRENT" };
+    private static final String[] SPECIAL_VALUES_OUTPUT_QUEUE = { "*", "*ALL" };
+    private static final String[] SPECIAL_VALUES_OUTPUT_QUEUE_LIBRARY = { "*", "*CURLIB", "*LIBL" };
+    private static final String[] SPECIAL_VALUES_USER_DATA = { "*", "*ALL" };
+    private static final String[] SPECIAL_VALUES_FORM_TYPE = { "*", "*ALL", "*STD" };
+
+    private Combo userText;
+    private Combo outqText;
+    private Combo outqLibText;
+    private Combo userDataText;
+    private Combo formTypeText;
     private Text nameText;
     private Combo startingDateCombo;
     private IDateEdit startingDateDateTime;
@@ -51,17 +57,28 @@ public class SpooledFileBaseFilterStringEditPane {
     public void createContents(Composite composite_prompts, final ModifyListener modifyListener, String inputFilterString) {
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.User + ":");
-        userText = WidgetFactory.createUpperCaseText(composite_prompts);
+        userText = WidgetFactory.createUpperCaseCombo(composite_prompts);
+        userText.setItems(SPECIAL_VALUES_USER);
         userText.setLayoutData(createLayoutData(2));
         userText.setTextLimit(10);
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.Output_queue + ":");
-        outqText = WidgetFactory.createUpperCaseText(composite_prompts);
+        outqText = WidgetFactory.createUpperCaseCombo(composite_prompts);
+        outqText.setItems(SPECIAL_VALUES_OUTPUT_QUEUE);
         outqText.setLayoutData(createLayoutData(2));
         outqText.setTextLimit(10);
+        outqText.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if ("*".equals(outqText.getText()) || "*ALL".equals(outqText.getText())) {
+                    outqLibText.setText("*");
+                }
+            }
+        });
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.___Library + ":");
-        outqLibText = WidgetFactory.createUpperCaseText(composite_prompts);
+        outqLibText = WidgetFactory.createUpperCaseCombo(composite_prompts);
+        outqLibText.setItems(SPECIAL_VALUES_OUTPUT_QUEUE_LIBRARY);
         outqLibText.setLayoutData(createLayoutData(2));
         outqLibText.setTextLimit(10);
 
@@ -69,16 +86,17 @@ public class SpooledFileBaseFilterStringEditPane {
         nameText = WidgetFactory.createUpperCaseText(composite_prompts);
         nameText.setLayoutData(createLayoutData(1));
         nameText.setTextLimit(10);
-        Label nameGenericLabel = new Label(composite_prompts, SWT.NONE);
-        nameGenericLabel.setText("*GENERIC*");
+        new Label(composite_prompts, SWT.NONE).setText("*GENERIC*");
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.User_data + ":");
-        userDataText = WidgetFactory.createUpperCaseText(composite_prompts);
+        userDataText = WidgetFactory.createUpperCaseCombo(composite_prompts);
+        userDataText.setItems(SPECIAL_VALUES_USER_DATA);
         userDataText.setLayoutData(createLayoutData(2));
         userDataText.setTextLimit(10);
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.Form_type + ":");
-        formTypeText = WidgetFactory.createUpperCaseText(composite_prompts);
+        formTypeText = WidgetFactory.createUpperCaseCombo(composite_prompts);
+        formTypeText.setItems(SPECIAL_VALUES_FORM_TYPE);
         formTypeText.setLayoutData(createLayoutData(2));
         formTypeText.setTextLimit(10);
 
@@ -430,6 +448,10 @@ public class SpooledFileBaseFilterStringEditPane {
     }
 
     public boolean areFieldsComplete() {
+        String error = validateInput();
+        if (error == null) {
+            return true;
+        }
         return false;
     }
 
@@ -437,7 +459,27 @@ public class SpooledFileBaseFilterStringEditPane {
 
         String error;
 
+        error = validateSimple(Messages.User, userText.getText(), SPECIAL_VALUES_USER);
+        if (error != null) {
+            return error;
+        }
+
+        error = validateOutputQueue();
+        if (error != null) {
+            return error;
+        }
+
         error = validateSpooledFileName();
+        if (error != null) {
+            return error;
+        }
+
+        error = validateSimple(Messages.User_data, userDataText.getText(), SPECIAL_VALUES_USER_DATA);
+        if (error != null) {
+            return error;
+        }
+
+        error = validateSimple(Messages.Form_type, formTypeText.getText(), SPECIAL_VALUES_FORM_TYPE);
         if (error != null) {
             return error;
         }
@@ -450,7 +492,51 @@ public class SpooledFileBaseFilterStringEditPane {
         return null;
     }
 
+    private String validateSimple(String fieldName, String text, String... specialValues) {
+
+        if (text.trim().length() == 0) {
+            return Messages.bind(Messages.The_value_in_field_A_is_not_valid, fieldName);
+        }
+
+        for (String specialValue : specialValues) {
+            if (text.equalsIgnoreCase(specialValue)) {
+                return null;
+            }
+        }
+
+        if (text.indexOf("*") >= 0) {
+            return Messages.bind(Messages.The_value_in_field_A_is_not_valid, fieldName);
+        }
+
+        return null;
+    }
+
+    private String validateOutputQueue() {
+
+        String error = validateSimple(Messages.Output_queue, outqText.getText(), SPECIAL_VALUES_OUTPUT_QUEUE);
+        if (error != null) {
+            return error;
+        }
+
+        error = validateSimple(Messages.___Library, outqLibText.getText(), SPECIAL_VALUES_OUTPUT_QUEUE_LIBRARY);
+        if (error != null) {
+            return error;
+        }
+
+        if ("*".equals(outqText.getText()) || "*ALL".equals(outqText.getText())) {
+            if (!"*".equals(outqLibText.getText())) {
+                return Messages.bind(Messages.The_value_in_field_A_is_not_valid, Messages.___Library);
+            }
+        }
+
+        return null;
+    }
+
     private String validateSpooledFileName() {
+
+        if (nameText.getText().trim().length() == 0) {
+            return Messages.bind(Messages.The_value_in_field_A_is_not_valid, Messages.Spooled_file_name);
+        }
 
         String spooledFileName = nameText.getText();
         if (spooledFileName.equals("*")) {
