@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.6.0.b011
+-----------------------------
+ • Fixed problem that source members with a *BLANK source type
+   where included in the iSphere source member search, when
+   the search was restricted to a certain source type.
+
 Changelog: iSphere 3.6.0.b010
 -----------------------------
  • Implemented setFocus() of "Spooled Files" view.

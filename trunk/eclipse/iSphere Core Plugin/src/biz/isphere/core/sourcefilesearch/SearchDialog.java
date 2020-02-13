@@ -126,7 +126,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         filterSrcTypeGridData.widthHint = 100;
         filterSrcTypeCombo.setLayoutData(filterSrcTypeGridData);
         filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
-        filterSrcTypeCombo.setItems(new String[] { "*" }); //$NON-NLS-1$
+        filterSrcTypeCombo.setItems(new String[] { "*", "*BLANK" }); //$NON-NLS-1$
         filterSrcTypeCombo.select(0);
         filterSrcTypeCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
