@@ -51,17 +51,17 @@ public class SourceFileSearchFilter {
 
         String srcType = searchOptions.getGenericStringOption(GenericSearchOption.SRCMBR_SRC_TYPE, "*"); //$NON-NLS-1$
 
-        if (StringHelper.isNullOrEmpty(srcType)) {
-            return true;
-        }
-
         if ("*".equals(srcType)) {
             return true;
         }
 
         String itemSrcType = item.getType();
-        if (StringHelper.isNullOrEmpty(itemSrcType)) {
-            return true;
+        if ("*BLANK".equals(srcType) || StringHelper.isNullOrEmpty(srcType)) {
+            if (StringHelper.isNullOrEmpty(itemSrcType)) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         // ISeriesPDMPatternMatch matcher = new

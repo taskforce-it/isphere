@@ -282,7 +282,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         filterSrcTypeGridData.widthHint = 100;
         filterSrcTypeCombo.setLayoutData(filterSrcTypeGridData);
         filterSrcTypeCombo.setToolTipText(Messages.Specifies_the_generic_source_type_of_the_members_that_are_included_in_the_search);
-        filterSrcTypeCombo.setItems(new String[] { "*" }); //$NON-NLS-1$
+        filterSrcTypeCombo.setItems(new String[] { "*", "*BLANK" }); //$NON-NLS-1$ //$NON-NLS-2$
         filterSrcTypeCombo.select(0);
 
         showAllRecordsButton = WidgetFactory.createCheckbox(tOptionsGroup);
