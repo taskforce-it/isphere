@@ -299,7 +299,9 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         final AbstractWorkWithSpooledFilesInputData inputData = produceInputData(connectionName, filterPoolName, filterName);
 
-        if (inputData != null) {
+        if (inputData == null) {
+            setPinned(false);
+        } else {
             setInputDataInternally(shell, inputData);
         }
     }
@@ -434,9 +436,9 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                     return;
                 }
 
-                if (spooledFiles.length == 0) {
-                    setPinned(false);
-                }
+                // if (spooledFiles.length == 0) {
+                // setPinned(false);
+                // }
 
                 workWithSpooledFilesPanel.setInput(connectionName, spooledFiles);
                 workWithSpooledFilesHelper.setShell(getShell());
