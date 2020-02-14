@@ -1,6 +1,7 @@
 
-Changelog: iSphere 3.6.0.b011
------------------------------
+Changelog: iSphere 3.6.0.r
+--------------------------
+ • Added status line messages to "Spooled Files" view.
  • Fixed problem that source members with a *BLANK source type
    where included in the iSphere source member search, when
    the search was restricted to a certain source type.
