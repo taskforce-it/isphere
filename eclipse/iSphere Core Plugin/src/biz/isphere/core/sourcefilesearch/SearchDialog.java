@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
@@ -151,6 +153,17 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     @Override
     protected void okPressed() {
+
+        if (StringHelper.isNullOrEmpty(filterSrcTypeCombo.getText())) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_type);
+            filterSrcTypeCombo.setFocus();
+            return;
+        }
+
+        if (getSelectedElements().size() == 0) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_objects_found_that_match_the_selection_criteria);
+            return;
+        }
 
         if (refreshJob != null) {
             refreshJob.cancel();

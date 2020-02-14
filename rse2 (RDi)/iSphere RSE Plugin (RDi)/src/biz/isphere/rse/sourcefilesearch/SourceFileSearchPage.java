@@ -748,12 +748,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 sourceFilePrompt.getMemberCombo().setFocus();
                 return false;
             }
+        }
 
-            if (StringHelper.isNullOrEmpty(getSourceType())) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_type);
-                filterSrcTypeCombo.setFocus();
-                return false;
-            }
+        if (StringHelper.isNullOrEmpty(getSourceType())) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_member_type);
+            filterSrcTypeCombo.setFocus();
+            return false;
         }
 
         storeScreenValues();
@@ -810,6 +810,11 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
             SourceFileSearchFilter filter = new SourceFileSearchFilter();
             ArrayList<SearchElement> selectedElements = filter.applyFilter(searchElements.values(), searchOptions);
+
+            if (selectedElements.size() == 0) {
+                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
+                return false;
+            }
 
             new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions, selectedElements, postRun);
 
