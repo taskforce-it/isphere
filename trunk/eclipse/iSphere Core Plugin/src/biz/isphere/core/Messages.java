@@ -1564,6 +1564,10 @@ public class Messages extends NLS {
 
     public static String Specify_whether_all_matching_records_are_returned;
 
+    public static String Enter_or_select_a_simple_or_generic_member_type;
+
+    public static String No_objects_found_that_match_the_selection_criteria;
+
     public static String Could_not_retrieve_any_text_lines_from_view;
 
     public static String No_TEXT_or_LISTING_views_available;
