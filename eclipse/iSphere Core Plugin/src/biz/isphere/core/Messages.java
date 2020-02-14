@@ -392,6 +392,12 @@ public class Messages extends NLS {
 
     public static String Spooled_Files_View;
 
+    public static String Spooled_file_A_B;
+
+    public static String Spooled_files_A_of_B;
+
+    public static String No_data;
+
     public static String Status;
 
     public static String Page;

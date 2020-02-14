@@ -21,7 +21,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
@@ -457,6 +455,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     @Override
     public void setFocus() {
         workWithSpooledFilesPanel.setFocus();
+        updateStatusLine();
     }
 
     /*
@@ -465,6 +464,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     public void selectionChanged(SelectionChangedEvent event) {
         refreshActionsEnablement();
+        updateStatusLine();
     }
 
     /*
@@ -567,14 +567,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     /*
-     * ISelectionListener methods
-     */
-
-    public void selectionChanged(IWorkbenchPart workbenchPart, ISelection selection) {
-        return;
-    }
-
-    /*
      * Private and protected methods
      */
 
@@ -634,6 +626,27 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     private boolean hasInputData() {
         return inputData != null;
+    }
+
+    private void updateStatusLine() {
+
+        int countTotal = workWithSpooledFilesPanel.getItemCount();
+        int countSelected = workWithSpooledFilesPanel.getSelectionCount();
+
+        if (countTotal == 0 || countSelected == 0) {
+            setStatusLineText(Messages.No_data_available);
+        } else if (countSelected == 1) {
+            SpooledFile spooledFile = workWithSpooledFilesPanel.getSelectedItems()[0];
+            setStatusLineText(Messages.bind(Messages.Spooled_file_A_B, spooledFile.getFile(), spooledFile.getStatus()));
+        } else {
+            setStatusLineText(Messages.bind(Messages.Spooled_files_A_of_B, countSelected, countTotal));
+        }
+    }
+
+    private void setStatusLineText(String message) {
+
+        IActionBars bars = getViewSite().getActionBars();
+        bars.getStatusLineManager().setMessage(message);
     }
 
     protected abstract IViewManager getViewManager();
