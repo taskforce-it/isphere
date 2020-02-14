@@ -383,12 +383,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         if (!inputData.isValid()) {
             setPinned(false);
+            updateStatusLine();
             return;
         }
 
         this.inputData = inputData;
 
         if (loadSpooledFilesJob != null) {
+            updateStatusLine();
             return;
         }
 
@@ -413,6 +415,8 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                 if (isPinned()) {
                     updatePinProperties();
                 }
+
+                updateStatus();
 
                 loadSpooledFilesJob = null;
 
@@ -442,6 +446,15 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                 workWithSpooledFilesHelper.setShell(getShell());
                 workWithSpooledFilesHelper.setConnection(connectionName);
                 refreshActionsEnablement();
+            }
+
+            private void updateStatus() {
+
+                if (isDisposed(workWithSpooledFilesPanel)) {
+                    return;
+                }
+
+                updateStatusLine();
             }
 
             private boolean isDisposed(Widget widget) {
@@ -633,8 +646,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         int countTotal = workWithSpooledFilesPanel.getItemCount();
         int countSelected = workWithSpooledFilesPanel.getSelectionCount();
 
-        if (countTotal == 0 || countSelected == 0) {
+        if (countTotal == 0) {
             setStatusLineText(Messages.No_data_available);
+        } else if (countSelected == 0) {
+            setStatusLineText(Messages.bind(Messages.Spooled_files_A, countTotal));
         } else if (countSelected == 1) {
             SpooledFile spooledFile = workWithSpooledFilesPanel.getSelectedItems()[0];
             setStatusLineText(Messages.bind(Messages.Spooled_file_A_B, spooledFile.getFile(), spooledFile.getStatus()));
