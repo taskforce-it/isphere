@@ -1,6 +1,9 @@
 
 Changelog: iSphere 3.6.0.r
 --------------------------
+ • Improved error checking of iSphere source file search to avoid
+   starting a search without elements that match the selection
+   criteria.
  • Added status line messages to "Spooled Files" view.
  • Fixed problem that source members with a *BLANK source type
    where included in the iSphere source member search, when
