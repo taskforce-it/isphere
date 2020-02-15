@@ -202,7 +202,7 @@ public class Messages extends NLS {
 
     public static String The_connection_A_is_currently_offline_and_cannot_be_connected;
 
-    public static String The_connection_does_not_exist;
+    public static String The_connection_does_not_exist_or_could_be_established;
 
     public static String Statement;
 

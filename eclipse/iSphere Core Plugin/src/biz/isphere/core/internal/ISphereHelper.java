@@ -106,7 +106,7 @@ public class ISphereHelper {
     private static String checkISphereLibraryWithMessage(AS400 as400, String library) {
 
         if (as400 == null) {
-            return Messages.The_connection_does_not_exist;
+            return Messages.The_connection_does_not_exist_or_could_be_established;
         }
 
         String dataAreaISphereContent;
