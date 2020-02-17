@@ -52,16 +52,19 @@
  *     - On the PC run target 'uploadSourceForgeFiles'.
  *     - Check files on SourceForge.
  *     - Check the green "Download" button on SourceForge.
- *     - Create SVN tag.
  *   Last steps when all changes are committed to the repository and all the
  *   files are published at sourceforge.
  *     - Open project's "Summary" page at SourceForge and select "Browse all files".
  *       Klick the "i" button (view details) nest to the RDi zip file and
  *       click "select all" for the "Download Button".
+ *     - On the PC run target 'releaseNewVersion'.
+ *     - Signon to the Eclipse Marketplace and change the version
+ *       number of the iSphere application.
+ *   Last steps:
  *     - Set the version number in MANIFEST.MF in the project specified at key
  *       'build.notifier.project' in file 'build.properties'.
  *       and commit the change to the repository.
- *     - On the PC run target 'releaseNewVersion'.
+ *     - Create SVN tag.
  *
  * ===================================================================== -->
 <project basedir="." default="build">
