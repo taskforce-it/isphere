@@ -26,7 +26,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.dataspacemonitor.rse.DataSpaceMonitorView;
@@ -78,7 +78,7 @@ public abstract class AbstractMonitorDataSpaceAction implements IObjectActionDel
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_SPACE_MONITOR_VIEWS);
-            IPinnableView view = (IPinnableView)viewManager.getView(DataSpaceMonitorView.ID, contentId);
+            IPinableView view = (IPinableView)viewManager.getView(DataSpaceMonitorView.ID, contentId);
             if (view instanceof IDialogView && !contentId.equals(view.getContentId())) {
                 ((IDialogView)view).setData(new RemoteObject[] { remoteObject });
             }

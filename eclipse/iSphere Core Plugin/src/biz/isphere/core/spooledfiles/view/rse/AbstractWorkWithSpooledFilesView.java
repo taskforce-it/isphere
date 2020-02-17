@@ -42,7 +42,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.spooledfiles.SpooledFile;
@@ -64,7 +64,7 @@ import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType
 import biz.isphere.core.spooledfiles.view.jobs.AutoRefreshJob;
 import biz.isphere.core.spooledfiles.view.listeners.AutoRefreshViewCloseListener;
 
-public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinnableView, IWaitForRseConnectionPostRun,
+public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinableView, IWaitForRseConnectionPostRun,
     ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView, ISelectionChangedListener {
 
     public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$
@@ -503,7 +503,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     /*
-     * IPinnableView methods
+     * IPinableView methods
      */
 
     public boolean isPinned() {

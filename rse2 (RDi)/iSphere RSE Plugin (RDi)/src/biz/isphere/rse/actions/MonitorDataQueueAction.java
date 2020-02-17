@@ -27,7 +27,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.dataqueue.rse.DataQueueMonitorView;
@@ -80,7 +80,7 @@ public class MonitorDataQueueAction implements IObjectActionDelegate {
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_QUEUE_MONITOR_VIEWS);
-            IPinnableView view = (IPinnableView)viewManager.getView(DataQueueMonitorView.ID, contentId);
+            IPinableView view = (IPinableView)viewManager.getView(DataQueueMonitorView.ID, contentId);
             if (view instanceof IDialogView && !contentId.equals(view.getContentId())) {
                 ((IDialogView)view).setData(new RemoteObject[] { remoteObject });
             }

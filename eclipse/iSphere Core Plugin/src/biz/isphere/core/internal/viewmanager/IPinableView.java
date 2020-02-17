@@ -7,7 +7,7 @@
  *******************************************************************************/
 
 /**
- * This interfaces defined the methods, a pinnable view has to implement.
+ * This interfaces defined the methods, a pinable view has to implement.
  * 
  * @author Thomas Raddatz
  */
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.ui.IViewSite;
 
-public interface IPinnableView {
+public interface IPinableView {
 
     public boolean isPinned();
 

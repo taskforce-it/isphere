@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -71,7 +71,7 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
-            IPinnableView view = (IPinnableView)viewManager.getView(WorkWithSpooledFilesView.ID, contentId);
+            IPinableView view = (IPinableView)viewManager.getView(WorkWithSpooledFilesView.ID, contentId);
 
             if (view instanceof WorkWithSpooledFilesView) {
                 WorkWithSpooledFilesView wrkSplfView = (WorkWithSpooledFilesView)view;

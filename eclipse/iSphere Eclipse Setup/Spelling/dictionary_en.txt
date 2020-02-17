@@ -2,7 +2,7 @@ Raddatz
 Thomas
 resizable
 editable
-pinnable
+pinable
 typo
 download
 zip

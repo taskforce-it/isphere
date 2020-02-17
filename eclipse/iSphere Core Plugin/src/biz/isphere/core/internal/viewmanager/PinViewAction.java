@@ -14,17 +14,17 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 
 /**
- * Action, that is used to change the 'pinned' state of a pinnable view. A
- * pinnable view must implement the {@link IPinnableView} interface and it must
+ * Action, that is used to change the 'pinned' state of a pinable view. A
+ * pinable view must implement the {@link IPinableView} interface and it must
  * register/unregister itself at a {@link IViewManager}.
  * 
  * @author Thomas Raddatz
  */
 public class PinViewAction extends Action {
 
-    private IPinnableView view;
+    private IPinableView view;
 
-    public PinViewAction(IPinnableView view) {
+    public PinViewAction(IPinableView view) {
         super(Messages.Pin_View, Action.AS_CHECK_BOX);
 
         this.view = view;
