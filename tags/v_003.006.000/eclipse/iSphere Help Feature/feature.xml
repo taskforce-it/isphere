@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="biz.isphere.help"
+      label="iSphere Help (optional)"
+      version="3.6.0.r"
+      provider-name="iSphere Project Team"
+      plugin="biz.isphere.core">
+
+   <description url="https://sourceforge.net/projects/isphere/">
+      iSphere help pages.
+   </description>
+
+   <copyright url="https://sourceforge.net/projects/isphere/">
+      Copyright (c) 2012-2020 iSphere Project Team. All rights reserved.
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/cpl-v10.html">
+      This program and the accompanying materials are made available
+under the terms of the Common Public License v1.0 which accompanies
+this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
+   </license>
+
+   <url>
+      <discovery label="iSphere Project Home" url="https://sourceforge.net/projects/isphere/"/>
+      <discovery label="Tools/400" url="http://www.tools400.de"/>
+      <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
+   </url>
+
+   <plugin
+         id="biz.isphere.base.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.core.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.lpex.tasks.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.tn5250j.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.joblogexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.messagesubsystem.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.strpreprc.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="biz.isphere.lpex.comments.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
