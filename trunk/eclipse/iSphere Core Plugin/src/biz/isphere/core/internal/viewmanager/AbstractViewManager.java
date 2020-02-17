@@ -33,11 +33,11 @@ import biz.isphere.core.ISpherePlugin;
 
 /**
  * This class manages pinned views, which have to be restored when the IDE is
- * started again. A pinnable view must at least call {@link #add(IPinnableView)}
- * from its constructor and {@link #remove(IPinnableView)} from the dispose()
+ * started again. A pinable view must at least call {@link #add(IPinableView)}
+ * from its constructor and {@link #remove(IPinableView)} from the dispose()
  * method.
  * <p>
- * The view can implement @link {@link IPinnableView#getPinProperties()} to
+ * The view can implement @link {@link IPinableView#getPinProperties()} to
  * provide custom properties that are required to restore the state of the view.
  * These properties are stored in 'dialog_settings.xml' in folder
  * '[workspace]/.metadata/.plugins/bzi.isphere.core'.
@@ -52,7 +52,7 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private static final String VIEW_PIN_PROPERTY = "view.";
 
-    private Set<IPinnableView> monitorViews;
+    private Set<IPinableView> monitorViews;
 
     private String name;
 
@@ -80,7 +80,7 @@ public abstract class AbstractViewManager implements IViewManager {
         }
 
         this.name = name;
-        this.monitorViews = new HashSet<IPinnableView>();
+        this.monitorViews = new HashSet<IPinableView>();
         this.pageService = (IPageService)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
         this.perspectiveListener = new PerspectiveAdapter() {
@@ -90,8 +90,8 @@ public abstract class AbstractViewManager implements IViewManager {
                 if (IWorkbenchPage.CHANGE_VIEW_HIDE.equals(changeId)) {
                     IViewReference viewRef = (IViewReference)partRef;
                     IViewPart viewPart = viewRef.getView(false);
-                    if (viewPart instanceof IPinnableView) {
-                        IPinnableView view = (IPinnableView)viewPart;
+                    if (viewPart instanceof IPinableView) {
+                        IPinableView view = (IPinableView)viewPart;
                         view.setPinned(false);
                     }
                 }
@@ -140,7 +140,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param contentId - ID that uniquely identified the content that is
      *        displayed by the view
      */
-    public synchronized IPinnableView getView(String viewId, String contentId) throws PartInitException {
+    public synchronized IPinableView getView(String viewId, String contentId) throws PartInitException {
         return getView(viewId, contentId, false);
     }
 
@@ -152,9 +152,9 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param contentId - ID that uniquely identified the content that is
      *        displayed by the view
      */
-    public synchronized IPinnableView getView(String viewId, String contentId, boolean considerContentId) throws PartInitException {
+    public synchronized IPinableView getView(String viewId, String contentId, boolean considerContentId) throws PartInitException {
 
-        IPinnableView view = null;
+        IPinableView view = null;
         boolean visible = false;
 
         this.isLoadingView = true;
@@ -164,7 +164,7 @@ public abstract class AbstractViewManager implements IViewManager {
             /*
              * Search all known views for the selected object
              */
-            for (IPinnableView monitorView : monitorViews) {
+            for (IPinableView monitorView : monitorViews) {
                 String viewedObject = monitorView.getContentId();
                 if (viewedObject != null && viewedObject.equals(contentId)) {
                     view = monitorView;
@@ -176,7 +176,7 @@ public abstract class AbstractViewManager implements IViewManager {
              * Search all known views for an unpinned view.
              */
             if (view == null) {
-                for (IPinnableView monitorView : monitorViews) {
+                for (IPinableView monitorView : monitorViews) {
                     if (!monitorView.isPinned()
                         && (!considerContentId || monitorView.getContentId() == null || monitorView.getContentId().equals(contentId))) {
                         view = monitorView;
@@ -189,7 +189,7 @@ public abstract class AbstractViewManager implements IViewManager {
             if (view == null) {
                 visible = true;
                 String secondaryId = createSecondaryId();
-                view = (IPinnableView)page.showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+                view = (IPinableView)page.showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
             }
 
             if (!visible && view != null) {
@@ -217,7 +217,7 @@ public abstract class AbstractViewManager implements IViewManager {
 
     private boolean secondaryIdExists(String id) {
 
-        for (IPinnableView view : monitorViews) {
+        for (IPinableView view : monitorViews) {
             if (id.equals(view.getViewSite().getSecondaryId())) {
                 return true;
             }
@@ -231,7 +231,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * 
      * @param view - view, that is added to the manager
      */
-    public void add(IPinnableView view) {
+    public void add(IPinableView view) {
         if (monitorViews.contains(view)) {
             throw new RuntimeException("View already exists. Do not try to add a view twice."); //$NON-NLS-1$
         }
@@ -244,7 +244,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * 
      * @param view - view, that is removed from the manager
      */
-    public void remove(IPinnableView view) {
+    public void remove(IPinableView view) {
 
         saveViewStatus(view);
         monitorViews.remove(view);
@@ -255,7 +255,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * 
      * @param view - view, whose 'pinned' state is returned
      */
-    public boolean isPinned(IPinnableView view) {
+    public boolean isPinned(IPinableView view) {
         IDialogSettings settings = getDialogSettings();
         return settings.getBoolean(getKey(view, IS_PINNED));
     }
@@ -279,7 +279,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param view - view, whose content ID is returned
      * @return content ID of the displayed content
      */
-    public String getContentId(IPinnableView view) {
+    public String getContentId(IPinableView view) {
         IDialogSettings settings = getDialogSettings();
         return settings.get(getKey(view, CONTENT_ID));
     }
@@ -291,7 +291,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param view - view, whose properties are returned
      * @param pinKeys - keys of the values that are retrieved and returned
      */
-    public Map<String, String> getPinProperties(IPinnableView view, Set<String> pinKeys) {
+    public Map<String, String> getPinProperties(IPinableView view, Set<String> pinKeys) {
 
         IDialogSettings settings = getDialogSettings();
         Map<String, String> pinProperties = new HashMap<String, String>();
@@ -308,7 +308,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * 
      * @param view - view, whose status is saved
      */
-    private void saveViewStatus(IPinnableView view) {
+    private void saveViewStatus(IPinableView view) {
 
         IDialogSettings settings = getDialogSettings();
         settings.put(getKey(view, IS_PINNED), new Boolean(view.isPinned()));
@@ -331,7 +331,7 @@ public abstract class AbstractViewManager implements IViewManager {
      * @param subKey - sub key that uniquely identifies a specific property
      * @return key value
      */
-    private String getKey(IPinnableView view, String subKey) {
+    private String getKey(IPinableView view, String subKey) {
         return view.getViewSite().getSecondaryId() + ":" + subKey;
     }
 

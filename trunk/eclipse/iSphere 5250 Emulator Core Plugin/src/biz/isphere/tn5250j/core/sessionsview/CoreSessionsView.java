@@ -25,7 +25,7 @@ import org.eclipse.ui.progress.UIJob;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.tn5250j.core.preferences.Preferences;
@@ -38,7 +38,7 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
 
-public abstract class CoreSessionsView extends TN5250JView implements IPinnableView {
+public abstract class CoreSessionsView extends TN5250JView implements IPinableView {
 
     protected static final String PROFILE_NAME = "profileName"; //$NON-NLS-1$
     protected static final String CONNECTION_NAME = "connectionName"; //$NON-NLS-1$

@@ -97,7 +97,7 @@ import biz.isphere.core.internal.IJobFinishedListener;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.internal.viewmanager.IPinnableView;
+import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.internal.viewmanager.PinViewAction;
 import biz.isphere.core.preferences.Preferences;
@@ -106,7 +106,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
 
-public abstract class AbstractDataQueueMonitorView extends ViewPart implements IDialogView, IPinnableView, IJobFinishedListener, ISelectionProvider,
+public abstract class AbstractDataQueueMonitorView extends ViewPart implements IDialogView, IPinableView, IJobFinishedListener, ISelectionProvider,
     IAdaptable, ControlListener {
 
     public static final String ID = "biz.isphere.rse.dataqueue.rse.DataQueueMonitorView"; //$NON-NLS-1$ 
@@ -966,7 +966,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     }
 
     /**
-     * Implements {@link IPinnableView#setPinned(boolean)}
+     * Implements {@link IPinableView#setPinned(boolean)}
      */
     public void setPinned(boolean pinned) {
         pinViewAction.setChecked(pinned);
@@ -974,14 +974,14 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     }
 
     /**
-     * Implements {@link IPinnableView#isPinned()}
+     * Implements {@link IPinableView#isPinned()}
      */
     public boolean isPinned() {
         return pinViewAction.isChecked();
     }
 
     /**
-     * Implements {@link IPinnableView#getContentId()}
+     * Implements {@link IPinableView#getContentId()}
      */
     public String getContentId() {
         if (noObjectAvailable()) {
@@ -991,7 +991,7 @@ public abstract class AbstractDataQueueMonitorView extends ViewPart implements I
     }
 
     /**
-     * Implements {@link IPinnableView#getPinProperties()}
+     * Implements {@link IPinableView#getPinProperties()}
      */
     public Map<String, String> getPinProperties() {
         return pinProperties;

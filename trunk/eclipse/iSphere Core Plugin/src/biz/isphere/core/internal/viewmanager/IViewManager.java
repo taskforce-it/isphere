@@ -25,21 +25,21 @@ public interface IViewManager {
     public static final String TN5250J_SESSION_VIEWS = "TN5250JSessionsViews";
     public static final String SPOOLED_FILES_VIEWS = "SpooledFilesViews";
 
-    public void add(IPinnableView view);
+    public void add(IPinableView view);
 
-    public void remove(IPinnableView view);
+    public void remove(IPinableView view);
 
-    public boolean isPinned(IPinnableView view);
+    public boolean isPinned(IPinableView view);
 
     public boolean isLoadingView();
 
     public boolean isInitialized(int timeout);
 
-    public IPinnableView getView(String viewId, String contentId) throws PartInitException;
+    public IPinableView getView(String viewId, String contentId) throws PartInitException;
 
-    public IPinnableView getView(String viewId, String contentId, boolean considerContentId) throws PartInitException;
+    public IPinableView getView(String viewId, String contentId, boolean considerContentId) throws PartInitException;
 
-    public Map<String, String> getPinProperties(IPinnableView view, Set<String> pinKeys);
+    public Map<String, String> getPinProperties(IPinableView view, Set<String> pinKeys);
 
     public void dispose();
 }
