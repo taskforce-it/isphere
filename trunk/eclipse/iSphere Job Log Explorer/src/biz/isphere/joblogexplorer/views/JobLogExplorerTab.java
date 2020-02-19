@@ -568,11 +568,11 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         }
 
         @Override
-        protected IStatus run(IProgressMonitor arg0) {
+        protected IStatus run(IProgressMonitor monitor) {
 
             try {
 
-                JobLogParser reader = new JobLogParser();
+                JobLogParser reader = new JobLogParser(monitor);
                 final JobLog jobLog = reader.loadFromStmf(fileInput.getPath());
 
                 new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
@@ -645,7 +645,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         }
 
         @Override
-        protected IStatus run(IProgressMonitor arg0) {
+        protected IStatus run(IProgressMonitor monitor) {
 
             try {
 
@@ -660,7 +660,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
                 JobLogExplorerFileInput editorInput = new JobLogExplorerFileInput(filePath, originalFileName);
 
-                JobLogParser reader = new JobLogParser();
+                JobLogParser reader = new JobLogParser(monitor);
                 final JobLog jobLog = reader.loadFromStmf(editorInput.getPath());
 
                 new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
@@ -690,7 +690,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         }
 
         @Override
-        public IStatus runInUIThread(IProgressMonitor arg0) {
+        public IStatus runInUIThread(IProgressMonitor monitor) {
 
             try {
 
