@@ -30,7 +30,7 @@ import biz.isphere.joblogexplorer.preferences.Preferences;
 
 public class JobLogParser {
 
-    private static final int NUMBER_OF_LINES_SCANNED_FOR_FIRST_LINE_OF_JOIB_LOG = 3;
+    private static final int NUMBER_OF_LINES_TO_SCAN_FOR_FIRST_LINE_OF_JOB_LOG = 3;
     private static final int IDLE = 1;
     private static final int PARSE_PAGE_HEADER = 2;
     private static final int PARSE_MESSAGE = 3;
@@ -71,7 +71,7 @@ public class JobLogParser {
         messageAttributes = new LinkedList<String>();
         lastMessageAttribute = -1;
 
-        int errCount = NUMBER_OF_LINES_SCANNED_FOR_FIRST_LINE_OF_JOIB_LOG;
+        int numLinesToScanForFirstLineOfJobLog = NUMBER_OF_LINES_TO_SCAN_FOR_FIRST_LINE_OF_JOB_LOG;
 
         try {
 
@@ -80,11 +80,11 @@ public class JobLogParser {
             br = new BufferedReader(new FileReader(pathName));
 
             mode = IDLE;
-            while ((line = br.readLine()) != null && errCount > 0) {
+            while ((line = br.readLine()) != null && numLinesToScanForFirstLineOfJobLog > 0) {
 
                 mode = checkForStartOfPage(line);
                 if (mode == IDLE) {
-                    errCount--;
+                    numLinesToScanForFirstLineOfJobLog--;
                     continue;
                 }
 
