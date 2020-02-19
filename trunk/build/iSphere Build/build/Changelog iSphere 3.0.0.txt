@@ -1,6 +1,8 @@
 
-Changelog: iSphere 3.x.x.b001
------------------------------
+Changelog: iSphere 3.6.1.r
+--------------------------
+ • Added option to cancel the job log parser.
+ • Fixed regular expression of job log parser.
  • Fixed spelling of 'pinable'.
 
 Changelog: iSphere 3.6.0.r
@@ -46,7 +48,7 @@ Changelog: iSphere 3.6.0.b007
 
 Changelog: iSphere 3.6.0.b006
 -----------------------------
- • Added pinable "Spooled Files" view.
+ • Added pinnable "Spooled Files" view.
 
 Changelog: iSphere 3.6.0.b005
 -----------------------------
