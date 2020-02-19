@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.IBMiDateFormat;
@@ -35,6 +36,7 @@ public class JobLogParser {
     private static final int PARSE_PAGE_HEADER = 2;
     private static final int PARSE_MESSAGE = 3;
 
+    private IProgressMonitor monitor;
     private JobLogParserConfiguration configuration;
     private int mode;
     private int headerCount;
@@ -50,8 +52,19 @@ public class JobLogParser {
     /**
      * Constructs a new JobLogParser object.
      */
-    public JobLogParser() {
+    private JobLogParser() {
 
+        this(null);
+    }
+
+    /**
+     * Constructs a new JobLogParser object.
+     * 
+     * @param IProgressMonitor monitor - Monitor
+     */
+    public JobLogParser(IProgressMonitor monitor) {
+
+        this.monitor = monitor;
         this.configuration = new JobLogParserConfiguration();
         this.configuration.loadConfiguration(Locale.getDefault().getLanguage());
     }
@@ -80,7 +93,7 @@ public class JobLogParser {
             br = new BufferedReader(new FileReader(pathName));
 
             mode = IDLE;
-            while ((line = br.readLine()) != null && numLinesToScanForFirstLineOfJobLog > 0) {
+            while (!isCanceled() && (line = br.readLine()) != null && numLinesToScanForFirstLineOfJobLog > 0) {
 
                 mode = checkForStartOfPage(line);
                 if (mode == IDLE) {
@@ -144,7 +157,7 @@ public class JobLogParser {
         }
 
         Matcher matcher = configuration.getStartOfPage().matcher(line);
-        while (matcher.find()) {
+        while (!isCanceled() && matcher.find()) {
             jobLogPage = jobLog.addPage();
             jobLogPage.setPageNumber(new Integer(matcher.group(8).trim()).intValue());
             jobLog.setSystemName(matcher.group(3).trim());
@@ -178,7 +191,7 @@ public class JobLogParser {
         }
 
         Matcher matcher = configuration.getPageHeader().matcher(line);
-        while (matcher.find()) {
+        while (!isCanceled() && matcher.find()) {
             headerCount++;
             switch (headerCount) {
             case 1:
@@ -250,7 +263,7 @@ public class JobLogParser {
 
         // Scan for the first line of the message
         matcher = configuration.getStartOfMessage().matcher(line);
-        while (matcher.find()) {
+        while (!isCanceled() && matcher.find()) {
             updateMessageAttributes(jobLogMessage, messageAttributes);
             jobLogMessage = jobLog.addMessage();
             jobLogMessage.setId(matcher.group(1));
@@ -328,7 +341,7 @@ public class JobLogParser {
         // From statement
         // ...
         matcher = configuration.getMessageAttribute().matcher(line);
-        while (matcher.find()) {
+        while (!isCanceled() && matcher.find()) {
             if (messageAttributes.size() == 0) {
                 messageIndent = getMessageContinuationIndention(line);
             }
@@ -434,6 +447,20 @@ public class JobLogParser {
         int count = string.length() - StringHelper.trimL(string).length();
 
         return StringHelper.getFixLength("", count + 2); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns true if the job was canceled by the user.
+     * 
+     * @return canceled
+     */
+    private boolean isCanceled() {
+
+        if (monitor == null) {
+            return false;
+        }
+
+        return monitor.isCanceled();
     }
 
     /**
