@@ -73,7 +73,7 @@ public class JobLogParserConfiguration {
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
-    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser_v" + ISpherePlugin.getDefault().getVersion() + ".properties";//$NON-NLS-1$
+    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser_v3.6.1.properties";//$NON-NLS-1$
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
@@ -294,7 +294,7 @@ public class JobLogParserConfiguration {
             PAGE_TIME = getProperty(properties, PROPERTY_PAGE_TIME, PAGE_TIME); //$NON-NLS-1$
 
             // Page header properties
-            HEADER_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_HEADER_ATTRIBUTE_NAME, PAGE_NUMBER_LABEL); //$NON-NLS-1$
+            HEADER_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_HEADER_ATTRIBUTE_NAME, HEADER_ATTRIBUTE_NAME); //$NON-NLS-1$
             HEADER_ATTRIBUTE_VALUE = getProperty(properties, PROPERTY_HEADER_ATTRIBUTE_VALUE, HEADER_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
             // Message properties
@@ -306,18 +306,10 @@ public class JobLogParserConfiguration {
             MESSAGE_CONTINUATION_LINE_INDENTION = getProperty(properties, PROPERTY_MESSAGE_CONTINUATION_LINE_INDENTION,
                 MESSAGE_CONTINUATION_LINE_INDENTION); //$NON-NLS-1$
 
-            HEADER_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_NAME, MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
-            HEADER_ATTRIBUTE_VALUE = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_VALUE, MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
+            MESSAGE_ATTRIBUTE_NAME = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_NAME, MESSAGE_ATTRIBUTE_NAME); //$NON-NLS-1$
+            MESSAGE_ATTRIBUTE_VALUE = getProperty(properties, PROPERTY_MESSAGE_ATTRIBUTE_VALUE, MESSAGE_ATTRIBUTE_VALUE); //$NON-NLS-1$
 
             produceRegularExpressions();
-
-            // Override default expressions
-            regex_startOfPage = replaceVariables(getProperty(properties, PROPERTY_REGEX_START_OF_PAGE, regex_startOfPage)); //$NON-NLS-1$
-            regex_headerAttribute = replaceVariables(getProperty(properties, PROPERTY_REGEX_HEADER_ATTRIBUTE, regex_headerAttribute)); //$NON-NLS-1$
-            regex_messageFirstLine = replaceVariables(getProperty(properties, PROPERTY_REGEX_MESSAGE_FIRST_LINE, regex_messageFirstLine)); //$NON-NLS-1$
-            regex_messageContinuationLine = replaceVariables(getProperty(properties, PROPERTY_REGEX_MESSAGE_CONTINUATION_LINE,
-                regex_messageContinuationLine)); //$NON-NLS-1$
-
             compilePattern();
 
             return true;
