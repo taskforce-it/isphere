@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.6.0.r
-X-Bundle-Update-Library: true
+Bundle-Version: 3.6.1.r
+X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: New pinable "Spooled Files" view.\nNew SQL-Where editor in iSphere Job Log Explorer.\nImproved performance when copying members between different IBM i systems.\nNew option "Member type" is iSphere Source Member Search.\n Bug fixes.
-X-Beta-Version: 3.6.0.r
-X-Beta-Update-Library: true
+X-Bundle-Info: Bugfix of Job Log Explorer (Ticket #81).
+X-Beta-Version: 3.6.1.r
+X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: New pinable "Spooled Files" view.\nNew SQL-Where editor in iSphere Job Log Explorer.\nImproved performance when copying members between different IBM i systems.\nNew option "Member type" is iSphere Source Member Search.\n Bug fixes.
+X-Beta-Info: Bugfix of Job Log Explorer (Ticket #81).
