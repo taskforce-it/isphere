@@ -73,7 +73,7 @@ public class JobLogParserConfiguration {
 
     private static final String CONFIGURATION_DIRECTORY = "jobLogParser";//$NON-NLS-1$
     private static final String DEFAULT_CONFIGURATION_FILE = "jobLogParser.properties";//$NON-NLS-1$
-    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser_v3.6.properties";//$NON-NLS-1$
+    private static final String EXAMPLE_CONFIGURATION_FILE = "example_jobLogParser_v" + ISpherePlugin.getDefault().getVersion() + ".properties";//$NON-NLS-1$
 
     private static final String REPOSITORY_LOCATION = "joblogparser"; //$NON-NLS-1$
 
@@ -104,7 +104,7 @@ public class JobLogParserConfiguration {
     private String MESSAGE_TYPE = "[A-Z][a-z ]+"; //$NON-NLS-1$
     private String MESSAGE_SEVERITY = "[ ]{2,}[0-9]{2}[ ]{1,}"; //$NON-NLS-1$
     private String MESSAGE_DATE = "[0-9]{2}[/\\\\-. ,][0-9]{2}[/\\\\-. ,][0-9]{2}|[0-9]{2}[/\\\\-. ,][0-9]{3}"; //$NON-NLS-1$
-    private String MESSAGE_TIME = "(?:[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2})(?:,[0-9]{3,6})?"; //$NON-NLS-1$
+    private String MESSAGE_TIME = "(?:[0-9]{2}[:. ,][0-9]{2}[:. ,][0-9]{2})(?:[,.][0-9]{3,6})?"; //$NON-NLS-1$
     private String MESSAGE_CONTINUATION_LINE_INDENTION = "[ ]{30,}"; //$NON-NLS-1$
 
     private String MESSAGE_ATTRIBUTE_NAME = "[a-zA-Z][a-zA-Z ]+"; //$NON-NLS-1$
