@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.6.2.r
+--------------------------
+ • Fixed AS400JDBCSQLSyntaxErrorException when an object name
+   contains a dot, e.g. "ISPHERE.6", when executing a SQL statement.
+
 Changelog: iSphere 3.6.1.r
 --------------------------
  • Added option to cancel the job log parser.

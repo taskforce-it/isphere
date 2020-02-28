@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.ISpherePlugin;
 
 public class SearchElement {
@@ -63,13 +64,16 @@ public class SearchElement {
 
     public static void setSearchElements(String iSphereLibrary, Connection jdbcConnection, int handle, ArrayList<SearchElement> _searchElements) {
 
-        String _separator;
-        try {
-            _separator = jdbcConnection.getMetaData().getCatalogSeparator();
-        } catch (SQLException e) {
-            _separator = ".";
-            ISpherePlugin.logError("*** Message file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
-        }
+        // String _separator;
+        // try {
+        // _separator = jdbcConnection.getMetaData().getCatalogSeparator();
+        // } catch (SQLException e) {
+        // _separator = ".";
+        // ISpherePlugin.logError("*** Message file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***",
+        // e);
+        // }
+
+        SqlHelper sqlHelper = new SqlHelper(jdbcConnection);
 
         if (_searchElements.size() > 0) {
 
@@ -88,7 +92,7 @@ public class SearchElement {
                 }
 
                 StringBuffer sqlInsert = new StringBuffer();
-                sqlInsert.append("INSERT INTO " + iSphereLibrary + _separator + "XFNDSTRI (XIHDL, XILIB, XIMSGF) VALUES");
+                sqlInsert.append("INSERT INTO " + sqlHelper.getObjectName(iSphereLibrary, "XFNDSTRI") + " (XIHDL, XILIB, XIMSGF) VALUES");
                 boolean first = true;
 
                 for (int idx = _start - 1; idx <= _end - 1; idx++) {

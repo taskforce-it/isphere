@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -180,20 +181,23 @@ public class SearchExec {
 
             Throwable error = null;
 
-            String _separator;
-            try {
-                _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
-            } catch (SQLException e) {
-                _separator = "."; //$NON-NLS-1$
-                ISpherePlugin.logError("*** Message file search (1): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
-            }
+            // String _separator;
+            // try {
+            // _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
+            // } catch (SQLException e) {
+            //                _separator = "."; //$NON-NLS-1$
+            // ISpherePlugin.logError("*** Message file search (1): Could not get JDBC meta data. Using '.' as SQL separator ***",
+            // e);
+            // }
+
+            SqlHelper sqlHelper = new SqlHelper(_jdbcConnection);
 
             PreparedStatement preparedStatementSelect = null;
             ResultSet resultSet = null;
             try {
 
-                preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT XSCNT, XSCNL FROM " + iSphereLibrary + _separator
-                    + "XFNDSTRS WHERE XSHDL = ?");
+                preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT XSCNT, XSCNL FROM "
+                    + sqlHelper.getObjectName(iSphereLibrary, "XFNDSTRS") + " WHERE XSHDL = ?");
                 preparedStatementSelect.setInt(1, _handle);
                 resultSet = preparedStatementSelect.executeQuery();
                 if (resultSet.next()) {
@@ -234,18 +238,21 @@ public class SearchExec {
 
         private void cancelJob() {
 
-            String _separator;
-            try {
-                _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
-            } catch (SQLException e) {
-                _separator = ".";
-                ISpherePlugin.logError("*** Message file search (3): Could not get JDBC meta data. Using '.' as SQL separator ***", e);
-            }
+            // String _separator;
+            // try {
+            // _separator = _jdbcConnection.getMetaData().getCatalogSeparator();
+            // } catch (SQLException e) {
+            // _separator = ".";
+            // ISpherePlugin.logError("*** Message file search (3): Could not get JDBC meta data. Using '.' as SQL separator ***",
+            // e);
+            // }
+
+            SqlHelper sqlHelper = new SqlHelper(_jdbcConnection);
 
             PreparedStatement preparedStatementUpdate = null;
             try {
-                preparedStatementUpdate = _jdbcConnection.prepareStatement("UPDATE " + iSphereLibrary + _separator
-                    + "XFNDSTRS SET XSCNL = '*YES' WHERE XSHDL = ?");
+                preparedStatementUpdate = _jdbcConnection.prepareStatement("UPDATE " + sqlHelper.getObjectName(iSphereLibrary, "XFNDSTRS")
+                    + " SET XSCNL = '*YES' WHERE XSHDL = ?");
                 preparedStatementUpdate.setInt(1, _handle);
                 preparedStatementUpdate.executeUpdate();
             } catch (SQLException e) {
