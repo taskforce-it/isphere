@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.Messages;
 
 import com.ibm.as400.access.AS400;
@@ -38,6 +39,8 @@ public class BindingDirectory {
 
         try {
 
+            SqlHelper sqlHelper = new SqlHelper(_jdbcConnection);
+
             String command = "DSPBNDDIR BNDDIR(" + _library + "/" + _bindingDirectory
                 + ") OUTPUT(*OUTFILE) OUTFILE(QTEMP/XBNDDIRX) OUTMBR(*FIRST *REPLACE)";
             StringBuffer buffer = new StringBuffer(Integer.toString(command.length()));
@@ -49,15 +52,13 @@ public class BindingDirectory {
             String commandLength = buffer.toString();
 
             Statement statement = _jdbcConnection.createStatement();
-            statement.executeUpdate("CALL QSYS" + _jdbcConnection.getMetaData().getCatalogSeparator() + "QCMDEXC('" + command + "'," + commandLength
-                + ")");
+            statement.executeUpdate("CALL " + sqlHelper.getObjectName("QSYS", "QCMDEXC") + "('" + command + "'," + commandLength + ")");
 
             PreparedStatement preparedStatementSelect = null;
             ResultSet resultSet = null;
             try {
-                preparedStatementSelect = _jdbcConnection
-                    .prepareStatement("SELECT * FROM QTEMP" + _jdbcConnection.getMetaData().getCatalogSeparator() + "XBNDDIRX",
-                        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                preparedStatementSelect = _jdbcConnection.prepareStatement("SELECT * FROM " + sqlHelper.getObjectName("QTEMP", "XBNDDIRX"),
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                 resultSet = preparedStatementSelect.executeQuery();
 
                 resultSet.beforeFirst();
