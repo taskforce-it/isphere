@@ -95,7 +95,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
     private void addMonitorTab(CTabFolder tabFolder) {
 
-        CTabItem tabItem = new CTabItem(tabFolder, SWT.NULL);
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
         tabItem.setText(Messages.Monitor);
 
         Composite propsGroup = new Composite(tabFolder, SWT.NONE);
@@ -179,7 +179,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
     private void addFilterTab(CTabFolder tabFolder) {
 
-        CTabItem tabItem = new CTabItem(tabFolder, SWT.NULL);
+        CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
         tabItem.setText(Messages.Filter);
 
         Composite propsGroup = new Composite(tabFolder, SWT.NONE);
