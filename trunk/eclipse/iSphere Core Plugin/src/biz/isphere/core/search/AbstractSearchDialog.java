@@ -374,7 +374,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     public String getString() {
         return _string;
     }
-    
+
     public String getCombinedSearchString() {
         return _string;
     }
@@ -404,7 +404,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
      */
     @Override
     protected Point getDefaultSize() {
-        return getShell().computeSize(650, 650, true);
+        return super.getDefaultSize();
     }
 
     /**
