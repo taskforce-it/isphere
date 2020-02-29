@@ -40,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.swt.widgets.CloseTabOnDoubleClickListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -111,6 +112,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 setActionEnablement();
             }
         });
+
+        tabFolderSearchResults.addMouseListener(new CloseTabOnDoubleClickListener());
 
         Menu popUpMenu = new Menu(tabFolderSearchResults);
         MenuItem menuItem = new MenuItem(popUpMenu, SWT.PUSH);
