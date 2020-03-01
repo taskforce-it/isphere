@@ -6,7 +6,11 @@ Changelog: iSphere 3.6.2.r
  • Moved menu option "Display Journal Entries" from menu group
    "group.browsewith" back to "additions" where it had been before.
  • Changed iSphere source and message file search dialogs to use the
-   default size calculated by the default SWT algorithm. 
+   default size calculated by the default SWT algorithm.
+ • Changed "Display journal entries" dialog to display an error
+   message, when no journal entry types are selected. 
+ • Changed "Display journal entries" dialog to let the user select
+   journal entry types with the space bar. 
  • Fixed AS400JDBCSQLSyntaxErrorException when an object name
    contains a dot, e.g. "ISPHERE.6", when executing a SQL statement.
 
