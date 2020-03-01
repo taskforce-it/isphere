@@ -32,7 +32,7 @@
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
                 icon="icons/display_journal_entries.gif"
-                menubarPath="group.browsewith">
+                menubarPath="additions">
 	         </action>
       	</objectContribution>
       	
@@ -46,7 +46,7 @@
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
                 icon="icons/display_journal_entries.gif"
-                menubarPath="group.browsewith">
+                menubarPath="additions">
 	         </action>
       	</objectContribution>
       	

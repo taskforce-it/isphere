@@ -3,6 +3,8 @@ Changelog: iSphere 3.6.2.r
 --------------------------
  • Added option to close tab items of the iSphere source and message
    file search result view with a mouse middle-click.
+ • Moved menu option "Display Journal Entries" from menu group
+   "group.browsewith" back to "additions" where it had been before.
  • Changed iSphere source and message file search dialogs to use the
    default size calculated by the default SWT algorithm. 
  • Fixed AS400JDBCSQLSyntaxErrorException when an object name
