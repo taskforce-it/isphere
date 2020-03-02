@@ -70,7 +70,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String connectionName = file.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
                     String libraryName = file.getLibrary();
                     String fileName = file.getName();
-                    String memberName = "*FIRST"; //$NON-NLS-1$
+                    String memberName = "*ALL"; //$NON-NLS-1$
 
                     selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
                 }
