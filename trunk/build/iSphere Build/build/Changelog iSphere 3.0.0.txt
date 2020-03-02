@@ -13,6 +13,8 @@ Changelog: iSphere 3.6.2.r
    journal entry types with the space bar. 
  • Fixed AS400JDBCSQLSyntaxErrorException when an object name
    contains a dot, e.g. "ISPHERE.6", when executing a SQL statement.
+ • Fixed problem that "Display Journal Entries..." was called with
+   member "*FIRST" instead of "*ALL" when executed for a file. 
 
 Changelog: iSphere 3.6.1.r
 --------------------------
