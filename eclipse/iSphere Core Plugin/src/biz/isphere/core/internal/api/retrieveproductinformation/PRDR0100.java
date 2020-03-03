@@ -48,8 +48,6 @@ public class PRDR0100 extends PRDR0000 {
      */
     public PRDR0100(AS400 system) throws UnsupportedEncodingException {
         super(system, "PRDR0100");
-
-        createStructure();
     }
 
     /**
