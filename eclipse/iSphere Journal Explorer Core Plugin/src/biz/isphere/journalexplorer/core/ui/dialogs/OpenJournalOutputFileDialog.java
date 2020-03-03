@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.internal.StringHelper;
@@ -160,6 +161,17 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         updateContentAssistProposals();
 
+        if (!haveConnections()) {
+            new UIJob("") {
+
+                @Override
+                public IStatus runInUIThread(IProgressMonitor arg0) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
+        }
+
         return container;
     }
 
@@ -168,8 +180,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         String connectionName = null;
 
-        Object object = cmbConnections.getElementAt(0);
-        if (ConnectionDelegate.instanceOf(object)) {
+        if (connection != null) {
             connectionName = connection.getConnectionName();
         }
 
@@ -193,17 +204,37 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void loadValues() {
 
-        String connectionName = loadValue(CONNECTION, null);
-        if (connectionName == null) {
-            Object object = cmbConnections.getElementAt(0);
-            if (ConnectionDelegate.instanceOf(object)) {
-                ConnectionDelegate connection = new ConnectionDelegate(object);
-                connectionName = connection.getConnectionName();
-            }
-        }
+        if (haveConnections()) {
 
-        if (connectionName != null) {
-            cmbConnections.setSelection(new StructuredSelection(ConnectionDelegate.getConnection(connectionName)));
+            Object connection = null;
+            final String connectionName = loadValue(CONNECTION, null);
+
+            if (connectionName != null) {
+                try {
+                    connection = ConnectionDelegate.getConnection(connectionName);
+                } catch (Throwable e) {
+                    // Ignore errors
+                }
+                if (connection == null) {
+                    new UIJob("") {
+
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor arg0) {
+                            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                                Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
+                            return Status.OK_STATUS;
+                        }
+                    }.schedule();
+                }
+            } else {
+                connection = cmbConnections.getElementAt(0);
+            }
+
+            if (connection != null) {
+                if (ConnectionDelegate.instanceOf(connection)) {
+                    cmbConnections.setSelection(new StructuredSelection(connection));
+                }
+            }
         }
 
         txtLibraryName.setText(loadValue(LIBRARY, ""));
@@ -277,7 +308,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         refreshJob.cancel();
 
-        if (!StringHelper.isNullOrEmpty(fileName) && !StringHelper.isNullOrEmpty(libraryName)) {
+        if (connection != null && !StringHelper.isNullOrEmpty(fileName) && !StringHelper.isNullOrEmpty(libraryName)) {
             refreshJob.schedule(autoRefreshDelay);
         }
     }
@@ -321,17 +352,25 @@ public class OpenJournalOutputFileDialog extends XDialog {
             return false;
         }
 
-        if (!connection.isConnected()) {
-            String message = connection.connect();
-            if (message != null) {
-                return false;
-            }
+        if (!haveConnections()) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
+            cmbConnections.getCombo().setFocus();
+            return false;
         }
 
         if (connection == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
             cmbConnections.getCombo().setFocus();
             return false;
+        }
+
+        if (!connection.isConnected()) {
+            String message = connection.connect();
+            if (message != null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
+                cmbConnections.getCombo().setFocus();
+                return false;
+            }
         }
 
         if (StringHelper.isNullOrEmpty(libraryName)) {
@@ -419,6 +458,15 @@ public class OpenJournalOutputFileDialog extends XDialog {
         return true;
     }
 
+    public boolean haveConnections() {
+
+        if (cmbConnections.getCombo().getItemCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public String getConnectionName() {
 
         return connection.getConnectionName();
@@ -498,28 +546,33 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
             monitor.beginTask("Refreshing", IProgressMonitor.UNKNOWN);
 
-            MetaTable metaData = null;
+            if (connection != null) {
 
-            try {
-                metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName);
-                if (!metaData.hasColumns()) {
-                    MetaDataCache.getInstance().removeMetaData(metaData);
+                MetaTable metaData = null;
+
+                try {
+                    metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName);
+                    if (!metaData.hasColumns()) {
+                        MetaDataCache.getInstance().removeMetaData(metaData);
+                    }
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-            }
 
-            List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
+                List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
 
-            if (metaData != null) {
-                for (MetaColumn column : metaData.getColumns()) {
-                    proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
+                if (metaData != null) {
+                    for (MetaColumn column : metaData.getColumns()) {
+                        proposals.add(new ContentAssistProposal(column.getName(), column.getFormattedType() + " - " + column.getText()));
+                    }
                 }
-            }
 
-            sqlEditor.setContentAssistProposals(proposals.toArray(new ContentAssistProposal[proposals.size()]));
+                sqlEditor.setContentAssistProposals(proposals.toArray(new ContentAssistProposal[proposals.size()]));
+
+            }
 
             monitor.done();
+
             return Status.OK_STATUS;
         };
     }

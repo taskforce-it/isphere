@@ -15,6 +15,9 @@ Changelog: iSphere 3.6.2.r
    contains a dot, e.g. "ISPHERE.6", when executing a SQL statement.
  • Fixed problem that "Display Journal Entries..." was called with
    member "*FIRST" instead of "*ALL" when executed for a file. 
+ • Fixed various problems in "Open journal" dialog when connections
+   have not yet been configured or when the last used connection
+   no longer exists.
 
 Changelog: iSphere 3.6.1.r
 --------------------------
