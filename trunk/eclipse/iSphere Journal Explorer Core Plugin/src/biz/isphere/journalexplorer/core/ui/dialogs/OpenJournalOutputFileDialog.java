@@ -40,13 +40,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -162,14 +162,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         updateContentAssistProposals();
 
         if (!haveConnections()) {
-            new UIJob("") {
-
-                @Override
-                public IStatus runInUIThread(IProgressMonitor arg0) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
-                    return Status.OK_STATUS;
-                }
-            }.schedule();
+            MessageDialogAsync.displayError(getShell(), Messages.Error_No_connections_available);
         }
 
         return container;
@@ -216,15 +209,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
                     // Ignore errors
                 }
                 if (connection == null) {
-                    new UIJob("") {
-
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor arg0) {
-                            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                                Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
-                            return Status.OK_STATUS;
-                        }
-                    }.schedule();
+                    MessageDialogAsync.displayError(getShell(), Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
                 }
             } else {
                 connection = cmbConnections.getElementAt(0);
