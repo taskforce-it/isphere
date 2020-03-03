@@ -159,6 +159,8 @@ public class Messages extends NLS {
     public static String Error_No_object_selected;
     public static String Error_in_SQL_WHERE_CLAUSE_A;
     public static String Error_No_journal_entry_types_selected;
+    public static String Error_No_connections_available;
+    public static String Error_Connection_A_not_found;
 
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
