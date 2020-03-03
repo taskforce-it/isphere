@@ -19,6 +19,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspace.rse.DE;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.exception.ValueTooLargeException;
 
 import com.ibm.as400.access.CharConverter;
 
@@ -179,16 +180,24 @@ public class DDataSpaceValue {
 
     public BigDecimal getDecimal(int offset, int length, int fraction) {
         ensureDecimalType();
-        String data = convertByteArrayToStringRaw(bytes, offset, length);
+        String data = convertByteArrayToString(bytes, offset, length);
         String digits = data.substring(0, length - fraction);
         String decPos = data.substring(length - fraction);
         return new BigDecimal(digits + "." + decPos);
     }
 
-    public void setDecimal(BigDecimal value, int offset, int length, int fraction) throws CharConversionException {
+    public void setDecimal(BigDecimal value, int offset, int length, int fraction) throws CharConversionException, ValueTooLargeException {
         ensureDecimalType();
+
+        String strDigits = StringHelper.getFixLength("", length - fraction, "9");
+        String strFraction = StringHelper.getFixLength("", fraction, "9");
+        BigDecimal maxValue = new BigDecimal(strDigits + "." + strFraction);
+        if (value.compareTo(maxValue) > 0) {
+            throw new ValueTooLargeException(value);
+        }
+
         String data = BigDecimalHelper.getFixLength(value, length, fraction);
-        convertStringToByteArrayRaw(data.replaceAll("\\.", ""), bytes, offset, length);
+        convertStringToByteArray(data.replaceAll("\\.", ""), bytes, offset, length);
     }
 
     private String convertByteArrayToString(byte[] bytes, int offset, int length) {

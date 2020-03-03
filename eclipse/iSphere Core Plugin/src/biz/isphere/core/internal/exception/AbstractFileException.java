@@ -41,6 +41,6 @@ public abstract class AbstractFileException extends AbstractException {
     }
 
     private static String getText(String text, File file) {
-        return text + ": " + file.getAbsolutePath();
+        return text + " (" + file.getAbsolutePath() + ")";
     }
 }

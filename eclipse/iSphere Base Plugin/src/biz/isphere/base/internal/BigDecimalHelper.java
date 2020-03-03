@@ -20,18 +20,22 @@ public final class BigDecimalHelper {
     }
 
     public static String getFixLength(BigDecimal decimal, int length, int fraction) {
+
         String[] parts = decimal.toString().split("\\."); //$NON-NLS-1$
         String strDigits = ""; //$NON-NLS-1$
         String strFraction = ""; //$NON-NLS-1$
         if (parts.length > 0) {
-            strDigits = parts[0];
             if (parts.length > 1) {
                 strFraction = parts[1];
             }
+            strDigits = parts[0];
         }
-        strDigits = StringHelper.getFixLengthLeading(strDigits, length - fraction).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-        strFraction = StringHelper.getFixLength(strFraction, fraction).replaceAll(" ", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+
+        strDigits = StringHelper.getFixLengthLeading(strDigits, length - fraction, "0"); //$NON-NLS-1$
+        strFraction = StringHelper.getFixLength(strFraction, fraction, "0"); //$NON-NLS-1$
+
         String decimalValue = strDigits + "." + strFraction; //$NON-NLS-1$
+
         return decimalValue;
     }
 }

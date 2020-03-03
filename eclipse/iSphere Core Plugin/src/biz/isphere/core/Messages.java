@@ -936,6 +936,8 @@ public class Messages extends NLS {
 
     public static String Failed_to_load_file;
 
+    public static String Value_too_large;
+
     public static String Load;
 
     public static String Save;
