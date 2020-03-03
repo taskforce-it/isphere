@@ -29,7 +29,7 @@ public class JournalEntryDelegate {
     public static Time getTime(int time, Character timeSeparaCharacter) {
 
         AS400Time as400time = new AS400Time(Calendar.getInstance().getTimeZone(), AS400Time.FORMAT_HMS, timeSeparaCharacter);
-        Time timeObject = as400time.parse(StringHelper.getFixLengthLeading(Integer.toString(time), 6));
+        Time timeObject = as400time.parse(StringHelper.getFixLengthLeading(Integer.toString(time), 6, "0")); //$NON-NLS-1$
 
         return new Time(timeObject.getTime());
     }

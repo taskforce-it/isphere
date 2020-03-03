@@ -18,6 +18,9 @@ Changelog: iSphere 3.6.2.r
  • Fixed various problems in "Open journal" dialog when connections
    have not yet been configured or when the last used connection
    no longer exists.
+ • Fixed "ExtendedIllegalArgumentException" when parsing a time
+   value when loading a journal entries output file into the journal
+   explorer.
 
 Changelog: iSphere 3.6.1.r
 --------------------------
