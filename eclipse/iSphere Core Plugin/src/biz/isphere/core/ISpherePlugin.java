@@ -497,6 +497,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
             QSZRTVPR main = new QSZRTVPR(system);
             if (!main.execute(prdr0100, prdi0100)) {
                 logError(main.getMessageList()[0].getText(), null);
+                return "V0R0M0";
             }
 
             return prdr0100.getReleaseLevel();
