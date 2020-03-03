@@ -102,9 +102,21 @@ public final class StringHelper {
      * @return string with fixed length
      */
     public static String getFixLength(String aValue, int aLength) {
+        return getFixLength(aValue, aLength, "0");
+    }
+
+    /**
+     * Returns a fixed length string suitable for IBM API calls.
+     * 
+     * @param aValue - String value that is expanded to 'aLength'.
+     * @param aLength - The length the string is expanded to.
+     * @param aFiller - Character used for filling the value.
+     * @return string with fixed length
+     */
+    public static String getFixLength(String aValue, int aLength, String aFiller) {
         StringBuffer fixLength = new StringBuffer(aValue);
         while (fixLength.length() < aLength) {
-            fixLength.append(" ");
+            fixLength.append(aFiller);
         }
         return fixLength.toString();
     }
@@ -117,9 +129,21 @@ public final class StringHelper {
      * @return string with fixed length
      */
     public static String getFixLengthLeading(String aValue, int aLength) {
+        return getFixLengthLeading(aValue, aLength, " ");
+    }
+
+    /**
+     * Returns a fixed length string suitable for IBM API calls.
+     * 
+     * @param aValue - String value that is expanded to 'aLength'.
+     * @param aLength - The length the string is expanded to.
+     * @param aFiller - Character used for filling the value.
+     * @return string with fixed length
+     */
+    public static String getFixLengthLeading(String aValue, int aLength, String aFiller) {
         StringBuffer fixLength = new StringBuffer();
         while (fixLength.length() < aLength - aValue.length()) {
-            fixLength.append(" ");
+            fixLength.append(aFiller);
         }
         fixLength.append(aValue);
         return fixLength.toString();
