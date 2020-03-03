@@ -21,6 +21,8 @@ Changelog: iSphere 3.6.2.r
  • Fixed "ExtendedIllegalArgumentException" when parsing a time
    value when loading a journal entries output file into the journal
    explorer.
+ • Fixed problems when editing BigDecimal values in the user space
+   editor.
 
 Changelog: iSphere 3.6.1.r
 --------------------------

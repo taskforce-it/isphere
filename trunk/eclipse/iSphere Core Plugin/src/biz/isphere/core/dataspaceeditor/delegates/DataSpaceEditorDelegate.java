@@ -34,6 +34,7 @@ import biz.isphere.core.dataspaceeditordesigner.model.AbstractDWidget;
 import biz.isphere.core.dataspaceeditordesigner.model.DDataSpaceValue;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.model.DataSpaceEditorManager;
+import biz.isphere.core.internal.exception.ValueTooLargeException;
 
 /**
  * Editor delegate that edits a data space using a provided editor.
@@ -167,9 +168,20 @@ public class DataSpaceEditorDelegate extends AbstractDataSpaceEditorDelegate imp
         handleSaveResult(aMonitor, exception);
 
         if (exception != null) {
-            ISpherePlugin.logError(exception.getMessage(), exception);
+            if (mustLogException(exception)) {
+                ISpherePlugin.logError(exception.getMessage(), exception);
+            }
             MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(exception));
         }
+    }
+
+    private boolean mustLogException(Throwable exception) {
+
+        if (exception instanceof ValueTooLargeException) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
