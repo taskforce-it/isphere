@@ -102,7 +102,7 @@ public final class StringHelper {
      * @return string with fixed length
      */
     public static String getFixLength(String aValue, int aLength) {
-        return getFixLength(aValue, aLength, "0");
+        return getFixLength(aValue, aLength, " ");
     }
 
     /**
