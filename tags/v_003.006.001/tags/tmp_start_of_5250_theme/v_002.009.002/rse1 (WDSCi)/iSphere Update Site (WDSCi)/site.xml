@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/biz.isphere.core_2.9.2.r.jar" id="biz.isphere.core" version="2.9.2.r">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.rse_2.9.2.r.jar" id="biz.isphere.rse" version="2.9.2.r">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.lpex.tasks_2.9.2.r.jar" id="biz.isphere.lpex.tasks" version="2.9.2.r">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.help_2.9.2.r.jar" id="biz.isphere.help" version="2.9.2.r">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.messagesubsystem.rse_2.9.2.r.jar" id="biz.isphere.messagesubsystem.rse" version="2.9.2.r">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
+      <category name="iSphere TN5250J for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.tn5250j.core_2.9.2.r.jar" id="biz.isphere.tn5250j.core" version="2.9.2.r">
+      <category name="iSphere TN5250J for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.tn5250j.rse_2.9.2.r.jar" id="biz.isphere.tn5250j.rse" version="2.9.2.r">
+      <category name="iSphere TN5250J for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/biz.isphere.strpreprc_2.9.2.r.jar" id="biz.isphere.strpreprc" version="2.9.2.r">
+      <category name="iSphere STRPREPRC Utility for WDSCi 7.0"/>
+   </feature>
+   <category-def name="iSphere for WDSCi 7.0" label="iSphere for WDSCi 7.0">
+      <description>
+         iSphere for WDSCi 7.0
+      </description>
+   </category-def>
+   <category-def name="iSphere TN5250J for WDSCi 7.0" label="iSphere TN5250J for WDSCi 7.0">
+      <description>
+         iSphere TN5250J emulator for WDSCi 7.0
+      </description>
+   </category-def>
+   <category-def name="iSphere STRPREPRC Utility for WDSCi 7.0" label="iSphere STRPREPRC Utility for WDSCi 7.0">
+      <description>
+         Plug-in that extends the context menu of the Lpex editor with options to add/remove a STRPREPRC header.
+      </description>
+   </category-def>
+</site>

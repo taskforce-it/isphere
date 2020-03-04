@@ -1,0 +1,129 @@
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2014 iSphere Project Owners.                       */
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /* Contributors:                                                         */
+     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Build iSphere Library - Delete objects                                */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
+     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+             PGM        PARM(&PRDLIB &DEVLIB &TMPLIB &SAVF)
+
+             DCL        VAR(&PRDLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&DEVLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&TMPLIB ) TYPE(*CHAR) LEN(10)
+             DCL        VAR(&SAVF   ) TYPE(*CHAR) LEN(10)
+
+             DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
+             DCL        VAR(&BUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
+             DCL        VAR(&CPYSRC   ) TYPE(*CHAR) LEN(10) VALUE('QCPYSRC')
+             DCL        VAR(&DTAARASRC) TYPE(*CHAR) LEN(10) VALUE('QDTAARASRC')
+             DCL        VAR(&DTAQSRC  ) TYPE(*CHAR) LEN(10) VALUE('QDTAQSRC')
+             DCL        VAR(&USRSPCSRC) TYPE(*CHAR) LEN(10) VALUE('QUSRSPCSRC')
+             DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
+             DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+             DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
+             DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
+             DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
+             DCL        VAR(&DDSSRC   ) TYPE(*CHAR) LEN(10) VALUE('QDDSSRC')
+             DCL        VAR(&CLSRC    ) TYPE(*CHAR) LEN(10) VALUE('QCLSRC')
+
+             DLTF       FILE(&TMPLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/&SAVF)
+             MONMSG     MSGID(CPF2105)
+
+             DLTDTAARA  DTAARA(&PRDLIB/ISPHERE)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/NBRRNG01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO01)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS01)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/FNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/FNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/NBRRNG)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/SPLF)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRI)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRO)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/XFNDSTRS)
+             MONMSG     MSGID(CPF2105)
+
+             DLTF       FILE(&PRDLIB/DEMO4P)
+             MONMSG     MSGID(CPF2105)
+             DLTF       FILE(&PRDLIB/DEMO4L)
+             MONMSG     MSGID(CPF2105)
+
+             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+                DLTF       FILE(&PRDLIB/&BNDSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&BUILD)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&CPYSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&DTAARASRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&DTAQSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&USRSPCSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&RPGLESRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SQLSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SRVSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&WCOSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&SRCTOOLS)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&DDSSRC)
+                MONMSG     MSGID(CPF2105)
+                DLTF       FILE(&PRDLIB/&CLSRC)
+                MONMSG     MSGID(CPF2105)
+             ENDDO
+
+             RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+
+             ENDPGM

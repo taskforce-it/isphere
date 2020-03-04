@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><templates><template autoinsert="true" context="java" deleted="false" description="Singleton Pattern" enabled="true" name="Singleton">package ${enclosing_package};&#13;
+&#13;
+public final class ${primary_type_name} {&#13;
+&#13;
+    /**&#13;
+     * The instance of this Singleton class.&#13;
+     */&#13;
+    private static ${primary_type_name} instance;&#13;
+&#13;
+    /**&#13;
+     * Private constructor to ensure the Singleton pattern.&#13;
+     */&#13;
+    private ${primary_type_name}() {&#13;
+    }&#13;
+&#13;
+    /**&#13;
+     * Thread-safe method that returns the instance of this Singleton class.&#13;
+     */&#13;
+    public synchronized static ${primary_type_name} getInstance() {&#13;
+        if (instance == null) {&#13;
+            instance = new ${primary_type_name}();&#13;
+        }&#13;
+        return instance;&#13;
+    }&#13;
+&#13;
+}</template></templates>

@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ISphere - Retrieve Journal Entries
+Bundle-SymbolicName: biz.isphere.journaling.retrievejournalentries;singleton:=true
+Bundle-Version: 2.1.0
+Bundle-Activator: biz.isphere.journaling.retrievejournalentries.internal.QjoRetrieveJournalEntriesPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ com.ibm.etools.iseries.toolbox;bundle-version="8.0.5",
+ biz.isphere.base;bundle-version="2.1.0"
+Export-Package: biz.isphere.journaling.retrievejournalentries
+Bundle-Vendor: iSphere Project Owners
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true

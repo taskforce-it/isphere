@@ -1,0 +1,6 @@
+<pcml version="4.0">
+   <program name="SPLF_setOutputQueue" path="/QSYS.LIB/%LIBL%.LIB/W003007.PGM">
+      <data name="outputQueue" type="char" length="10" usage="input" />
+      <data name="outputQueueLibrary" type="char" length="10" usage="input" />
+   </program>
+</pcml>

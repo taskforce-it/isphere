@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Message Subsystem</title>
+</head>
+<body>
+	<h1>Message Subsystem</h1>
+	<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+		<img src="assets/messagesubsystem.png"
+		style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
+		border=0>
+	</a> With the iSphere Message Subsystem you can manage and monitor
+	messages on an IBM i server:
+	<ul>
+		<li>View and delete messages, with filters.</li>
+		<li>Reply to inquiry messages.</li>
+		<li>Create an alert for new messages, using a dialog, an email or
+			a beep.</li>
+	</ul>
+	<p>The iSphere Message Subsystem integrates into the Remote Systems
+		Explorer as shown below. From there you can use the context menu
+		(right click)to create message filters or to perform actions on
+		selected messages.
+	<p>
+		<img src="assets/message_subsystem.png" align="middle">
+	<p>Use the iSphere Messages context menu (right click) to create
+		filters for your messages.
+	<p>
+		<img src="assets/create_filter.png" align="middle">
+	<p>Use the message file context menu  (right click) to rename a message filter or
+		to change the filter properties.
+	<p>
+		<img src="assets/message_filter_popup_menu.png" align="middle">
+	<p>Use the message file context menu  (right click) to remove or view the message
+		details.
+	<p>
+		<img src="assets/message_popup_menu.png" align="middle">
+	<p>Answer inquiry messages from the message detail dialog:
+	<p>
+		<img src="assets/message_detail_dialog.png" align="middle">
+	<p>
+	<h2>Monitoring Messages</h2>
+	<p>You can also use the iSphere message subsystem to monitor the
+		message queue of your user profile in the background. When a new
+		message is added to the message queue you can be notified by:
+	<ul>
+		<li>a message dialog</li>
+		<li>a "beep" of your computer</li>
+		<li>an email</li>
+	</ul>
+	<p>
+		Use the context menu (right click) of the <i>iSphere Messages</i> node to configure
+		the message monitor.
+	<p>
+		<img src="assets/message_monitor_properties.png" align="middle">
+	<p>When <i>Display informational messages as list on startup</i> is check, these messages
+	   are collected and then presented in a list. Otherwise all pending informational messages
+	   are displayed one by one which might be annoying for a huge number of pending messages:
+	<p>
+		<img src="assets/message_list.png" align="middle">
+	<p>Double click a message to display the details.
+	<p>The <i>Login credentials</i> are optional and must be specified only
+	   for email servers that require an authenticated user for sending emails.
+    
+    <p>
+ 	<table>
+ 		<tr>
+ 			<td class="notice" >Notice: The email password is stored in the Eclipse secure 
+ 			storage area.<br>See: Windows | Preferences | General | Security | Secure Storage</td>
+		</tr>
+ 	</table>
+ 	
+    <p>
+ 	<table>
+ 		<tr>
+ 			<td class="important" >Important: Eclipse 3.2, which is used by WDSCi, does not have
+ 			a secure storage container. Here the password is encrypted and stored by iSphere, which
+ 			might not be as secure as the Eclipse secure storage area.</td>
+		</tr>
+ 	</table>
+	   
+	<p>The message monitor requires an <b>exclusive lock</b> on your message
+		queue. It will not get the lock if the message queue is locked by
+		another job, such as a 5250 session. Therefore it is recommended you
+		start RDi/WDSCi before any 5250 session. But you can also use the 
+		following CL command to unlock the message queue:
+	<p>   
+	<table>
+		<tr>
+			<td class="code">DLCOBJ OBJ((library_name/message_queue_name *MSGQ *EXCL)) SCOPE(*THREAD)</td>
+		</tr>
+	</table>
+	
+	<p>The command must be executed from the job that holds the lock.
+	<p>
+		The message queue is not immediately unlocked when option <i>Monitor
+		message queue</i> is unchecked. It can take up to 5 seconds until the
+		lock has been removed.
+	<h2>Remove Messages</h2>
+	<p>Actually messages cannot be removed from a monitored message queue, because
+	   the Java message queue class puts an *EXCL lock on the message queue when 
+	   it waits for incoming messages. But you can get around that limitation by
+	   sending a <i>*REMOVE_ALL</i> message to the message queue to make the message
+	   monitor remove all messages from the queue: 
+	<p>   
+	<table>
+		<tr>
+			<td class="code">SNDMSG MSG('*REMOVE_ALL') TOUSR(user_profile)</td>
+		</tr>
+	</table>
+	<h2>End Message Monitor</h2>
+	<p>Message monitoring ends, when the <i>Monitor message queue</i> checkbox is
+	   unchecked. That may take up to 5 seconds, because of the receive message
+	   timeout. You can also end the message monitor from a 5250 command line or
+	   any program by sending <i>*END_MONITORING</i> to a monitored message queue
+	   like this:
+	<p>   
+	<table>
+		<tr>
+			<td class="code">SNDMSG MSG('*END_MONITORING') TOUSR(user_profile)</td>
+		</tr>
+	</table>
+	<p>You need to check the <i>Monitor message queue</i> checkbox again to
+	   start the message monitor again.
+	<p>
+	<h2>Acknowledgement</h2>
+	<p>Over several  months,  many on the WDSC_L mailing list at
+		midrange.com have asked us to adopt the Message Subsystem feature from
+		the RSE Extensions Plug-in of Softlandings Systems.
+	<p>In our opinion, forking another open source project is
+		difficult, but sometimes there are good reasons to do this. If the
+		original contributor cannot provide further support and enhancements,
+		for whatever reasons, it benefits the community if others are willing
+		to do this. This is the spirit of open source and everyone who starts
+		an open source project has to be aware of this.
+	<p>So, we decided to adopt the Message Subsystem feature from
+		the RSE Extensions Plugin to iSphere. If anyone has a feature request
+		regarding the Message Subsystem, please let us know immediately.
+	<p>
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

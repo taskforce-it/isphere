@@ -1,0 +1,259 @@
+<!--
+=============================================================================
+  build.xml (ant build script)
+
+  SQLJEP - Java SQL Expression Parser
+  http://sourceforge.net/projects/sqljep
+
+  Setting up your system to compile JEP:
+    1. Set the JAVAHOME environment variable
+    2. Set the JAVACCHOME environment variable to the location of the
+       library directory of JavaCC (e.g. C:\apps\javacc\bin\lib)
+=============================================================================
+-->
+
+<project name="SQLJEP" default="compile" basedir=".">
+	
+	<!-- set global properties for this build -->
+	<property name="src"            location="src"/>
+	<property name="junit"          location="junit"/>
+	<property name="build"          location="build"/>
+	<property name="build.compile"  location="${build}/compile"/>
+	<property name="build.junit"    location="${build}/junit"/>
+	<property name="build.dist"     location="${build}/dist"/>
+	<property name="junit.lib"      location="lib/junit"/>
+	<property name="build.doc"      location="${build}/doc"/>
+	<property name="build.javadoc"  location="${build.doc}/javadoc"/>
+	<property name="build.disttemp" location="${build}/disttemp"/>
+	
+	<property name="version"     value="0.2.2.r"/>
+	<property name="jar"         value="${app.name}-${version}.jar"/>
+	<property name="src.zip"     value="${app.name}-${version}-src.zip"/>
+	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
+	<property name="javac.debug" value="true"/>
+	<!--
+	<property environment="env"/>
+	-->
+	<!--
+	<property name="javacchome" value="${env.JAVACCHOME}"/>
+	-->
+	<property name="javacchome" value="${basedir}/lib/javacc-3.2/bin/lib"/>
+	<property name="java.home" value="${env.JAVAHOME}"/>
+	<property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
+
+	<!-- Set date and time values -->
+	<tstamp>
+		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
+		<format property="today.date.eur" pattern="dd.MM.yyyy" locale="de,DE" />
+		<format property="today.date.iso" pattern="yyyy-MM-dd" locale="de,DE" />
+		<format property="today.year" pattern="yyyy" locale="de,DE" />
+	</tstamp>
+
+
+<!--======================================================================-->
+<!-- INIT -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+
+		<!-- Ensure JavaCC is present -->
+		<echo>Testing Javacc availability: ${javacchome}</echo>
+		<available file="${javacchome}/javacc.jar" property="javacc.present"/>
+		<echo>Javacc ist present: ${javacc.present}</echo>
+	</target>
+
+<!--======================================================================-->
+<!-- JJTREE -->
+	<target name="jjtree" depends="init" if="javacc.present">
+		<echo>Executing Jjtree ...</echo>
+		<jjtree
+			target="${src}/org/medfoster/sqljep/Parser.jjt"
+			javacchome="${javacchome}"
+			outputdirectory="${src}/org/medfoster/sqljep"
+		/>
+	</target>
+
+<!--======================================================================-->
+<!-- JAVACC -->
+	<target name="javacc" depends="jjtree" if="javacc.present">
+		<echo>Executing Javacc ...</echo>
+		<javacc
+			target="${src}/org/medfoster/sqljep/Parser.jj"
+			javacchome="${javacchome}"
+			outputdirectory="${src}/org/medfoster/sqljep"
+		/>
+	</target>
+
+      
+<!--======================================================================-->
+<!-- COMPILE -->
+	<target name="compile" depends="javacc">
+		<echo>Compiling Java classes ...</echo>
+
+		<!-- Create the build directory -->
+		<mkdir dir="${build.compile}"/>
+		<mkdir dir="${build.junit}"/>
+
+		<!-- Compile the java code from ${src} into ${build.compile} -->
+		<javac srcdir="${src}"
+		       destdir="${build.compile}"
+		       source="1.5"
+		       target="1.5"
+			   debug="${javac.debug}"
+			   debuglevel="lines,vars,source">
+			<!--
+			<exclude name="org/medfoster/sqljep/junit/**"/>
+			-->
+		</javac>
+
+		<!-- Compile the JUnit tests from ${junit} into ${build.junit} -->
+		<javac srcdir="${junit}"
+		       destdir="${build.junit}"
+		       source="1.5"
+		       target="1.5"
+			   debug="${javac.debug}"
+			   debuglevel="lines,vars,source">
+			<classpath>
+				<path location="${build.compile}" />
+				<path location="${junit.lib}/junit.jar" />
+				<path location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+			</classpath>
+		</javac>
+	</target>
+
+
+<!--======================================================================-->
+<!-- JAVADOC -->
+	<target name="javadoc" depends="init">
+		<echo>Generating Javadoc ...</echo>
+		
+		<delete dir="${build.javadoc}"/>
+		<mkdir dir="${build.javadoc}"/>
+		<javadoc packagenames="org.medfoster.sqljep.*"
+				sourcepath="src"
+				destdir="${build.javadoc}"
+				windowtitle="SQLJEP API">
+			<bottom><![CDATA[<A HREF=\"http://sourceforge.net/projects/sqljep\" TARGET=\"_blank\">http://sourceforge.net/projects/sqljep</A> Copyright &#169; 2006 Alexey Gaidukov]]></bottom>
+		</javadoc>
+	</target>
+
+
+	<!--======================================================================-->
+	<!-- JUNIT -->
+		<target name="junit" depends="compile">
+			<echo>Executing JUnit tests ...</echo>
+			
+			<junit haltonerror="true" haltonfailure="true" printsummary="true">
+				<classpath>
+					<!-- JUnit4 -->
+					<pathelement location="${junit.lib}/junit.jar" />
+					<pathelement location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+					<!-- SQLJEP -->
+					<pathelement location="${build.compile}" />
+				</classpath>
+				<batchtest>
+					<fileset dir="${build.junit}" id="id">
+	    				<include name="**/TestDummy.class"/>
+					</fileset>
+				</batchtest>
+			</junit>
+		</target>
+
+<!--======================================================================-->
+<!-- DIST -->
+	<target name="dist" depends="compile,javadoc">
+		<echo>Creating distribution package ...</echo>
+		
+		<!-- Create the distribution directory -->
+		<mkdir dir="${build.dist}"/>
+
+		<!-- Put everything in ${build.compile} into the sqljep-${DSTAMP}.jar file -->
+		<jar jarfile="${build.dist}/sqljep-${version}.jar"
+		     basedir="${build.compile}"
+		     includes="org/medfoster/sqljep/**" 
+             description="SQLJEP patched for iSphere">
+            <manifest>
+            	<attribute name="Version" value="${version}"/>
+            	<attribute name="Date-Created" value="${today.timestamp}"/>
+            	<attribute name="Vendor" value="iSphere Project Team"/>
+            	<attribute name="Developer" value="Medfoster.ru"/>
+            </manifest>
+        </jar>
+		
+		<!-- Create a temp dir for contents of packages-->
+		<mkdir dir="${disttemp}/sqljep-${version}"/>
+
+		<!-- Copy jar -->
+		<copy file="${build.dist}/sqljep-${version}.jar" todir="${disttemp}/sqljep-${version}"/>
+
+		<!-- Copy src files -->
+		<!-- define filterset -->
+		<filterset id="sourcefilters" begintoken="%" endtoken="*">
+			<filter token="SQLJEPHEADER" value="SQLJEP - Java SQL Expression Parser ${version}"/>
+			<filter token="SQLJEPDATE" value="${TODAY}"/>
+			<filter token="SQLJEPAUTHOR" value="SQLJEP Author: Alexey Gaidukov"/>
+			<filter token="SQLJEPCOPYRIGHT" value="   (c) Copyright 2006, Alexey Gaidukov"/>
+			<filter token="SQLJEPCOPYRIGHT2" value="SQLJEP is based on JEP 2.24 (http://www.singularsys.com/jep/)"/>
+			<filter token="SQLJEPCOPYRIGHT3" value="     (c) Copyright 2002, Nathan Funk"/>
+			<filter token="SQLJEPLICENSE" value="See LICENSE.txt for license information."/>
+		</filterset>
+		<copy todir="${disttemp}/sqljep-${version}">
+			<fileset dir="."
+					includes="
+					 ${src}/org/medfoster/sqljep/**"/>
+			<filterset refid="sourcefilters"/>
+		</copy>
+
+		<!-- Copy doc, build, and single files -->
+		<copy todir="${disttemp}/sqljep-${version}">
+			<fileset dir="."
+					includes="
+					 ${build.doc}/**,
+					 ${build.compile}/**,
+					 build.xml,
+					 LICENSE.txt,
+					 README.html"/>
+		</copy>
+
+		<!-- zip file -->
+		<delete file="${build.dist}/sqljep-${version}.zip"/>
+		<zip zipfile="${build.dist}/sqljep-${version}.zip"
+		     basedir="${disttemp}"
+		     >
+		</zip>
+
+		<!-- tar.gz file -->
+		<delete file="${build.dist}/sqljep-${version}.tar.gz"/>
+		<tar tarfile="${build.dist}/sqljep-${version}.tar"
+		     basedir="${disttemp}"
+		     >
+		</tar>
+		<gzip zipfile="${build.dist}/sqljep-${version}.tar.gz"
+		      src="${build.dist}/sqljep-${version}.tar"/>
+
+		<!-- clean up temporary files -->
+		<delete file="${build.dist}/sqljep-${version}.tar"/>
+		<delete dir="${disttemp}" />
+	</target>
+
+
+<!--======================================================================-->
+<!-- CLEAN -->
+	<target name="clean">
+		<!-- Delete the ${build.compile} and ${build.dist} directory trees -->
+		<delete dir="${build.compile}"/>
+		<delete dir="${build.junit}"/>
+		<delete dir="${build.dist}"/>
+		<delete dir="${build.javadoc}"/>
+		<delete dir="${build}"/>
+	</target>
+
+
+<!--======================================================================-->
+<!-- EOLUNIX -->
+	<target name="eolunix">
+		<fixcrlf srcdir="${src}"
+			eol="lf" eof="remove"/>
+	</target>
+</project>
+

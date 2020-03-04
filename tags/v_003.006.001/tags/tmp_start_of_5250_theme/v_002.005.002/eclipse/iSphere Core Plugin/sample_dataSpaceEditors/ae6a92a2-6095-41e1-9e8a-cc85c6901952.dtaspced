@@ -1,0 +1,19 @@
+<dialog>
+  <name>TSTDTAARA2</name>
+  <description>Under construction</description>
+  <widgets>
+    <entry>
+      <string>1</string>
+      <decimal>
+        <label>Decimal 12,4</label>
+        <offset>0</offset>
+        <length>12</length>
+        <sequence>1</sequence>
+        <fraction>4</fraction>
+      </decimal>
+    </entry>
+  </widgets>
+  <referencedBy/>
+  <columns>2</columns>
+  <key>ae6a92a2-6095-41e1-9e8a-cc85c6901952</key>
+</dialog>

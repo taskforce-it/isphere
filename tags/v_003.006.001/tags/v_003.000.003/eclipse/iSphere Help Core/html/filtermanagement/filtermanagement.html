@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>RSE Filter Management</title>
+</head>
+
+<body>
+	<h1>RSE Filter Management</h1>
+	<p>With iSphere RSE Filter Management you can export some or all
+		filters from your workspace to a repository. A repository is an XML
+		file on your local PC or a network drive. You can then import some or
+		all filters from a repository to your workspace. The repository can
+		act as a backup for your filters.
+	<p>Here are some other scenarios where you might find Filter
+		Management useful:
+	<p>
+	<ul>
+		<li>Your workspace is corrupted and you need to create a new one.
+			In this case you can export your filters from the old workspace and
+			import them into the new one.</li>
+		<li>You want to share your filters with your colleagues.</li>
+		<li>You have RDi installed on a computer in your office and at
+			home and want to synchronize your filters.</li>
+	</ul>
+	<p>
+		To open the iSphere RSE Filter Management dialog, click on the <i>Sun</i>
+		icon in the upper right corner of the Remote Systems view, or select <i>RSE
+			Filter Management</i> from the <i>iSphere</i> menu.
+	<p>
+		<img src="assets/remote_systems_explorer.png" align="middle">
+	<h2>Choosing what to Manage</h2>
+	<p>You now need to specify what you want to manage, and also the
+		repository name:
+	<p>
+	<p>
+		<img src="assets/rse_filter_management_manage_choose.png"
+			align="middle">
+	<h3>Editing Area</h3>
+	<p>The filters in the workspace and in the repository will be
+		displayed in up to four separate horizontal panes.
+	<p>
+	<ul>
+		<li>Edit workspace and repository filters</li>
+		<li>Edit only workspace filters</li>
+		<li>Edit only repository filters</li>
+	</ul>
+
+	Click the appropriate button. The default,
+	<i>Edit workspace and repository filters</i>, is suitable for the first
+	time you want to create a new repository. With this option you can:
+	<ul>
+	<li>Push filters from the workspace to the repository and vice versa.</li>
+	<li>Delete filters from the workspace.</li>
+	<li>Delete filters from the repository.</li>
+	</ul>
+	<p>The next two option, <i>Edit only workspace filters</i> and 
+	<i>Edit only repository filters</i> are suitable for removing filters from
+	the workspace or the repository.
+	<h3>Profile</h3>
+	Select the profile that contains the filter pools you want to manage.
+	<h3>Single Filter Pool</h3>
+	If this is checked, then you will need to select a filter pool using
+	the	<i>Filter Pool</i> drop down below. Only filters in this filter pool
+	will be considered for action, and the filter pool name will not be
+	saved. (Note that even if you never explicitly created a Filter Pool, a
+	default filter pool is created for each connection and it is shown in
+	the	<i>Filter Pool</i> drop down.)
+	<P>If this is unchecked, then all filters will be considered for
+		action and the connections between filters and filter pools will be
+		saved.
+	<h3>Filter Pool</h3>
+	Use this option to specify the filter pool you want to manage, when 
+	<i>Single filter pool</i> is checked.
+	<h3>Repository</h3>
+	Specify the location and name of the repository. A single filter pool
+	repository must have a suffix of
+	<b> .rseflt</b> and a repository for all filters must have a sfuffix of
+	<b> .rsefltall</b>.
+	<p>
+	<h2>Exporting All Filters for the First Time</h2>
+	Suppose we have chosen to manage like this, exporting all filters for
+	the first time to a new repository:
+	<p>
+	<p>
+		<img src="assets/rse_filter_management_manage_choose_all.png"
+			align="middle">
+	<p>When we click [OK] we get a screen like this:
+	<p>
+	<p>
+		<img src="assets/rse_filter_management_manage_action01.png"
+			align="middle">
+	<p>Since this is an export to a new repository, there is only one
+		pane, showing the filters in the workspace.
+	<p>Click [Select all] and all the filters are selected. (Note that
+		you can also select filters in the traditional way, by clicking on them
+		and using the Shift and Ctrl keys.)
+	<p>All the action buttons on the right are now activated:
+	<p>
+		<img src="assets/rse_filter_management_manage_action02.png"
+			align="middle">
+	<p>Click the [Push to Repository] button and the action column is
+		populated for all selected flters:
+	<p>
+		<img src="assets/rse_filter_management_manage_action03.png"
+			align="middle">
+	<p>
+	<p>Now click the [Perform action] button at the bottom left. You
+		get a confirmation prompt :
+	<p>
+		<img src="assets/rse_filter_management_manage_action04.png"
+			align="middle">.
+	<p>If you click [Yes] the repository is updated.
+	<br>If you click [No] you get back to the editor.
+	<br>If you click [Cancel] nothing is updated and the editor is closed.
+	<p>
+	<h2>The Editing Window Areas</h2>
+	The filters in the workspace and in the repository are displayed in up to four 
+	separate horizontal panes, with these titles:
+	<ul>
+	<li>Filters only in workspace</li>
+	<li>Filters only in repository</li>
+	<li>Filters in workspace and in repository with a different type or string</li>
+	<li>Filters in workspace and in repository with an equal type and string</li>
+	</ul>
+	When you export filters for the first time only the first area, 
+	<i>Filters only in workspace</i>, is displayed. The other areas are displayed
+	depending on the selected options and the existence, and filter string values, of the filters in the
+	workspace and the repository.
+	<h2>Exporting All Filters After a Change</h2>
+	Suppose we create a new filter,
+	<i> LENNONS/XPR-O</i>, in the
+	<i>Experimental_Stuff</i> filter pool. Then we decide to delete the
+	<i>LENNONS2/XPR_2</i> filter. This will be our new filter setup going
+	forward and we want to update our repository. We set up to manage as we
+	did for the first export:
+	<p>
+		<img src="assets/rse_filter_management_manage_choose_all.png"
+			align="middle">
+	<p>
+	<p>Now when we click [OK] we see this:
+	<p>
+		<img src="assets/rse_filter_management_manage_action05.png"
+			align="middle">
+	<p>The 3 horizontal panes show the differences and the similarities
+		between the workspace and the repository.
+	<p>By selecting filters and setting the desired <i>Action</i> using the
+		action buttons on the right, we can bring the workspace and repository
+		into synch:
+	<p>
+		<img src="assets/rse_filter_management_manage_action06.png"
+			align="middle">
+	<p>
+		This is a rather simple example and it might have been easier to just
+		export all filters to a new repository, but you have flexibility in
+		managing as you choose. Note the actions you can define in the <i>Action</i>
+		column:
+	<p>
+	<ul>
+		<li>Push to workspace.</li>
+		<li>Push to repository.</li>
+		<li>Delete from workspace.</li>
+		<li>Delete from repository.</li>
+		<li>Delete from both.</li>
+	</ul>
+	<p>
+	<h2>Restoring Filters and Filter Pools</h2>
+	With a
+	<b>filter</b>, you can subset objects on the server. A filter is a set
+	of definitions and a filter can be used in one or more
+	<b>connections</b>, though it may return a different set of objects on
+	different connections.
+	<p>
+		A <b>filter pool</b> is a group of filters. If you end up with many
+		filters, you can group them into filters pools. A filter pool can also
+		be used in one or more connections.
+	<p>When you restore a filter or a filter pool it may be necessary
+		to assign it to a connection.
+	<p>Suppose we create a brand new workspace but have not yet created
+		a connection, but we want to import our filters. By setting up to manage
+		like this, we can import all our filters:
+	<p>
+		<img src="assets/rse_filter_management_import01.png" align="middle">
+	<p>If we go to the RSE view, we do not see any filters or filter
+		pools:
+	<p>
+		<img src="assets/rse_filter_management_import02.png" align="middle">
+	<p>However, if we switch to the Team view, we can see that the
+		filters and filters pools are there.
+	<p>
+		<img src="assets/rse_filter_management_import03.png" align="middle">
+	<p>
+		We create a connection in the RSE view and then use the <i>View</i>
+		menu to <i>Show Filter Pools</i>:
+	<p>
+		<img src="assets/rse_filter_management_import04.png" align="middle">
+	<p>
+		Now we can right click on <i>Objects</i> and click on <i>Select
+			Filter Pools</i>:
+	<p>
+		<img src="assets/rse_filter_management_import05.png" align="middle">
+	<p>Then pick which filter pools will be assigned to this
+		connection:
+	<p>
+		<img src="assets/rse_filter_management_import06.png" align="middle">
+	<p>
+		Alternatively, you can also assign filters one at a time by creating a
+		new <i>Filter Pool Reference</i>:
+	<p>
+		<img src="assets/rse_filter_management_import07.png" align="middle">
+	<p>
+	<h2>Restoring Filters (saved from a single filter pool)</h2>
+
+	If you are importing a single filter pool, make sure you identify the
+	target filter in the
+	<i>Filter poo</i>l drop down:
+	<p>
+		<img src="assets/rse_filter_management_import08.png" align="middle">
+	<p>Filters you chose to be restored will end up in this filter
+		pool, even if they were saved from another filter pool:
+	<p>
+		<img src="assets/rse_filter_management_import09.png" align="middle">
+	<p>
+
+
+
+
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

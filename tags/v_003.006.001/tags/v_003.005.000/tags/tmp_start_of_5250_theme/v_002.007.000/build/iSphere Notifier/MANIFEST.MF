@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-Version: 2.7.0.r
+X-Bundle-Update-Library: true
+X-Bundle-Info: New Release!
+X-Beta-Version: 2.7.0.b009
+X-Beta-Update-Library: true
+X-Beta-Info: Message Monitor: Added options to specify the user name and password for smtp servers that require authentication. (Release candidate)

@@ -1,0 +1,70 @@
+BODY  {
+	BACKGROUND-COLOR : #ffffff;
+	COLOR : #000033;
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+TD  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+A  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	COLOR : #000066;
+	FONT-SIZE : 10pt;
+}
+
+A:VISITED {
+	color : #000099;
+}
+
+A:HOVER {
+	color : #3333ff;
+}
+
+P  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+; margin-top: 0px; padding-top: 0px
+}
+
+H1  {
+	COLOR : #000033;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 15pt;
+	FONT-WEIGHT : bold;
+; margin-bottom: 0px; padding-bottom: 0px
+}
+
+H2  {
+	COLOR : #333366;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 13pt;
+; margin-bottom: 0px; padding-bottom: 0px
+}
+
+H3  {
+	COLOR : #666699;
+	FONT-FAMILY : Arial, Helvetica, sans-serif;
+	FONT-SIZE : 12pt;
+; margin-bottom: 0px; padding-bottom: 0px
+}
+
+OL  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+UL  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+LI  {
+	FONT-FAMILY : Verdana, Arial, Helvetica, sans-serif;
+	FONT-SIZE : 10pt;
+}
+
+pre {  font-size: 10pt}
