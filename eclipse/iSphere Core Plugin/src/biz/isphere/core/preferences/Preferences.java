@@ -1013,7 +1013,7 @@ public final class Preferences {
      * @return default URL for updates.
      */
     public String getDefaultURLForUpdates() {
-        return "http://isphere.sourceforge.net/MANIFEST.MF";
+        return "http://isphere.sourceforge.net/MANIFEST.MF?raw";
     }
 
     /**
