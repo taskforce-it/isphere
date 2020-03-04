@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-Version: 3.6.2.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Bugfix of tickets #86, #87, #88 and other corrections.
+X-Bundle-Info: Bugfix of tickets 86 / 87 / 88 and other corrections.
 X-Beta-Version: 3.6.2.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Bugfix of tickets #86, #87, #88 and other corrections.
+X-Beta-Info: Bugfix of tickets 86 / 87 / 88 and other corrections.
