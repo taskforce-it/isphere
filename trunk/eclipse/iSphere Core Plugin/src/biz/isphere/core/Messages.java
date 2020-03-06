@@ -200,7 +200,7 @@ public class Messages extends NLS {
 
     public static String Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
 
-    public static String The_connection_A_is_currently_offline_and_cannot_be_connected;
+    public static String Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected;
 
     public static String The_connection_does_not_exist_or_could_be_established;
 
