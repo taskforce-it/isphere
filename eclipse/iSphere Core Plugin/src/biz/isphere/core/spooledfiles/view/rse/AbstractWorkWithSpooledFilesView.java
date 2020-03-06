@@ -269,6 +269,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             return;
         }
 
+        String filterName = pinProperties.get(FILTER_NAME);
+        if (StringHelper.isNullOrEmpty(filterName)) {
+            setPinned(false);
+            return;
+        }
+
+        setSubTitle(connectionName, filterName);
+
         new WaitForRseConnectionJob(getShell(), connectionName, this).schedule();
     }
 
@@ -307,14 +315,27 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     /**
      * Sets the title of the view.
      */
-    public void setTitle() {
+    public void setSubTitle(AbstractWorkWithSpooledFilesInputData inputData) {
 
         if (inputData == null) {
             labelHeadline.setText(Messages.EMPTY);
             return;
         }
 
-        labelHeadline.setText(inputData.getConnectionName() + ":" + inputData.getFilterName()); //$NON-NLS-1$
+        setSubTitle(inputData.getConnectionName(), inputData.getFilterName());
+    }
+
+    /**
+     * Sets the title of the view.
+     */
+    public void setSubTitle(String connectionName, String filterName) {
+
+        if (connectionName == null || filterName == null) {
+            labelHeadline.setText(Messages.EMPTY);
+            return;
+        }
+
+        labelHeadline.setText(connectionName + ":" + filterName); //$NON-NLS-1$
     }
 
     /**
@@ -323,7 +344,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      */
     public void refreshTitle() {
 
-        setTitle();
+        setSubTitle(inputData);
 
         if (isPinned()) {
             updatePinProperties();
@@ -409,30 +430,30 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             @Override
             public IStatus runInUIThread(IProgressMonitor monitor) {
 
-                setInputData();
-                setHeadline();
+                setInputDataChecked();
+                setSubTitleChecked();
 
                 if (isPinned()) {
                     updatePinProperties();
                 }
 
-                updateStatus();
+                updateStatusChecked();
 
                 loadSpooledFilesJob = null;
 
                 return Status.OK_STATUS;
             }
 
-            private void setHeadline() {
+            private void setSubTitleChecked() {
 
                 if (isDisposed(labelHeadline)) {
                     return;
                 }
 
-                setTitle();
+                setSubTitle(inputData);
             }
 
-            private void setInputData() {
+            private void setInputDataChecked() {
 
                 if (isDisposed(workWithSpooledFilesPanel)) {
                     return;
@@ -448,7 +469,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
                 refreshActionsEnablement();
             }
 
-            private void updateStatus() {
+            private void updateStatusChecked() {
 
                 if (isDisposed(workWithSpooledFilesPanel)) {
                     return;
@@ -595,7 +616,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             refreshViewAction.setEnabled(true);
         }
 
-        if (hasInputData()) {
+        if (hasInputData() || isPinned()) {
             pinViewAction.setEnabled(true);
         } else {
             pinViewAction.setEnabled(false);
