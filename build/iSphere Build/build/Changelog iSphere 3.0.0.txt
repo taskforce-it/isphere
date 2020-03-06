@@ -1,4 +1,16 @@
 
+Changelog: iSphere 3.6.3.r
+--------------------------
+ • Changed incorrect enablement of "Pin View" button and ensured that
+   the subtitle of the "Work With Spooled Files" view is set when the
+   connection could not be established.
+ • Changed message to be more meaningful:
+   Method: ISphereHelper.checkISphereLibrary(String connectionName)
+   Old: The connection {0} is currently offline and cannot be
+        connected.
+   New: Connection {0} does not exist or is currently offline
+        and cannot be connected.
+
 Changelog: iSphere 3.6.2.r
 --------------------------
  • Added option to close tab items of the iSphere source and message
