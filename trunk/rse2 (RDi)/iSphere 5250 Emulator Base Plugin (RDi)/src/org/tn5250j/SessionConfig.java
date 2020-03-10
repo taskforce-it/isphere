@@ -219,12 +219,24 @@ public class SessionConfig {
 
         setThemePropertiesDirty(false);
 
-        if (!fileName.equals(themeConfigurationFile)) {
+        if (themeConfigurationFile != null && !fileName.equals(themeConfigurationFile)) {
             configureFactory.saveSettingsAs(getThemeConfigurationKey(themeConfigurationFile), getThemeConfigurationKey(fileName), fileName,
                 THEME_CONFIGURATION_HEADER);
         } else {
+            configureFactory.setProperties(getThemeConfigurationKey(fileName), getThemeColorProperties(sesProps));
             configureFactory.saveSettings(getThemeConfigurationKey(fileName), fileName, THEME_CONFIGURATION_HEADER);
         }
+    }
+
+    private Properties getThemeColorProperties(Properties sesProps) {
+        Properties themeProperties = new Properties();
+
+        String[] keys = ColorProperty.keys();
+        for (String key : keys) {
+            themeProperties.put(key, sesProps.getProperty(key));
+        }
+
+        return themeProperties;
     }
 
     private String getThemeConfigurationKey(String fileName) {
@@ -332,11 +344,7 @@ public class SessionConfig {
      * Initializes the theme properties with the current session properties.
      */
     private void initializeThemeColorProperties() {
-
-        String[] keys = ColorProperty.keys();
-        for (String key : keys) {
-            themeColorProperties.put(key, sesProps.getProperty(key));
-        }
+        themeColorProperties = getThemeColorProperties(sesProps);
     }
 
     /**

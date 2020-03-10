@@ -10,6 +10,8 @@ Changelog: iSphere 3.6.3.r
         connected.
    New: Connection {0} does not exist or is currently offline
         and cannot be connected.
+ • Fixed problem that saving a 5250 theme did not work, when the
+   current session theme was '*NONE'.
 
 Changelog: iSphere 3.6.2.r
 --------------------------
