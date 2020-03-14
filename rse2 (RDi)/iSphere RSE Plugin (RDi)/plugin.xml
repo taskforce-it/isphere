@@ -907,6 +907,24 @@
             </with>
          </activeWhen>
       </handler>
+
+      <handler
+            class="biz.isphere.rse.handler.CopyMembersToHandler"
+            id="biz.isphere.rse.handler.CopyMembersToHandler"
+            commandId="biz.isphere.core.command.CopyMembersTo.execute">
+         <activeWhen>
+            <with variable="selection">
+               <count value="*" />
+               <iterate operator="and" ifEmpty="false">
+                  <or>
+                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember" />
+                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+                     <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
+                  </or>
+               </iterate>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>	 
 
       	<!--
@@ -1231,6 +1249,12 @@
             id="biz.isphere.core.command.SourceMemberCompare.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Compare_Source_Members">
+      </command>
+      
+      <command
+            id="biz.isphere.core.command.CopyMembersTo.execute"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Copy_Members_To">
       </command>
    </extension>
   

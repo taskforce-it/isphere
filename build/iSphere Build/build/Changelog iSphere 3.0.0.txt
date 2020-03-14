@@ -1,6 +1,8 @@
 
 Changelog: iSphere 3.6.3.r
 --------------------------
+ • Added command definition "Copy Member(s) To..." to allow defining
+   a keyboard shortcut for the "Copy Members To" option.
  • Changed incorrect enablement of "Pin View" button and ensured that
    the subtitle of the "Work With Spooled Files" view is set when the
    connection could not be established.
