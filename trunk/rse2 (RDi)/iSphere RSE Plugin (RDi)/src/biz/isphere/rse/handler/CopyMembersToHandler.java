@@ -39,7 +39,7 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
 
 public class CopyMembersToHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "biz.isphere.core.command.CopyMembersTo.execute";
+    public static final String ID = "biz.isphere.core.command.SourceMember.copyTo";
 
     private CopyMemberService jobDescription;
 

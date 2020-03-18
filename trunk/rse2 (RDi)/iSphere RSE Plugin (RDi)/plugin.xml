@@ -911,7 +911,7 @@
       <handler
             class="biz.isphere.rse.handler.CopyMembersToHandler"
             id="biz.isphere.rse.handler.CopyMembersToHandler"
-            commandId="biz.isphere.core.command.CopyMembersTo.execute">
+            commandId="biz.isphere.core.command.SourceMember.copyTo">
          <activeWhen>
             <with variable="selection">
                <count value="*" />
@@ -1252,7 +1252,7 @@
       </command>
       
       <command
-            id="biz.isphere.core.command.CopyMembersTo.execute"
+            id="biz.isphere.core.command.SourceMember.copyTo"
             categoryId="biz.isphere.category.Commands"
             name="%command_Copy_Members_To">
       </command>
