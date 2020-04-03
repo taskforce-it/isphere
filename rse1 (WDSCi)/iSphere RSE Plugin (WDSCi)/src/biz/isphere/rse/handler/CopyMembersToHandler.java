@@ -98,13 +98,15 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                 }
             } else if (selectedObject instanceof SystemFilterReference) {
                 SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
-                String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getSystemConnection()
-                    .getAliasName();
-                if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
-                    return false;
+                String filterType = filterReference.getReferencedFilter().getType();
+                if ("Object".equals(filterType) || "Member".equals(filterType)) {
+                    String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getSystemConnection()
+                        .getAliasName();
+                    if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
+                        return false;
+                    }
                 }
-
             }
         }
 
