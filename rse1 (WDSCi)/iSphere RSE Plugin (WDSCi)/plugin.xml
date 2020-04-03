@@ -323,21 +323,6 @@
             id="biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"
             allowMultiple="true"/>
    </extension> 
-      	
-      	<!--
-      	  ==========================================
-      	    RSE Source Member
-            menubarPath="group.adapters"
-      	  ==========================================
-      	-->
-   
-   <extension point="org.eclipse.ui.commands">
-      <command
-            categoryId="biz.isphere.category.Commands"             
-            id="biz.isphere.core.command.SourceMember.copyTo"
-            name="%command_CopyMembersTo_Name">
-      </command>
-	</extension>	 
 	     	
       	<!--
       	  ==========================================
@@ -757,7 +742,28 @@
             categoryId="biz.isphere.category.Commands"
             name="%command_Compare_Source_Members">
       </command>
-      
+
+      <command
+            id="biz.isphere.core.command.SourceMember.copyTo"
+            categoryId="biz.isphere.category.Commands"             
+            name="%command_CopyMembersTo_Name">
+      </command>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="biz.isphere.rse.handler.CopyMembersToHandler"
+            commandId="biz.isphere.core.command.SourceMember.copyTo">
+         <enabledWhen>
+			<with
+              variable="activePartId">
+	            <equals
+	                  value="com.ibm.etools.systems.core.ui.view.systemView">
+	            </equals>
+         	</with>
+         </enabledWhen>
+      </handler>
    </extension>
 
       	<!--
