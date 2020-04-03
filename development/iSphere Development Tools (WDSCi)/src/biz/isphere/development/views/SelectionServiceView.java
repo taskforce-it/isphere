@@ -25,6 +25,10 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.ViewPart;
 
+import com.ibm.etools.iseries.core.api.ISeriesMember;
+import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
+import com.ibm.etools.systems.dstore.core.model.DataElement;
+
 /**
  * This view simply mirrors the current selection in the workbench window. It
  * works for both, element and text selection.
@@ -53,7 +57,7 @@ public class SelectionServiceView extends ViewPart {
         if (selection instanceof IStructuredSelection) {
             IStructuredSelection ss = (IStructuredSelection)selection;
             showText(getClassNames(ss.toArray()));
-//            showItems(ss.toArray());
+            // showItems(ss.toArray());
         } else if (selection instanceof ITextSelection) {
             ITextSelection ts = (ITextSelection)selection;
             showText(ts.getText());
@@ -73,6 +77,15 @@ public class SelectionServiceView extends ViewPart {
         StringBuilder classNames = new StringBuilder();
         for (Object object : objects) {
             classNames.append(object.getClass().getName());
+            if (object instanceof DataElement) {
+                DataElement dataElement = (DataElement)object;
+                dataElement.getAdapter(this.getClass());
+                new ISeriesMember(dataElement);
+                String type = ISeriesDataElementHelpers.getType(dataElement);
+                classNames.append(" (");
+                classNames.append(type);
+                classNames.append(")");
+            }
             classNames.append("\n");
         }
 
