@@ -8,7 +8,10 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ibm.etools.systems.core,
- org.eclipse.jface.text
+ org.eclipse.jface.text,
+ com.ibm.etools.systems.dstore.core,
+ com.ibm.etools.iseries.core,
+ com.ibm.etools.systems.dstore.extra
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Bundle-Vendor: iSphere Project Team
