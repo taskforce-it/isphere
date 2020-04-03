@@ -17,6 +17,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
@@ -31,7 +32,6 @@ import biz.isphere.rse.Messages;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile;
@@ -66,12 +66,12 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
             for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
                 Object selectedObject = iterator.next();
 
-                if (selectedObject instanceof QSYSRemoteSourceMember) {
+                if (ResourceTypeUtil.isSrcMember(selectedObject)) {
                     QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)selectedObject;
                     if (!addElement(shell, object)) {
                         return;
                     }
-                } else if (selectedObject instanceof QSYSRemoteSourceFile) {
+                } else if (ResourceTypeUtil.isSourceFile(selectedObject)) {
                     QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
                     String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
                     if (!addElementsFromSourceFile(shell, connectionName, object.getLibrary(), object.getName())) {
@@ -146,20 +146,7 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
                     return false;
                 } else {
-                    for (int idx2 = 0; idx2 < children.length; idx2++) {
-                        IQSYSResource element = (IQSYSResource)children[idx2];
-                        if (ResourceTypeUtil.isSourceFile(element)) {
-                            // not yet used.
-                            if (!addElementsFromSourceFile(shell, connectionName, element.getLibrary(), element.getName())) {
-                                return false;
-                            }
-                        } else if (ResourceTypeUtil.isMember(element)) {
-                            QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)element;
-                            if (!addElement(shell, object)) {
-                                return false;
-                            }
-                        }
-                    }
+                    executeInternally(shell, new StructuredSelection(children));
                 }
             }
         }
