@@ -25,17 +25,17 @@ import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
-import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
-import biz.isphere.rse.Messages;
-
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
+import biz.isphere.rse.Messages;
 
 public class CopyMembersToHandler extends AbstractHandler implements IHandler {
 
@@ -95,10 +95,13 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                 }
             } else if ((selectedObject instanceof SystemFilterReference)) {
                 SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
-                String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
-                if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
-                    return false;
+                String filterType = filterReference.getReferencedFilter().getType();
+                if ("Object".equals(filterType) || "Member".equals(filterType)) {
+                    String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
+                    if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
+                        return false;
+                    }
                 }
             }
         }
