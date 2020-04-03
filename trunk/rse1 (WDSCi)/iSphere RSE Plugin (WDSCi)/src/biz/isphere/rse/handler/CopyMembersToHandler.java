@@ -63,43 +63,52 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            for (Iterator<?> iterObjects = structuredSelection.iterator(); iterObjects.hasNext();) {
-                Object selectedObject = iterObjects.next();
-
-                if (selectedObject instanceof DataElement) {
-                    DataElement dataElement = (DataElement)selectedObject;
-                    ISeriesObject object = new ISeriesObject(dataElement);
-                    if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceMember()) {
-                        if (!addElement(shell, object)) {
-                            return;
-                        }
-                    } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceFile()) {
-                        String connectionName = object.getISeriesConnection().getSystemConnection().getAliasName();
-                        if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelpers.getLibrary(dataElement),
-                            ISeriesDataElementHelpers.getName(dataElement))) {
-                            return;
-                        }
-                    }
-                } else if (selectedObject instanceof SystemFilterReference) {
-                    SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
-                    String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getSystemConnection()
-                        .getAliasName();
-                    if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
-                        return;
-                    }
-
-                }
-            }
+            collectSourceMembers(shell, structuredSelection);
 
             if (jobDescription != null && jobDescription.getItems().length > 0) {
                 CopyMemberDialog dialog = new CopyMemberDialog(shell);
                 dialog.setContent(jobDescription);
                 dialog.open();
+            } else {
+                MessageDialog.openInformation(shell, Messages.Information, Messages.Selection_does_not_include_any_source_members);
             }
 
             jobDescription = null;
         }
+    }
+
+    private boolean collectSourceMembers(Shell shell, IStructuredSelection structuredSelection) {
+
+        for (Iterator<?> iterObjects = structuredSelection.iterator(); iterObjects.hasNext();) {
+            Object selectedObject = iterObjects.next();
+
+            if (selectedObject instanceof DataElement) {
+                DataElement dataElement = (DataElement)selectedObject;
+                ISeriesObject object = new ISeriesObject(dataElement);
+                if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceMember()) {
+                    if (!addElement(shell, object)) {
+                        return false;
+                    }
+                } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceFile()) {
+                    String connectionName = object.getISeriesConnection().getSystemConnection().getAliasName();
+                    if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelpers.getLibrary(dataElement),
+                        ISeriesDataElementHelpers.getName(dataElement))) {
+                        return false;
+                    }
+                }
+            } else if (selectedObject instanceof SystemFilterReference) {
+                SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
+                String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getSystemConnection()
+                    .getAliasName();
+                if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
+                    return false;
+                }
+
+            }
+        }
+
+        return true;
     }
 
     private boolean addElement(Shell shell, ISeriesObject object) {
@@ -151,7 +160,9 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
                     return false;
                 } else {
-                    executeInternally(shell, new StructuredSelection(children));
+                    if (!collectSourceMembers(shell, new StructuredSelection(children))) {
+                        return false;
+                    }
                 }
             }
         }
