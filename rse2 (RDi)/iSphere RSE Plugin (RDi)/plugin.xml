@@ -912,7 +912,7 @@
             class="biz.isphere.rse.handler.CopyMembersToHandler"
             id="biz.isphere.rse.handler.CopyMembersToHandler"
             commandId="biz.isphere.core.command.SourceMember.copyTo">
-         <activeWhen>
+         <enabledWhen>
             <with variable="selection">
                <count value="*" />
                <iterate operator="and" ifEmpty="false">
@@ -923,7 +923,7 @@
                   </or>
                </iterate>
             </with>
-         </activeWhen>
+         </enabledWhen>
       </handler>
    </extension>	 
 

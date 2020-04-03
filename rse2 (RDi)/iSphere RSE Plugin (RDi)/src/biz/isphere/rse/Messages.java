@@ -140,6 +140,8 @@ public class Messages extends NLS {
 
     public static String Cannot_copy_source_members_from_different_connections;
 
+    public static String Selection_does_not_include_any_source_members;
+
     public static String Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D;
 
     public static String Failed_to_connect_to_system_A;
