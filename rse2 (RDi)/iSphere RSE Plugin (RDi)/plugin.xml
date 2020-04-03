@@ -913,16 +913,25 @@
             id="biz.isphere.rse.handler.CopyMembersToHandler"
             commandId="biz.isphere.core.command.SourceMember.copyTo">
          <enabledWhen>
-            <with variable="selection">
-               <count value="*" />
-               <iterate operator="and" ifEmpty="false">
-                  <or>
-                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember" />
-                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
-                     <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
-                  </or>
-               </iterate>
-            </with>
+         	<and>
+				<with
+	              variable="activePartId">
+	              	<or>
+			            <equals value="org.eclipse.rse.ui.view.systemView" />
+			            <equals value="com.ibm.etools.iseries.rse.ui.ObjectTableView" />
+		            </or>
+	         	</with>
+	            <with variable="selection">
+	               <count value="*" />
+	               <iterate operator="and" ifEmpty="false">
+	                  <or>
+	                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember" />
+	                     <adapt type="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+	                     <adapt type="org.eclipse.rse.core.filters.SystemFilterReference" />
+	                  </or>
+	               </iterate>
+	            </with>
+            </and>
          </enabledWhen>
       </handler>
    </extension>	 
