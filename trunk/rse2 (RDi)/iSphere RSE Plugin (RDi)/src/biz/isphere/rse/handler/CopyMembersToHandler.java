@@ -63,38 +63,47 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
-                Object selectedObject = iterator.next();
-
-                if (ResourceTypeUtil.isSrcMember(selectedObject)) {
-                    QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)selectedObject;
-                    if (!addElement(shell, object)) {
-                        return;
-                    }
-                } else if (ResourceTypeUtil.isSourceFile(selectedObject)) {
-                    QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
-                    String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
-                    if (!addElementsFromSourceFile(shell, connectionName, object.getLibrary(), object.getName())) {
-                        return;
-                    }
-                } else if ((selectedObject instanceof SystemFilterReference)) {
-                    SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
-                    String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
-                    if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
-                        return;
-                    }
-                }
-            }
+            collectSourceMembers(shell, structuredSelection);
 
             if (jobDescription != null && jobDescription.getItems().length > 0) {
                 CopyMemberDialog dialog = new CopyMemberDialog(shell);
                 dialog.setContent(jobDescription);
                 dialog.open();
+            } else {
+                MessageDialog.openInformation(shell, Messages.Information, Messages.Selection_does_not_include_any_source_members);
             }
 
             jobDescription = null;
         }
+    }
+
+    private boolean collectSourceMembers(Shell shell, IStructuredSelection structuredSelection) {
+
+        for (Iterator<?> iterator = structuredSelection.iterator(); iterator.hasNext();) {
+            Object selectedObject = iterator.next();
+
+            if (ResourceTypeUtil.isSrcMember(selectedObject)) {
+                QSYSRemoteSourceMember object = (QSYSRemoteSourceMember)selectedObject;
+                if (!addElement(shell, object)) {
+                    return false;
+                }
+            } else if (ResourceTypeUtil.isSourceFile(selectedObject)) {
+                QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
+                String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
+                if (!addElementsFromSourceFile(shell, connectionName, object.getLibrary(), object.getName())) {
+                    return false;
+                }
+            } else if ((selectedObject instanceof SystemFilterReference)) {
+                SystemFilterReference filterReference = (SystemFilterReference)selectedObject;
+                String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
+                String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
+                if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean addElement(Shell shell, QSYSRemoteSourceMember object) {
@@ -146,7 +155,9 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
                     return false;
                 } else {
-                    executeInternally(shell, new StructuredSelection(children));
+                    if (!collectSourceMembers(shell, new StructuredSelection(children))) {
+                        return false;
+                    }
                 }
             }
         }
