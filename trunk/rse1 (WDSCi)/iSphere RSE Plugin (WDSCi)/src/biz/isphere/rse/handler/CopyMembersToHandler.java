@@ -158,7 +158,7 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                                 ISeriesDataElementHelpers.getName(dataElement))) {
                                 return false;
                             }
-                        } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isMember()) {
+                        } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceMember()) {
                             ISeriesObject object = new ISeriesObject(dataElement);
                             if (!addElement(shell, object)) {
                                 return false;
