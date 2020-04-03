@@ -17,6 +17,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
@@ -150,21 +151,7 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                     SystemMessageDialog.displayErrorMessage(shell, ((SystemMessageObject)firstObject).getMessage());
                     return false;
                 } else {
-                    for (int idx2 = 0; idx2 < children.length; idx2++) {
-                        DataElement dataElement = (DataElement)children[idx2];
-                        if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceFile()) {
-                            // not yet used.
-                            if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelpers.getLibrary(dataElement),
-                                ISeriesDataElementHelpers.getName(dataElement))) {
-                                return false;
-                            }
-                        } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceMember()) {
-                            ISeriesObject object = new ISeriesObject(dataElement);
-                            if (!addElement(shell, object)) {
-                                return false;
-                            }
-                        }
-                    }
+                    executeInternally(shell, new StructuredSelection(children));
                 }
             }
         }
