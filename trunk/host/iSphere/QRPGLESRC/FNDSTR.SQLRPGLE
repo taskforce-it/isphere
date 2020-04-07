@@ -113,6 +113,11 @@
 
      d/Copy QCPYSRC,LOCALE
 
+     d matchesResult_t...
+     d                 DS                  Qualified Based(pDummy)
+     d  mustBeFound                    N
+     d  hasBeenFound                   N
+
       // Record format template for file QSRCF
 
      dQSRCFRF_t        DS           240    Qualified Based(pDummy)
@@ -171,11 +176,19 @@
      d LSMBR                         10A   Const                                --> Member
      d LIRLNG                         5S 0 Const                                --> Record length
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
      d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     d getFinalResult...
+     d                 PR              N   Extproc('getFinalResult')
+     d  i_matchOpt                   10A   Const
+     d  i_numArgs                    10I 0 Const
+     d  i_matchesResult...
+     d                                     Const LikeDs(matchesResult_t)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
 
      d removeMember...
      d                 PR                  Extproc('removeMember')
@@ -495,7 +508,7 @@
      d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
@@ -659,7 +672,7 @@
          performSearch(FNDSTRIRF.XIHDL
                        : FNDSTRIRF.XIFILE: FNDSTRIRF.XILIB: FNDSTRIRF.XIMBR
                        : fileAttrs.LIRLNG
-                       : LSSHWRCDS: LSMTCALL: LISIZE: LSARGS);
+                       : LSSHWRCDS: LSMTCOPT: LISIZE: LSARGS);
 
        EndDo;
 
@@ -742,7 +755,7 @@
      d LSMBR                         10A   Const                                --> Member
      d LIRLNG                         5S 0 Const                                --> Record length
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
@@ -760,11 +773,9 @@
 
       // This array has a 1:1 relation to
       // the LSARGS input array.
-     d matchesResult   DS                  Qualified
+     d matchesResult   DS                  LikeDs(matchesResult_t)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
      d                                     Inz
-     d  mustBeFound                    N
-     d  hasBeenFound                   N
 
      d rc              S             10I 0
      d cflags          S             10I 0
@@ -910,18 +921,18 @@
                matchesResult(LIIDX).hasBeenFound = *ON;
                If (matchesResult(LIIDX).mustBeFound);
                  recordFound = *ON;
-                 memberFound = *ON; // For now. Maybe changed below.
                Else;
                  // For "contains not" criterias,
                  // records are not logged.
                EndIf;
-             Else;
-               If (not matchesResult(LIIDX).mustBeFound);
-                 memberFound = *ON; // For now. Maybe changed below.
-               EndIf;
              EndIf;
 
            EndFor;
+
+           If (LSMTCOPT = SRCHOPTS_MATCH_LINE);
+             recordFound = getFinalResult(
+                             SRCHOPTS_MATCH_ALL: LISIZE: matchesResult);
+           EndIf;
 
            // Check record found
            // (record matches at least 1 criterum)
@@ -945,39 +956,81 @@
          // Close member
          Close QSRCF;
 
-         // Evaluate final result
-         If (LSMTCALL);
-           For LIIDX = 1 to LISIZE;
-             If ((matchesResult(LIIDX).mustBeFound and
-                  matchesResult(LIIDX).hasBeenFound) or
-                 (not matchesResult(LIIDX).mustBeFound and
-                  not matchesResult(LIIDX).hasBeenFound));
-               // No further action required
-             Else;
-               memberFound = *OFF;
-               Leave;
-             EndIf;
-           EndFor;
-         EndIf;
+         If (LSMTCOPT <> SRCHOPTS_MATCH_LINE);
 
-         // Set final result
-         If (LIRCDS > 0);
-           If (not memberFound);
-             // Remove statement records in case
-             // of a "must not contain" condition has not been met.
-             removeMember(LPHDL: LSFILE: LSLIB: LSMBR);
-           EndIf;
-         Else;
-           If (memberFound);
-             // Ensure at least a "member record" in case
-             // we only had "must not contain" condition.
-             addMember(LPHDL: LSFILE: LSLIB: LSMBR: 0
-                       : %trim(LSLIB) + '/' + %trim(LSFILE)
-                         + '.' + %trim(LSMBR));
+           // Evaluate final result
+           memberFound = getFinalResult(LSMTCOPT: LISIZE: matchesResult);
+
+           // Set final result
+           If (LIRCDS > 0);
+             If (not memberFound);
+               // Remove statement records in case
+               // of a "must not contain" condition has not been met.
+               removeMember(LPHDL: LSFILE: LSLIB: LSMBR);
+             EndIf;
+           Else;
+             If (memberFound);
+               // Ensure at least a "member record" in case
+               // we only had "must not contain" condition.
+               addMember(LPHDL: LSFILE: LSLIB: LSMBR: 0
+                         : %trim(LSLIB) + '/' + %trim(LSFILE)
+                           + '.' + %trim(LSMBR));
+             EndIf;
            EndIf;
          EndIf;
 
          Return memberFound;
+
+      /end-free
+     p                 E
+
+      //*==========================================================================================*
+      //* Computes the final result.                                                               *
+      //*==========================================================================================*
+
+     p getFinalResult...
+     p                 B                   Export
+     d                 PI              N
+     d  i_matchOpt                   10A   Const
+     d  i_numArgs                    10I 0 Const
+     d  i_matchesResult...
+     d                                     Const LikeDs(matchesResult_t)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     d i               S             10I 0
+     d result          S               N
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+         Select;
+         When (i_matchOpt = SRCHOPTS_MATCH_ALL);
+           result = *ON;
+           For i = 1 to i_numArgs;
+             If ((i_matchesResult(i).mustBeFound and
+                  i_matchesResult(i).hasBeenFound) or
+                 (not i_matchesResult(i).mustBeFound and
+                  not i_matchesResult(i).hasBeenFound));
+               // No further action required
+             Else;
+               result = *OFF;
+               Leave;
+             EndIf;
+           EndFor;
+         When (i_matchOpt = SRCHOPTS_MATCH_ANY);
+           result = *OFF;
+           For i = 1 to i_numArgs;
+             If ((i_matchesResult(i).mustBeFound and
+                  i_matchesResult(i).hasBeenFound) or
+                 (not i_matchesResult(i).mustBeFound and
+                  not i_matchesResult(i).hasBeenFound));
+               result = *ON;
+               Leave;
+             EndIf;
+           EndFor;
+         EndSl;
+
+         Return result;
 
       /end-free
      p                 E
