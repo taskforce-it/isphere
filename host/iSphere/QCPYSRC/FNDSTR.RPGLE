@@ -27,7 +27,7 @@
      d                 PR
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
-     d matchAll                        N   Const                                --> Match all finds
+     d matchOpt                      10A   Const                                --> Match option
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)

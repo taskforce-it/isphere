@@ -113,11 +113,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        1 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -191,11 +191,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        1 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -275,11 +275,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        1 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -350,11 +350,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_REGEX;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        1 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -422,11 +422,11 @@
        searchArguments(1).regex = SRCHOPTS_ARG_REGEX;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        1 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        1 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -501,11 +501,11 @@
        searchArguments(2).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *OFF :          // --> Match any search arguments
-        2 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ANY : // --> Match any search arguments
+        2 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -578,11 +578,11 @@
        searchArguments(2).regex = SRCHOPTS_ARG_STRING;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        2 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        2 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result
@@ -661,11 +661,11 @@
        searchArguments(2).regex = SRCHOPTS_ARG_REGEX;
 
        FNDSTR_search(
-        GIHDL :         // --> Handle
-        *ON :           // --> Show all records
-        *ON :           // --> Match all search arguments
-        2 :             // --> Number of search arguments
-        searchArguments // --> search arguments
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_ALL : // --> Match all search arguments
+        2 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
        );
 
        // Check search result

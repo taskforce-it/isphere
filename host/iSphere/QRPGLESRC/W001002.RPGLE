@@ -56,15 +56,22 @@
 
      d/Copy QCPYSRC,FNDSTR
 
+     d matchOpt        S             10A
       //*------------------------------------------------------------------------------------------*
 
       /Free
+
+       If (LSMTCALL);
+         matchOpt = SRCHOPTS_MATCH_ALL;
+       Else;
+         matchOpt = SRCHOPTS_MATCH_ANY;
+       EndIf;
 
        // Call service program
        FNDSTR_search(
         LPHDL :     // --> Handle
         LSSHWRCDS : // --> Show records
-        LSMTCALL :  // --> Match all finds
+        matchOpt :  // --> Match all/any fields
         LISIZE :    // --> Number of args.
         LSARGS      // --> Search arguments
        );
