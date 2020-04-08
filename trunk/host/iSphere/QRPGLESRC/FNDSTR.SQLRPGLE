@@ -240,6 +240,10 @@
      d retrieveJobCcsid...
      d                 PR            10I 0 Extproc('retrieveJobCcsid')
 
+     d removeFileOpenMessage...
+     d                 PR                  Extproc('removeFileOpenMessage')
+     d  i_msgId                       7A   Const
+
       //*==========================================================================================*
       //* Get Handle                                                                               *
       //*==========================================================================================*
@@ -807,6 +811,8 @@
          // Error during open of member occured
          If %Error;
            Return;
+         Else;
+           removeFileOpenMessage('CPF4011');
          EndIf;
 
          // Initialize match result array
@@ -1383,3 +1389,62 @@
 
       /End-Free
      p                 E
+
+      //*==========================================================================================*
+      //* Removes 'Buffer length longer than record for member DEMO5.' (CPF4011) message.          *
+      //*==========================================================================================*
+
+     p removeFileOpenMessage...
+     p                 b
+     d                 pi
+     d  i_msgId                       7A   Const
+
+      // Receive Program Message (QMHRCVPM) API
+     d QMHRCVPM...
+     d                 pr                  extpgm('QMHRCVPM')
+     d  o_msgInf                  65535a          options(*varsize)
+     d  i_msgInfLen                  10i 0 const
+     d  i_format                      8a   const
+     d  i_callStkE                  256a   const
+     d  i_callStkC                   10i 0 const
+     d  i_msgType                    10a   const
+     d  i_msgKey                      4a   const
+     d  i_wait                       10i 0 const
+     d  i_action                     10a   const
+     d  io_ErrCode                65535a          options(*varsize)
+
+      // Inclomplete format RCVM0100
+     d rcvm0100...
+     d                 ds                  qualified inz
+     d  bytRet                       10i 0                                      Bytes ret.
+     d  bytAvl                       10i 0                                      Bytes avail.
+     d  msgSev                       10i 0                                      Msg Severty
+     d  msgID                         7a                                        Msg ID
+     d  msgType                       2a                                        Msg Type
+     d  msgKey                        4a                                        Msg Key
+
+      // Remove Program Messages (QMHRMVPM) API
+     d QMHRMVPM...
+     d                 pr                  extpgm('QMHRMVPM')
+     d  i_callStkE                  256a   const
+     d  i_callStkC                   10i 0 const
+     d  i_msgKey                      4a   const
+     d  i_msgToRmv                   10a   const
+     d  io_ErrCode                65535a          options(*varsize)
+
+      // Incomplete IBM i API error code
+     d errCode         ds                  qualified
+     d  bytPrv                       10i 0 inz(%size(errCode))
+     d  bytAvl                       10i 0 inz
+
+      /Free
+
+         QMHRCVPM(rcvm0100: %size(rcvm0100): 'RCVM0100'
+                  : '*': 1: '*LAST': '': 0: '*SAME': errCode);
+
+         if (rcvm0100.msgID = i_msgId);
+           QMHRMVPM('*': 1: rcvm0100.msgKey: '*BYKEY': errCode);
+         endif;
+
+      /End-Free
+     p                 e
