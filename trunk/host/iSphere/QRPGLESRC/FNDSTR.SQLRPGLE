@@ -169,7 +169,7 @@
       // Local procedures
       //
      d performSearch...
-     d                 PR              N   Extproc('performSearch')
+     d                 PR                  Extproc('performSearch')
      d LPHDL                         10S 0 Const                                --> Handle
      d LSFILE                        10A   Const                                --> Source File
      d LSLIB                         10A   Const                                --> Library
@@ -189,6 +189,15 @@
      d  i_matchesResult...
      d                                     Const LikeDs(matchesResult_t)
      d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     d initResultArray...
+     d                 PR                  Extproc('initResultArray')
+     d                                     LikeDs(matchesResult_t)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d  i_numArgs                    10I 0 Const
+     d  i_searchArgs                       Const Likeds(searchArgument_t)
+     d                                     Options(*varsize)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
 
      d removeMember...
      d                 PR                  Extproc('removeMember')
@@ -748,7 +757,7 @@
 
      p performSearch...
      p                 B
-     d                 PI              N
+     d                 PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LSFILE                        10A   Const                                --> Source File
      d LSLIB                         10A   Const                                --> Library
@@ -760,8 +769,6 @@
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
      d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
-
-     d memberFound     S               N                                        RtnVal: Member Found
 
      dLISTR            S              3S 0                                      Start
      dLILNG            S              3S 0                                      Length
@@ -785,6 +792,7 @@
 
      d searchArgFound  S               N
      d recordFound     S               N
+     d memberFound     S               N
 
      d srcLine         DS                  LikeDs(QSRCFRF_t)
       //*------------------------------------------------------------------------------------------*
@@ -798,28 +806,17 @@
 
          // Error during open of member occured
          If %Error;
-           Return *OFF;
+           Return;
          EndIf;
 
-         // Set "matches to find / not to find"
-         For LIIDX = 1 to LISIZE;
-           Select;
-           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS);
-             matchesResult(LIIDX).mustBeFound = *ON;
-           When (LSARGS(LIIDX).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT);
-             matchesResult(LIIDX).mustBeFound = *OFF;
-           EndSl;
-           matchesResult(LIIDX).hasBeenFound = *OFF;
-         EndFor;
+         // Initialize match result array
+         matchesResult = initResultArray(LISIZE: LSARGS);
 
          // Initialize statement
          LISTMT = *Zero;
 
          // Initialize record counter
          LIRCDS = *Zero;
-
-         // Initialize "member found" indicator
-         memberFound = *OFF;
 
          DoW GILoop;
 
@@ -920,6 +917,7 @@
              If searchArgFound;
                matchesResult(LIIDX).hasBeenFound = *ON;
                If (matchesResult(LIIDX).mustBeFound);
+                 // Set 'recordFond' for match 'all/any' mode
                  recordFound = *ON;
                Else;
                  // For "contains not" criterias,
@@ -930,8 +928,11 @@
            EndFor;
 
            If (LSMTCOPT = SRCHOPTS_MATCH_LINE);
+             // Set 'recordFond' for match 'line mode'
              recordFound = getFinalResult(
                              SRCHOPTS_MATCH_ALL: LISIZE: matchesResult);
+             // Reset match result array
+             matchesResult = initResultArray(LISIZE: LSARGS);
            EndIf;
 
            // Check record found
@@ -979,7 +980,42 @@
            EndIf;
          EndIf;
 
-         Return memberFound;
+      /end-free
+     p                 E
+
+      //*==========================================================================================*
+      //* Initialize result array.                                                                 *
+      //*==========================================================================================*
+
+     p initResultArray...
+     p                 B                   Export
+     d                 PI                  LikeDs(matchesResult_t)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d  i_numArgs                    10I 0 Const
+     d  i_searchArgs                       Const Likeds(searchArgument_t)
+     d                                     Options(*varsize)
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     d i               S             10i 0
+     d matchesResult   DS                  LikeDs(matchesResult_t)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+         Clear matchesResult;
+
+         For i = 1 to i_numArgs;
+           Select;
+           When (i_searchArgs(i).operator = SRCHOPTS_OPERATOR_CONTAINS);
+             matchesResult(i).mustBeFound = *ON;
+           When (i_searchArgs(i).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT);
+             matchesResult(i).mustBeFound = *OFF;
+           EndSl;
+           matchesResult(i).hasBeenFound = *OFF;
+         EndFor;
+
+         Return matchesResult;
 
       /end-free
      p                 E
