@@ -51,6 +51,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.MatchOption;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
@@ -157,7 +158,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     private void createSearchStringEditorGroup(Composite aMainPanel) {
-        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, true);
+        searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, true, SearchOptionConfig.getAdditionalLineModeSearchOptions());
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(aMainPanel);
     }
