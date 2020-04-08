@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Security Plugin (WDSCi)
 Bundle-SymbolicName: org.eclipse.equinox.security
-Bundle-Version: 3.6.3.r
+Bundle-Version: 3.7.0.b001
 Bundle-Activator: org.eclipse.equinox.security.ISphereSecurityRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
