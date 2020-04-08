@@ -30,26 +30,22 @@ public class SearchOptions implements Serializable {
     public static final int CONTAINS = 1;
     public static final int CONTAINS_NOT = -1;
 
-    public static final String MATCH_ALL = "*ALL";
-    public static final String MATCH_ANY = "*ANY";
-    public static final String MATCH_MESSAGE_ID = "*MSGID";
-
     public static final String CASE_MATCH = "*MATCH";
     public static final String CASE_IGNORE = "*IGNORE";
 
     public static final String SEARCH_ARG_STRING = "*STRING";
     public static final String SEARCH_ARG_REGEX = "*REGEX";
 
-    private String matchOption;
+    private MatchOption matchOption;
     private boolean showAllItems;
     private List<SearchArgument> searchArguments;
     private Map<GenericSearchOption.Key, GenericSearchOption> genericOptions;
 
     public SearchOptions() {
-        this(MATCH_ALL, true);
+        this(MatchOption.ALL, true);
     }
 
-    public SearchOptions(String aMatchOption, boolean aShowAllItems) {
+    public SearchOptions(MatchOption aMatchOption, boolean aShowAllItems) {
         matchOption = aMatchOption;
         showAllItems = aShowAllItems;
         searchArguments = null;
@@ -63,7 +59,7 @@ public class SearchOptions implements Serializable {
         this.showAllItems = showAllItems;
     }
 
-    public String getMatchOption() {
+    public MatchOption getMatchOption() {
         return matchOption;
     }
 
@@ -152,7 +148,8 @@ public class SearchOptions implements Serializable {
 
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(Messages.Conditions_to_match_colon + SPACE + getMatchOption());
+        buffer.append(Messages.Conditions_to_match_colon + SPACE + getMatchOption().getLabel()); // TODO:
+                                                                                                 // label
         buffer.append(NEW_LINE);
         buffer.append(Messages.Show_all_matches_colon + SPACE + isShowAllItems());
         buffer.append(NEW_LINE);

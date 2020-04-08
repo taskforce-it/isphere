@@ -79,7 +79,8 @@ public class DisplaySearchOptionsDialog extends Dialog {
         // Set input data
         textConnection.setText(searchResultTab.getConnectionName());
         if (searchResultTab.hasSearchOptions()) {
-            textMatch.setText(searchResultTab.getSearchOptions().getMatchOption());
+            textMatch.setText(searchResultTab.getSearchOptions().getMatchOption().getLabel()); // TODO:
+                                                                                               // label
             cbShowAllMatches.setSelection(searchResultTab.getSearchOptions().isShowAllItems());
         }
 

@@ -33,7 +33,7 @@
      dW001002          PR
      d handle                        10S 0 Const                                --> Handle
      d showRecords                     N   Const                                --> Show records
-     d matchAll                        N   Const                                --> Match all finds
+     d matchAll                      10A   Const                                --> Match option
      d numArguments                  10I 0 Const                                --> Number of args.
      d arguments                           Const Likeds(searchArgument_t)       --> Search argument
      d                                     Options(*varsize)
@@ -44,7 +44,7 @@
      dW001002          PI
      d LPHDL                         10S 0 Const                                --> Handle
      d LSSHWRCDS                       N   Const                                --> Show records
-     d LSMTCALL                        N   Const                                --> Match all finds
+     d LSMTCOPT                      10A   Const                                --> Match option
      d LISIZE                        10I 0 Const                                --> Number of args.
      d LSARGS                              Const Likeds(searchArgument_t)       --> String
      d                                     Options(*varsize)
@@ -56,22 +56,15 @@
 
      d/Copy QCPYSRC,FNDSTR
 
-     d matchOpt        S             10A
       //*------------------------------------------------------------------------------------------*
 
       /Free
-
-       If (LSMTCALL);
-         matchOpt = SRCHOPTS_MATCH_ALL;
-       Else;
-         matchOpt = SRCHOPTS_MATCH_ANY;
-       EndIf;
 
        // Call service program
        FNDSTR_search(
         LPHDL :     // --> Handle
         LSSHWRCDS : // --> Show records
-        matchOpt :  // --> Match all/any fields
+        LSMTCOPT :  // --> Match option (all/any/line mode)
         LISIZE :    // --> Number of args.
         LSARGS      // --> Search arguments
        );

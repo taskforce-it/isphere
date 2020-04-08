@@ -54,11 +54,7 @@ public class FNDSTR_search {
                 pcml.setValue("FNDSTR_search.showRecords", "0");
             }
 
-            if (SearchOptions.MATCH_ALL.equals(_searchOptions.getMatchOption())) {
-                pcml.setValue("FNDSTR_search.matchAll", "1");
-            } else {
-                pcml.setValue("FNDSTR_search.matchAll", "0");
-            }
+            pcml.setValue("FNDSTR_search.matchOpt", _searchOptions.getMatchOption().getId());
 
             boolean rc = pcml.callProgram("FNDSTR_search");
             if (rc == false) {

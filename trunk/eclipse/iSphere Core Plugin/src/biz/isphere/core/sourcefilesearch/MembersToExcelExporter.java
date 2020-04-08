@@ -211,7 +211,8 @@ public class MembersToExcelExporter {
         WritableSheet sheet = workbook.createSheet("Search arguments", 0);
 
         sheet.addCell(new jxl.write.Label(0, 0, Messages.Conditions_to_match_colon));
-        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption()));
+        sheet.addCell(new jxl.write.Label(1, 0, searchOptions.getMatchOption().getLabel())); // TODO:
+                                                                                             // label
 
         sheet.addCell(new jxl.write.Label(0, 1, Messages.Show_all_matches_colon));
         sheet.addCell(new jxl.write.Boolean(1, 1, searchOptions.isShowAllItems()));
