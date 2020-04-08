@@ -24,8 +24,8 @@
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         --PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*ALL)');                           *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         --PARM--  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*ALL)');                           *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
