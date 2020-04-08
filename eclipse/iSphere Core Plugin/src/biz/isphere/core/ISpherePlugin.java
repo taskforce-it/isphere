@@ -55,7 +55,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // WDSCi 7.0 = Eclipse 3.2
     private static final Version WDSCI70 = new Version(3, 2, 0);
 
-    private static final String MIN_SERVER_VERSION = "3.6.0"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "3.7.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;
