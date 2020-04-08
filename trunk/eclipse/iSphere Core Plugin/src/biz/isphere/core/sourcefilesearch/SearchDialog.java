@@ -41,6 +41,7 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -59,7 +60,8 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     }
 
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true);
+        super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true, SearchOptionConfig
+            .getAdditionalLineModeSearchOptions());
         this.searchElements = searchElements;
     }
 
