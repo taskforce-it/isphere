@@ -496,6 +496,8 @@ public class Messages extends NLS {
 
     public static String MatchAnyCondition;
 
+    public static String MatchLine;
+
     public static String MatchMessageIdCondition;
 
     public static String Options;

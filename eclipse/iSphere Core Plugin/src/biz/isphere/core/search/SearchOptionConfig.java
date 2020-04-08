@@ -38,6 +38,13 @@ public class SearchOptionConfig {
         return new SearchOptionConfig[] { searchOptionMessageId };
     }
 
+    public static SearchOptionConfig[] getAdditionalLineModeSearchOptions() {
+
+        SearchOptionConfig searchOptionMessageId = new SearchOptionConfig(MatchOption.LINE, Messages.MatchLine);
+
+        return new SearchOptionConfig[] { searchOptionMessageId };
+    }
+
     public SearchOptionConfig(MatchOption option, String label) {
         this.option = option;
         this.label = label;
