@@ -54,6 +54,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.MatchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
@@ -711,7 +712,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * 
      * @return status of the "match option" radio buttons
      */
-    private String getMatchOption() {
+    private MatchOption getMatchOption() {
         return searchArgumentsListEditor.getMatchOption();
     }
 
