@@ -40,7 +40,7 @@ public class SearchOptionConfig {
 
     public static SearchOptionConfig[] getAdditionalLineModeSearchOptions() {
 
-        SearchOptionConfig searchOptionMessageId = new SearchOptionConfig(MatchOption.LINE, Messages.MatchLine);
+        SearchOptionConfig searchOptionMessageId = new SearchOptionConfig(MatchOption.LINE, Messages.MatchAllPerLine);
 
         return new SearchOptionConfig[] { searchOptionMessageId };
     }
