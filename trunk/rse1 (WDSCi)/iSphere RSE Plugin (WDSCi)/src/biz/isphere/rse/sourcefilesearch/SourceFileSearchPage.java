@@ -49,6 +49,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.MatchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchElement;
@@ -710,7 +711,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * 
      * @return status of the "match option" radio buttons
      */
-    private String getMatchOption() {
+    private MatchOption getMatchOption() {
         return searchArgumentsListEditor.getMatchOption();
     }
 
@@ -800,7 +801,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                     searchOptions.addSearchArgument(searchArgument);
                 }
             }
-            
+
             searchOptions.setGenericOption(GenericSearchOption.Key.SRCMBR_SRC_TYPE, getSourceType());
 
             Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
