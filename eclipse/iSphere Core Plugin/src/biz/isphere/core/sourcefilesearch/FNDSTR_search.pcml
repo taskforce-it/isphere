@@ -17,7 +17,7 @@
    <program name="FNDSTR_search" parseorder="handle size arguments" path="/QSYS.LIB/%LIBL%.LIB/W001002.PGM">
       <data name="handle"      type="zoned"  length="10" precision="0" usage="input" />
       <data name="showRecords" type="char"   length="1"                usage="input" />
-      <data name="matchAll"    type="char"   length="1"                usage="input" />
+      <data name="matchOpt"    type="char"   length="10"               usage="input" />
       <data name="size"        type="int"    length="4"                usage="input" />
       <data name="arguments"   type="struct" struct="searchArgument"   usage="input" count="size" />
    </program>

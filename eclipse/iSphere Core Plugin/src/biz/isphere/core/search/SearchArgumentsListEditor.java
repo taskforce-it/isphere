@@ -80,8 +80,8 @@ public abstract class SearchArgumentsListEditor implements Listener {
         tMatchGroup.setLayout(tMatchGroupLayout);
 
         List<SearchOptionConfig> rdoOptions = new ArrayList<SearchOptionConfig>();
-        rdoOptions.add(new SearchOptionConfig(SearchOptions.MATCH_ALL, Messages.MatchAllConditions));
-        rdoOptions.add(new SearchOptionConfig(SearchOptions.MATCH_ANY, Messages.MatchAnyCondition));
+        rdoOptions.add(new SearchOptionConfig(MatchOption.ALL, Messages.MatchAllConditions));
+        rdoOptions.add(new SearchOptionConfig(MatchOption.ANY, Messages.MatchAnyCondition));
 
         if (rdoAdditionalMatchOptions != null) {
             for (int i = 0; i < rdoAdditionalMatchOptions.length; i++) {
@@ -160,7 +160,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
         Button currentMatchOption = getCurrentMatchOption();
         applySearchOptionConfig(currentMatchOption);
-        
+
         return tEditor;
     }
 
@@ -248,12 +248,12 @@ public abstract class SearchArgumentsListEditor implements Listener {
         return tSearchArguments;
     }
 
-    public String getMatchOption() {
+    public MatchOption getMatchOption() {
 
         for (int i = 0; i < rdoMatchOptions.length; i++) {
             if (rdoMatchOptions[i].getSelection()) {
                 SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
-                return config.getId();
+                return config.getOption();
             }
         }
 
@@ -265,7 +265,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
         for (int i = 0; i < rdoMatchOptions.length; i++) {
             if (rdoMatchOptions[i].getSelection()) {
                 SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
-                aDialogSettings.put(MATCH_ALL, config.getId());
+                aDialogSettings.put(MATCH_ALL, config.getOption().getId());
             }
         }
 
@@ -282,10 +282,10 @@ public abstract class SearchArgumentsListEditor implements Listener {
     public void loadScreenValues(IDialogSettings aDialogSettings) {
 
         Button defaultMatchOption = null;
-        String id = loadValue(aDialogSettings, MATCH_ALL, SearchOptions.MATCH_ALL);
+        String id = loadValue(aDialogSettings, MATCH_ALL, MatchOption.ALL.getId());
         for (int i = 0; i < rdoMatchOptions.length; i++) {
             SearchOptionConfig config = (SearchOptionConfig)rdoMatchOptions[i].getData(CONFIG_DATA);
-            if (id.equals(config.getId())) {
+            if (id.equals(config.getOption().getId())) {
                 rdoMatchOptions[i].setSelection(true);
                 defaultMatchOption = rdoMatchOptions[i];
             } else {
@@ -354,7 +354,7 @@ public abstract class SearchArgumentsListEditor implements Listener {
         if (widget == null) {
             return;
         }
-        
+
         Object data = widget.getData(CONFIG_DATA);
         if (!(data instanceof SearchOptionConfig)) {
             return;

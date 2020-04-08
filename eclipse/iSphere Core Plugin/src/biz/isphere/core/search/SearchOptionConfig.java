@@ -12,7 +12,7 @@ import biz.isphere.core.Messages;
 
 public class SearchOptionConfig {
 
-    private String id;
+    private MatchOption option;
     private String label;
 
     private boolean caseEnabled;
@@ -26,7 +26,7 @@ public class SearchOptionConfig {
 
     public static SearchOptionConfig[] getAdditionalMessageFileSearchOptions() {
 
-        SearchOptionConfig searchOptionMessageId = new SearchOptionConfig(SearchOptions.MATCH_MESSAGE_ID, Messages.MatchMessageIdCondition);
+        SearchOptionConfig searchOptionMessageId = new SearchOptionConfig(MatchOption.MSGID, Messages.MatchMessageIdCondition);
         searchOptionMessageId.setCaseEnabled(false);
         searchOptionMessageId.setRegularExpressionEnabled(false);
         searchOptionMessageId.setConditionEnabled(false);
@@ -38,8 +38,8 @@ public class SearchOptionConfig {
         return new SearchOptionConfig[] { searchOptionMessageId };
     }
 
-    public SearchOptionConfig(String id, String label) {
-        this.id = id;
+    public SearchOptionConfig(MatchOption option, String label) {
+        this.option = option;
         this.label = label;
 
         this.caseEnabled = true;
@@ -53,12 +53,12 @@ public class SearchOptionConfig {
         this.includeMessageIdEnabled = true;
     }
 
-    public String getId() {
-        return id;
+    public MatchOption getOption() {
+        return option;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setOption(MatchOption option) {
+        this.option = option;
     }
 
     public String getLabel() {

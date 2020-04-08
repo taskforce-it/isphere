@@ -345,7 +345,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
                 _case = SearchOptions.CASE_MATCH;
             }
 
-            _searchOptions = new SearchOptions(SearchOptions.MATCH_ALL, true);
+            _searchOptions = new SearchOptions(MatchOption.ALL, true);
             _searchOptions.addSearchArgument(new SearchArgument(getSearchArgument(), getFromColumn(), getToColumn(), getCase()));
             setElementsSearchOptions(_searchOptions);
 
