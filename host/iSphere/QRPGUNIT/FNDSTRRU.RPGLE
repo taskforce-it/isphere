@@ -55,6 +55,9 @@
      d testCombined2Exclude...
      d                 pr                  extproc('testCombined2Exclude')
 
+     d testLineMode2Exclude...
+     d                 pr                  extproc('testLineMode2Exclude')
+
      d prepareMemberList...
      d                 pr                  extproc('prepareMemberList')
      d LPHDL                         10S 0 Const                                --> Handle
@@ -630,10 +633,14 @@
      p                 b                   export
      d                 pi
 
-     dGIHDL            s             10S 0                                      Handle
-     dsearchArguments  ds                  likeds(searchArgument_t) inz
+     d GIHDL           s             10S 0                                      Handle
+     d searchArguments...
+     d                 ds                  likeds(searchArgument_t) inz
      d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
-     dcount            s             10i 0
+     d count           s             10i 0
+
+     d FROM            c                   1
+     d TO              c                   40
       /free
 
        Open FNDSTRI;
@@ -648,15 +655,15 @@
        // Do search
        searchArguments(1).operator = SRCHOPTS_OPERATOR_CONTAINS;
        searchArguments(1).string = 'DEMO4P';
-       searchArguments(1).fromColumn = 8;
-       searchArguments(1).toColumn = 40;
+       searchArguments(1).fromColumn = FROM;             // From/to values must must be the
+       searchArguments(1).toColumn = TO;                 // same for all search arguments.
        searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
        searchArguments(2).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT;
        searchArguments(2).string = 'open|close';
-       searchArguments(2).fromColumn = 1;
-       searchArguments(2).toColumn = 228;
+       searchArguments(2).fromColumn = FROM;
+       searchArguments(2).toColumn = TO;
        searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(2).regex = SRCHOPTS_ARG_REGEX;
 
@@ -683,6 +690,87 @@
        enddo;
 
        iEqual(0: count: 'count');
+
+       on-exit;
+
+       // Clear files
+       FNDSTR_clear(
+        GIHDL // --> Handle
+       );
+
+      /end-free
+     p                 e
+
+       //----------------------------------------------------------------------
+       //   Test 'line mode'. Search all lines that conain the first
+       //   search argument, but that do not contain the second
+       //   regular expression.
+       //----------------------------------------------------------------------
+     p testLineMode2Exclude...
+     p                 b                   export
+     d                 pi
+
+     d GIHDL           s             10S 0                                      Handle
+     d searchArguments...
+     d                 ds                  likeds(searchArgument_t) inz
+     d                                     dim(SRCHOPTS_ARGUMENTS_SIZE)
+     d count           s             10i 0
+
+     d FROM            c                   1
+     d TO              c                   40
+      /free
+
+       Open FNDSTRI;
+       Open FNDSTRO01;
+
+       // Get handle
+       GIHDL = FNDSTR_getHandle();
+
+       // Set search elements
+       prepareMemberList(GIHDL);
+
+       // Do search
+       searchArguments(1).operator = SRCHOPTS_OPERATOR_CONTAINS;
+       searchArguments(1).string = 'DEMO4P';
+       searchArguments(1).fromColumn = FROM;             // From/to values must must be the
+       searchArguments(1).toColumn = TO;                 // same for all search arguments.
+       searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
+       searchArguments(1).regex = SRCHOPTS_ARG_STRING;
+
+       searchArguments(2).operator = SRCHOPTS_OPERATOR_CONTAINS_NOT;
+       searchArguments(2).string = 'open|close';
+       searchArguments(2).fromColumn = FROM;
+       searchArguments(2).toColumn = TO;
+       searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
+       searchArguments(2).regex = SRCHOPTS_ARG_REGEX;
+
+       FNDSTR_search(
+        GIHDL :              // --> Handle
+        *ON :                // --> Show all records
+        SRCHOPTS_MATCH_LINE: // --> Match all search arguments
+        2 :                  // --> Number of search arguments
+        searchArguments      // --> search arguments
+       );
+
+       // Check search result
+
+       count = 0;
+
+       setll GIHDL FNDSTRORF;
+       dow (%found(FNDSTRO01) and not %eof(FNDSTRO01));
+         reade GIHDL FNDSTRORF;
+         if (not %eof(FNDSTRO01));
+
+           count += 1;
+
+           aEqual('DEMO4': XOMBR: 'XOMBR');
+           assert(XOSTMT = 37 or XOSTMT = 84
+                  : 'Unexpected statement #' + %char(XOSTMT));
+
+         endif;
+       enddo;
+
+       iEqual(2: count: 'count');
 
        on-exit;
 
