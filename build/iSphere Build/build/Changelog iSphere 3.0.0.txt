@@ -1,4 +1,8 @@
 
+Changelog: iSphere 3.7.0.b001
+-----------------------------
+ • Added Option "Match all per Line" to iSphere Source File Search
+
 Changelog: iSphere 3.6.3.r
 --------------------------
  • Added command definition "Copy Member(s) To..." to allow defining
