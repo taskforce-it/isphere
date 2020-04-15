@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.7.0.b002
+-----------------------------
+ • Added replacement variables "&OUTQ" and "&OUTQLIB" to spooled
+   file decorator.
+
 Changelog: iSphere 3.7.0.b001
 -----------------------------
  • Added Option "Match all per Line" to iSphere Source File Search
