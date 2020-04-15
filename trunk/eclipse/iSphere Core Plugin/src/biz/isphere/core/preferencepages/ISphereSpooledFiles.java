@@ -627,6 +627,9 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME, Messages.Creation_Time);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_USRDTA, Messages.User_data);
 
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_OUTQ, Messages.Output_queue);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_OUTQLIB, Messages.Output_queue_library);
+
         return groupSubstitutionVariables;
     }
 

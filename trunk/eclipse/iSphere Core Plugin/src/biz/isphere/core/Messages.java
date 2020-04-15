@@ -372,6 +372,8 @@ public class Messages extends NLS {
 
     public static String Output_queue;
 
+    public static String Output_queue_library;
+
     public static String Output_priority;
 
     public static String Reply;

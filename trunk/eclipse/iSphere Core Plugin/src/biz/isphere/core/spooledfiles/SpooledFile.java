@@ -82,6 +82,9 @@ public class SpooledFile implements IPropertySource {
     public static final String VARIABLE_CTIME = "&CTIME";
     public static final String VARIABLE_USRDTA = "&USRDTA";
 
+    public static final String VARIABLE_OUTQ = "&OUTQ";
+    public static final String VARIABLE_OUTQLIB = "&OUTQLIB";
+
     private static final String IBMI_FILE_SEPARATOR = "/";
     private static final String ISPHERE_IFS_TMP_DIRECTORY = IBMI_FILE_SEPARATOR + "tmp"; // $NON-NLS-N$
 
@@ -921,6 +924,9 @@ public class SpooledFile implements IPropertySource {
             mask = replace(mask, VARIABLE_CDATE, getCreationDateFormatted());
             mask = replace(mask, VARIABLE_CTIME, getCreationTimeFormatted());
             mask = replace(mask, VARIABLE_USRDTA, getUserData());
+
+            mask = replace(mask, VARIABLE_OUTQLIB, getOutputQueueLibrary());
+            mask = replace(mask, VARIABLE_OUTQ, getOutputQueue());
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Could not replace spooled file variable ***", e);
