@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.7.0.r
+--------------------------
+
+ • No changes since 3.7.0.b002.
+
 Changelog: iSphere 3.7.0.b002
 -----------------------------
  • Added replacement variables "&OUTQ" and "&OUTQLIB" to spooled
