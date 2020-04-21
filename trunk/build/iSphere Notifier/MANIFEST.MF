@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.6.3.r
-X-Bundle-Update-Library: false
+Bundle-Version: 3.7.0.r
+X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Bugfix of tickets 89 and 90.
-X-Beta-Version: 3.6.3.r
-X-Beta-Update-Library: false
+X-Bundle-Info: Enhancements of Source File Search (ticket 83) and Spooled File Decoration (ticket 94).
+X-Beta-Version: 3.7.0.r
+X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Bugfix of tickets 89 and 90.
+X-Beta-Info: Enhancements of Source File Search (ticket 83) and Spooled File Decoration (ticket 94).

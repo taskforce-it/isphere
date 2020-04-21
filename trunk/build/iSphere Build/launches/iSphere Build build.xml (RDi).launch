@@ -22,6 +22,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="iSphere Build"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
 <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5432"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_TARGETS" value="uploadSourceForgeFiles,"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/iSphere Build/build/build.xml}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-Dbuild.target=RDi"/>
 <stringAttribute key="process_factory_id" value="org.eclipse.ant.ui.remoteAntProcessFactory"/>
