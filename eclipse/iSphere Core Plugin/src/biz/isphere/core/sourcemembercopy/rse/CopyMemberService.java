@@ -37,6 +37,8 @@ import com.ibm.as400.access.AS400;
  */
 public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopyMembersPostRun {
 
+    public static String TO_FILE_FROMFILE = "*FROMFILE";
+
     private String fromConnectionName;
     private String toConnectionName;
     private String toLibrary;
@@ -219,7 +221,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
             for (CopyMemberItem member : members) {
                 member.setToLibrary(this.toLibrary);
-                member.setToFile(this.toFile);
+                if (TO_FILE_FROMFILE.equals(this.toFile)) {
+                    member.setToFile(member.getFromFile());
+                } else {
+                    member.setToFile(this.toFile);
+                }
                 member.setErrorMessage(null);
             }
 

@@ -1202,6 +1202,8 @@ public class Messages extends NLS {
 
     public static String Copy_Members_headline;
 
+    public static String To_connection_colon;
+
     public static String To_file_colon;
 
     public static String To_library_colon;

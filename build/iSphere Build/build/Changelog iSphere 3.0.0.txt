@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.7.1.b001
+-----------------------------
+
+ • Changed default of "To file" field of "Copy Members" dialog
+   to *FROMFILE when from members are selected from multiple from
+   files.
+
 Changelog: iSphere 3.7.0.r
 --------------------------
 
