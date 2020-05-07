@@ -42,6 +42,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -69,7 +70,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private CopyMemberValidator copyMemberValidator;
 
     private Combo comboToConnection;
-    private Text textToFile;
+    private Combo comboToFile;
     private Text textToLibrary;
     private TableViewer tableViewer;
     private Button chkBoxReplace;
@@ -193,11 +194,11 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
                         break;
 
                     case CopyMemberValidator.ERROR_TO_FILE:
-                        textToFile.setFocus();
+                        comboToFile.setFocus();
                         break;
 
                     case CopyMemberValidator.ERROR_CANCELED:
-                        textToFile.setFocus();
+                        comboToFile.setFocus();
                         break;
 
                     default:
@@ -235,16 +236,16 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     protected Control createDialogArea(Composite parent) {
 
         mainArea = new Composite(parent, SWT.NONE);
-        mainArea.setLayout(new GridLayout(3, false));
+        mainArea.setLayout(new GridLayout(4, false));
         mainArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label labelToConnection = new Label(mainArea, SWT.NONE);
-        labelToConnection.setText("To connection:");
+        labelToConnection.setText(Messages.To_connection_colon);
 
         String[] connections = IBMiHostContributionsHandler.getConnectionNames();
         if (connections != null) {
             comboToConnection = WidgetFactory.createReadOnlyCombo(mainArea);
-            comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+            comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
             comboToConnection.setItems(connections);
             comboToConnection.addSelectionListener(new SelectionAdapter() {
                 @Override
@@ -261,12 +262,31 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         textInfo.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false, 1, 3));
         textInfo.setText(Messages.bind(Messages.CopyMemberDialog_Info, SINGLE_QUOTE + Messages.To_member_colhdg + SINGLE_QUOTE));
 
-        textToFile = createNameField(mainArea, Messages.To_file_colon);
-        textToLibrary = createNameField(mainArea, Messages.To_library_colon);
+        Label labelToFile = new Label(mainArea, SWT.NONE);
+        labelToFile.setText(Messages.To_file_colon);
+
+        comboToFile = WidgetFactory.createCombo(mainArea);
+        comboToFile.setItems(new String[] { CopyMemberService.TO_FILE_FROMFILE });
+        comboToFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        comboToFile.setTextLimit(10);
+        comboToFile.addVerifyListener(new UpperCaseOnlyVerifier());
+
+        // Create spacer
+        new Label(mainArea, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label labelToLibrary = new Label(mainArea, SWT.NONE);
+        labelToLibrary.setText(Messages.To_library_colon);
+
+        textToLibrary = WidgetFactory.createUpperCaseText(mainArea);
+        textToLibrary.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        textToLibrary.setTextLimit(10);
+
+        // Create spacer
+        new Label(mainArea, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         tableViewer = new TableViewer(mainArea, SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         Table table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, getNumberOfLayoutColumns(mainArea), 1));
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
@@ -284,7 +304,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         supporter.startSupport();
 
         labelNumElem = new Label(mainArea, SWT.NONE);
-        labelNumElem.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, ((GridLayout)mainArea.getLayout()).numColumns, 1));
+        labelNumElem.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
         int numItems;
         if (copyMemberService != null) {
             numItems = copyMemberService.getItems().length;
@@ -297,11 +317,11 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
         chkBoxReplace.setText(Messages.Replace_existing_members);
-        chkBoxReplace.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+        chkBoxReplace.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
 
         chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
-        chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.BEGINNING, SWT.DEFAULT, false, false, 3, 1));
+        chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
 
         // TODO: remove obsolete stmt
         // chkBoxUseLocalCache = WidgetFactory.createCheckbox(mainArea);
@@ -314,6 +334,16 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         loadScreenValues();
 
         return mainArea;
+    }
+
+    private int getNumberOfLayoutColumns(Composite composite) {
+
+        if (composite.getLayout() instanceof GridLayout) {
+            GridLayout gridLayout = (GridLayout)composite.getLayout();
+            return gridLayout.numColumns;
+        }
+
+        return 0;
     }
 
     @Override
@@ -351,12 +381,16 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         if (StringHelper.isNullOrEmpty(comboToConnection.getText())) {
             comboToConnection.setFocus();
-        } else if (StringHelper.isNullOrEmpty(textToFile.getText())) {
-            textToFile.setFocus();
+        } else if (StringHelper.isNullOrEmpty(comboToFile.getText())) {
+            comboToFile.setFocus();
         } else if (StringHelper.isNullOrEmpty(textToLibrary.getText())) {
             textToLibrary.setFocus();
         } else {
-            comboToConnection.setFocus();
+            if (CopyMemberService.TO_FILE_FROMFILE.equals(comboToFile.getText())) {
+                comboToFile.setFocus();
+            } else {
+                comboToConnection.setFocus();
+            }
         }
     }
 
@@ -376,9 +410,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         }
 
         if (copyMemberService.getFromFileNamesCount() == 1) {
-            textToFile.setText(copyMemberService.getFromFileNames()[0]);
+            comboToFile.setText(copyMemberService.getFromFileNames()[0]);
         } else {
-            textToFile.setText(Messages.EMPTY);
+            comboToFile.setText(CopyMemberService.TO_FILE_FROMFILE);
         }
 
         tableViewer.setInput(copyMemberService);
@@ -399,17 +433,6 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         // chkBoxUseLocalCache.getSelection());
     }
 
-    private Text createNameField(Composite mainArea, String label) {
-        Label labelToFile = new Label(mainArea, SWT.NONE);
-        labelToFile.setText(label);
-
-        Text text = WidgetFactory.createUpperCaseText(mainArea);
-        text.setLayoutData(new GridData(120, SWT.DEFAULT));
-        text.setTextLimit(10);
-
-        return text;
-    }
-
     private TableColumn addTableColumn(Table table, Columns column) {
         return addTableColumn(table, column, column.width);
     }
@@ -423,7 +446,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     }
 
     private String getToFileName() {
-        return textToFile.getText();
+        return comboToFile.getText();
     }
 
     private String getToLibraryName() {
@@ -505,7 +528,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         }
 
         comboToConnection.setEnabled(enabled);
-        textToFile.setEnabled(enabled);
+        comboToFile.setEnabled(enabled);
         textToLibrary.setEnabled(enabled);
         tableViewer.getTable().setEnabled(enabled);
         chkBoxReplace.setEnabled(enabled);

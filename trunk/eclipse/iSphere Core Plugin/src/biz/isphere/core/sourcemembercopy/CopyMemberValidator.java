@@ -130,6 +130,10 @@ public class CopyMemberValidator extends Thread {
 
         private boolean validateTargetFile(String toConnectionName, String toLibrary, String toFile) {
 
+            if (CopyMemberService.TO_FILE_FROMFILE.equals(toFile)) {
+                return true;
+            }
+
             Validator nameValidator = Validator.getNameInstance(jobDescription.getToConnectionCcsid());
 
             boolean isError = false;
