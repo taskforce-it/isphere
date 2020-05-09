@@ -3,7 +3,7 @@ Bundle-Version: 3.7.0.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
 X-Bundle-Info: Enhancements of Source File Search (ticket 83) and Spooled File Decoration (ticket 94).
-X-Beta-Version: 3.7.0.r
-X-Beta-Update-Library: true
+X-Beta-Version: 3.7.1.b001
+X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Enhancements of Source File Search (ticket 83) and Spooled File Decoration (ticket 94).
+X-Beta-Info: Enhancements of Copy Members (ticket 96). Partial update of Italian translation.
