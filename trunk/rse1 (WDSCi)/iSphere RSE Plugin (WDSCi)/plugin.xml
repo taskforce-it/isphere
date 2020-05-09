@@ -746,7 +746,7 @@
       <command
             id="biz.isphere.core.command.SourceMember.copyTo"
             categoryId="biz.isphere.category.Commands"             
-            name="%command_CopyMembersTo_Name">
+            name="%command_Copy_Members_To">
       </command>
    </extension>
 
