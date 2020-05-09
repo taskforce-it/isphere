@@ -5,6 +5,8 @@ Changelog: iSphere 3.7.1.b001
  • Changed default of "To file" field of "Copy Members" dialog
    to *FROMFILE when from members are selected from multiple from
    files.
+ • Partially re-worked Italian translation.
+ • Aligned plug-in properties (NLS) of WDSCi RSE plug-in with RDi.
 
 Changelog: iSphere 3.7.0.r
 --------------------------
