@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.7.0.r
-X-Bundle-Update-Library: true
+Bundle-Version: 3.7.1.r
+X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Enhancements of Source File Search (ticket 83) and Spooled File Decoration (ticket 94).
+X-Bundle-Info: *** Important Update ***\nBugfix of ticket #101.\nCopy Members To new value *FROMFILE.\nBinding directory editor enabled for multiple-selections. 
 X-Beta-Version: 3.7.1.b001
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
