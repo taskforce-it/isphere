@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere for WDSCi 7.0
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
-Bundle-Version: 3.7.1.b001
+Bundle-Version: 3.7.1.r
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
