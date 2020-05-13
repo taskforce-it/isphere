@@ -220,8 +220,6 @@ public class BindingDirectory {
 
         }
 
-        System.out.println("Remove: #" + entriesOld.size() + ", added: #" + entriesNew.size());
-
         if (!BindingDirectory.removeEntries(level, _as400, _library, _bindingDirectory, entriesOld)) {
             return false;
         } else {
