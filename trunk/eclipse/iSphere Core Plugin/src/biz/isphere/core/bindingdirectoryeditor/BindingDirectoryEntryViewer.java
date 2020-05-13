@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -64,6 +65,7 @@ public class BindingDirectoryEntryViewer {
     private ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>();
     private Button buttonUp;
     private Button buttonDown;
+    private Label statusLine;
 
     private class LabelProviderTableViewer extends LabelProvider implements ITableLabelProvider {
         public String getColumnText(Object element, int columnIndex) {
@@ -140,7 +142,7 @@ public class BindingDirectoryEntryViewer {
                             DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                             uploadEntries();
-                            _tableViewer.refresh();
+                            refreshTableViewer();
                         }
 
                     }
@@ -202,6 +204,11 @@ public class BindingDirectoryEntryViewer {
         buttonDown.setText(Messages.Down);
         buttonDown.setEnabled(false);
 
+        statusLine = new Label(container, SWT.NONE);
+        GridData gridDataStatusLine = new GridData(GridData.FILL_HORIZONTAL);
+        gridDataStatusLine.horizontalSpan = 2;
+        statusLine.setLayoutData(gridDataStatusLine);
+
         final Menu menuTableBindingDirectoryEntries = new Menu(_table);
         menuTableBindingDirectoryEntries.addMenuListener(new MenuAdapter() {
 
@@ -249,7 +256,7 @@ public class BindingDirectoryEntryViewer {
                 boolean isCopy = false;
                 boolean isDelete = false;
                 boolean isDisplay = false;
-                boolean isRefresh = false;
+                boolean isRefresh = true;
                 for (int idx = 0; idx < selectedItems.length; idx++) {
                     if (selectedItems[idx] instanceof BindingDirectoryEntry) {
                         if (mode.equals(IEditor.EDIT)) {
@@ -258,7 +265,6 @@ public class BindingDirectoryEntryViewer {
                             isDelete = true;
                         }
                         isDisplay = true;
-                        isRefresh = true;
                     }
                 }
                 if (mode.equals(IEditor.EDIT)) {
@@ -288,9 +294,10 @@ public class BindingDirectoryEntryViewer {
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
                             DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                            _bindingDirectoryEntries.add(_bindingDirectoryEntry);
-                            uploadEntries();
-                            _tableViewer.refresh();
+                            if (uploadEntries()) {
+                                _bindingDirectoryEntries.add(_bindingDirectoryEntry);
+                            }
+                            refreshTableViewer();
                         }
 
                         deSelectAllItems();
@@ -313,7 +320,7 @@ public class BindingDirectoryEntryViewer {
                                     level, DialogActionTypes.CHANGE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
                                     uploadEntries();
-                                    _tableViewer.refresh();
+                                    refreshTableViewer();
                                 }
 
                             }
@@ -345,9 +352,10 @@ public class BindingDirectoryEntryViewer {
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
                                     level, DialogActionTypes.COPY, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                                    _bindingDirectoryEntries.add(_bindingDirectoryEntry);
-                                    uploadEntries();
-                                    _tableViewer.refresh();
+                                    if (uploadEntries()) {
+                                        _bindingDirectoryEntries.add(_bindingDirectoryEntry);
+                                    }
+                                    refreshTableViewer();
                                 }
 
                             }
@@ -370,9 +378,10 @@ public class BindingDirectoryEntryViewer {
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
                                     level, DialogActionTypes.DELETE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                                    _bindingDirectoryEntries.remove(selectedItems[idx]);
-                                    uploadEntries();
-                                    _tableViewer.refresh();
+                                    if (uploadEntries()) {
+                                        _bindingDirectoryEntries.remove(selectedItems[idx]);
+                                    }
+                                    refreshTableViewer();
                                 }
 
                             }
@@ -415,7 +424,7 @@ public class BindingDirectoryEntryViewer {
                         _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library,
                             bindingDirectory);
 
-                        _tableViewer.refresh();
+                        refreshTableViewer();
 
                         deSelectAllItems();
 
@@ -426,6 +435,7 @@ public class BindingDirectoryEntryViewer {
         _table.setMenu(menuTableBindingDirectoryEntries);
 
         _tableViewer.setInput(new Object());
+        updateStatusLine();
     }
 
     private void retrieveSelectedTableItems() {
@@ -473,15 +483,13 @@ public class BindingDirectoryEntryViewer {
 
                 BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItems[0];
 
-                int position = _bindingDirectoryEntries.indexOf(bindingDirectoryEntry);
+                if (uploadEntries()) {
+                    int position = _bindingDirectoryEntries.indexOf(bindingDirectoryEntry);
+                    _bindingDirectoryEntries.remove(position);
+                    _bindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
+                }
 
-                _bindingDirectoryEntries.remove(position);
-
-                _bindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
-
-                uploadEntries();
-
-                _tableViewer.refresh();
+                refreshTableViewer();
 
                 refreshUpDown();
 
@@ -504,9 +512,18 @@ public class BindingDirectoryEntryViewer {
 
     }
 
-    private void uploadEntries() {
+    private void refreshTableViewer() {
+        _tableViewer.refresh();
+        updateStatusLine();
+    }
 
-        BindingDirectory.saveChanges(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
+    private void updateStatusLine() {
+        statusLine.setText(Messages.bind(Messages.Number_of_entries_colon, _table.getItemCount()));
+    }
+
+    private boolean uploadEntries() {
+
+        return BindingDirectory.saveChanges(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
 
     }
 
