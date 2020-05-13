@@ -1582,6 +1582,8 @@ public class Messages extends NLS {
 
     public static String Could_not_read_status_from_file_B_A_for_search_job_handle_C;
 
+    public static String Number_of_entries_colon;
+
     public static String SqlEditor_WHERE;
 
     public static String SqlEditor_WHERE_Tooltip;
