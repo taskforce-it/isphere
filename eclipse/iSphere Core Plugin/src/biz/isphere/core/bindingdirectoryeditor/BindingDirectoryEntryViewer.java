@@ -10,6 +10,9 @@ package biz.isphere.core.bindingdirectoryeditor;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -60,7 +63,6 @@ public class BindingDirectoryEntryViewer {
     private int ccsid;
     private TableViewer _tableViewer;
     private Table _table;
-    private Object[] selectedItems;
     private Shell shell;
     private ArrayList<BindingDirectoryEntry> _bindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>();
     private Button buttonUp;
@@ -128,7 +130,7 @@ public class BindingDirectoryEntryViewer {
         container.setLayout(new GridLayout(2, false));
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-        _tableViewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.BORDER);
+        _tableViewer = new TableViewer(container, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
         _tableViewer.setLabelProvider(new LabelProviderTableViewer());
         _tableViewer.setContentProvider(new ContentProviderTableViewer());
         _tableViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -138,13 +140,7 @@ public class BindingDirectoryEntryViewer {
                     IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
                     if (structuredSelection.getFirstElement() instanceof BindingDirectoryEntry) {
                         BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)structuredSelection.getFirstElement();
-                        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
-                            DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
-                        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                            uploadEntries();
-                            refreshTableViewer();
-                        }
-
+                        doChangeEntry(bindingDirectoryEntry);
                     }
                 }
             }
@@ -186,7 +182,7 @@ public class BindingDirectoryEntryViewer {
         buttonUp.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                moveUpDown(-1);
+                doMoveUpDown(-1);
             }
         });
         buttonUp.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1, 1));
@@ -197,7 +193,7 @@ public class BindingDirectoryEntryViewer {
         buttonDown.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                moveUpDown(+1);
+                doMoveUpDown(+1);
             }
         });
         buttonDown.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false, true, 1, 1));
@@ -222,7 +218,6 @@ public class BindingDirectoryEntryViewer {
 
             @Override
             public void menuShown(MenuEvent event) {
-                retrieveSelectedTableItems();
                 destroyMenuItems();
                 createMenuItems();
             }
@@ -257,6 +252,7 @@ public class BindingDirectoryEntryViewer {
                 boolean isDelete = false;
                 boolean isDisplay = false;
                 boolean isRefresh = true;
+                Object[] selectedItems = retrieveSelectedTableItems();
                 for (int idx = 0; idx < selectedItems.length; idx++) {
                     if (selectedItems[idx] instanceof BindingDirectoryEntry) {
                         if (mode.equals(IEditor.EDIT)) {
@@ -291,17 +287,9 @@ public class BindingDirectoryEntryViewer {
 
                         BindingDirectoryEntry _bindingDirectoryEntry = new BindingDirectoryEntry();
                         _bindingDirectoryEntry.setConnection(connectionName);
-                        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
-                            DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
-                        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                            _bindingDirectoryEntries.add(_bindingDirectoryEntry);
-                            if (uploadEntries()) {
-                            }
-                            refreshTableViewer();
-                        }
+                        doAddEntry(_bindingDirectoryEntry);
 
-                        deSelectAllItems();
-
+                        refreshTableViewer();
                     }
                 });
             }
@@ -313,19 +301,17 @@ public class BindingDirectoryEntryViewer {
                 menuItemChange.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        for (int idx = 0; idx < selectedItems.length; idx++) {
-                            if (selectedItems[idx] instanceof BindingDirectoryEntry) {
+                        Object[] tempSelection = retrieveSelectedTableItems();
+                        for (Object selectedItem : tempSelection) {
+                            if (selectedItem instanceof BindingDirectoryEntry) {
 
-                                BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.CHANGE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
-                                if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                                    uploadEntries();
-                                    refreshTableViewer();
+                                BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItem;
+                                if (!doChangeEntry(bindingDirectoryEntry)) {
+                                    return;
                                 }
-
                             }
                         }
-                        deSelectAllItems();
+                        refreshTableViewer();
                     }
                 });
             }
@@ -337,30 +323,27 @@ public class BindingDirectoryEntryViewer {
                 menuItemCopy.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        for (int idx = 0; idx < selectedItems.length; idx++) {
-                            if (selectedItems[idx] instanceof BindingDirectoryEntry) {
+                        Object[] tempSelection = retrieveSelectedTableItems();
+                        for (Object selectedItem : tempSelection) {
+                            if (selectedItem instanceof BindingDirectoryEntry) {
 
-                                BindingDirectoryEntry _bindingDirectoryEntry = new BindingDirectoryEntry();
-                                _bindingDirectoryEntry.setConnection(((BindingDirectoryEntry)selectedItems[idx]).getConnection());
-                                _bindingDirectoryEntry.setLibrary(((BindingDirectoryEntry)selectedItems[idx]).getLibrary());
-                                _bindingDirectoryEntry.setObject(((BindingDirectoryEntry)selectedItems[idx]).getObject());
-                                _bindingDirectoryEntry.setObjectType(((BindingDirectoryEntry)selectedItems[idx]).getObjectType());
+                                BindingDirectoryEntry fromBindingDirectoryEntry = ((BindingDirectoryEntry)selectedItem);
+
+                                BindingDirectoryEntry toBindingDirectoryEntry = new BindingDirectoryEntry();
+                                toBindingDirectoryEntry.setConnection(fromBindingDirectoryEntry.getConnection());
+                                toBindingDirectoryEntry.setLibrary(fromBindingDirectoryEntry.getLibrary());
+                                toBindingDirectoryEntry.setObject(fromBindingDirectoryEntry.getObject());
+                                toBindingDirectoryEntry.setObjectType(fromBindingDirectoryEntry.getObjectType());
                                 if (level.compareTo("V6R1M0") >= 0) {
-                                    _bindingDirectoryEntry.setActivation(((BindingDirectoryEntry)selectedItems[idx]).getActivation());
+                                    toBindingDirectoryEntry.setActivation(fromBindingDirectoryEntry.getActivation());
                                 }
 
-                                BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.COPY, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
-                                if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                                    _bindingDirectoryEntries.add(_bindingDirectoryEntry);
-                                    if (uploadEntries()) {
-                                    }
-                                    refreshTableViewer();
+                                if (!doCopyEntry(fromBindingDirectoryEntry, toBindingDirectoryEntry)) {
+                                    return;
                                 }
-
                             }
                         }
-                        deSelectAllItems();
+                        refreshTableViewer();
                     }
                 });
             }
@@ -372,21 +355,16 @@ public class BindingDirectoryEntryViewer {
                 menuItemDelete.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        for (int idx = 0; idx < selectedItems.length; idx++) {
-                            if (selectedItems[idx] instanceof BindingDirectoryEntry) {
+                        Object[] tempSelection = retrieveSelectedTableItems();
+                        for (Object selectedItem : tempSelection) {
+                            if (selectedItem instanceof BindingDirectoryEntry) {
 
-                                BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.DELETE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
-                                if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
-                                    _bindingDirectoryEntries.remove(selectedItems[idx]);
-                                    if (uploadEntries()) {
-                                    }
-                                    refreshTableViewer();
+                                BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItem;
+                                if (!doRemoveEntry(bindingDirectoryEntry)) {
+                                    return;
                                 }
-
                             }
                         }
-                        deSelectAllItems();
                     }
                 });
             }
@@ -398,17 +376,16 @@ public class BindingDirectoryEntryViewer {
                 menuItemDisplay.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        for (int idx = 0; idx < selectedItems.length; idx++) {
-                            if (selectedItems[idx] instanceof BindingDirectoryEntry) {
+                        Object[] tempSelection = retrieveSelectedTableItems();
+                        for (Object selectedItem : tempSelection) {
+                            if (selectedItem instanceof BindingDirectoryEntry) {
 
-                                BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
-                                    level, DialogActionTypes.DISPLAY, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
-                                if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+                                BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItem;
+                                if (!doDisplayEntry(bindingDirectoryEntry)) {
+                                    break;
                                 }
-
                             }
                         }
-                        deSelectAllItems();
                     }
                 });
             }
@@ -421,13 +398,7 @@ public class BindingDirectoryEntryViewer {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
 
-                        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library,
-                            bindingDirectory);
-
-                        refreshTableViewer();
-
-                        deSelectAllItems();
-
+                        doRefreshItems();
                     }
                 });
             }
@@ -438,12 +409,12 @@ public class BindingDirectoryEntryViewer {
         updateStatusLine();
     }
 
-    private void retrieveSelectedTableItems() {
+    private Object[] retrieveSelectedTableItems() {
         if (_tableViewer.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection structuredSelection = (IStructuredSelection)_tableViewer.getSelection();
-            selectedItems = structuredSelection.toArray();
+            return structuredSelection.toArray();
         } else {
-            selectedItems = new Object[0];
+            return new Object[0];
         }
     }
 
@@ -454,7 +425,7 @@ public class BindingDirectoryEntryViewer {
 
         if (mode.equals(IEditor.EDIT)) {
 
-            retrieveSelectedTableItems();
+            Object[] selectedItems = retrieveSelectedTableItems();
 
             if (selectedItems.length == 1) {
                 if (selectedItems[0] instanceof BindingDirectoryEntry) {
@@ -473,9 +444,104 @@ public class BindingDirectoryEntryViewer {
 
     }
 
-    private void moveUpDown(int offset) {
+    private boolean doAddEntry(BindingDirectoryEntry newBindingDirectoryEntry) {
 
-        retrieveSelectedTableItems();
+        ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>(_bindingDirectoryEntries);
+        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
+            DialogActionTypes.CREATE, newBindingDirectoryEntry, newBindingDirectoryEntries, ccsid);
+        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+            newBindingDirectoryEntries.add(newBindingDirectoryEntry);
+            if (uploadEntries(newBindingDirectoryEntries)) {
+                _bindingDirectoryEntries = newBindingDirectoryEntries;
+                deSelectAllItems();
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean doChangeEntry(BindingDirectoryEntry bindingDirectoryEntry) {
+
+        ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>(_bindingDirectoryEntries);
+        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
+            DialogActionTypes.getSubEditorActionType(mode), bindingDirectoryEntry, newBindingDirectoryEntries, ccsid);
+        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+            if (uploadEntries(newBindingDirectoryEntries)) {
+                _bindingDirectoryEntries = newBindingDirectoryEntries;
+                deSelectItem(bindingDirectoryEntry);
+                refreshTableViewerItem(bindingDirectoryEntry);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean doCopyEntry(BindingDirectoryEntry fromBindingDirectoryEntry, BindingDirectoryEntry toBindingDirectoryEntry) {
+
+        ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>(_bindingDirectoryEntries);
+        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
+            DialogActionTypes.CREATE, toBindingDirectoryEntry, newBindingDirectoryEntries, ccsid);
+        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+            newBindingDirectoryEntries.add(toBindingDirectoryEntry);
+            if (uploadEntries(newBindingDirectoryEntries)) {
+                _bindingDirectoryEntries = newBindingDirectoryEntries;
+                Object[] selectedItems = deSelectItem(fromBindingDirectoryEntry);
+                refreshTableViewer();
+                selectItems(selectedItems);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean doRemoveEntry(BindingDirectoryEntry bindingDirectoryEntry) {
+
+        ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>(_bindingDirectoryEntries);
+        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
+            DialogActionTypes.DELETE, bindingDirectoryEntry, newBindingDirectoryEntries, ccsid);
+        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+            newBindingDirectoryEntries.remove(bindingDirectoryEntry);
+            if (uploadEntries(newBindingDirectoryEntries)) {
+                _bindingDirectoryEntries = newBindingDirectoryEntries;
+                Object[] selectedItems = deSelectItem(bindingDirectoryEntry);
+                refreshTableViewer();
+                selectItems(selectedItems);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean doDisplayEntry(BindingDirectoryEntry bindingDirectoryEntry) {
+
+        BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
+            DialogActionTypes.DISPLAY, bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
+        if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+            deSelectItem(bindingDirectoryEntry);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean doRefreshItems() {
+
+        _bindingDirectoryEntries = BindingDirectory.getEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory);
+
+        refreshTableViewer();
+        deSelectAllItems();
+
+        return true;
+    }
+
+    private void doMoveUpDown(int offset) {
+
+        Object[] selectedItems = retrieveSelectedTableItems();
 
         if (selectedItems.length == 1) {
 
@@ -483,11 +549,12 @@ public class BindingDirectoryEntryViewer {
 
                 BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItems[0];
 
-                int position = _bindingDirectoryEntries.indexOf(bindingDirectoryEntry);
-                _bindingDirectoryEntries.remove(position);
-                _bindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
-                
-                if (uploadEntries()) {
+                ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries = new ArrayList<BindingDirectoryEntry>(_bindingDirectoryEntries);
+                int position = newBindingDirectoryEntries.indexOf(bindingDirectoryEntry);
+                newBindingDirectoryEntries.remove(position);
+                newBindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
+                if (uploadEntries(newBindingDirectoryEntries)) {
+                    _bindingDirectoryEntries = newBindingDirectoryEntries;
                 }
 
                 refreshTableViewer();
@@ -502,15 +569,29 @@ public class BindingDirectoryEntryViewer {
 
     }
 
+    private void selectItems(Object[] bindingDirectoryEntries) {
+
+        _tableViewer.setSelection(new StructuredSelection(bindingDirectoryEntries), true);
+
+        refreshUpDown();
+    }
+
+    private Object[] deSelectItem(Object item) {
+
+        Set<Object> items = new HashSet<Object>(Arrays.asList(retrieveSelectedTableItems()));
+        items.remove(item);
+        _tableViewer.setSelection(new StructuredSelection(items.toArray()), true);
+
+        refreshUpDown();
+
+        return retrieveSelectedTableItems();
+    }
+
     private void deSelectAllItems() {
 
         _tableViewer.setSelection(new StructuredSelection(), true);
 
-        selectedItems = new Object[0];
-
-        buttonUp.setEnabled(false);
-        buttonDown.setEnabled(false);
-
+        refreshUpDown();
     }
 
     private void refreshTableViewer() {
@@ -518,13 +599,17 @@ public class BindingDirectoryEntryViewer {
         updateStatusLine();
     }
 
+    private void refreshTableViewerItem(Object item) {
+        _tableViewer.refresh(item);
+    }
+
     private void updateStatusLine() {
         statusLine.setText(Messages.bind(Messages.Number_of_entries_colon, _table.getItemCount()));
     }
 
-    private boolean uploadEntries() {
+    private boolean uploadEntries(ArrayList<BindingDirectoryEntry> newBindingDirectoryEntries) {
 
-        return BindingDirectory.saveChanges(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
+        return BindingDirectory.saveChanges(level, as400, jdbcConnection, connectionName, library, bindingDirectory, newBindingDirectoryEntries);
 
     }
 
