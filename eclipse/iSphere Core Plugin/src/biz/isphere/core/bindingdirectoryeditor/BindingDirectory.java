@@ -114,6 +114,17 @@ public class BindingDirectory {
                     buffer.append("(" + entry.getLibrary() + "/" + entry.getObject() + " " + entry.getObjectType()
                         + (level.compareTo("V6R1M0") >= 0 && entry.getObjectType().equals("*SRVPGM") ? " " + entry.getActivation() : "") + ")");
                     buffer.append(")");
+                    
+                    if (idx == 0) {
+                        buffer.append(" POSITION(*FIRST)");
+                    }
+                    else {
+                        buffer.append(" POSITION(*AFTER " + 
+                                      entries.get(idx-1).getLibrary() + "/" + 
+                                      entries.get(idx-1).getObject() + " " + 
+                                      entries.get(idx-1).getObjectType() + 
+                                      ")");
+                    }
 
                     if (!runCommand(_as400, buffer.toString())) {
                         ISpherePlugin.logError("Could not execute command: " + buffer.toString(), null);
@@ -160,7 +171,9 @@ public class BindingDirectory {
 
     public static boolean saveChanges(String level, AS400 _as400, Connection _jdbcConnection, String _connection, String _library,
         String _bindingDirectory, ArrayList<BindingDirectoryEntry> entriesNew) {
-
+        
+        // This part is for additions, deletions and changes 
+        
         ArrayList<BindingDirectoryEntry> entriesOld = getEntries(level, _as400, _jdbcConnection, _connection, _library, _bindingDirectory);
 
         for (int idxNew = 0; idxNew < entriesNew.size(); idxNew++) {
@@ -216,7 +229,51 @@ public class BindingDirectory {
                 return false;
             }
         }
+        
+        // This part is for movements (up/down) 
+        
+        entriesOld = getEntries(level, _as400, _jdbcConnection, _connection, _library, _bindingDirectory);
 
+        if (entriesOld.size() == entriesNew.size()) {
+            
+            int _size = entriesOld.size();
+            
+            for (int idxNew = 0; idxNew < _size; idxNew++) {
+                BindingDirectoryEntry entryNew = entriesNew.get(idxNew);
+                entryNew.setMatch(true);
+            }
+
+            for (int idxOld = 0; idxOld < _size; idxOld++) {
+                BindingDirectoryEntry entryOld = entriesOld.get(idxOld);
+                entryOld.setMatch(true);
+            }
+
+            for (int idx = 0; idx < _size; idx++) {
+
+                BindingDirectoryEntry entryOld = entriesOld.get(idx);
+                BindingDirectoryEntry entryNew = entriesNew.get(idx);
+                
+                if (!entryOld.getLibrary().equals(entryNew.getLibrary()) || 
+                    !entryOld.getObject().equals(entryNew.getObject()) || 
+                    !entryOld.getObjectType().equals(entryNew.getObjectType())) {
+                    entryOld.setMatch(false);
+                    entryNew.setMatch(false);
+                }
+
+            }
+
+            if (!BindingDirectory.removeEntries(level, _as400, _library, _bindingDirectory, entriesOld)) {
+                return false;
+            } else {
+                if (!BindingDirectory.addEntries(level, _as400, _library, _bindingDirectory, entriesNew)) {
+                    return false;
+                }
+            }
+
+        }
+        
+        // Return
+        
         return true;
     }
 

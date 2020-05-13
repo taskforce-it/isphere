@@ -294,8 +294,8 @@ public class BindingDirectoryEntryViewer {
                         BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell, level,
                             DialogActionTypes.CREATE, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                         if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+                            _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                             if (uploadEntries()) {
-                                _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                             }
                             refreshTableViewer();
                         }
@@ -352,8 +352,8 @@ public class BindingDirectoryEntryViewer {
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
                                     level, DialogActionTypes.COPY, _bindingDirectoryEntry, _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+                                    _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                                     if (uploadEntries()) {
-                                        _bindingDirectoryEntries.add(_bindingDirectoryEntry);
                                     }
                                     refreshTableViewer();
                                 }
@@ -378,8 +378,8 @@ public class BindingDirectoryEntryViewer {
                                 BindingDirectoryEntryDetailDialog _bindingDirectoryEntryDetailDialog = new BindingDirectoryEntryDetailDialog(shell,
                                     level, DialogActionTypes.DELETE, (BindingDirectoryEntry)selectedItems[idx], _bindingDirectoryEntries, ccsid);
                                 if (_bindingDirectoryEntryDetailDialog.open() == Dialog.OK) {
+                                    _bindingDirectoryEntries.remove(selectedItems[idx]);
                                     if (uploadEntries()) {
-                                        _bindingDirectoryEntries.remove(selectedItems[idx]);
                                     }
                                     refreshTableViewer();
                                 }
@@ -483,10 +483,11 @@ public class BindingDirectoryEntryViewer {
 
                 BindingDirectoryEntry bindingDirectoryEntry = (BindingDirectoryEntry)selectedItems[0];
 
+                int position = _bindingDirectoryEntries.indexOf(bindingDirectoryEntry);
+                _bindingDirectoryEntries.remove(position);
+                _bindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
+                
                 if (uploadEntries()) {
-                    int position = _bindingDirectoryEntries.indexOf(bindingDirectoryEntry);
-                    _bindingDirectoryEntries.remove(position);
-                    _bindingDirectoryEntries.add(position + offset, bindingDirectoryEntry);
                 }
 
                 refreshTableViewer();
