@@ -99,53 +99,112 @@ public class BindingDirectory {
 
     }
 
-    public static boolean addEntries(String level, AS400 _as400, Connection _jdbcConnection, String _connection, String _library,
-        String _bindingDirectory, ArrayList<BindingDirectoryEntry> entries) {
+    public static void addEntries(String level, AS400 _as400, String _library, String _bindingDirectory, ArrayList<BindingDirectoryEntry> entries) {
 
         if (entries.size() > 0) {
 
-            StringBuffer buffer = new StringBuffer("ADDBNDDIRE BNDDIR(" + _library + "/" + _bindingDirectory + ") OBJ(");
-
             for (int idx = 0; idx < entries.size(); idx++) {
+
                 BindingDirectoryEntry entry = entries.get(idx);
-                buffer.append("(" + entry.getLibrary() + "/" + entry.getObject() + " " + entry.getObjectType()
-                    + (level.compareTo("V6R1M0") >= 0 && entry.getObjectType().equals("*SRVPGM") ? " " + entry.getActivation() : "") + ")");
+                
+                if (!entry.isMatch()) {
+
+                    StringBuffer buffer = new StringBuffer("ADDBNDDIRE BNDDIR(" + _library + "/" + _bindingDirectory + ") OBJ(");
+                    buffer.append("(" + entry.getLibrary() + "/" + entry.getObject() + " " + entry.getObjectType()
+                        + (level.compareTo("V6R1M0") >= 0 && entry.getObjectType().equals("*SRVPGM") ? " " + entry.getActivation() : "") + ")");
+                    buffer.append(")");
+
+                    runCommand(_as400, buffer.toString());
+                    
+                }
+                
             }
-
-            buffer.append(")");
-
-            return runCommand(_as400, buffer.toString());
 
         }
 
-        return true;
-
     }
 
-    public static boolean removeEntries(String level, AS400 _as400, Connection _jdbcConnection, String _connection, String _library,
-        String _bindingDirectory) {
-
-        ArrayList<BindingDirectoryEntry> entries = getEntries(level, _as400, _jdbcConnection, _connection, _library, _bindingDirectory);
+    public static void removeEntries(String level, AS400 _as400, String _library, String _bindingDirectory, ArrayList<BindingDirectoryEntry> entries) {
 
         if (entries.size() > 0) {
 
-            StringBuffer buffer = new StringBuffer("RMVBNDDIRE BNDDIR(" + _library + "/" + _bindingDirectory + ") OBJ(");
-
             for (int idx = 0; idx < entries.size(); idx++) {
+
                 BindingDirectoryEntry entry = entries.get(idx);
-                buffer.append("(" + entry.getLibrary() + "/" + entry.getObject() + " " + entry.getObjectType() + ")");
+
+                if (!entry.isMatch()) {
+
+                    StringBuffer buffer = new StringBuffer("RMVBNDDIRE BNDDIR(" + _library + "/" + _bindingDirectory + ") OBJ(");
+                    buffer.append("(" + entry.getLibrary() + "/" + entry.getObject() + " " + entry.getObjectType() + ")");
+                    buffer.append(")");
+
+                    runCommand(_as400, buffer.toString());
+                    
+                }
+                
             }
-
-            buffer.append(")");
-
-            return runCommand(_as400, buffer.toString());
 
         }
 
-        return true;
-
     }
 
+    public static void saveChanges(String level, AS400 _as400, Connection _jdbcConnection, String _connection, String _library,
+        String _bindingDirectory, ArrayList<BindingDirectoryEntry> entriesNew) {
+        
+        ArrayList<BindingDirectoryEntry> entriesOld = getEntries(level, _as400, _jdbcConnection, _connection, _library, _bindingDirectory);
+        
+        for (int idxNew = 0; idxNew < entriesNew.size(); idxNew++) {
+            BindingDirectoryEntry entryNew = entriesNew.get(idxNew);
+            entryNew.setMatch(false);
+        }
+        
+        for (int idxOld = 0; idxOld < entriesOld.size(); idxOld++) {
+            BindingDirectoryEntry entryOld = entriesOld.get(idxOld);
+            entryOld.setMatch(false);
+        }
+        
+        for (int idxNew = 0; idxNew < entriesNew.size(); idxNew++) {
+            
+            BindingDirectoryEntry entryNew = entriesNew.get(idxNew);
+            
+            if (!entryNew.isMatch()) {
+
+                for (int idxOld = 0; idxOld < entriesOld.size(); idxOld++) {
+                    
+                    BindingDirectoryEntry entryOld = entriesOld.get(idxOld);
+                    
+                    if (!entryOld.isMatch()) {
+                        
+                        if (entryOld.getLibrary().equals(entryNew.getLibrary()) &&
+                            entryOld.getObject().equals(entryNew.getObject()) &&
+                            entryOld.getObjectType().equals(entryNew.getObjectType())) {
+                            if (level.compareTo("V6R1M0") >= 0 && entryOld.getObjectType().equals("*SRVPGM")) {
+                                if (entryOld.getActivation().equals(entryNew.getActivation())) {
+                                    entryOld.setMatch(true);
+                                    entryNew.setMatch(true);
+                                }
+                            }
+                            else {
+                                entryOld.setMatch(true);
+                                entryNew.setMatch(true);
+                            }
+                            break;
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+        BindingDirectory.removeEntries(level, _as400, _library, _bindingDirectory, entriesOld);
+
+        BindingDirectory.addEntries(level, _as400, _library, _bindingDirectory, entriesNew);
+
+    }
+    
     public static boolean runCommand(AS400 as400, String command) {
 
         CommandCall commandCall = new CommandCall(as400);

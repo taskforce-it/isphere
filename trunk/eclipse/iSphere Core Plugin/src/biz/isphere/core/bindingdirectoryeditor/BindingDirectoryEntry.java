@@ -17,6 +17,7 @@ public class BindingDirectoryEntry {
     private String object;
     private String objectType;
     private String activation;
+    private boolean match;
 
     public BindingDirectoryEntry() {
         connectionName = "";
@@ -24,6 +25,7 @@ public class BindingDirectoryEntry {
         object = "";
         objectType = "";
         activation = "";
+        match = false;
     }
 
     public String getConnection() {
@@ -68,6 +70,14 @@ public class BindingDirectoryEntry {
 
     public void setActivation(String activation) {
         this.activation = activation;
+    }
+
+    public boolean isMatch() {
+        return match;
+    }
+
+    public void setMatch(boolean match) {
+        this.match = match;
     }
 
 }
