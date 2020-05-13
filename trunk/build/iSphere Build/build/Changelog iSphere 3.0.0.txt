@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.7.1.r
+--------------------------
+ • Fixed iSphere ticket #101 "binding directory editor: too many
+   entries".
+ • Changed binding directory editor to allow selecting multiple
+   items.
+
 Changelog: iSphere 3.7.1.b001
 -----------------------------
 
