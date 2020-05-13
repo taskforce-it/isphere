@@ -506,9 +506,7 @@ public class BindingDirectoryEntryViewer {
 
     private void uploadEntries() {
 
-        if (BindingDirectory.removeEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory)) {
-            BindingDirectory.addEntries(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
-        }
+        BindingDirectory.saveChanges(level, as400, jdbcConnection, connectionName, library, bindingDirectory, _bindingDirectoryEntries);
 
     }
 
