@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 8/09/2019">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/13/2020">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1295,7 +1295,7 @@ mbrtext =  "STRPREPRC - Installer                             "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -1543,7 +1543,7 @@ mbrtext =  "MSG: PRZ0001 - PRZ0027                            "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
              PGM        PARM(&LI)
 
@@ -2257,6 +2257,60 @@ on command'' (CMD).'                                                  +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0031                    */
+     /* Invalid INCLUDE tag found in line &1.                       */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0031) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0031) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Invalid INCLUDE tag found in line &1.'                               +
+                ) +
+                SECLVL(+
+'Cause . . . . . :   Either the file or der member name is missing. Th-
+e expected format is: &P >>INCLUDE<< [Library]/File Member;'          +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*DEC 006 2) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0032                    */
+     /* Nested INCLUDE tag found in line &4 of file &2/&1, member & */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0032) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0032) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Nested INCLUDE tag found in line &4 of file &2/&3, member &3.'       +
+                ) +
+                SECLVL(+
+'Cause . . . . . :   Nested INCLUDE tags are not allowed.'            +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 010) +
+                    (*CHAR 010) +
+                    (*CHAR 010) +
+                    (*DEC 006 2) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
      /*-------------------------------------------------------------*/
      /*   Cmd-ADDMSGD für Message-ID :   PRZ0035                    */
      /* Library &1 not found.                                       */
@@ -2340,7 +2394,7 @@ mbrtext =  "MSG: PRZ0001 - PRZ0027                            "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
              PGM        PARM(&LI)
 
@@ -3050,8 +3104,62 @@ r Befehl'' (CMD) angegeben.'                                          +
 'Die Option *ADDJOBLOG ist nur in Verbindung mit *EVENTF zulässig.'   +
                 ) +
                 SEV(30) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0031                    */
+     /* Ungültige INCLUDE Marke in Zeile &1 gefunden.               */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0031) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0031) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Ungültige INCLUDE Marke in Zeile &1 gefunden.'                       +
+                ) +
+                SECLVL(+
+'Ursache . . . . :   Es fehlt entweder die Datei oder die Teildatei. D-
+as richtige Format ist:&P >>INCLUDE<< [Bibliothek]/Datei Teildatei;'  +
+                ) +
+                SEV(30) +
                 FMT( +
-                    (*CHAR 0070) +
+                    (*DEC 006 2) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0032                    */
+     /* Verschachtelte INCLUDE Marke in Zeile &4 der Datei &2/&1, T */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0032) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0032) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Verschachtelte INCLUDE Marke in Zeile &4 der Datei &2/&1, Teildatei &+
+3 gefunden.'                                                          +
+                ) +
+                SECLVL(+
+'Ursache . . . . :   Mehrfach verschachtelte INCLUDE Marken sind nicht-
+ erlaubt.'                                                            +
+                ) +
+                SEV(30) +
+                FMT( +
+                    (*CHAR 010) +
+                    (*CHAR 010) +
+                    (*CHAR 010) +
+                    (*DEC 006 2) +
                 ) +
                 ALROPT(*NO) +
                 CCSID( 65535) +
@@ -3140,7 +3248,7 @@ mbrtext =  "Readme of STRPREPRC                               "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 STRPREPRC - A Tools/400 Utility
 -------------------------------
@@ -3174,16 +3282,16 @@ mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) Srv-Modul  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.17.0 - 07.08.2019 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.18.0 - 26.04.2020 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.17.0'
+     d                 C                   '1.18.0'
      d STRPREPRC_DATE...
-     d                 C                   '07.08.2019'
+     d                 C                   '26.04.2020'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3198,7 +3306,7 @@ mbrtext =  "H-Specifications                                  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      H DEBUG
      H OPTION(*SRCSTMT : *NODEBUGIO)
@@ -3223,7 +3331,7 @@ mbrtext =  "Tool: STRPREPRC - Prototypes                      "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(proto_h)
       /define proto_h
@@ -3296,7 +3404,7 @@ mbrtext =  "MSG: Falsche Reihenfolge im Betriebsmodus.        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0001
@@ -3321,7 +3429,7 @@ mbrtext =  "MSG: Verarbeitung in Zeile  1 abgebrochen.        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0002
@@ -3345,7 +3453,7 @@ mbrtext =  "MSG: Parameteranweisung in der Betriebsart  1 unzu"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0003
@@ -3369,7 +3477,7 @@ mbrtext =  "MSG: Die Marke  1 ist außerhalb der Betriebsart  2"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0004
@@ -3394,7 +3502,7 @@ mbrtext =  "MSG: Ungültiges Fortsetzungszeichen  1 in Zeile  2"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0005
@@ -3419,7 +3527,7 @@ mbrtext =  "MSG: Das Ende des Schlüsselwortes  1 konnte nicht "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0006
@@ -3443,7 +3551,7 @@ mbrtext =  "MSG: Befehlszeichenfolge ist zu lang.             "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0007
@@ -3467,7 +3575,7 @@ mbrtext =  "MSG: Das Zeilenendekennzeichen konnte nicht gefund"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0008
@@ -3491,7 +3599,7 @@ mbrtext =  "MSG: Unbekannter Wert   1  für Fortsetzungszeichen"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0009
@@ -3515,7 +3623,7 @@ mbrtext =  "MSG: Modus für Marke  1 nicht definiert.          "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0010
@@ -3539,7 +3647,7 @@ mbrtext =  "MSG: Die Datensatzlänge der Eingabedatei ist zu la"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0011
@@ -3566,7 +3674,7 @@ mbrtext =  "MSG: Fehler beim Öffnen der Quellendatei  2/ 1, Te"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0012
@@ -3592,7 +3700,7 @@ mbrtext =  "MSG: Fehler beim Öffnen der Steuerdatei  2/ 1, Tei"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0013
@@ -3618,7 +3726,7 @@ mbrtext =  "MSG: Auszuführender Befehl fehlt. Weitere Verarbei"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0014
@@ -3642,7 +3750,7 @@ mbrtext =  "MSG: Fehler im Erstellungsbefehl gefunden.        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0015
@@ -3666,7 +3774,7 @@ mbrtext =  "MSG: Der Parameter  OBJSRCFILE  ist nicht zuläss  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0016
@@ -3690,7 +3798,7 @@ mbrtext =  "MSG: Der Parameter  OBJSRCLIB  ist nicht zulässi  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0017
@@ -3714,7 +3822,7 @@ mbrtext =  "MSG: Der Parameter  OBJSRCMBR  ist nicht zulässi  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0018
@@ -3738,7 +3846,7 @@ mbrtext =  "MSG: Der Parameter  OBJTYPE  ist nicht zulässig,  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0019
@@ -3762,7 +3870,7 @@ mbrtext =  "MSG: Der Parameter  OBJTYPE  muss angegeben werd  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0020
@@ -3786,7 +3894,7 @@ mbrtext =  "MSG: Befehl CHGOBJDA nicht gefunden oder unvollstä"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0021
@@ -3810,7 +3918,7 @@ mbrtext =  "MSG: Verarbeitung abgebrochen.                    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0022
@@ -3834,7 +3942,7 @@ mbrtext =  "MSG: Fehlender Wert für Variable an Position  1 de"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0023
@@ -3859,7 +3967,7 @@ mbrtext =  "MSG: Keine Pre-Compiler Anweisungen in Quellendate"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0024
@@ -3885,7 +3993,7 @@ mbrtext =  "MSG: EVFEVENT Datei in Bibliothek  1 oder das Job "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0025
@@ -3909,7 +4017,7 @@ mbrtext =  "MSG: EVFEVENT Datei konnte nicht zur Ausgabe vorbe"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0026
@@ -3933,7 +4041,7 @@ mbrtext =  "MSG: Wenn die Option  *EVENTF  angegeben ist, müss"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0027
@@ -3957,7 +4065,7 @@ mbrtext =  "MSG: Erstellungsbefehl nicht gefunden in Quellenda"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0028
@@ -3979,11 +4087,11 @@ Installing PRZ0029  type RPGLE - in progress.
 <mbr
 mbrname =  "PRZ0029   "
 mbrtype =  "RPGLE     "
-mbrtext =  "1                                                 "
+mbrtext =  "MSG:  1.                                          "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0029
@@ -4007,7 +4115,7 @@ mbrtext =  "MSG: Die Option *JOBLOG ist nur in Verbindung mit "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *---------------------------------------------------------------
       * Datenstruktur für Message-ID : PRZ0030
@@ -4022,6 +4130,57 @@ srccssid=  "00273">
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0031  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0031   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Ungültige INCLUDE Marke in Zeile  1 gefunden."
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0031
+
+      //  Ungültige INCLUDE Marke in Zeile &1 gefunden.
+
+     d PRZ0031         ds
+     d  PRZ00311                    006P 2 INZ(*ZEROS )
+     d PRZ0031_SIZE    s              8B 0 INZ(0004)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0032  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0032   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Verschachtelte INCLUDE Marke in Zeile  4 der "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0031
+
+      //  Verschachtelte INCLUDE Marke in Zeile &4 der Datei &2/&1, Teil
+
+     d PRZ0032         ds
+     d  PRZ00321                    010A   INZ(*BLANKS)
+     d  PRZ00322                    010A   INZ(*BLANKS)
+     d  PRZ00323                    010A   INZ(*BLANKS)
+     d  PRZ00324                    006P 2 INZ(*ZEROS )
+     d PRZ0032_SIZE    s              8B 0 INZ(0036)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing PRZ0035  type RPGLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -4032,7 +4191,7 @@ mbrtext =  "MSG: Bibliothek  1 nicht gefunden.                "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       // ---------------------------------------------------------------
       //  Data structure for message ID: PRZ0035
@@ -4056,7 +4215,7 @@ mbrtext =  "MSG: Datei  1 in Bibliothek  2 nicht gefunden.    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       // ---------------------------------------------------------------
       //  Data structure for message ID: PRZ0036
@@ -4081,7 +4240,7 @@ mbrtext =  "MSG: Teildatei  3 von Datei  1 in Bibliothek  2 ni"
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       // ---------------------------------------------------------------
       //  Data structure for message ID: PRZ0037
@@ -4107,7 +4266,7 @@ mbrtext =  "Process Commands (QCAPCMD) API                    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QCAPCMD)
       /DEFINE QCAPCMD
@@ -4207,7 +4366,7 @@ mbrtext =  "Receive Program Message (QMHRCVPM) API            "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QMHRCVPM)
       /DEFINE QMHRCVPM
@@ -4436,6 +4595,37 @@ srccssid=  "00273">
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing QMHRMVPM  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "QMHRMVPM  "
+mbrtype =  "RPGLE     "
+mbrtext =  "Remove Program Message (QMHRMVPM) API             "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      /if not defined(QMHRMVPM)
+      /define QMHRMVPM
+      *
+      *  Remove Program Message (QMHRMVPM) API
+     d QMHRMVPM...
+     d                 PR                         extpgm('QMHRMVPM')
+     d  i_callStackE                 10a   const
+     d  i_callStackC                 10i 0 const
+     d  i_msgKey                      4a   const
+     d  i_msgToRmv                   10a   const
+     d  i_errCode                 32767a         options(*varsize)
+     d  i_lenCalStkE                 10i 0       options(*nopass)
+     d  i_calStkEQual                20a         options(*nopass)
+     d  i_rmvExcp                    10a         options(*nopass)
+     d  i_calStkeDTyp                10a         options(*nopass)
+      /endif
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing QMHRTVM  type RPGLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -4446,7 +4636,7 @@ mbrtext =  "Retrieve Message (QMHRTVM) API                    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QMHRTVM)
       /DEFINE QMHRTVM
@@ -4746,7 +4936,7 @@ mbrtext =  "Retrieve Member Description (QUSRMBRD) API        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(QUSRMBRD)
       /define QUSRMBRD
@@ -4838,7 +5028,7 @@ mbrtext =  "Retrieve Current Attributes (QWCRTVCA) API        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(QWCRTVCA)
       /define QWCRTVCA
@@ -5073,7 +5263,7 @@ mbrtext =  "Start Pre-Processor - Ger                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 .*=====================================================================*
 .*                                                                     *
@@ -5130,6 +5320,8 @@ srccssid=  "00273">
 .*                              'END-MONMSG'                           *
 .*                                                                     *
 .*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 *
+.*                                                                     *
+.*  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
 .*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
@@ -5224,37 +5416,40 @@ Der Anweisungsblock für den Pre-Prozessor kann wie folgt aussehen:
 0002.00        >>CRTCMD<<           CRTRPGMOD(&LI/&OB) +
 0003.00                               SRCFILE(&SL/&SF) +
 0004.00                               SRCMBR(&SM);
-0005.00        >>IMPORTANT<<
-0006.00            >>PARM<<         TRUNCNBR(*NO);
-0007.00        >>END-IMPORTANT<<
-0008.00
-0009.00        >>COMPILE<<
-0010.00            >>PARM<<         TRUNCNBR(*NO);
-0011.00        >>END-COMPILE<<
-0012.00
-0013.00        >>LINK<<
-0014.00            >>PARM<<         ACTGRP(*CALLER);
-0015.00        >>END-LINK<<
-0016.00
-0017.00        >>CMD<<              OVRDBF +
-0018.00                               FILE(SRCFILE) +
-0019.00                               FROMFILE(QRPGLESRC) +
-0020.00                               MBR(*FIRST) +
-0021.00                               OVRSCOPE(*JOB);
-0022.00
-0023.00        /* Ändern Bibliotheksliste */
-0024.00        >>CURLIB<<           *CRTDFT;
-0025.00        >>LIBL<<             &LL;
-0026.00
-0027.00        >>EXECUTE<<
-0028.00        /* Wiederherstellen Bibliotheksliste */
-0029.00        >>CURLIB<<           &CX;
-0030.00        >>LIBL<<             &LX;
-0031.00
-0032.00        >>CMD<<              DLTOVR +
-0033.00                               FILE(SRCFILE) +
-0034.00                               LVL(*JOB);
-0035.00    >>END-PRE-COMPILER<<
+0005.00
+0006.00        >>INCLUDE<<          &SL/QINCLUDE MYINCLUDE
+0007.00
+0008.00        >>IMPORTANT<<
+0009.00            >>PARM<<         TRUNCNBR(*NO);
+0010.00        >>END-IMPORTANT<<
+0011.00
+0012.00        >>COMPILE<<
+0013.00            >>PARM<<         TRUNCNBR(*NO);
+0014.00        >>END-COMPILE<<
+0015.00
+0016.00        >>LINK<<
+0017.00            >>PARM<<         ACTGRP(*CALLER);
+0018.00        >>END-LINK<<
+0019.00
+0020.00        >>CMD<<              OVRDBF +
+0021.00                               FILE(SRCFILE) +
+0022.00                               FROMFILE(QRPGLESRC) +
+0023.00                               MBR(*FIRST) +
+0024.00                               OVRSCOPE(*JOB);
+0025.00
+0026.00        /* Ändern Bibliotheksliste */
+0027.00        >>CURLIB<<           *CRTDFT;
+0028.00        >>LIBL<<             &LL;
+0029.00
+0030.00        >>EXECUTE<<
+0031.00        /* Wiederherstellen Bibliotheksliste */
+0032.00        >>CURLIB<<           &CX;
+0033.00        >>LIBL<<             &LX;
+0034.00
+0035.00        >>CMD<<              DLTOVR +
+0036.00                               FILE(SRCFILE) +
+0037.00                               LVL(*JOB);
+0038.00    >>END-PRE-COMPILER<<
 :ELINES.
 :P.
 :HP1.Verwendung von Variablen im Pre-Prozessor-Abschnitt::EHP1.
@@ -5289,6 +5484,11 @@ Die >>CRTCMD<< Marke ist optional. Der Erstellungsbefehl kann
 alternativ auch über den Befehl STRPREPRC mitgegeben werden. Wenn
 die >>CRTCMD<< Marke angegeben wird, dann sollte sie nur einmal
 am Anfang der Pre-Prozessor-Anweisungen definiert werden.
+
+:PT.>>INCLUDE<<
+:PD.Diese Marke bindet eine Teildatei mit Pre-Prozessor-Anweisungen ein.
+Die Syntax folgt hierbei der RPG /copy Anweisung. Ein verschachteltes
+Einbinden von Teildateien ist nicht erlaubt.
 
 :PT.>>IMPORTANT<<
 :PD.Diese Marke leitet den Abschnitt für die Compiler-Schlüsselworte ein.
@@ -6484,7 +6684,7 @@ mbrtext =  "Start Pre-Processor - Eng                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 .*=====================================================================*
 .*                                                                     *
@@ -6541,6 +6741,8 @@ srccssid=  "00273">
 .*                              'END-MONMSG'                           *
 .*                                                                     *
 .*  07.08.2019  Th.Raddatz    Added parameter EXECOPT.                 *
+.*                                                                     *
+.*  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
 .*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
@@ -6632,37 +6834,40 @@ This is an example of a pre-compiler section in a source member:
 0002.00        >>CRTCMD<<           CRTRPGMOD(&LI/&OB) +
 0003.00                               SRCFILE(&SL/&SF) +
 0004.00                               SRCMBR(&SM);
-0005.00        >>IMPORTANT<<
-0006.00            >>PARM<<         TRUNCNBR(*NO);
-0007.00        >>END-IMPORTANT<<
-0008.00
-0009.00        >>COMPILE<<
-0010.00            >>PARM<<         TRUNCNBR(*NO);
-0011.00        >>END-COMPILE<<
-0012.00
-0013.00        >>LINK<<
-0014.00            >>PARM<<         ACTGRP(*CALLER);
-0015.00        >>END-LINK<<
-0016.00
-0017.00        >>CMD<<              OVRDBF +
-0018.00                               FILE(SRCFILE) +
-0019.00                               FROMFILE(QRPGLESRC) +
-0020.00                               MBR(*FIRST) +
-0021.00                               OVRSCOPE(*JOB);
-0022.00
-0023.00        /* Change library list */
-0024.00        >>CURLIB<<           *CRTDFT;
-0025.00        >>LIBL<<             &LL;
-0026.00
-0027.00        >>EXECUTE<<
-0028.00        /* Restore library list */
-0029.00        >>CURLIB<<           &CX;
-0030.00        >>LIBL<<             &LX;
-0031.00
-0032.00        >>CMD<<              DLTOVR +
-0033.00                               FILE(SRCFILE) +
-0034.00                               LVL(*JOB);
-0035.00    >>END-PRE-COMPILER<<
+0005.00
+0006.00        >>INCLUDE<<          &SL/QINCLUDE MYINCLUDE
+0007.00
+0008.00        >>IMPORTANT<<
+0009.00            >>PARM<<         TRUNCNBR(*NO);
+0010.00        >>END-IMPORTANT<<
+0011.00
+0012.00        >>COMPILE<<
+0013.00            >>PARM<<         TRUNCNBR(*NO);
+0014.00        >>END-COMPILE<<
+0015.00
+0016.00        >>LINK<<
+0017.00            >>PARM<<         ACTGRP(*CALLER);
+0018.00        >>END-LINK<<
+0019.00
+0020.00        >>CMD<<              OVRDBF +
+0021.00                               FILE(SRCFILE) +
+0022.00                               FROMFILE(QRPGLESRC) +
+0023.00                               MBR(*FIRST) +
+0024.00                               OVRSCOPE(*JOB);
+0025.00
+0026.00        /* Ändern Bibliotheksliste */
+0027.00        >>CURLIB<<           *CRTDFT;
+0028.00        >>LIBL<<             &LL;
+0029.00
+0030.00        >>EXECUTE<<
+0031.00        /* Wiederherstellen Bibliotheksliste */
+0032.00        >>CURLIB<<           &CX;
+0033.00        >>LIBL<<             &LX;
+0034.00
+0035.00        >>CMD<<              DLTOVR +
+0036.00                               FILE(SRCFILE) +
+0037.00                               LVL(*JOB);
+0038.00    >>END-PRE-COMPILER<<
 :ELINES.
 :P.
 :HP1.How to use replacement variables::EHP1.
@@ -6701,6 +6906,11 @@ command at a >>CRTCMD<< tag the creation command can also be passed
 to STRPREPRC from outside. The >>CRTCMD<< tag should be used once
 in a source member. Also it should be placed prior to the compile
 and link sub-sections.
+
+:PT.>>INCLUDE<<
+:PD.This tag is used for including a member with pre-compiler
+statements. It is used like the RPG /copy statement. Nested includes
+are not allowed.
 
 :PT.>>IMPORTANT<<
 :PD.This tag is used to mark the 'important' sub-section. The 'important'
@@ -7824,6 +8034,36 @@ Beispiel:
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing SDS  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "SDS       "
+mbrtype =  "RPGLE     "
+mbrtext =  "Program Status Data Structure                     "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      /if not defined(SDS)
+      /define SDS
+     D sds            sds                  qualified
+     D  pgmName                      10a
+     D  status                        5s 0
+     D  prvStat                       5s 0
+     D  lastSeq                       8a
+     D  lastSubR                      8a
+     D  numParm                       3s 0
+     D  msgID                         7a
+     D  MiInstr                       4a
+     D  wrkArea                      30a
+     D  pgmLib                       10a
+     D  msgText                      80a
+      /endif
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing STRPRE1  type PF - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -7834,7 +8074,7 @@ mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) Ctrl File  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *                                                                     *
@@ -7884,7 +8124,7 @@ mbrtext =  "Tool: STRPREPRC  (Starten Pre-Proz.  ) MsgID File "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *                                                                     *
@@ -7940,7 +8180,7 @@ mbrtext =  "Command: Start Pre-Processor (CPP Module)         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -8003,7 +8243,7 @@ mbrtext =  "Start Pre-Processor - CPP                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -8322,7 +8562,7 @@ mbrtext =  "Start Pre-Processor - Services                    "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       * =================================================================== *
       *                                                                     *
@@ -8438,6 +8678,8 @@ srccssid=  "00273">
       *                                'MSGID' CPF9801; // Object not found *
       *                              'END-MONMSG'                           *
       *                                                                     *
+      *  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -8462,12 +8704,26 @@ srccssid=  "00273">
      F                                     extfile(g_useSrcFile.name)
      F                                     extmbr(g_useSrcFile.member)
      F                                     infds(f1)
+     FINCLUDE   IF   F  256        DISK    usropn
+     F                                     extfile(g_include.name)
+     F                                     extmbr(g_include.member)
+     F                                     infds(f3)
       *
      FSTRPRE1   IF   E           K DISK    usropn
      F                                     prefix(P1)
+     F                                     extfile(g_strpre1.name)
+     F                                     extmbr(g_strpre1.member)
      F                                     infds(f2)
       *
-     D g_useSrcFile    ds                  qualified
+     D g_useSrcFile    ds                  qualified inz
+     D  name                         21a   varying
+     D  member                       10a   varying
+      *
+     D g_strpre1       ds                  qualified inz
+     D  name                         21a   varying
+     D  member                       10a   varying
+      *
+     D g_include       ds                  qualified inz
      D  name                         21a   varying
      D  member                       10a   varying
       *
@@ -8490,6 +8746,17 @@ srccssid=  "00273">
      D f1_line_number  s             10i 0 inz(-1)
       *
      D f2              ds                  likeds(f1)
+      *
+     D f3              ds                  qualified
+     D  status                11     15S 0
+     D  file                  83     92A
+     D  lib                   93    102A
+     D  rcdLen               125    126B 0
+     D  mbr                  129    138A
+     D  nbrOfKey             387    388B 0
+     D  rcdNbr               397    400B 0
+      *
+     D f3_line_number  s             10i 0 inz(-1)
       *
       * -------------------------------------------------------------
       *  Globale Referenzfelder
@@ -8643,6 +8910,7 @@ srccssid=  "00273">
      D cTAG_PARM       c                   '>>PARM<<'
      D cTAG_EXECUTE    c                   '>>EXECUTE<<'
      D cTAG_CMD        c                   '>>CMD<<'
+     D cTAG_INCLUDE    c                   '>>INCLUDE<<'
      D cTAG_LIBL       c                   '>>LIBL<<'
      D cTAG_CURLIB     c                   '>>CURLIB<<'
       *
@@ -8674,6 +8942,7 @@ srccssid=  "00273">
      D cMODE_PARM      c                   '>>PARM<<'
      D cMODE_EXECUTE   c                   '>>EXECUTE<<'
      D cMODE_CMD       c                   '>>CMD<<'
+     D cMODE_INCLUDE   c                   '>>INCLUDE<<'
      D cMODE_LIBL      c                   '>>LIBL<<'
      D cMODE_CURLIB    c                   '>>CURLIB<<'
       *
@@ -8704,6 +8973,7 @@ srccssid=  "00273">
      D g_pgmCmdExc...
      D                 s                   like(pgm_t) inz
      D g_libPgmCmdExc  s                   like(lib_t) inz
+     D g_width         s             10i 0 inz(-1)
       *
      D g_eventf        ds                  qualified
      D  isOpen                         n   inz(cFalse)
@@ -8742,10 +9012,14 @@ srccssid=  "00273">
       *
      D MODE_PRECMDS    c                   1
      D MODE_POSTCMDS   c                   2
+      *
+      /copy QSTRPREPRC,SDS
+      *
       * -------------------------------------------------------------
       *  Importierte Prototypen
       * -------------------------------------------------------------
       /copy QSTRPREPRC,QMHRCVPM
+      /copy QSTRPREPRC,QMHRMVPM
       /copy QBASICS1,PBASICS1
       /copy QSTRPREPRC,PROTO_H
       /copy QSTRPREPRC,QCAPCMD
@@ -8849,6 +9123,11 @@ srccssid=  "00273">
      D                 PR
      D                                     extproc('performCmd')
      D  i_cmd                              value  like(cmdLong_t)
+      *
+     D performInclude...
+     D                 PR
+     D                                     extproc('performInclude')
+     D  i_include                          value  like(cmdLong_t)
       *
      D performSetLibraryList...
      D                 pr
@@ -9007,17 +9286,8 @@ srccssid=  "00273">
      D  i_lib                        10a   const
      D  i_mbr                        10a   const
       *
-     D QMHRMVPM...
-     D                 PR                         extpgm('QMHRMVPM')
-     D  i_callStackE                 10a   const
-     D  i_callStackC                 10i 0 const
-     D  i_msgKey                      4a   const
-     D  i_msgToRmv                   10a   const
-     D  i_errCode                 32767a         options(*varsize)
-     D  i_lenCalStkE                 10i 0       options(*nopass)
-     D  i_calStkEQual                20a         options(*nopass)
-     D  i_rmvExcp                    10a         options(*nopass)
-     D  i_calStkeDTyp                10a         options(*nopass)
+     D removeFileOpenmessage...
+     D                 pr                  extproc('removeFileOpenmessage')
       *
      D getMsgInf...
      D                 PR
@@ -9127,7 +9397,6 @@ srccssid=  "00273">
      D tag             S                   like(tag_t) inz
      D mode            S                   like(mode_t) inz
      D newMode         S                   like(mode_t) inz
-     D srcDtaLen       S                   like(int4_t) inz
      D cmdString       S                   like(cmdLong_t) inz
      D execCmdImplizit...
      D                 S                   like(bool_t)  inz(cTrue)
@@ -9285,19 +9554,22 @@ srccssid=  "00273">
          open(E) SRCFILE;
          if (%error());
             clear PRZ0012;
-            PRZ00121 = f1.file;
-            PRZ00122 = f1.lib;
-            PRZ00123 = f1.mbr;
+            PRZ00121 = i_useSrcFile;
+            PRZ00122 = i_useSrcLib;
+            PRZ00123 = i_useSrcMbr;
             sendMsg(f_newMsg('PRZ0012': PRZ0012: cTYPE_DIAG));
             endAbnormal();
          endif;
 
+         g_strpre1.name = %trim(sds.pgmLib) + '/' + 'STRPRE1';
+         g_strpre1.member = '*FIRST';
+
          open(E) STRPRE1;
          if (%error());
             clear PRZ0013;
-            PRZ00131 = f2.file;
-            PRZ00132 = f2.lib;
-            PRZ00133 = f2.mbr;
+            PRZ00131 = 'STRPRE1';
+            PRZ00132 = '*LIBL';
+            PRZ00133 = '*FIRST';
             sendMsg(f_newMsg('PRZ0013': PRZ0013: cTYPE_DIAG));
             endAbnormal();
          endif;
@@ -9315,8 +9587,6 @@ srccssid=  "00273">
             sendMsg(f_newMsg('PRZ0011': PRZ0011: cTYPE_DIAG));
             endAbnormal();
          endif;
-
-         srcDtaLen = getSrcDataLength();
 
          // Formatieren Befehl
          cmd = formatCmd(%trim(i_cmd));
@@ -9421,7 +9691,7 @@ srccssid=  "00273">
 
             // Breite der Quellenangaben >>WIDTH<<
             if (mode  = cMODE_WIDTH);
-               srcDtaLen = getWidthValue(srcDta: srcDtaLen);
+               g_width = getWidthValue(srcDta: getSrcDataLength());
                mode = popMode();
             endif;
 
@@ -9504,6 +9774,25 @@ srccssid=  "00273">
                endif;
             endif;
 
+            // Befehl-Anweisung    >>INCLUDE<<
+            if (mode = cMODE_INCLUDE);
+               // zufügen Schlüsselwortdaten
+               lineData.keyData = addData(cTAG_INCLUDE
+                                          : lineData.keyData
+                                          : srcDta
+                                          : lineData.continue);
+
+               // prüfen auf Fortsetzungszeile
+               if (lineData.continue <> cEND_OF_LINE);
+                  iter;
+               else;
+                  performInclude(lineData.keyData);
+                  resetLineData(lineData);
+                  mode = popMode();
+                  iter;
+               endif;
+            endif;
+
             // Befehl-Anweisung    >>LIBL<<
             if (mode = cMODE_LIBL);
                // zufügen Schlüsselwortdaten
@@ -9518,7 +9807,7 @@ srccssid=  "00273">
                else;
                   cmdString = 'CHGLIBL LIBL(' + lineData.keyData + ')';
                   performSetLibraryList(
-                     replaceVars(cmdString: variables): variables); // TODO: test it
+                     replaceVars(cmdString: variables): variables);
                   resetLineData(lineData);
                   mode = popMode();
                   iter;
@@ -9539,7 +9828,7 @@ srccssid=  "00273">
                else;
                   cmdString = 'CHGLIBL CURLIB(' + lineData.keyData + ')';
                   performSetCurrentLibrary(
-                     replaceVars(cmdString: variables): variables); // TODO: test it
+                     replaceVars(cmdString: variables): variables);
                   resetLineData(lineData);
                   mode = popMode();
                   iter;
@@ -9554,6 +9843,10 @@ srccssid=  "00273">
 
          if (%open(STRPRE1));
             close STRPRE1;
+         endif;
+
+         if (%open(INCLUDE));
+            close INCLUDE;
          endif;
 
          // Ausführen >>EXECUTE<< implizit, weil
@@ -9629,15 +9922,30 @@ srccssid=  "00273">
      D ds_srcFile      ds                  likeds(ds_srcFile_t) inz
       /free
 
-         read SRCFILE ds_srcFile;
-         if (%eof());
-            io_srcDta = '';
-            return cFalse;
+         if (%open(INCLUDE));
+
+            read INCLUDE ds_srcFile;
+            if (%eof());
+               close INCLUDE;
+               clear g_include;
+               return readLine(io_srcDta);
+            endif;
+
+            f3_line_number = f3_line_number + 1;
+
+         else;
+
+            read SRCFILE ds_srcFile;
+            if (%eof());
+               io_srcDta = '';
+               return cFalse;
+            endif;
+
+            f1_line_number = f1_line_number + 1;
+
          endif;
 
          io_srcDta = %subst(ds_srcFile.srcDta: 1: getSrcDataLength());
-
-         f1_line_number = f1_line_number + 1;
 
          return cTrue;
 
@@ -9655,15 +9963,30 @@ srccssid=  "00273">
      D ds_srcFile      ds                  likeds(ds_srcFile_t) inz
       /free
 
-         readp SRCFILE ds_srcFile;
-         if (%eof());
-            io_srcDta = '';
-            return cFalse;
+         if (%open(INCLUDE));
+
+            read INCLUDE ds_srcFile;
+            if (%eof());
+               close INCLUDE;
+               clear g_include;
+               return readPrvLine(io_srcDta);
+            endif;
+
+            f3_line_number = f3_line_number - 1;
+
+         else;
+
+            readp SRCFILE ds_srcFile;
+            if (%eof());
+               io_srcDta = '';
+               return cFalse;
+            endif;
+
+            f1_line_number = f1_line_number - 1;
+
          endif;
 
          io_srcDta = %subst(ds_srcFile.srcDta: 1: getSrcDataLength());
-
-         f1_line_number = f1_line_number - 1;
 
          return cTrue;
 
@@ -10070,6 +10393,99 @@ srccssid=  "00273">
                endif;
             endif;
          endif;
+
+      /end-free
+     P                 e
+
+      * =============================================================
+      *  Execute >>INCLUDE<< tag (Read /include)
+      * =============================================================
+     P performInclude...
+     P                 b
+     D                 pi
+     D  i_include                          value  like(cmdLong_t)
+      *
+     D s               s             10i 0
+     D e               s             10i 0
+     D library         s             10a   varying
+     D file            s             10a   varying
+     D member          s             10a   varying
+      *
+      *  ... Die Datensatzlänge der Eingabedatei ist zu lang.
+      /COPY QSTRPREPRC,PRZ0011
+      *  ... Fehler beim Öffnen der Quellendatei &2/&1, Teildatei &3.
+      /COPY QSTRPREPRC,PRZ0012
+      *  ... Ungültige INCLUDE Marke in Zeile &1 gefunden.
+      /COPY QSTRPREPRC,PRZ0031
+      /free
+
+         s = 1;
+         e = %scan('/': i_include);
+         if (e - s > 0);
+            library = %subst(i_include: 1: e - s);
+            s = e + 1;
+         else;
+            library = '*LIBL';
+            s = 1;
+         endif;
+
+         if (s < %len(i_include));
+            e = %scan(' ': i_include: s);
+            if (e - s > 0);
+               file = %subst(i_include: s: e - s);
+               s = e + 1;
+            endif;
+         endif;
+
+         if (file = '');
+            clear PRZ0031;
+            PRZ00311 = f1_line_number;
+            sendMsg(f_newMsg('PRZ0031': PRZ0031: cTYPE_DIAG));
+            endAbnormal();
+         endif;
+
+         if (s < %len(i_include));
+            s = %check(' ': i_include: s); // Skip spaces
+            e = %len(%trimr(i_include)) + 1;
+            if (e - s > 0);
+               member = %subst(i_include: s: e - s);
+            endif;
+         endif;
+
+         if (member = '');
+            clear PRZ0031;
+            PRZ00311 = f1_line_number;
+            sendMsg(f_newMsg('PRZ0031': PRZ0031: cTYPE_DIAG));
+            endAbnormal();
+         endif;
+
+         g_include.name = library + '/' + file;
+         g_include.member = member;
+
+         open(E) INCLUDE;
+         if (%error());
+            clear PRZ0012;
+            PRZ00121 = file;
+            PRZ00122 = library;
+            PRZ00123 = member;
+            sendMsg(f_newMsg('PRZ0012': PRZ0012: cTYPE_DIAG));
+            endAbnormal();
+         endif;
+
+         removeFileOpenMessage();
+
+         // Prüfen der Datensatzlänge
+         if (f3.rcdLen > cMaxRcdLen);
+            clear PRZ0011;
+            PRZ00111 = f3.rcdLen;
+            PRZ00112 = cMaxRcdLen;
+            PRZ00113 = f3.lib;
+            PRZ00114 = f3.file;
+            sendMsg(f_newMsg('PRZ0011': PRZ0011: cTYPE_DIAG));
+            endAbnormal();
+         endif;
+
+         f3_line_number = 0;
 
       /end-free
      P                 e
@@ -10747,8 +11163,19 @@ srccssid=  "00273">
      D srcDtaLen       s                   like(int4_t) inz
       /free
 
-         srcDtaLen = f1.rcdLen -
-                     (%size(ds_srcFile_t.srcSeq) + %size(ds_srcFile_t.srcDat));
+         if (%open(INCLUDE));
+            srcDtaLen =
+               f3.rcdLen -
+               (%size(ds_srcFile_t.srcSeq) + %size(ds_srcFile_t.srcDat));
+         else;
+            srcDtaLen =
+               f1.rcdLen -
+               (%size(ds_srcFile_t.srcSeq) + %size(ds_srcFile_t.srcDat));
+         endif;
+
+         if (g_width <> -1 and g_width < srcDtaLen);
+            srcDtaLen = g_width;
+         endif;
 
          return srcDtaLen;
 
@@ -10893,6 +11320,12 @@ srccssid=  "00273">
                leave;
             endif;
 
+            // Einlesen /include
+            if (retrieveTag(cTAG_INCLUDE: i_srcDta: o_tag));
+               isTag = cTrue;
+               leave;
+            endif;
+
             // Ausführen Anweisung zum Setzen einer Bibliotheksliste
             if (retrieveTag(cTAG_LIBL: i_srcDta: o_tag));
                isTag = cTrue;
@@ -11024,6 +11457,10 @@ srccssid=  "00273">
          when (i_tag = cTAG_CMD);
             mode  = cMODE_CMD;
 
+            // Einlesen /include
+         when (i_tag = cTAG_INCLUDE);
+            mode  = cMODE_INCLUDE;
+
             // Ausführen Anweisung zum Setzen einer Bibliotheksliste
          when (i_tag = cTAG_LIBL);
             mode  = cMODE_LIBL;
@@ -11064,6 +11501,8 @@ srccssid=  "00273">
       *  Nachrichten
       *  ... Falsche Reihenfolge im Betriebsmodus.
       /COPY QSTRPREPRC,PRZ0001
+      *  ... Verschachtelte INCLUDE Marke in Zeile &4 der Datei &2/&1, Teildatei &3 gefunden.
+      /COPY QSTRPREPRC,PRZ0032
       /free
 
          P1KEY2.MODE = i_mode;
@@ -11082,6 +11521,16 @@ srccssid=  "00273">
                leave;
             endif;
          enddo;
+
+         if (i_newMode = cMODE_INCLUDE and %open(INCLUDE));
+            clear PRZ0032;
+            PRZ00321 = f3.file;
+            PRZ00322 = f3.lib;
+            PRZ00323 = f3.mbr;
+            PRZ00324 = f3_line_number;
+            sendMsg(f_newMsg('PRZ0032': PRZ0032: cTYPE_DIAG));
+            return cFalse;
+         endif;
 
          return cTrue;
 
@@ -11507,6 +11956,10 @@ srccssid=  "00273">
             close STRPRE1;
          endif;
 
+         if (%open(INCLUDE));
+            close INCLUDE;
+         endif;
+
          clear PRZ0002;
          PRZ00021 = f1_line_number;
          sendMsg(f_newMsg('PRZ0002': PRZ0002: cTYPE_ESCAPE));
@@ -11674,11 +12127,13 @@ srccssid=  "00273">
       /COPY QSTRPREPRC,PRZ0037
       /free
 
-         rc = system('CHKOBJ OBJ(' + %trim(i_lib) + ') OBJTYPE(*LIB)');
-         if (rc <> 0);
-            clear PRZ0035;
-            PRZ00351 = i_lib;
-            sendMsg(f_newMsg('PRZ0035': PRZ0035: cTYPE_ESCAPE));
+         if (%subst(i_lib: 1: 1) <> '*');
+            rc = system('CHKOBJ OBJ(' + %trim(i_lib) + ') OBJTYPE(*LIB)');
+            if (rc <> 0);
+               clear PRZ0035;
+               PRZ00351 = i_lib;
+               sendMsg(f_newMsg('PRZ0035': PRZ0035: cTYPE_ESCAPE));
+            endif;
          endif;
 
          rc = system('CHKOBJ OBJ(' + %trim(i_lib) + '/' +
@@ -11700,6 +12155,31 @@ srccssid=  "00273">
             PRZ00373 = i_mbr;
             sendMsg(f_newMsg('PRZ0037': PRZ0037: cTYPE_ESCAPE));
          endif;
+
+      /end-free
+     P                 E
+      *
+      *===============================================================*
+      *  Remove file open message:
+      *  CPF4011 - Buffer length longer than record for member
+      *===============================================================*
+     P removeFileOpenMessage...
+     P                 b
+     D                 pi
+      *
+     D rcvm0100        ds                  likeds(rcvm0100_t)
+     D errCode         ds                  likeds(errCode_t)
+      /free
+
+       errCode = f_newApiErrCode(cTrue); // ignore errors
+
+       QMHRCVPM(rcvm0100: %size(rcvm0100): 'RCVM0100': '*': 1
+                : '*ANY': '': 0: '*SAME': errCode);
+
+       if (not f_isApiError(errCode) and rcvm0100.msgID = 'CPF4011');
+          QMHRMVPM('*' : 1: rcvm0100.msgKey: '*BYKEY': errCode);
+       endif;
+
 
       /end-free
      P                 E
@@ -11740,7 +12220,7 @@ mbrtext =  "Start Pre-Processor - Init                        "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       * =================================================================== *
       *                                                                     *
@@ -11769,6 +12249,8 @@ srccssid=  "00273">
       *  ----------  ------------  ---------------------------------------  *
       *  18.05.2015  Th.Raddatz    Converted to /free.                      *
       *                                                                     *
+      *  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -11788,9 +12270,21 @@ srccssid=  "00273">
       *  Verwendete Dateien
       * -------------------------------------------------------------
      FSTRPRE1   UF A E             DISK    usropn
+     F                                     extfile(g_strpre1.name)
+     F                                     extmbr(g_strpre1.member)
      F                                     infds(f1)
      FSTRPRE2   UF A E             DISK    usropn
+     F                                     extfile(g_strpre2.name)
+     F                                     extmbr(g_strpre2.member)
      F                                     infds(f2)
+      *
+     D g_strpre1       ds                  qualified inz
+     D  name                         21a   varying
+     D  member                       10a   varying
+      *
+     D g_strpre2       ds                  qualified inz
+     D  name                         21a   varying
+     D  member                       10a   varying
       *
      D f1              DS                  qualified
      D  status                11     15S 0
@@ -11815,8 +12309,10 @@ srccssid=  "00273">
       * -------------------------------------------------------------
       *  Globale Variablen
       * -------------------------------------------------------------
-     D ctrlEntry       S             60A   dim(21) ctdata perrcd(1)
+     D ctrlEntry       S             60A   dim(25) ctdata perrcd(1)
      D msgIDs          S             83A   dim(25) ctdata perrcd(1)
+      *
+      /copy QSTRPREPRC,SDS
       *
       * -------------------------------------------------------------
       *  Prototypen
@@ -11833,6 +12329,9 @@ srccssid=  "00273">
       *
      D x               S             10I 0 inz
       /free
+
+         g_strpre1.name = %trim(sds.pgmLib) + '/' + 'STRPRE1';
+         g_strpre1.member = '*FIRST';
 
          open STRPRE1;
 
@@ -11855,6 +12354,9 @@ srccssid=  "00273">
          endif;
 
          close STRPRE1;
+
+         g_strpre2.name = %trim(sds.pgmLib) + '/' + 'STRPRE2';
+         g_strpre2.member = '*FIRST';
 
          open STRPRE2;
 
@@ -11888,12 +12390,16 @@ srccssid=  "00273">
 *SCAN                         >>PRE-COMPILER<<
 >>COMPILE<<                   >>END-COMPILE<<
 >>COMPILE<<                   >>PARM<<
+>>COMPILE<<                   >>INCLUDE<<
 >>IMPORTANT<<                 >>END-IMPORTANT<<
 >>IMPORTANT<<                 >>PARM<<
+>>IMPORTANT<<                 >>INCLUDE<<
 >>LINK<<                      >>END-LINK<<
 >>LINK<<                      >>PARM<<
+>>LINK<<                      >>INCLUDE<<
 >>PRE-COMPILER<<              *EXIT
 >>PRE-COMPILER<<              >>CMD<<
+>>PRE-COMPILER<<              >>INCLUDE<<
 >>PRE-COMPILER<<              >>COMPILE<<
 >>PRE-COMPILER<<              >>IMPORTANT<<
 >>PRE-COMPILER<<              >>CRTCMD<<
@@ -11945,7 +12451,7 @@ mbrtext =  "Start Pre-Processor - Event File                  "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       * =================================================================== *
       *                                                                     *
@@ -11995,7 +12501,15 @@ srccssid=  "00273">
      H NOMAIN BNDDIR('QC2LE')
       *
      FSTRPRE2   IF   E           K DISK    usropn
+     F                                     extfile(g_strpre2.name)
+     F                                     extmbr(g_strpre2.member)
      F                                     prefix(P2)
+      *
+     D g_strpre2       ds                  qualified inz
+     D  name                         21a   varying
+     D  member                       10a   varying
+      *
+      /copy QSTRPREPRC,SDS
       *
       *  Returns cTrue for an ignored message ID, else cFalse.
      D isIgnoredMsgID...
@@ -12424,6 +12938,8 @@ srccssid=  "00273">
       /free
 
          if (not %open(STRPRE2));
+            g_strpre2.name = %trim(sds.pgmLib) + '/' + 'STRPRE2';
+            g_strpre2.member = '*FIRST';
             open STRPRE2;
          endif;
 
@@ -12605,7 +13121,7 @@ mbrtext =  "Start Pre-Processor - Ger                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -13085,7 +13601,7 @@ mbrtext =  "Start Pre-Processor - Eng                         "
 srcfile =  "QSTRPREPRC"
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
