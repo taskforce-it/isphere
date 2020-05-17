@@ -1,4 +1,9 @@
 
+Changelog: iSphere 3.7.2.b001
+-----------------------------
+ • Added replacement variable "&PAGES" to spooled file decorator.
+ • Updated STRPREPRC command to version 1.18. Added >>INCLUDE<< tag.
+
 Changelog: iSphere 3.7.1.r
 --------------------------
  • Fixed iSphere ticket #101 "binding directory editor: too many
