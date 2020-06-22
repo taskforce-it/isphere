@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
@@ -97,11 +98,23 @@ public class JdbcConnectionManager implements ICommunicationsListener {
 
     private Connection getStandardIBMiJdbcConnection(IBMiConnection ibmiConnection, Properties properties) {
 
+        String _properties = null;
+        if (properties != null && properties.size() > 0) {
+            _properties = "";
+            Set<Object> keys = properties.keySet();
+            for (Object _keys : keys){
+                String key = (String)_keys;
+                String value = properties.getProperty(key);
+                _properties = _properties + ";" + key + "=" + value;
+            }
+        }
+        
         Connection jdbcConnection = null;
 
         try {
 
-            jdbcConnection = ibmiConnection.getJDBCConnection(null, false);
+            // ";prompt=false;big decimal=false;secure=true"
+            jdbcConnection = ibmiConnection.getJDBCConnection(_properties, false);
 
         } catch (Throwable e) {
             return null;

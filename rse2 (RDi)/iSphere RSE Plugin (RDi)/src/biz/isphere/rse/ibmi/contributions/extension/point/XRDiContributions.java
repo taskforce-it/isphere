@@ -44,6 +44,7 @@ import biz.isphere.rse.internal.RSEMember;
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.SecureAS400;
 import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
 import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
@@ -481,6 +482,12 @@ public class XRDiContributions implements IIBMiHostContributions {
             properties = new Properties();
             properties.put("prompt", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             properties.put("big decimal", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            try {
+                if (connection.getAS400ToolboxObject() instanceof SecureAS400) {
+                    properties.put("secure", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            } catch (SystemMessageException e) {
+            }
         }
 
         Connection jdbcConnection = manager.getJdbcConnection(properties);
