@@ -66,6 +66,7 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintObjectListEvent;
 import com.ibm.as400.access.PrintObjectListListener;
+import com.ibm.as400.access.SecureAS400;
 import com.ibm.as400.access.SpooledFile;
 import com.ibm.as400.access.SpooledFileList;
 import com.ibm.as400.vaccess.SpooledFileViewer;
@@ -303,7 +304,14 @@ public class SpoolExporter extends GenericTn5250JFrame {
             updateStatus(LangTool.getString("spool.working"));
 
             // get a system object
-            if (system == null) system = new AS400(vt.getHostName());
+            if (system == null) {
+                if (vt.isSSLConnection()) {
+                    system = new SecureAS400(vt.getHostName());
+
+                } else {
+                    system = new AS400(vt.getHostName());
+                }
+            }
 
             // create a spoolfile list
             splfList = new SpooledFileList(system);
