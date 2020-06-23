@@ -8,13 +8,13 @@
 
 package biz.isphere.messagesubsystem.internal;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.PcmlProgramCallDocument;
-import biz.isphere.messagesubsystem.rse.SendMessageOptions;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.data.PcmlException;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.PcmlProgramCallDocument;
+import biz.isphere.messagesubsystem.rse.SendMessageOptions;
 
 public class QEZSNDMG {
 
@@ -73,22 +73,5 @@ public class QEZSNDMG {
         } catch (PcmlException e) {
             ISpherePlugin.logError("Failed calling the QEZSNDMG API.", e); //$NON-NLS-1$
         }
-    }
-
-    public static void main(String[] args) {
-
-        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
-        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
-        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
-
-        AS400 system = new AS400(hostname, user, password);
-
-        SendMessageOptions options = new SendMessageOptions();
-        options.setRecipients(new String[] { "RADDATZ" }); //$NON-NLS-1$
-        options.setMessageText("Test message sent by QEZSNDMSG"); //$NON-NLS-1$
-
-        QEZSNDMG main = new QEZSNDMG();
-        main.run(system, options);
-
     }
 }

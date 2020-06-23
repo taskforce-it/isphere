@@ -10,6 +10,8 @@ package biz.isphere.joblogexplorer.model;
 
 import java.io.UnsupportedEncodingException;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.joblogexplorer.api.listjoblog.JobLogListener;
@@ -23,8 +25,6 @@ import biz.isphere.joblogexplorer.api.retrievejobinformation.QUSRJOBI;
 import biz.isphere.joblogexplorer.api.retrievenetworkattributes.QWCRNETA;
 import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
-
-import com.ibm.as400.access.AS400;
 
 public class JobLogReader implements JobLogListener {
 
@@ -205,28 +205,6 @@ public class JobLogReader implements JobLogListener {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-    }
-
-    /**
-     * This method is used for testing purposes.
-     * <p>
-     * It parses the specified job log and prints the result.
-     * 
-     * @param args - none (not used)
-     */
-    public static void main(String[] args) throws Exception {
-
-        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
-        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
-        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
-
-        AS400 as400 = new AS400(hostname, user, password);
-
-        JobLogReader main = new JobLogReader();
-        JobLog jobLog = main.loadFromJob(as400, "TRADDATZA1", "RADDATZ", "791807"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
-        jobLog.dump();
 
     }
 
