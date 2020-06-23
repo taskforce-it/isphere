@@ -8,12 +8,12 @@
 
 package biz.isphere.joblogexplorer.api.retrievejobinformation;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
 
 /**
  * Retrieve Job Information (QUSRJOBI) API
@@ -72,30 +72,6 @@ public class QUSRJOBI extends APIProgramCallDocument {
         parameterList[5] = produceByteParameter(new APIErrorCode().getBytes());
 
         return parameterList;
-    }
-
-    /**
-     * This method is used for testing purposes.
-     * <p>
-     * It parses the specified job log and prints the result.
-     * 
-     * @param args - none (not used)
-     */
-    public static void main(String[] args) throws Exception {
-
-        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
-        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
-        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
-
-        AS400 as400 = new AS400(hostname, user, password);
-
-        JOBI0400 jobi0400 = new JOBI0400(as400);
-        QUSRJOBI main = new QUSRJOBI(as400);
-        main.setJob("*"); //$NON-NLS-1$
-        main.execute(jobi0400);
-
-        System.out.println("Job description: " + jobi0400.getJobDescriptionName()); //$NON-NLS-1$
-        System.out.println("  Library      : " + jobi0400.getJobDescriptionLibraryName()); //$NON-NLS-1$
     }
 
 }

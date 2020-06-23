@@ -14,12 +14,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
 
 /**
  * Retrieve Network Attributes (QWCRNETA) API
@@ -146,40 +146,5 @@ public class QWCRNETA extends APIProgramCallDocument {
         parameterList[4] = produceByteParameter(new APIErrorCode().getBytes());
 
         return parameterList;
-    }
-
-    /**
-     * This method is used for testing purposes.
-     * <p>
-     * It parses the specified job log and prints the result.
-     * 
-     * @param args - none (not used)
-     */
-    public static void main(String[] args) throws Exception {
-
-        String hostname = System.getProperty("isphere.junit.as400"); //$NON-NLS-1$
-        String user = System.getProperty("isphere.junit.username"); //$NON-NLS-1$
-        String password = System.getProperty("isphere.junit.password"); //$NON-NLS-1$
-
-        AS400 as400 = new AS400(hostname, user, password);
-
-        // Retrieving multiple attributes
-        QWCRNETA main = new QWCRNETA(as400);
-        main.addKey(QWCRNETA.Key.LCLLOCNAME);
-        main.addKey(QWCRNETA.Key.MSGQ);
-        main.addKey(QWCRNETA.Key.OUTQ);
-        main.addKey(QWCRNETA.Key.SYSNAME);
-        main.execute();
-        System.out.println("System name   : " + main.getCharValue(QWCRNETA.Key.SYSNAME)); //$NON-NLS-1$
-        System.out.println("Local location: " + main.getCharValue(QWCRNETA.Key.LCLLOCNAME)); //$NON-NLS-1$
-        System.out.println("Output queue  : " + main.getCharValue(QWCRNETA.Key.OUTQ)); //$NON-NLS-1$
-        System.out.println("Message queue : " + main.getCharValue(QWCRNETA.Key.MSGQ)); //$NON-NLS-1$
-
-        System.out.println();
-
-        // Retrieving one attribute
-        main = new QWCRNETA(as400);
-        main.execute(QWCRNETA.Key.SYSNAME);
-        System.out.println("System name: " + main.getCharValue()); //$NON-NLS-1$
     }
 }
