@@ -187,10 +187,7 @@ public class SpoolExporter extends TN5250jFrame {
                 // close the system connection
                 if (system != null) {
                     // close the spool file list if allocated
-                    if (splfList != null) {
-                        splfList.close();
-                        splfList = null;
-                    }
+                    closeSpooledFileList();
 
                     system.disconnectAllServices();
                 }
@@ -261,9 +258,7 @@ public class SpoolExporter extends TN5250jFrame {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // SpooledFileList splfList = null;
         if (splfList != null) {
-            splfList.removePrintObjectListListener(stm);
-            splfList.close();
-            splfList = null;
+            closeSpooledFileList();
         }
 
         // clear our data
@@ -315,8 +310,8 @@ public class SpoolExporter extends TN5250jFrame {
 
             }
 
-            splfList.openAsynchronously();
             splfList.addPrintObjectListListener(stm);
+            splfList.openAsynchronously();
 
             // if we have something update the status
             if (splfList != null) {
@@ -327,6 +322,7 @@ public class SpoolExporter extends TN5250jFrame {
 
         } catch (Exception erp) {
             updateStatus(erp.getMessage(), true);
+            closeSpooledFileList();
         }
 
         // setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -757,6 +753,16 @@ public class SpoolExporter extends TN5250jFrame {
         updateStatus(stat, false);
     }
 
+    private void closeSpooledFileList() {
+
+        if (splfList != null) {
+            splfList.removePrintObjectListListener(stm);
+            splfList.close();
+            splfList = null;
+            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
     /**
      * Custom table model used to display the spooled file list with the
      * attributes.
@@ -828,7 +834,7 @@ public class SpoolExporter extends TN5250jFrame {
 
         public void listCompleted(PrintObjectListEvent e) {
             // System.out.println("list completed");
-            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            closeSpooledFileList();
 
             SwingUtilities.invokeLater(new Thread() {
                 @Override
@@ -841,6 +847,8 @@ public class SpoolExporter extends TN5250jFrame {
         public void listErrorOccurred(PrintObjectListEvent e) {
 
             System.err.println("list error occurred : " + e.getException().getMessage());
+
+            closeSpooledFileList();
 
             SwingUtilities.invokeLater(new Thread() {
                 @Override
