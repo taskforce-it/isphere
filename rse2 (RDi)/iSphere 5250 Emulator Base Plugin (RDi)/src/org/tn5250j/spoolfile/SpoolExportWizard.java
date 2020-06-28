@@ -66,6 +66,7 @@ import com.ibm.as400.access.IFSFileOutputStream;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.PrintObjectTransformedInputStream;
 import com.ibm.as400.access.PrintParameterList;
+import com.ibm.as400.access.SecureAS400;
 import com.ibm.as400.access.SpooledFile;
 import com.ibm.as400.vaccess.IFSFileDialog;
 import com.lowagie.text.Document;
@@ -653,7 +654,12 @@ public class SpoolExportWizard extends GenericTn5250JFrame implements WizardList
 
             // Create an AS400 object. The system name was passed
             // as the first command line argument.
-            AS400 system = new AS400(systemName.getText());
+            AS400 system = null;
+            if (session.getSession().isSslConfigured()) {
+                system = new SecureAS400(systemName.getText());
+            } else {
+                system = new AS400(systemName.getText());
+            }
 
             String splfName = spooledFile.getText();
             int splfNumber = Integer.parseInt(spooledFileNumber.getText());
