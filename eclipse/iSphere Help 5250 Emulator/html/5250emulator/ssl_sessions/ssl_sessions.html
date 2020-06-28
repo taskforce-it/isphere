@@ -12,6 +12,7 @@
 	<ul>
 	<li><a href="#enabling_ssl_sessions">Enabling SSL Sessions</a></li>
 	<li><a href="#configuring_ssl_sessions">Configuring SSL Sessions</a></li>
+	<li><a href="#self_signed_certificates">Using Self-Signed Certificates</a></li>
 	</ul>
 	<p>
 	<a id="enabling_ssl_sessions"></a>
@@ -64,6 +65,28 @@
 			<td valign="top"><img src="assets/config_ssl_4.png" align="middle"></td>
 		</tr>
 	</table>
+	<p>
+	<a id="#self_signed_certificates"></a>
+	<h2>Using Self-Signed Certificates</h2>
+	<p>
+	Follow these steps to use self-signed certificates for connecting to your server:
+	<p>
+	<h3>Import the certificate to RDi</h3>
+	<p>
+	<ul>
+	<li>Run RDi as administrator.</li>
+	<li>Open <i>Window -> Preferences -> Remote Systems -> SSL</i>.</li>
+	<li>Import your <i>*.cer</i> file.</li>
+	</ul>
+	<p>
+	<h3>Import the certificate to JRE</h3>
+	<p>
+	<ul>
+	<li>Go to the <i>bin</i> directory or the JDK of RDi, e.g.: <code>c:\IBM\SDP_096\jdk\bin\</code></li>
+	<li>Execute </code>keytool -import -alias MYSYSTEM -file "c:\myCerts\MYSYSTEM.cer" -keystore "c:\IBM\SDP_096\jdk\jre\lib\security\cacerts"</code></li>
+	<li>The default password of the Java certificates store is: <i>changeit</i></li>
+	<li>When asked if want to trust the certificate, type: y</li>
+	</ul>
 	<p>
 		<iframe src="../../copyright.html" width="100%" frameborder="0"
 			marginheight="0" marginwidth="0"></iframe>
