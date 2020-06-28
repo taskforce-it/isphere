@@ -106,6 +106,20 @@ public class Session5250 implements SessionInterface, TN5250jConstants {
 
     }
 
+    /**
+     * @return true when SSL is configured but not necessary in use
+     * @see {@link #isSslSocket()}
+     */
+    public boolean isSslConfigured() {
+        if (sesConnProps.get(SESSION_SSL_TYPE) != null) {
+            final String sslType = (String)sesConnProps.get(SESSION_SSL_TYPE);
+            if (!SSL_TYPE_NONE.equals(sslType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isSendKeepAlive() {
         return heartBeat;
     }
