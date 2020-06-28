@@ -159,6 +159,15 @@ public final class tnvt implements Runnable, TN5250jConstants {
         sslType = type;
     }
 
+    public boolean isSSLConnection() {
+
+        if (sslType != null && !TN5250jConstants.SSL_TYPE_NONE.equals(sslType)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public void setDeviceName(String name) {
 
         devName = name;
@@ -252,7 +261,7 @@ public final class tnvt implements Runnable, TN5250jConstants {
                 // sock = new Socket(s, port);
                 // smk - For SSL compability
                 SocketConnector sc = new SocketConnector();
-                if (sslType != null) {
+                if (isSSLConnection()) {
                     sc.setSSLType(sslType);
                 }
 
