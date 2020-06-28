@@ -271,7 +271,6 @@ public class SpoolExporter extends TN5250jFrame {
             if (system == null) {
                 if (vt.isSSLConnection()) {
                     system = new SecureAS400(vt.getHostName());
-
                 } else {
                     system = new AS400(vt.getHostName());
                 }
