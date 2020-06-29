@@ -22,6 +22,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.debugger.moduleviews.DebuggerView;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.SecureAS400;
 
 public class ModuleViewEditorInput implements IStorageEditorInput {
 
@@ -35,7 +36,13 @@ public class ModuleViewEditorInput implements IStorageEditorInput {
     public ModuleViewEditorInput(AS400 system, String connectionName, String iSphereLibrary, DebuggerView[] debuggerViews, int viewNumber)
         throws Exception {
 
-        this.system = new AS400(system); // Lazy connect in ModuleViewStorage
+        // Lazy connect in ModuleViewStorage
+        if (system instanceof SecureAS400) {
+            this.system = new SecureAS400(system);
+        } else {
+            this.system = new AS400(system);
+        }
+
         this.connectionName = connectionName;
         this.debuggerViews = debuggerViews;
         this.viewStorages = new ModuleViewStorage[debuggerViews.length];
