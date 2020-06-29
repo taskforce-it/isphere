@@ -10,6 +10,10 @@ Changelog: iSphere 3.7.2.r
    TN5250j sessions has SSL enabled.
  • Changed SpoolExportWizard to use SSL connection, when the
    associated TN5250j sessions has SSL enabled.
+ • Changed ModuleViewEditorInput to use an SSL connection, when the
+   associated RSE connection has SSL enabled.
+ • Changed QueuedMessageSubSystem to use an SSL connection, when the
+   associated RSE connection has SSL enabled.
  • Removed a whole bunch of unused NLS strings from iSphere 5250
    Emulator Core Plugin.
  • Added Marco Riva to the list of Italian translators.
