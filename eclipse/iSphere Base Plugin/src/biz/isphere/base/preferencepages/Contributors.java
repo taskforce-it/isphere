@@ -166,6 +166,10 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         Label nicolaBrion = new Label(translators, SWT.NONE);
         nicolaBrion.setText("Nicola Brion");
 
+        new Label(translators, SWT.NONE); // Filler
+        Label marcoRiva = new Label(translators, SWT.NONE);
+        marcoRiva.setText("Marco Riva");
+
     }
 
     private void createSectionDocumentation(Composite container) {
