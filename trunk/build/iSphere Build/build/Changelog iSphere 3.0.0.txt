@@ -1,6 +1,15 @@
 
 Changelog: iSphere 3.7.2.r
 --------------------------
+
+ • Updated iSphere help with instructions how to use self-signed
+   certificates.
+ • Fixed SpoolExporter to properly close the list of spooled files
+   and to restore the cursor on errors.
+ • Changed SpoolExporter to use SSL connection, when the associated
+   TN5250j sessions has SSL enabled.
+ • Changed SpoolExportWizard to use SSL connection, when the
+   associated TN5250j sessions has SSL enabled.
  • Removed a whole bunch of unused NLS strings from iSphere 5250
    Emulator Core Plugin.
  • Added Marco Riva to the list of Italian translators.
