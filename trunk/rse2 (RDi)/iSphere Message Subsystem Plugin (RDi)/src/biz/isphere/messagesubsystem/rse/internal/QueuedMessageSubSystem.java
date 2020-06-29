@@ -71,7 +71,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
         try {
 
-            QueuedMessageFactory factory = new QueuedMessageFactory(getToolboxAS400Object());
+            QueuedMessageFactory factory = new QueuedMessageFactory(getToolboxAS400Object(false));
             QueuedMessage[] queuedMessages = factory.getQueuedMessages(queuedMessageFilter);
             queuedMessageResources = new QueuedMessageResource[queuedMessages.length];
 
@@ -217,7 +217,7 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
                 // Start new message monitor
                 debugPrint("Subsystem: Starting message monitor thread ..."); //$NON-NLS-1$
-                pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, new AS400(getToolboxAS400Object()), monitoringAttributes);
+                pendingMonitoredMessageQueue = new MonitoredMessageQueue(this, getToolboxAS400Object(true), monitoringAttributes);
                 pendingMonitoredMessageQueue.startMonitoring();
 
                 // End running message monitor
@@ -302,10 +302,10 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
         return msgObj;
     }
 
-    private AS400 getToolboxAS400Object() {
+    private AS400 getToolboxAS400Object(boolean createNew) {
 
         try {
-            return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject();
+            return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject(createNew);
         } catch (SystemMessageException e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
             return null;
