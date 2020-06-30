@@ -8,12 +8,7 @@
 
 package biz.isphere.core.internal;
 
-import java.io.File;
-import java.net.URL;
-
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -49,12 +44,10 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400FTP;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.FTP;
 
-public class TransferISphereLibrary extends Shell {
+public class TransferISphereLibrary extends Shell implements StatusMessageReceiver {
 
     private AS400 as400;
     private CommandCall commandCall;
@@ -246,102 +239,6 @@ public class TransferISphereLibrary extends Shell {
         // Disable the check that prevents subclassing of SWT components
     }
 
-    public void setStatus(String status) {
-        TableItem itemStatus = new TableItem(tableStatus, SWT.BORDER);
-        itemStatus.setText(status);
-        tableStatus.update();
-        redraw();
-    }
-
-    private boolean checkLibraryPrecondition(String iSphereLibrary, String aspGroup) {
-
-        while (libraryExists(iSphereLibrary)) {
-            if (!MessageDialog.openQuestion(
-                getShell(),
-                Messages.msgBox_headline_Delete_Object,
-                Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "\n\n"
-                    + Messages.bind(Messages.Do_you_want_to_delete_library_A, iSphereLibrary))) {
-                return false;
-            }
-            setStatus(Messages.bind(Messages.Deleting_library_A, iSphereLibrary));
-            deleteLibrary(iSphereLibrary, aspGroup);
-        }
-
-        return true;
-    }
-
-    private boolean libraryExists(String iSphereLibrary) {
-
-        if (!ISphereHelper.checkLibrary(as400, iSphereLibrary)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean deleteLibrary(String iSphereLibrary, String aspGroup) {
-
-        if (!executeCommand(produceDeleteLibraryCommand(iSphereLibrary, aspGroup), true).equals("")) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean checkSaveFilePrecondition(String workLibrary, String saveFileName) {
-
-        while (saveFileExists(workLibrary, saveFileName)) {
-            if (!MessageDialog.openQuestion(
-                getShell(),
-                Messages.msgBox_headline_Delete_Object,
-                Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName }) + "\n\n"
-                    + Messages.bind(Messages.Do_you_want_to_delete_object_A_B_type_C, new String[] { workLibrary, saveFileName, "*FILE" }))) {
-                return false;
-            }
-            setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C, new String[] { workLibrary, saveFileName, "*FILE" }));
-            deleteSaveFile(workLibrary, saveFileName);
-        }
-
-        return true;
-    }
-
-    private boolean saveFileExists(String workLibrary, String saveFileName) {
-
-        if (!ISphereHelper.checkObject(as400, workLibrary, saveFileName, "*FILE")) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean deleteSaveFile(String workLibrary, String saveFileName) {
-
-        if (!executeCommand("DLTF FILE(" + workLibrary + "/" + saveFileName + ")", true).equals("")) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean createSaveFile(String workLibrary, String saveFileName) {
-
-        if (!executeCommand("CRTSAVF FILE(" + workLibrary + "/" + saveFileName + ") TEXT('iSphere')", true).equals("")) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean restoreLibrary(String workLibrary, String saveFileName, String iSphereLibrary, String aspGroup) {
-
-        String cpfMsg = executeCommand(produceRestoreLibraryCommand(workLibrary, saveFileName, iSphereLibrary, aspGroup), true);
-        if (!cpfMsg.equals("")) {
-            return false;
-        }
-
-        return true;
-    }
-
     private void printJobLog() {
 
         String cpfMsg = executeCommand("DSPJOBLOG JOB(*) OUTPUT(*PRINT)", true);
@@ -404,24 +301,11 @@ public class TransferISphereLibrary extends Shell {
         return false;
     }
 
-    private String produceRestoreLibraryCommand(String workLibrary, String saveFileName, String iSphereLibrary, String aspGroup) {
-
-        String command = "RSTLIB SAVLIB(ISPHERE) DEV(*SAVF) SAVF(" + workLibrary + "/" + saveFileName + ") RSTLIB(" + iSphereLibrary + ")";
-        if (ISphereHelper.isASPGroupSpecified(aspGroup)) {
-            command += " RSTASPDEV(" + aspGroup + ")";
-        }
-
-        return command;
-    }
-
-    private String produceDeleteLibraryCommand(String iSphereLibrary, String aspGroup) {
-
-        String command = "DLTLIB LIB(" + iSphereLibrary + ")";
-        if (ISphereHelper.isASPGroupSpecified(aspGroup)) {
-            command += " ASPDEV(*)";
-        }
-
-        return command;
+    public void setStatus(String message) {
+        TableItem itemStatus = new TableItem(tableStatus, SWT.BORDER);
+        itemStatus.setText(message);
+        tableStatus.update();
+        redraw();
     }
 
     private class TransferLibrarySelectionAdapter extends SelectionAdapter {
@@ -431,96 +315,21 @@ public class TransferISphereLibrary extends Shell {
             buttonStart.setEnabled(false);
             buttonClose.setEnabled(false);
 
-            boolean successfullyTransfered = false;
+            ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), as400, ftpPort, iSphereLibrary, aspGroup);
+            uploader.setStatusMessageReceiver(TransferISphereLibrary.this);
 
-            try {
+            buttonPanel.dispose();
+            buttonPanel = createButtons(true);
+            layout(true);
 
-                String workLibrary = "QGPL";
-                String saveFileName = iSphereLibrary;
-
-                boolean ok = true;
-                if (ISphereHelper.isASPGroupSpecified(aspGroup)) {
-                    String cpfMsg = executeCommand("SETASPGRP ASPGRP(" + aspGroup + ")", true);
-                    if (!cpfMsg.equals("")) {
-                        setStatus(Messages.bind(Messages.Error_occurred_while_setting_the_asp_group_to_A, aspGroup));
-                        ok = false;
-                    }
-                }
-                if (ok) {
-                    setStatus(Messages.bind(Messages.Checking_library_A_for_existence, iSphereLibrary));
-                    if (!checkLibraryPrecondition(iSphereLibrary, aspGroup)) {
-                        setStatus("!!!   " + Messages.bind(Messages.Library_A_does_already_exist, iSphereLibrary) + "   !!!");
-                    } else {
-                        setStatus(Messages.bind(Messages.Checking_file_B_in_library_A_for_existence, new String[] { workLibrary, saveFileName }));
-                        if (!checkSaveFilePrecondition(workLibrary, saveFileName)) {
-                            setStatus("!!!   "
-                                + Messages.bind(Messages.File_B_in_library_A_does_already_exist, new String[] { workLibrary, saveFileName })
-                                + "   !!!");
-                        } else {
-
-                            setStatus(Messages.bind(Messages.Creating_save_file_B_in_library_A, new String[] { workLibrary, saveFileName }));
-                            if (!createSaveFile(workLibrary, saveFileName)) {
-                                setStatus("!!!   "
-                                    + Messages.bind(Messages.Could_not_create_save_file_B_in_library_A, new String[] { workLibrary, saveFileName })
-                                    + "   !!!");
-                            } else {
-
-                                try {
-
-                                    setStatus(Messages.Sending_save_file_to_host);
-                                    setStatus(Messages.bind(Messages.Using_Ftp_port_number, new Integer(ftpPort)));
-                                    AS400FTP client = new AS400FTP(as400);
-
-                                    URL fileUrl = FileLocator.toFileURL(ISpherePlugin.getInstallURL());
-                                    File file = new File(fileUrl.getPath() + "Server" + File.separator + "ISPHERE.SAVF");
-                                    client.setPort(ftpPort);
-                                    client.setDataTransferType(FTP.BINARY);
-                                    if (client.connect()) {
-                                        client.put(file, "/QSYS.LIB/" + workLibrary + ".LIB/" + saveFileName + ".FILE");
-                                        client.disconnect();
-                                    }
-
-                                    setStatus(Messages.bind(Messages.Restoring_library_A, iSphereLibrary));
-                                    if (!restoreLibrary(workLibrary, saveFileName, iSphereLibrary, aspGroup)) {
-                                        setStatus("!!!   " + Messages.bind(Messages.Could_not_restore_library_A, iSphereLibrary) + "   !!!");
-                                    } else {
-                                        successfullyTransfered = true;
-                                    }
-
-                                } catch (Throwable e) {
-                                    ISpherePlugin.logError(Messages.Could_not_send_save_file_to_host, e);
-
-                                    setStatus("!!!   " + Messages.Could_not_send_save_file_to_host + "   !!!");
-                                    setStatus(e.getLocalizedMessage());
-                                } finally {
-
-                                    setStatus(Messages.bind(Messages.Deleting_object_A_B_of_type_C,
-                                        new String[] { workLibrary, saveFileName, "*FILE" }));
-                                    deleteSaveFile(workLibrary, saveFileName);
-                                }
-
-                            }
-                        }
-                    }
-                }
-
-                buttonPanel.dispose();
-                buttonPanel = createButtons(true);
-                layout(true);
-
-            } finally {
-
-                if (successfullyTransfered) {
-                    setStatus("!!!   " + Messages.bind(Messages.Library_A_successfull_transfered, iSphereLibrary) + "   !!!");
-                    buttonStart.setEnabled(false);
-                    buttonClose.setEnabled(true);
-                    buttonClose.setFocus();
-                } else {
-                    setStatus("!!!   " + Messages.bind(Messages.Error_occurred_while_transfering_library_A, iSphereLibrary) + "   !!!");
-                    buttonStart.setEnabled(true);
-                    buttonClose.setEnabled(true);
-                    buttonJobLog.setFocus();
-                }
+            if (uploader.run()) {
+                buttonStart.setEnabled(false);
+                buttonClose.setEnabled(true);
+                buttonClose.setFocus();
+            } else {
+                buttonStart.setEnabled(true);
+                buttonClose.setEnabled(true);
+                buttonJobLog.setFocus();
             }
         }
     }
