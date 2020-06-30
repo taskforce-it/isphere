@@ -57,6 +57,7 @@ public class XDialog extends Dialog {
 
     private DialogSettingsManager dialogSettingsManager = null;
     private StatusLineManager statusLineManager = null;
+    private Point minimalSize = null;
 
     /**
      * {@inheritDoc}
@@ -65,6 +66,7 @@ public class XDialog extends Dialog {
         super(parentShell);
         initializeDialogSettingsManager();
         setStyleResizable();
+        setMinimalSize(getDefaultMinimalSize());
     }
 
     /**
@@ -188,9 +190,44 @@ public class XDialog extends Dialog {
             }
         }
 
+        result = ensureMinimalHeight(result);
+        result = ensureMinimalWidth(result);
+
         // No attempt is made to constrain the bounds. The default
         // constraining behavior in Window will be used.
         return result;
+    }
+
+    private Point ensureMinimalHeight(Point result) {
+
+        if (minimalSize.y == SWT.DEFAULT) {
+            return result;
+        }
+
+        result.y = Math.max(minimalSize.y, result.y);
+        return result;
+    }
+
+    private Point ensureMinimalWidth(Point result) {
+
+        if (minimalSize.x == SWT.DEFAULT) {
+            return result;
+        }
+
+        result.x = Math.max(minimalSize.x, result.x);
+        return result;
+    }
+
+    public void setMinimalSize(Point minimalSize) {
+        if (minimalSize == null) {
+            this.minimalSize = getDefaultMinimalSize();
+            return;
+        }
+        this.minimalSize = minimalSize;
+    }
+
+    private Point getDefaultMinimalSize() {
+        return new Point(SWT.DEFAULT, SWT.DEFAULT);
     }
 
     /**

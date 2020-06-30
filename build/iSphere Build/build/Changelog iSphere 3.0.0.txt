@@ -17,6 +17,7 @@ Changelog: iSphere 3.7.2.r
  • Removed a whole bunch of unused NLS strings from iSphere 5250
    Emulator Core Plugin.
  • Added Marco Riva to the list of Italian translators.
+ • Added option to set the minimal size of a XDialog.
 
 Changelog: iSphere 3.7.2.b001
 -----------------------------
