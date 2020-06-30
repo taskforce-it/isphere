@@ -80,7 +80,9 @@ public class SignOnDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        Point point = getShell().computeSize(250, SWT.DEFAULT, true);
+        Point defaultSize = new Point(320, 240);
+        setMinimalSize(defaultSize);
+        Point point = getShell().computeSize(defaultSize.x, defaultSize.y, true);
         return point;
     }
 
