@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
@@ -485,6 +486,18 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces a read-only combo field.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param style - the style of dialog to construct
+     * @return read-only combo field
+     */
+    public static Combo createReadOnlyCombo(Composite parent, int style) {
+        return WidgetFactory.getInstance().produceComboField(parent, SWT.READ_ONLY | style);
+    }
+
+    /**
      * Produces a read-only history combo field.
      * 
      * @param parent a composite control which will be the parent of the new
@@ -493,6 +506,17 @@ public final class WidgetFactory {
      */
     public static HistoryCombo createReadOnlyHistoryCombo(Composite parent) {
         return WidgetFactory.getInstance().produceHistoryComboField(parent, SWT.READ_ONLY);
+    }
+
+    /**
+     * Produces a read-only connection combo field.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return read-only connection combo field
+     */
+    public static ConnectionCombo createConnectionCombo(Composite parent, int style) {
+        return WidgetFactory.getInstance().produceConnectionComboField(parent, style);
     }
 
     /**
@@ -851,6 +875,13 @@ public final class WidgetFactory {
     private HistoryCombo produceHistoryComboField(Composite parent, int style) {
 
         HistoryCombo combo = new HistoryCombo(parent, style | SWT.DROP_DOWN);
+
+        return combo;
+    }
+
+    private ConnectionCombo produceConnectionComboField(Composite parent, int style) {
+
+        ConnectionCombo combo = new ConnectionCombo(parent, style);
 
         return combo;
     }

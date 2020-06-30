@@ -18,6 +18,7 @@ Changelog: iSphere 3.7.2.r
    Emulator Core Plugin.
  • Added Marco Riva to the list of Italian translators.
  • Added option to set the minimal size of a XDialog.
+ • Added ConnectionCombo SWT control.
 
 Changelog: iSphere 3.7.2.b001
 -----------------------------
