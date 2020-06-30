@@ -19,6 +19,8 @@ Changelog: iSphere 3.7.2.r
  • Added Marco Riva to the list of Italian translators.
  • Added option to set the minimal size of a XDialog.
  • Added ConnectionCombo SWT control.
+ • Changed signon dialog to expect a connection name instead of a
+   host name, when uploading the iSphere product library.
 
 Changelog: iSphere 3.7.2.b001
 -----------------------------

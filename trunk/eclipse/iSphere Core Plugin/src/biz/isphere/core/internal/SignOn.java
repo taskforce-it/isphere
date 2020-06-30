@@ -8,12 +8,16 @@
 
 package biz.isphere.core.internal;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -23,17 +27,22 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.SecureAS400;
 
 public class SignOn {
 
+    private static final String OVERRIDE_CREDENTIALS = "OVERRIDE_CREDENTIALS";
     private static final String HOST = "HOST";
     private static final String USER = "USER";
 
-    private Text textHost;
+    private ConnectionCombo comboConnections;
+    private Button btnOverrideCredentials;
     private Text textUser;
     private Text textPassword;
     private StatusLineManager statusLineManager;
@@ -44,23 +53,33 @@ public class SignOn {
         as400 = null;
     }
 
-    public void createContents(Composite parent, String aHostName) {
+    public void createContents(Composite parent, String aConnectionName) {
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
 
         final Composite compositeGeneral = new Composite(container, SWT.NONE);
+        compositeGeneral.setLayout(new GridLayout(2, false));
         compositeGeneral.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        final GridLayout gridLayoutCompositeGeneral = new GridLayout();
-        gridLayoutCompositeGeneral.numColumns = 2;
-        compositeGeneral.setLayout(gridLayoutCompositeGeneral);
 
         final Label labelHost = new Label(compositeGeneral, SWT.NONE);
         labelHost.setText(Messages.Host_colon);
 
-        textHost = WidgetFactory.createText(compositeGeneral);
-        textHost.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        textHost.setText(aHostName);
+        comboConnections = WidgetFactory.createConnectionCombo(compositeGeneral, SWT.BORDER);
+        comboConnections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        comboConnections.setText(aConnectionName);
+
+        WidgetFactory.createLineFiller(compositeGeneral);
+
+        btnOverrideCredentials = WidgetFactory.createCheckbox(compositeGeneral, "&Override credentials");
+        btnOverrideCredentials.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        btnOverrideCredentials.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setControlEnablement();
+                positionCursor();
+            }
+        });
 
         final Label labelUser = new Label(compositeGeneral, SWT.NONE);
         labelUser.setText(Messages.User_colon);
@@ -82,8 +101,8 @@ public class SignOn {
         final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
         statusLine.setLayoutData(gridDataStatusLine);
 
-        if (StringHelper.isNullOrEmpty(textHost.getText())) {
-            textHost.setFocus();
+        if (StringHelper.isNullOrEmpty(comboConnections.getText())) {
+            comboConnections.setFocus();
         } else if (StringHelper.isNullOrEmpty(textUser.getText())) {
             textUser.setFocus();
         } else if (StringHelper.isNullOrEmpty(textPassword.getText())) {
@@ -97,12 +116,16 @@ public class SignOn {
 
     private void positionCursor() {
 
-        if (StringHelper.isNullOrEmpty(textHost.getText())) {
-            textHost.setFocus();
+        if (StringHelper.isNullOrEmpty(comboConnections.getText())) {
+            comboConnections.setFocus();
+        } else if (!btnOverrideCredentials.getSelection()) {
+            comboConnections.setFocus();
         } else if (StringHelper.isNullOrEmpty(textUser.getText())) {
             textUser.setFocus();
-        } else {
+        } else if (StringHelper.isNullOrEmpty(textPassword.getText())) {
             textPassword.setFocus();
+        } else {
+            textUser.setFocus();
         }
     }
 
@@ -118,38 +141,63 @@ public class SignOn {
 
         storeScreenValues();
 
-        textHost.getText().trim();
-        textUser.getText().trim();
-        textPassword.getText().trim();
+        String userId = null;
+        String password = null;
 
-        if (textHost.getText().equals("")) {
+        if (comboConnections.getText().equals("")) {
             setErrorMessage(Messages.Enter_a_host);
-            textHost.setFocus();
+            comboConnections.setFocus();
             return false;
         }
 
-        if (textUser.getText().equals("")) {
-            setErrorMessage(Messages.Enter_a_user);
+        if (btnOverrideCredentials.getSelection()) {
+
+            userId = textUser.getText().trim();
+            password = textPassword.getText().trim();
+
+            if (StringHelper.isNullOrEmpty(userId)) {
+                setErrorMessage(Messages.Enter_a_user);
+                textUser.setFocus();
+                return false;
+            }
+
+            if (StringHelper.isNullOrEmpty(password)) {
+                setErrorMessage(Messages.Enter_a_password);
+                textPassword.setFocus();
+                return false;
+            }
+
+        }
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(comboConnections.getText());
+        if (system instanceof SecureAS400) {
+            as400 = new SecureAS400(system);
+        } else {
+            as400 = new AS400(system);
+        }
+
+        try {
+
+            if (userId != null) {
+                as400.setUserId(userId);
+            }
+
+            if (password != null) {
+                as400.setPassword(password);
+            }
+
+            as400.validateSignon();
+        } catch (PropertyVetoException e) {
+            setErrorMessage(e.getMessage());
             textUser.setFocus();
             return false;
-        }
-
-        if (textPassword.getText().equals("")) {
-            setErrorMessage(Messages.Enter_a_password);
-            textPassword.setFocus();
-            return false;
-        }
-
-        as400 = new AS400(textHost.getText(), textUser.getText(), textPassword.getText());
-        try {
-            as400.validateSignon();
         } catch (AS400SecurityException e) {
             setErrorMessage(e.getMessage());
-            textHost.setFocus();
+            textPassword.setFocus();
             return false;
         } catch (IOException e) {
             setErrorMessage(e.getMessage());
-            textHost.setFocus();
+            comboConnections.setFocus();
             return false;
         }
 
@@ -158,19 +206,34 @@ public class SignOn {
 
     private void loadScreenValues() {
 
-        if (StringHelper.isNullOrEmpty(textHost.getText())) {
-            String host = getDialogSettingsManager().loadValue(HOST, "");
-            textHost.setText(host);
-        }
+        boolean overrideCredentials = getDialogSettingsManager().loadBooleanValue(OVERRIDE_CREDENTIALS, false);
+        btnOverrideCredentials.setSelection(overrideCredentials);
+
+        String host = getDialogSettingsManager().loadValue(HOST, "");
+        comboConnections.setText(host);
 
         String user = getDialogSettingsManager().loadValue(USER, "");
         textUser.setText(user);
+
+        setControlEnablement();
     }
 
     private void storeScreenValues() {
 
-        getDialogSettingsManager().storeValue(HOST, textHost.getText());
+        getDialogSettingsManager().storeValue(OVERRIDE_CREDENTIALS, btnOverrideCredentials.getSelection());
+        getDialogSettingsManager().storeValue(HOST, comboConnections.getText());
         getDialogSettingsManager().storeValue(USER, textUser.getText());
+    }
+
+    private void setControlEnablement() {
+
+        if (btnOverrideCredentials.getSelection()) {
+            textUser.setEnabled(true);
+            textPassword.setEnabled(true);
+        } else {
+            textUser.setEnabled(false);
+            textPassword.setEnabled(false);
+        }
     }
 
     public AS400 getAS400() {
