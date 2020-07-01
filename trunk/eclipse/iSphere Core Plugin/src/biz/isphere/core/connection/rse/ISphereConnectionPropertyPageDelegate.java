@@ -18,7 +18,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -65,6 +64,7 @@ public class ISphereConnectionPropertyPageDelegate {
     private int systemCcsid;
 
     private boolean updateISphereLibraryVersion;
+    private boolean listenersEnabled;
 
     /**
      * Constructor for SamplePropertyPage.
@@ -95,13 +95,12 @@ public class ISphereConnectionPropertyPageDelegate {
 
         checkBoxUseConnectionSpecificSettings = WidgetFactory.createCheckbox(parent);
         checkBoxUseConnectionSpecificSettings.setText(Messages.Use_connection_specific_settings);
-        checkBoxUseConnectionSpecificSettings.addSelectionListener(new SelectionListener() {
+        checkBoxUseConnectionSpecificSettings.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
-                setControlEnablement();
-                updateISphereLibraryVersion();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
+                if (listenersEnabled) {
+                    setControlEnablement();
+                    updateISphereLibraryVersion();
+                }
             }
         });
 
@@ -122,6 +121,10 @@ public class ISphereConnectionPropertyPageDelegate {
 
     public boolean verifyPageContents() {
         return true;
+    }
+
+    public void setControlListenersEnabled(boolean enabled) {
+        this.listenersEnabled = enabled;
     }
 
     public void setControlEnablement() {
@@ -179,14 +182,16 @@ public class ISphereConnectionPropertyPageDelegate {
 
         Composite parent = createDefaultComposite(container, ""); //$NON-NLS-1$
 
-        Label labelHostName = new Label(parent, SWT.NONE);
-        labelHostName.setLayoutData(createLabelLayoutData());
-        labelHostName.setText(Messages.Host_name_colon);
+        Label labelConnectionName = new Label(parent, SWT.NONE);
+        labelConnectionName.setLayoutData(createLabelLayoutData());
+        labelConnectionName.setText(Messages.Connection_colon);
 
         textConnectionName = WidgetFactory.createReadOnlyText(parent);
         textConnectionName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
-                updateISphereLibraryVersion();
+                if (listenersEnabled) {
+                    updateISphereLibraryVersion();
+                }
             }
         });
         textConnectionName.setLayoutData(createTextLayoutData());
@@ -207,13 +212,15 @@ public class ISphereConnectionPropertyPageDelegate {
         textISphereLibrary.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
-                if (!validateISphereLibraryName()) {
-                    setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
-                    setValid(false);
-                } else {
-                    clearErrorMessage();
-                    setValid(true);
+                if (listenersEnabled) {
+                    iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
+                    if (!validateISphereLibraryName()) {
+                        setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
+                        setValid(false);
+                    } else {
+                        clearErrorMessage();
+                        setValid(true);
+                    }
                 }
             }
         });
@@ -225,9 +232,6 @@ public class ISphereConnectionPropertyPageDelegate {
         textISphereLibrary.setLayoutData(createTextLayoutData());
         textISphereLibrary.setTextLimit(10);
 
-        // TODO: fix library name validator (pass CCSID) - DONE
-        validatorLibrary = Validator.getLibraryNameInstance(getSystemCcsid());
-
         Label labelASPGroup = new Label(parent, SWT.NONE);
         labelASPGroup.setLayoutData(createLabelLayoutData());
         labelASPGroup.setText(Messages.ASP_group_colon);
@@ -235,23 +239,22 @@ public class ISphereConnectionPropertyPageDelegate {
         comboASPGroup = WidgetFactory.createUpperCaseCombo(parent);
         comboASPGroup.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
-                aspGroup = comboASPGroup.getText().toUpperCase().trim();
-                if (!validateASPGroup()) {
-                    setErrorMessage(Messages.The_value_in_field_ASP_group_is_not_valid);
-                    setValid(false);
-                } else {
-                    setErrorMessage(null);
-                    setValid(true);
-                    updateISphereLibraryVersion();
+                if (listenersEnabled) {
+                    aspGroup = comboASPGroup.getText().toUpperCase().trim();
+                    if (!validateASPGroup()) {
+                        setErrorMessage(Messages.The_value_in_field_ASP_group_is_not_valid);
+                        setValid(false);
+                    } else {
+                        setErrorMessage(null);
+                        setValid(true);
+                        updateISphereLibraryVersion();
+                    }
                 }
             }
         });
         comboASPGroup.setLayoutData(createTextLayoutData());
         comboASPGroup.setTextLimit(10);
         comboASPGroup.add("*NONE"); //$NON-NLS-1$
-
-        validatorASPGroup = Validator.getNameInstance(getSystemCcsid());
-        validatorASPGroup.addSpecialValue("*NONE"); //$NON-NLS-1$
 
         Label labelIShereLibraryVersion = new Label(parent, SWT.NONE);
         labelIShereLibraryVersion.setLayoutData(createLabelLayoutData());
@@ -262,13 +265,12 @@ public class ISphereConnectionPropertyPageDelegate {
 
         buttonUpdateISphereLibraryVersion = WidgetFactory.createPushButton(parent);
         buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REFRESH));
-        buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionListener() {
+        buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
-                updateISphereLibraryVersion = true;
-                updateISphereLibraryVersion();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent arg0) {
+                if (listenersEnabled) {
+                    updateISphereLibraryVersion = true;
+                    updateISphereLibraryVersion();
+                }
             }
         });
 
@@ -276,14 +278,18 @@ public class ISphereConnectionPropertyPageDelegate {
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                String hostName = textConnectionName.getText();
-                int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary, aspGroup);
-                handler.setConnectionsEnabled(false);
-                try {
-                    handler.execute(null);
-                } catch (Throwable e) {
-                    ISpherePlugin.logError("*** Failed to transfer iSphere library ***", e); //$NON-NLS-1$
+                if (listenersEnabled) {
+                    if (validateAll()) {
+                        String hostName = textConnectionName.getText();
+                        int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
+                        TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary, aspGroup);
+                        handler.setConnectionsEnabled(false);
+                        try {
+                            handler.execute(null);
+                        } catch (Throwable e) {
+                            ISpherePlugin.logError("*** Failed to transfer iSphere library ***", e); //$NON-NLS-1$
+                        }
+                    }
                 }
             }
         });
@@ -292,16 +298,26 @@ public class ISphereConnectionPropertyPageDelegate {
 
     }
 
+    private boolean hasSystemCcsid() {
+
+        if (getSystemCcsid() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private int getSystemCcsid() {
 
         if (systemCcsid == -1) {
             systemCcsid = IBMiHostContributionsHandler.getSystemCcsid(connectionName);
-            if (systemCcsid < 0) {
-                systemCcsid = Preferences.getInstance().getSystemCcsid();
-            }
         }
 
         return systemCcsid;
+    }
+
+    private AS400 getSystem(String connectionName) {
+        return IBMiHostContributionsHandler.getSystem(connectionName);
     }
 
     private Composite createDefaultComposite(Composite parent, String text) {
@@ -358,7 +374,7 @@ public class ISphereConnectionPropertyPageDelegate {
 
         try {
 
-            AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+            AS400 as400 = getSystem(connectionName);
             if (as400 == null) {
                 updateISphereLibraryVersion = false;
                 return Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName);
@@ -388,8 +404,31 @@ public class ISphereConnectionPropertyPageDelegate {
         }
     }
 
+    private boolean validateAll() {
+
+        if (getSystem(connectionName) == null) {
+            setErrorMessage(Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName));
+            return false;
+        }
+
+        if (!hasSystemCcsid()) {
+            return setValid(false);
+        } else if (!validateISphereLibraryName()) {
+            setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
+            return setValid(false);
+        } else if (!validateASPGroup()) {
+            setErrorMessage(Messages.The_value_in_field_ASP_group_is_not_valid);
+            return setValid(false);
+        } else {
+            updateISphereLibraryVersion = true;
+            updateISphereLibraryVersion();
+            clearErrorMessage();
+            return setValid(true);
+        }
+    }
+
     private boolean validateISphereLibraryName() {
-        if (StringHelper.isNullOrEmpty(iSphereLibrary) || !validatorLibrary.validate(iSphereLibrary)) {
+        if (StringHelper.isNullOrEmpty(iSphereLibrary) || !getLibraryValidator().validate(iSphereLibrary)) {
             return false;
         } else {
             return true;
@@ -397,11 +436,26 @@ public class ISphereConnectionPropertyPageDelegate {
     }
 
     private boolean validateASPGroup() {
-        if (StringHelper.isNullOrEmpty(aspGroup) || !validatorASPGroup.validate(aspGroup)) {
+        if (StringHelper.isNullOrEmpty(aspGroup) || !getASPGroupValidator().validate(aspGroup)) {
             return false;
         } else {
             return true;
         }
+    }
+
+    private Validator getLibraryValidator() {
+        if (validatorLibrary == null) {
+            validatorLibrary = Validator.getLibraryNameInstance(getSystemCcsid());
+        }
+        return validatorLibrary;
+    }
+
+    private Validator getASPGroupValidator() {
+        if (validatorASPGroup == null) {
+            validatorASPGroup = Validator.getNameInstance(getSystemCcsid());
+            validatorASPGroup.addSpecialValue("*NONE"); //$NON-NLS-1$
+        }
+        return validatorASPGroup;
     }
 
     private void setErrorMessage(String message) {
@@ -412,7 +466,8 @@ public class ISphereConnectionPropertyPageDelegate {
         parent.clearErrorMessage();
     }
 
-    private void setValid(boolean valid) {
+    private boolean setValid(boolean valid) {
         parent.setValid(valid);
+        return valid;
     }
 }

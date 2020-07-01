@@ -23,6 +23,8 @@ Changelog: iSphere 3.7.2.r
    host name, when uploading the iSphere product library.
  • Changed uploading library dialogs to let the user select a
    RSE connection for uploading the iSphere library.
+ • Disabled validation, when the iSphere Connection Properties
+   dialog is opened.
 
 Changelog: iSphere 3.7.2.b001
 -----------------------------
