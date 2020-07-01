@@ -191,10 +191,10 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         buttonPanel = createButtons(false);
 
-        updateConnectionProperties();
+        showConnectionProperties();
     }
 
-    private void updateConnectionProperties() {
+    private void showConnectionProperties() {
 
         clearStatus();
 
@@ -367,7 +367,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         commandCall = new CommandCall(as400);
 
-        updateConnectionProperties();
+        showConnectionProperties();
 
         return true;
     }
@@ -381,7 +381,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         commandCall = null;
 
-        updateConnectionProperties();
+        showConnectionProperties();
     }
 
     private class TransferLibrarySelectionAdapter extends SelectionAdapter {
@@ -400,7 +400,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                     return;
                 }
             } else {
-                updateConnectionProperties();
+                showConnectionProperties();
             }
 
             ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), as400, ftpPort, iSphereLibrary, aspGroup);
