@@ -131,7 +131,7 @@ public final class Preferences {
 
     private static final String ASP_GROUP = "ASP_GROUP"; //$NON-NLS-1$
 
-    private static final String HOST_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
+    private static final String CONNECTION_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
 
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
@@ -282,8 +282,8 @@ public final class Preferences {
         return preferenceStore.getString(ASP_GROUP);
     }
 
-    public String getHostName() {
-        return preferenceStore.getString(HOST_NAME);
+    public String getConnectionName() {
+        return preferenceStore.getString(CONNECTION_NAME);
     }
 
     public int getFtpPortNumber() {
@@ -604,8 +604,8 @@ public final class Preferences {
         preferenceStore.setValue(ASP_GROUP, aASPGroup.trim());
     }
 
-    public void setHostName(String aHostName) {
-        preferenceStore.setValue(HOST_NAME, aHostName);
+    public void setConnectionName(String aHostName) {
+        preferenceStore.setValue(CONNECTION_NAME, aHostName);
     }
 
     public void setFtpPortNumber(int aPortNumber) {
@@ -861,7 +861,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(ISPHERE_LIBRARY, getDefaultISphereLibrary());
         preferenceStore.setDefault(ASP_GROUP, getDefaultASPGroup());
-        preferenceStore.setDefault(HOST_NAME, getDefaultHostName());
+        preferenceStore.setDefault(CONNECTION_NAME, getDefaultConnectionName());
         preferenceStore.setDefault(FTP_PORT_NUMBER, getDefaultFtpPortNumber());
         preferenceStore.setDefault(SYSTEM_CCSID, getDefaultSystemCcsid());
 
@@ -949,7 +949,7 @@ public final class Preferences {
      * @return default iSphere library name
      */
     public String getDefaultISphereLibrary() {
-        return "ISPHERE";
+        return "ISPHERE"; //$NON-NLS-1$
     }
 
     /**
@@ -958,7 +958,7 @@ public final class Preferences {
      * @return default asp group
      */
     public String getDefaultASPGroup() {
-        return "*NONE";
+        return "*NONE"; //$NON-NLS-1$
     }
 
     /**
@@ -966,8 +966,8 @@ public final class Preferences {
      * 
      * @return default host name
      */
-    public String getDefaultHostName() {
-        return "";
+    public String getDefaultConnectionName() {
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1117,7 +1117,7 @@ public final class Preferences {
      * @return library name for user defined spooled file to text conversion
      */
     public String getDefaultSpooledFileConversionTextLibrary() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1127,7 +1127,7 @@ public final class Preferences {
      * @return command for user defined spooled file to text conversion
      */
     public String getDefaultSpooledFileConversionTextCommand() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1156,7 +1156,7 @@ public final class Preferences {
      * @return library name for user defined spooled file to HTML conversion
      */
     public String getDefaultSpooledFileConversionHTMLLibrary() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1166,7 +1166,7 @@ public final class Preferences {
      * @return command for user defined spooled file to HTML conversion
      */
     public String getDefaultSpooledFileConversionHTMLCommand() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1195,7 +1195,7 @@ public final class Preferences {
      * @return library name for user defined spooled file to PDF conversion
      */
     public String getDefaultSpooledFileConversionPDFLibrary() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1205,7 +1205,7 @@ public final class Preferences {
      * @return command for user defined spooled file to PDF conversion
      */
     public String getDefaultSpooledFileConversionPDFCommand() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1310,7 +1310,7 @@ public final class Preferences {
      * @return default path last used for saving
      */
     public String getDefaultSourceFileSearchResultsLastUsedFileName() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**
@@ -1368,7 +1368,7 @@ public final class Preferences {
      * @return default path last used for saving
      */
     public String getDefaultMessageFileSearchResultsLastUsedFileName() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     /**

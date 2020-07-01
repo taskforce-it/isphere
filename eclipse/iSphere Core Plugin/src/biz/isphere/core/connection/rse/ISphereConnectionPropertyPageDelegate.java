@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,41 +47,36 @@ public class ISphereConnectionPropertyPageDelegate {
 
     private IDisplayErrorDialog parent;
     private String connectionName;
-    private String ftpHostName;
 
     private String iSphereLibrary;
     private Validator validatorLibrary;
 
     private String aspGroup;
     private Validator validatorASPGroup;
-    
+
     private Button checkBoxUseConnectionSpecificSettings;
-    private Text textFtpHostName;
+    private Text textConnectionName;
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Combo comboASPGroup;
     private Label textISphereLibraryVersion;
     private Button buttonUpdateISphereLibraryVersion;
     private Button buttonTransfer;
+    private int systemCcsid;
 
     private boolean updateISphereLibraryVersion;
 
     /**
      * Constructor for SamplePropertyPage.
      */
-    public ISphereConnectionPropertyPageDelegate(IDisplayErrorDialog parent, String connectionName, String ftpHostName) {
+    public ISphereConnectionPropertyPageDelegate(IDisplayErrorDialog parent, String connectionName) {
         super();
 
         this.parent = parent;
         this.connectionName = connectionName;
 
-        if (ftpHostName == null) {
-            this.ftpHostName = "";
-        } else {
-            this.ftpHostName = ftpHostName;
-        }
-
         this.updateISphereLibraryVersion = false;
+        this.systemCcsid = -1;
     }
 
     public void performDefaults() {
@@ -132,7 +127,7 @@ public class ISphereConnectionPropertyPageDelegate {
     public void setControlEnablement() {
 
         if (checkBoxUseConnectionSpecificSettings.getSelection()) {
-            textFtpHostName.setEnabled(true);
+            textConnectionName.setEnabled(true);
             textFtpPortNumber.setEnabled(true);
             textISphereLibrary.setEnabled(true);
             comboASPGroup.setEnabled(true);
@@ -143,7 +138,7 @@ public class ISphereConnectionPropertyPageDelegate {
             }
             buttonTransfer.setEnabled(true);
         } else {
-            textFtpHostName.setEnabled(false);
+            textConnectionName.setEnabled(false);
             textFtpPortNumber.setEnabled(false);
             textISphereLibrary.setEnabled(false);
             comboASPGroup.setEnabled(false);
@@ -154,7 +149,7 @@ public class ISphereConnectionPropertyPageDelegate {
 
     public void setScreenToValues(ConnectionProperties connectionProperties) {
 
-        textFtpHostName.setText(ftpHostName);
+        textConnectionName.setText(connectionName);
         textFtpPortNumber.setText(Integer.toString(connectionProperties.getFtpPortNumber()));
         iSphereLibrary = connectionProperties.getISphereLibraryName();
         aspGroup = connectionProperties.getASPGroup();
@@ -165,7 +160,7 @@ public class ISphereConnectionPropertyPageDelegate {
 
     private void setScreenToDefaultValues() {
 
-        textFtpHostName.setText(ftpHostName);
+        textConnectionName.setText(connectionName);
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         aspGroup = Preferences.getInstance().getDefaultASPGroup();
@@ -188,13 +183,13 @@ public class ISphereConnectionPropertyPageDelegate {
         labelHostName.setLayoutData(createLabelLayoutData());
         labelHostName.setText(Messages.Host_name_colon);
 
-        textFtpHostName = WidgetFactory.createReadOnlyText(parent);
-        textFtpHostName.addModifyListener(new ModifyListener() {
+        textConnectionName = WidgetFactory.createReadOnlyText(parent);
+        textConnectionName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 updateISphereLibraryVersion();
             }
         });
-        textFtpHostName.setLayoutData(createTextLayoutData());
+        textConnectionName.setLayoutData(createTextLayoutData());
 
         Label labelFtpPortNumber = new Label(parent, SWT.NONE);
         labelFtpPortNumber.setLayoutData(createLabelLayoutData());
@@ -231,8 +226,8 @@ public class ISphereConnectionPropertyPageDelegate {
         textISphereLibrary.setTextLimit(10);
 
         // TODO: fix library name validator (pass CCSID) - DONE
-        validatorLibrary = Validator.getLibraryNameInstance(IBMiHostContributionsHandler.getSystemCcsid(connectionName));
-        
+        validatorLibrary = Validator.getLibraryNameInstance(getSystemCcsid());
+
         Label labelASPGroup = new Label(parent, SWT.NONE);
         labelASPGroup.setLayoutData(createLabelLayoutData());
         labelASPGroup.setText(Messages.ASP_group_colon);
@@ -253,14 +248,14 @@ public class ISphereConnectionPropertyPageDelegate {
         });
         comboASPGroup.setLayoutData(createTextLayoutData());
         comboASPGroup.setTextLimit(10);
-        comboASPGroup.add("*NONE");
+        comboASPGroup.add("*NONE"); //$NON-NLS-1$
 
-        validatorASPGroup = Validator.getNameInstance(IBMiHostContributionsHandler.getSystemCcsid(connectionName));
-        validatorASPGroup.addSpecialValue("*NONE");
-        
+        validatorASPGroup = Validator.getNameInstance(getSystemCcsid());
+        validatorASPGroup.addSpecialValue("*NONE"); //$NON-NLS-1$
+
         Label labelIShereLibraryVersion = new Label(parent, SWT.NONE);
         labelIShereLibraryVersion.setLayoutData(createLabelLayoutData());
-        labelIShereLibraryVersion.setText("Version:");
+        labelIShereLibraryVersion.setText(Messages.Version_colon);
 
         textISphereLibraryVersion = new Label(parent, SWT.NONE);
         textISphereLibraryVersion.setLayoutData(createTextLayoutData(1));
@@ -281,19 +276,32 @@ public class ISphereConnectionPropertyPageDelegate {
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                String hostName = textFtpHostName.getText();
+                String hostName = textConnectionName.getText();
                 int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
                 TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary, aspGroup);
+                handler.setConnectionsEnabled(false);
                 try {
                     handler.execute(null);
                 } catch (Throwable e) {
-                    ISpherePlugin.logError("Failed to transfer iSphere library.", e); //$NON-NLS-1$
+                    ISpherePlugin.logError("*** Failed to transfer iSphere library ***", e); //$NON-NLS-1$
                 }
             }
         });
         buttonTransfer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
         buttonTransfer.setText(Messages.Transfer_iSphere_library);
 
+    }
+
+    private int getSystemCcsid() {
+
+        if (systemCcsid == -1) {
+            systemCcsid = IBMiHostContributionsHandler.getSystemCcsid(connectionName);
+            if (systemCcsid < 0) {
+                systemCcsid = Preferences.getInstance().getSystemCcsid();
+            }
+        }
+
+        return systemCcsid;
     }
 
     private Composite createDefaultComposite(Composite parent, String text) {
@@ -320,7 +328,7 @@ public class ISphereConnectionPropertyPageDelegate {
     }
 
     private void updateISphereLibraryVersion() {
-        String text = getISphereLibraryVersion(connectionName, textISphereLibrary.getText(), ftpHostName);
+        String text = getISphereLibraryVersion(connectionName, textISphereLibrary.getText());
         if (text == null) {
             return;
         }
@@ -330,7 +338,7 @@ public class ISphereConnectionPropertyPageDelegate {
         setControlEnablement();
     }
 
-    private String getISphereLibraryVersion(String connectionName, String library, String hostName) {
+    private String getISphereLibraryVersion(String connectionName, String library) {
 
         if (!updateISphereLibraryVersion) {
             return ""; //$NON-NLS-1$
@@ -353,7 +361,7 @@ public class ISphereConnectionPropertyPageDelegate {
             AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
             if (as400 == null) {
                 updateISphereLibraryVersion = false;
-                return Messages.bind(Messages.Host_A_not_found_or_connected, hostName);
+                return Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName);
             }
 
             /*
@@ -387,7 +395,7 @@ public class ISphereConnectionPropertyPageDelegate {
             return true;
         }
     }
-    
+
     private boolean validateASPGroup() {
         if (StringHelper.isNullOrEmpty(aspGroup) || !validatorASPGroup.validate(aspGroup)) {
             return false;

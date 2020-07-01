@@ -200,6 +200,8 @@ public class Messages extends NLS {
 
     public static String Specified_iSphere_library_A_on_System_B_is_not_a_iSphere_library;
 
+    public static String Please_select_a_connection;
+
     public static String Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected;
 
     public static String The_connection_does_not_exist_or_could_be_established;
@@ -807,6 +809,8 @@ public class Messages extends NLS {
     public static String Invert_selection;
 
     public static String Tooltip_Invert_selection;
+
+    public static String Ready_to_transfer_the_iSphere_library;
 
     public static String About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C;
 

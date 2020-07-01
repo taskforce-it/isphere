@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 
 package biz.isphere.core.internal;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -16,6 +15,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -35,23 +37,27 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.SecureAS400;
 
 public class TransferISphereLibrary extends Shell implements StatusMessageReceiver {
 
     private AS400 as400;
     private CommandCall commandCall;
     private Table tableStatus;
+    private ConnectionCombo comboConnections;
     private Button buttonStart;
     private Composite buttonPanel;
     private Button buttonClose;
@@ -59,17 +65,19 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
     private String iSphereLibrary;
     private String aspGroup;
     private int ftpPort;
-    private String hostName;
+    private String connectionName;
+    private boolean connectionsEnabled;
 
-    public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aASPGroup, String aHostName, int aFtpPort) {
+    public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aASPGroup, String aConnectionName, int aFtpPort) {
         super(display, style);
 
         setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32));
 
         iSphereLibrary = anISphereLibrary;
         aspGroup = aASPGroup;
-        hostName = aHostName;
+        connectionName = aConnectionName;
         setFtpPort(aFtpPort);
+        setConnectionsEnabled(true);
 
         createContents();
 
@@ -85,13 +93,16 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         addShellListener(new ShellAdapter() {
             public void shellClosed(ShellEvent arg0) {
-                if (as400 != null) {
-                    as400.disconnectAllServices();
-                    as400 = null;
-                    commandCall = null;
-                }
+                disconnectSystem();
             }
         });
+    }
+
+    public void setConnectionsEnabled(boolean enabled) {
+        this.connectionsEnabled = enabled;
+        if (comboConnections != null && !comboConnections.isDisposed()) {
+            comboConnections.setEnabled(connectionsEnabled);
+        }
     }
 
     private void setFtpPort(int aFtpPort) {
@@ -104,7 +115,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
     protected void createContents() {
 
-        GridLayout gl_shell = new GridLayout();
+        GridLayout gl_shell = new GridLayout(2, false);
         gl_shell.marginTop = 10;
         gl_shell.verticalSpacing = 10;
         setLayout(gl_shell);
@@ -112,13 +123,28 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         setText(Messages.Transfer_iSphere_library);
         setSize(500, 400);
 
+        final Label labelConnections = new Label(this, SWT.NONE);
+        labelConnections.setText(Messages.Connection_colon);
+        labelConnections.setLayoutData(new GridData());
+
+        comboConnections = WidgetFactory.createConnectionCombo(this, SWT.NONE);
+        comboConnections.setEnabled(connectionsEnabled);
+        comboConnections.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        comboConnections.setText(connectionName);
+        comboConnections.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent arg0) {
+                clearStatus();
+                updateConnectionProperties(true);
+            }
+        });
+
         buttonStart = WidgetFactory.createPushButton(this);
         buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
-        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
         buttonStart.setText(Messages.Start_Transfer);
 
         tableStatus = new Table(this, SWT.BORDER | SWT.MULTI);
-        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true);
+        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
         tableStatus.setLayoutData(gd_tableStatus);
 
         final TableColumn columnStatus = new TableColumn(tableStatus, SWT.NONE);
@@ -165,6 +191,31 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         tableStatus.setMenu(menuTableStatusContextMenu);
 
         buttonPanel = createButtons(false);
+
+        updateConnectionProperties(false);
+    }
+
+    private void updateConnectionProperties(boolean updateSystem) {
+
+        connectionName = comboConnections.getText();
+        if (StringHelper.isNullOrEmpty(connectionName)) {
+            setStatus(Messages.Please_select_a_connection);
+            return;
+        }
+
+        if (updateSystem) {
+            if (!connectSystem()) {
+                setStatus(Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName));
+                return;
+            }
+        }
+
+        if (as400 == null) {
+            setStatus(Messages.Ready_to_transfer_the_iSphere_library);
+        } else {
+            setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C,
+                new Object[] { iSphereLibrary, as400.getSystemName(), ftpPort, aspGroup }));
+        }
     }
 
     protected void copyStatusLinesToClipboard(TableItem[] tableItems) {
@@ -192,7 +243,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         Composite buttonPanel = new Composite(this, SWT.NONE);
         GridLayout buttonPanelLayout = new GridLayout(1, true);
-        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
         buttonPanelLayout.marginHeight = 0;
         buttonPanelLayout.marginWidth = 0;
         buttonPanel.setLayout(buttonPanelLayout);
@@ -241,14 +292,20 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
     private void printJobLog() {
 
-        String cpfMsg = executeCommand("DSPJOBLOG JOB(*) OUTPUT(*PRINT)", true);
-        if (cpfMsg.equals("")) {
+        String cpfMsg = executeCommand("DSPJOBLOG JOB(*) OUTPUT(*PRINT)", true); //$NON-NLS-1$
+        if (cpfMsg.equals("")) { //$NON-NLS-1$
             setStatus(Messages.Job_log_has_been_printed);
         }
     }
 
     private String executeCommand(String command, boolean logError) {
+
         try {
+
+            if (commandCall == null) {
+                commandCall = new CommandCall(as400);
+            }
+
             commandCall.run(command);
             AS400Message[] messageList = commandCall.getMessageList();
             if (messageList.length > 0) {
@@ -262,43 +319,23 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                     if (logError) {
                         setStatus(Messages.bind(Messages.Error_A, command));
                         for (int idx = 0; idx < messageList.length; idx++) {
-                            setStatus(messageList[idx].getID() + ": " + messageList[idx].getText());
+                            setStatus(messageList[idx].getID() + ": " + messageList[idx].getText()); //$NON-NLS-1$
                         }
                     }
                     return escapeMessage.getID();
                 }
             }
-            return "";
+
+            return ""; //$NON-NLS-1$
+
         } catch (Exception e) {
-            return "CPF0000";
+            return "CPF0000"; //$NON-NLS-1$
         }
     }
 
-    public boolean connect() {
-        buttonStart.setEnabled(false);
-        buttonClose.setEnabled(false);
-        SignOnDialog signOnDialog = new SignOnDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), hostName);
-        if (signOnDialog.open() == Dialog.OK) {
-            as400 = signOnDialog.getAS400();
-            if (as400 != null) {
-                try {
-                    as400.connectService(AS400.COMMAND);
-                    commandCall = new CommandCall(as400);
-                    if (commandCall != null) {
-                        setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
-                        hostName = as400.getSystemName();
-                        setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C, new String[] {
-                            iSphereLibrary, hostName, Integer.toString(ftpPort), aspGroup }));
-                        buttonStart.setEnabled(true);
-                        buttonClose.setEnabled(true);
-                        return true;
-                    }
-                } catch (Throwable e) {
-                    ISpherePlugin.logError("Failed to connect to host: " + hostName, e);
-                }
-            }
-        }
-        return false;
+    private void clearStatus() {
+        tableStatus.removeAll();
+        redraw();
     }
 
     public void setStatus(String message) {
@@ -308,12 +345,57 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         redraw();
     }
 
+    private boolean connectSystem() {
+
+        if (as400 != null) {
+            disconnectSystem();
+        }
+
+        as400 = IBMiHostContributionsHandler.getSystem(comboConnections.getText());
+        if (as400 == null) {
+            commandCall = null;
+            return false;
+        }
+
+        if (as400 instanceof SecureAS400) {
+            as400 = new SecureAS400(as400);
+        } else {
+            as400 = new AS400(as400);
+        }
+
+        commandCall = new CommandCall(as400);
+
+        return true;
+    }
+
+    private void disconnectSystem() {
+
+        if (as400 != null) {
+            as400.disconnectAllServices();
+            as400 = null;
+        }
+
+        commandCall = null;
+    }
+
     private class TransferLibrarySelectionAdapter extends SelectionAdapter {
         @Override
         public void widgetSelected(final SelectionEvent event) {
 
+            comboConnections.setEnabled(false);
             buttonStart.setEnabled(false);
             buttonClose.setEnabled(false);
+
+            if (as400 == null) {
+                if (!connectSystem()) {
+                    clearStatus();
+                    setStatus(Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName));
+                    comboConnections.setEnabled(true);
+                    buttonStart.setEnabled(true);
+                    buttonClose.setEnabled(true);
+                    return;
+                }
+            }
 
             ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), as400, ftpPort, iSphereLibrary, aspGroup);
             uploader.setStatusMessageReceiver(TransferISphereLibrary.this);
@@ -323,10 +405,12 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             layout(true);
 
             if (uploader.run()) {
+                comboConnections.setEnabled(false);
                 buttonStart.setEnabled(false);
                 buttonClose.setEnabled(true);
                 buttonClose.setFocus();
             } else {
+                comboConnections.setEnabled(true);
                 buttonStart.setEnabled(true);
                 buttonClose.setEnabled(true);
                 buttonJobLog.setFocus();

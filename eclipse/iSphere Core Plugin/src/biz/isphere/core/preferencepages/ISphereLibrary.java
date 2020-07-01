@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import biz.isphere.core.internal.Validator;
 import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 
 import com.ibm.as400.access.AS400;
 
@@ -52,8 +53,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     private String aspGroup;
     private Validator validatorASPGroup;
-    
-    private Text textHostName;
+
+    private ConnectionCombo textConnectionName;
     private Text textFtpPortNumber;
     private Text textISphereLibrary;
     private Combo comboASPGroup;
@@ -86,13 +87,13 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         labelHostName.setLayoutData(createLabelLayoutData());
         labelHostName.setText(Messages.Host_name_colon);
 
-        textHostName = WidgetFactory.createText(container);
-        textHostName.addModifyListener(new ModifyListener() {
+        textConnectionName = WidgetFactory.createConnectionCombo(container, SWT.NONE);
+        textConnectionName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 updateISphereLibraryVersion();
             }
         });
-        textHostName.setLayoutData(createTextLayoutData());
+        textConnectionName.setLayoutData(createTextLayoutData());
 
         Label labelFtpPortNumber = new Label(container, SWT.NONE);
         labelFtpPortNumber.setLayoutData(createLabelLayoutData());
@@ -111,7 +112,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
             @Override
             public void keyReleased(KeyEvent e) {
                 iSphereLibrary = textISphereLibrary.getText().toUpperCase().trim();
-                if (iSphereLibrary.equals("") || !validatorLibrary.validate(iSphereLibrary)) {
+                if (iSphereLibrary.equals("") || !validatorLibrary.validate(iSphereLibrary)) { //$NON-NLS-1$
                     setErrorMessage(Messages.The_value_in_field_iSphere_library_is_not_valid);
                     setValid(false);
                 } else {
@@ -139,7 +140,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         comboASPGroup.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
                 aspGroup = comboASPGroup.getText().toUpperCase().trim();
-                if (aspGroup.equals("") || !validatorASPGroup.validate(aspGroup)) {
+                if (aspGroup.equals("") || !validatorASPGroup.validate(aspGroup)) { //$NON-NLS-1$
                     setErrorMessage(Messages.The_value_in_field_ASP_group_is_not_valid);
                     setValid(false);
                 } else {
@@ -151,11 +152,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         });
         comboASPGroup.setLayoutData(createTextLayoutData());
         comboASPGroup.setTextLimit(10);
-        comboASPGroup.add("*NONE");
+        comboASPGroup.add("*NONE"); //$NON-NLS-1$
 
         validatorASPGroup = Validator.getNameInstance(getDefaultSystemCcsid());
-        validatorASPGroup.addSpecialValue("*NONE");
-        
+        validatorASPGroup.addSpecialValue("*NONE"); //$NON-NLS-1$
+
         Label labelSystemCcsid = new Label(container, SWT.NONE);
         labelSystemCcsid.setLayoutData(createLabelLayoutData());
         labelSystemCcsid.setText(Messages.System_ccsid_colon);
@@ -187,9 +188,9 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                String hostName = textHostName.getText();
+                String hostConnectionName = textConnectionName.getText();
                 int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-                TransferLibraryHandler handler = new TransferLibraryHandler(hostName, ftpPort, iSphereLibrary, aspGroup);
+                TransferLibraryHandler handler = new TransferLibraryHandler(hostConnectionName, ftpPort, iSphereLibrary, aspGroup);
                 try {
                     handler.execute(null);
                 } catch (Throwable e) {
@@ -250,7 +251,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     protected void setStoreToValues() {
 
-        Preferences.getInstance().setHostName(textHostName.getText());
+        Preferences.getInstance().setConnectionName(textConnectionName.getText());
         Preferences.getInstance().setFtpPortNumber(
             IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
@@ -263,7 +264,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     protected void setScreenToValues() {
 
         ISpherePlugin.getDefault();
-        textHostName.setText(Preferences.getInstance().getHostName());
+        textConnectionName.setText(Preferences.getInstance().getConnectionName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getISphereLibrary();
         textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getSystemCcsid()));
@@ -275,7 +276,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
     protected void setScreenToDefaultValues() {
 
-        textHostName.setText(Preferences.getInstance().getDefaultHostName());
+        textConnectionName.setText(Preferences.getInstance().getDefaultConnectionName());
         textFtpPortNumber.setText(Integer.toString(Preferences.getInstance().getDefaultFtpPortNumber()));
         iSphereLibrary = Preferences.getInstance().getDefaultISphereLibrary();
         textSystemCcsid.setText(Integer.toString(Preferences.getInstance().getDefaultSystemCcsid()));
@@ -289,7 +290,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         textISphereLibrary.setText(iSphereLibrary);
         comboASPGroup.setText(aspGroup);
-        
+
     }
 
     public void init(IWorkbench workbench) {
@@ -308,7 +309,7 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void updateISphereLibraryVersion() {
-        String text = getISphereLibraryVersion(textHostName.getText(), textISphereLibrary.getText());
+        String text = getISphereLibraryVersion(textConnectionName.getText(), textISphereLibrary.getText());
         if (text == null) {
             return;
         }
@@ -318,13 +319,13 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         setControlEnablement();
     }
 
-    private String getISphereLibraryVersion(String hostName, String library) {
+    private String getISphereLibraryVersion(String connectionName, String library) {
 
         if (!updateISphereLibraryVersion) {
             return ""; //$NON-NLS-1$
         }
 
-        if (StringHelper.isNullOrEmpty(hostName) || StringHelper.isNullOrEmpty(library)) {
+        if (StringHelper.isNullOrEmpty(connectionName) || StringHelper.isNullOrEmpty(library)) {
             updateISphereLibraryVersion = false;
             return Messages.not_found;
         }
@@ -333,10 +334,10 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
         try {
 
-            AS400 as400 = IBMiHostContributionsHandler.findSystem(hostName);
+            AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
             if (as400 == null) {
                 updateISphereLibraryVersion = false;
-                return Messages.bind(Messages.Host_A_not_found_or_connected, hostName);
+                return Messages.bind(Messages.Host_A_not_found_or_connected, connectionName);
             }
 
             /*

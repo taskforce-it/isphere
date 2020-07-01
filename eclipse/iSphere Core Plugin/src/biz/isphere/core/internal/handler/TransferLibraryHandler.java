@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,11 @@ import biz.isphere.core.internal.TransferISphereLibrary;
  */
 public class TransferLibraryHandler extends AbstractHandler implements IHandler {
 
-    private String hostName;
+    private String connectionName;
     private int ftpPort;
     private String iSphereLibrary;
     private String aspGroup;
+    private boolean connectionsEnabled;
 
     /**
      * Default constructor, used by the Eclipse framework.
@@ -39,11 +40,13 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
         super();
     }
 
-    public TransferLibraryHandler(String hostName, int ftpPort, String iSphereLibrary, String aspGroup) {
-        this.hostName = hostName;
+    public TransferLibraryHandler(String connectionName, int ftpPort, String iSphereLibrary, String aspGroup) {
+        this.connectionName = connectionName;
         this.ftpPort = ftpPort;
         this.iSphereLibrary = iSphereLibrary;
         this.aspGroup = aspGroup;
+
+        setConnectionsEnabled(true);
     }
 
     /*
@@ -64,14 +67,18 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
             }
 
             TransferISphereLibrary statusDialog = new TransferISphereLibrary(shell.getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM,
-                iSphereLibrary, aspGroup, hostName, ftpPort);
-            if (statusDialog.connect()) {
-                statusDialog.open();
-            }
+                iSphereLibrary, aspGroup, connectionName, ftpPort);
+
+            statusDialog.setConnectionsEnabled(connectionsEnabled);
+            statusDialog.open();
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("Failed to invoke the 'Transfer Library' handler.", e);
+            ISpherePlugin.logError("*** Failed to invoke the 'Transfer Library' handler ***", e); //$NON-NLS-1$
         }
         return null;
+    }
+
+    public void setConnectionsEnabled(boolean enabled) {
+        this.connectionsEnabled = enabled;
     }
 }
