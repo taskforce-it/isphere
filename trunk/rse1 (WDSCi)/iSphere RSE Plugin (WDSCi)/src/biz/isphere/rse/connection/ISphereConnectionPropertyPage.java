@@ -64,6 +64,7 @@ public class ISphereConnectionPropertyPage extends SystemBasePropertyPage implem
         Control parent = delegate.createContentArea(container);
 
         delegate.setScreenToValues(connectionProperties);
+        delegate.setControlListenersEnabled(true);
         delegate.setControlEnablement();
 
         return parent;
