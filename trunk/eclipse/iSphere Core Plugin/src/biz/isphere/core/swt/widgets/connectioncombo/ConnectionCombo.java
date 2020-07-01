@@ -9,6 +9,7 @@
 package biz.isphere.core.swt.widgets.connectioncombo;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -40,6 +41,14 @@ public class ConnectionCombo extends Composite {
         connectionCombo.setItems(connections);
     }
 
+    public void addModifyListener(ModifyListener listener) {
+        connectionCombo.addModifyListener(listener);
+    }
+
+    public void removeModifyListener(ModifyListener listener) {
+        connectionCombo.removeModifyListener(listener);
+    }
+
     @Override
     public void setLayout(Layout layout) {
         throw new IllegalAccessError();
@@ -48,7 +57,7 @@ public class ConnectionCombo extends Composite {
     @Override
     public void setLayoutData(Object layoutData) {
         if (!(layoutData instanceof GridData)) {
-            throw new IllegalArgumentException("Parameter 'layoutData' is not of type 'GridData'.");
+            throw new IllegalArgumentException("Parameter 'layoutData' is not of type 'GridData'."); //$NON-NLS-1$
         }
         super.setLayoutData(layoutData);
     }
@@ -61,7 +70,7 @@ public class ConnectionCombo extends Composite {
 
         if (text == null) {
             connectionCombo.select(-1);
-            connectionCombo.setText("");
+            connectionCombo.setText(""); //$NON-NLS-1$
             return;
         }
 
