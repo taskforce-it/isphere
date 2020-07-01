@@ -83,9 +83,9 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         gridLayout.numColumns = 3;
         container.setLayout(gridLayout);
 
-        Label labelHostName = new Label(container, SWT.NONE);
-        labelHostName.setLayoutData(createLabelLayoutData());
-        labelHostName.setText(Messages.Host_name_colon);
+        Label labelConnectionName = new Label(container, SWT.NONE);
+        labelConnectionName.setLayoutData(createLabelLayoutData());
+        labelConnectionName.setText(Messages.Connection_colon);
 
         textConnectionName = WidgetFactory.createConnectionCombo(container, SWT.NONE);
         textConnectionName.addModifyListener(new ModifyListener() {
