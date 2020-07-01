@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class ISphereConnectionPropertyPage extends SystemBasePropertyPage implem
     @Override
     protected Control createContentArea(Composite container) {
 
-        delegate = new ISphereConnectionPropertyPageDelegate(this, getConnectionName(), getFtpHostName());
+        delegate = new ISphereConnectionPropertyPageDelegate(this, getConnectionName());
 
         Control parent = delegate.createContentArea(container);
 
@@ -87,17 +87,6 @@ public class ISphereConnectionPropertyPage extends SystemBasePropertyPage implem
         if (element instanceof IHost) {
             IHost host = (IHost)element;
             return ConnectionManager.getConnectionName(host);
-        }
-
-        return null;
-    }
-
-    private String getFtpHostName() {
-        
-        Object element = getElement();
-        if (element instanceof IHost) {
-            IHost host = (IHost)element;
-            return host.getHostName();
         }
 
         return null;
