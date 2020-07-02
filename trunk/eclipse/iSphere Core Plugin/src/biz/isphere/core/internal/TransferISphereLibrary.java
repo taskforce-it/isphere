@@ -8,6 +8,11 @@
 
 package biz.isphere.core.internal;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -68,6 +73,10 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
     private String connectionName;
     private boolean connectionsEnabled;
 
+    private boolean uploadCompleted;
+    private boolean escapeEnabled;
+    private Job enableEscapeKeyJob;
+
     public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aASPGroup, String aConnectionName, int aFtpPort) {
         super(display, style);
 
@@ -80,6 +89,31 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         setConnectionsEnabled(true);
 
         createContents();
+        setEscapeEnabled(true);
+        setUploadCompleted(false);
+
+        addListener(SWT.Traverse, new Listener() {
+            public void handleEvent(Event event) {
+                switch (event.detail) {
+                case SWT.TRAVERSE_ESCAPE:
+                    if (escapeEnabled && !buttonClose.isDisposed() && buttonClose.isEnabled()) {
+                        boolean closeConfirmed;
+                        if (uploadCompleted) {
+                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Question, Messages.Close_dialog);
+                        } else {
+                            closeConfirmed = true;
+                        }
+                        if (closeConfirmed) {
+                            close();
+                            event.detail = SWT.TRAVERSE_NONE;
+                            event.doit = false;
+                        }
+                    } else {
+                        eatEscapeKeyStrokes();
+                    }
+                }
+            }
+        });
 
         addListener(SWT.Close, new Listener() {
             public void handleEvent(Event event) {
@@ -96,6 +130,14 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                 disconnectSystem();
             }
         });
+    }
+
+    private void setEscapeEnabled(boolean enabled) {
+        this.escapeEnabled = enabled;
+    }
+
+    private void setUploadCompleted(boolean completed) {
+        this.uploadCompleted = completed;
     }
 
     public void setConnectionsEnabled(boolean enabled) {
@@ -121,7 +163,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         setLayout(gl_shell);
 
         setText(Messages.Transfer_iSphere_library);
-        setSize(520, 400);
+        setSize(600, 450);
 
         final Label labelConnections = new Label(this, SWT.NONE);
         labelConnections.setText(Messages.Connection_colon);
@@ -129,7 +171,9 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         comboConnections = WidgetFactory.createConnectionCombo(this, SWT.NONE);
         comboConnections.setEnabled(connectionsEnabled);
-        comboConnections.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+        // gridData.widthHint = 250;
+        comboConnections.setLayoutData(gridData);
         comboConnections.setText(connectionName);
         comboConnections.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
@@ -139,11 +183,11 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         buttonStart = WidgetFactory.createPushButton(this);
         buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
-        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, gl_shell.numColumns, 1));
         buttonStart.setText(Messages.Start_Transfer);
 
         tableStatus = new Table(this, SWT.BORDER | SWT.MULTI);
-        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, gl_shell.numColumns, 1);
         tableStatus.setLayoutData(gd_tableStatus);
 
         final TableColumn columnStatus = new TableColumn(tableStatus, SWT.NONE);
@@ -247,9 +291,11 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
     private Composite createButtons(boolean printJobLogButton) {
 
+        GridLayout parentLayout = (GridLayout)this.getLayout();
+
         Composite buttonPanel = new Composite(this, SWT.NONE);
         GridLayout buttonPanelLayout = new GridLayout(1, true);
-        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
+        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, parentLayout.numColumns, 1));
         buttonPanelLayout.marginHeight = 0;
         buttonPanelLayout.marginWidth = 0;
         buttonPanel.setLayout(buttonPanelLayout);
@@ -392,11 +438,14 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             buttonStart.setEnabled(false);
             buttonClose.setEnabled(false);
 
+            setEscapeEnabled(false);
+
             if (as400 == null) {
                 if (!connectSystem()) {
                     comboConnections.setEnabled(true);
                     buttonStart.setEnabled(true);
                     buttonClose.setEnabled(true);
+                    setEscapeEnabled(true);
                     return;
                 }
             } else {
@@ -421,7 +470,29 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                 buttonClose.setEnabled(true);
                 buttonJobLog.setFocus();
             }
+
+            setUploadCompleted(true);
+            eatEscapeKeyStrokes();
         }
+    }
+
+    private void eatEscapeKeyStrokes() {
+
+        if (enableEscapeKeyJob != null) {
+            System.out.println("Eating Esc key ...");
+            enableEscapeKeyJob.cancel();
+        }
+
+        enableEscapeKeyJob = new Job("Enable Escape Key") { //$NON-NLS-1$
+            @Override
+            protected IStatus run(IProgressMonitor arg0) {
+                enableEscapeKeyJob = null;
+                setEscapeEnabled(true);
+                return Status.OK_STATUS;
+            }
+        };
+
+        enableEscapeKeyJob.schedule(150);
     }
 
     /**
