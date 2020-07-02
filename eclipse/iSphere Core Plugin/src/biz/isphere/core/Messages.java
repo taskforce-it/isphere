@@ -278,6 +278,8 @@ public class Messages extends NLS {
 
     public static String Transfer_iSphere_library;
 
+    public static String Close_dialog;
+
     public static String Host_colon;
 
     public static String User_colon;
