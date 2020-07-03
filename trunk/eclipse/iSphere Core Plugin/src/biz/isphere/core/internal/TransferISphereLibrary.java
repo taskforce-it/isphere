@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -99,7 +100,8 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                     if (escapeEnabled && !buttonClose.isDisposed() && buttonClose.isEnabled()) {
                         boolean closeConfirmed;
                         if (uploadCompleted) {
-                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Question, Messages.Close_upload_dialog);
+                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Confirm_exit,
+                                Messages.Close_upload_dialog);
                         } else {
                             closeConfirmed = true;
                         }
@@ -109,7 +111,8 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                             event.doit = false;
                         }
                     } else {
-                        eatEscapeKeyStrokes();
+                        // Eat Esc keystroke
+                        enableEscapeKeyDelayed();
                     }
                 }
             }
@@ -177,7 +180,13 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         comboConnections.setText(connectionName);
         comboConnections.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
-                connectSystem();
+                connectionName = comboConnections.getText();
+                clearStatus();
+                setStatus(Messages.bind(Messages.Connecting_to_A, connectionName));
+                if (!connectSystem()) {
+                    setStatus(Messages.Operation_has_been_canceled_by_the_user);
+                }
+                showConnectionProperties();
             }
         });
 
@@ -235,21 +244,29 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         buttonPanel = createButtons(false);
 
-        showConnectionProperties();
+        new UIJob("Establish connection") { //$NON-NLS-1$
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+                clearStatus();
+                setStatus(Messages.bind(Messages.Connecting_to_A, connectionName));
+                if (!connectSystem()) {
+                    setStatus(Messages.Operation_has_been_canceled_by_the_user);
+                }
+                showConnectionProperties();
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     private void showConnectionProperties() {
 
-        clearStatus();
-
-        connectionName = comboConnections.getText();
         if (StringHelper.isNullOrEmpty(connectionName)) {
             setStatus(Messages.Please_select_a_connection);
             return;
         }
 
         if (as400 == null) {
-            setStatus(Messages.Ready_to_transfer_the_iSphere_library);
+            setStatus(Messages.bind(Messages.Not_yet_connected_to_A, connectionName));
         } else {
 
             try {
@@ -399,23 +416,25 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             disconnectSystem();
         }
 
-        as400 = IBMiHostContributionsHandler.getSystem(comboConnections.getText());
+        as400 = IBMiHostContributionsHandler.getSystem(connectionName);
         if (as400 == null) {
             commandCall = null;
-            return false;
-        }
-
-        if (as400 instanceof SecureAS400) {
-            as400 = new SecureAS400(as400);
         } else {
-            as400 = new AS400(as400);
+
+            if (as400 instanceof SecureAS400) {
+                as400 = new SecureAS400(as400);
+            } else {
+                as400 = new AS400(as400);
+            }
+
+            commandCall = new CommandCall(as400);
         }
 
-        commandCall = new CommandCall(as400);
-
-        showConnectionProperties();
-
-        return true;
+        if (as400 == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void disconnectSystem() {
@@ -427,6 +446,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         commandCall = null;
 
+        clearStatus();
         showConnectionProperties();
     }
 
@@ -440,8 +460,12 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
             setEscapeEnabled(false);
 
+            clearStatus();
             if (as400 == null) {
+                setStatus(Messages.bind(Messages.Connecting_to_A, connectionName));
                 if (!connectSystem()) {
+                    setStatus(Messages.Operation_has_been_canceled_by_the_user);
+                    showConnectionProperties();
                     comboConnections.setEnabled(true);
                     buttonStart.setEnabled(true);
                     buttonClose.setEnabled(true);
@@ -472,14 +496,14 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             }
 
             setUploadCompleted(true);
-            eatEscapeKeyStrokes();
+            enableEscapeKeyDelayed();
         }
     }
 
-    private void eatEscapeKeyStrokes() {
+    private void enableEscapeKeyDelayed() {
 
         if (enableEscapeKeyJob != null) {
-            System.out.println("Eating Esc key ...");
+            // Eat Esc keystroke
             enableEscapeKeyJob.cancel();
         }
 

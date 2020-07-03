@@ -202,6 +202,10 @@ public class Messages extends NLS {
 
     public static String Please_select_a_connection;
 
+    public static String Not_yet_connected_to_A;
+
+    public static String Connecting_to_A;
+
     public static String Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected;
 
     public static String The_connection_does_not_exist_or_could_be_established;
@@ -969,6 +973,8 @@ public class Messages extends NLS {
     public static String Auto_save_file_name_Tooltip;
 
     public static String Question;
+
+    public static String Confirm_exit;
 
     public static String Question_replace_search_results;
 
