@@ -99,7 +99,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                     if (escapeEnabled && !buttonClose.isDisposed() && buttonClose.isEnabled()) {
                         boolean closeConfirmed;
                         if (uploadCompleted) {
-                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Question, Messages.Close_dialog);
+                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Question, Messages.Close_upload_dialog);
                         } else {
                             closeConfirmed = true;
                         }
