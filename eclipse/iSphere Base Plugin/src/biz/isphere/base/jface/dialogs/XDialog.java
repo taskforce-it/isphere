@@ -223,7 +223,7 @@ public class XDialog extends Dialog {
             this.minimalSize = getDefaultMinimalSize();
             return;
         }
-        this.minimalSize = minimalSize;
+        this.minimalSize = new Point(minimalSize.x, minimalSize.y);
     }
 
     private Point getDefaultMinimalSize() {
