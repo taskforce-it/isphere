@@ -66,8 +66,8 @@ public class TransferLibraryHandler extends AbstractHandler implements IHandler 
                 return null;
             }
 
-            TransferISphereLibrary statusDialog = new TransferISphereLibrary(shell.getDisplay(), SWT.APPLICATION_MODAL | SWT.SHELL_TRIM,
-                iSphereLibrary, aspGroup, connectionName, ftpPort);
+            TransferISphereLibrary statusDialog = new TransferISphereLibrary(shell, SWT.APPLICATION_MODAL | SWT.SHELL_TRIM, iSphereLibrary, aspGroup,
+                connectionName, ftpPort);
 
             statusDialog.setConnectionsEnabled(connectionsEnabled);
             statusDialog.open();

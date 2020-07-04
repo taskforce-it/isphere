@@ -12,6 +12,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -26,16 +28,13 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -46,6 +45,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -58,14 +58,15 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.SecureAS400;
 
-public class TransferISphereLibrary extends Shell implements StatusMessageReceiver {
+public class TransferISphereLibrary extends XDialog implements StatusMessageReceiver {
+
+    private static final String ENABLED_STATUS = "ENABLED_STATUS"; //$NON-NLS-1$
 
     private AS400 as400;
     private CommandCall commandCall;
     private Table tableStatus;
     private ConnectionCombo comboConnections;
     private Button buttonStart;
-    private Composite buttonPanel;
     private Button buttonClose;
     private Button buttonJobLog;
     private String iSphereLibrary;
@@ -75,13 +76,12 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
     private boolean connectionsEnabled;
 
     private boolean uploadCompleted;
-    private boolean escapeEnabled;
     private Job enableEscapeKeyJob;
 
-    public TransferISphereLibrary(Display display, int style, String anISphereLibrary, String aASPGroup, String aConnectionName, int aFtpPort) {
-        super(display, style);
+    private Composite dialogArea;
 
-        setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32));
+    public TransferISphereLibrary(Shell shell, int style, String anISphereLibrary, String aASPGroup, String aConnectionName, int aFtpPort) {
+        super(shell);
 
         iSphereLibrary = anISphereLibrary;
         aspGroup = aASPGroup;
@@ -89,54 +89,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         setFtpPort(aFtpPort);
         setConnectionsEnabled(true);
 
-        createContents();
-        setEscapeEnabled(true);
         setUploadCompleted(false);
-
-        addListener(SWT.Traverse, new Listener() {
-            public void handleEvent(Event event) {
-                switch (event.detail) {
-                case SWT.TRAVERSE_ESCAPE:
-                    if (escapeEnabled && !buttonClose.isDisposed() && buttonClose.isEnabled()) {
-                        boolean closeConfirmed;
-                        if (uploadCompleted) {
-                            closeConfirmed = MessageDialog.openQuestion(TransferISphereLibrary.this, Messages.Confirm_exit,
-                                Messages.Close_upload_dialog);
-                        } else {
-                            closeConfirmed = true;
-                        }
-                        if (closeConfirmed) {
-                            close();
-                            event.detail = SWT.TRAVERSE_NONE;
-                            event.doit = false;
-                        }
-                    } else {
-                        // Eat Esc keystroke
-                        enableEscapeKeyDelayed();
-                    }
-                }
-            }
-        });
-
-        addListener(SWT.Close, new Listener() {
-            public void handleEvent(Event event) {
-                if (!buttonClose.isDisposed()) {
-                    event.doit = buttonClose.isEnabled();
-                } else {
-                    event.doit = true;
-                }
-            }
-        });
-
-        addShellListener(new ShellAdapter() {
-            public void shellClosed(ShellEvent arg0) {
-                disconnectSystem();
-            }
-        });
-    }
-
-    private void setEscapeEnabled(boolean enabled) {
-        this.escapeEnabled = enabled;
     }
 
     private void setUploadCompleted(boolean completed) {
@@ -158,24 +111,57 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         }
     }
 
-    protected void createContents() {
+    /**
+     * Overridden to set the window title.
+     */
+    @Override
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(Messages.Transfer_iSphere_library);
 
-        GridLayout gl_shell = new GridLayout(2, false);
-        gl_shell.marginTop = 10;
-        gl_shell.verticalSpacing = 10;
-        setLayout(gl_shell);
+        newShell.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_TRANSFER_LIBRARY_32));
+    }
 
-        setText(Messages.Transfer_iSphere_library);
-        setSize(600, 450);
+    @Override
+    public boolean close() {
 
-        final Label labelConnections = new Label(this, SWT.NONE);
+        if (!buttonClose.isDisposed() && buttonClose.isEnabled()) {
+            boolean closeConfirmed;
+            if (uploadCompleted) {
+                closeConfirmed = MessageDialog.openQuestion(getShell(), Messages.Confirm_exit, Messages.Close_upload_dialog);
+            } else {
+                closeConfirmed = true;
+            }
+            if (closeConfirmed) {
+                if (super.close()) {
+                    disconnectSystem();
+                    return true;
+                }
+            }
+        } else {
+            // Eat Esc keystrokes and 'Window Close' events.
+            enableCloseDelayed();
+        }
+        return false;
+    }
+
+    protected Control createDialogArea(Composite parent) {
+
+        dialogArea = new Composite(parent, SWT.NONE);
+        GridLayout gridLayout = new GridLayout(2, false);
+        gridLayout.marginTop = 10;
+        gridLayout.verticalSpacing = 10;
+        dialogArea.setLayout(gridLayout);
+        dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        final Label labelConnections = new Label(dialogArea, SWT.NONE);
         labelConnections.setText(Messages.Connection_colon);
         labelConnections.setLayoutData(new GridData());
 
-        comboConnections = WidgetFactory.createConnectionCombo(this, SWT.NONE);
+        comboConnections = WidgetFactory.createConnectionCombo(dialogArea, SWT.NONE);
         comboConnections.setEnabled(connectionsEnabled);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        // gridData.widthHint = 250;
+
         comboConnections.setLayoutData(gridData);
         comboConnections.setText(connectionName);
         comboConnections.addModifyListener(new ModifyListener() {
@@ -190,17 +176,16 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             }
         });
 
-        buttonStart = WidgetFactory.createPushButton(this);
+        buttonStart = WidgetFactory.createPushButton(dialogArea);
         buttonStart.addSelectionListener(new TransferLibrarySelectionAdapter());
-        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, gl_shell.numColumns, 1));
+        buttonStart.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, gridLayout.numColumns, 1));
         buttonStart.setText(Messages.Start_Transfer);
 
-        tableStatus = new Table(this, SWT.BORDER | SWT.MULTI);
-        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, gl_shell.numColumns, 1);
+        tableStatus = new Table(dialogArea, SWT.BORDER | SWT.MULTI);
+        final GridData gd_tableStatus = new GridData(SWT.FILL, SWT.FILL, true, true, gridLayout.numColumns, 1);
         tableStatus.setLayoutData(gd_tableStatus);
 
         final TableColumn columnStatus = new TableColumn(tableStatus, SWT.NONE);
-        columnStatus.setWidth(getSize().x);
 
         tableStatus.addControlListener(new ControlAdapter() {
             public void controlResized(ControlEvent event) {
@@ -242,8 +227,6 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         menuTableStatusContextMenu.addMenuListener(new TableContextMenu(tableStatus));
         tableStatus.setMenu(menuTableStatusContextMenu);
 
-        buttonPanel = createButtons(false);
-
         new UIJob("Establish connection") { //$NON-NLS-1$
             @Override
             public IStatus runInUIThread(IProgressMonitor arg0) {
@@ -256,6 +239,8 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                 return Status.OK_STATUS;
             }
         }.schedule();
+
+        return dialogArea;
     }
 
     private void showConnectionProperties() {
@@ -270,7 +255,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         } else {
 
             try {
-                setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString());
+                setStatus(Messages.Server_job_colon + " " + commandCall.getServerJob().toString()); //$NON-NLS-1$
             } catch (Throwable e) {
             }
 
@@ -306,26 +291,6 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
         }
     }
 
-    private Composite createButtons(boolean printJobLogButton) {
-
-        GridLayout parentLayout = (GridLayout)this.getLayout();
-
-        Composite buttonPanel = new Composite(this, SWT.NONE);
-        GridLayout buttonPanelLayout = new GridLayout(1, true);
-        buttonPanel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, parentLayout.numColumns, 1));
-        buttonPanelLayout.marginHeight = 0;
-        buttonPanelLayout.marginWidth = 0;
-        buttonPanel.setLayout(buttonPanelLayout);
-
-        if (printJobLogButton) {
-            createButtonPrintJobLog(buttonPanel);
-        }
-
-        createButtonClose(buttonPanel);
-
-        return buttonPanel;
-    }
-
     private void createButtonPrintJobLog(Composite buttonPanel) {
 
         GridLayout buttonPanelLayout = (GridLayout)buttonPanel.getLayout();
@@ -340,29 +305,15 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                 printJobLog();
             }
         });
-    }
 
-    private void createButtonClose(Composite buttonPanel) {
-        buttonClose = WidgetFactory.createPushButton(buttonPanel);
-        buttonClose.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        buttonClose.setText(Messages.btnLabel_Close);
-        buttonClose.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                close();
-            }
-        });
-    }
-
-    @Override
-    protected void checkSubclass() {
-        // Disable the check that prevents subclassing of SWT components
+        buttonJobLog.setEnabled(false);
+        buttonJobLog.setVisible(buttonJobLog.isEnabled());
     }
 
     private void printJobLog() {
 
         String cpfMsg = executeCommand("DSPJOBLOG JOB(*) OUTPUT(*PRINT)", true); //$NON-NLS-1$
-        if (cpfMsg.equals("")) { //$NON-NLS-1$
+        if (StringHelper.isNullOrEmpty(cpfMsg)) {
             setStatus(Messages.Job_log_has_been_printed);
         }
     }
@@ -391,7 +342,7 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                 }
             }
 
-            return ""; //$NON-NLS-1$
+            return Messages.EMPTY;
 
         } catch (Exception e) {
             return "CPF0000"; //$NON-NLS-1$
@@ -400,17 +351,19 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
     private void clearStatus() {
         tableStatus.removeAll();
-        redraw();
+        tableStatus.update();
     }
 
     public void setStatus(String message) {
         TableItem itemStatus = new TableItem(tableStatus, SWT.BORDER);
         itemStatus.setText(message);
         tableStatus.update();
-        redraw();
+        tableStatus.update();
     }
 
     private boolean connectSystem() {
+
+        disableControls();
 
         if (as400 != null) {
             disconnectSystem();
@@ -430,11 +383,46 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             commandCall = new CommandCall(as400);
         }
 
+        restoreControlsEnablement();
+
         if (as400 == null) {
             return false;
         } else {
             return true;
         }
+    }
+
+    private void disableControls() {
+
+        saveEnablement(comboConnections);
+        saveEnablement(buttonStart);
+        saveEnablement(buttonJobLog);
+        saveEnablement(buttonClose);
+
+        comboConnections.setEnabled(false);
+        buttonStart.setEnabled(false);
+        buttonJobLog.setEnabled(false);
+        buttonClose.setEnabled(false);
+
+        buttonJobLog.setVisible(buttonJobLog.isEnabled());
+    }
+
+    private void restoreControlsEnablement() {
+
+        comboConnections.setEnabled(getPreviousEnablement(comboConnections));
+        buttonStart.setEnabled(getPreviousEnablement(buttonStart));
+        buttonJobLog.setEnabled(getPreviousEnablement(buttonJobLog));
+        buttonClose.setEnabled(getPreviousEnablement(buttonClose));
+
+        buttonJobLog.setVisible(buttonJobLog.isEnabled());
+    }
+
+    private void saveEnablement(Control control) {
+        control.setData(ENABLED_STATUS, control.isEnabled());
+    }
+
+    private boolean getPreviousEnablement(Control control) {
+        return (Boolean)control.getData(ENABLED_STATUS);
     }
 
     private void disconnectSystem() {
@@ -446,8 +434,10 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
 
         commandCall = null;
 
-        clearStatus();
-        showConnectionProperties();
+        if (!dialogArea.isDisposed()) {
+            clearStatus();
+            showConnectionProperties();
+        }
     }
 
     private class TransferLibrarySelectionAdapter extends SelectionAdapter {
@@ -458,7 +448,8 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             buttonStart.setEnabled(false);
             buttonClose.setEnabled(false);
 
-            setEscapeEnabled(false);
+            buttonJobLog.setEnabled(false);
+            buttonJobLog.setVisible(buttonJobLog.isEnabled());
 
             clearStatus();
             if (as400 == null) {
@@ -469,7 +460,6 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
                     comboConnections.setEnabled(true);
                     buttonStart.setEnabled(true);
                     buttonClose.setEnabled(true);
-                    setEscapeEnabled(true);
                     return;
                 }
             } else {
@@ -479,44 +469,88 @@ public class TransferISphereLibrary extends Shell implements StatusMessageReceiv
             ProductLibraryUploader uploader = new ProductLibraryUploader(getShell(), as400, ftpPort, iSphereLibrary, aspGroup);
             uploader.setStatusMessageReceiver(TransferISphereLibrary.this);
 
-            buttonPanel.dispose();
-            buttonPanel = createButtons(true);
-            layout(true);
-
             if (uploader.run()) {
                 comboConnections.setEnabled(false);
                 buttonStart.setEnabled(false);
-                buttonClose.setEnabled(true);
                 buttonClose.setFocus();
             } else {
                 comboConnections.setEnabled(true);
                 buttonStart.setEnabled(true);
-                buttonClose.setEnabled(true);
                 buttonJobLog.setFocus();
             }
 
+            buttonJobLog.setEnabled(true);
+            buttonJobLog.setVisible(buttonJobLog.isEnabled());
+
             setUploadCompleted(true);
-            enableEscapeKeyDelayed();
+            enableCloseDelayed();
         }
     }
 
-    private void enableEscapeKeyDelayed() {
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButtonPrintJobLog(parent);
+        super.createButtonsForButtonBar(parent);
+    }
+
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
+        if (id == Dialog.CANCEL) {
+            buttonClose = super.createButton(parent, id, Messages.btnLabel_Close, defaultButton);
+            return buttonClose;
+        }
+        return null;
+    }
+
+    private void enableCloseDelayed() {
 
         if (enableEscapeKeyJob != null) {
             // Eat Esc keystroke
             enableEscapeKeyJob.cancel();
         }
 
-        enableEscapeKeyJob = new Job("Enable Escape Key") { //$NON-NLS-1$
+        enableEscapeKeyJob = new Job(Messages.EMPTY) {
             @Override
             protected IStatus run(IProgressMonitor arg0) {
                 enableEscapeKeyJob = null;
-                setEscapeEnabled(true);
+                new UIJob(Messages.EMPTY) {
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor arg0) {
+                        buttonClose.setEnabled(true);
+                        return Status.OK_STATUS;
+                    }
+                }.schedule();
                 return Status.OK_STATUS;
             }
         };
 
-        enableEscapeKeyJob.schedule(150);
+        enableEscapeKeyJob.schedule(200);
+    }
+
+    /**
+     * Overridden to make this dialog resizable.
+     */
+    @Override
+    protected boolean isResizable() {
+        return true;
+    }
+
+    /**
+     * Overridden to provide a default size to {@link XDialog}.
+     */
+    @Override
+    protected Point getDefaultSize() {
+        Point defaultSize = getShell().computeSize(Size.getSize(500), Size.getSize(350), true);
+        setMinimalSize(defaultSize);
+        return defaultSize;
+    }
+
+    /**
+     * Overridden to let {@link XDialog} store the state of this dialog in a
+     * separate section of the dialog settings file.
+     */
+    @Override
+    protected IDialogSettings getDialogBoundsSettings() {
+        return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
     /**
