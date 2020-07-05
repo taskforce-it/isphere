@@ -167,8 +167,13 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
         nicolaBrion.setText("Nicola Brion");
 
         new Label(translators, SWT.NONE); // Filler
-        Label marcoRiva = new Label(translators, SWT.NONE);
-        marcoRiva.setText("Marco Riva");
+        // Label marcoRiva = new Label(translators, SWT.NONE);
+        // marcoRiva.setText("Marco Riva"); // https://www.markonetools.it/
+
+        Link cI2 = new Link(translators, SWT.NONE);
+        // cI2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        cI2.setText("<a href=\"www.markonetools.it\">Marco Riva</a>");
+        cI2.addSelectionListener(new LinkSelectionListener());
 
     }
 
