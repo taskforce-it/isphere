@@ -81,9 +81,16 @@ public class SignOnDialog extends XDialog {
     @Override
     protected Point getDefaultSize() {
         Point defaultSize = new Point(320, 240);
-        setMinimalSize(defaultSize);
         Point point = getShell().computeSize(defaultSize.x, defaultSize.y, true);
         return point;
+    }
+
+    /**
+     * Overridden to ensure a minimal size of the dialog.
+     */
+    @Override
+    public Point getMinimalSize() {
+        return new Point(Size.getSize(320), Size.getSize(240));
     }
 
     /**

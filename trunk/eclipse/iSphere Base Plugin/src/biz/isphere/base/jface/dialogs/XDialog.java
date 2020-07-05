@@ -58,6 +58,7 @@ public class XDialog extends Dialog {
     private DialogSettingsManager dialogSettingsManager = null;
     private StatusLineManager statusLineManager = null;
     private Point minimalSize = null;
+    private Point defaultMinimalSize = null;
 
     /**
      * {@inheritDoc}
@@ -66,7 +67,6 @@ public class XDialog extends Dialog {
         super(parentShell);
         initializeDialogSettingsManager();
         setStyleResizable();
-        setMinimalSize(getDefaultMinimalSize());
     }
 
     /**
@@ -200,34 +200,35 @@ public class XDialog extends Dialog {
 
     private Point ensureMinimalHeight(Point result) {
 
-        if (minimalSize.y == SWT.DEFAULT) {
+        if (getMinimalSize().y == SWT.DEFAULT) {
             return result;
         }
 
-        result.y = Math.max(minimalSize.y, result.y);
+        result.y = Math.max(getMinimalSize().y, result.y);
         return result;
     }
 
     private Point ensureMinimalWidth(Point result) {
 
-        if (minimalSize.x == SWT.DEFAULT) {
+        if (getMinimalSize().x == SWT.DEFAULT) {
             return result;
         }
 
-        result.x = Math.max(minimalSize.x, result.x);
+        result.x = Math.max(getMinimalSize().x, result.x);
         return result;
     }
 
-    public void setMinimalSize(Point minimalSize) {
-        if (minimalSize == null) {
-            this.minimalSize = getDefaultMinimalSize();
-            return;
-        }
-        this.minimalSize = new Point(minimalSize.x, minimalSize.y);
+    public Point getMinimalSize() {
+        return getDefaultMinimalSize();
     }
 
     private Point getDefaultMinimalSize() {
-        return new Point(SWT.DEFAULT, SWT.DEFAULT);
+
+        if (defaultMinimalSize == null) {
+            defaultMinimalSize = new Point(SWT.DEFAULT, SWT.DEFAULT);
+        }
+
+        return defaultMinimalSize;
     }
 
     /**
