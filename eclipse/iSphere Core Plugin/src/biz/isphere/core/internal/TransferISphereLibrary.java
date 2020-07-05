@@ -540,8 +540,15 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
     @Override
     protected Point getDefaultSize() {
         Point defaultSize = getShell().computeSize(Size.getSize(500), Size.getSize(350), true);
-        setMinimalSize(defaultSize);
         return defaultSize;
+    }
+
+    /**
+     * Overridden to ensure a minimal size of the dialog.
+     */
+    @Override
+    public Point getMinimalSize() {
+        return new Point(Size.getSize(280), Size.getSize(200));
     }
 
     /**
