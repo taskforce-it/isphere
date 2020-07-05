@@ -1,7 +1,6 @@
 package biz.isphere.junit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
@@ -17,10 +16,6 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
-import com.ibm.xtq.xslt.runtime.RuntimeError;
-
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.search.MatchOption;
@@ -32,7 +27,10 @@ import biz.isphere.core.sourcefilesearch.FNDSTR_search;
 import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 import biz.isphere.core.sourcefilesearch.SearchResultStatement;
-import biz.isphere.rse.ISphereRSEPlugin;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400JDBCDriver;
+import com.ibm.xtq.xslt.runtime.RuntimeError;
 
 public class SourceFileSearchTest {
 
@@ -202,7 +200,7 @@ public class SourceFileSearchTest {
         expectedMembers.add("DEMO3");
         expectedMembers.add("DEMO4");
         expectedMembers.add("DEMO6");
-        
+
         int count = 0;
 
         for (SearchResult searchResult : searchResults) {
@@ -211,12 +209,12 @@ public class SourceFileSearchTest {
             assertEquals(SOURCE_FILE, searchResult.getFile());
 
             assertTrue("Unexpected member: " + searchResult.getMember(), expectedMembers.contains(searchResult.getMember()));
-            
-            assertNotEquals("DEMO5", searchResult.getMember());
-            assertNotEquals("DEMO7", searchResult.getMember());
-            assertNotEquals("DEMO8", searchResult.getMember());
-            assertNotEquals("DEMO9", searchResult.getMember());
-            
+
+            assertTrue("Unexpected sourcemember: DEMO5", !"DEMO5".equals(searchResult.getMember()));
+            assertTrue("Unexpected sourcemember: DEMO7", !"DEMO7".equals(searchResult.getMember()));
+            assertTrue("Unexpected sourcemember: DEMO8", !"DEMO8".equals(searchResult.getMember()));
+            assertTrue("Unexpected sourcemember: DEMO9", !"DEMO9".equals(searchResult.getMember()));
+
             assertTrue(searchResult.getMember().startsWith("DEMO"));
 
             count += searchResult.getStatements().length;
@@ -247,7 +245,7 @@ public class SourceFileSearchTest {
             assertEquals(SOURCE_FILE, searchResult.getFile());
 
             assertEquals("DEMO7", searchResult.getMember());
-            
+
             assertTrue(searchResult.getMember().startsWith("DEMO"));
 
             count += searchResult.getStatements().length;
@@ -257,7 +255,7 @@ public class SourceFileSearchTest {
     }
 
     /**
-     * Test simple case-sensitive regular expression search. 
+     * Test simple case-sensitive regular expression search.
      */
     @Test
     public void testSimpleCaseMatchRegex() {
@@ -278,7 +276,7 @@ public class SourceFileSearchTest {
             assertEquals(SOURCE_FILE, searchResult.getFile());
 
             assertEquals("DEMO7", searchResult.getMember());
-            
+
             assertTrue(searchResult.getMember().startsWith("DEMO"));
 
             count += searchResult.getStatements().length;
@@ -481,7 +479,8 @@ public class SourceFileSearchTest {
             jdbcConnection = as400JDBCDriver.connect(system, properties, null);
 
         } catch (Throwable e) {
-            ISphereRSEPlugin.logError("*** Could not produce JDBC connection ***", e);
+            System.out.println("*** Could not produce JDBC connection ***");
+            e.printStackTrace();
         }
 
         return jdbcConnection;
