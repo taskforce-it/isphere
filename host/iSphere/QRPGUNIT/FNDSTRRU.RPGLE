@@ -8,7 +8,9 @@
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
       //*                                                                                          *
-      //* Demo of iSphere Source File Search API                                                   *
+      //* This service program is a iRPGUnit test suite for testing the 'iSphere Source File       *
+      //* Search' feature. It call the procedures of the FNDSTR service program via the            *
+      //* W001* wrapper programs.                                                                  *
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
       //*    >>PRE-COMPILER<<
@@ -17,13 +19,12 @@
       //*      >>IMPORTANT<<
       //*        >>PARM<< COPTION(*SRCSTMT *EVENTF);
       //*        >>PARM<< DBGVIEW(*LIST);
-      //*        >>PARM<< BNDDIR(ISPHERE);
       //*      >>END-IMPORTANT<<
       //*      >>EXECUTE<<
       //*    >>END-PRE-COMPILER<<
       //*------------------------------------------------------------------------------------------*
 
-     h NoMain Option(*SrcStmt) BNDDIR('ISPHERE')
+     h NoMain Option(*SrcStmt)
 
      fFNDSTRI   O    E             Disk    Rename(FNDSTRI : FNDSTRIRF) UsrOpn
      fFNDSTRO01 IF   E           K Disk    Rename(FNDSTRO : FNDSTRORF) UsrOpn
@@ -60,6 +61,23 @@
 
      d testLineMode2Exclude...
      d                 pr                  extproc('testLineMode2Exclude')
+
+     d WRAPPER_getHandle...
+     d                 pr            10S 0 extproc('WRAPPER_getHandle')
+
+     d WRAPPER_search...
+     d                 pr                  extproc('WRAPPER_search')
+     d handle                        10S 0 Const                                --> Handle
+     d showRecords                     N   Const                                --> Show records
+     d matchAll                      10A   Const                                --> Match option
+     d numArguments                  10I 0 Const                                --> Number of args.
+     d arguments                           Const Likeds(searchArgument_t)       --> Search argument
+     d                                     Options(*varsize)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     d WRAPPER_clear...
+     d                 pr                  extproc('WRAPPER_clear')
+     d  i_handle                     10S 0 Value
 
      d prepareMemberList...
      d                 pr                  extproc('prepareMemberList')
@@ -123,7 +141,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -136,7 +154,7 @@
        searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -177,7 +195,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -198,7 +216,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -211,7 +229,7 @@
        searchArguments(1).case = SRCHOPTS_CASE_MATCH;
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -258,7 +276,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -279,7 +297,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -292,7 +310,7 @@
        searchArguments(1).case = SRCHOPTS_CASE_MATCH;
        searchArguments(1).regex = SRCHOPTS_ARG_STRING;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -330,7 +348,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -351,7 +369,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -364,7 +382,7 @@
        searchArguments(1).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(1).regex = SRCHOPTS_ARG_REGEX;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -399,7 +417,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -420,7 +438,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -433,7 +451,7 @@
        searchArguments(1).case = SRCHOPTS_CASE_MATCH;
        searchArguments(1).regex = SRCHOPTS_ARG_REGEX;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -468,7 +486,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -489,7 +507,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -509,7 +527,7 @@
        searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(2).regex = SRCHOPTS_ARG_STRING;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ANY : // --> Match any search arguments
@@ -542,7 +560,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -563,7 +581,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -583,7 +601,7 @@
        searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(2).regex = SRCHOPTS_ARG_STRING;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -620,7 +638,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -647,7 +665,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -667,7 +685,7 @@
        searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(2).regex = SRCHOPTS_ARG_REGEX;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_ALL : // --> Match all search arguments
@@ -694,7 +712,7 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
 
@@ -721,7 +739,7 @@
       /free
 
        // Get handle
-       GIHDL = FNDSTR_getHandle();
+       GIHDL = WRAPPER_getHandle();
 
        // Set search elements
        prepareMemberList(GIHDL);
@@ -741,7 +759,7 @@
        searchArguments(2).case = SRCHOPTS_CASE_IGNORE;
        searchArguments(2).regex = SRCHOPTS_ARG_REGEX;
 
-       FNDSTR_search(
+       WRAPPER_search(
         GIHDL :              // --> Handle
         *ON :                // --> Show all records
         SRCHOPTS_MATCH_LINE: // --> Match all search arguments
@@ -772,9 +790,75 @@
        on-exit;
 
        // Clear files
-       FNDSTR_clear(
+       WRAPPER_clear(
         GIHDL // --> Handle
        );
+
+      /end-free
+     p                 e
+
+       //----------------------------------------------------------------------
+       //   iSphere wrapper of FNDSTR_getHandle().
+       //----------------------------------------------------------------------
+     p WRAPPER_getHandle...
+     p                 b
+     d                 pi            10S 0
+
+     d handle          s             10S 0
+
+     dW001001          PR                  extpgm('W001001')
+     d                               10S 0                                      <-- Handle
+      /free
+
+       W001001(handle);
+
+       return handle;
+
+      /end-free
+     p                 e
+
+       //----------------------------------------------------------------------
+       //   iSphere wrapper of FNDSTR_search().
+       //----------------------------------------------------------------------
+     p WRAPPER_search...
+     p                 b
+     d                 pi
+     d i_handle                      10S 0 Const                                --> Handle
+     d i_showRecords                   N   Const                                --> Show records
+     d i_matchAll                    10A   Const                                --> Match option
+     d i_numArguments                10I 0 Const                                --> Number of args.
+     d i_arguments                         Const Likeds(searchArgument_t)       --> Search argument
+     d                                     Options(*varsize)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+
+     dW001002          PR                  extpgm('W001002')
+     d handle                        10S 0 Const                                --> Handle
+     d showRecords                     N   Const                                --> Show records
+     d matchAll                      10A   Const                                --> Match option
+     d numArguments                  10I 0 Const                                --> Number of args.
+     d arguments                           Const Likeds(searchArgument_t)       --> Search argument
+     d                                     Options(*varsize)
+     d                                     Dim(SRCHOPTS_ARGUMENTS_SIZE)
+      /free
+
+       W001002(i_handle: i_showRecords: i_matchAll: i_numArguments:i_arguments);
+
+      /end-free
+     p                 e
+
+       //----------------------------------------------------------------------
+       //   iSphere wrapper of FNDSTR_clear().
+       //----------------------------------------------------------------------
+     p WRAPPER_clear...
+     p                 b
+     d                 pi
+     d  i_handle                     10S 0 Value
+
+     dW001003          PR                  extpgm('W001003')
+     d                               10S 0 Const                                --> Handle
+      /free
+
+       W001003(i_handle);
 
       /end-free
      p                 e
@@ -826,9 +910,10 @@
       /end-free
      p                 e
 
-      //*==========================================================================================*
-      //* Removes 'Buffer length longer than record for member DEMO5.' (CPF4011) message.          *
-      //*==========================================================================================*
+       //----------------------------------------------------------------------
+       //   Removes 'Buffer length longer than record for member DEMO5.'
+       //   (CPF4011) message.
+       //----------------------------------------------------------------------
 
      p removeFileOpenMessage...
      p                 b
