@@ -48,6 +48,7 @@
              DCL        VAR(&DTAQSRC  ) TYPE(*CHAR) LEN(10) VALUE('QDTAQSRC')
              DCL        VAR(&USRSPCSRC) TYPE(*CHAR) LEN(10) VALUE('QUSRSPCSRC')
              DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
+             DCL        VAR(&RPGUNIT  ) TYPE(*CHAR) LEN(10) VALUE('QRPGUNIT')
              DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
              DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
              DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
@@ -255,6 +256,9 @@
                              TOLIB(&PRDLIB) DATA(*YES)
 
                 CRTDUPOBJ  OBJ(&RPGLESRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+                             TOLIB(&PRDLIB) DATA(*YES)
+
+                CRTDUPOBJ  OBJ(&RPGUNIT) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
                              TOLIB(&PRDLIB) DATA(*YES)
 
                 CRTDUPOBJ  OBJ(&SQLSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
