@@ -16,6 +16,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400JDBCDriver;
+import com.ibm.xtq.xslt.runtime.RuntimeError;
+
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.search.MatchOption;
@@ -28,10 +32,13 @@ import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchResult;
 import biz.isphere.core.sourcefilesearch.SearchResultStatement;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
-import com.ibm.xtq.xslt.runtime.RuntimeError;
-
+/**
+ * This class is a JUnit test suite for testing the 'iSphere Source File Search'
+ * feature.
+ * 
+ * @see Source member: QRPGUNIT.FNDSTRRU
+ * @author Thomas Raddatz
+ */
 public class SourceFileSearchTest {
 
     private static final String ISPHERE_PRODUCT_LIBRARY = "ISPHEREDVP";
@@ -285,12 +292,148 @@ public class SourceFileSearchTest {
         assertEquals(1, count);
     }
 
+    /**
+     * Test 'match any' search string search with two arguments.
+     */
+    @Test
+    public void testCombined2Any() {
+
+        String caseSensitivity = SearchOptions.CASE_IGNORE;
+
+        SearchOptions searchOptions = new SearchOptions(MatchOption.ANY, true);
+        searchOptions.addSearchArgument(includesStrings("qcpysrc,iqdbrtvfd", caseSensitivity));
+        searchOptions.addSearchArgument(includesStrings("qcpysrc,iqsdrtvmv", caseSensitivity));
+
+        SearchResult[] searchResults = performSearch(searchOptions);
+
+        Set<String> expectedMembers = new HashSet<String>();
+        expectedMembers.add("DEMO7");
+        expectedMembers.add("DEMO8");
+        expectedMembers.add("DEMO9");
+
+        int count = 0;
+
+        for (SearchResult searchResult : searchResults) {
+
+            assertEquals(SOURCE_LIBRARY, searchResult.getLibrary());
+            assertEquals(SOURCE_FILE, searchResult.getFile());
+
+            assertTrue("Unexpected member: " + searchResult.getMember(), expectedMembers.contains(searchResult.getMember()));
+
+            assertTrue(searchResult.getMember().startsWith("DEMO"));
+
+            count += searchResult.getStatements().length;
+        }
+
+        assertEquals(3, count);
+    }
+
+    /**
+     * Test 'match all' search string search with two arguments.
+     */
+    @Test
+    public void testCombined2All() {
+
+        String caseSensitivity = SearchOptions.CASE_IGNORE;
+
+        SearchOptions searchOptions = new SearchOptions(MatchOption.ALL, true);
+        searchOptions.addSearchArgument(includesStrings("qcpysrc,iqsdrtvmv", caseSensitivity));
+        searchOptions.addSearchArgument(includesStrings("qcpysrc,iqsdrtvvt", caseSensitivity));
+
+        SearchResult[] searchResults = performSearch(searchOptions);
+
+        int count = 0;
+
+        for (SearchResult searchResult : searchResults) {
+
+            assertEquals(SOURCE_LIBRARY, searchResult.getLibrary());
+            assertEquals(SOURCE_FILE, searchResult.getFile());
+
+            assertTrue("Unexpected member: " + searchResult.getMember(), "DEMO9".equals(searchResult.getMember()));
+
+            for (int i = 0; i < searchResult.getStatements().length; i++) {
+                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i],
+                    searchResult.getStatements()[i].getStatement() == 35 || searchResult.getStatements()[i].getStatement() == 37);
+            }
+
+            assertTrue(searchResult.getMember().startsWith("DEMO"));
+
+            count += searchResult.getStatements().length;
+        }
+
+        assertEquals(2, count);
+    }
+
+    /**
+     * Test 'match all' search string search with two arguments.
+     * <p>
+     * First argument must be found.<br>
+     * Second argument (regex) must not be found.
+     */
+    @Test
+    public void testCombined2Exclude() {
+
+        String caseSensitivity = SearchOptions.CASE_IGNORE;
+
+        SearchOptions searchOptions = new SearchOptions(MatchOption.ALL, true);
+        searchOptions.addSearchArgument(includesStrings("DEMO4P", caseSensitivity));
+        searchOptions.addSearchArgument(excludesRegex("open|close", caseSensitivity));
+
+        SearchResult[] searchResults = performSearch(searchOptions);
+
+        int count = 0;
+
+        for (SearchResult searchResult : searchResults) {
+            count += searchResult.getStatements().length;
+        }
+
+        assertEquals(0, count);
+    }
+
+    /**
+     * Test 'line mode'. Search all lines that conain the first search argument,
+     * but that do not contain the second regular expression.
+     */
+    @Test
+    public void testLineMode2Exclude() {
+
+        String caseSensitivity = SearchOptions.CASE_IGNORE;
+
+        SearchOptions searchOptions = new SearchOptions(MatchOption.LINE, true);
+        searchOptions.addSearchArgument(includesStrings("DEMO4P", caseSensitivity, 1, 40));
+        searchOptions.addSearchArgument(excludesRegex("open|close", caseSensitivity, 1, 40));
+
+        SearchResult[] searchResults = performSearch(searchOptions);
+
+        int count = 0;
+
+        for (SearchResult searchResult : searchResults) {
+
+            assertEquals("DEMO4", searchResult.getMember());
+
+            for (int i = 0; i < searchResult.getStatements().length; i++) {
+                assertTrue("Unexpected stmt #" + searchResult.getStatements()[i],
+                    searchResult.getStatements()[i].getStatement() == 37 || searchResult.getStatements()[i].getStatement() == 84);
+            }
+
+            assertTrue(searchResult.getMember().startsWith("DEMO"));
+
+            count += searchResult.getStatements().length;
+        }
+
+        assertEquals(2, count);
+    }
+
     /*
      * Internally used functions.
      */
 
     private SearchArgument includesStrings(String searchArgument, String caseSensitivity) {
-        return new SearchArgument(searchArgument, 1, 228, caseSensitivity, SearchOptions.SEARCH_ARG_STRING, SearchOptions.CONTAINS);
+        return includesStrings(searchArgument, caseSensitivity, 1, 228);
+    }
+
+    private SearchArgument includesStrings(String searchArgument, String caseSensitivity, int from, int to) {
+        return new SearchArgument(searchArgument, from, to, caseSensitivity, SearchOptions.SEARCH_ARG_STRING, SearchOptions.CONTAINS);
     }
 
     private SearchArgument excludesStrings(String searchArgument, String caseSensitivity) {
@@ -299,6 +442,14 @@ public class SourceFileSearchTest {
 
     private SearchArgument includesRegex(String searchArgument, String caseSensitivity) {
         return new SearchArgument(searchArgument, 1, 228, caseSensitivity, SearchOptions.SEARCH_ARG_REGEX, SearchOptions.CONTAINS);
+    }
+
+    private SearchArgument excludesRegex(String searchArgument, String caseSensitivity) {
+        return excludesRegex(searchArgument, caseSensitivity, 1, 228);
+    }
+
+    private SearchArgument excludesRegex(String searchArgument, String caseSensitivity, int from, int to) {
+        return new SearchArgument(searchArgument, from, to, caseSensitivity, SearchOptions.SEARCH_ARG_REGEX, SearchOptions.CONTAINS_NOT);
     }
 
     private SearchResult[] performSearch(SearchOptions searchOptions) {
