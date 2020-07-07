@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -49,6 +48,8 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
@@ -128,7 +129,8 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
         if (!buttonClose.isDisposed() && buttonClose.isEnabled()) {
             boolean closeConfirmed;
             if (uploadCompleted) {
-                closeConfirmed = MessageDialog.openQuestion(getShell(), Messages.Confirm_exit, Messages.Close_upload_dialog);
+                closeConfirmed = DoNotAskMeAgainDialog.openConfirm(getShell(), DoNotAskMeAgain.CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG,
+                    Messages.Close_upload_dialog);
             } else {
                 closeConfirmed = true;
             }
