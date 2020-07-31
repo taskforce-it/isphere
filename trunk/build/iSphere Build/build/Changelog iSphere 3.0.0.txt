@@ -14,6 +14,8 @@ Changelog: iSphere 3.7.2.r
    associated RSE connection has SSL enabled.
  • Changed QueuedMessageSubSystem to use an SSL connection, when the
    associated RSE connection has SSL enabled.
+ • Changed shortcut of search condition "Match all per line" in
+   'iSphere Source File Search' dialog.
  • Removed a whole bunch of unused NLS strings from iSphere 5250
    Emulator Core Plugin.
  • Added Marco Riva to the list of Italian translators.
@@ -25,7 +27,7 @@ Changelog: iSphere 3.7.2.r
    RSE connection for uploading the iSphere library.
  • Disabled validation, when the iSphere Connection Properties
    dialog is opened.
- • Enabled Esc-key for closing the "Transfer iSphere Library" dialog. 
+ • Enabled Esc-key for closing the "Transfer iSphere Library" dialog.
 
 Changelog: iSphere 3.7.2.b001
 -----------------------------
