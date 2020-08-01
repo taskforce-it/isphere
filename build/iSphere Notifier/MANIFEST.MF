@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.7.1.r
-X-Bundle-Update-Library: false
-X-Bundle-Update-Library-Info: .
-X-Bundle-Info: *** Important Update ***\nBugfix of ticket #101.\nCopy Members To new value *FROMFILE.\nBinding directory editor enabled for multiple-selections. 
-X-Beta-Version: 3.7.2.b001
+Bundle-Version: 3.7.2.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: Updated STRPREPRC command to v1.18. Added >>INCLUDE<< tag.
+X-Bundle-Info: Added replacement variable "&PAGES" to spooled file decorator.\nUpdated STRPREPRC command to v1.18.\nUpdated Italian translation.\nThoroughly enabled SSL. 
+X-Beta-Version: 3.7.2.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Updated STRPREPRC command to v1.18. Added >>INCLUDE<< tag.
-X-Beta-Info: Added replacement variable "&PAGES" to spooled file decorator.\nUpdated STRPREPRC command to v1.18.
+X-Beta-Info: Added replacement variable "&PAGES" to spooled file decorator.\nUpdated STRPREPRC command to v1.18.\nUpdated Italian translation.\nThoroughly enabled SSL.
