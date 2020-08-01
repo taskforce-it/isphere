@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+      	<!--
+      	  ==========================================
+      	    Extension point: IRDiContributions
+      	  ==========================================
+      	-->
+
+   <extension-point id="biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions" 
+   		 name="Display Journal Entries Handler: IDisplayJournalEntriesContributions" 
+   		 schema="schema/biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions.xsd">
+   </extension-point>
+    
+	<extension 
+		point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
+      	
+      	<!--
+      	  ==========================================
+      	    File contributions
+      	  ==========================================
+      	-->
+
+		<dynamicPopupMenuExtension
+			name="Display Journal Entries"
+			class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+			id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction">
+	    </dynamicPopupMenuExtension>
+      	
+   </extension>
+
+</plugin>
