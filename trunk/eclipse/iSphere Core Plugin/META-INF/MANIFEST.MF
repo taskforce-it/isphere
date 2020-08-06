@@ -9,7 +9,6 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  com.ibm.etools.iseries.toolbox,
- com.ibm.lpex,
  org.eclipse.compare,
  org.eclipse.ui.ide,
  org.eclipse.core.resources,
