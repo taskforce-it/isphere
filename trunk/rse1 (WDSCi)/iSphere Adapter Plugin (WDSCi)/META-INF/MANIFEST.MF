@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Adapter for WDSCi 7.0
 Bundle-SymbolicName: biz.isphere.adapter;singleton:=true
-Bundle-Version: 3.7.2.r
+Bundle-Version: 3.7.3.b002
 Bundle-Activator: biz.isphere.adapter.ISphereAdapterPlugin
 Bundle-Vendor: iSphere Project
 Require-Bundle: org.eclipse.ui,
