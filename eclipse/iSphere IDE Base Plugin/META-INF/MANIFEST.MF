@@ -12,7 +12,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.lpex,
  biz.isphere.base,
  biz.isphere.core
-Export-Package: biz.isphere.ide.lpex.menu,
+Export-Package: biz.isphere.ide.lpex.actions,
+ biz.isphere.ide.lpex.menu,
  biz.isphere.ide.lpex.menu.model
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
