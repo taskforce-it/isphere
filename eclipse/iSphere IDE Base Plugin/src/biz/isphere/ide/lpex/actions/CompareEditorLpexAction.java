@@ -28,9 +28,9 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
-import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.ide.lpex.RemoteSourceLocation;
 
 import com.ibm.lpex.core.LpexAction;
@@ -42,6 +42,8 @@ import com.ibm.lpex.core.LpexView;
  */
 public class CompareEditorLpexAction implements LpexAction {
 
+    // ID that had been assigned, when this class belonged to the iSphere Core
+    // plug-in.
     public static final String ID = "iSphere.Core.CompareSourceMember";
 
     public void doAction(LpexView view) {
