@@ -17,10 +17,10 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
-import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
-import biz.isphere.core.lpex.menu.model.UserAction;
-import biz.isphere.core.lpex.menu.model.UserKeyAction;
+import biz.isphere.ide.lpex.menu.AbstractLpexMenuExtension;
+import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
+import biz.isphere.ide.lpex.menu.model.UserAction;
+import biz.isphere.ide.lpex.menu.model.UserKeyAction;
 import biz.isphere.strpreprc.lpex.action.AddPostCompileCommandAction;
 import biz.isphere.strpreprc.lpex.action.AddPreCompileCommandAction;
 import biz.isphere.strpreprc.lpex.action.EditCommandAction;

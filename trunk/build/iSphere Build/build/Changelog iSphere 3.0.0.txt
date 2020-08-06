@@ -1,4 +1,10 @@
 
+Changelog: iSphere 3.7.3.r
+--------------------------
+
+ • Introduced plug-in 'iSphere IDE Base Plugin' to remove dependency
+   to RDi/WDSCi from the 'iSphere Core Plugin' plug-in.
+
 Changelog: iSphere 3.7.2.r
 --------------------------
 

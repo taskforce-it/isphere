@@ -34,7 +34,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.lpex,
  biz.isphere.core,
  biz.isphere.adapter,
- biz.isphere.base
+ biz.isphere.base,
+ biz.isphere.ide
 Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
  biz.isphere.rse.clcommands,

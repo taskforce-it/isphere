@@ -11,8 +11,8 @@ package biz.isphere.strpreprc;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import biz.isphere.core.lpex.menu.ILpexMenuExtension;
-import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
+import biz.isphere.ide.lpex.menu.ILpexMenuExtension;
+import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
 import biz.isphere.strpreprc.model.HeaderTemplates;
 
 /**

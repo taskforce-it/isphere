@@ -6,32 +6,32 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.menu.model;
+package biz.isphere.ide.lpex.menu.model;
 
-public class UserAction extends AbstractLpexAction<UserAction> implements Comparable<UserAction> {
+public class UserKeyAction extends AbstractLpexAction<UserKeyAction> implements Comparable<UserKeyAction> {
 
-    private String className;
+    private String keyStrokes;
 
-    public UserAction(String actionId, String className) {
+    public UserKeyAction(String name, String actionId) {
         super(actionId);
-        this.className = className;
+        this.keyStrokes = name;
     }
 
-    public String getClassName() {
-        return className;
+    public String getKeyStrokes() {
+        return keyStrokes;
     }
 
     @Override
     public String toString() {
-        return getActionId() + ACTION_DELIMITER + className;
+        return keyStrokes + ACTION_DELIMITER + getActionId();
     }
 
-    public int compareTo(UserAction action) {
+    public int compareTo(UserKeyAction action) {
 
-        if (action == null || action.getActionId() == null) {
+        if (action == null || action.getKeyStrokes() == null) {
             return 1;
         }
 
-        return getActionId().compareTo(action.getActionId());
+        return getKeyStrokes().compareTo(action.getKeyStrokes());
     }
 }
