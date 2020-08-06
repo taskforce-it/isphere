@@ -8,7 +8,7 @@
 
 package biz.isphere.rse.lpex;
 
-import biz.isphere.core.lpex.MenuExtension;
+import biz.isphere.ide.lpex.menu.MenuExtension;
 import biz.isphere.rse.ISphereRSEPlugin;
 
 import com.ibm.lpex.alef.LpexPreload;
