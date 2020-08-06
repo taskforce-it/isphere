@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex;
+package biz.isphere.ide.lpex.menu;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,12 +17,9 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import biz.isphere.core.lpex.actions.CompareEditorLpexAction;
-import biz.isphere.core.lpex.menu.AbstractLpexMenuExtension;
-import biz.isphere.core.lpex.menu.LpexMenu;
-import biz.isphere.core.lpex.menu.LpexMenuExtensionPlugin;
-import biz.isphere.core.lpex.menu.model.UserAction;
-import biz.isphere.core.lpex.menu.model.UserKeyAction;
+import biz.isphere.ide.lpex.actions.CompareEditorLpexAction;
+import biz.isphere.ide.lpex.menu.model.UserAction;
+import biz.isphere.ide.lpex.menu.model.UserKeyAction;
 
 import com.ibm.lpex.alef.LpexPlugin;
 

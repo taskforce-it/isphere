@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.menu;
+package biz.isphere.ide.lpex.menu;
 
 public interface LpexKey {
 

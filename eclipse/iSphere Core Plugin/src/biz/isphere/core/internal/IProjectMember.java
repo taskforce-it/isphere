@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.lpex.LocalSourceLocation;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 

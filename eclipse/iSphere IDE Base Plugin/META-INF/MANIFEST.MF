@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ISphere IDE Plugin
+Bundle-SymbolicName: biz.isphere.ide
+Bundle-Version: 3.7.2.r
+Bundle-Activator: biz.isphere.ide.ISphereIDEPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ com.ibm.lpex,
+ biz.isphere.base,
+ biz.isphere.core
+Export-Package: biz.isphere.ide.lpex.menu,
+ biz.isphere.ide.lpex.menu.model
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true

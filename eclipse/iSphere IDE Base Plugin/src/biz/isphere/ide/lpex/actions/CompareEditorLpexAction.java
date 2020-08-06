@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.actions;
+package biz.isphere.ide.lpex.actions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.IProjectMember;
-import biz.isphere.core.lpex.RemoteSourceLocation;
+import biz.isphere.ide.lpex.RemoteSourceLocation;
 
 import com.ibm.lpex.core.LpexAction;
 import com.ibm.lpex.core.LpexView;

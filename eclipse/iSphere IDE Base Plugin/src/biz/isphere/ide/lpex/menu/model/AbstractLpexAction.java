@@ -6,9 +6,21 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.menu;
+package biz.isphere.ide.lpex.menu.model;
 
-public interface ILpexMenuExtension {
+public abstract class AbstractLpexAction<T> implements Comparable<T> {
 
-    public void uninstall();
+    public static final String ACTION_DELIMITER = " "; //$NON-NLS-1$
+
+    private String actionId;
+
+    public AbstractLpexAction(String actionId) {
+        this.actionId = actionId;
+    }
+
+    public String getActionId() {
+        return actionId;
+    }
+
+    public abstract int compareTo(T action);
 }

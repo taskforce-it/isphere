@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  com.ibm.lpex,
  biz.isphere.base,
- biz.isphere.core
+ biz.isphere.core,
+ biz.isphere.ide
 Bundle-Vendor: iSphere Project Team
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy

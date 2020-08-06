@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.lpex.menu;
+package biz.isphere.ide.lpex.menu;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,9 +18,9 @@ import java.util.Set;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.lpex.menu.model.AbstractLpexAction;
-import biz.isphere.core.lpex.menu.model.UserAction;
-import biz.isphere.core.lpex.menu.model.UserKeyAction;
+import biz.isphere.ide.lpex.menu.model.AbstractLpexAction;
+import biz.isphere.ide.lpex.menu.model.UserAction;
+import biz.isphere.ide.lpex.menu.model.UserKeyAction;
 
 import com.ibm.lpex.alef.LpexPlugin;
 import com.ibm.lpex.core.LpexView;
