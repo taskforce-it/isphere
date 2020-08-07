@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,11 +26,11 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.ide.Messages;
 import biz.isphere.ide.lpex.RemoteSourceLocation;
 
 import com.ibm.lpex.core.LpexAction;
@@ -89,6 +89,10 @@ public class CompareEditorLpexAction implements LpexAction {
             if (member != null) {
 
                 String connectionName = member.getConnection();
+                if (StringHelper.isNullOrEmpty(connectionName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Could_not_get_RSE_connection_A, "[null]"));
+                    return;
+                }
 
                 if (view.queryOn("dirty")) {
                     if (MessageDialog.openQuestion(getShell(), Messages.Question,
