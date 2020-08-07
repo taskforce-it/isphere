@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="lib/jt400_7.1.0.6.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer Core Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Lpex Editor Extensions Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere IDE Base Plugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
