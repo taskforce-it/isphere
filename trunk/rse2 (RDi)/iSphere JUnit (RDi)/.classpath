@@ -21,5 +21,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer Core Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer RSE Plugin (RDi)"/>
 	<classpathentry kind="lib" path="lib/jt400.jar" sourcepath="C:/Users/traddatz/AppData/Local/Temp/.org.sf.feeling.decompiler1594011407038/source/jt400-9.6-sources.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere IDE Base Plugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

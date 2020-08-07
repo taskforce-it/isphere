@@ -68,6 +68,8 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.messagesubsystem.rse.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.strpreprc.Messages.class, "messages");
 
+        checkMessagesForLocales(biz.isphere.ide.Messages.class, "messages");
+
         checkMessagesForLocales(biz.isphere.joblogexplorer.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.joblogexplorer.rse.Messages.class, "messages");
 
