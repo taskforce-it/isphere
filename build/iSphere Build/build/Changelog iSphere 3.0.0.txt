@@ -5,6 +5,9 @@ Changelog: iSphere 3.7.3.r
  • Introduced plug-in 'iSphere IDE Base Plugin' to remove dependency
    to RDi/WDSCi from the 'iSphere Core Plugin' plug-in. This changed
    had been requested by CMOne.
+ • Enhanced the "iSphere Journal Explorer", to check the iSphere
+   library when attempting to display the journal entries of a
+   selected file.
 
 Changelog: iSphere 3.7.2.r
 --------------------------

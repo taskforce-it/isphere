@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dialog.ConfirmErrorsDialog;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
@@ -32,6 +34,8 @@ import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
+
+import com.ibm.as400.access.AS400;
 
 public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContributions {
 
@@ -52,6 +56,12 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             Map<String, List<ISelectedFile>> filesByConnection = groupFilesByConnection(selectedFiles);
 
             for (String connectionName : filesByConnection.keySet()) {
+
+                AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+                if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
+                    return;
+                }
+
                 List<ISelectedFile> files = filesByConnection.get(connectionName);
                 handleDisplayFileJournalEntries(connectionName, files);
             }
