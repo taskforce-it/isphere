@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.core.swt.widgets.extension;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -25,6 +26,10 @@ import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 public class DefaultFileDialog implements IFileDialog {
 
     private FileDialog dialog = null;
+
+    public DefaultFileDialog(Shell aParent) {
+        dialog = new FileDialog(aParent, SWT.APPLICATION_MODAL);
+    }
 
     public DefaultFileDialog(Shell aParent, int aStyle) {
         dialog = new FileDialog(aParent, aStyle);
