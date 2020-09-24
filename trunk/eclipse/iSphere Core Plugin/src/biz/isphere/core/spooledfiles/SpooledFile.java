@@ -1046,6 +1046,17 @@ public class SpooledFile implements IPropertySource {
 
     public String save(Shell shell, String format) {
 
+        String file = getFileName(shell, format);
+        if (file == null) {
+            return "";
+        }
+
+        return saveInternally(format, file);
+
+    }
+
+    private String getFileName(Shell shell, String format) {
+
         String fileName = replaceVariables(Preferences.getInstance().getSuggestedSpooledFileName(), format);
         String fileDescription = "";
         String fileExtension = "";
@@ -1070,12 +1081,24 @@ public class SpooledFile implements IPropertySource {
         dialog.setFilterExtensions(new String[] { fileExtension, "*.*" });
         dialog.setFilterPath(getSaveDirectory());
         dialog.setFileName(fileName);
-        // Xystem.out.println(fileName);
         dialog.setOverwrite(true);
         String file = dialog.open();
 
+        return file;
+    }
+
+    public String saveToDirectory(String format, String directory) {
+
+        String file = new File(directory, replaceVariables(Preferences.getInstance().getQualifiedSpooledFileName(), format)).getPath();
+
+        return saveInternally(format, file);
+
+    }
+
+    private String saveInternally(String format, String file) {
+
         if (file != null) {
-            // Xystem.out.println(file);
+
             storeSaveDirectory(file);
 
             String source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
