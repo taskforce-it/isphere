@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.swt.widgets.datetime.DateEdit;
 import biz.isphere.core.swt.widgets.datetime.TimeEdit;
+import biz.isphere.core.swt.widgets.extension.DefaultDirectoryDialog;
 import biz.isphere.core.swt.widgets.extension.DefaultFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
+import biz.isphere.core.swt.widgets.extension.point.IDirectoryDialog;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.extension.point.IWidgetFactory;
@@ -50,7 +52,7 @@ public class WidgetFactoryContributionsHandler {
             return new DefaultFileDialog(aParent, aStyle);
         }
 
-        return factory.getDialog(aParent, aStyle);
+        return factory.getFileDialog(aParent, aStyle);
     }
 
     /**
@@ -59,9 +61,59 @@ public class WidgetFactoryContributionsHandler {
      * @param aParent - a shell which will be the parent of the new instance
      */
     public IFileDialog getFileDialog(Shell aParent) {
-        IFileDialog dialog = null;
 
-        return dialog;
+        IWidgetFactory factory = getWidgetFactory();
+
+        if (factory == null) {
+            return new DefaultFileDialog(aParent);
+        }
+
+        return factory.getFileDialog(aParent);
+    }
+
+    /**
+     * Constructs a new instance of this class given its parent and a style
+     * value describing its behavior and appearance.
+     * <p>
+     * The style value is either one of the style constants defined in class SWT
+     * which is applicable to instances of this class, or must be built by
+     * bitwise OR'ing together (that is, using the int "|" operator) two or more
+     * of those SWT style constants. The class description lists the style
+     * constants that are applicable to the class. Style bits are also inherited
+     * from superclasses.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @param aStyle - the style of dialog to construct
+     * @return the directory dialog
+     * @see org.eclipse.swt.widgets.DirectoryDialog
+     */
+    public IDirectoryDialog getDirectoryDialog(Shell aParent, int aStyle) {
+
+        IWidgetFactory factory = getWidgetFactory();
+
+        if (factory == null) {
+            return new DefaultDirectoryDialog(aParent);
+        }
+
+        return factory.getDirectoryDialog(aParent, aStyle);
+    }
+
+    /**
+     * Constructs a new instance of this class given only its parent.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @return the directory dialog
+     * @see org.eclipse.swt.widgets.DirectoryDialog
+     */
+    public IDirectoryDialog getDirectoryDialog(Shell aParent) {
+
+        IWidgetFactory factory = getWidgetFactory();
+
+        if (factory == null) {
+            return new DefaultDirectoryDialog(aParent);
+        }
+
+        return factory.getDirectoryDialog(aParent);
     }
 
     /**

@@ -26,15 +26,46 @@ public interface IWidgetFactory {
      * 
      * @param aParent - a shell which will be the parent of the new instance
      * @param aStyle - the style of dialog to construct
+     * @return the file dialog
+     * @see org.eclipse.swt.widgets.FileDialog
      */
-    public IFileDialog getDialog(Shell aParent, int aStyle);
+    public IFileDialog getFileDialog(Shell aParent, int aStyle);
 
     /**
      * Constructs a new instance of this class given only its parent.
      * 
      * @param aParent - a shell which will be the parent of the new instance
+     * @return the file dialog
+     * @see org.eclipse.swt.widgets.FileDialog
      */
-    public IFileDialog getDialog(Shell aParent);
+    public IFileDialog getFileDialog(Shell aParent);
+
+    /**
+     * Constructs a new instance of this class given its parent and a style
+     * value describing its behavior and appearance.
+     * <p>
+     * The style value is either one of the style constants defined in class SWT
+     * which is applicable to instances of this class, or must be built by
+     * bitwise OR'ing together (that is, using the int "|" operator) two or more
+     * of those SWT style constants. The class description lists the style
+     * constants that are applicable to the class. Style bits are also inherited
+     * from superclasses.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @param aStyle - the style of dialog to construct
+     * @return the directory dialog
+     * @see org.eclipse.swt.widgets.DirectoryDialog
+     */
+    public IDirectoryDialog getDirectoryDialog(Shell aParent, int aStyle);
+
+    /**
+     * Constructs a new instance of this class given only its parent.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @return the directory dialog
+     * @see org.eclipse.swt.widgets.DirectoryDialog
+     */
+    public IDirectoryDialog getDirectoryDialog(Shell aParent);
 
     /**
      * Produces a new date edit control. If the underlaying Eclipse has a
