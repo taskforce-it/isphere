@@ -166,6 +166,10 @@ public class Messages extends NLS {
 
     public static String No_compile_command_manager_available;
 
+    public static String Select_directory;
+
+    public static String Saving_spooled_files;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

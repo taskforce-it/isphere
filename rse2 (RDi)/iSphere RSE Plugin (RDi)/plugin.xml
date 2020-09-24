@@ -611,6 +611,13 @@
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
             id="biz.isphere.core.menu.wrksplf">
             
+	         <menu
+	               label="%SaveAs"
+	               id="biz.isphere.core.menu.save">             
+	            <separator
+	                  name="main">
+	            </separator>
+	         </menu> 
 	         <action
                 class="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
                 enablesFor="1"
@@ -618,6 +625,30 @@
                 label="%iSphere_Work_With_Spooled_Files"
 	            icon="icons/spooled_files.gif"
                 menubarPath="group.expandto">
+	         </action>
+	         <action
+                class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsPDFAction"
+                enablesFor="1"
+                id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsPDFAction"
+                label="%SaveAsPDF"
+	            icon="icons/pdf.gif"
+                menubarPath="biz.isphere.core.menu.save/main">
+	         </action>
+	         <action
+                class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsHTMLAction"
+                enablesFor="1"
+                id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsHTMLAction"
+                label="%SaveAsHTML"
+	            icon="icons/html.gif"
+                menubarPath="biz.isphere.core.menu.save/main">
+	         </action>
+	         <action
+                class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsTextAction"
+                enablesFor="1"
+                id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsTextAction"
+                label="%SaveAsText"
+	            icon="icons/text.gif"
+                menubarPath="biz.isphere.core.menu.save/main">
 	         </action>
       	</objectContribution>
       	
@@ -846,6 +877,7 @@
          </action>
          <action
                label="%SaveAsPDF"
+               icon="icons/pdf.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -853,6 +885,7 @@
          </action>
          <action
                label="%SaveAsHTML"
+               icon="icons/html.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -860,6 +893,7 @@
          </action>
          <action
                label="%SaveAsText"
+               icon="icons/text.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -867,6 +901,7 @@
          </action>
          <action
                label="%OpenAsPDF"
+               icon="icons/pdf.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
@@ -874,6 +909,7 @@
          </action>
          <action
                label="%OpenAsHTML"
+               icon="icons/html.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
@@ -881,6 +917,7 @@
          </action>
          <action
                label="%OpenAsText"
+               icon="icons/text.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"

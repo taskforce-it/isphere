@@ -73,6 +73,12 @@ public final class Preferences {
 
     private static final String WARNING_BASE_KEY = DOMAIN + "SHOW_WARNING."; //$NON-NLS-1$
 
+    private static final String SPOOLED_FILE_NAME_DEFAULT = "*DEFAULT"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILE_NAME_SIMPLE = "*SIMPLE"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILE_NAME_QUALIFIED = "*QUALIFIED"; //$NON-NLS-1$
+
     private static final String SPOOLED_FILES_LOAD_ASYNCHRONOUSLY = DOMAIN + "SPOOLED_FILES.LOAD.ASYNCHRONOUSLY"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_SUGGESTED_FILE_NAME = DOMAIN + "SPOOLED_FILES.SUGGESTED.FILE_NAME"; //$NON-NLS-1$
@@ -1030,7 +1036,7 @@ public final class Preferences {
     }
 
     public String getDefaultSpooledFilesSuggestedFileName() {
-        return "*SIMPLE";
+        return SPOOLED_FILE_NAME_SIMPLE;
     }
 
     /**
@@ -1569,6 +1575,10 @@ public final class Preferences {
         return suggestedNames;
     }
 
+    public String getQualifiedSpooledFileName() {
+        return getSpooledFileSuggestedNamesMap().get(SPOOLED_FILE_NAME_QUALIFIED);
+    }
+
     public String getSuggestedSpooledFileName() {
 
         String key = getSpooledFilesSuggestedFileName();
@@ -1609,9 +1619,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames = new HashMap<String, String>();
 
-        suggestedSpooledFileNames.put("*DEFAULT", "spooled_file"); //$NON-NLS-1$
-        suggestedSpooledFileNames.put("*SIMPLE", SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put("*QUALIFIED", SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
             + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
             + SpooledFile.VARIABLE_JOBSYS);
 
