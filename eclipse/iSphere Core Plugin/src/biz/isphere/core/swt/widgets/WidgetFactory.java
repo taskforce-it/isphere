@@ -31,6 +31,7 @@ import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
 import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
+import biz.isphere.core.swt.widgets.extension.point.IDirectoryDialog;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.hexeditor.HexText;
@@ -86,6 +87,18 @@ public final class WidgetFactory {
      */
     public static IFileDialog getFileDialog(Shell parent, int style) {
         return WidgetFactory.getInstance().produceFileDialog(parent, style);
+    }
+
+    /**
+     * Constructs a new instance of this class given its parent and a style
+     * value describing its behavior and appearance.
+     * 
+     * @param aParent - a shell which will be the parent of the new instance
+     * @return the directory dialog
+     * @see org.eclipse.swt.widgets.DirectoryDialog
+     */
+    public static IDirectoryDialog getDirectoryDialog(Shell parent) {
+        return WidgetFactory.getInstance().produceDirectoryDialog(parent, SWT.APPLICATION_MODAL);
     }
 
     /**
@@ -821,6 +834,14 @@ public final class WidgetFactory {
 
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(parent, style);
+
+        return dialog;
+    }
+
+    private IDirectoryDialog produceDirectoryDialog(Shell parent, int style) {
+
+        WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
+        IDirectoryDialog dialog = factory.getDirectoryDialog(parent, style);
 
         return dialog;
     }

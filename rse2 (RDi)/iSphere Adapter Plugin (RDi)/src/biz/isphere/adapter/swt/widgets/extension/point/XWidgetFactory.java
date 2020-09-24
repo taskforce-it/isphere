@@ -12,21 +12,31 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.adapter.swt.widgets.XDateEdit;
+import biz.isphere.adapter.swt.widgets.XDirectoryDialog;
 import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.adapter.swt.widgets.XTimeEdit;
 import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
+import biz.isphere.core.swt.widgets.extension.point.IDirectoryDialog;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.core.swt.widgets.extension.point.IWidgetFactory;
 
 public class XWidgetFactory implements IWidgetFactory {
 
-    public IFileDialog getDialog(Shell aParent, int aStyle) {
+    public IFileDialog getFileDialog(Shell aParent, int aStyle) {
         return new XFileDialog(aParent, aStyle);
     }
 
-    public IFileDialog getDialog(Shell aParent) {
+    public IFileDialog getFileDialog(Shell aParent) {
         return new XFileDialog(aParent);
+    }
+
+    public IDirectoryDialog getDirectoryDialog(Shell aParent, int aStyle) {
+        return new XDirectoryDialog(aParent, aStyle);
+    }
+
+    public IDirectoryDialog getDirectoryDialog(Shell aParent) {
+        return new XDirectoryDialog(aParent);
     }
 
     public IDateEdit getDateEdit(Composite aParent, int style) {
