@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,7 +260,7 @@ public class JobLogMessage {
     }
 
     public void setType(String type) {
-        this.type = type.trim();
+        this.type = trimChecked(type);
         notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.TYPE, this.type));
     }
 
@@ -273,7 +273,7 @@ public class JobLogMessage {
     }
 
     public void setSeverity(String severity) {
-        this.severity = severity;
+        this.severity = trimChecked(severity);
         setSeverityIntValue(this.severity);
         notifyModifyListeners(new MessageModifyEvent(MessageModifyEvent.SEVERITY, this.severity));
     }
@@ -425,6 +425,15 @@ public class JobLogMessage {
     public void removeModifyListener(MessageModifyListener listener) {
 
         listeners.remove(listener);
+    }
+
+    private String trimChecked(String value) {
+
+        if (value == null) {
+            return value;
+        }
+
+        return value.trim();
     }
 
     private void notifyModifyListeners(MessageModifyEvent event) {
