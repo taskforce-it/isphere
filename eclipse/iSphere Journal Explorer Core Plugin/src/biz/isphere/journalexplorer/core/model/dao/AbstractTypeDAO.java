@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             }
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+            int numRowsAvailable = getNumRowsAvailable(whereClause);
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -73,10 +74,14 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                 JournalEntry journalEntry = null;
 
+                monitor.beginTask("", numRowsAvailable);
+
                 while (resultSet.next() && !isCanceled(monitor, journalEntries)) {
 
+                    monitor.worked(1);
+
                     if (journalEntries.getNumberOfRowsDownloaded() >= maxNumRows) {
-                        handleOverflowError(journalEntries);
+                        handleOverflowError(journalEntries, numRowsAvailable);
                         break;
                     } else {
                         journalEntry = new JournalEntry(outputFile);
@@ -102,6 +107,8 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
             super.destroy(preparedStatement);
             super.destroy(resultSet);
+
+            monitor.done();
         }
 
         return journalEntries;
@@ -179,10 +186,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         return true;
     }
 
-    private void handleOverflowError(JournalEntries journalEntries) {
+    private int getNumRowsAvailable(String whereClause) {
 
-        String sqlCountStatement = getSqlCountStatement(outputFile);
+        int numRowsAvailable = Integer.MAX_VALUE;
 
+        String sqlCountStatement = getSqlCountStatement(outputFile, whereClause);
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -190,10 +198,11 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
             preparedStatement = prepareStatement(sqlCountStatement);
             resultSet = preparedStatement.executeQuery();
+
             if (resultSet.next()) {
-                journalEntries.setOverflow(true, resultSet.getInt(1));
+                numRowsAvailable = resultSet.getInt(1);
             } else {
-                journalEntries.setOverflow(true, Integer.MAX_VALUE);
+                numRowsAvailable = Integer.MAX_VALUE;
             }
 
         } catch (SQLException e) {
@@ -205,11 +214,21 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             } catch (Throwable e) {
             }
         }
+
+        return numRowsAvailable;
     }
 
-    private String getSqlCountStatement(OutputFile outputFile) {
+    private void handleOverflowError(JournalEntries journalEntries, int numRowsAvailable) {
+
+        journalEntries.setOverflow(true, numRowsAvailable);
+    }
+
+    private String getSqlCountStatement(OutputFile outputFile, String whereClause) {
 
         String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+        if (!StringHelper.isNullOrEmpty(whereClause)) {
+            sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
+        }
 
         return sqlStatement;
     }
