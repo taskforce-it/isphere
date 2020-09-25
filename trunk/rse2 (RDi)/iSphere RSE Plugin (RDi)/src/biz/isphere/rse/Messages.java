@@ -14,31 +14,11 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.rse.messages";
 
-    public static String iSphere_Message_File_Editor; // Only for WDSCi
-
-    public static String iSphere_Compare_Editor; // Only for WDSCi
-
-    public static String iSphere_Data_Area_Editor; // Only for WDSCi
-
-    public static String iSphere_User_Space_Editor; // Only for WDSCi
-
-    public static String iSphere_Data_Area_Monitor; // Only for WDSCi
-
-    public static String iSphere_User_Space_Monitor; // Only for WDSCi
-
-    public static String iSphere_Data_Queue_Monitor; // Only for WDSCi
-
-    public static String iSphere_Compare_Message_File_Editor; // Only for WDSCi
-
-    public static String iSphere_CopyMembersTo; // Only for WDSCi
-
     public static String Right;
 
     public static String Left;
 
     public static String Ancestor;
-
-    public static String iSphere_Binding_Directory_Editor;
 
     public static String E_R_R_O_R;
 
@@ -114,8 +94,6 @@ public class Messages extends NLS {
 
     public static String No_objects_found_that_match_the_selection_criteria;
 
-    public static String Loading_remote_objects;
-
     public static String Library_A_not_found;
 
     public static String File_A_in_library_B_not_found;
@@ -127,8 +105,6 @@ public class Messages extends NLS {
     public static String Object_A_in_library_B_not_found;
 
     public static String No_filter_pool_available;
-
-    public static String A_filter_with_name_A_already_exists_Do_you_want_to_extend_the_filter;
 
     public static String Failed_to_save_data_to_file_colon_A;
 
