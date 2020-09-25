@@ -8,6 +8,8 @@ Changelog: iSphere 3.7.3.r
    Text, HTML or PDF to a PC.
  • Changed spool file "save as" and "open as" options, so that
    pressing the "Cancel" button cancels the whole series.
+ • Changed "iSphere Journal Explorer" not to auto-close the tab when
+   no journal entries are loaded.
  • Fixed problem that background coloring did not work for Job Logs
    parsed from a spooled file stored on a PC.
  • Introduced plug-in 'iSphere IDE Base Plugin' to remove dependency
