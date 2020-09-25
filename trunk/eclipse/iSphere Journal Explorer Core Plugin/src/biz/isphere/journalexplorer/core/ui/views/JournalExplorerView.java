@@ -268,6 +268,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             return;
         } else if (e instanceof NoJournalEntriesLoadedException) {
             MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            return;
         } else if (e instanceof SQLSyntaxErrorException) {
             MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
         } else {
@@ -494,7 +495,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             exportToExcelAction.setColumns(null);
             exportToExcelAction.setEnabled(false);
             exportToExcelAction.setSelectedItems(new JournalEntry[0]);
-            reloadEntriesAction.setEnabled(false);
+            reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(false);
             resetColumnSizeAction.setEnabled(false);
             resetColumnSizeAction.setViewer(null);
