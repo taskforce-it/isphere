@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class JournalEntry {
     private static final int JORCV = 16;
     private static final int JORCVLIB = 17;
     private static final int JOUSPF = 17;
+    private static final int JOSEQN = 18;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -81,6 +82,7 @@ public class JournalEntry {
         columnMappings.put("JORCV", JORCV);
         columnMappings.put("JORCVLIB", JORCVLIB);
         columnMappings.put("JOUSPF", JOUSPF);
+        columnMappings.put("JOSEQN", JOSEQN);
     }
 
     private static List<ContentAssistProposal> proposals;
@@ -105,6 +107,7 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JORCV", "CHAR(10)" + " - " + Messages.LongFieldName_JORCV));
         proposals.add(new ContentAssistProposal("JORCVLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
         proposals.add(new ContentAssistProposal("JOUSPF", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
+        proposals.add(new ContentAssistProposal("JOSEQN", "INTEGER" + " - " + Messages.LongFieldName_JOSEQN));
     }
 
     private Calendar calendar;
