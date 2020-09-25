@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,10 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
     private static URL installURL;
 
     private Map<String, IViewManager> viewManagers;
+    
+    public static final String IMAGE_TEXT = "text.gif";
+    public static final String IMAGE_HTML = "html.gif";
+    public static final String IMAGE_PDF = "pdf.gif";
 
     public ISphereRSEPlugin() {
         super();
@@ -103,6 +107,9 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
     @Override
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
+        reg.put(IMAGE_TEXT, getImageDescriptor(IMAGE_TEXT));
+        reg.put(IMAGE_HTML, getImageDescriptor(IMAGE_HTML));
+        reg.put(IMAGE_PDF, getImageDescriptor(IMAGE_PDF));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")

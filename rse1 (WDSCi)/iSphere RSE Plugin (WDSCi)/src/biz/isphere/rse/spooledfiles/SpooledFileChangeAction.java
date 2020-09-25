@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.Vector;
 
 import org.eclipse.swt.widgets.Display;
 
+import biz.isphere.core.internal.exception.CanceledByUserException;
+
 import com.ibm.as400.ui.util.CommandPrompter;
 import com.ibm.etools.iseries.core.util.clprompter.CLPrompter;
 import com.ibm.etools.systems.core.SystemPlugin;
@@ -24,7 +26,7 @@ import com.ibm.etools.systems.model.SystemRegistry;
 public class SpooledFileChangeAction extends AbstractSpooledFileAction {
 
     @Override
-    public String execute(SpooledFileResource spooledFileResource) {
+    public String execute(SpooledFileResource spooledFileResource) throws CanceledByUserException {
         try {
             CLPrompter command = new CLPrompter();
             command.setCommandString(spooledFileResource.getSpooledFile().getCommandChangeAttribute());
@@ -48,6 +50,9 @@ public class SpooledFileChangeAction extends AbstractSpooledFileAction {
                 return null;
             }
         } catch (Exception e) {
+            if (e instanceof CanceledByUserException) {
+                throw new CanceledByUserException();
+            }
             return e.getMessage();
         }
     }

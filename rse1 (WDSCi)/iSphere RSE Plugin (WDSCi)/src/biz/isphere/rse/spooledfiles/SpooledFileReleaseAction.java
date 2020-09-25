@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package biz.isphere.rse.spooledfiles;
 
 import java.util.Vector;
 
+import biz.isphere.core.internal.exception.CanceledByUserException;
+
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.model.ISystemRemoteChangeEvents;
 import com.ibm.etools.systems.model.SystemRegistry;
@@ -20,7 +22,7 @@ import com.ibm.etools.systems.model.SystemRegistry;
 public class SpooledFileReleaseAction extends AbstractSpooledFileAction {
 
     @Override
-    public String execute(SpooledFileResource spooledFileResource) {
+    public String execute(SpooledFileResource spooledFileResource) throws CanceledByUserException {
 
         String message = spooledFileResource.getSpooledFile().release();
 
