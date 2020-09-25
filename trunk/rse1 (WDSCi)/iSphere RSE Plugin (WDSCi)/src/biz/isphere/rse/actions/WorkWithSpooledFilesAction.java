@@ -52,7 +52,7 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
 
     public void populateMenu(Shell shell, SystemMenuManager menu, IStructuredSelection selection, String menuGroup) {
         setShell(shell);
-        menu.add("additions", this); //$NON-NLS-1$
+        menu.add(this.getContextMenuGroup(), this);
     }
 
     public boolean supportsSelection(IStructuredSelection selection) {

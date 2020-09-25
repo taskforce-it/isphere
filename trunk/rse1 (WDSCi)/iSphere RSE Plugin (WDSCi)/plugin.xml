@@ -242,6 +242,28 @@
 			class="biz.isphere.rse.actions.WorkWithSpooledFilesAction"
 			id="biz.isphere.rse.actions.WorkWithSpooledFilesAction">
 	    </dynamicPopupMenuExtension>
+      	
+      	<!--
+      	  ==========================================
+      	    Save Spooled Files to Directory
+      	  ==========================================
+      	-->
+	    
+		<dynamicPopupMenuExtension
+			name="Save as Text..."
+			class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsTextAction"
+			id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsTextAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Save as ^HTML..."
+			class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsHTMLAction"
+			id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsHTMLAction">
+	    </dynamicPopupMenuExtension>
+		<dynamicPopupMenuExtension
+			name="Save as PDF..."
+			class="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsPDFAction"
+			id="biz.isphere.rse.spooledfiles.SpooledFilesSaveToDirectoryAsPDFAction">
+	    </dynamicPopupMenuExtension>
 	</extension>  
       	
       	<!--
@@ -400,6 +422,7 @@
          </action>
          <action
                label="%SaveAsPDF"
+               icon="icons/pdf.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsPDFAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -407,6 +430,7 @@
          </action>
          <action
                label="%SaveAsHTML"
+               icon="icons/html.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsHTMLAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -414,6 +438,7 @@
          </action>
          <action
                label="%SaveAsText"
+               icon="icons/text.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileSaveAsTextAction"
                menubarPath="biz.isphere.core.menu.save/main"
                enablesFor="+"
@@ -421,6 +446,7 @@
          </action>
          <action
                label="%OpenAsPDF"
+               icon="icons/pdf.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsPDFAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
@@ -428,6 +454,7 @@
          </action>
          <action
                label="%OpenAsHTML"
+               icon="icons/html.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsHTMLAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"
@@ -435,6 +462,7 @@
          </action>
          <action
                label="%OpenAsText"
+               icon="icons/text.gif"
                class="biz.isphere.rse.spooledfiles.SpooledFileOpenAsTextAction"
                menubarPath="biz.isphere.core.menu.open/main"
                enablesFor="+"

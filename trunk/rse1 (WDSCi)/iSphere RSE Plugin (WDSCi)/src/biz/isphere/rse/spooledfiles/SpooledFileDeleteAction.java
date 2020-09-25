@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package biz.isphere.rse.spooledfiles;
 
 import java.util.ArrayList;
 
+import biz.isphere.core.internal.exception.CanceledByUserException;
 import biz.isphere.rse.handler.DeleteSpooledFileHandler;
 
 public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
@@ -25,7 +26,7 @@ public class SpooledFileDeleteAction extends AbstractSpooledFileAction {
     }
 
     @Override
-    public String execute(SpooledFileResource spooledFileResource) {
+    public String execute(SpooledFileResource spooledFileResource) throws CanceledByUserException {
 
         spooledFileResource.getSpooledFile().setData(spooledFileResource);
 

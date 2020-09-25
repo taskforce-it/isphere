@@ -11,14 +11,15 @@
 
 package biz.isphere.rse.spooledfiles;
 
-import biz.isphere.core.internal.exception.CanceledByUserException;
 import biz.isphere.core.preferencepages.IPreferences;
+import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 
-public class SpooledFileOpenAsTextAction extends AbstractSpooledFileAction {
+public class SpooledFilesSaveToDirectoryAsPDFAction extends AbstractSpooledFileSaveToDirectoryAction {
 
-    @Override
-    public String execute(SpooledFileResource spooledFileResource) throws CanceledByUserException {
-        return spooledFileResource.getSpooledFile().open(IPreferences.OUTPUT_FORMAT_TEXT);
+    public SpooledFilesSaveToDirectoryAsPDFAction() {
+        super(Messages.Save_as_PDF, IPreferences.OUTPUT_FORMAT_PDF, ISphereRSEPlugin.getDefault().getImageRegistry().getDescriptor(
+            ISphereRSEPlugin.IMAGE_PDF));
     }
 
 }

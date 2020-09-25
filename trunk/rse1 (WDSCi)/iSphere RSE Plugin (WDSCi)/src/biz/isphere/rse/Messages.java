@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -184,6 +184,18 @@ public class Messages extends NLS {
     
     public static String No_compile_command_manager_available;
 
+    public static String Select_directory;
+
+    public static String Saving_spooled_files;
+
+    public static String Save_as;
+    
+    public static String Save_as_Text;
+
+    public static String Save_as_HTML;
+
+    public static String Save_as_PDF;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
