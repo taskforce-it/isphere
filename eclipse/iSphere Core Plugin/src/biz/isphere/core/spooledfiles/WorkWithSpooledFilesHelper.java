@@ -21,6 +21,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.exception.CanceledByUserException;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
@@ -156,28 +157,40 @@ public class WorkWithSpooledFilesHelper {
 
     public void performSaveAsText(SpooledFile[] spooledFiles) {
 
-        for (SpooledFile spooledFile : spooledFiles) {
-            if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_TEXT))) {
-                break;
+        try {
+            for (SpooledFile spooledFile : spooledFiles) {
+                if (handleErrorMessage(spooledFile.saveWithCancelOption(getShell(), IPreferences.OUTPUT_FORMAT_TEXT))) {
+                    break;
+                }
             }
+        } catch (CanceledByUserException e) {
+            // nothing to do here
         }
     }
 
     public void performSaveAsHtml(SpooledFile[] spooledFiles) {
 
-        for (SpooledFile spooledFile : spooledFiles) {
-            if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_HTML))) {
-                break;
+        try {
+            for (SpooledFile spooledFile : spooledFiles) {
+                if (handleErrorMessage(spooledFile.saveWithCancelOption(getShell(), IPreferences.OUTPUT_FORMAT_HTML))) {
+                    break;
+                }
             }
+        } catch (CanceledByUserException e) {
+            // nothing to do here
         }
     }
 
     public void performSaveAsPdf(SpooledFile[] spooledFiles) {
 
-        for (SpooledFile spooledFile : spooledFiles) {
-            if (handleErrorMessage(spooledFile.save(getShell(), IPreferences.OUTPUT_FORMAT_PDF))) {
-                break;
+        try {
+            for (SpooledFile spooledFile : spooledFiles) {
+                if (handleErrorMessage(spooledFile.saveWithCancelOption(getShell(), IPreferences.OUTPUT_FORMAT_PDF))) {
+                    break;
+                }
             }
+        } catch (CanceledByUserException e) {
+            // nothing to do here
         }
     }
 
