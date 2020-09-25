@@ -38,7 +38,7 @@ public class Messages extends NLS {
 
     public static String Ancestor;
 
-    public static String iSphere_Binding_Directory_Editor; // Only for WDSCi
+    public static String iSphere_Binding_Directory_Editor;
 
     public static String E_R_R_O_R;
 
