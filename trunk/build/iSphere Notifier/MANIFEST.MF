@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-Version: 3.7.2.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: Updated STRPREPRC command to v1.18. Added >>INCLUDE<< tag.
-X-Bundle-Info: Added replacement variable "&PAGES" to spooled file decorator.\nUpdated STRPREPRC command to v1.18.\nUpdated Italian translation.\nThoroughly enabled SSL. 
-X-Beta-Version: 3.7.3.b003
+X-Bundle-Info: Various improvements and fixes of iSphere Journal and Job Log explorers. 
+X-Beta-Version: 3.7.3.b005
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
 X-Beta-Info: Internal changes as requested by CMOne.
