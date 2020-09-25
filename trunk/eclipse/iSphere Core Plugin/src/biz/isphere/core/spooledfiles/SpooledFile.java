@@ -44,6 +44,7 @@ import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.ReadOnlyEditor;
+import biz.isphere.core.internal.exception.CanceledByUserException;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.spooledfiles.view.SpooledFilePropertiesDialog;
@@ -1044,6 +1045,17 @@ public class SpooledFile implements IPropertySource {
             + getCreationDate() + delimiter + getCreationTime();
     }
 
+    public String saveWithCancelOption(Shell shell, String format) throws CanceledByUserException {
+
+        String file = getFileName(shell, format);
+        if (file == null) {
+            throw new CanceledByUserException();
+        }
+
+        return saveInternally(format, file);
+
+    }
+
     public String save(Shell shell, String format) {
 
         String file = getFileName(shell, format);
@@ -1089,7 +1101,17 @@ public class SpooledFile implements IPropertySource {
 
     public String saveToDirectory(String format, String directory) {
 
-        String file = new File(directory, replaceVariables(Preferences.getInstance().getQualifiedSpooledFileName(), format)).getPath();
+        String fileExtension = "";
+        if (format.equals(IPreferences.OUTPUT_FORMAT_TEXT)) {
+            fileExtension = ".txt";
+        } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
+            fileExtension = ".html";
+        } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
+            fileExtension = ".pdf";
+        }
+
+        String file = new File(directory, replaceVariables(Preferences.getInstance().getQualifiedSpooledFileName() + fileExtension, format))
+            .getPath();
 
         return saveInternally(format, file);
 

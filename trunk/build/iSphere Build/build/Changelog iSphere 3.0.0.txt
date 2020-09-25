@@ -2,16 +2,17 @@
 Changelog: iSphere 3.7.3.r
 --------------------------
 
- • Added options to save the items of a spooled file filter as Text,
-   HTML or PDF to aPC.
+ • Enhanced the "iSphere Journal Explorer", to check the iSphere
+   library, when attempting to display the journal entries of a
+ • Added options for saving the items of a spooled file filter as
+   Text, HTML or PDF to a PC.
+ • Changed spool file "save as" and "open as" options, so that
+   pressing the "Cancel" button cancels the whole series.
+ • Fixed problem that background coloring did not work for Job Logs
+   parsed from a spooled file stored on a PC.
  • Introduced plug-in 'iSphere IDE Base Plugin' to remove dependency
    to RDi/WDSCi from the 'iSphere Core Plugin' plug-in. This changed
    had been requested by CMOne.
- • Enhanced the "iSphere Journal Explorer", to check the iSphere
-   library when attempting to display the journal entries of a
-   selected file.
- • Fixed problem that background coloring did not work for Job Logs
-   parsed from a spooled file stored on a PC.
 
 Changelog: iSphere 3.7.2.r
 --------------------------

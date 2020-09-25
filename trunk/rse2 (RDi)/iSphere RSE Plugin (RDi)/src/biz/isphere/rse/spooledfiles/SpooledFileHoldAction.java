@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemRemoteChangeEvents;
 import org.eclipse.rse.core.model.ISystemRegistry;
 
+import biz.isphere.core.internal.exception.CanceledByUserException;
+
 public class SpooledFileHoldAction extends AbstractSpooledFileAction {
 
     @Override
-    public String execute(SpooledFileResource spooledFileResource) {
+    public String execute(SpooledFileResource spooledFileResource) throws CanceledByUserException {
 
         String message = spooledFileResource.getSpooledFile().hold();
 
