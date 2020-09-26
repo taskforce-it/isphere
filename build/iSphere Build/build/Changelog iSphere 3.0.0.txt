@@ -6,6 +6,8 @@ Changelog: iSphere 3.7.3.r
    library, when attempting to display the journal entries of a
  • Added options for saving the items of a spooled file filter as
    Text, HTML or PDF to a PC.
+ • Added option to open the "iSphere Journal Explorer" from the
+   context menu of a journal.
  • Changed spool file "save as" and "open as" options, so that
    pressing the "Cancel" button cancels the whole series.
  • Changed "iSphere Journal Explorer" not to auto-close the tab when

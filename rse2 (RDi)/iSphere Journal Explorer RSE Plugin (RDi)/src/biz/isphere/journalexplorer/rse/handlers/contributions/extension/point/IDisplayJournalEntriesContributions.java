@@ -16,4 +16,11 @@ public interface IDisplayJournalEntriesContributions {
      * @param selectedFile - List of selected files.
      */
     public void handleDisplayFileJournalEntries(ISelectedFile... selectedFile);
+
+    /**
+     * Handles displaying of journal entries.
+     * 
+     * @param selectedJournals - List of selected journals.
+     */
+    public void handleDisplayJournalEntries(ISelectedJournal... selectedJournal);
 }

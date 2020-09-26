@@ -21,9 +21,12 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedJournal;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile;
 
 /**
@@ -45,6 +48,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
             List<ISelectedFile> selectedFiles = new ArrayList<ISelectedFile>();
+            List<ISelectedJournal> selectedJournals = new ArrayList<ISelectedJournal>();
 
             Iterator<?> iterator = structuredSelection.iterator();
 
@@ -53,6 +57,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 Object _object = iterator.next();
 
                 ISelectedFile selectedFile = null;
+                ISelectedJournal selectedJournal = null;
 
                 if (_object instanceof QSYSRemoteMember) {
 
@@ -73,15 +78,34 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String memberName = "*ALL"; //$NON-NLS-1$
 
                     selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
+                } else if (_object instanceof QSYSRemoteObject) {
+
+                    QSYSRemoteObject remoteObject = (QSYSRemoteObject)_object;
+                    if ("*JRN".equals(remoteObject.getType())) {
+
+                        String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                        String libraryName = remoteObject.getLibrary();
+                        String journalName = remoteObject.getName();
+
+                        selectedJournal = new SelectedJournal(connectionName, libraryName, journalName);
+                    }
                 }
 
                 if (selectedFile != null) {
                     selectedFiles.add(selectedFile);
                 }
+
+                if (selectedJournal != null) {
+                    selectedJournals.add(selectedJournal);
+                }
             }
 
             if (!selectedFiles.isEmpty()) {
                 DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
+            }
+
+            if (!selectedJournals.isEmpty()) {
+                DisplayJournalEntriesHandler.handleDisplayJournalEntries(selectedJournals.toArray(new ISelectedJournal[selectedJournals.size()]));
             }
         }
     }
