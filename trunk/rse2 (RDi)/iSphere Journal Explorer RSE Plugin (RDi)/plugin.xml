@@ -50,6 +50,30 @@
 	         </action>
       	</objectContribution>
       	
+      	<!--
+      	  ==========================================
+      	    Journal contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject">
+
+			 <visibility>
+			    <objectState name="type" value="*JRN" />
+			 </visibility>
+	         
+	         <action
+                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                enablesFor="1"
+                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                label="%Display_Journal_Entries"
+                icon="icons/display_journal_entries.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
    </extension>
 
 </plugin>

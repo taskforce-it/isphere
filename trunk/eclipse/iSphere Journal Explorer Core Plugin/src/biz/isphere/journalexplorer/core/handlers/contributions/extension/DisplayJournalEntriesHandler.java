@@ -34,6 +34,8 @@ import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedObject;
 
 import com.ibm.as400.access.AS400;
 
@@ -43,6 +45,42 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
     private LoadJournalEntriesDialog.SelectionCriterias selectionCriterias;
 
+    /**
+     * Displays the journal entries of a given list of journals.
+     * 
+     * @param selectedJournals - list of journal objects
+     */
+    public void handleDisplayJournalEntries(ISelectedJournal... selectedJournals) {
+
+        selectionCriterias = null;
+
+        if (selectedJournals.length == 0) {
+            return;
+        }
+
+        try {
+
+            for (ISelectedJournal selectedJournal : selectedJournals) {
+
+                String connectionName = selectedJournal.getConnectionName();
+                String library = selectedJournal.getLibrary();
+                String name = selectedJournal.getName();
+                Journal journal = new Journal(connectionName, library, name);
+
+                handleDisplayFileJournalEntries(journal, new ArrayList<JournaledFile>(), selectionCriterias);
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method DisplayJournalEntriesHandler.handleDisplayFileJournalEntries() ***", e);
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
+
+    /**
+     * Displays the journal entries of a given list of physical files.
+     * 
+     * @param selectedFiles - list of file objects
+     */
     public void handleDisplayFileJournalEntries(ISelectedFile... selectedFiles) {
 
         selectionCriterias = null;
@@ -53,7 +91,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
         try {
 
-            Map<String, List<ISelectedFile>> filesByConnection = groupFilesByConnection(selectedFiles);
+            Map<String, List<ISelectedFile>> filesByConnection = groupObjectsByConnection(selectedFiles);
 
             for (String connectionName : filesByConnection.keySet()) {
 
@@ -72,6 +110,14 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         }
     }
 
+    /**
+     * Groups the selected files by the journals they are attached to. Displays
+     * an error message for the files that are not journaled.
+     * 
+     * @param connectionName - name of the RSE connection
+     * @param selectedFiles - list of selected files
+     * @throws Exception
+     */
     private void handleDisplayFileJournalEntries(String connectionName, List<ISelectedFile> selectedFiles) throws Exception {
 
         Map<Journal, List<JournaledFile>> objectsByJournal = groupObjectsByJournal(connectionName, selectedFiles);
@@ -115,6 +161,15 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         }
     }
 
+    /**
+     * Creates a tab for the journal the files are attached to and loads all
+     * journal entries in that tab. entries.
+     * 
+     * @param journal - journal the files are attached to
+     * @param journaledFiles - list of files
+     * @param selectionCriterias - selection criterias
+     * @throws Exception
+     */
     private void handleDisplayFileJournalEntries(Journal journal, List<JournaledFile> journaledFiles,
         LoadJournalEntriesDialog.SelectionCriterias selectionCriterias) throws Exception {
 
@@ -147,11 +202,19 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         view.createJournalTab(tJrneToRtv);
     }
 
-    private Map<String, List<ISelectedFile>> groupFilesByConnection(ISelectedFile[] selectedFiles) {
+    /**
+     * Groups a list of objects by the RSE connection they came from. The object
+     * could be a file or a journal.
+     * 
+     * @param selectedObjects - list of selected objects of various RSE
+     *        connections
+     * @return map with an entry per connection and the associated files
+     */
+    private Map<String, List<ISelectedFile>> groupObjectsByConnection(ISelectedFile[] selectedObjects) {
 
         Map<String, List<ISelectedFile>> filesByConnection = new HashMap<String, List<ISelectedFile>>();
 
-        for (ISelectedFile file : selectedFiles) {
+        for (ISelectedFile file : selectedObjects) {
             String connectionName = file.getConnectionName();
             List<ISelectedFile> filesOfConnection = filesByConnection.get(connectionName);
             if (filesOfConnection == null) {
@@ -164,30 +227,48 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         return filesByConnection;
     }
 
+    /**
+     * Creates a map per journal with the files attached to it.
+     * 
+     * @param connectionName - connection name
+     * @param selectedFiles - selected files attached to various journals
+     * @return map with an entry per journal and the files attached to it
+     */
     private Map<Journal, List<JournaledFile>> groupObjectsByJournal(String connectionName, List<ISelectedFile> selectedFiles) {
 
         Map<Journal, List<JournaledFile>> objectsByJournal = new HashMap<Journal, List<JournaledFile>>();
 
-        for (ISelectedFile file : selectedFiles) {
+        for (ISelectedObject object : selectedFiles) {
 
-            String libraryName = file.getLibrary();
-            String fileName = file.getName();
-            String memberName = file.getMember();
+            // TODO: probably remove that
+            if (object instanceof ISelectedFile) {
+                ISelectedFile file = (ISelectedFile)object;
 
-            JournaledFile journaledObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
+                String libraryName = file.getLibrary();
+                String fileName = file.getName();
+                String memberName = file.getMember();
 
-            Journal journal = journaledObject.getJournal();
-            List<JournaledFile> filesOfJournal = objectsByJournal.get(journal);
-            if (filesOfJournal == null) {
-                filesOfJournal = new ArrayList<JournaledFile>();
-                objectsByJournal.put(journal, filesOfJournal);
+                JournaledFile journaledObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
+
+                Journal journal = journaledObject.getJournal();
+                List<JournaledFile> filesOfJournal = objectsByJournal.get(journal);
+                if (filesOfJournal == null) {
+                    filesOfJournal = new ArrayList<JournaledFile>();
+                    objectsByJournal.put(journal, filesOfJournal);
+                }
+                filesOfJournal.add(journaledObject);
+
             }
-            filesOfJournal.add(journaledObject);
         }
 
         return objectsByJournal;
     }
 
+    /**
+     * Returns the current shell.
+     * 
+     * @return current shell
+     */
     private Shell getShell() {
         return Display.getCurrent().getActiveShell();
     }
