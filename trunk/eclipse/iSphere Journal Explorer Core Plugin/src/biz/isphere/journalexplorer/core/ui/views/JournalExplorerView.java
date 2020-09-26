@@ -491,11 +491,16 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             selection = tabItem.getSelection();
         }
 
+        if (tabItem == null || tabItem.isLoading()) {
+            reloadEntriesAction.setEnabled(false);
+        } else {
+            reloadEntriesAction.setEnabled(true);
+        }
+
         if (numEntries == 0) {
             exportToExcelAction.setColumns(null);
             exportToExcelAction.setEnabled(false);
             exportToExcelAction.setSelectedItems(new JournalEntry[0]);
-            reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(false);
             resetColumnSizeAction.setEnabled(false);
             resetColumnSizeAction.setViewer(null);
@@ -503,7 +508,6 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             exportToExcelAction.setColumns(columns);
             exportToExcelAction.setEnabled(true);
             exportToExcelAction.setSelectedItems(journalEntries.getItems().toArray(new JournalEntry[journalEntries.size()]));
-            reloadEntriesAction.setEnabled(true);
             toggleHighlightUserEntriesAction.setEnabled(true);
             resetColumnSizeAction.setEnabled(true);
             resetColumnSizeAction.setViewer(getSelectedViewer());
