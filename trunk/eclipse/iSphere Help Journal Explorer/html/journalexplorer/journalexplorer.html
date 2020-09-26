@@ -25,6 +25,16 @@ DSPJRN command are supported:
 <p>
 You can also launch the iSphere Journal Explorer from the context menu of a physical file of an 
 object filter in the <i>Remote System Explorer</i> perspective.
+<ul>
+<li><a href="#opening_the_journal_explorer_perspective">Opening the Journal Explorer Perspective</a></li>
+<li><a href="#journal_explorer_view">Journal Explorer View</a></li>
+<li><a href="#creating_an_output_file">Creating an Output File</a></li>
+<li><a href="#opening_an_output_file">Opening an Output File</a></li>
+<li><a href="#loading_journal_entries_of_a_given_file">Loading Journal Entries of a Given File</a></li>
+<li><a href="#filtering_journal_entries">Filtering Journal Entries</a></li>
+<li><a href="#journal_entry_details_view">Journal Entry Details View</a></li>
+<li><a href="#journal_entry_viewer_view">Journal Entry Viewer View</a></li>
+</ul> 
 <p>
 <table>
 	<tr>
@@ -34,35 +44,8 @@ object filter in the <i>Remote System Explorer</i> perspective.
 	</tr>
 </table>
 <p>
-Example of creating a *TYPE1 or *TYPE2 output file:
-<p>
-<div class="codeCommand">
-DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
-JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
-OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1)<br>
-ENTDTALEN(5000)
-</div>
-<p>
-Example of creating *TYPE3 or higher output file:
-<p>
-<div class="codeCommand">
-DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
-JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
-OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3)<br>
-ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
-</div>
-<p>
-<table>
-	<tr>
-		<td class="notice"><b>Notice: </b>Please check your journal attributes, if fields are unexpectedly empty. You
-		                      need to specify parameter FIXLENDTA when creating the journal if you want to see fields 
-		                      like <i>Program library name</i>, <i>System sequence number</i>, <i>Remote address</i>,
-		                      <i>Thread identifier</i>, <i>Logical unit of work</i> or <i>Transaction identifier</i>. Use
-		                      to change the journal afterwards:<p>
-		                      CHGJRN ... JRNRCV(*GEN) FIXLENDTA(*JOB *USR *PGM *PGMLIB *SYSSEQ *RMTADR *THD *LUW *XID)
-		                      </td>
-	</tr>
-</table>
+<a id="opening_the_journal_explorer_perspective"></a>
+<h2>Opening the Journal Explorer Perspective</h2>
 <p>
 You can open the Journal Explorer perspective from <i>'Window -> Open Perspective -> Other...'</i>. The
 perspective looks like that: 
@@ -72,6 +55,7 @@ perspective looks like that:
 The columns can be colored on the <a href="./preferences/preferences.html">preferences</a> page of the <i>Journal Explorer</i>. By 
 default the <i>#RRN</i> and the <i>job</i> and <i>object</i> related columns are color-coded.
 <p>
+<a id="#journal_explorer_view"></a>
 <h2>Journal Explorer View</h2>
 <p>
 The <i>Journal Explorer</i> view displays the journal entries of all open output files. Output 
@@ -92,6 +76,40 @@ The following actions are available:
 <tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the journal entries form the output file or the journal receiver.<br>(Remote operation that reloads the data from the host.)</td></tr>
 </table>
 <p>
+<a id="creating_an_output_file"></a>
+<h2>Creating an Output File</h2>
+<p>
+Output files of *TYPE1 or *TYPE2 are created like this:
+<p>
+<div class="codeCommand">
+DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
+JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1)<br>
+ENTDTALEN(5000)
+</div>
+<p>
+For output files of *TYPE3 use the following command:
+<p>
+<div class="codeCommand">
+DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
+JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3)<br>
+ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
+</div>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Please check your journal attributes, if fields are unexpectedly empty. You
+		                      need to specify parameter FIXLENDTA when creating the journal if you want to see fields 
+		                      like <i>Program library name</i>, <i>System sequence number</i>, <i>Remote address</i>,
+		                      <i>Thread identifier</i>, <i>Logical unit of work</i> or <i>Transaction identifier</i>. Use
+		                      to change the journal afterwards:<p>
+		                      CHGJRN ... JRNRCV(*GEN) FIXLENDTA(*JOB *USR *PGM *PGMLIB *SYSSEQ *RMTADR *THD *LUW *XID)
+		                      </td>
+	</tr>
+</table>
+<p>
+<a id="opening_an_output_file"></a>
 <h2>Opening an Output File</h2>
 <p>
 Click the <i>Open journal output file</i> button at the top of the <i>Journal Explorer</i> view:
@@ -121,7 +139,8 @@ The following actions are available:
 	</tr>
 </table>
 <p>
-<h2>Loading Journal Entries From a Journal Receiver</h2>
+<a id="#loading_journal_entries_of_a_given_file"></a>
+<h2>Loading Journal Entries of a Given File</h2>
 <p>
 Right-click one or more journaled physical files of an object filter in the <i>Remote System Explorer</i> perspective
 and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
@@ -155,6 +174,7 @@ The Journal Explorer opens multiple tabs when it is started for a group of selec
 <tr><td align="center">Tab shows the name of the selected file.</td><td align="center">Tab shows the name of the associated journal.</td></tr>
 </table>
 <p>
+<a id="filtering_journal_entries"></a>
 <h2>Filtering Journal Entries</h2>
 <p>
 Click the <i>Edit SQL</i> button at the top of the <i>Journal Explorer</i> view to open the SQL editor:
@@ -197,11 +217,13 @@ The following actions are available:
 	</tr>
 </table>
 <p>
+<a id="#journal_entry_details_view"></a>
 <h2>Journal Entry Details View</h2>
 <p>
 The <i>Journal Entry Details</i> view displays the details of a journal entry, selected from 
 the <i>Journal Explorer</i> or <i>Journal Entry Viewer</i> view. 
 <p>
+<a id="journal_entry_viewer_view"></a>
 <h2>Journal Entry Viewer View</h2>
 <p>
 The <i>Journal Entry Viewer</i> displays the selected journal entries of all open journal output 
