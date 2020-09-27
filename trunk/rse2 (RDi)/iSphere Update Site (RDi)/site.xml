@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/biz.isphere.core_3.7.3.b006.jar" id="biz.isphere.core" version="3.7.3.b006">
+   <feature url="features/biz.isphere.core_3.7.3.b007.jar" id="biz.isphere.core" version="3.7.3.b007">
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.rse_3.7.3.b006.jar" id="biz.isphere.rse" version="3.7.3.b006">
+   <feature url="features/biz.isphere.rse_3.7.3.b007.jar" id="biz.isphere.rse" version="3.7.3.b007">
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.lpex.tasks_3.7.3.b006.jar" id="biz.isphere.lpex.tasks" version="3.7.3.b006">
+   <feature url="features/biz.isphere.lpex.tasks_3.7.3.b007.jar" id="biz.isphere.lpex.tasks" version="3.7.3.b007">
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.help_3.7.3.b006.jar" id="biz.isphere.help" version="3.7.3.b006">
+   <feature url="features/biz.isphere.help_3.7.3.b007.jar" id="biz.isphere.help" version="3.7.3.b007">
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.messagesubsystem.rse_3.7.3.b006.jar" id="biz.isphere.messagesubsystem.rse" version="3.7.3.b006">
+   <feature url="features/biz.isphere.messagesubsystem.rse_3.7.3.b007.jar" id="biz.isphere.messagesubsystem.rse" version="3.7.3.b007">
       <category name="iSphere for RDi 8.0+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.comparefilters_3.7.3.b006.jar" id="biz.isphere.comparefilters" version="3.7.3.b006">
+   <feature url="features/biz.isphere.comparefilters_3.7.3.b007.jar" id="biz.isphere.comparefilters" version="3.7.3.b007">
       <category name="iSphere Additions for RDi 9.5+ (recommended)"/>
    </feature>
    <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
       <category name="iSphere TN5250J for RDi 8.0+"/>
    </feature>
-   <feature url="features/biz.isphere.tn5250j.core_3.7.3.b006.jar" id="biz.isphere.tn5250j.core" version="3.7.3.b006">
+   <feature url="features/biz.isphere.tn5250j.core_3.7.3.b007.jar" id="biz.isphere.tn5250j.core" version="3.7.3.b007">
       <category name="iSphere TN5250J for RDi 8.0+"/>
    </feature>
-   <feature url="features/biz.isphere.tn5250j.rse_3.7.3.b006.jar" id="biz.isphere.tn5250j.rse" version="3.7.3.b006">
+   <feature url="features/biz.isphere.tn5250j.rse_3.7.3.b007.jar" id="biz.isphere.tn5250j.rse" version="3.7.3.b007">
       <category name="iSphere TN5250J for RDi 8.0+"/>
    </feature>
-   <feature url="features/biz.isphere.strpreprc_3.7.3.b006.jar" id="biz.isphere.strpreprc" version="3.7.3.b006">
+   <feature url="features/biz.isphere.strpreprc_3.7.3.b007.jar" id="biz.isphere.strpreprc" version="3.7.3.b007">
       <category name="iSphere STRPREPRC Utility for RDi 8.0+"/>
    </feature>
-   <feature url="features/biz.isphere.joblogexplorer.rse_3.7.3.b006.jar" id="biz.isphere.joblogexplorer.rse" version="3.7.3.b006">
+   <feature url="features/biz.isphere.joblogexplorer.rse_3.7.3.b007.jar" id="biz.isphere.joblogexplorer.rse" version="3.7.3.b007">
       <category name="iSphere Job Log Explorer for RDi 8.0+"/>
    </feature>
-   <feature url="features/biz.isphere.lpex.comments_3.7.3.b006.jar" id="biz.isphere.lpex.comments" version="3.7.3.b006">
+   <feature url="features/biz.isphere.lpex.comments_3.7.3.b007.jar" id="biz.isphere.lpex.comments" version="3.7.3.b007">
       <category name="iSphere Additions for RDi 8.0+ (optional, see description)"/>
    </feature>
-   <feature url="features/biz.isphere.journalexplorer.rse_3.7.3.b006.jar" id="biz.isphere.journalexplorer.rse" version="3.7.3.b006">
+   <feature url="features/biz.isphere.journalexplorer.rse_3.7.3.b007.jar" id="biz.isphere.journalexplorer.rse" version="3.7.3.b007">
       <category name="iSphere Journal Explorer for RDi 8.0+"/>
    </feature>
    <category-def name="iSphere for RDi 8.0+ (Base Component)" label="iSphere for RDi 8.0+ (Base Component)">
