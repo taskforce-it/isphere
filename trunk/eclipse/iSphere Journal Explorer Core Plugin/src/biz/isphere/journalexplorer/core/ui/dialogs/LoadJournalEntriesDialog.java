@@ -58,6 +58,7 @@ import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
+import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedObject;
 
 public class LoadJournalEntriesDialog extends XDialog {
 
@@ -72,7 +73,7 @@ public class LoadJournalEntriesDialog extends XDialog {
     public static int WIDTH_SELECTED = 30;
     public static int WIDTH_TEXT = 500;
 
-    private List<ISelectedFile> files;
+    private ISelectedObject[] objects;
 
     private IDateEdit startingDateDateTime;
     private ITimeEdit startingTimeDateTime;
@@ -94,10 +95,10 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private SelectionCriterias selectionCriterias;
 
-    public LoadJournalEntriesDialog(Shell parentShell, List<ISelectedFile> files) {
+    public LoadJournalEntriesDialog(Shell parentShell, ISelectedObject[] objects) {
         super(parentShell);
 
-        this.files = files;
+        this.objects = objects;
 
         journalEntryTypes = new LinkedList<SelectableJournalEntryType>();
         journalEntryTypes.add(new SelectableJournalEntryType(JournalEntryType.PT, true));
@@ -114,18 +115,23 @@ public class LoadJournalEntriesDialog extends XDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.DisplayJournalEntriesDialog_Title + addJournaledObjects(files));
+        newShell.setText(Messages.DisplayJournalEntriesDialog_Title + addJournaledObjects(objects));
     }
 
-    private String addJournaledObjects(List<ISelectedFile> files) {
+    private String addJournaledObjects(ISelectedObject[] objects) {
 
-        if (files.size() != 1) {
+        if (objects.length != 1) {
             return ""; //$NON-NLS-1$
         }
 
-        ISelectedFile file = files.get(0);
+        ISelectedObject object = objects[0];
 
-        return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember()); //$NON-NLS-1$
+        if (object instanceof ISelectedFile) {
+            ISelectedFile file = (ISelectedFile)object;
+            return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember());
+        } else {
+            return ": " + QualifiedName.getName(object.getLibrary(), object.getName());
+        }
     }
 
     @Override
