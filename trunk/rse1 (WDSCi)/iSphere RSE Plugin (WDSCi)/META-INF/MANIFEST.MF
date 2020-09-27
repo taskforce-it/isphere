@@ -33,6 +33,7 @@ Export-Package: biz.isphere.rse,
  biz.isphere.rse.actions,
  biz.isphere.rse.compareeditor,
  biz.isphere.rse.compareeditor.handler,
+ biz.isphere.rse.ibm.helper,
  biz.isphere.rse.internal,
  biz.isphere.rse.spooledfiles
 Bundle-ClassPath: .,

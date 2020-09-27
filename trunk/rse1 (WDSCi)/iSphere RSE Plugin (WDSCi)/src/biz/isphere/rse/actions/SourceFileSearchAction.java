@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import biz.isphere.core.sourcefilesearch.SearchElement;
 import biz.isphere.core.sourcefilesearch.SearchExec;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 import biz.isphere.rse.sourcefilesearch.SourceFileSearchDelegate;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 
@@ -43,7 +44,6 @@ import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -97,13 +97,12 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
                 DataElement element = (DataElement)_object;
 
-                if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isLibrary()
-                    || ISeriesDataElementUtil.getDescriptorTypeObject(element).isSourceFile()
-                    || ISeriesDataElementUtil.getDescriptorTypeObject(element).isMember()) {
+                if (ISeriesDataElementHelper.isLibrary(element) || ISeriesDataElementHelper.isSourceFile(element)
+                    || ISeriesDataElementHelper.isSourceMember(element)) {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(element).getAliasName()));
+                    checkIfMultipleConnections(ISeriesConnection.getConnection(ISeriesDataElementHelper.getConnection(element).getAliasName()));
 
                 }
 
@@ -177,11 +176,11 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
                 DataElement element = (DataElement)_object;
 
-                if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isLibrary()) {
+                if (ISeriesDataElementHelper.isLibrary(element)) {
                     _continue = addElementsFromLibrary(element);
-                } else if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isSourceFile()) {
+                } else if (ISeriesDataElementHelper.isSourceFile(element)) {
                     addElementsFromSourceFile(ISeriesDataElementHelpers.getLibrary(element), ISeriesDataElementHelpers.getName(element));
-                } else if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isMember()) {
+                } else if (ISeriesDataElementHelper.isSourceMember(element)) {
                     addElement(element);
                 }
                 if (!_continue) {
