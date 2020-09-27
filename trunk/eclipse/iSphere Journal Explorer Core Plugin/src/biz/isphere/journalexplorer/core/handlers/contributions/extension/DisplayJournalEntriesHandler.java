@@ -60,6 +60,13 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
         try {
 
+            LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedJournals);
+            if (dialog.open() == LoadJournalEntriesDialog.OK) {
+                selectionCriterias = dialog.getSelectionCriterias();
+            } else {
+                return;
+            }
+
             for (ISelectedJournal selectedJournal : selectedJournals) {
 
                 String connectionName = selectedJournal.getConnectionName();
@@ -146,13 +153,11 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             return;
         }
 
-        if (selectionCriterias == null) {
-            LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedFiles);
-            if (dialog.open() == LoadJournalEntriesDialog.OK) {
-                selectionCriterias = dialog.getSelectionCriterias();
-            } else {
-                return;
-            }
+        LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedFiles.toArray(new ISelectedObject[selectedFiles.size()]));
+        if (dialog.open() == LoadJournalEntriesDialog.OK) {
+            selectionCriterias = dialog.getSelectionCriterias();
+        } else {
+            return;
         }
 
         for (Journal journal : objectsByJournal.keySet()) {
