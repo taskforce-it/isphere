@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
@@ -61,15 +61,9 @@ public class MessageFileEditorAction extends ISeriesSystemBaseAction implements 
 
         for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
             Object objSelection = iterSelection.next();
-            if (objSelection instanceof DataElement) {
+            if (ISeriesDataElementHelper.isMessageFile(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
-                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                if (type.isObject()) {
-                    String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase(ISeries.MSGF)) {
-                        arrayListSelection.add(dataElement);
-                    }
-                }
+                arrayListSelection.add(dataElement);
             }
         }
 

@@ -20,16 +20,14 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesObject;
-import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -64,15 +62,9 @@ public class OpenMessageFileCompareEditorAction extends ISeriesSystemBaseAction 
 
         for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
             Object objSelection = iterSelection.next();
-            if (objSelection instanceof DataElement) {
+            if (ISeriesDataElementHelper.isMessageFile(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
-                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                if (type.isObject()) {
-                    String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase(ISeries.MSGF)) {
-                        arrayListSelection.add(dataElement);
-                    }
-                }
+                arrayListSelection.add(dataElement);
             }
         }
 
@@ -151,14 +143,10 @@ public class OpenMessageFileCompareEditorAction extends ISeriesSystemBaseAction 
         if (arrayListSelection.size() <= 0 || arrayListSelection.size() > 2) {
             return false;
         }
-        
+
         for (DataElement dataElement : arrayListSelection) {
-            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-            if (type.isObject()) {
-                String strType = ISeriesDataElementHelpers.getType(dataElement);
-                if (!strType.equalsIgnoreCase(ISeries.MSGF)) {
-                    return false;
-                }
+            if (!ISeriesDataElementHelper.isMessageFile(dataElement)) {
+                return false;
             }
         }
 

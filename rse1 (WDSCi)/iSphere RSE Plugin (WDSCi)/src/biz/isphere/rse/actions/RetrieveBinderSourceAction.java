@@ -29,6 +29,7 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 import biz.isphere.rse.retrievebindersource.RetrieveBinderSourceDialog;
 
 import com.ibm.as400.access.AS400;
@@ -89,15 +90,9 @@ public class RetrieveBinderSourceAction extends ISeriesSystemBaseAction implemen
 
         for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
             Object objSelection = iterSelection.next();
-            if (objSelection instanceof DataElement) {
+            if (ISeriesDataElementHelper.isServiceProgram(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
-                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                if (type.isObject()) {
-                    String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase(ISeries.SRVPGM)) {
-                        arrayListSelection.add(dataElement);
-                    }
-                }
+                arrayListSelection.add(dataElement);
             }
         }
 
