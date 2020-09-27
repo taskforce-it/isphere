@@ -30,7 +30,8 @@ object filter in the <i>Remote System Explorer</i> perspective.
 <li><a href="#journal_explorer_view">Journal Explorer View</a></li>
 <li><a href="#creating_an_output_file">Creating an Output File</a></li>
 <li><a href="#opening_an_output_file">Opening an Output File</a></li>
-<li><a href="#loading_journal_entries_of_a_given_file">Loading Journal Entries of a Given File</a></li>
+<li><a href="#loading_journal_entries_of_a_specific_file">Loading Journal Entries of a Specific File</a></li>
+<li><a href="#loading_journal_entries_of_a_journal">Loading Journal Entries of a Journal</a>
 <li><a href="#filtering_journal_entries">Filtering Journal Entries</a></li>
 <li><a href="#journal_entry_details_view">Journal Entry Details View</a></li>
 <li><a href="#journal_entry_viewer_view">Journal Entry Viewer View</a></li>
@@ -139,12 +140,12 @@ The following actions are available:
 	</tr>
 </table>
 <p>
-<a id="#loading_journal_entries_of_a_given_file"></a>
-<h2>Loading Journal Entries of a Given File</h2>
+<a id="#loading_journal_entries_of_a_specific_file"></a>
+<h2>Loading Journal Entries of a Specific File</h2>
 <p>
-Right-click one or more journaled physical files of an object filter in the <i>Remote System Explorer</i> perspective
+Right-click one or more journaled physical files in the <i>Remote System Explorer</i> perspective
 and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
-and click the [OK] button. The journal entries are retrieved by QjoRetrieveJournalEntries API. 
+and click the [OK] button. The journal entries are retrieved by the QjoRetrieveJournalEntries API. 
 <p>
 <img src="assets/loading_journal_entries_of_physical_file_dialog.png" align="middle">
 <p>
@@ -174,6 +175,15 @@ The Journal Explorer opens multiple tabs when it is started for a group of selec
 <tr><td align="center">Tab shows the name of the selected file.</td><td align="center">Tab shows the name of the associated journal.</td></tr>
 </table>
 <p>
+<a id="#loading_journal_entries_of_a_journal"></a>
+<h2>Loading Journal Entries of a Journal</h2>
+<p>
+Loading journal entries of a journal basically works the same as loading journal entries of a file.
+<p>
+Right-click one or more journals in the <i>Remote System Explorer</i> perspective
+and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
+and click the [OK] button.
+<p>	
 <a id="filtering_journal_entries"></a>
 <h2>Filtering Journal Entries</h2>
 <p>
