@@ -12,13 +12,14 @@
    		 name="Display Journal Entries Handler: IDisplayJournalEntriesContributions" 
    		 schema="schema/biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions.xsd">
    </extension-point>
-    
+
 	<extension 
 		point = "com.ibm.etools.systems.core.dynamicPopupMenuExtensions" >
-      	
+
       	<!--
       	  ==========================================
-      	    File contributions
+      	    File contributions and
+      	    Journal contributions
       	  ==========================================
       	-->
 
@@ -27,7 +28,7 @@
 			class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
 			id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction">
 	    </dynamicPopupMenuExtension>
-      	
+
    </extension>
 
 </plugin>

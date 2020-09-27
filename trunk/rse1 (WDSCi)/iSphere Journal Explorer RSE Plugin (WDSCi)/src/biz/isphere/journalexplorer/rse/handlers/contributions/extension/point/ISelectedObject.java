@@ -8,14 +8,12 @@
 
 package biz.isphere.journalexplorer.rse.handlers.contributions.extension.point;
 
-public interface ISelectedFile extends ISelectedObject {
+public interface ISelectedObject {
 
 	public String getConnectionName();
 
 	public String getLibrary();
 
 	public String getName();
-
-	public String getMember();
 
 }
