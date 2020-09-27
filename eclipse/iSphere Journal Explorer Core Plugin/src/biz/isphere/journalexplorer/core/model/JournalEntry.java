@@ -330,6 +330,7 @@ public class JournalEntry {
         row[JORCV] = getReceiver();
         row[JORCVLIB] = getReceiverLibrary();
         row[JOUSPF] = getUserProfile();
+        row[JOSEQN] = getSequenceNumber();
 
         return row;
     }
