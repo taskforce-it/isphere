@@ -64,7 +64,7 @@ public abstract class AbstractMonitorDataSpaceAction extends ISeriesSystemBaseAc
         Iterator selectionIterator = selection.iterator();
         while (selectionIterator.hasNext()) {
             Object objSelection = selectionIterator.next();
-            if (matchesType(objSelection, objectType)) {
+            if (ISeriesDataElementHelper.matchesType(objSelection, objectType)) {
                 DataElement dataElement = (DataElement)objSelection;
                 arrayListSelection.add(dataElement);
             }
@@ -121,20 +121,6 @@ public abstract class AbstractMonitorDataSpaceAction extends ISeriesSystemBaseAc
             ISpherePlugin.logError(e.getMessage(), e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
-    }
-
-    private boolean matchesType(Object object, String objectType) {
-        if (object instanceof DataElement) {
-            DataElement dataElement = (DataElement)object;
-            ISeriesDataElementDescriptorType descriptorType = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-            if (descriptorType.isObject()) {
-                String strType = ISeriesDataElementHelpers.getType(dataElement);
-                if (objectType.equals(strType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

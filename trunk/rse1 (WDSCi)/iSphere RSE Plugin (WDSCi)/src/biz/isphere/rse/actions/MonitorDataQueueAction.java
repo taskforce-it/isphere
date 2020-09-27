@@ -19,7 +19,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
@@ -30,8 +29,6 @@ import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesObject;
-import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -39,11 +36,11 @@ import com.ibm.etools.systems.dstore.core.model.DataElement;
 
 public class MonitorDataQueueAction extends ISeriesSystemBaseAction implements ISystemDynamicPopupMenuExtension {
 
-    protected ArrayList arrayListSelection;
+    protected ArrayList<DataElement> arrayListSelection;
 
     public MonitorDataQueueAction() {
         super(Messages.iSphere_Data_Queue_Monitor, "", null);
-        arrayListSelection = new ArrayList();
+        arrayListSelection = new ArrayList<DataElement>();
         setContextMenuGroup("additions");
         allowOnMultipleSelection(true);
         setHelp("");
@@ -62,7 +59,7 @@ public class MonitorDataQueueAction extends ISeriesSystemBaseAction implements I
         Iterator selectionIterator = selection.iterator();
         while (selectionIterator.hasNext()) {
             Object objSelection = selectionIterator.next();
-            if (matchesType(objSelection, ISeries.DTAQ)) {
+            if (ISeriesDataElementHelper.isDataQueue(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
                 arrayListSelection.add(dataElement);
             }
@@ -119,19 +116,5 @@ public class MonitorDataQueueAction extends ISeriesSystemBaseAction implements I
             ISpherePlugin.logError(e.getMessage(), e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
         }
-    }
-
-    private boolean matchesType(Object object, String objectType) {
-        if (object instanceof DataElement) {
-            DataElement dataElement = (DataElement)object;
-            ISeriesDataElementDescriptorType descriptorType = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-            if (descriptorType.isObject()) {
-                String strType = ISeriesDataElementHelpers.getType(dataElement);
-                if (objectType.equals(strType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

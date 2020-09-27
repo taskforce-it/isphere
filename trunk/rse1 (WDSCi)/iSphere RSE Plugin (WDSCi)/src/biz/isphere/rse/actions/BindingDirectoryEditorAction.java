@@ -12,7 +12,6 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -23,15 +22,13 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesObject;
-import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -64,15 +61,9 @@ public class BindingDirectoryEditorAction extends ISeriesSystemBaseAction implem
 
         for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
             Object objSelection = iterSelection.next();
-            if (objSelection instanceof DataElement) {
+            if (ISeriesDataElementHelper.isBindingDirectory(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
-                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                if (type.isObject()) {
-                    String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase(ISeries.BNDDIR)) {
-                        arrayListSelection.add(dataElement);
-                    }
-                }
+                arrayListSelection.add(dataElement);
             }
         }
 

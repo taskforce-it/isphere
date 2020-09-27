@@ -8,7 +8,10 @@
 
 package biz.isphere.rse.ibm.helper;
 
+import biz.isphere.core.internal.ISeries;
+
 import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
+import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.model.SystemConnection;
@@ -38,37 +41,134 @@ public final class ISeriesDataElementHelper {
             + dataElement.getType());
     }
 
-    public static boolean isLibrary(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isLibrary();
+    public static boolean isLibrary(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isLibrary();
+        }
+        return false;
     }
 
-    public static boolean isFile(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isFile();
+    public static boolean isFile(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isFile();
+        }
+        return false;
     }
 
-    public static boolean isSourceFile(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isSourceFile();
+    public static boolean isSourceFile(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+
+            return type.isSourceFile();
+        }
+        return false;
     }
 
-    public static boolean isMember(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isMember();
+    public static boolean isMember(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isMember();
+        }
+        return false;
     }
 
-    public static boolean isSourceMember(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isSourceMember();
+    public static boolean isSourceMember(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isSourceMember();
+        }
+        return false;
     }
 
-    public static boolean isMessageFile(DataElement dataElement) {
-        ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-        return type.isMessageFile();
+    public static boolean isMessageFile(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isMessageFile();
+        }
+        return false;
     }
 
-    public static boolean isJournal(DataElement dataElement) {
-        return "*JRN".equals(dataElement.getType()); //$NON-NLS-1$
+    public static boolean isJournal(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.JOURNAL);
+        }
+        return false;
+    }
+
+    public static boolean isBindingDirectory(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.BNDDIR);
+        }
+        return false;
+    }
+
+    public static boolean isDataArea(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.DTAARA);
+        }
+        return false;
+    }
+
+    public static boolean isDataQueue(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.DTAQ);
+        }
+        return false;
+    }
+
+    public static boolean isServiceProgram(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.SRVPGM);
+        }
+        return false;
+    }
+
+    public static boolean isUserSpace(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, ISeries.USRSPC);
+        }
+        return false;
+    }
+
+    public static boolean matchesType(Object object, String objectType) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            return matchesType(dataElement, objectType);
+        }
+        return false;
+    }
+
+    private static boolean matchesType(DataElement dataElement, String objectType) {
+
+        ISeriesDataElementDescriptorType descriptorType = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+        if (descriptorType.isObject()) {
+            String strType = ISeriesDataElementHelpers.getType(dataElement);
+            if (objectType.equals(strType)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isDataElement(Object object) {
+        if (object instanceof DataElement) {
+            return true;
+        }
+        return false;
     }
 }

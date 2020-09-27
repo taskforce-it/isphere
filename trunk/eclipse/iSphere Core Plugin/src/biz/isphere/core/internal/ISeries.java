@@ -30,6 +30,8 @@ public interface ISeries {
 
     public static final String MODULE = "*MODULE"; //$NON-NLS-1$
 
+    public static final String JOURNAL = "*JRN"; //$NON-NLS-1$
+    
     public static final String SPCVAL_LIBL = "*LIBL"; //$NON-NLS-1$
 
     public static final String SPCVAL_CURLIB = "*CURLIB"; //$NON-NLS-1$
