@@ -77,6 +77,7 @@ public class JournalDAO {
             bufferSize = IntHelper.align16Bytes(bufferSize);
 
             do {
+                monitor.setTaskName(Messages.Calling_API);
                 rjne0200 = tRetriever.execute(bufferSize);
                 if (isBufferTooSmall(rjne0200) && isDynamicBufferSize) {
                     bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
@@ -84,6 +85,7 @@ public class JournalDAO {
             } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize) && !isCanceled(monitor, journalEntries));
 
             if (rjne0200 != null) {
+                monitor.setTaskName(Messages.Loading_entries);
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
                     messages = new LinkedList<IBMiMessage>();
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
