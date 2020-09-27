@@ -10,6 +10,4 @@ package biz.isphere.core.internal.exception;
 
 public class CanceledByUserException extends Exception {
 
-    private static final long serialVersionUID = -1475097755663656157L;
-
 }
