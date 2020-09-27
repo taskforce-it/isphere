@@ -86,7 +86,9 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         buffer.append(Messages.bind(Messages.Title_Journal_A, jrneToRtv.getQualifiedJournalName()));
         buffer.append("\n");
 
-        if (files.length == 1) {
+        if (files.length == 0) {
+            // do not append anything
+        } else if (files.length == 1) {
             buffer.append(Messages.bind(Messages.Title_File_A, files[0]));
         } else {
             buffer.append(Messages.bind(Messages.Title_Files_A, "*SELECTION"));
