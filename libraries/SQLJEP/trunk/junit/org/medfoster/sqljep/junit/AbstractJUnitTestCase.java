@@ -8,6 +8,7 @@
 
 package org.medfoster.sqljep.junit;
 
+import java.math.BigInteger;
 import java.sql.Time;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
@@ -34,6 +35,7 @@ public abstract class AbstractJUnitTestCase {
     private static final int JOTIME2 = 10;
     private static final int JOTIME3 = 11;
     private static final int JOTSTP = 12;
+    private static final int JOSEQN = 13;
     
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -51,6 +53,7 @@ public abstract class AbstractJUnitTestCase {
         columnMappings.put("JOTIME2", JOTIME2);
         columnMappings.put("JOTIME3", JOTIME3);
         columnMappings.put("JOTSTP", JOTSTP);
+        columnMappings.put("JOSEQN", JOSEQN);
     }
 
     private static HashMap<String, Integer> emptyColumnMappings;
@@ -116,6 +119,7 @@ public abstract class AbstractJUnitTestCase {
         row[JODATE] = getDate(2018, 10, 22);
         row[JOTIME] = getTime(3, 5, "pm");
         row[JOTSTP] = getTimestamp(2018, 10, 22, 15, 5, 0);
+        row[JOSEQN] = getBigInteger();
 
         try {
             // Different mSecs
@@ -126,6 +130,14 @@ public abstract class AbstractJUnitTestCase {
         }
 
         return row;
+    }
+
+    protected BigInteger getBigInteger() {
+        return new BigInteger("93064587");
+    }
+
+    protected BigInteger getBigInteger(int diffValue) {
+        return new BigInteger("93064587").add(BigInteger.valueOf(diffValue));
     }
 
     protected java.sql.Time getTime(int hour, int minute, int second) {
