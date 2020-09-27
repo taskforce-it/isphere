@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
@@ -72,11 +73,11 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
                 if ("&".equals(ch)) {
                     replacement = "&";
                 } else if ("T".equals(ch)) {
-                    replacement = ISeriesDataElementHelpers.getDescription(tResource);
+                    replacement = ISeriesDataElementHelper.getDescription(tResource);
                 } else if ("L".equals(ch)) {
-                    replacement = ISeriesDataElementHelpers.getLibrary(tResource);
+                    replacement = ISeriesDataElementHelper.getLibrary(tResource);
                 } else if ("F".equals(ch)) {
-                    replacement = ISeriesDataElementHelpers.getFile(tResource);
+                    replacement = ISeriesDataElementHelper.getFile(tResource);
                 }
                 if (replacement != null) {
                     buffer.replace(i, i + 2, replacement);
@@ -184,7 +185,7 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
     private boolean isSourceMember(DataElement tResource) {
 
-        if (ISeriesDataElementHelpers.getFile(tResource) != null && "SRC".equals(ISeriesDataElementHelpers.getSubtype(tResource))) {
+        if (ISeriesDataElementHelper.isSourceMember(tResource)) {
             return true;
         }
 
@@ -193,7 +194,7 @@ public class RSEHostObjectDecorator implements ILightweightLabelDecorator {
 
     private boolean isDataMember(DataElement tResource) {
 
-        if (ISeriesDataElementHelpers.getFile(tResource) != null && "DTA".equals(ISeriesDataElementHelpers.getSubtype(tResource))) {
+        if (ISeriesDataElementHelper.isDataMember(tResource)) {
             return true;
         }
 

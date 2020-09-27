@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,10 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.handler.DisplayModuleViewHandler;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.api.ISeriesAbstractProgramObject;
 import com.ibm.etools.iseries.core.api.ISeriesProgramModule;
-import com.ibm.etools.iseries.core.descriptors.ISeriesDataElementDescriptorType;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -59,15 +58,9 @@ public class DisplayModuleViewAction extends ISeriesSystemBaseAction implements 
 
         for (Iterator iterSelection = selection.iterator(); iterSelection.hasNext();) {
             Object objSelection = iterSelection.next();
-            if (objSelection instanceof DataElement) {
+            if (ISeriesDataElementHelper.isProgramModule(objSelection)) {
                 DataElement dataElement = (DataElement)objSelection;
-                ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
-                if (type.isProgramModule()) {
-                    String strType = ISeriesDataElementHelpers.getType(dataElement);
-                    if (strType.equalsIgnoreCase("*MODULE_INTERNAL")) { //$NON-NLS-1$
-                        arrayListSelection.add(dataElement);
-                    }
-                }
+                arrayListSelection.add(dataElement);
             }
         }
 
@@ -87,9 +80,7 @@ public class DisplayModuleViewAction extends ISeriesSystemBaseAction implements 
             for (Iterator iterObjects = arrayListSelection.iterator(); iterObjects.hasNext();) {
 
                 DataElement dataElement = (DataElement)iterObjects.next();
-                String strType = ISeriesDataElementHelpers.getType(dataElement);
-
-                if (strType.equalsIgnoreCase("*MODULE_INTERNAL")) { //$NON-NLS-1$
+                if (ISeriesDataElementHelper.isProgramModule(dataElement)) {
 
                     ISeriesProgramModule module = new ISeriesProgramModule(dataElement);
 

@@ -91,8 +91,8 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                     }
                 } else if (ISeriesDataElementHelper.isSourceFile(dataElement)) {
                     String connectionName = object.getISeriesConnection().getSystemConnection().getAliasName();
-                    if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelpers.getLibrary(dataElement),
-                        ISeriesDataElementHelpers.getName(dataElement))) {
+                    if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelper.getLibrary(dataElement),
+                        ISeriesDataElementHelper.getFile(dataElement))) {
                         return false;
                     }
                 }

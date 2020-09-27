@@ -42,7 +42,6 @@ import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -179,7 +178,7 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
                 if (ISeriesDataElementHelper.isLibrary(element)) {
                     _continue = addElementsFromLibrary(element);
                 } else if (ISeriesDataElementHelper.isSourceFile(element)) {
-                    addElementsFromSourceFile(ISeriesDataElementHelpers.getLibrary(element), ISeriesDataElementHelpers.getName(element));
+                    addElementsFromSourceFile(ISeriesDataElementHelper.getLibrary(element), ISeriesDataElementHelper.getName(element));
                 } else if (ISeriesDataElementHelper.isSourceMember(element)) {
                     addElement(element);
                 }
@@ -262,9 +261,9 @@ public class SourceFileSearchAction extends ISeriesSystemBaseAction implements I
 
     private void addElement(DataElement element) {
 
-        String library = ISeriesDataElementHelpers.getLibrary(element);
-        String file = ISeriesDataElementHelpers.getFile(element);
-        String member = ISeriesDataElementHelpers.getName(element);
+        String library = ISeriesDataElementHelper.getLibrary(element);
+        String file = ISeriesDataElementHelper.getFile(element);
+        String member = ISeriesDataElementHelper.getMember(element);
 
         String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
 
