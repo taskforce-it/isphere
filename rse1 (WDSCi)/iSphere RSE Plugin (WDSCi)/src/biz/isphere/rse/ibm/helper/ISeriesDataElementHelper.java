@@ -22,6 +22,10 @@ public final class ISeriesDataElementHelper {
         return ISeriesDataElementUtil.getConnection(dataElement);
     }
 
+    public static String getConnectionName(DataElement dataElement) {
+        return ISeriesDataElementUtil.getConnection(dataElement).getAliasName();
+    }
+
     public static String getName(DataElement dataElement) {
         if (isMember(dataElement) || isSourceMember(dataElement)) {
             return ISeriesDataElementUtil.getFile(dataElement);
@@ -33,12 +37,42 @@ public final class ISeriesDataElementHelper {
         return ISeriesDataElementUtil.getLibrary(dataElement);
     }
 
+    public static String getFile(DataElement dataElement) {
+        if (isFile(dataElement) || isSourceFile(dataElement)) {
+            return ISeriesDataElementUtil.getName(dataElement);
+        } else if (isMember(dataElement) || isSourceMember(dataElement)) {
+            return ISeriesDataElementUtil.getFile(dataElement);
+        }
+        throw new IllegalArgumentException("Data element is not a member:" // //$NON-NLS-1$
+            + dataElement.getType());
+    }
+
     public static String getMember(DataElement dataElement) {
         if (isMember(dataElement) || isSourceMember(dataElement)) {
             return ISeriesDataElementUtil.getName(dataElement);
         }
         throw new IllegalArgumentException("Data element is not a member:" // //$NON-NLS-1$
             + dataElement.getType());
+    }
+
+    public static String getMemberType(DataElement dataElement) {
+        if (isMember(dataElement) || isSourceMember(dataElement)) {
+            return ISeriesDataElementHelpers.getType(dataElement);
+        }
+        throw new IllegalArgumentException("Data element is not a member:" // //$NON-NLS-1$
+            + dataElement.getType());
+    }
+
+    public static String getMemberText(DataElement dataElement) {
+        if (isMember(dataElement) || isSourceMember(dataElement)) {
+            return ISeriesDataElementHelpers.getDescription(dataElement);
+        }
+        throw new IllegalArgumentException("Data element is not a member:" // //$NON-NLS-1$
+            + dataElement.getType());
+    }
+
+    public static String getDescription(DataElement dataElement) {
+        return ISeriesDataElementHelpers.getDescription(dataElement);
     }
 
     public static boolean isLibrary(Object object) {
@@ -83,6 +117,15 @@ public final class ISeriesDataElementHelper {
             DataElement dataElement = (DataElement)object;
             ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
             return type.isSourceMember();
+        }
+        return false;
+    }
+
+    public static boolean isDataMember(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isDataMember();
         }
         return false;
     }
@@ -132,6 +175,15 @@ public final class ISeriesDataElementHelper {
         if (isDataElement(object)) {
             DataElement dataElement = (DataElement)object;
             return matchesType(dataElement, ISeries.SRVPGM);
+        }
+        return false;
+    }
+
+    public static boolean isProgramModule(Object object) {
+        if (isDataElement(object)) {
+            DataElement dataElement = (DataElement)object;
+            ISeriesDataElementDescriptorType type = ISeriesDataElementDescriptorType.getDescriptorTypeObject(dataElement);
+            return type.isProgramModule();
         }
         return false;
     }

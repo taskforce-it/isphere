@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,9 @@ package biz.isphere.rse.messagefilesearch;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.messagefilesearch.AbstractMessageFileSearchDelegate;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
 import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
@@ -45,23 +44,23 @@ public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate
     }
 
     protected boolean isLibrary(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isLibrary();
+        return ISeriesDataElementHelper.isLibrary(object);
     }
 
     protected boolean isMessageFile(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isMessageFile();
+        return ISeriesDataElementHelper.isMessageFile(object);
     }
 
     protected String getResourceLibrary(Object resource) {
-        return ISeriesDataElementHelpers.getLibrary((DataElement)resource);
+        return ISeriesDataElementHelper.getLibrary((DataElement)resource);
     }
 
     protected String getResourceName(Object resource) {
-        return ((DataElement)resource).getName();
+        return ISeriesDataElementHelper.getName((DataElement)resource);
     }
 
     protected String getResourceDescription(Object resource) {
-        return ISeriesDataElementHelpers.getDescription((DataElement)resource);
+        return ISeriesDataElementHelper.getDescription((DataElement)resource);
     }
 
 }

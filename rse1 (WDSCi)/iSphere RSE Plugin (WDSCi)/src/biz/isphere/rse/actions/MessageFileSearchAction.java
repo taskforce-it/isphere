@@ -258,14 +258,14 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
     private void addElement(DataElement element) {
 
-        String key = ISeriesDataElementHelpers.getLibrary(element) + "-" + ISeriesDataElementHelpers.getName(element);
+        String key = ISeriesDataElementHelper.getLibrary(element) + "-" + ISeriesDataElementHelper.getName(element);
 
         if (!_searchElements.containsKey(key)) {
 
             SearchElement _searchElement = new SearchElement();
-            _searchElement.setLibrary(ISeriesDataElementHelpers.getLibrary(element));
-            _searchElement.setMessageFile(ISeriesDataElementHelpers.getName(element));
-            _searchElement.setDescription(ISeriesDataElementHelpers.getDescription(element));
+            _searchElement.setLibrary(ISeriesDataElementHelper.getLibrary(element));
+            _searchElement.setMessageFile(ISeriesDataElementHelper.getName(element));
+            _searchElement.setDescription(ISeriesDataElementHelper.getDescription(element));
             _searchElements.put(key, _searchElement);
 
         }

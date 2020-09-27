@@ -25,7 +25,6 @@ import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IS
 import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
@@ -71,8 +70,8 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 
 			if (ISeriesDataElementHelper.isMember(dataElement)) {
 
-				String connectionName = ISeriesDataElementUtil.getConnection(
-						dataElement).getAliasName();
+				String connectionName = ISeriesDataElementHelper
+						.getConnectionName(dataElement);
 				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
 				String fileName = ISeriesDataElementHelper.getName(dataElement);
@@ -84,8 +83,8 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 
 			} else if (ISeriesDataElementHelper.isFile(dataElement)) {
 
-				String connectionName = ISeriesDataElementUtil.getConnection(
-						dataElement).getAliasName();
+				String connectionName = ISeriesDataElementHelper
+						.getConnectionName(dataElement);
 				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
 				String fileName = ISeriesDataElementHelper.getName(dataElement);
@@ -95,8 +94,8 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 						fileName, memberName);
 			} else if (ISeriesDataElementHelper.isJournal(dataElement)) {
 
-				String connectionName = ISeriesDataElementUtil.getConnection(
-						dataElement).getAliasName();
+				String connectionName = ISeriesDataElementHelper
+						.getConnectionName(dataElement);
 				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
 				String journalName = ISeriesDataElementHelper

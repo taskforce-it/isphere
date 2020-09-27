@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,10 @@ import java.util.Date;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesMember;
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.as400filesubsys.FileSubSystem;
 import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
@@ -48,43 +47,43 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
     }
 
     protected boolean isLibrary(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isLibrary();
+        return ISeriesDataElementHelper.isLibrary(object);
     }
 
     protected boolean isSourceFile(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isSourceFile();
+        return ISeriesDataElementHelper.isSourceFile(object);
     }
 
     protected boolean isSourceMember(Object object) {
-        return ISeriesDataElementUtil.getDescriptorTypeObject(object).isSourceMember();
+        return ISeriesDataElementHelper.isSourceMember(object);
     }
 
     protected String getResourceLibrary(Object resource) {
-        return ISeriesDataElementHelpers.getLibrary((DataElement)resource);
+        return ISeriesDataElementHelper.getLibrary((DataElement)resource);
     }
 
     protected String getResourceName(Object resource) {
-        return ((DataElement)resource).getName();
+        return ISeriesDataElementHelper.getName((DataElement)resource);
     }
 
     protected String getMemberResourceLibrary(Object resource) {
-        return ISeriesDataElementHelpers.getLibrary(resource);
+        return ISeriesDataElementHelper.getLibrary((DataElement)resource);
     }
 
     protected String getMemberResourceFile(Object resource) {
-        return ISeriesDataElementHelpers.getFile((DataElement)resource);
+        return ISeriesDataElementHelper.getFile((DataElement)resource);
     }
 
     protected String getMemberResourceName(Object resource) {
-        return ISeriesDataElementHelpers.getName((DataElement)resource);
+        return ISeriesDataElementHelper.getMember((DataElement)resource);
     }
 
     protected String getMemberResourceType(Object resource) {
-        return ISeriesDataElementHelpers.getType((DataElement)resource);
+        return ISeriesDataElementHelper.getMemberType((DataElement)resource);
     }
 
     protected String getMemberResourceDescription(Object resource) {
-        return ISeriesDataElementHelpers.getDescription((DataElement)resource);
+        return ISeriesDataElementHelper.getMemberText((DataElement)resource);
     }
 
     @Override
