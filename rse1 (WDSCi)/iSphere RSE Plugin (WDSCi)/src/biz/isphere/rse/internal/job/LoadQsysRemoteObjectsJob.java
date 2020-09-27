@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.core.api.ISeriesObject;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.core.SystemPlugin;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 import com.ibm.etools.systems.model.SystemProfile;
@@ -59,7 +59,7 @@ public class LoadQsysRemoteObjectsJob extends Job {
     }
 
     private String getConnectionName(DataElement object) {
-        return ISeriesDataElementUtil.getConnection(object).getAliasName();
+        return ISeriesDataElementHelper.getConnection(object).getAliasName();
     }
 
     private ArrayList<DataElement> getRSESourceObjects(String[] droppedObjects) {

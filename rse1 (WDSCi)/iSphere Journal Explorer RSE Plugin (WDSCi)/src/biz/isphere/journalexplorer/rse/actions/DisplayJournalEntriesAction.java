@@ -22,9 +22,8 @@ import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedJournal;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
 import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
-import biz.isphere.journalexplorer.rse.helpers.ISeriesDataElementHelper;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
-import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -74,12 +73,11 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 
 				String connectionName = ISeriesDataElementUtil.getConnection(
 						dataElement).getAliasName();
-				String libraryName = ISeriesDataElementHelpers
+				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
-				String fileName = ISeriesDataElementHelpers
-						.getFile(dataElement);
-				String memberName = ISeriesDataElementHelpers
-						.getFile(dataElement);
+				String fileName = ISeriesDataElementHelper.getName(dataElement);
+				String memberName = ISeriesDataElementHelper
+						.getMember(dataElement);
 
 				selectedFile = new SelectedFile(connectionName, libraryName,
 						fileName, memberName);
@@ -88,10 +86,9 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 
 				String connectionName = ISeriesDataElementUtil.getConnection(
 						dataElement).getAliasName();
-				String libraryName = ISeriesDataElementHelpers
+				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
-				String fileName = ISeriesDataElementHelpers
-						.getName(dataElement);
+				String fileName = ISeriesDataElementHelper.getName(dataElement);
 				String memberName = "*ALL"; //$NON-NLS-1$
 
 				selectedFile = new SelectedFile(connectionName, libraryName,
@@ -100,9 +97,9 @@ public class DisplayJournalEntriesAction extends ISeriesSystemBaseAction
 
 				String connectionName = ISeriesDataElementUtil.getConnection(
 						dataElement).getAliasName();
-				String libraryName = ISeriesDataElementHelpers
+				String libraryName = ISeriesDataElementHelper
 						.getLibrary(dataElement);
-				String journalName = ISeriesDataElementHelpers
+				String journalName = ISeriesDataElementHelper
 						.getName(dataElement);
 
 				selectedJournal = new SelectedJournal(connectionName,

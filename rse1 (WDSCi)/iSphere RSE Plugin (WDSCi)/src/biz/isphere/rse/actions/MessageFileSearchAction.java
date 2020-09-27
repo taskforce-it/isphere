@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2013 Task Force IT-Consulting GmbH, Waltrop and others.
+ * Copyright (c) 2012-2020 Task Force IT-Consulting GmbH, Waltrop and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 
@@ -41,7 +42,6 @@ import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.core.messages.SystemMessageException;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
 import com.ibm.etools.systems.core.ui.actions.ISystemDynamicPopupMenuExtension;
@@ -96,12 +96,11 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
                 DataElement element = (DataElement)_object;
 
-                if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isLibrary()
-                    || ISeriesDataElementUtil.getDescriptorTypeObject(element).isMessageFile()) {
+                if (ISeriesDataElementHelper.isLibrary(element) || ISeriesDataElementHelper.isMessageFile(element)) {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(ISeriesConnection.getConnection(ISeriesDataElementUtil.getConnection(element).getAliasName()));
+                    checkIfMultipleConnections(ISeriesConnection.getConnection(ISeriesDataElementHelper.getConnection(element).getAliasName()));
 
                 }
 
@@ -175,9 +174,9 @@ public class MessageFileSearchAction extends ISeriesSystemBaseAction implements 
 
                 DataElement element = (DataElement)_object;
 
-                if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isLibrary()) {
+                if (ISeriesDataElementHelper.isLibrary(element)) {
                     _continue = addElementsFromLibrary(element);
-                } else if (ISeriesDataElementUtil.getDescriptorTypeObject(element).isMessageFile()) {
+                } else if (ISeriesDataElementHelper.isMessageFile(element)) {
                     addElement(element);
                 }
                 if (!_continue) {

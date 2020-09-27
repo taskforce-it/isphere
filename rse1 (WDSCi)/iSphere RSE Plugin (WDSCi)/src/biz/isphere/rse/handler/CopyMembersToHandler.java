@@ -24,12 +24,12 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibm.helper.ISeriesDataElementHelper;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.core.api.ISeriesConnection;
 import com.ibm.etools.iseries.core.api.ISeriesObject;
 import com.ibm.etools.iseries.core.dstore.common.ISeriesDataElementHelpers;
-import com.ibm.etools.iseries.core.util.ISeriesDataElementUtil;
 import com.ibm.etools.systems.as400filesubsys.impl.FileSubSystemImpl;
 import com.ibm.etools.systems.core.ui.messages.SystemMessageDialog;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
@@ -85,11 +85,11 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
             if (selectedObject instanceof DataElement) {
                 DataElement dataElement = (DataElement)selectedObject;
                 ISeriesObject object = new ISeriesObject(dataElement);
-                if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceMember()) {
+                if (ISeriesDataElementHelper.isSourceMember(dataElement)) {
                     if (!addElement(shell, object)) {
                         return false;
                     }
-                } else if (ISeriesDataElementUtil.getDescriptorTypeObject(dataElement).isSourceFile()) {
+                } else if (ISeriesDataElementHelper.isSourceFile(dataElement)) {
                     String connectionName = object.getISeriesConnection().getSystemConnection().getAliasName();
                     if (!addElementsFromSourceFile(shell, connectionName, ISeriesDataElementHelpers.getLibrary(dataElement),
                         ISeriesDataElementHelpers.getName(dataElement))) {
