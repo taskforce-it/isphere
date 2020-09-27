@@ -73,6 +73,18 @@
 
      d/Copy QCPYSRC,SPLF0300
 
+      // Local procedures
+
+     dgetCompareType...
+     d                 PR             1A   ExtProc('getCompareType')
+     d LPValue                      128A   Const Varying Options(*Varsize)      --> String Value
+
+     dgetCompareValue...
+     d                 PR           128A   Varying
+     d                                     ExtProc('getCompareValue')
+     d LPCompareType                  1A   Const
+     d LPValue                      128A   Const Varying Options(*Varsize)      --> String Value
+
       // Global field declarations
 
      dGILoop           S              1N   Inz(*On)                             Loop
@@ -96,7 +108,7 @@
      dGIEndTime        S              8T   TimFmt(*ISO)                         End time
      dGISlcName        S              1A                                        Selec. by SplF name
      dGIName           S             10A   Varying                              SplF Name
-     dGICmpName        S              1A                                        Comp. type SplF name
+     dGICmpTypeName    S              1A                                        Comp. type SplF name
 
      dGIMaxNumSplF     S             10I 0 Inz(-1)
      dGIErrorMsg       S            256A   Varying
@@ -152,7 +164,7 @@
        // Selection by spooled file name
        GISlcName = *Blank;
        GIName = *Blanks;
-       GICmpName = *Blank;
+       GICmpTypeName = *Blank;
 
        // Return all spooled files
        GIMaxNumSplF = -1;
@@ -391,23 +403,8 @@
        GISlcName = 'X';
        GIName = %Trim(LPName);
 
-       Select;
-       When %Len(GIName) >= 3 And
-            %SubSt(GIName: 1:1) = '*' And
-            %SubSt(GIName: %Len(GIName):1) = '*';
-         GICmpName = GENERIC_MATCH;
-         GIName = %SubSt(GIName: 2: %Len(GIName) - 2);
-       When %Len(GIName) >= 2 And
-            %SubSt(GIName: %Len(GIName): 1) = '*';
-         GICmpName = LEADING_MATCH;
-         GIName = %SubSt(GIName: 1: %Len(GIName) - 1);
-       When %Len(GIName) >= 2 And
-            %SubSt(GIName: 1: 1) = '*';
-         GICmpName = TRAILING_MATCH;
-         GIName = %SubSt(GIName: 2);
-       Other;
-         GICmpName = EXACT_MATCH;
-       EndSl;
+       GICmpTypeName = getCompareType(GIName);
+       GIName = getCompareValue(GICmpTypeName: GIName);
 
        // Leave procedure
        Return;
@@ -627,20 +624,20 @@
                // Spooled file name
                If GISlcName = 'X' And GIName <> '*';
                  Select;
-                 When GICmpName = EXACT_MATCH;
+                 When GICmpTypeName = EXACT_MATCH;
                    If GIName <> SPLFSplF;
                      Iter;
                    EndIf;
-                 When GICmpName = LEADING_MATCH;
+                 When GICmpTypeName = LEADING_MATCH;
                    If GIName <> %SubSt(SPLFSplF: 1: %Len(GIName));
                      Iter;
                    EndIf;
-                 When GICmpName = TRAILING_MATCH;
+                 When GICmpTypeName = TRAILING_MATCH;
                    LIOffs = %Len(%TrimR(SPLFSplF)) - %Len(GIName);
                    If LIOffs < 0 Or GIName <> %SubSt(SPLFSplF: 1 + LIOffs);
                      Iter;
                    EndIf;
-                 When GICmpName = GENERIC_MATCH;
+                 When GICmpTypeName = GENERIC_MATCH;
                    If %Scan(GIName: SPLFSplF) = 0;
                      Iter;
                    EndIf;
@@ -819,5 +816,76 @@
        //*------------------------------------------------------------------------------------------
 
      pSPLF_clear...
+     p                 E
+
+      //*==========================================================================================*
+      //* Returns the compare type of a given string value.                                        *
+      //*==========================================================================================*
+
+     pgetCompareType...
+     p                 B                   Export
+     d                 PI             1A
+     d LPValue                      128A   Const Varying Options(*Varsize)      --> String Value
+
+     dLICompareType    S              1A
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       Select;
+       When %Len(LPValue) >= 3 And
+            %SubSt(LPValue: 1:1) = '*' And
+            %SubSt(LPValue: %Len(LPValue):1) = '*';
+         LICompareType = GENERIC_MATCH;
+       When %Len(LPValue) >= 2 And
+            %SubSt(LPValue: %Len(LPValue): 1) = '*';
+         LICompareType = LEADING_MATCH;
+       When %Len(LPValue) >= 2 And
+            %SubSt(LPValue: 1: 1) = '*';
+         LICompareType = TRAILING_MATCH;
+       Other;
+         LICompareType = EXACT_MATCH;
+       EndSl;
+
+       Return LICompareType;
+
+      /End-Free
+
+       //*------------------------------------------------------------------------------------------
+
+     p                 E
+
+      //*==========================================================================================*
+      //* Returns the compare value of a given string value.                                       *
+      //*==========================================================================================*
+
+     pgetCompareValue...
+     p                 B                   Export
+     d                 PI           128A   Varying
+     d LPCompareType                  1A   Const
+     d LPValue                      128A   Const Varying Options(*Varsize)      --> String Value
+
+     dLIValue          S            128A   Varying
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+       Select;
+       When LPCompareType = GENERIC_MATCH;
+         LIValue = %SubSt(LPValue: 2: %Len(LPValue) - 2);
+       When LPCompareType = LEADING_MATCH;
+         LIValue = %SubSt(LPValue: 1: %Len(LPValue) - 1);
+       When LPCompareType = TRAILING_MATCH;
+         LIValue = %SubSt(LPValue: 2);
+       Other;
+         LIValue = LPValue;
+       EndSl;
+
+       Return LIValue;
+
+      /End-Free
+
+       //*------------------------------------------------------------------------------------------
+
      p                 E
 
