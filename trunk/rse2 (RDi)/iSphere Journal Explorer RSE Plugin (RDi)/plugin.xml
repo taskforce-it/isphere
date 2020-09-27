@@ -66,7 +66,7 @@
 	         
 	         <action
                 class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
-                enablesFor="1"
+                enablesFor="*"
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
                 icon="icons/display_journal_entries.gif"
