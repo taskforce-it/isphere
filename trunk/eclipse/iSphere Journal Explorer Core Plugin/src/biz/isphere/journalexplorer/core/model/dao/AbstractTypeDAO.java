@@ -15,7 +15,6 @@ import java.sql.Statement;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -44,8 +43,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
 
-        SubMonitor subMonitor = SubMonitor.convert(monitor);
-
         JournalEntries journalEntries = new JournalEntries(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
 
         PreparedStatement preparedStatement = null;
@@ -69,7 +66,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
             int numRowsAvailable = getNumRowsAvailable(whereClause);
 
-            subMonitor.setWorkRemaining(numRowsAvailable);
+            monitor.beginTask("", numRowsAvailable);
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
@@ -79,9 +76,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
                 JournalEntry journalEntry = null;
 
-                while (resultSet.next() && !isCanceled(subMonitor, journalEntries)) {
+                while (resultSet.next() && !isCanceled(monitor, journalEntries)) {
 
-                    subMonitor.worked(1);
+                    monitor.worked(1);
 
                     if (journalEntries.getNumberOfRowsDownloaded() >= maxNumRows) {
                         handleOverflowError(journalEntries, numRowsAvailable);
@@ -111,7 +108,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             super.destroy(preparedStatement);
             super.destroy(resultSet);
 
-            subMonitor.done();
+            monitor.done();
         }
 
         return journalEntries;
