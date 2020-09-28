@@ -59,6 +59,7 @@ public class JournalEntry {
     private static final int JORCVLIB = 17;
     private static final int JOUSPF = 17;
     private static final int JOSEQN = 18;
+    private static final int JOCCID = 19;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -83,6 +84,7 @@ public class JournalEntry {
         columnMappings.put("JORCVLIB", JORCVLIB);
         columnMappings.put("JOUSPF", JOUSPF);
         columnMappings.put("JOSEQN", JOSEQN);
+        columnMappings.put("JOCCID", JOCCID);
     }
 
     private static List<ContentAssistProposal> proposals;
@@ -108,6 +110,7 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JORCVLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
         proposals.add(new ContentAssistProposal("JOUSPF", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
         proposals.add(new ContentAssistProposal("JOSEQN", "INTEGER" + " - " + Messages.LongFieldName_JOSEQN));
+        proposals.add(new ContentAssistProposal("JOCCID", "INTEGER" + " - " + Messages.LongFieldName_JOCCID));
     }
 
     private Calendar calendar;
@@ -331,6 +334,7 @@ public class JournalEntry {
         row[JORCVLIB] = getReceiverLibrary();
         row[JOUSPF] = getUserProfile();
         row[JOSEQN] = getSequenceNumber();
+        row[JOCCID] = getCommitmentCycle();
 
         return row;
     }
