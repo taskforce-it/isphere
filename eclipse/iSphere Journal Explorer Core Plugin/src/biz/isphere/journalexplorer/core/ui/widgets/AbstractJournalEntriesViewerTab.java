@@ -142,6 +142,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             });
             // TODO: remove debug message
             System.out.println("** SQL editor created. **");
+            ISpherePlugin.logError("** SQL editor created. **", null);
         }
     }
 
@@ -154,6 +155,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             getContainer().layout();
             // TODO: remove debug message
             System.out.println("** SQL editor disposed. **");
+            ISpherePlugin.logError("** SQL editor disposed. **", null);
         }
     }
 
