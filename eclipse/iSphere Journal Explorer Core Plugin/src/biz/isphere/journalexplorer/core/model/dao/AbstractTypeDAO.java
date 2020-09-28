@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -66,7 +67,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
             int numRowsAvailable = getNumRowsAvailable(whereClause);
 
-            monitor.beginTask("", numRowsAvailable);
+            monitor.beginTask(Messages.Status_Loading_journal_entries, numRowsAvailable);
 
             preparedStatement = prepareStatement(sqlStatement);
             resultSet = preparedStatement.executeQuery();
