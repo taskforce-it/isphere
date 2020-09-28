@@ -41,7 +41,7 @@ public class HistoryCombo {
 
     private Composite panel;
     private Combo cboHistory;
-    private Button btnWworkWithHistory;
+    private Button btnWorkWithHistory;
 
     public HistoryCombo(Composite parent, int style) {
 
@@ -65,15 +65,15 @@ public class HistoryCombo {
 
         cboHistory = new Combo(panel, style);
         cboHistory.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        btnWworkWithHistory = new Button(panel, SWT.ARROW_LEFT);
+        btnWorkWithHistory = new Button(panel, SWT.ARROW_LEFT);
 
         boolean isDrawn = System.getProperty("os.name").toLowerCase().startsWith("win");
         if (isDrawn) {
             final Image upArrow = new Image(parent.getDisplay(), 5, 6);
             GC gc = new GC(upArrow);
-            gc.setBackground(btnWworkWithHistory.getBackground());
+            gc.setBackground(btnWorkWithHistory.getBackground());
             gc.fillRectangle(upArrow.getBounds());
-            gc.setForeground(btnWworkWithHistory.getForeground());
+            gc.setForeground(btnWorkWithHistory.getForeground());
             gc.drawLine(0, 5, 4, 5);
             gc.drawLine(0, 4, 4, 4);
             gc.drawLine(1, 3, 3, 3);
@@ -81,18 +81,18 @@ public class HistoryCombo {
             gc.drawLine(2, 1, 2, 1);
             gc.drawLine(2, 0, 2, 0);
             gc.dispose();
-            btnWworkWithHistory.addDisposeListener(new DisposeListener() {
+            btnWorkWithHistory.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent e) {
                     upArrow.dispose();
                 }
             });
-            btnWworkWithHistory.setImage(upArrow);
+            btnWorkWithHistory.setImage(upArrow);
         } else {
-            btnWworkWithHistory = new Button(panel, SWT.ARROW);
-            btnWworkWithHistory.setAlignment(SWT.UP);
+            btnWorkWithHistory = new Button(panel, SWT.ARROW);
+            btnWorkWithHistory.setAlignment(SWT.UP);
         }
 
-        btnWworkWithHistory.addSelectionListener(new SelectionListener() {
+        btnWorkWithHistory.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent paramSelectionEvent) {
                 WorkWithHistoryDialog workWithHistoryDialog = new WorkWithHistoryDialog(parent.getShell());
