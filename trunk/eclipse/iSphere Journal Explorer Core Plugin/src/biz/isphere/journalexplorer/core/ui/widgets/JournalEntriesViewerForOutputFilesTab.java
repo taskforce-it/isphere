@@ -171,11 +171,14 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
             this.filterWhereClause = filterWhereClause;
         }
 
+        /*
+         * The Monitor is set in AbstractTypeDAO.
+         * @see
+         * biz.isphere.journalexplorer.core.model.dao.AbstractTypeDAO#load(...)
+         */
         public IStatus run(IProgressMonitor monitor) {
 
             try {
-
-                monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
 
                 OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
 
@@ -202,8 +205,6 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
                     });
                 }
 
-            } finally {
-                monitor.done();
             }
 
             return Status.OK_STATUS;
