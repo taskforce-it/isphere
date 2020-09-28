@@ -51,7 +51,7 @@ public class SaveSpooledFilesToDirectoryExec {
 
             IStatus status = Status.OK_STATUS;
 
-            aMonitor.beginTask(Messages.Deleting, spooledFiles.length);
+            aMonitor.beginTask("", spooledFiles.length); //$NON-NLS-1$
 
             for (SpooledFile spooledFile : spooledFiles) {
 
