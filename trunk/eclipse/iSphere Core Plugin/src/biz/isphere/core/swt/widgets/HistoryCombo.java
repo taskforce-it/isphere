@@ -16,8 +16,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -110,6 +112,10 @@ public class HistoryCombo {
         this.maxSize = maxSize;
     }
 
+    public void setTextLimit(int limit) {
+        cboHistory.setTextLimit(limit);
+    }
+
     public void setLayoutData(Object layoutData) {
         panel.setLayoutData(layoutData);
     }
@@ -124,6 +130,22 @@ public class HistoryCombo {
 
     public void removeSelectionListener(SelectionListener listener) {
         cboHistory.removeSelectionListener(listener);
+    }
+
+    public void addModifyListener(ModifyListener listener) {
+        cboHistory.addModifyListener(listener);
+    }
+
+    public void removeModifyListener(ModifyListener listener) {
+        cboHistory.removeModifyListener(listener);
+    }
+
+    public void addVerifyListener(VerifyListener listener) {
+        cboHistory.addVerifyListener(listener);
+    }
+
+    public void removeVerifyListener(VerifyListener listener) {
+        cboHistory.removeVerifyListener(listener);
     }
 
     public void deselectAll() {
@@ -165,6 +187,14 @@ public class HistoryCombo {
 
             setHistoryItems(currentHistoryItems);
         }
+    }
+
+    public String getText() {
+        return cboHistory.getText();
+    }
+
+    public void setText(String text) {
+        cboHistory.setText(text);
     }
 
     public void updateHistory(String string) {
@@ -209,10 +239,19 @@ public class HistoryCombo {
 
     private void setHistoryItems(String[] items) {
 
+        String text = cboHistory.getText();
+
         currentHistoryItems.clear();
         currentHistoryItems.addAll(Arrays.asList(items));
 
         cboHistory.setItems(items);
+
+        for (String item : items) {
+            if (text != null && text.equals(item)) {
+                cboHistory.setText(item);
+                break;
+            }
+        }
     }
 
     private void setHistoryItems(Set<String> items) {
