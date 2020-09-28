@@ -140,6 +140,8 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                     setFilterClause(sqlEditor.getWhereClause().trim());
                 }
             });
+            // TODO: remove debug message
+            System.out.println("** SQL editor created. **");
         }
     }
 
@@ -150,6 +152,8 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             // the list of preferences listeners.
             sqlEditor.dispose();
             getContainer().layout();
+            // TODO: remove debug message
+            System.out.println("** SQL editor disposed. **");
         }
     }
 
