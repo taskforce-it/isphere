@@ -37,6 +37,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -113,16 +114,14 @@ public class OpenJournalOutputFileDialog extends XDialog {
     protected Control createDialogArea(Composite parent) {
 
         Composite container = (Composite)super.createDialogArea(parent);
+        container.setLayout(new GridLayout(2, false));
 
         Label lblConnections = new Label(container, SWT.NONE);
         lblConnections.setText(Messages.AddJournalDialog_Conection);
         lblConnections.setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
         cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
-        GridData cmbConnectionLayoutData = new GridData();
-        cmbConnectionLayoutData.minimumWidth = 100;
-        cmbConnectionLayoutData.grabExcessHorizontalSpace = true;
-        cmbConnections.getControl().setLayoutData(cmbConnectionLayoutData);
+        cmbConnections.getControl().setLayoutData(createLayoutData(100));
         cmbConnections.getControl().setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
         Label lblLibrary = new Label(container, SWT.NONE);
@@ -130,7 +129,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblLibrary.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
         txtLibraryName = WidgetFactory.createNameHistoryCombo(container);
-        txtLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        txtLibraryName.setLayoutData(createLayoutData());
         txtLibraryName.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
         Label lblFileName = new Label(container, SWT.NONE);
@@ -138,7 +137,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
         txtFileName = WidgetFactory.createNameHistoryCombo(container);
-        txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtFileName.setLayoutData(createLayoutData());
         txtFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
         Label lblMemberName = new Label(container, SWT.NONE);
@@ -146,7 +145,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
         txtMemberName = WidgetFactory.createNameHistoryCombo(container);
-        txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtMemberName.setLayoutData(createLayoutData());
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
         sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
@@ -168,6 +167,21 @@ public class OpenJournalOutputFileDialog extends XDialog {
         }
 
         return container;
+    }
+
+    private GridData createLayoutData() {
+        GridData gridData = new GridData();
+        gridData.widthHint = 160;
+        return gridData;
+    }
+
+    private GridData createLayoutData(int minWidth) {
+
+        GridData gridData = createLayoutData();
+        gridData.minimumWidth = minWidth;
+        gridData.grabExcessHorizontalSpace = true;
+
+        return gridData;
     }
 
     @Override
