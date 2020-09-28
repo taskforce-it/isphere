@@ -103,6 +103,7 @@ public class SaveSpooledFilesToDirectoryHandler extends AbstractHandler implemen
 
         String directory = dialog.open();
         if (directory != null) {
+            Preferences.getInstance().setSpooledFileSaveDirectory(directory);
             new SaveSpooledFilesToDirectoryExec().execute(spooledFiles, format, directory);
         }
 
