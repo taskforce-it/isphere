@@ -33,13 +33,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.internal.StringHelper;
@@ -49,6 +50,7 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
@@ -68,9 +70,9 @@ public class OpenJournalOutputFileDialog extends XDialog {
     private static final String WHERE_CLAUSE = "WHERE_CLAUSE";
 
     private ComboViewer cmbConnections;
-    private Text txtLibraryName;
-    private Text txtFileName;
-    private Text txtMemberName;
+    private HistoryCombo txtLibraryName;
+    private HistoryCombo txtFileName;
+    private HistoryCombo txtMemberName;
     private SqlEditor sqlEditor;
 
     private String libraryName;
@@ -127,7 +129,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblLibrary.setText(Messages.AddJournalDialog_Library);
         lblLibrary.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
-        txtLibraryName = WidgetFactory.createNameText(container, true);
+        txtLibraryName = WidgetFactory.createNameHistoryCombo(container);
         txtLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         txtLibraryName.setToolTipText(Messages.AddJournalDialog_Library_Tooltip);
 
@@ -135,7 +137,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblFileName.setText(Messages.AddJournalDialog_FileName);
         lblFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
-        txtFileName = WidgetFactory.createNameText(container, true);
+        txtFileName = WidgetFactory.createNameHistoryCombo(container);
         txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtFileName.setToolTipText(Messages.AddJournalDialog_FileName_Tooltip);
 
@@ -143,7 +145,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblMemberName.setText(Messages.AddJournalDialog_MemberName);
         lblMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        txtMemberName = WidgetFactory.createNameText(container, true);
+        txtMemberName = WidgetFactory.createNameHistoryCombo(container);
         txtMemberName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
@@ -222,6 +224,10 @@ public class OpenJournalOutputFileDialog extends XDialog {
             }
         }
 
+        txtLibraryName.load(getDialogSettingsManager(), getClass().getName() + "#library"); //$NON-NLS-1$
+        txtFileName.load(getDialogSettingsManager(), getClass().getName() + "#file"); //$NON-NLS-1$
+        txtMemberName.load(getDialogSettingsManager(), getClass().getName() + "#member"); //$NON-NLS-1$
+
         txtLibraryName.setText(loadValue(LIBRARY, ""));
         txtFileName.setText(loadValue(FILE, ""));
         txtMemberName.setText(loadValue(MEMBER, ""));
@@ -230,13 +236,22 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void storeValues() {
 
-        sqlEditor.storeHistory();
-
         storeValue(CONNECTION, connection.getConnectionName());
         storeValue(LIBRARY, libraryName);
         storeValue(FILE, fileName);
         storeValue(MEMBER, memberName);
         storeValue(WHERE_CLAUSE, whereClause);
+
+        txtLibraryName.updateHistory(libraryName);
+        txtLibraryName.store();
+
+        txtFileName.updateHistory(fileName);
+        txtFileName.store();
+
+        txtMemberName.updateHistory(memberName);
+        txtMemberName.store();
+
+        sqlEditor.storeHistory();
     }
 
     private void configureControls() {
@@ -261,6 +276,17 @@ public class OpenJournalOutputFileDialog extends XDialog {
             }
         });
 
+        txtLibraryName.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                libraryName = txtLibraryName.getText().trim();
+                updateContentAssistProposals();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
         txtFileName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 fileName = txtFileName.getText().trim();
@@ -268,10 +294,32 @@ public class OpenJournalOutputFileDialog extends XDialog {
             }
         });
 
+        txtFileName.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                fileName = txtFileName.getText().trim();
+                updateContentAssistProposals();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
         txtMemberName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 memberName = txtMemberName.getText().trim();
                 updateContentAssistProposals();
+            }
+        });
+
+        txtMemberName.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                memberName = txtMemberName.getText().trim();
+                updateContentAssistProposals();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
             }
         });
 
