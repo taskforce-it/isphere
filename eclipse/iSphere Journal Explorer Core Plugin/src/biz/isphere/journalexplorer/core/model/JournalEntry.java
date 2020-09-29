@@ -29,6 +29,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
 import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
+import com.google.gson.annotations.Expose;
 import com.ibm.as400.access.AS400Text;
 
 public class JournalEntry {
@@ -113,30 +114,44 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JOCCID", "INTEGER" + " - " + Messages.LongFieldName_JOCCID));
     }
 
-    private Calendar calendar;
-    private SimpleDateFormat dateFormatter;
-    private SimpleDateFormat timeFormatter;
-    private SimpleDateFormat timestampFormatter;
-
+    @Expose(serialize = true, deserialize = true)
     private OutputFile outputFile;
-    private String qualifiedObjectName;
-
+    @Expose(serialize = true, deserialize = true)
     private String connectionName;
+    @Expose(serialize = true, deserialize = true)
     private int id;
+    @Expose(serialize = true, deserialize = true)
+    private java.sql.Timestamp timestamp;
+
+    @Expose(serialize = true, deserialize = true)
     private int entryLength; // JOENTL
+    @Expose(serialize = true, deserialize = true)
     private BigInteger sequenceNumber; // JOSEQN
+    @Expose(serialize = true, deserialize = true)
     private String journalCode; // JOCODE
+    @Expose(serialize = true, deserialize = true)
     private String entryType; // JOENTT
+    @Expose(serialize = true, deserialize = true)
     private java.sql.Date date; // JODATE
+    @Expose(serialize = true, deserialize = true)
     private java.sql.Time time; // JOTIME
+    @Expose(serialize = true, deserialize = true)
     private String jobName; // JOJOB
+    @Expose(serialize = true, deserialize = true)
     private String jobUserName; // JOUSER
+    @Expose(serialize = true, deserialize = true)
     private int jobNumber; // JONBR
+    @Expose(serialize = true, deserialize = true)
     private String programName; // JOPGM
+    @Expose(serialize = true, deserialize = true)
     private String programLibrary; // JOLIB
+    @Expose(serialize = true, deserialize = true)
     private String objectName; // JOOBJ
+    @Expose(serialize = true, deserialize = true)
     private String objectLibrary; // JOLIB
+    @Expose(serialize = true, deserialize = true)
     private String memberName; // JOMBR
+    @Expose(serialize = true, deserialize = true)
     private BigInteger countRrn; // JOCTRR
     /**
      * Contains an indicator for the operation. The following tables show
@@ -196,63 +211,118 @@ public class JournalEntry {
      * <li>1 = Before and after images are journaled.</li>
      * </ul>
      */
+    @Expose(serialize = true, deserialize = true)
     private String flag; // JOFLAG
+    @Expose(serialize = true, deserialize = true)
     private BigInteger commitmentCycle; // JOCCID
+    @Expose(serialize = true, deserialize = true)
     private String userProfile; // JOUSPF
+    @Expose(serialize = true, deserialize = true)
     private String systemName; // JOSYNM
+    @Expose(serialize = true, deserialize = true)
     private String journalID; // JOJID
+    @Expose(serialize = true, deserialize = true)
     private String referentialConstraint; // JORCST
+    @Expose(serialize = true, deserialize = true)
     private String referentialConstraintText;
+    @Expose(serialize = true, deserialize = true)
     private String trigger; // JOTGR
+    @Expose(serialize = true, deserialize = true)
     private String triggerText;
+    @Expose(serialize = true, deserialize = true)
     private String incompleteData; // JOINCDAT
+    @Expose(serialize = true, deserialize = true)
     private String incompleteDataText;
+    @Expose(serialize = true, deserialize = true)
     private String apyRmvJrnChg; // JOIGNAPY
+    @Expose(serialize = true, deserialize = true)
     private String apyRmvJrnChgText;
+    @Expose(serialize = true, deserialize = true)
     private String minimizedSpecificData; // JOMINESD
+    @Expose(serialize = true, deserialize = true)
     private String minimizedSpecificDataText;
+    @Expose(serialize = true, deserialize = true)
     private byte[] specificData; // JOESD
+    @Expose(serialize = true, deserialize = true)
     private String stringSpecificData; // JOESD (String)
+    @Expose(serialize = true, deserialize = true)
     private String programAspDevice; // JOPGMDEV
+    @Expose(serialize = true, deserialize = true)
     private long programAsp; // JOPGMASP
+    @Expose(serialize = true, deserialize = true)
     private String objectIndicator; // JOOBJIND
+    @Expose(serialize = true, deserialize = true)
     private String objectIndicatorText;
+    @Expose(serialize = true, deserialize = true)
     private String systemSequenceNumber; // JOSYSSEQ
+    @Expose(serialize = true, deserialize = true)
     private String receiver; // JORCV
+    @Expose(serialize = true, deserialize = true)
     private String receiverLibrary; // JORCVLIB
+    @Expose(serialize = true, deserialize = true)
     private String receiverAspDevice; // JORCVDEV
+    @Expose(serialize = true, deserialize = true)
     private int receiverAsp; // JORCVASP
+    @Expose(serialize = true, deserialize = true)
     private int armNumber; // JOARM
+    @Expose(serialize = true, deserialize = true)
     private String threadId; // JOTHDX
+    @Expose(serialize = true, deserialize = true)
     private String addressFamily; // JOADF
+    @Expose(serialize = true, deserialize = true)
     private String addressFamilyText;
+    @Expose(serialize = true, deserialize = true)
     private int remotePort; // JORPORT
+    @Expose(serialize = true, deserialize = true)
     private String remoteAddress; // JORADR
+    @Expose(serialize = true, deserialize = true)
     private String logicalUnitOfWork; // JOLUW
+    @Expose(serialize = true, deserialize = true)
     private String transactionIdentifier; // JOXID
+    @Expose(serialize = true, deserialize = true)
     private String objectType; // JOOBJTYP
+    @Expose(serialize = true, deserialize = true)
     private String fileTypeIndicator; // JOFILTYP
+    @Expose(serialize = true, deserialize = true)
     private String fileTypeIndicatorText;
+    @Expose(serialize = true, deserialize = true)
     private long nestedCommitLevel; // JOCMTLVL
+    @Expose(serialize = true, deserialize = true)
     private byte[] nullIndicators; // JONVI
 
-    // Cached values
-    private java.sql.Timestamp timestamp; // JOTIME + JODATE
-    private String stringSpecificDataForUI;
+    // Transient values, set on demand
+    private transient String qualifiedObjectName;
+    private transient String stringSpecificDataForUI;
 
-    private IDatatypeConverterDelegate datatypeConverterDelegate = new DatatypeConverterDelegate();
-    private DecimalFormat bin8Formatter;
-    private DecimalFormat nestedCommitLevelFormatter;
+    // Transient values
+    private transient IDatatypeConverterDelegate datatypeConverterDelegate;
+    private transient DecimalFormat bin8Formatter;
+    private transient DecimalFormat nestedCommitLevelFormatter;
+    private transient SimpleDateFormat dateFormatter;
+    private transient SimpleDateFormat timeFormatter;
+    private transient SimpleDateFormat timestampFormatter;
+    private transient Calendar calendar;
+
+    public JournalEntry() {
+        this(null);
+    }
 
     public JournalEntry(OutputFile outputFile) {
         this.outputFile = outputFile;
+
+        // Transient values, set on demand
         this.qualifiedObjectName = null;
+        this.stringSpecificDataForUI = null;
+
+        // Transient values
+        this.datatypeConverterDelegate = new DatatypeConverterDelegate();
         this.bin8Formatter = new DecimalFormat("00000000000000000000");
         this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
-        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+
         this.dateFormatter = biz.isphere.core.preferences.Preferences.getInstance().getDateFormatter();
-        // this.timeFormatter = // new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
         this.timeFormatter = biz.isphere.core.preferences.Preferences.getInstance().getTimeFormatter();
+        // this.timeFormatter = // new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
         this.timestampFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); //$NON-NLS-1$
         this.calendar = Calendar.getInstance();
 
