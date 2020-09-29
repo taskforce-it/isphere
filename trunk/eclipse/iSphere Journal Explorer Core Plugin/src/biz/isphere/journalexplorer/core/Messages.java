@@ -56,6 +56,10 @@ public class Messages extends NLS {
     public static String JournalExplorerView_ResetColumnSize;
     public static String JournalExplorerView_ResetColumnSize_Tooltip;
     public static String JournalExplorerView_HighlightUserEntries;
+    public static String JournalExplorerView_Import_from_Json;
+    public static String JournalExplorerView_Import_from_Json_Tooltip;
+    public static String JournalExplorerView_Export_to_Json;
+    public static String JournalExplorerView_Export_to_Json_Tooltip;
     public static String LongFieldName_OutputFile_Rrn;
     public static String LongFieldName_JOENTL;
     public static String LongFieldName_JOSEQN;
@@ -166,6 +170,7 @@ public class Messages extends NLS {
     public static String Loading_entries;
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
+    public static String Exception_No_entries_converted_or_received_from_Json_file_A;
     public static String Exception_No_entries_converted_or_received_from_journal_A_B;
     public static String Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences;
 
@@ -272,7 +277,10 @@ public class Messages extends NLS {
     public static String ExcelExport_Headline;
     public static String Finished_exporting_data_to_file_A;
     public static String Exporting_to_Excel;
+    public static String Exporting_to_Json;
     public static String Display_Export_Result;
+    public static String Importing_from_Json;
+    public static String Display_Import_Result;
 
     public static String Status_Loading_journal_entries;
 

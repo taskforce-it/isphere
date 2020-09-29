@@ -91,7 +91,9 @@ public final class Preferences implements ColumnsDAO {
 
     public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
 
-    public static final String EXPORT_FILE_EXCEL = DOMAIN + "EXPORT_FILE"; //$NON-NLS-1$
+    public static final String EXPORT_FILE_EXCEL = DOMAIN + "EXPORT_FILE_EXCEL"; //$NON-NLS-1$
+
+    public static final String EXPORT_FILE_JSON = DOMAIN + "EXPORT_FILE_JSON"; //$NON-NLS-1$
 
     public static final String EXPORT_COLUMN_HEADINGS = DOMAIN + "EXPORT_COLUMN_HEADINGS"; //$NON-NLS-1$
 
@@ -240,6 +242,11 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getString(EXPORT_FILE_EXCEL);
     }
 
+    public String getExportFileJson() {
+
+        return preferenceStore.getString(EXPORT_FILE_JSON);
+    }
+
     public boolean isExportColumnHeadings() {
 
         return preferenceStore.getBoolean(EXPORT_COLUMN_HEADINGS);
@@ -294,6 +301,11 @@ public final class Preferences implements ColumnsDAO {
     public void setExportFileExcel(String exportFile) {
 
         preferenceStore.setValue(EXPORT_FILE_EXCEL, exportFile);
+    }
+
+    public void setExportFileJson(String exportFile) {
+
+        preferenceStore.setValue(EXPORT_FILE_JSON, exportFile);
     }
 
     public void setExportColumnHeadings(boolean export) {
@@ -399,6 +411,7 @@ public final class Preferences implements ColumnsDAO {
 
         preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
         preferenceStore.setDefault(EXPORT_FILE_EXCEL, getInitialExportFileExcel());
+        preferenceStore.setDefault(EXPORT_FILE_JSON, getInitialExportFileJson());
         preferenceStore.setDefault(EXPORT_COLUMN_HEADINGS, getInitialExportColumnHeadings());
     }
 
@@ -517,6 +530,10 @@ public final class Preferences implements ColumnsDAO {
     }
 
     public String getInitialExportFileExcel() {
+        return "ExportJournalEntries"; //$NON-NLS-1$
+    }
+
+    public String getInitialExportFileJson() {
         return "ExportJournalEntries"; //$NON-NLS-1$
     }
 
