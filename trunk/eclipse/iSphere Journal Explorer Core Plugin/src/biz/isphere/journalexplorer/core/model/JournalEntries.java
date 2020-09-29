@@ -19,14 +19,26 @@ import org.medfoster.sqljep.RowJEP;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
+import com.google.gson.annotations.Expose;
+
 public class JournalEntries {
 
+    @Expose(serialize = true, deserialize = true)
     private List<JournalEntry> journalEntries;
-    private List<JournalEntry> filteredJournalEntries;
+
+    @Expose(serialize = true, deserialize = true)
     private boolean isOverflow;
+
+    @Expose(serialize = true, deserialize = true)
     private int numAvailableRows;
+
+    @Expose(serialize = true, deserialize = true)
     private List<IBMiMessage> messages;
+
+    @Expose(serialize = true, deserialize = true)
     private boolean isCanceled;
+
+    private transient List<JournalEntry> filteredJournalEntries;
 
     public JournalEntries(int initialCapacity) {
 
