@@ -140,9 +140,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                     setFilterClause(sqlEditor.getWhereClause().trim());
                 }
             });
-            // TODO: remove debug message
-            System.out.println("** SQL editor created. **");
-            ISpherePlugin.logError("** SQL editor created. **", null);
         }
     }
 
@@ -153,9 +150,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             // the list of preferences listeners.
             sqlEditor.dispose();
             getContainer().layout();
-            // TODO: remove debug message
-            System.out.println("** SQL editor disposed. **");
-            ISpherePlugin.logError("** SQL editor disposed. **", null);
         }
     }
 
@@ -178,7 +172,9 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     }
 
     public void refreshSqlEditorHistory() {
-        sqlEditor.refreshHistory();
+        if (isAvailable(sqlEditor)) {
+            sqlEditor.refreshHistory();
+        }
     }
 
     protected void setSelectClause(String whereClause) {
