@@ -436,6 +436,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(openJournalOutputFileAction);
         toolBarManager.add(editSqlAction);
+        toolBarManager.add(new Separator());
         toolBarManager.add(exportToExcelAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(compareSideBySideAction);
