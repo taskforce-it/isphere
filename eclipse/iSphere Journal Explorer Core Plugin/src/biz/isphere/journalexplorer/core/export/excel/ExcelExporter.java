@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.export;
+package biz.isphere.journalexplorer.core.export.excel;
 
 import java.io.File;
 

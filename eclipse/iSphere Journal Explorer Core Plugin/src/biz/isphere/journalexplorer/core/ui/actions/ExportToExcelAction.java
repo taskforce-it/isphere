@@ -30,7 +30,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.export.ExcelExporter;
+import biz.isphere.journalexplorer.core.export.excel.ExcelExporter;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
