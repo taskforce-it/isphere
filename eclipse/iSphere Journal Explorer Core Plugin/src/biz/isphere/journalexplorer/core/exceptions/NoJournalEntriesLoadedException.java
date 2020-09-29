@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,20 @@ public class NoJournalEntriesLoadedException extends Exception {
         this.journalName = journalName;
     }
 
+    public NoJournalEntriesLoadedException(String fileName) {
+
+        this.libraryName = null;
+        this.journalName = fileName;
+
+    }
+
     @Override
     public String getMessage() {
-        return Messages.bind(Messages.Exception_No_entries_converted_or_received_from_journal_A_B, libraryName, journalName);
+
+        if (libraryName == null) {
+            return Messages.bind(Messages.Exception_No_entries_converted_or_received_from_Json_file_A, journalName);
+        } else {
+            return Messages.bind(Messages.Exception_No_entries_converted_or_received_from_journal_A_B, libraryName, journalName);
+        }
     }
 }

@@ -41,6 +41,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
     public static final String IMAGE_EXCEL = "excel.png";
+    public static final String IMAGE_JSON = "json.png";
     public static final String IMAGE_RESET_COLUMN_SIZE = "reset_column_size.png";
 
     public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
@@ -111,6 +112,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_COLLAPSE_ALL));
         reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_EDIT_SQL));
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
+        reg.put(IMAGE_JSON, getImageDescriptor(IMAGE_JSON));
         reg.put(IMAGE_RESET_COLUMN_SIZE, getImageDescriptor(IMAGE_RESET_COLUMN_SIZE));
 
         reg.put(IMAGE_CHECKED, getImageDescriptor(IMAGE_CHECKED));

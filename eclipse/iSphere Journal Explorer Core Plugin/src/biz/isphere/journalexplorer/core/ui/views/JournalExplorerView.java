@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -56,11 +57,14 @@ import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
+import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.ResetColumnSizeAction;
+import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForLoadedJournalEntriesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntriesTab;
 
@@ -76,6 +80,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private ToggleHighlightUserEntriesAction toggleHighlightUserEntriesAction;
     private ConfigureParsersAction configureParsersAction;
     private GenericRefreshAction reloadEntriesAction;
+
+    private LoadJournalEntriesAction loadJournalEntriesAction;
+    private SaveJournalEntriesAction saveJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
 
@@ -142,6 +149,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         createActions();
         initializeToolBar();
+        initializeMenu();
 
         clearStatusLine();
 
@@ -211,6 +219,26 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
+        loadJournalEntriesAction = new LoadJournalEntriesAction(getShell(), this);
+        loadJournalEntriesAction.setEnabled(false);
+
+        saveJournalEntriesAction = new SaveJournalEntriesAction(getShell());
+        saveJournalEntriesAction.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SAVE));
+        saveJournalEntriesAction.setEnabled(false);
+
+    }
+
+    /**
+     * Create view menu.
+     */
+    private void initializeMenu() {
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+
+        viewMenu.add(loadJournalEntriesAction);
+        viewMenu.add(new Separator());
+        viewMenu.add(saveJournalEntriesAction);
     }
 
     public void createJournalTab(JrneToRtv jrneToRtv) {
@@ -220,6 +248,26 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         try {
 
             journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntriesTab(tabFolder, jrneToRtv, new SqlEditorSelectionListener());
+
+            journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
+            journalEntriesViewer.addSelectionChangedListener(this);
+
+            tabFolder.setSelection(journalEntriesViewer);
+
+            performLoadJournalEntries(journalEntriesViewer);
+
+        } catch (Throwable e) {
+            handleDataLoadException(journalEntriesViewer, e);
+        }
+    }
+
+    public void createJournalTab(String fileName) {
+
+        JournalEntriesViewerForLoadedJournalEntriesTab journalEntriesViewer = null;
+
+        try {
+
+            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(tabFolder, fileName, new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -505,6 +553,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             toggleHighlightUserEntriesAction.setEnabled(false);
             resetColumnSizeAction.setEnabled(false);
             resetColumnSizeAction.setViewer(null);
+            loadJournalEntriesAction.setEnabled(true);
+            saveJournalEntriesAction.setEnabled(false);
+            saveJournalEntriesAction.setSelectedItems(new JournalEntries(0));
         } else {
             exportToExcelAction.setColumns(columns);
             exportToExcelAction.setEnabled(true);
@@ -512,6 +563,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             toggleHighlightUserEntriesAction.setEnabled(true);
             resetColumnSizeAction.setEnabled(true);
             resetColumnSizeAction.setViewer(getSelectedViewer());
+            loadJournalEntriesAction.setEnabled(true);
+            saveJournalEntriesAction.setEnabled(true);
+            saveJournalEntriesAction.setSelectedItems(journalEntries);
         }
 
         if (selection != null && selection.size() == 2) {

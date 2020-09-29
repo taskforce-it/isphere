@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.export.json.JsonExporter;
+import biz.isphere.journalexplorer.core.export.json.JsonImporter;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -111,6 +113,25 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
             monitor.done();
         }
+
+        final JsonExporter exporter = new JsonExporter();
+        exporter.execute(null, journalEntries, "c:\\temp\\test1.json");
+
+        JsonImporter importer = new JsonImporter();
+        JournalEntries tEntries = importer.execute(null, "c:\\temp\\test1.json");
+
+        exporter.execute(null, journalEntries, "c:\\temp\\test2.json");
+
+        // final JournalEntries exportData = journalEntries;
+        // new UIJob("") {
+        //
+        // @Override
+        // public IStatus runInUIThread(IProgressMonitor arg0) {
+        // exporter.export(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+        // exportData, null);
+        // return Status.OK_STATUS;
+        // }
+        // }.schedule();
 
         return journalEntries;
     }
