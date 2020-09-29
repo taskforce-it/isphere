@@ -91,7 +91,7 @@ public final class Preferences implements ColumnsDAO {
 
     public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
 
-    public static final String EXPORT_FILE = DOMAIN + "EXPORT_FILE"; //$NON-NLS-1$
+    public static final String EXPORT_FILE_EXCEL = DOMAIN + "EXPORT_FILE"; //$NON-NLS-1$
 
     public static final String EXPORT_COLUMN_HEADINGS = DOMAIN + "EXPORT_COLUMN_HEADINGS"; //$NON-NLS-1$
 
@@ -235,9 +235,9 @@ public final class Preferences implements ColumnsDAO {
         return preferenceStore.getString(EXPORT_PATH);
     }
 
-    public String getExportFile() {
+    public String getExportFileExcel() {
 
-        return preferenceStore.getString(EXPORT_FILE);
+        return preferenceStore.getString(EXPORT_FILE_EXCEL);
     }
 
     public boolean isExportColumnHeadings() {
@@ -291,9 +291,9 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setValue(EXPORT_PATH, exportPath);
     }
 
-    public void setExportFile(String exportFile) {
+    public void setExportFileExcel(String exportFile) {
 
-        preferenceStore.setValue(EXPORT_FILE, exportFile);
+        preferenceStore.setValue(EXPORT_FILE_EXCEL, exportFile);
     }
 
     public void setExportColumnHeadings(boolean export) {
@@ -398,7 +398,7 @@ public final class Preferences implements ColumnsDAO {
         preferenceStore.setDefault(DYNAMIC_BUFFER_SIZE, getInitialRetrieveJournalEntriesIsDynamicBufferSize());
 
         preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
-        preferenceStore.setDefault(EXPORT_FILE, getInitialExportFile());
+        preferenceStore.setDefault(EXPORT_FILE_EXCEL, getInitialExportFileExcel());
         preferenceStore.setDefault(EXPORT_COLUMN_HEADINGS, getInitialExportColumnHeadings());
     }
 
@@ -516,7 +516,7 @@ public final class Preferences implements ColumnsDAO {
         return FileHelper.getDefaultRootDirectory();
     }
 
-    public String getInitialExportFile() {
+    public String getInitialExportFileExcel() {
         return "ExportJournalEntries"; //$NON-NLS-1$
     }
 
