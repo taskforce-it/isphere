@@ -53,7 +53,7 @@ public class LoadJournalEntriesAction extends Action {
         dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ 
         dialog.setFilterPath(Preferences.getInstance().getExportPath());
         dialog.setFileName(Preferences.getInstance().getExportFileJson());
-        dialog.setOverwrite(true);
+        dialog.setOverwrite(false);
         final String importPath = dialog.open();
         if (importPath == null) {
             return;
