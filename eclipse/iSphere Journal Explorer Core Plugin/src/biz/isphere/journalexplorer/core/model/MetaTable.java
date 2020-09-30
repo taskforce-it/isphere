@@ -73,7 +73,7 @@ public class MetaTable {
 
     public boolean isJournalOutputFile() {
 
-        if (JournalOutputType.NONE.equals(getOutfileType())) {
+        if (!JournalOutputType.NONE.equals(getOutfileType())) {
             return true;
         }
 
