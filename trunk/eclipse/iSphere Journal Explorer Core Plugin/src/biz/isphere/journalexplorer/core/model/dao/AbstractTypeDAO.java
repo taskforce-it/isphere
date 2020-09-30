@@ -44,7 +44,9 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
 
-        JournalEntries journalEntries = new JournalEntries(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
+        int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+
+        JournalEntries journalEntries = new JournalEntries(maxNumRows);
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -64,7 +66,6 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
                 sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
             }
 
-            int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
             int numRowsAvailable = getNumRowsAvailable(whereClause);
 
             monitor.beginTask(Messages.Status_Loading_journal_entries, numRowsAvailable);
