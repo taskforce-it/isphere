@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,11 +72,12 @@ public class MetaTable {
     }
 
     public boolean isJournalOutputFile() {
-        return isJournalOutputFile;
-    }
 
-    public void setJournalOutputFile(boolean isJournalOutputFile) {
-        this.isJournalOutputFile = isJournalOutputFile;
+        if (JournalOutputType.NONE.equals(getOutfileType())) {
+            return true;
+        }
+
+        return false;
     }
 
     public void addWarningMessage(String message) {
@@ -224,8 +225,10 @@ public class MetaTable {
             } else if (hasColumn("JOUSPF")) {
                 // Added with *TYPE2
                 outfileType = JournalOutputType.TYPE2;
-            } else {
+            } else if (hasColumn("JOUSPF")) {
                 outfileType = JournalOutputType.TYPE1;
+            } else {
+                outfileType = JournalOutputType.NONE;
             }
 
         }
