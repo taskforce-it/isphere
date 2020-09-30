@@ -40,6 +40,10 @@ public class JournalEntries {
 
     private transient List<JournalEntry> filteredJournalEntries;
 
+    public JournalEntries() {
+        this(0);
+    }
+
     public JournalEntries(int initialCapacity) {
 
         this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
