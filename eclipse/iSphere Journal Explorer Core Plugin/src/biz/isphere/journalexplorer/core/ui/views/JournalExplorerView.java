@@ -555,7 +555,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             resetColumnSizeAction.setViewer(null);
             loadJournalEntriesAction.setEnabled(true);
             saveJournalEntriesAction.setEnabled(false);
-            saveJournalEntriesAction.setSelectedItems(new JournalEntries(0));
+            saveJournalEntriesAction.setSelectedItems(new JournalEntries());
         } else {
             exportToExcelAction.setColumns(columns);
             exportToExcelAction.setEnabled(true);
