@@ -115,9 +115,14 @@ public class JournalEntry {
     }
 
     @Expose(serialize = true, deserialize = true)
-    private OutputFile outputFile;
-    @Expose(serialize = true, deserialize = true)
     private String connectionName;
+    @Expose(serialize = true, deserialize = true)
+    private String outFileName;
+    @Expose(serialize = true, deserialize = true)
+    private String outFileLibrary;
+    @Expose(serialize = true, deserialize = true)
+    private String outMemberName;
+
     @Expose(serialize = true, deserialize = true)
     private int id;
     @Expose(serialize = true, deserialize = true)
@@ -291,6 +296,7 @@ public class JournalEntry {
     private byte[] nullIndicators; // JONVI
 
     // Transient values, set on demand
+    private OutputFile outputFile;
     private transient String qualifiedObjectName;
     private transient String stringSpecificDataForUI;
 
@@ -303,12 +309,28 @@ public class JournalEntry {
     private transient SimpleDateFormat timestampFormatter;
     private transient Calendar calendar;
 
+    /**
+     * Produces a new JournalEntry object. This constructor is used by the Json
+     * importer, when loading journal entries from a Json file.
+     */
     public JournalEntry() {
         this(null);
     }
 
+    /**
+     * Produces a new JournalEntry. This constructor is used when loading
+     * journal entries from a journal or a DSPJRN output file.
+     * 
+     * @param outputFile
+     */
     public JournalEntry(OutputFile outputFile) {
-        this.outputFile = outputFile;
+
+        if (outputFile != null) {
+            this.connectionName = outputFile.getConnectionName();
+            this.outFileName = outputFile.getOutFileName();
+            this.outFileLibrary = outputFile.getOutFileLibrary();
+            this.outMemberName = outputFile.getOutMemberName();
+        }
 
         // Transient values, set on demand
         this.qualifiedObjectName = null;
@@ -329,6 +351,9 @@ public class JournalEntry {
     }
 
     public OutputFile getOutputFile() {
+        if (outputFile == null) {
+            outputFile = new OutputFile(this.connectionName, this.outFileLibrary, this.outFileName, this.outMemberName);
+        }
         return outputFile;
     }
 
@@ -417,9 +442,9 @@ public class JournalEntry {
         return connectionName;
     }
 
-    public void setConnectionName(String connectionName) {
-        this.connectionName = connectionName;
-    }
+    // public void setConnectionName(String connectionName) {
+    // this.connectionName = connectionName;
+    // }
 
     public String getKey() {
         return Messages.bind(Messages.Journal_RecordNum, new Object[] { getConnectionName(), getOutFileLibrary(), getOutFileName(), getId() });
@@ -434,11 +459,11 @@ public class JournalEntry {
     }
 
     public String getOutFileName() {
-        return outputFile.getOutFileName();
+        return getOutputFile().getOutFileName();
     }
 
     public String getOutFileLibrary() {
-        return outputFile.getOutFileLibrary();
+        return getOutputFile().getOutFileLibrary();
     }
 
     // //////////////////////////////////////////////////////////

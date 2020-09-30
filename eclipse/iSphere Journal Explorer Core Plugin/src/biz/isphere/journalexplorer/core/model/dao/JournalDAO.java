@@ -158,7 +158,7 @@ public class JournalDAO {
     private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) throws Exception {
 
         // AbstractTypeDAO
-        journalEntry.setConnectionName(connectionName);
+        // journalEntry.setConnectionName(connectionName);
         journalEntry.setId(id);
         journalEntry.setCommitmentCycle(journalEntryData.getCommitCycleId());
         journalEntry.setEntryLength(journalEntryData.getEntrySpecificDataLength());

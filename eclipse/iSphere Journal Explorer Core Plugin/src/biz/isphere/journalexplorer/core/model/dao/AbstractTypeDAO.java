@@ -238,7 +238,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
 
-        journalEntry.setConnectionName(getConnectionName());
+        // journalEntry.setConnectionName(getConnectionName());
         journalEntry.setId(resultSet.getInt(RRN_OUTPUT_FILE));
         journalEntry.setCommitmentCycle(resultSet.getBigDecimal(JOCCID).toBigIntegerExact());
         journalEntry.setEntryLength(resultSet.getInt(JOENTL));
