@@ -58,10 +58,10 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
             Date startTime = new Date();
 
             statement = createStatement();
-            overwriteDatabaseFile(statement, outputFile.getOutFileName(), outputFile.getOutFileLibrary(), outputFile.getOutFileName(),
-                outputFile.getOutMemberName());
+            overwriteDatabaseFile(statement, outputFile.getFileName(), outputFile.getLibraryName(), outputFile.getFileName(),
+                outputFile.getMemberName());
 
-            String sqlStatement = String.format(getSqlStatement(), outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+            String sqlStatement = String.format(getSqlStatement(), outputFile.getLibraryName(), outputFile.getFileName());
             if (!StringHelper.isNullOrEmpty(whereClause)) {
                 sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
             }
@@ -102,7 +102,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
         } finally {
 
             try {
-                deleteDatabaseOverwrite(statement, outputFile.getOutFileName());
+                deleteDatabaseOverwrite(statement, outputFile.getFileName());
             } catch (Throwable e) {
                 // Ignore error. It has already been logged.
             }
@@ -144,8 +144,8 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
-            command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getOutFileName(),
-                outputFile.getOutFileLibrary(), outputFile.getOutFileName(), outputFile.getOutMemberName());
+            command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getFileName(),
+                outputFile.getLibraryName(), outputFile.getFileName(), outputFile.getMemberName());
             command = "CALL QSYS.QCMDEXC('" + command + "', CAST(" + command.length() + " AS DECIMAL(15, 5)))";
             statement.execute(command);
 
@@ -227,7 +227,7 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
     private String getSqlCountStatement(OutputFile outputFile, String whereClause) {
 
-        String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getOutFileLibrary(), outputFile.getOutFileName());
+        String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getLibraryName(), outputFile.getFileName());
         if (!StringHelper.isNullOrEmpty(whereClause)) {
             sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
         }

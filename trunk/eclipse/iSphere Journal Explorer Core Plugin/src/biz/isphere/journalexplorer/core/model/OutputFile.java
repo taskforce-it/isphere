@@ -14,9 +14,9 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 public class OutputFile {
 
     private String connectionName;
-    private String outFileLibrary;
-    private String outFileName;
-    private String outMemberName;
+    private String libraryName;
+    private String fileName;
+    private String memberName;
 
     public OutputFile(String connectionName, String outFileLibrary, String outFileName) {
         this(connectionName, outFileLibrary, outFileName, "*FIRST");
@@ -24,9 +24,9 @@ public class OutputFile {
 
     public OutputFile(String connectionName, String outFileLibrary, String outFileName, String outMemberName) {
         this.connectionName = connectionName;
-        this.outFileLibrary = outFileLibrary;
-        this.outFileName = outFileName;
-        this.outMemberName = outMemberName;
+        this.libraryName = outFileLibrary;
+        this.fileName = outFileName;
+        this.memberName = outMemberName;
     }
 
     /**
@@ -45,36 +45,20 @@ public class OutputFile {
         return connectionName;
     }
 
-    public void setConnetionName(String connetionName) {
-        this.connectionName = connetionName;
+    public String getLibraryName() {
+        return libraryName;
     }
 
-    public String getOutFileLibrary() {
-        return outFileLibrary;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setOutFileLibrary(String outFileLibrary) {
-        this.outFileLibrary = outFileLibrary;
-    }
-
-    public String getOutFileName() {
-        return outFileName;
-    }
-
-    public void setOutFileName(String outFileName) {
-        this.outFileName = outFileName;
-    }
-
-    public String getOutMemberName() {
-        return outMemberName;
-    }
-
-    public void setOutMemberName(String outMemberName) {
-        this.outMemberName = outMemberName;
+    public String getMemberName() {
+        return memberName;
     }
 
     public String getQualifiedName() {
-        return QualifiedName.getMemberName(outFileLibrary, outFileName, outMemberName);
+        return QualifiedName.getMemberName(libraryName, fileName, memberName);
     }
 
     @Override
