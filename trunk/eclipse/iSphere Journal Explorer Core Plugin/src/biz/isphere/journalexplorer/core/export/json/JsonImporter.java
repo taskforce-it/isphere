@@ -8,7 +8,6 @@
 
 package biz.isphere.journalexplorer.core.export.json;
 
-import java.io.File;
 import java.io.FileReader;
 
 import org.eclipse.swt.SWT;
@@ -43,8 +42,6 @@ public class JsonImporter {
         if (file == null) {
             return null;
         }
-
-        System.out.println(new File(file).getPath());
 
         return performImportFromJson(file);
     }

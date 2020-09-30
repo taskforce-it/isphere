@@ -8,7 +8,6 @@
 
 package biz.isphere.journalexplorer.core.export.json;
 
-import java.io.File;
 import java.io.FileWriter;
 
 import org.eclipse.swt.SWT;
@@ -43,8 +42,6 @@ public class JsonExporter {
         if (file == null) {
             return null;
         }
-
-        System.out.println(new File(file).getPath());
 
         return performExportToJson(journalEntries, file);
     }
