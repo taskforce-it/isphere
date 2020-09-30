@@ -117,11 +117,11 @@ public class JournalEntry {
     @Expose(serialize = true, deserialize = true)
     private String connectionName;
     @Expose(serialize = true, deserialize = true)
-    private String outFileName;
+    private String outputFileName;
     @Expose(serialize = true, deserialize = true)
-    private String outFileLibrary;
+    private String outputFileLibraryName;
     @Expose(serialize = true, deserialize = true)
-    private String outMemberName;
+    private String outputFileMemberName;
 
     @Expose(serialize = true, deserialize = true)
     private int id;
@@ -327,9 +327,9 @@ public class JournalEntry {
 
         if (outputFile != null) {
             this.connectionName = outputFile.getConnectionName();
-            this.outFileName = outputFile.getOutFileName();
-            this.outFileLibrary = outputFile.getOutFileLibrary();
-            this.outMemberName = outputFile.getOutMemberName();
+            this.outputFileName = outputFile.getFileName();
+            this.outputFileLibraryName = outputFile.getLibraryName();
+            this.outputFileMemberName = outputFile.getMemberName();
         }
 
         // Transient values, set on demand
@@ -352,7 +352,7 @@ public class JournalEntry {
 
     public OutputFile getOutputFile() {
         if (outputFile == null) {
-            outputFile = new OutputFile(this.connectionName, this.outFileLibrary, this.outFileName, this.outMemberName);
+            outputFile = new OutputFile(this.connectionName, this.outputFileLibraryName, this.outputFileName, this.outputFileMemberName);
         }
         return outputFile;
     }
@@ -459,11 +459,11 @@ public class JournalEntry {
     }
 
     public String getOutFileName() {
-        return getOutputFile().getOutFileName();
+        return getOutputFile().getFileName();
     }
 
     public String getOutFileLibrary() {
-        return getOutputFile().getOutFileLibrary();
+        return getOutputFile().getLibraryName();
     }
 
     // //////////////////////////////////////////////////////////
