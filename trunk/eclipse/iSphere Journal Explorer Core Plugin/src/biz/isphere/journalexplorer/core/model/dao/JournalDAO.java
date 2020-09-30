@@ -56,7 +56,7 @@ public class JournalDAO {
         return new OutputFile(connectionName, "QSYS", "QADSPJR5");
     }
 
-    public JournalEntries getJournalData(String whereClause, IProgressMonitor monitor) throws Exception {
+    public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 

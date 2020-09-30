@@ -176,7 +176,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
                 JrneToRtv tJrneToRtv = jrneToRtv.clone();
 
                 JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
-                final JournalEntries data = journalDAO.getJournalData(whereClause, monitor);
+                final JournalEntries data = journalDAO.load(whereClause, monitor);
                 data.applyFilter(filterWhereClause);
 
                 if (!isDisposed()) {
