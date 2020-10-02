@@ -359,7 +359,7 @@ public final class WidgetFactory {
 
     /**
      * Produces an integer text field with a border. Only the character 0-9 are
-     * allowed to be entered.
+     * allowed to be entered. Only positive values can be entered.
      * 
      * @param parent a composite control which will be the parent of the new
      *        instance (cannot be null)
