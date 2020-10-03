@@ -4,24 +4,27 @@ Changelog: iSphere 3.7.3.r
 
  • Enhanced the "iSphere Journal Explorer", to check the iSphere
    library, when attempting to display the journal entries of a
- • Added options for saving the items of a spooled file filter as
-   Text, HTML or PDF to a PC.
  • Added option to open the "iSphere Journal Explorer" from the
    context menu of a journal.
- • Changed spool file "save as" and "open as" options, so that
-   pressing the "Cancel" button cancels the whole series.
- • Changed "iSphere Journal Explorer" not to auto-close the tab when
-   no journal entries are loaded.
- • Added column JOSEQN to "iSphere Journal Explorer" (SQL Editor).
+ • Added columns JOSEQN and JOCCID to "iSphere Journal Explorer"
+   (SQL Editor).
  • Added "Save" and "Load" options to the view menu of the "iSphere
    Journal Explorer" to save/load journal entries to/from a Json
    file.
+ • Changed "iSphere Journal Explorer" not to auto-close the tab when
+   no journal entries are loaded.
+ • Added options for saving the items of a spooled file filter as
+   Text, HTML or PDF to a PC.
+ • Changed spool file "save as" and "open as" options, so that
+   pressing the "Cancel" button cancels the whole series.
+ • Added button for exploring a job log to the toolbar of the
+   "iSphere Job Log Explorer" view.
  • Removed editor area from "iSphere Job Log Explorer" perspective.
  • Improved the Journal Explorer help page.
  • Fixed problem that background coloring did not work for Job Logs
    parsed from a spooled file stored on a PC.
  • Fixed NullPointerException when updating the history of the SQL
-   editor of a Journal Explorer tab.
+   editor of a journal explorer tab.
  • Introduced plug-in 'iSphere IDE Base Plugin' to remove dependency
    to RDi/WDSCi from the 'iSphere Core Plugin' plug-in. This changed
    had been requested by CMOne.

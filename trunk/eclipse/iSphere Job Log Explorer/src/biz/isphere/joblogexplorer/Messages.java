@@ -134,6 +134,7 @@ public class Messages extends NLS {
     public static String Use_the_exclamation_mark_to_negate_a_search_argument_eg_Completion;
 
     public static String Refresh;
+    public static String Explore_job_log;
     public static String Edit_SQL;
     public static String Exort_to_Excel;
     public static String Reset_Column_Size;
@@ -142,6 +143,20 @@ public class Messages extends NLS {
 
     public static String ParserError_Could_not_parse_time_A;
     public static String ParserError_Could_not_parse_date_A;
+
+    public static String SelectJobDialog_Connection;
+    public static String SelectJobDialog_Connection_Tooltip;
+    public static String SelectJobDialog_JobName;
+    public static String SelectJobDialog_JobName_Tooltip;
+    public static String SelectJobDialog_UserName;
+    public static String SelectJobDialog_UserName_Tooltip;
+    public static String SelectJobDialog_JobNumber;
+    public static String SelectJobDialog_JobNumber_Tooltip;
+
+    public static String Error_AllDataRequired;
+    public static String Error_Job_not_found;
+    public static String Error_No_connections_available;
+    public static String Error_Connection_A_not_found_or_not_available;
 
     static {
         // initialize resource bundle
