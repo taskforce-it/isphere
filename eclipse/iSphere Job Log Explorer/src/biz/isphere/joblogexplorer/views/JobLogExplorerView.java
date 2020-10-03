@@ -47,6 +47,7 @@ import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.action.EditSqlAction;
 import biz.isphere.joblogexplorer.action.ExportToExcelAction;
+import biz.isphere.joblogexplorer.action.OpenJobLogAction;
 import biz.isphere.joblogexplorer.action.RefreshAction;
 import biz.isphere.joblogexplorer.action.ResetColumnSizeAction;
 import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
@@ -61,6 +62,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
     private RefreshAction reloadEntriesAction;
     private ExportToExcelAction exportToExcelAction;
     private ResetColumnSizeAction resetColumnSizeAction;
+    private OpenJobLogAction openJobLogAction;
 
     private CTabFolder tabFolder;
     private ListenerList selectionChangedListeners;
@@ -175,6 +177,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
      */
     private void createActions() {
 
+        openJobLogAction = new OpenJobLogAction(getShell());
         editSqlAction = new EditSqlAction();
         reloadEntriesAction = new RefreshAction();
         exportToExcelAction = new ExportToExcelAction();
@@ -330,6 +333,7 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
     private void initializeToolBar() {
 
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        toolBarManager.add(openJobLogAction);
         toolBarManager.add(editSqlAction);
         toolBarManager.add(exportToExcelAction);
         toolBarManager.add(new Separator());
@@ -367,6 +371,8 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             reloadEntriesAction.setEnabled(false);
             reloadEntriesAction.setTabItem(null);
         }
+
+        openJobLogAction.setEnabled(true);
 
         if (tabItem != null) {
             editSqlAction.setEnabled(true);

@@ -80,6 +80,8 @@ public class JOBI0400 extends APIFormat {
     private static final String JOB_LOG_OUTPUT = "jobLogOutput"; //$NON-NLS-1$
     private static final String JOB_DESCRIPTION_LIBRARY_ASP_DEVICE_NAME = "jobDescriptionLibraryASPDeviceName"; //$NON-NLS-1$
 
+    public static final String JOB_NOT_FOUND_MSGID = "CPF3C53"; //$NON-NLS-1$
+
     private String jobName;
     private String jobUser;
     private String jobNumber;
