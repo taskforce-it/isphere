@@ -16,6 +16,7 @@ Changelog: iSphere 3.7.3.r
  • Added "Save" and "Load" options to the view menu of the "iSphere
    Journal Explorer" to save/load journal entries to/from a Json
    file.
+ • Removed editor area from "iSphere Job Log Explorer" perspective.
  • Improved the Journal Explorer help page.
  • Fixed problem that background coloring did not work for Job Logs
    parsed from a spooled file stored on a PC.
