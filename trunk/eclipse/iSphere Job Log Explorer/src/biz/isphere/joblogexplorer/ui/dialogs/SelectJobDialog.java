@@ -8,6 +8,8 @@
 
 package biz.isphere.joblogexplorer.ui.dialogs;
 
+import java.util.StringTokenizer;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -20,14 +22,22 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -47,16 +57,19 @@ public class SelectJobDialog extends XDialog {
     private static final String JOB_NAME = "JOB_NAME"; //$NON-NLS-1$
     private static final String USER_NAME = "USER_NAME"; //$NON-NLS-1$
     private static final String JOB_NUMBER = "JOB_NUMBER"; //$NON-NLS-1$
+    private static final String WATCH_CLIPBOARD = "WATCH_CLIPBOARD"; //$NON-NLS-1$
 
     private ComboViewer cmbConnections;
     private HistoryCombo txtJobName;
     private HistoryCombo txtUserName;
     private HistoryCombo txtJobNumber;
 
+    private Composite container;
     private String connectionName;
     private String jobName;
     private String userName;
     private String jobNumber;
+    private Button chkWatchClipboard;
 
     public SelectJobDialog(Shell shell) {
         super(shell);
@@ -71,7 +84,7 @@ public class SelectJobDialog extends XDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
 
-        Composite container = (Composite)super.createDialogArea(parent);
+        container = (Composite)super.createDialogArea(parent);
         container.setLayout(new GridLayout(2, false));
 
         createLabel(container, Messages.SelectJobDialog_Connection, Messages.SelectJobDialog_Connection_Tooltip);
@@ -83,14 +96,25 @@ public class SelectJobDialog extends XDialog {
         createLabel(container, Messages.SelectJobDialog_JobName, Messages.SelectJobDialog_JobName_Tooltip);
         txtJobName = WidgetFactory.createNameHistoryCombo(container);
         txtJobName.setLayoutData(createLayoutData());
+        txtJobName.setToolTipText(Messages.SelectJobDialog_JobName_Tooltip);
 
         createLabel(container, Messages.SelectJobDialog_UserName, Messages.SelectJobDialog_UserName_Tooltip);
         txtUserName = WidgetFactory.createNameHistoryCombo(container);
         txtUserName.setLayoutData(createLayoutData());
+        txtUserName.setToolTipText(Messages.SelectJobDialog_UserName_Tooltip);
 
         createLabel(container, Messages.SelectJobDialog_JobNumber, Messages.SelectJobDialog_JobNumber_Tooltip);
         txtJobNumber = WidgetFactory.createIntegerHistoryCombo(container, 6);
         txtJobNumber.setLayoutData(createLayoutData());
+        txtJobNumber.setToolTipText(Messages.SelectJobDialog_JobNumber_Tooltip);
+
+        WidgetFactory.createLineFiller(container);
+
+        chkWatchClipboard = WidgetFactory.createCheckbox(container, Messages.SelectJobDialog_Retrieve_job_name_from_clipboard);
+        chkWatchClipboard.setToolTipText(Messages.SelectJobDialog_Retrieve_job_name_from_clipboard_tooltip);
+        chkWatchClipboard.setLayoutData(createSpanLayoutData(2));
+
+        WidgetFactory.createLineFiller(container);
 
         configureControls();
 
@@ -206,6 +230,12 @@ public class SelectJobDialog extends XDialog {
         return gridData;
     }
 
+    private GridData createSpanLayoutData(int horizontalSpan) {
+        GridData gridData = new GridData();
+        gridData.horizontalSpan = horizontalSpan;
+        return gridData;
+    }
+
     @Override
     public void setFocus() {
 
@@ -261,6 +291,7 @@ public class SelectJobDialog extends XDialog {
         txtJobName.setText(loadValue(JOB_NAME, ""));
         txtUserName.setText(loadValue(USER_NAME, ""));
         txtJobNumber.setText(loadValue(JOB_NUMBER, ""));
+        chkWatchClipboard.setSelection(loadBooleanValue(WATCH_CLIPBOARD, false));
     }
 
     private void storeValues() {
@@ -269,6 +300,7 @@ public class SelectJobDialog extends XDialog {
         storeValue(JOB_NAME, jobName);
         storeValue(USER_NAME, userName);
         storeValue(JOB_NUMBER, jobNumber);
+        storeValue(WATCH_CLIPBOARD, chkWatchClipboard.getSelection());
 
         updateAndStoreHistory(txtJobName, jobName);
         updateAndStoreHistory(txtUserName, userName);
@@ -287,6 +319,8 @@ public class SelectJobDialog extends XDialog {
 
     private void configureControls() {
 
+        container.addListener(SWT.Activate, new QualifiedJobNameListener());
+
         cmbConnections.setContentProvider(new ArrayContentProvider());
         cmbConnections.setLabelProvider(new ConnectionLabelProvider());
         cmbConnections.setInput(IBMiHostContributionsHandler.getConnectionNames());
@@ -302,8 +336,11 @@ public class SelectJobDialog extends XDialog {
         txtJobName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 jobName = txtJobName.getText().trim();
+                return;
             }
         });
+
+        txtJobName.addVerifyListener(new QualifiedJobNameListener());
 
         txtUserName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
@@ -311,9 +348,21 @@ public class SelectJobDialog extends XDialog {
             }
         });
 
+        txtUserName.addVerifyListener(new QualifiedJobNameListener());
+
         txtJobNumber.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 jobNumber = txtJobNumber.getText().trim();
+            }
+        });
+
+        txtJobNumber.addVerifyListener(new QualifiedJobNameListener());
+
+        chkWatchClipboard.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                if (chkWatchClipboard.getSelection()) {
+                    new QualifiedJobNameListener().handleEvent(null);
+                }
             }
         });
     }
@@ -352,6 +401,11 @@ public class SelectJobDialog extends XDialog {
         return super.getDialogBoundsSettings(ISphereJobLogExplorerPlugin.getDefault().getDialogSettings());
     }
 
+    @Override
+    public Point getMinimalSize() {
+        return new Point(430, 260);
+    }
+
     private class ConnectionLabelProvider extends LabelProvider {
 
         @Override
@@ -362,6 +416,67 @@ public class SelectJobDialog extends XDialog {
             }
 
             return super.getText(element);
+        }
+    }
+
+    private class QualifiedJobNameListener implements VerifyListener, Listener {
+
+        public void verifyText(VerifyEvent event) {
+            if (event.text.trim().length() > 10) {
+                // Retrieve job, user and number from a qualified job name of
+                // format '123456/USER/JOB' or 'JOB(123456/USER/JOB)'.
+                if (setQualifiedJobName(event.text)) {
+                    event.doit = false;
+                }
+            }
+        }
+
+        public void handleEvent(Event event) {
+            if (chkWatchClipboard.getSelection()) {
+                if (ClipboardHelper.hasTextContents()) {
+                    String text = ClipboardHelper.getText().trim().toUpperCase();
+                    if (text.length() > 10 && text.length() <= 33) {
+                        setQualifiedJobName(text);
+                    }
+                }
+            }
+        }
+
+        private boolean setQualifiedJobName(String qualifiedJobName) {
+
+            String job = null;
+            String user = null;
+            String number = null;
+
+            qualifiedJobName = qualifiedJobName.trim().toUpperCase();
+
+            if (qualifiedJobName.startsWith("JOB(")) {
+                qualifiedJobName = qualifiedJobName.substring(4);
+                if (qualifiedJobName.endsWith(")")) {
+                    qualifiedJobName = qualifiedJobName.substring(0, qualifiedJobName.length() - 1);
+                }
+            }
+
+            // Retrieve job, user and number from a qualified job name of
+            // format '123456/USER/JOB'.
+            StringTokenizer tokens = new StringTokenizer(qualifiedJobName, " /");
+            if (tokens.hasMoreTokens()) {
+                number = tokens.nextToken();
+            }
+            if (tokens.hasMoreTokens()) {
+                user = tokens.nextToken();
+            }
+            if (tokens.hasMoreTokens()) {
+                job = tokens.nextToken();
+            }
+            if (!StringHelper.isNullOrEmpty(job)) {
+                txtJobName.setText(job);
+                txtUserName.setText(user);
+                txtJobNumber.setText(number);
+                return true;
+            }
+
+            return false;
         }
     }
 }

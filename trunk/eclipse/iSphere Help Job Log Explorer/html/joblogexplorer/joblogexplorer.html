@@ -13,17 +13,24 @@
 <img src="assets/joblogexplorer.png" 
      style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
 The Job Log Explorer is supposed to be used for viewing and filtering the job log
-messages fast and easily. You can open it from the context menus of:
-<ul>
-<li><a href="#filtering_job_log_messages">Filtering job log messages</a></li>
-<li><a href="#opening_job_log_of_remote_job">Jobs of the <i>Jobs</i> subsystem</a></li>
-<li><a href="#opening_spooled_file_job_log">QPJOBLOG spooled files</a></li>
-<li><a href="#opening_local_file_job_log">Local files</a></li>
-</ul> 
+messages fast and easily. You can open it from the context menus of a remote job, a
+remote spooled file or a local spooled file (Text format).
 <p>
 Messages can be colored depending on their severity to get your attention.
 <p>
-Use the <i>Job Log Explorer</i> perspective to get the best user experience.
+<ul>
+<li><a href="#opening_the_job_log_explorer_perspective">Opening the Job Log Explorer Perspective</a></li>
+<li><a href="#opening_job_log_by_job_name">Opening Job Log by Job Name</a></li>
+<li><a href="#opening_job_log_of_remote_job">Opening Job Log of Remote Job</a></li>
+<li><a href="#parsing_a_remote_QPJOBLOG_spooled_file">Parsing a Remote QPJOBLOG Spooled File</a></li>
+<li><a href="#parsing_a_local_QPJOBLOG_spooled_file">Parsing a Local QPJOBLOG Spooled File</a></li>
+<li><a href="#filtering_job_log_messages">Filtering job log messages</a></li>
+</ul>
+<p>
+<a id="#opening_the_job_log_explorer_perspective"></a>
+<h2>Opening the Job Log Explorer Perspective</h2>
+<p>
+You can open the Job Log Explorer perspective from 'Window -> Open Perspective -> Other...'. The perspective looks like that: 
 <p>
 <img src="assets/joblogexplorer_view.png" align="middle">
 <p>
@@ -40,6 +47,54 @@ The following actions are available:
 The properties of the job log are displayed in the Eclipse <i>Properties</i> view:
 <p>
 <img src="assets/joblogexplorer_properties.png" align="middle">
+<p>
+<a id="#opening_job_log_by_job_name"></a>
+<h2>Opening Job Log by Job Name</h2>
+<p>
+Click the <i>Explore job log</i> button at the top of the <i>Job Log Explorer</i> view:
+<p>
+<img src="assets/open_joblog.png" align="middle">
+<p>
+Select the connection and fill in the job name, user name and job number and click the [OK] button.
+<p>
+<img src="assets/open_job_log_by_name.png" align="middle">
+<p>
+Select the <i>Retrieve job name from clipboard</i> option to let the dialog retrieve a qualified
+job name from the clipboard. The supported formats are:
+<p>
+<ul>
+<li>number/user/job</li>
+<li>JOB(number/user/job)</li>
+</ul>
+<p>
+<a id="opening_job_log_of_remote_job"></a>
+<h2>Opening Job Log of Remote Job</h2>
+<p>
+Go to the <i>Jobs</i> subsystem and start the Job log Explorer from the context menu of a 
+remote job:
+<p>
+<img src="assets/open_remote_job.png" align="middle">
+<p>
+<a id="#parsing_a_remote_QPJOBLOG_spooled_file"></a>
+<h2>Parsing a Remote QPJOBLOG Spooled File</h2>
+<p>
+Go to the <i>iSphere Spooled Files</i> subsystem and start the Job log Explorer from the context menu of a 
+QPJOBLOG spooled file:
+<p>
+<img src="assets/open_spooled_file.png" align="middle">
+<p>
+<a id="#parsing_a_local_QPJOBLOG_spooled_file"></a>
+<h2>Parsing a Local QPJOBLOG Spooled File</h2>
+<p>
+Go to the <i>Local</i> subsystem and start the Job log Explorer from the context menu of a 
+given local file:
+<p>
+<img src="assets/open_local_file.png" align="middle">
+<p>
+The file name must not necessarily start with QPJOBLOG. If the job log parser cannot not recognize the
+format, an error message is displayed: 
+<p>
+<img src="assets/error_invalid_format.png" align="middle">
 <p>
 <a id="filtering_job_log_messages"></a>
 <h2>Filtering job log messages</h2>
@@ -98,35 +153,6 @@ The following actions are available:
 		</td>
 	</tr>
 </table>
-<p>
-<a id="opening_job_log_of_remote_job"></a>
-<h2>Opening Job Log of Remote Job</h2>
-<p>
-Go to the <i>Jobs</i> subsystem and start the Job log Explorer from the context menu of a 
-remote job:
-<p>
-<img src="assets/open_remote_job.png" align="middle">
-<p>
-<a id="opening_spooled_file_job_log"></a>
-<h2>Opening Spooled File Job Log</h2>
-<p>
-Go to the <i>iSphere Spooled Files</i> subsystem and start the Job log Explorer from the context menu of a 
-QPJOBLOG spooled file:
-<p>
-<img src="assets/open_spooled_file.png" align="middle">
-<p>
-<a id="opening_local_file_job_log"></a>
-<h2>Opening Local File Job Log</h2>
-<p>
-Go to the <i>Local</i> subsystem and start the Job log Explorer from the context menu of a 
-given local file:
-<p>
-<img src="assets/open_local_file.png" align="middle">
-<p>
-The file name must not necessarily start with QPJOBLOG. If the job log parser cannot not recognize the
-format, an error message is displayed: 
-<p>
-<img src="assets/error_invalid_format.png" align="middle">
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

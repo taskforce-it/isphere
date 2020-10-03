@@ -152,6 +152,8 @@ public class Messages extends NLS {
     public static String SelectJobDialog_UserName_Tooltip;
     public static String SelectJobDialog_JobNumber;
     public static String SelectJobDialog_JobNumber_Tooltip;
+    public static String SelectJobDialog_Retrieve_job_name_from_clipboard;
+    public static String SelectJobDialog_Retrieve_job_name_from_clipboard_tooltip;
 
     public static String Error_AllDataRequired;
     public static String Error_Job_not_found;
