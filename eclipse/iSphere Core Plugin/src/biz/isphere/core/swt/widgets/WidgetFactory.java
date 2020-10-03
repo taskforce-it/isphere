@@ -476,6 +476,23 @@ public final class WidgetFactory {
     }
 
     /**
+     * Produces a history combo field for positive integer values.
+     * 
+     * @param parent - a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param maxDigits - maximum number of digits
+     * @return read-only history combo field
+     */
+    public static HistoryCombo createIntegerHistoryCombo(Composite parent, int maxDigits) {
+
+        HistoryCombo combo = WidgetFactory.getInstance().produceHistoryComboField(parent, SWT.NONE);
+        combo.addVerifyListener(new NumericOnlyVerifyListener(false, false));
+        combo.setTextLimit(maxDigits);
+
+        return combo;
+    }
+
+    /**
      * Produces a combo field.
      * 
      * @param parent a composite control which will be the parent of the new
