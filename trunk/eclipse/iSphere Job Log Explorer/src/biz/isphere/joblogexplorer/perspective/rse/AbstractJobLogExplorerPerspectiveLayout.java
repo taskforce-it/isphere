@@ -56,6 +56,8 @@ public abstract class AbstractJobLogExplorerPerspectiveLayout implements IPerspe
         layout.addShowViewShortcut(getCommandLogViewID());
 
         layout.addPerspectiveShortcut(ID);
+
+        layout.setEditorAreaVisible(false);
     }
 
     protected abstract String getRemoveSystemsViewID();
