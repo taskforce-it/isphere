@@ -25,7 +25,7 @@ import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputD
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesView;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystem;
-import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesFilterInputData;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -98,7 +98,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
 
     private void doEvent(int eventType, ISubSystem subSystem, ISystemFilter filter) {
 
-        WorkWithSpooledFilesInputData inputData = (WorkWithSpooledFilesInputData)getInputData();
+        WorkWithSpooledFilesFilterInputData inputData = (WorkWithSpooledFilesFilterInputData)getInputData();
         if (inputData != null && inputData.referencesFilter(subSystem, filter)) {
 
             switch (eventType) {
@@ -153,7 +153,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
             return null;
         }
 
-        WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(filterReference);
+        WorkWithSpooledFilesFilterInputData inputData = new WorkWithSpooledFilesFilterInputData(filterReference);
 
         return inputData;
     }
