@@ -41,7 +41,6 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
@@ -261,25 +260,8 @@ public class SelectJobDialog extends XDialog {
 
         cmbConnections.setSelection(null);
         if (haveConnections()) {
-
-            Object system = null;
-            final String connectionName = loadValue(CONNECTION, null);
-
+            String connectionName = loadValue(CONNECTION, null);
             if (connectionName != null) {
-                try {
-                    system = IBMiHostContributionsHandler.getSystem(connectionName);
-                } catch (Throwable e) {
-                    // Ignore errors
-                }
-                if (system == null) {
-                    MessageDialogAsync
-                        .displayError(getShell(), Messages.bind(Messages.Error_Connection_A_not_found_or_not_available, connectionName));
-                }
-            } else {
-                system = cmbConnections.getElementAt(0);
-            }
-
-            if (system != null) {
                 cmbConnections.setSelection(new StructuredSelection(connectionName));
             }
         }
