@@ -196,6 +196,8 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             jobLogExplorerTab.setSqlEditorVisibility(false);
             jobLogExplorerTab.addStatusChangedListener(this);
             jobLogExplorerTab.setInput(input);
+        } else {
+            jobLogExplorerTab.refresh();
         }
 
         tabFolder.setSelection(jobLogExplorerTab);
