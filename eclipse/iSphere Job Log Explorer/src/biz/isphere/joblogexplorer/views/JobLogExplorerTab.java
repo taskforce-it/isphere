@@ -149,6 +149,10 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
 
     }
 
+    public void refresh() {
+        setInput(getInput());
+    }
+
     public AbstractJobLogExplorerInput getInput() {
         return jobLogExplorerInput;
     }
