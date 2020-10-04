@@ -32,7 +32,7 @@ import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystem;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
-import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesFilterInputData;
 
 public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
@@ -67,7 +67,7 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate {
 
         try {
 
-            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(filterReference);
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesFilterInputData(filterReference);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);

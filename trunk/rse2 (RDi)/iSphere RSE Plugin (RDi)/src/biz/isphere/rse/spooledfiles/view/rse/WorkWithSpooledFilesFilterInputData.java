@@ -15,12 +15,12 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.connection.ConnectionManager;
 
-public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesInputData {
+public class WorkWithSpooledFilesFilterInputData extends AbstractWorkWithSpooledFilesInputData {
 
     private ISubSystem subSystem;
     private ISystemFilter systemFilter;
 
-    public WorkWithSpooledFilesInputData(ISystemFilterReference filterReference) {
+    public WorkWithSpooledFilesFilterInputData(ISystemFilterReference filterReference) {
         this.subSystem = filterReference.getSubSystem();
         this.systemFilter = filterReference.getReferencedFilter();
     }
