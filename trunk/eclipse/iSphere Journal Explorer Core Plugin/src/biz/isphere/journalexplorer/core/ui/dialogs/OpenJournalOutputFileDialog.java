@@ -213,28 +213,11 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void loadValues() {
 
+        cmbConnections.setSelection(null);
         if (haveConnections()) {
-
-            Object connection = null;
-            final String connectionName = loadValue(CONNECTION, null);
-
+            String connectionName = loadValue(CONNECTION, null);
             if (connectionName != null) {
-                try {
-                    connection = ConnectionDelegate.getConnection(connectionName);
-                } catch (Throwable e) {
-                    // Ignore errors
-                }
-                if (connection == null) {
-                    MessageDialogAsync.displayError(getShell(), Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
-                }
-            } else {
-                connection = cmbConnections.getElementAt(0);
-            }
-
-            if (connection != null) {
-                if (ConnectionDelegate.instanceOf(connection)) {
-                    cmbConnections.setSelection(new StructuredSelection(connection));
-                }
+                cmbConnections.setSelection(new StructuredSelection(connection));
             }
         }
 
