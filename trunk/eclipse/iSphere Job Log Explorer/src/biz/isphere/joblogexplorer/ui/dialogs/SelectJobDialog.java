@@ -8,8 +8,6 @@
 
 package biz.isphere.joblogexplorer.ui.dialogs;
 
-import java.util.StringTokenizer;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -41,6 +39,7 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
@@ -426,10 +425,6 @@ public class SelectJobDialog extends XDialog {
 
         private boolean setQualifiedJobName(String qualifiedJobName) {
 
-            String job = null;
-            String user = null;
-            String number = null;
-
             qualifiedJobName = qualifiedJobName.trim().toUpperCase();
 
             if (qualifiedJobName.startsWith("JOB(")) {
@@ -441,20 +436,11 @@ public class SelectJobDialog extends XDialog {
 
             // Retrieve job, user and number from a qualified job name of
             // format '123456/USER/JOB'.
-            StringTokenizer tokens = new StringTokenizer(qualifiedJobName, " /");
-            if (tokens.hasMoreTokens()) {
-                number = tokens.nextToken();
-            }
-            if (tokens.hasMoreTokens()) {
-                user = tokens.nextToken();
-            }
-            if (tokens.hasMoreTokens()) {
-                job = tokens.nextToken();
-            }
-            if (!StringHelper.isNullOrEmpty(job)) {
-                txtJobName.setText(job);
-                txtUserName.setText(user);
-                txtJobNumber.setText(number);
+            if (QualifiedJobName.isValid(qualifiedJobName)) {
+                QualifiedJobName qJobName = new QualifiedJobName(qualifiedJobName);
+                txtJobName.setText(qJobName.getJob());
+                txtUserName.setText(qJobName.getUser());
+                txtJobNumber.setText(qJobName.getNumber());
                 return true;
             }
 
