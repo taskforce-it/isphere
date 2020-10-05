@@ -46,7 +46,7 @@ public class IProjectMember extends Member {
         this.libraryName = localSourceLocation.getLibraryName();
         this.fileName = localSourceLocation.getFileName();
         this.memberName = localSourceLocation.getMemberName();
-        this.connectionName = IBMiHostContributionsHandler.getConnectionName(localSourceLocation.getProjectName());
+        this.connectionName = IBMiHostContributionsHandler.getConnectionNameOfIProject(localSourceLocation.getProjectName());
 
         this.hasSequenceNumbersAndDateFields = null;
     }
