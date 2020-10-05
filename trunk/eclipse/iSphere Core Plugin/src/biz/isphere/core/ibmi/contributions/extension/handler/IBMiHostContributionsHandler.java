@@ -243,7 +243,7 @@ public class IBMiHostContributionsHandler {
      * @param projectName - name of an i Project
      * @return name of the connection the file has been loaded from
      */
-    public static String getConnectionName(String projectName) {
+    public static String getConnectionNameOfIProject(String projectName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -251,7 +251,7 @@ public class IBMiHostContributionsHandler {
             return null;
         }
 
-        return factory.getConnectionName(projectName);
+        return factory.getConnectionNameOfIProject(projectName);
     }
 
     /**

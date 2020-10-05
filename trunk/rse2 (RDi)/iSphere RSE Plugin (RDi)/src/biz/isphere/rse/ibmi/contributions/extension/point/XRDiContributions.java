@@ -375,7 +375,7 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @param projectName - name of an i Project
      * @return name of the connection the file has been loaded from
      */
-    public String getConnectionName(String projectName) {
+    public String getConnectionNameOfIProject(String projectName) {
 
         AbstractISeriesProject iSeriesProject = findISeriesProject(projectName);
         if (iSeriesProject == null) {

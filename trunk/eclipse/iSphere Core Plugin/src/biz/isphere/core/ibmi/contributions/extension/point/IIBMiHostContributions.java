@@ -146,7 +146,7 @@ public interface IIBMiHostContributions {
      * @param projectName - name of an i Project
      * @return name of the connection the file has been loaded from
      */
-    public String getConnectionName(String projectName);
+    public String getConnectionNameOfIProject(String projectName);
 
     /**
      * Returns the name of the associated library of a given i Project.
