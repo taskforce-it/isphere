@@ -49,4 +49,6 @@ public abstract class AbstractWorkWithSpooledFilesInputData {
     public abstract String getFilterName();
 
     public abstract String[] getFilterStrings();
+
+    public abstract boolean isPersistable();
 }

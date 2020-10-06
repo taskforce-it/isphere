@@ -9,53 +9,55 @@
 package biz.isphere.rse.spooledfiles.view.rse;
 
 import org.eclipse.rse.core.filters.ISystemFilter;
-import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 
+import biz.isphere.core.internal.QualifiedJobName;
+import biz.isphere.core.spooledfiles.SpooledFileFilter;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
-import biz.isphere.rse.connection.ConnectionManager;
 
-public class WorkWithSpooledFilesFilterInputData extends AbstractWorkWithSpooledFilesInputData {
+public class WorkWithSpooledFilesJobInputData extends AbstractWorkWithSpooledFilesInputData {
 
-    private ISubSystem subSystem;
-    private ISystemFilter systemFilter;
+    private String connectionName;
+    private QualifiedJobName qualifiedJobName;
 
-    public WorkWithSpooledFilesFilterInputData(ISystemFilterReference filterReference) {
-        this.subSystem = filterReference.getSubSystem();
-        this.systemFilter = filterReference.getReferencedFilter();
+    private SpooledFileFilter spooledFileFilter;
+
+    public WorkWithSpooledFilesJobInputData(String connectionName, QualifiedJobName qualifiedJobName) {
+        this.connectionName = connectionName;
+        this.qualifiedJobName = qualifiedJobName;
+
+        this.spooledFileFilter = new SpooledFileFilter();
+        this.spooledFileFilter.setJobName(this.qualifiedJobName.getJob());
+        this.spooledFileFilter.setUser(this.qualifiedJobName.getUser());
+        this.spooledFileFilter.setJobNumber(this.qualifiedJobName.getNumber());
     }
 
     @Override
     public String getConnectionName() {
-        return ConnectionManager.getConnectionName(subSystem.getHost());
+        return connectionName;
     }
 
     @Override
     public String getFilterPoolName() {
-        return systemFilter.getParentFilterPool().getName();
+        return "";
     }
 
     @Override
     public String getFilterName() {
-        return systemFilter.getName();
+        return qualifiedJobName.getQualifiedJobName();
     }
 
     @Override
     public String[] getFilterStrings() {
-        return systemFilter.getFilterStrings();
+        return new String[] { spooledFileFilter.getFilterString() };
     }
 
     @Override
     public boolean isPersistable() {
-        return true;
+        return false;
     }
 
     public boolean referencesFilter(ISubSystem subSystem, ISystemFilter systemFilter) {
-
-        if (this.subSystem.equals(subSystem) && this.systemFilter.equals(systemFilter)) {
-            return true;
-        }
-
         return false;
     }
 }

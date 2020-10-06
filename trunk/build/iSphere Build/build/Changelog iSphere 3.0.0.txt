@@ -22,6 +22,9 @@ Changelog: iSphere 3.7.3.r
  • Added menu option to the "Job" node of the debug view to open the
    "iSphere Job Log Explorer", when a program stops at a SEP.
  • Removed editor area from "iSphere Job Log Explorer" perspective.
+ • Added menu option to the "Job" node of the debug view to open the
+   "iSphere Work With Spooled Files" view, when a program stops at a
+   breakpoint.
  • Improved the Journal Explorer help page.
  • Fixed problem that background coloring did not work for Job Logs
    parsed from a spooled file stored on a PC.
