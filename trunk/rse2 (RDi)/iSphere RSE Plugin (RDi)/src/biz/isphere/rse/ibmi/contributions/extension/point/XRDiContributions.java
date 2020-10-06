@@ -9,6 +9,7 @@
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.connection.rse.ConnectionProperties;
@@ -383,6 +385,38 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return iSeriesProject.getConnectionName();
+    }
+
+    /**
+     * Returns the connection name of a given TCP/IP Address.
+     * 
+     * @param projectName - TCP/IP address
+     * @param isConnected - specifies whether the connection must be connected
+     * @return name of the connection
+     */
+    public String getConnectionNameByIPAddr(String tcpIpAddr, boolean isConnected) {
+
+        if (StringHelper.isNullOrEmpty(tcpIpAddr)) {
+            return null;
+        }
+
+        try {
+
+            IBMiConnection[] connections = IBMiConnection.getConnections();
+            for (IBMiConnection ibMiConnection : connections) {
+                if (!isConnected || ibMiConnection.isConnected()) {
+                    InetAddress inetAddress = InetAddress.getByName(tcpIpAddr);
+                    InetAddress connTcpIpAddr = InetAddress.getByName(ibMiConnection.getHostName());
+                    if (Arrays.equals(inetAddress.getAddress(), connTcpIpAddr.getAddress())) {
+                        return ibMiConnection.getConnectionName();
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+        }
+
+        return null;
     }
 
     /**
