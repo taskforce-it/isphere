@@ -168,6 +168,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             return;
         }
 
+        if (!inputData.isPersistable()) {
+            return;
+        }
+
         pinProperties.put(CONNECTION_NAME, inputData.getConnectionName());
         pinProperties.put(FILTER_POOL_NAME, inputData.getFilterPoolName());
         pinProperties.put(FILTER_NAME, inputData.getFilterName());
@@ -261,7 +265,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         keySet.add(FILTER_STRING);
 
         pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, keySet);
-        // workWithSpooledFilesPanel.restoreData(pinProperties);
+        if (pinProperties.size() == 0) {
+            setPinned(false);
+            return;
+        }
 
         String connectionName = pinProperties.get(CONNECTION_NAME);
         if (StringHelper.isNullOrEmpty(connectionName)) {
@@ -550,6 +557,11 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     public Map<String, String> getPinProperties() {
+
+        if (!inputData.isPersistable()) {
+            pinProperties.clear();
+            return pinProperties;
+        }
 
         Map<String, String> panelPinProperties = workWithSpooledFilesPanel.getPinProperties();
         if (panelPinProperties != null) {

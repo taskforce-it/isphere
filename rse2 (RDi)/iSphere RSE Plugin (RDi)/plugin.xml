@@ -1357,4 +1357,36 @@
       </decorator>
    </extension>
 
+   <!-- ======================================= -->
+   <!--   Debug View Popup Menu                 -->
+   <!-- ======================================= -->
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+
+      <!-- Debug View Popup Menu -->
+      <!--  "launchGroup" -->
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.debugview.popupMenu">
+
+         <visibility>
+            <objectClass
+               name="com.ibm.debug.pdt.internal.core.model.DebuggeeProcess">
+            </objectClass>
+         </visibility>
+
+         <action
+               label="%iSphere_Work_With_Spooled_Files"
+               icon="icons/spooled_files.gif"
+               class="biz.isphere.rse.actions.WorkWithSpooledFilesDebugPopupAction"
+               menubarPath="group.workwith" 
+               enablesFor="1"
+               state="false"
+               id="biz.isphere.rse.actions.WorkWithSpooledFilesDebugPopupAction">
+         </action>
+      </viewerContribution>
+
+   </extension>
+
 </plugin>
