@@ -52,6 +52,8 @@ public class SpooledFileFilter {
     private String startingTime;
     private String endingDate;
     private String endingTime;
+    private String jobName;
+    private String jobNumber;
 
     public static Calendar getStartingDateValue(String dateTypeLiteral) {
         return getDateValue(dateTypeLiteral, true);
@@ -222,6 +224,22 @@ public class SpooledFileFilter {
         this.endingTime = endingTime;
     }
 
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
+    }
+
+    public String getJobNumber() {
+        return jobNumber;
+    }
+
+    public void setJobNumber(String jobNumber) {
+        this.jobNumber = jobNumber;
+    }
+
     public int getStartingDateIntValue() {
 
         if (getStartingDate() == null || ISpooledFileFilter.ALL.equals(getStartingDate())) {
@@ -350,6 +368,18 @@ public class SpooledFileFilter {
             filterString.append(endingTime + "/");
         }
 
+        if (jobName == null) {
+            filterString.append("*/");
+        } else {
+            filterString.append(jobName + "/");
+        }
+
+        if (jobNumber == null) {
+            filterString.append("*/");
+        } else {
+            filterString.append(jobNumber + "/");
+        }
+
         return filterString.toString();
     }
 
@@ -406,6 +436,16 @@ public class SpooledFileFilter {
         index++; // Ending time
         if (values.length > index && !values[index].equals("*")) {
             setEndingTime(values[index]);
+        }
+
+        index++; // JobName
+        if (values.length > index && !values[index].equals("*")) {
+            setJobName(values[index]);
+        }
+
+        index++; // JobNumber
+        if (values.length > index && !values[index].equals("*")) {
+            setJobNumber(values[index]);
         }
     }
 }
