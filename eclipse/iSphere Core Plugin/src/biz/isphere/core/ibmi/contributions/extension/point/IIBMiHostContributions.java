@@ -149,6 +149,15 @@ public interface IIBMiHostContributions {
     public String getConnectionNameOfIProject(String projectName);
 
     /**
+     * Returns the connection name of a given TCP/IP Address.
+     * 
+     * @param projectName - TCP/IP address
+     * @param isConnected - specifies whether the connection must be connected
+     * @return name of the connection
+     */
+    public String getConnectionNameByIPAddr(String tcpIpAddr, boolean isConnected);
+
+    /**
      * Returns the name of the associated library of a given i Project.
      * 
      * @param projectName - name of an i Project
