@@ -65,7 +65,7 @@ public class QualifiedJobName {
     public String getQualifiedJobName() {
 
         if (qualifiedJobName == null) {
-            StringBuilder qualifiedJobName = new StringBuilder();
+            qualifiedJobName = new StringBuilder();
             qualifiedJobName.append(jobNumber);
             qualifiedJobName.append(DELIMITER);
             qualifiedJobName.append(userName);
@@ -84,6 +84,17 @@ public class QualifiedJobName {
         }
 
         return false;
+    }
+
+    public static QualifiedJobName parse(String string) {
+
+        Pattern pattern = Pattern.compile(PATTERN);
+        Matcher matcher = pattern.matcher(string);
+        if (matcher.find()) {
+            return new QualifiedJobName(matcher.group(1).trim());
+        }
+
+        return null;
     }
 
     @Override
