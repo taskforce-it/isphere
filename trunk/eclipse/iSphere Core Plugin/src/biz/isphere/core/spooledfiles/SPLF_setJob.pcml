@@ -2,6 +2,6 @@
    <program name="SPLF_setJob" path="/QSYS.LIB/%LIBL%.LIB/W003005.PGM">
       <data name="jobName" type="char" length="10" usage="input" />
       <data name="jobUser" type="char" length="10" usage="input" />
-      <data name="jobNumer" type="char" length="6" usage="input" />
+      <data name="jobNumber" type="char" length="6" usage="input" />
    </program>
 </pcml>
