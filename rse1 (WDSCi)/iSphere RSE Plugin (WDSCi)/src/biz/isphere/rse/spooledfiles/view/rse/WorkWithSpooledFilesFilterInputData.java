@@ -15,12 +15,12 @@ import com.ibm.etools.systems.filters.SystemFilter;
 import com.ibm.etools.systems.filters.SystemFilterReference;
 import com.ibm.etools.systems.subsystems.SubSystem;
 
-public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesInputData {
+public class WorkWithSpooledFilesFilterInputData extends AbstractWorkWithSpooledFilesInputData {
 
     private SubSystem subSystem;
     private SystemFilter systemFilter;
 
-    public WorkWithSpooledFilesInputData(SystemFilterReference filterReference) {
+    public WorkWithSpooledFilesFilterInputData(SystemFilterReference filterReference) {
         this.subSystem = (SubSystem)filterReference.getFilterPoolReferenceManager().getProvider();
         this.systemFilter = filterReference.getReferencedFilter();
     }
@@ -43,6 +43,11 @@ public class WorkWithSpooledFilesInputData extends AbstractWorkWithSpooledFilesI
     @Override
     public String[] getFilterStrings() {
         return systemFilter.getFilterStrings();
+    }
+
+    @Override
+    public boolean isPersistable() {
+        return true;
     }
 
     public boolean referencesFilter(SubSystem subSystem, SystemFilter systemFilter) {
