@@ -73,30 +73,45 @@ public class SpooledFileFactory {
                     final int maxNumSpooledFilesToLoad = Preferences.getInstance().getSpooledFilesMaxFilesToLoad();
                     new SPLF_setMaxNumSplF().run(as400, maxNumSpooledFilesToLoad);
 
-                    if (filter.getUser() != null) {
-                        new SPLF_setUser().run(as400, filter.getUser());
-                    }
+                    if (filter.getJobName() != null) {
+                        new SPLF_setJob().run(as400, filter.getJobName(), filter.getUser(), filter.getJobNumber());
+                    } else {
 
-                    if (filter.getOutputQueue() != null) {
-                        String library;
-                        if ("*ALL".equals(filter.getOutputQueue())) {
-                            library = "";
-                        } else {
-                            if (filter.getOutputQueueLibrary() != null) {
-                                library = filter.getOutputQueueLibrary();
-                            } else {
-                                library = "*LIBL";
-                            }
+                        /*
+                         * IBM documentation link:
+                         * https://www.ibm.com/support/knowledgecenter
+                         * /ssw_ibm_i_74/apis/QUSLSPL.htm
+                         */
+
+                        // not allowed with qualified job name
+                        if (filter.getUser() != null) {
+                            new SPLF_setUser().run(as400, filter.getUser());
                         }
-                        new SPLF_setOutputQueue().run(as400, filter.getOutputQueue(), library);
-                    }
 
-                    if (filter.getUserData() != null) {
-                        new SPLF_setUserData().run(as400, filter.getUserData());
-                    }
+                        // not allowed with qualified job name
+                        if (filter.getOutputQueue() != null) {
+                            String library;
+                            if ("*ALL".equals(filter.getOutputQueue())) {
+                                library = "";
+                            } else {
+                                if (filter.getOutputQueueLibrary() != null) {
+                                    library = filter.getOutputQueueLibrary();
+                                } else {
+                                    library = "*LIBL";
+                                }
+                            }
+                            new SPLF_setOutputQueue().run(as400, filter.getOutputQueue(), library);
+                        }
 
-                    if (filter.getFormType() != null) {
-                        new SPLF_setFormType().run(as400, filter.getFormType());
+                        // not allowed with qualified job name
+                        if (filter.getUserData() != null) {
+                            new SPLF_setUserData().run(as400, filter.getUserData());
+                        }
+
+                        // not allowed with qualified job name
+                        if (filter.getFormType() != null) {
+                            new SPLF_setFormType().run(as400, filter.getFormType());
+                        }
                     }
 
                     if (filter.getName() != null) {
