@@ -1377,6 +1377,16 @@
          </visibility>
 
          <action
+               label="%Copy_Qualified_Job_Name"
+               icon="icons/copy_qualified_job_name.png"
+               class="biz.isphere.rse.actions.CopyQualifiedJobNameDebugPopupAction"
+               menubarPath="additions" 
+               enablesFor="1"
+               state="false"
+               id="biz.isphere.rse.actions.CopyQualifiedJobNameDebugPopupAction">
+         </action>
+
+         <action
                label="%iSphere_Work_With_Spooled_Files"
                icon="icons/spooled_files.gif"
                class="biz.isphere.rse.actions.WorkWithSpooledFilesDebugPopupAction"
