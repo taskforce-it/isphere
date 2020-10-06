@@ -17,8 +17,10 @@ Changelog: iSphere 3.7.3.r
    Text, HTML or PDF to a PC.
  • Changed spool file "save as" and "open as" options, so that
    pressing the "Cancel" button cancels the whole series.
- • Added button for exploring a job log to the toolbar of the
-   "iSphere Job Log Explorer" view.
+ • Added button for opening a job log to the toolbar of the "iSphere
+   Job Log Explorer" view.
+ • Added menu option to the "Job" node of the debug view to open the
+   "iSphere Job Log Explorer", when a program stops at a SEP.
  • Removed editor area from "iSphere Job Log Explorer" perspective.
  • Improved the Journal Explorer help page.
  • Fixed problem that background coloring did not work for Job Logs

@@ -112,5 +112,37 @@
             class="biz.isphere.joblogexplorer.spooledfiles.popupmenu.extension.point.SpooledFilePopupMenuContributions">
          </client>
    </extension>
+
+   <!-- ======================================= -->
+   <!--   Debug View Popup Menu                 -->
+   <!-- ======================================= -->
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+
+      <!-- Debug View Popup Menu -->
+      <!--  "launchGroup" -->
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.DebugView"
+            id="org.eclipse.debug.ui.debugview.popupMenu">
+
+         <visibility>
+            <objectClass
+               name="com.ibm.debug.pdt.internal.core.model.DebuggeeProcess">
+            </objectClass>
+         </visibility>
+         
+         <action
+               label="%menu_Job_Log_Explorer"
+               icon="icons/joblog_explorer.png"
+               class="biz.isphere.joblogexplorer.action.OpenJobLogDebugPopupAction"
+               menubarPath="group.browsewith" 
+               enablesFor="1"
+               state="false"
+               id="biz.isphere.joblogexplorer.action.OpenJobLogDebugPopupAction">
+         </action>
+      </viewerContribution>
+
+   </extension>
    
 </plugin>
