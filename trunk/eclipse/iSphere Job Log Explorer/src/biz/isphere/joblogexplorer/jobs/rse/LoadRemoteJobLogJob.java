@@ -19,14 +19,12 @@ public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
     private String userName;
     private String jobNumber;
 
-    public LoadRemoteJobLogJob(String connectionName, String qualifiedJobName) {
-
-        QualifiedJobName qJobName = new QualifiedJobName(qualifiedJobName);
+    public LoadRemoteJobLogJob(String connectionName, QualifiedJobName qualifiedJobName) {
 
         this.connectionName = connectionName;
-        this.jobName = qJobName.getJob();
-        this.userName = qJobName.getUser();
-        this.jobNumber = qJobName.getNumber();
+        this.jobName = qualifiedJobName.getJob();
+        this.userName = qualifiedJobName.getUser();
+        this.jobNumber = qualifiedJobName.getNumber();
     }
 
     public LoadRemoteJobLogJob(String connectionName, String jobName, String userName, String jobNumber) {

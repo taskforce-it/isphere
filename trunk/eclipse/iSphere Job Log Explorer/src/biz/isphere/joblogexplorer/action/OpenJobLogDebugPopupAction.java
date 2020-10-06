@@ -10,8 +10,6 @@ package biz.isphere.joblogexplorer.action;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.IAction;
@@ -26,6 +24,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteJobLogJob;
 
 import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
@@ -34,18 +33,20 @@ import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
 @SuppressWarnings("restriction")
 public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
 
-    private static final String PATTERN = "\\S*\\s+((\\d{6})/(.{1,10})/(.{1,10}))\\s+.*";
-
     private Shell shell;
     private IStructuredSelection structuredSelection;
 
     public void run(IAction action) {
+
         Object selectedObject = structuredSelection.getFirstElement();
+
         if (selectedObject instanceof DebuggeeProcess) {
+
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
             String connectionName = getConnectionName(debuggeeProcess);
-            String qualifiedJobName = getQualifiedJobName(debuggeeProcess);
-            if (!StringHelper.isNullOrEmpty(qualifiedJobName)) {
+            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(debuggeeProcess.getAttribute(null));
+
+            if (isValid(connectionName, qualifiedJobName)) {
                 LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, qualifiedJobName);
                 job.run();
             }
@@ -63,18 +64,20 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
         }
     }
 
-    protected String getQualifiedJobName(IProcess process) {
+    private boolean isValid(String connectionName, QualifiedJobName qualifiedJobName) {
 
-        Pattern pattern = Pattern.compile(PATTERN);
-        Matcher matcher = pattern.matcher(process.getAttribute(null));
-        if (matcher.find()) {
-            return matcher.group(1);
+        if (qualifiedJobName == null) {
+            return false;
         }
 
-        return null;
+        if (StringHelper.isNullOrEmpty(connectionName)) {
+            return false;
+        }
+
+        return true;
     }
 
-    protected String getConnectionName(DebuggeeProcess debuggeeProcess) {
+    private String getConnectionName(DebuggeeProcess debuggeeProcess) {
 
         if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
             PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
@@ -97,17 +100,14 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
         return null;
     }
 
-    protected boolean isIBMiJob(ISelection selection) {
+    private boolean isIBMiJob(ISelection selection) {
 
         if (selection instanceof IStructuredSelection) {
             structuredSelection = ((IStructuredSelection)selection);
             Object selectedObject = structuredSelection.getFirstElement();
             if ((selectedObject instanceof IProcess)) {
                 IProcess process = (IProcess)selectedObject;
-                String patternString = PATTERN;
-                Pattern pattern = Pattern.compile(patternString);
-                Matcher matcher = pattern.matcher(process.getAttribute(null));
-                if (matcher.find()) {
+                if (QualifiedJobName.parse(process.getAttribute(null)) != null) {
                     return true;
                 }
             }
