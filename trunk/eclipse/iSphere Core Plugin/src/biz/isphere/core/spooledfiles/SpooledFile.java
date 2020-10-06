@@ -35,6 +35,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -560,6 +561,9 @@ public class SpooledFile implements IPropertySource {
     }
 
     public String getOutputQueueFormatted() {
+        if (StringHelper.isNullOrEmpty(outputQueueLibrary) && StringHelper.isNullOrEmpty(outputQueue)) {
+            return ""; //$NON-NLS-1$
+        }
         return outputQueueLibrary + "/" + outputQueue;
     }
 
