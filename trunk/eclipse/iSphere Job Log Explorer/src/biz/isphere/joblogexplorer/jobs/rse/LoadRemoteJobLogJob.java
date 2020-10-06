@@ -8,9 +8,8 @@
 
 package biz.isphere.joblogexplorer.jobs.rse;
 
-import java.util.StringTokenizer;
-
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 
 public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
@@ -22,18 +21,12 @@ public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
 
     public LoadRemoteJobLogJob(String connectionName, String qualifiedJobName) {
 
-        this.connectionName = connectionName;
+        QualifiedJobName qJobName = new QualifiedJobName(qualifiedJobName);
 
-        StringTokenizer tokens = new StringTokenizer(qualifiedJobName, " /");
-        if (tokens.hasMoreTokens()) {
-            this.jobNumber = tokens.nextToken();
-        }
-        if (tokens.hasMoreTokens()) {
-            this.userName = tokens.nextToken();
-        }
-        if (tokens.hasMoreTokens()) {
-            this.jobName = tokens.nextToken();
-        }
+        this.connectionName = connectionName;
+        this.jobName = qJobName.getJob();
+        this.userName = qJobName.getUser();
+        this.jobNumber = qJobName.getNumber();
     }
 
     public LoadRemoteJobLogJob(String connectionName, String jobName, String userName, String jobNumber) {
