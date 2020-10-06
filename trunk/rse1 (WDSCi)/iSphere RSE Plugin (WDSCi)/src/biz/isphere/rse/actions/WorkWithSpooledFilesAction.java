@@ -28,7 +28,7 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystemFactory;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
-import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesInputData;
+import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesFilterInputData;
 
 import com.ibm.etools.iseries.core.ui.actions.ISeriesSystemBaseAction;
 import com.ibm.etools.systems.core.ui.SystemMenuManager;
@@ -111,7 +111,7 @@ public class WorkWithSpooledFilesAction extends ISeriesSystemBaseAction implemen
 
         try {
 
-            WorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesInputData(filterReference);
+            WorkWithSpooledFilesFilterInputData inputData = new WorkWithSpooledFilesFilterInputData(filterReference);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
