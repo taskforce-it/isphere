@@ -12,14 +12,14 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 
-public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
+public class JobLogActiveJobLoader extends AbstractJobLogLoader {
 
     private String connectionName;
     private String jobName;
     private String userName;
     private String jobNumber;
 
-    public LoadRemoteJobLogJob(String connectionName, QualifiedJobName qualifiedJobName) {
+    public JobLogActiveJobLoader(String connectionName, QualifiedJobName qualifiedJobName) {
 
         this.connectionName = connectionName;
         this.jobName = qualifiedJobName.getJob();
@@ -27,7 +27,7 @@ public class LoadRemoteJobLogJob extends AbstractLoadInputJob {
         this.jobNumber = qualifiedJobName.getNumber();
     }
 
-    public LoadRemoteJobLogJob(String connectionName, String jobName, String userName, String jobNumber) {
+    public JobLogActiveJobLoader(String connectionName, String jobName, String userName, String jobNumber) {
         this.connectionName = connectionName;
         this.jobName = jobName;
         this.userName = userName;

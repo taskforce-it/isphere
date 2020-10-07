@@ -11,12 +11,12 @@ package biz.isphere.joblogexplorer.jobs.rse;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
 
-public class LoadIRemoteFileJob extends AbstractLoadInputJob {
+public class JobLogStreamFileLoader extends AbstractJobLogLoader {
 
     private String originalFileName;
     private String filePath;
 
-    public LoadIRemoteFileJob(String fileName, String absolutePath) {
+    public JobLogStreamFileLoader(String fileName, String absolutePath) {
         this.originalFileName = fileName;
         this.filePath = absolutePath;
     }

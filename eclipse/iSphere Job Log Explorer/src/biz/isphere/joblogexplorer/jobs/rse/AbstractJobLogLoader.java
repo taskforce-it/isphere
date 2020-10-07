@@ -15,7 +15,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
 import biz.isphere.joblogexplorer.views.JobLogExplorerView;
 
-public abstract class AbstractLoadInputJob {
+public abstract class AbstractJobLogLoader {
 
     protected void openJobLogExplorerView(AbstractJobLogExplorerInput input) throws PartInitException {
 

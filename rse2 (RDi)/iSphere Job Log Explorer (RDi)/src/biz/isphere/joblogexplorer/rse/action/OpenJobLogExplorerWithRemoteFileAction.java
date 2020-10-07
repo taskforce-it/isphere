@@ -11,7 +11,7 @@ package biz.isphere.joblogexplorer.rse.action;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
-import biz.isphere.joblogexplorer.jobs.rse.LoadIRemoteFileJob;
+import biz.isphere.joblogexplorer.jobs.rse.JobLogStreamFileLoader;
 
 public class OpenJobLogExplorerWithRemoteFileAction extends AbstractOpenJobLogExplorerAction {
 
@@ -22,7 +22,7 @@ public class OpenJobLogExplorerWithRemoteFileAction extends AbstractOpenJobLogEx
 
         if (object instanceof IRemoteFile) {
             IRemoteFile remoteFile = (IRemoteFile)object;
-            LoadIRemoteFileJob job = new LoadIRemoteFileJob(remoteFile.getName(), remoteFile.getAbsolutePath());
+            JobLogStreamFileLoader job = new JobLogStreamFileLoader(remoteFile.getName(), remoteFile.getAbsolutePath());
             job.run();
         }
     }

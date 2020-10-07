@@ -14,7 +14,7 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributionItem;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
-import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteSpooledFileJob;
+import biz.isphere.joblogexplorer.jobs.rse.JobLogSpooledFileLoader;
 
 public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenuContributionItem {
 
@@ -58,7 +58,7 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
         }
 
         for (SpooledFile spooledFile : spooledFiles) {
-            new LoadRemoteSpooledFileJob(spooledFile).run();
+            new JobLogSpooledFileLoader(spooledFile).run();
         }
     }
 }
