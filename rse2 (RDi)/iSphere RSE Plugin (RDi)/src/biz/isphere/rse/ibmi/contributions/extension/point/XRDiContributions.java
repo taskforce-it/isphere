@@ -416,7 +416,11 @@ public class XRDiContributions implements IIBMiHostContributions {
         } catch (Exception e) {
         }
 
-        return null;
+        if (isConnected) {
+            return getConnectionNameByIPAddr(tcpIpAddr, false);
+        } else {
+            return null;
+        }
     }
 
     /**
