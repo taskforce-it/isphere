@@ -1,0 +1,479 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2020 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
+package biz.isphere.jobtraceexplorer.core.ui.views;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.part.ViewPart;
+import org.medfoster.sqljep.ParseException;
+
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
+import biz.isphere.jobtraceexplorer.core.Messages;
+import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedException;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewerTab;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
+
+public class JobTraceExplorerView extends ViewPart implements ISelectionChangedListener, SelectionListener {
+
+    public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
+
+    // private EditSqlAction editSqlAction;
+    // private OpenJournalOutfileAction openJournalOutputFileAction;
+    // private ResetColumnSizeAction resetColumnSizeAction;
+    // private ToggleHighlightUserEntriesAction
+    // toggleHighlightUserEntriesAction;
+    // private GenericRefreshAction reloadEntriesAction;
+
+    private CTabFolder tabFolder;
+
+    public JobTraceExplorerView() {
+    }
+
+    /**
+     * Create contents of the view part.
+     * 
+     * @param parent
+     */
+    @Override
+    public void createPartControl(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new FillLayout(SWT.HORIZONTAL));
+
+        tabFolder = new CTabFolder(container, SWT.TOP | SWT.CLOSE);
+        tabFolder.addSelectionListener(this);
+        tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
+            public void showList(CTabFolderEvent arg0) {
+            }
+
+            public void restore(CTabFolderEvent arg0) {
+            }
+
+            public void minimize(CTabFolderEvent arg0) {
+            }
+
+            public void maximize(CTabFolderEvent arg0) {
+            }
+
+            public void close(CTabFolderEvent event) {
+                if (event.item instanceof AbstractJobTraceEntriesViewerTab) {
+                    AbstractJobTraceEntriesViewerTab closedTab = (AbstractJobTraceEntriesViewerTab)event.item;
+                    selectNextTab(closedTab);
+                }
+            }
+
+            private void selectNextTab(CTabItem closedTab) {
+                CTabItem activeTab = getSelectedViewer();
+                if (closedTab.equals(activeTab)) {
+                    int closedTabIndex = tabFolder.getSelectionIndex();
+                    int newTabIndex;
+                    int maxTabIndex = tabFolder.getItemCount() - 1;
+                    if (closedTabIndex < maxTabIndex) {
+                        newTabIndex = closedTabIndex + 1;
+                    } else {
+                        newTabIndex = closedTabIndex - 1;
+                    }
+                    if (newTabIndex >= 0) {
+                        tabFolder.setSelection(newTabIndex);
+                        updateStatusLine();
+                    } else {
+                        clearStatusLine();
+                    }
+                }
+            }
+        });
+
+        createActions();
+        initializeToolBar();
+        initializeMenu();
+
+        clearStatusLine();
+    }
+
+    private void disposeJobTraceExplorerTabChecked(Object object) {
+        if (object instanceof AbstractJobTraceEntriesViewerTab) {
+            AbstractJobTraceEntriesViewerTab tabItem = (AbstractJobTraceEntriesViewerTab)object;
+            tabItem.dispose();
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+    }
+
+    /**
+     * Create view actions.
+     */
+    private void createActions() {
+
+        // resetColumnSizeAction = new ResetColumnSizeAction(getShell());
+
+        // openJournalOutputFileAction = new
+        // OpenJournalOutfileAction(getShell()) {
+        // @Override
+        // public void postRunAction() {
+        // OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
+        // if (outputFile != null) {
+        // String whereClause = openJournalOutputFileAction.getWhereClause();
+        // createJournalTab(outputFile, whereClause);
+        // }
+        // }
+        // };
+
+        // editSqlAction = new EditSqlAction(getShell()) {
+        // @Override
+        // public void postRunAction() {
+        // AbstractJobTraceEntriesViewerTab tabItem = getSelectedViewer();
+        // tabItem.setSqlEditorVisibility(editSqlAction.isChecked());
+        // return;
+        // }
+        // };
+
+        // toggleHighlightUserEntriesAction = new
+        // ToggleHighlightUserEntriesAction();
+
+        // reloadEntriesAction = new GenericRefreshAction() {
+        // @Override
+        // protected void postRunAction() {
+        // performReloadJournalEntries();
+        // }
+        // };
+
+    }
+
+    /**
+     * Create view menu.
+     */
+    private void initializeMenu() {
+
+        IActionBars actionBars = getViewSite().getActionBars();
+        IMenuManager viewMenu = actionBars.getMenuManager();
+    }
+
+    public void createJobTraceTab(String libraryName, String sessionID) {
+
+        JobTraceEntriesViewerTab jobTraceEntriesViewer = null;
+
+        try {
+
+            jobTraceEntriesViewer = new JobTraceEntriesViewerTab(tabFolder, libraryName, sessionID, new SqlEditorSelectionListener());
+
+            jobTraceEntriesViewer.addSelectionChangedListener(this);
+
+            tabFolder.setSelection(jobTraceEntriesViewer);
+
+            performLoadJobTraceEntries(jobTraceEntriesViewer);
+
+        } catch (Throwable e) {
+            handleDataLoadException(jobTraceEntriesViewer, e);
+        }
+    }
+
+    public void handleDataLoadException(AbstractJobTraceEntriesViewerTab tabItem, Throwable e) {
+
+        if (e instanceof ParseException) {
+            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+            return;
+        } else if (e instanceof NoJobTraceEntriesLoadedException) {
+            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+            return;
+        } else if (e instanceof SQLSyntaxErrorException) {
+            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+        } else {
+            ISpherePlugin.logError("*** Error in method JobTraceExplorerView.handleDataLoadException() ***", e); //$NON-NLS-1$
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+
+        disposeJobTraceExplorerTabChecked(tabItem);
+
+        updateStatusLine();
+    }
+
+    /**
+     * Returns the tab folder.
+     * 
+     * @return tab folder
+     */
+    private CTabFolder getTabFolder() {
+        if (tabFolder == null || tabFolder.isDisposed()) {
+            return null;
+        }
+        return tabFolder;
+    }
+
+    /**
+     * Returns the currently selected viewer (tab).
+     * 
+     * @return selected viewer
+     */
+    public AbstractJobTraceEntriesViewerTab getSelectedViewer() {
+        CTabFolder tabFolder = getTabFolder();
+        if (tabFolder == null) {
+            return null;
+        }
+        return (AbstractJobTraceEntriesViewerTab)tabFolder.getSelection();
+    }
+
+    private void performReloadJobTraceEntries() {
+
+        try {
+
+            AbstractJobTraceEntriesViewerTab tabItem = getSelectedViewer();
+            performLoadJobTraceEntries(tabItem);
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method JobTraceExplorerView.performReloadJobTraceEntries() ***", e); //$NON-NLS-1$
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
+
+    private void performLoadJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
+
+        String initialWhereClause = tabItem.getSelectClause();
+        String filterWhereClause = tabItem.getFilterClause();
+
+        tabItem.validateWhereClause(getViewSite().getShell(), initialWhereClause);
+        tabItem.validateWhereClause(getViewSite().getShell(), filterWhereClause);
+
+        tabItem.closeJobTraceSession();
+        updateStatusLine();
+        tabItem.openJobTraceSession(this, initialWhereClause, filterWhereClause);
+    }
+
+    private void performFilterJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
+
+        tabItem.validateWhereClause(getViewSite().getShell(), tabItem.getFilterClause());
+
+        tabItem.storeSqlEditorHistory();
+        refreshSqlEditorHistory();
+
+        tabItem.filterJobTraceSession(this, tabItem.getFilterClause());
+    }
+
+    private void refreshSqlEditorHistory() {
+        for (CTabItem tabItem : tabFolder.getItems()) {
+            ((AbstractJobTraceEntriesViewerTab)tabItem).refreshSqlEditorHistory();
+        }
+    }
+
+    public void finishDataLoading(AbstractJobTraceEntriesViewerTab tabItem, boolean isFilter) {
+
+        if (tabItem != null) {
+            JobTraceEntries jobTraceEntries = tabItem.getInput();
+            if (jobTraceEntries != null) {
+                if (jobTraceEntries.isCanceled()) {
+                    MessageDialog.openWarning(getShell(), Messages.MessageDialog_Load_Job_Trace_Entries_Title,
+                        Messages.Warning_Loading_job_trace_entries_has_been_canceled_by_the_user);
+                } else {
+                    int numItemsDownloaded = jobTraceEntries.getNumberOfRowsDownloaded();
+                    if (jobTraceEntries.isOverflow() && !isFilter) {
+                        String messageText;
+                        int numItemsAvailable = jobTraceEntries.getNumberOfRowsAvailable();
+                        if (numItemsAvailable < 0) {
+                            messageText = Messages.bind(Messages.Warning_Not_all_job_trace_entries_loaded_unknown_size, numItemsAvailable,
+                                numItemsDownloaded);
+                        } else {
+                            messageText = Messages.bind(Messages.Warning_Not_all_job_trace_entries_loaded, numItemsAvailable, numItemsDownloaded);
+                        }
+                        DoNotAskMeAgainDialog.openInformation(getViewSite().getShell(), DoNotAskMeAgain.WARNING_NOT_ALL_JOB_TRACE_ENTRIES_LOADED,
+                            messageText);
+                    }
+                }
+            }
+        }
+    }
+
+    private Shell getShell() {
+        return getSite().getShell();
+    }
+
+    private void updateStatusLine() {
+
+        AbstractJobTraceEntriesViewerTab tabItem = getSelectedViewer();
+
+        if (tabItem == null || tabItem.isLoading()) {
+            clearStatusLine();
+            return;
+        }
+
+        JobTraceEntries jobTraceEntries = tabItem.getInput();
+        if (jobTraceEntries == null) {
+            clearStatusLine();
+            return;
+        }
+
+        String message = null;
+
+        int numItems = jobTraceEntries.size();
+        if (jobTraceEntries.isOverflow()) {
+            int numItemsAvailable = jobTraceEntries.getNumberOfRowsAvailable();
+            if (numItemsAvailable < 0) {
+                message = Messages.bind(Messages.Number_of_job_trace_entries_A_more_items_available, numItems);
+            } else {
+                message = Messages.bind(Messages.Number_of_job_trace_entries_A_of_B, numItems, numItemsAvailable);
+            }
+        } else {
+            message = Messages.bind(Messages.Number_of_job_trace_entries_A, numItems);
+        }
+
+        if (tabItem.isFiltered()) {
+            message += " (" + Messages.subsetted_list + ")";
+        }
+
+        setStatusLineText(message);
+        setActionEnablement(tabItem);
+    }
+
+    private void clearStatusLine() {
+
+        setStatusLineText(""); //$NON-NLS-1$
+        setActionEnablement(null);
+    }
+
+    private void setStatusLineText(String message) {
+
+        IActionBars bars = getViewSite().getActionBars();
+        bars.getStatusLineManager().setMessage(message);
+    }
+
+    /**
+     * Initialize the toolbar.
+     */
+    private void initializeToolBar() {
+
+        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        // toolBarManager.add(openJournalOutputFileAction);
+        // toolBarManager.add(editSqlAction);
+        toolBarManager.add(new Separator());
+        // toolBarManager.add(toggleHighlightUserEntriesAction);
+        toolBarManager.add(new Separator());
+        // toolBarManager.add(resetColumnSizeAction);
+        toolBarManager.add(new Separator());
+        // toolBarManager.add(reloadEntriesAction);
+    }
+
+    @Override
+    public void setFocus() {
+        updateStatusLine();
+    }
+
+    /**
+     * Enables the actions for the current viewer.
+     * 
+     * @param tabItem - the selected viewer (tab)
+     */
+    private void setActionEnablement(AbstractJobTraceEntriesViewerTab tabItem) {
+
+        if (tabItem == null || tabItem.getInput() == null) {
+            // editSqlAction.setEnabled(false);
+            // editSqlAction.setChecked(false);
+        } else {
+            // editSqlAction.setEnabled(tabItem.hasSqlEditor());
+            // editSqlAction.setChecked(tabItem.isSqlEditorVisible());
+        }
+
+        // openJournalOutputFileAction.setEnabled(true);
+
+        int numEntries = 0;
+        JobTraceEntryColumn[] columns = null;
+        JobTraceEntries jobTraceEntries = null;
+        StructuredSelection selection = new StructuredSelection(new JobTraceEntry[0]);
+        if (tabItem != null) {
+
+            columns = tabItem.getColumns();
+            jobTraceEntries = tabItem.getInput();
+            if (jobTraceEntries != null) {
+                numEntries = jobTraceEntries.size();
+            }
+
+            selection = tabItem.getSelection();
+        }
+
+        if (tabItem == null || tabItem.isLoading()) {
+            // reloadEntriesAction.setEnabled(false);
+        } else {
+            // reloadEntriesAction.setEnabled(true);
+        }
+
+        if (numEntries == 0) {
+            // toggleHighlightUserEntriesAction.setEnabled(false);
+            // resetColumnSizeAction.setEnabled(false);
+            // resetColumnSizeAction.setViewer(null);
+        } else {
+            // toggleHighlightUserEntriesAction.setEnabled(true);
+            // resetColumnSizeAction.setEnabled(true);
+            // resetColumnSizeAction.setViewer(getSelectedViewer());
+        }
+
+    }
+
+    /**
+     * Called by the viewer, when setSelection() is called.
+     */
+    public void selectionChanged(SelectionChangedEvent event) {
+        updateStatusLine();
+    }
+
+    /**
+     * Called by the UI, when the user selects a different viewer (tab).
+     */
+    public void widgetSelected(SelectionEvent event) {
+        updateStatusLine();
+    }
+
+    public void widgetDefaultSelected(SelectionEvent event) {
+        widgetSelected(event);
+    }
+
+    private class SqlEditorSelectionListener implements SelectionListener {
+
+        public void widgetSelected(SelectionEvent event) {
+            try {
+                performFilterJobTraceEntries(getSelectedViewer());
+            } catch (SQLSyntaxErrorException e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                getSelectedViewer().setFocusOnSqlEditor();
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Error in method JobTraceExplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+        }
+
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetDefaultSelected(event);
+        }
+    }
+}

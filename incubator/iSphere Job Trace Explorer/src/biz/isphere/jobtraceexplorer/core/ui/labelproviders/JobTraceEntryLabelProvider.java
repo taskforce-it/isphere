@@ -1,0 +1,115 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2020 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Initial idea and development: Isaac Ramirez Herrera
+ * Continued and adopted to iSphere: iSphere Project Team
+ *******************************************************************************/
+
+package biz.isphere.jobtraceexplorer.core.ui.labelproviders;
+
+import java.text.SimpleDateFormat;
+
+import org.eclipse.jface.viewers.ITableColorProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
+
+/**
+ * This class is the label provider for a "Job Trace Entry" column.
+ * 
+ * @see JobTraceEntryColumn
+ * @see JobTraceEntriesViewerTab
+ */
+public class JobTraceEntryLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
+
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat timeFormat;
+
+    private JobTraceEntryColumnUI[] fieldIdMapping;
+    private JobTraceEntryColumn[] columns;
+
+    public JobTraceEntryLabelProvider(JobTraceEntryColumnUI[] fieldIdMapping, JobTraceEntryColumn[] columns) {
+        this.fieldIdMapping = fieldIdMapping;
+        this.columns = columns;
+    }
+
+    public JobTraceEntryColumn[] getColumns() {
+        return columns;
+    }
+
+    public Color getBackground(Object element, int index) {
+
+        if (element instanceof JobTraceEntry) {
+            JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    public Color getForeground(Object element, int index) {
+        return null;
+    }
+
+    public SimpleDateFormat getDateFormatter() {
+        if (dateFormat == null) {
+            dateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
+        }
+        return dateFormat;
+    }
+
+    public SimpleDateFormat getTimeFormatter() {
+        if (timeFormat == null) {
+            timeFormat = new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
+        }
+        return timeFormat;
+    }
+
+    @Override
+    public String getText(Object element) {
+        return super.getText(element);
+    }
+
+    public Image getColumnImage(Object object, int index) {
+        return null;
+    }
+
+    public String getColumnText(Object object, int index) {
+
+        JobTraceEntry jobTraceEntry = (JobTraceEntry)object;
+
+        switch (fieldIdMapping[index]) {
+        // case ID:
+        // return jobTraceEntry.getValueForUi(ColumnsDAO.RRN_OUTPUT_FILE);
+        default:
+            break;
+        }
+
+        return null;
+    }
+
+    public void setColumnColor(String columnName, Color color) {
+
+        if (columns == null || columnName == null) {
+            return;
+        }
+
+        for (JobTraceEntryColumn column : columns) {
+            if (columnName.equals(column.getName())) {
+                column.setColor(color);
+                return;
+            }
+        }
+
+    }
+}

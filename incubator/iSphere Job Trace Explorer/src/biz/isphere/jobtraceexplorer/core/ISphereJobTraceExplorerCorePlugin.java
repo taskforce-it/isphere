@@ -1,4 +1,4 @@
-package biz.isphere.jobtraceexplorer;
+package biz.isphere.jobtraceexplorer.core;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -9,7 +9,7 @@ import org.osgi.framework.BundleContext;
 public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$
 
 	// The shared instance
 	private static ISphereJobTraceExplorerCorePlugin plugin;
