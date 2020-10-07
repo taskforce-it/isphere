@@ -146,6 +146,10 @@ public class Messages extends NLS {
 
     public static String Saving_spooled_files;
 
+    public static String Invalid_job_name_A;
+
+    public static String Connection_not_found_A;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -11,6 +11,8 @@ package biz.isphere.core.internal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import biz.isphere.base.internal.StringHelper;
+
 public class QualifiedJobName {
 
     private static final String PATTERN = "((\\d{6})/(.{1,10})/(.{1,10}))";
@@ -87,6 +89,10 @@ public class QualifiedJobName {
     }
 
     public static QualifiedJobName parse(String string) {
+
+        if (StringHelper.isNullOrEmpty(string)) {
+            return null;
+        }
 
         Pattern pattern = Pattern.compile(PATTERN);
         Matcher matcher = pattern.matcher(string);
