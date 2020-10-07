@@ -41,6 +41,7 @@ import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedException;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewerTab;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
@@ -54,7 +55,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     // private ResetColumnSizeAction resetColumnSizeAction;
     // private ToggleHighlightUserEntriesAction
     // toggleHighlightUserEntriesAction;
-    // private GenericRefreshAction reloadEntriesAction;
+    private GenericRefreshAction reloadEntriesAction;
 
     private CTabFolder tabFolder;
 
@@ -165,12 +166,12 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         // toggleHighlightUserEntriesAction = new
         // ToggleHighlightUserEntriesAction();
 
-        // reloadEntriesAction = new GenericRefreshAction() {
-        // @Override
-        // protected void postRunAction() {
-        // performReloadJournalEntries();
-        // }
-        // };
+        reloadEntriesAction = new GenericRefreshAction() {
+            @Override
+            protected void postRunAction() {
+                performReloadJobTraceEntries();
+            }
+        };
 
     }
 
@@ -382,7 +383,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         toolBarManager.add(new Separator());
         // toolBarManager.add(resetColumnSizeAction);
         toolBarManager.add(new Separator());
-        // toolBarManager.add(reloadEntriesAction);
+        toolBarManager.add(reloadEntriesAction);
     }
 
     @Override
@@ -423,9 +424,9 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         }
 
         if (tabItem == null || tabItem.isLoading()) {
-            // reloadEntriesAction.setEnabled(false);
+            reloadEntriesAction.setEnabled(false);
         } else {
-            // reloadEntriesAction.setEnabled(true);
+            reloadEntriesAction.setEnabled(true);
         }
 
         if (numEntries == 0) {

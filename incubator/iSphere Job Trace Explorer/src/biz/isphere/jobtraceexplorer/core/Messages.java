@@ -23,6 +23,8 @@ public class Messages extends NLS {
 
     public static String Status_Loading_job_trace_entries;
 
+    public static String Action_ReloadEntries;
+
     public static String DisplayJobTraceEntriesDialog_Title;
     public static String MessageDialog_Load_Job_Trace_Entries_Title;
 
