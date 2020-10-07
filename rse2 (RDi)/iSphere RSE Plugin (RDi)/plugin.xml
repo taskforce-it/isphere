@@ -1377,7 +1377,7 @@
          </visibility>
 
          <action
-               label="%Copy_Qualified_Job_Name"
+               label="%iSphere_Copy_Qualified_Job_Name"
                icon="icons/copy_qualified_job_name.png"
                class="biz.isphere.rse.actions.CopyQualifiedJobNameDebugPopupAction"
                menubarPath="additions" 
