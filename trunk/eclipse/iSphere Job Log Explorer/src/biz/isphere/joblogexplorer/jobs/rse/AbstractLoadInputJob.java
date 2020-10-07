@@ -22,6 +22,8 @@ public abstract class AbstractLoadInputJob {
         IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
         if (view == null) {
             view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobLogExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
         }
 
         if (view instanceof JobLogExplorerView) {
