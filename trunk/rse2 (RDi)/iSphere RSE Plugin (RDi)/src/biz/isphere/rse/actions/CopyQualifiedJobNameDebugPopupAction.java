@@ -21,11 +21,11 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
 import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 
@@ -44,11 +44,15 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         if (selectedObject instanceof DebuggeeProcess) {
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
-            QualifiedJobName qualifiedJobName = getJobName(debuggeeProcess);
 
-            if (isValid(qualifiedJobName)) {
-                ClipboardHelper.setText(qualifiedJobName.getQualifiedJobName());
+            String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
+            if (qualifiedJobName == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
+                return;
             }
+
+            ClipboardHelper.setText(qualifiedJobName.getQualifiedJobName());
         }
     }
 
@@ -93,8 +97,8 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         return true;
     }
 
-    private QualifiedJobName getJobName(IProcess debuggeeProcess) {
-        return new QualifiedJobName(debuggeeProcess.getAttribute(null));
+    private String getJobName(IProcess debuggeeProcess) {
+        return debuggeeProcess.getAttribute(null);
     }
 
     private boolean isIBMiJob(ISelection selection) {
