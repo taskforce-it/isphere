@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
-import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteJobLogJob;
+import biz.isphere.joblogexplorer.jobs.rse.JobLogActiveJobLoader;
 import biz.isphere.joblogexplorer.ui.dialogs.SelectJobDialog;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
@@ -49,7 +49,7 @@ public class OpenJobLogAction extends Action {
 
             String connectionName = dialog.getConnectionName();
             ISeriesJobName jobName = new ISeriesJobName(dialog.getJobName(), dialog.getUserName(), dialog.getJobNumber());
-            LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
+            JobLogActiveJobLoader job = new JobLogActiveJobLoader(connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
             job.run();
         }
     }

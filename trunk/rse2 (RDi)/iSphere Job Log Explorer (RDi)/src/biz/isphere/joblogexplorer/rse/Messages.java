@@ -14,6 +14,10 @@ public class Messages extends NLS {
 
     private static final String BUNDLE_NAME = "biz.isphere.joblogexplorer.rse.messages"; //$NON-NLS-1$
 
+    public static String E_R_R_O_R;
+    public static String Error_Invalid_job_name_A;
+    public static String Error_Connection_not_found_A;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

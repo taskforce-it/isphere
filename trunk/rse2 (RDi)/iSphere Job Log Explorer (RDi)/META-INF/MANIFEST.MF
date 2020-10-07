@@ -13,6 +13,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.subsystems.qsys,
  com.ibm.etools.iseries.services.qsys,
  com.ibm.etools.iseries.toolbox,
+ com.ibm.debug.pdt.core,
+ biz.isphere.base,
  biz.isphere.core,
  biz.isphere.rse,
  biz.isphere.joblogexplorer

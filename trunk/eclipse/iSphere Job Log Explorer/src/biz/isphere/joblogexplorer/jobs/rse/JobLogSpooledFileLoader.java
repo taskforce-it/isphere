@@ -12,11 +12,11 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
 
-public class LoadRemoteSpooledFileJob extends AbstractLoadInputJob {
+public class JobLogSpooledFileLoader extends AbstractJobLogLoader {
 
     private SpooledFile spooledFile;
 
-    public LoadRemoteSpooledFileJob(SpooledFile spooledFile) {
+    public JobLogSpooledFileLoader(SpooledFile spooledFile) {
         this.spooledFile = spooledFile;
     }
 
