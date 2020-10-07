@@ -44,7 +44,7 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         if (selectedObject instanceof DebuggeeProcess) {
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
-            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(debuggeeProcess.getAttribute(null));
+            QualifiedJobName qualifiedJobName = getJobName(debuggeeProcess);
 
             if (isValid(qualifiedJobName)) {
                 ClipboardHelper.setText(qualifiedJobName.getQualifiedJobName());
@@ -91,6 +91,10 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
         }
 
         return true;
+    }
+
+    private QualifiedJobName getJobName(IProcess debuggeeProcess) {
+        return new QualifiedJobName(debuggeeProcess.getAttribute(null));
     }
 
     private boolean isIBMiJob(ISelection selection) {
