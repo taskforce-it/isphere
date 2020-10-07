@@ -58,9 +58,9 @@
            -->
 
 	       <action
-              class="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"
+              class="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithActiveJobAction"
               enablesFor="1"
-              id="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"
+              id="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithActiveJobAction"
               label="%menu_Job_Log_Explorer"
               icon="icons/joblog_explorer.png"
               menubarPath="group.browsewith">
@@ -93,9 +93,9 @@
            </visibility>
 
 	       <action
-              class="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteFileAction"
+              class="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithStreamFileAction"
               enablesFor="1"
-              id="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteFileAction"
+              id="biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithStreamFileAction"
               label="%menu_Job_Log_Explorer"
               icon="icons/joblog_explorer.png"
               menubarPath="group.browsewith">

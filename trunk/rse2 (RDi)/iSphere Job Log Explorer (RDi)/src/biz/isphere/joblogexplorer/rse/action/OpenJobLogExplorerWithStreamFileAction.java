@@ -13,9 +13,9 @@ import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
 import biz.isphere.joblogexplorer.jobs.rse.JobLogStreamFileLoader;
 
-public class OpenJobLogExplorerWithRemoteFileAction extends AbstractOpenJobLogExplorerAction {
+public class OpenJobLogExplorerWithStreamFileAction extends AbstractOpenJobLogExplorerAction {
 
-    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteFileAction"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithStreamFileAction"; //$NON-NLS-1$
 
     @Override
     protected void execute(Object object) {

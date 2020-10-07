@@ -14,9 +14,9 @@ import biz.isphere.joblogexplorer.jobs.rse.JobLogActiveJobLoader;
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
 
-public class OpenJobLogExplorerWithRemoteJobAction extends AbstractOpenJobLogExplorerAction {
+public class OpenJobLogExplorerWithActiveJobAction extends AbstractOpenJobLogExplorerAction {
 
-    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithActiveJobAction"; //$NON-NLS-1$
 
     @Override
     protected void execute(Object object) {
