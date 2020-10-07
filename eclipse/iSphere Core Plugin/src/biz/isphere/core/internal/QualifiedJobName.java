@@ -15,8 +15,8 @@ import biz.isphere.base.internal.StringHelper;
 
 public class QualifiedJobName {
 
-    // private static final String PATTERN = "((\\d{6})/(.{1,10})/(.{1,10}))";
-    private static final String PATTERN = "((\\d{6})/\\b((?!/)\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
+    private static final String RETRIEVE_PATTERN = "((\\d{6})/\\b((?!/)\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
+    private static final String VALIDATE_PATTERN = "^" + RETRIEVE_PATTERN + "$";
     private static final String DELIMITER = "/";
 
     private String jobName;
@@ -24,7 +24,8 @@ public class QualifiedJobName {
     private String jobNumber;
 
     private StringBuilder qualifiedJobName;
-    private static final Pattern pattern = Pattern.compile(PATTERN);
+    private static final Pattern retrieve_pattern = Pattern.compile(RETRIEVE_PATTERN);
+    private static final Pattern validate_pattern = Pattern.compile(VALIDATE_PATTERN);
 
     public QualifiedJobName(String jobName, String userName, String jobNumber) {
 
@@ -39,11 +40,13 @@ public class QualifiedJobName {
 
         // Retrieve job, user and number from a qualified job name of
         // format '123456/USER/JOB'.
-        Matcher matcher = pattern.matcher(qualifiedJobName.trim().toUpperCase());
+        Matcher matcher = validate_pattern.matcher(qualifiedJobName.trim().toUpperCase());
         if (matcher.find()) {
             this.jobNumber = matcher.group(2);
             this.userName = matcher.group(3);
             this.jobName = matcher.group(4);
+        } else {
+            throw new IllegalArgumentException("Invalid qualified job name: " + qualifiedJobName); //$NON-NLS-1$
         }
 
         this.qualifiedJobName = null;
@@ -81,7 +84,7 @@ public class QualifiedJobName {
 
     public static boolean isValid(String qualifiedJobName) {
 
-        Matcher matcher = pattern.matcher(qualifiedJobName.trim().toUpperCase());
+        Matcher matcher = validate_pattern.matcher(qualifiedJobName.toUpperCase());
         if (matcher.find()) {
             return true;
         }
@@ -95,8 +98,7 @@ public class QualifiedJobName {
             return null;
         }
 
-        Pattern pattern = Pattern.compile(PATTERN);
-        Matcher matcher = pattern.matcher(string);
+        Matcher matcher = retrieve_pattern.matcher(string);
         if (matcher.find()) {
             return new QualifiedJobName(matcher.group(1).trim());
         }
