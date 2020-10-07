@@ -52,7 +52,7 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
             String connectionName = getConnectionName(debuggeeProcess);
-            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(debuggeeProcess.getAttribute(null));
+            QualifiedJobName qualifiedJobName = getJobName(debuggeeProcess);
 
             if (isValid(connectionName, qualifiedJobName)) {
 
@@ -111,6 +111,10 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         }
 
         return true;
+    }
+
+    private QualifiedJobName getJobName(IProcess debuggeeProcess) {
+        return new QualifiedJobName(debuggeeProcess.getAttribute(null));
     }
 
     private String getConnectionName(DebuggeeProcess debuggeeProcess) {
