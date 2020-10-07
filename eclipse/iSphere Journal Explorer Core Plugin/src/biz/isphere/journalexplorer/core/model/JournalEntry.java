@@ -110,8 +110,8 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JORCV", "CHAR(10)" + " - " + Messages.LongFieldName_JORCV));
         proposals.add(new ContentAssistProposal("JORCVLIB", "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
         proposals.add(new ContentAssistProposal("JOUSPF", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
-        proposals.add(new ContentAssistProposal("JOSEQN", "INTEGER" + " - " + Messages.LongFieldName_JOSEQN));
-        proposals.add(new ContentAssistProposal("JOCCID", "INTEGER" + " - " + Messages.LongFieldName_JOCCID));
+        proposals.add(new ContentAssistProposal("JOSEQN", "BIGINT" + " - " + Messages.LongFieldName_JOSEQN));
+        proposals.add(new ContentAssistProposal("JOCCID", "BIGINT" + " - " + Messages.LongFieldName_JOCCID));
     }
 
     @Expose(serialize = true, deserialize = true)
