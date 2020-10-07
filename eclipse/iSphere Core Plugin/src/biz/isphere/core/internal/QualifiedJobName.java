@@ -15,7 +15,8 @@ import biz.isphere.base.internal.StringHelper;
 
 public class QualifiedJobName {
 
-    private static final String PATTERN = "((\\d{6})/(.{1,10})/(.{1,10}))";
+    // private static final String PATTERN = "((\\d{6})/(.{1,10})/(.{1,10}))";
+    private static final String PATTERN = "((\\d{6})/\\b((?!/)\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
     private static final String DELIMITER = "/";
 
     private String jobName;
@@ -36,18 +37,14 @@ public class QualifiedJobName {
 
     public QualifiedJobName(String qualifiedJobName) {
 
-        if (!isValid(qualifiedJobName)) {
-            throw new IllegalArgumentException("Invalid qualified job name: " + qualifiedJobName); //$NON-NLS-1$
-        }
-
         // Retrieve job, user and number from a qualified job name of
         // format '123456/USER/JOB'.
         Matcher matcher = pattern.matcher(qualifiedJobName.trim().toUpperCase());
-        matcher.find();
-
-        this.jobNumber = matcher.group(2);
-        this.userName = matcher.group(3);
-        this.jobName = matcher.group(4);
+        if (matcher.find()) {
+            this.jobNumber = matcher.group(2);
+            this.userName = matcher.group(3);
+            this.jobName = matcher.group(4);
+        }
 
         this.qualifiedJobName = null;
     }
@@ -65,6 +62,10 @@ public class QualifiedJobName {
     }
 
     public String getQualifiedJobName() {
+
+        if (StringHelper.isNullOrEmpty(jobName) || StringHelper.isNullOrEmpty(userName) || StringHelper.isNullOrEmpty(jobNumber)) {
+            return null;
+        }
 
         if (qualifiedJobName == null) {
             qualifiedJobName = new StringBuilder();
