@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Job Trace Explorer" link_to="../biz.isphere.base.help/toc/toc.xml#reference"> 
+  <topic label="Job Trace Explorer"  href="html/jobtraceexplorer/jobtraceexplorer.html"> 
+  	<!--
+  	Add sub topics here:
+    <topic label="..." href="html/tasktags/..." />
+    -->
+    <topic label="SQL Reference" href="/biz.isphere.base.help/html/sql/sql_reference.html" />
+  </topic>
+</toc> 

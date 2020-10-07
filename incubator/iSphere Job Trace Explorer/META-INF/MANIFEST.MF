@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Job Trace Explorer
+Bundle-SymbolicName: biz.isphere.jobtraceexplorer;singleton:=true
+Bundle-Version: 3.7.3.b007
+Bundle-Activator: biz.isphere.jobtraceexplorer.ISphereJobTraceExplorerPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ biz.isphere.base,
+ biz.isphere.core
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Job Trace Explorer</title>
+</head>
+
+<body>
+<h1>Job Trace Explorer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/joblogexplorer.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The Job Log Explorer is supposed to be used for viewing and filtering the job log
+messages fast and easily. You can open it from the context menus of a remote job, a
+remote spooled file or a local spooled file (Text format).
+<p>
+<ul>
+<li><a href="#opening_the_job_trace_explorer_perspective">Opening the Job Trace Explorer Perspective</a></li>
+</ul>
+<p>
+<a id="#opening_the_job_trace_explorer_perspective"></a>
+<h2>Opening the Job Trace Explorer Perspective</h2>
+<p>
+You can open the Job Trace Explorer perspective from 'Window -> Open Perspective -> Other...'. The perspective looks like that: 
+<p>
+<img src="assets/jobtraceexplorer_view.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/open_jobtrace.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Open a dialog for selecting the trace session.</td></tr>
+<tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job trace entries.<br>(Local operation that does not contact the host system.)</td></tr>
+<tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+The properties of the job trace are displayed in the Eclipse <i>Properties</i> view:
+<p>
+<img src="assets/jobtraceexplorer_properties.png" align="middle">
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
