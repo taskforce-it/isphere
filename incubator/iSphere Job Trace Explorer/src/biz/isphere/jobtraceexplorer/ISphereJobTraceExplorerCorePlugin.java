@@ -6,18 +6,18 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class ISphereJobTraceExplorerPlugin extends AbstractUIPlugin {
+public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer"; //$NON-NLS-1$
 
 	// The shared instance
-	private static ISphereJobTraceExplorerPlugin plugin;
+	private static ISphereJobTraceExplorerCorePlugin plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public ISphereJobTraceExplorerPlugin() {
+	public ISphereJobTraceExplorerCorePlugin() {
 	}
 
 	/*
@@ -43,7 +43,7 @@ public class ISphereJobTraceExplorerPlugin extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static ISphereJobTraceExplorerPlugin getDefault() {
+	public static ISphereJobTraceExplorerCorePlugin getDefault() {
 		return plugin;
 	}
 
