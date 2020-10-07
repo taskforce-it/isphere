@@ -15,9 +15,9 @@ import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.core.api.ISeriesJob;
 import com.ibm.etools.systems.dstore.core.model.DataElement;
 
-public class OpenJobLogExplorerWithRemoteJobAction extends AbstractOpenJobLogExplorerAction {
+public class OpenJobLogExplorerWithActiveJobAction extends AbstractOpenJobLogExplorerAction {
 
-    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithRemoteJobAction"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.joblogexplorer.rse.action.OpenJobLogExplorerWithActiveJobAction"; //$NON-NLS-1$
 
     @Override
     protected void execute(Object object) {
