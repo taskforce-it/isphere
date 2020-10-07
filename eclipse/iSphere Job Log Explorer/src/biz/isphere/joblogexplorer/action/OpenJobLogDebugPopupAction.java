@@ -22,9 +22,9 @@ import org.eclipse.ui.IViewPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.QualifiedJobName;
+import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.jobs.rse.LoadRemoteJobLogJob;
 
 import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
@@ -43,13 +43,23 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
         if (selectedObject instanceof DebuggeeProcess) {
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
-            String connectionName = getConnectionName(debuggeeProcess);
-            QualifiedJobName qualifiedJobName = getJobName(debuggeeProcess);
 
-            if (isValid(connectionName, qualifiedJobName)) {
-                LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, qualifiedJobName);
-                job.run();
+            String hostName = getHostName(debuggeeProcess);
+            String connectionName = getConnectionName(hostName);
+            if (StringHelper.isNullOrEmpty(connectionName)) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Error_Connection_not_found_A, hostName));
+                return;
             }
+
+            String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
+            if (qualifiedJobName == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Error_Invalid_job_name_A, qualifiedJobNameAttr));
+                return;
+            }
+
+            LoadRemoteJobLogJob job = new LoadRemoteJobLogJob(connectionName, qualifiedJobName);
+            job.run();
         }
     }
 
@@ -64,32 +74,17 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
         }
     }
 
-    private boolean isValid(String connectionName, QualifiedJobName qualifiedJobName) {
-
-        if (qualifiedJobName == null) {
-            return false;
-        }
-
-        if (StringHelper.isNullOrEmpty(connectionName)) {
-            return false;
-        }
-
-        return true;
+    private String getJobName(IProcess debuggeeProcess) {
+        return debuggeeProcess.getAttribute(null);
     }
 
-    private QualifiedJobName getJobName(IProcess debuggeeProcess) {
-        return new QualifiedJobName(debuggeeProcess.getAttribute(null));
-    }
+    private String getConnectionName(String hostName) {
 
-    private String getConnectionName(DebuggeeProcess debuggeeProcess) {
-
-        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
-            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
+        if (!StringHelper.isNullOrEmpty(hostName)) {
 
             String tcpAddr = null;
 
             try {
-                String hostName = debugTarget.getSocket().getInetAddress().getHostName();
                 tcpAddr = InetAddress.getByName(hostName).getHostAddress();
             } catch (UnknownHostException e1) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e1));
@@ -99,6 +94,18 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
                 String connectionName = IBMiHostContributionsHandler.getConnectionNameByIPAddr(tcpAddr, true);
                 return connectionName;
             }
+        }
+
+        return null;
+    }
+
+    private String getHostName(DebuggeeProcess debuggeeProcess) {
+
+        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
+            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
+
+            String hostName = debugTarget.getSocket().getInetAddress().getHostName();
+            return hostName;
         }
 
         return null;
@@ -121,5 +128,9 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
 
     public void init(IViewPart view) {
         this.shell = view.getSite().getShell();
+    }
+
+    private Shell getShell() {
+        return shell;
     }
 }

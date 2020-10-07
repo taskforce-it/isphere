@@ -21,17 +21,16 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
 import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 
@@ -51,18 +50,27 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         if (selectedObject instanceof DebuggeeProcess) {
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
-            String connectionName = getConnectionName(debuggeeProcess);
-            QualifiedJobName qualifiedJobName = getJobName(debuggeeProcess);
 
-            if (isValid(connectionName, qualifiedJobName)) {
+            String hostName = getHostName(debuggeeProcess);
+            String connectionName = getConnectionName(hostName);
+            if (StringHelper.isNullOrEmpty(connectionName)) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Connection_not_found_A, hostName));
+                return;
+            }
 
-                IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+            String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
+            if (qualifiedJobName == null) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
+                return;
+            }
 
-                if (window != null) {
-                    IWorkbenchPage page = window.getActivePage();
-                    if (page != null) {
-                        openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page);
-                    }
+            IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+
+            if (window != null) {
+                IWorkbenchPage page = window.getActivePage();
+                if (page != null) {
+                    openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page);
                 }
             }
         }
@@ -100,32 +108,17 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         }
     }
 
-    private boolean isValid(String connectionName, QualifiedJobName qualifiedJobName) {
-
-        if (qualifiedJobName == null) {
-            return false;
-        }
-
-        if (StringHelper.isNullOrEmpty(connectionName)) {
-            return false;
-        }
-
-        return true;
+    private String getJobName(IProcess debuggeeProcess) {
+        return debuggeeProcess.getAttribute(null);
     }
 
-    private QualifiedJobName getJobName(IProcess debuggeeProcess) {
-        return new QualifiedJobName(debuggeeProcess.getAttribute(null));
-    }
+    private String getConnectionName(String hostName) {
 
-    private String getConnectionName(DebuggeeProcess debuggeeProcess) {
-
-        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
-            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
+        if (!StringHelper.isNullOrEmpty(hostName)) {
 
             String tcpAddr = null;
 
             try {
-                String hostName = debugTarget.getSocket().getInetAddress().getHostName();
                 tcpAddr = InetAddress.getByName(hostName).getHostAddress();
             } catch (UnknownHostException e1) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e1));
@@ -135,6 +128,18 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
                 String connectionName = IBMiHostContributionsHandler.getConnectionNameByIPAddr(tcpAddr, true);
                 return connectionName;
             }
+        }
+
+        return null;
+    }
+
+    private String getHostName(DebuggeeProcess debuggeeProcess) {
+
+        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
+            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
+
+            String hostName = debugTarget.getSocket().getInetAddress().getHostName();
+            return hostName;
         }
 
         return null;
@@ -160,6 +165,6 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
     }
 
     private Shell getShell() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return shell;
     }
 }
