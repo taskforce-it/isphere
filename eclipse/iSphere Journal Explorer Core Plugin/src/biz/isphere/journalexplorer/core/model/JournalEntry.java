@@ -61,6 +61,7 @@ public class JournalEntry {
     private static final int JOUSPF = 17;
     private static final int JOSEQN = 18;
     private static final int JOCCID = 19;
+    private static final int JOCTRR = 20;
 
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -86,6 +87,7 @@ public class JournalEntry {
         columnMappings.put("JOUSPF", JOUSPF);
         columnMappings.put("JOSEQN", JOSEQN);
         columnMappings.put("JOCCID", JOCCID);
+        columnMappings.put("JOCTRR", JOCTRR);
     }
 
     private static List<ContentAssistProposal> proposals;
@@ -112,6 +114,7 @@ public class JournalEntry {
         proposals.add(new ContentAssistProposal("JOUSPF", "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
         proposals.add(new ContentAssistProposal("JOSEQN", "BIGINT" + " - " + Messages.LongFieldName_JOSEQN));
         proposals.add(new ContentAssistProposal("JOCCID", "BIGINT" + " - " + Messages.LongFieldName_JOCCID));
+        proposals.add(new ContentAssistProposal("JOCTRR", "BIGINT" + " - " + Messages.LongFieldName_JOCTRR));
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -384,23 +387,26 @@ public class JournalEntry {
         long now = new java.util.Date().getTime();
 
         JournalEntry journalEntry = new JournalEntry(null);
-        journalEntry.setJournalCode("R");
-        journalEntry.setEntryType("DL");
-        journalEntry.setJobName("TRADDATZA1");
-        journalEntry.setJobUserName("RADDATZ");
-        journalEntry.setJobNumber(939207);
-        journalEntry.setObjectLibrary("ISPHEREDVP");
-        journalEntry.setObjectName("TYPES_SQL");
-        journalEntry.setMemberName("TYPES_SQL");
-        journalEntry.setTimestamp(new java.sql.Timestamp(now));
-        journalEntry.setProgramName("CRTTSTDTA");
-        journalEntry.setProgramLibrary("*OMITTED");
-        journalEntry.setObjectType("*QDDS");
-        journalEntry.setFileTypeIndicator("");
-        journalEntry.setSystemName("GFD400");
-        journalEntry.setReceiverName("JRN003");
-        journalEntry.setReceiverLibraryName("ISPHEREDVP");
-        journalEntry.setUserProfile("RADDATZ");
+        journalEntry.setJournalCode("R"); // JOCODE
+        journalEntry.setEntryType("DL"); // JOENTT
+        journalEntry.setJobName("TRADDATZA1"); // JOJOB
+        journalEntry.setJobUserName("RADDATZ"); // JOUSER
+        journalEntry.setJobNumber(939207); // JONBR
+        journalEntry.setObjectLibrary("ISPHEREDVP"); // JOLIB;
+        journalEntry.setObjectName("TYPES_SQL"); // JOOBJ
+        journalEntry.setMemberName("TYPES_SQL"); // JOMBR
+        journalEntry.setTimestamp(new java.sql.Timestamp(now)); // JODATE/JOTIME
+        journalEntry.setProgramName("CRTTSTDTA"); // JOPGM
+        journalEntry.setProgramLibrary("*OMITTED"); // JOPGMLIB
+        journalEntry.setObjectType("*QDDS"); // JOOBJTYP
+        journalEntry.setFileTypeIndicator(""); // JOFILTYP
+        journalEntry.setSystemName("GFD400"); // JOSYNM
+        journalEntry.setReceiverName("JRN003"); // JORCV
+        journalEntry.setReceiverLibraryName("ISPHEREDVP"); // JORCVLIB
+        journalEntry.setUserProfile("RADDATZ"); // JOUSPF
+        journalEntry.setSequenceNumber(new BigInteger("4836")); // JOSEQN
+        journalEntry.setCommitmentCycle(new BigInteger("472568965")); // JOCCID
+        journalEntry.setCountRrn(new BigInteger("324705620")); // JOCTRR
 
         return journalEntry.getRow();
     }
@@ -430,6 +436,7 @@ public class JournalEntry {
         row[JOUSPF] = getUserProfile();
         row[JOSEQN] = getSequenceNumber();
         row[JOCCID] = getCommitmentCycle();
+        row[JOCTRR] = getCountRrn();
 
         return row;
     }
