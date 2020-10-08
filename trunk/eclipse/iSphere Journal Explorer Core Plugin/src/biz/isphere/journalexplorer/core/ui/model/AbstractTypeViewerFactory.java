@@ -42,10 +42,6 @@ public abstract class AbstractTypeViewerFactory {
     private Set<String> columnNames;
     private JournalEntryColumnUI[] fieldIdMapping;
 
-    public AbstractTypeViewerFactory() {
-        this(null);
-    }
-
     public AbstractTypeViewerFactory(Set<JournalEntryColumnUI> columnNames) {
         if (columnNames != null) {
             this.columnNames = getColumnNames(columnNames);
