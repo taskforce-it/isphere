@@ -9,7 +9,9 @@
 package biz.isphere.base.internal;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public final class SqlHelper {
 
@@ -24,6 +26,60 @@ public final class SqlHelper {
         this.jdbcConnection = jdbcConnection;
         this.catalogSeparator = getCatalogSeparator();
         this.nameQuotes = getIdentifierQuoteString();
+    }
+
+    public boolean executeSystemCommandChecked(String command) {
+
+        try {
+            executeSystemCommand(command);
+            return true;
+        } catch (SQLException e) {
+        }
+
+        return false;
+    }
+
+    public void executeSystemCommand(String command) throws SQLException {
+
+        Statement statement = null;
+
+        try {
+            command = "CALL QSYS.QCMDEXC('" + command + "', CAST(" + command.length() + " AS DECIMAL(15, 5)))";
+            statement = jdbcConnection.createStatement();
+            statement.execute(command);
+        } finally {
+            close(statement);
+        }
+    }
+
+    public void close(ResultSet resultSet) {
+
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+            }
+        }
+    }
+
+    public void close(Statement statement) {
+
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+            }
+        }
+    }
+
+    public void close(Connection connection) {
+
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+            }
+        }
     }
 
     public String getObjectName(String library, String object) {
