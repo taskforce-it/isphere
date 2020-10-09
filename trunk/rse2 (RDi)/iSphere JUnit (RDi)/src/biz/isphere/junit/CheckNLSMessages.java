@@ -73,6 +73,11 @@ public class CheckNLSMessages {
         checkMessagesForLocales(biz.isphere.joblogexplorer.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.joblogexplorer.rse.Messages.class, "messages");
 
+        checkMessagesForLocales(biz.isphere.jobtraceexplorer.core.Messages.class, "messages");
+
+        checkMessagesForLocales(biz.isphere.journalexplorer.core.Messages.class, "messages");
+        checkMessagesForLocales(biz.isphere.journalexplorer.rse.Messages.class, "messages");
+
         checkMessagesForLocales(biz.isphere.journalexplorer.core.Messages.class, "messages");
         checkMessagesForLocales(biz.isphere.journalexplorer.rse.Messages.class, "messages");
 
