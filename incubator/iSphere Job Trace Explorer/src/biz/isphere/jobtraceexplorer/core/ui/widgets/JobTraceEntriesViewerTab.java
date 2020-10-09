@@ -17,19 +17,19 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 
 import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
+import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
 /**
@@ -43,14 +43,13 @@ import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private TableViewer tableViewer;
-    private String libraryName;
-    private String sessionID;
+    private JobTraceSession jobTraceSession;
 
-    public JobTraceEntriesViewerTab(CTabFolder parent, String libraryName, String sessionID, SelectionListener loadJobTraceEntriesSelectionListener) {
+    public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, String whereClause,
+        SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, null, loadJobTraceEntriesSelectionListener);
 
-        this.libraryName = libraryName;
-        this.sessionID = sessionID;
+        this.jobTraceSession = jobTraceSession;
 
         setSelectClause(null);
         setSqlEditorVisibility(false);
@@ -59,19 +58,20 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
     }
 
     protected String getLabel() {
-        return FileHelper.getFileName(libraryName);
+        return jobTraceSession.toString();
     }
 
     protected String getTooltip() {
-        return sessionID + ":" + libraryName; //$NON-NLS-1$
+        return jobTraceSession.toString(); //$NON-NLS-1$
     }
 
     protected TableViewer createTableViewer(Composite container) {
 
         try {
 
-            Table table = new Table(container, SWT.NONE);
-            tableViewer = new TableViewer(table);
+            tableViewer = new JobTraceViewerFactory().createTableViewer(container, getDialogSettingsManager());
+            tableViewer.addSelectionChangedListener(this);
+            tableViewer.getTable().setEnabled(false);
 
             return tableViewer;
 
@@ -101,7 +101,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
         setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(view, libraryName, sessionID);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(view, jobTraceSession, whereClause);
         loadJobTraceDataJob.schedule();
     }
 
@@ -120,16 +120,17 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
     private class OpenJobTraceSessionJob extends Job {
 
         private JobTraceExplorerView view;
-        private String libraryName;
-        private String sessionID;
+        private JobTraceSession jobTraceSession;
+        private String whereClause;
+        private String filterWhereClause;
 
-        public OpenJobTraceSessionJob(JobTraceExplorerView view, String libraryName, String sessionID) {
+        public OpenJobTraceSessionJob(JobTraceExplorerView view, JobTraceSession jobTraceSession, String whereClause) {
             super(Messages.Status_Loading_job_trace_entries);
 
             this.view = view;
-            this.libraryName = libraryName;
-            this.sessionID = sessionID;
-            ;
+            this.jobTraceSession = jobTraceSession;
+            this.whereClause = whereClause;
+            this.filterWhereClause = ""; // filterWhereClause;
         }
 
         public IStatus run(IProgressMonitor monitor) {
@@ -138,9 +139,22 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
                 monitor.beginTask(Messages.Status_Loading_job_trace_entries, IProgressMonitor.UNKNOWN);
 
-                IBMiMessage[] messages = null;
+                JobTraceDAO jobTraceDAO = new JobTraceDAO(jobTraceSession);
+                final JobTraceEntries data = jobTraceDAO.load(whereClause, monitor);
+                data.applyFilter(filterWhereClause);
+
+                IBMiMessage[] messages = data.getMessages();
                 if (messages.length != 0) {
                     throw new Exception("*** Error loading job trace entries. *** \n" + messages[0].getID() + ": " + messages[0].getText()); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            view.finishDataLoading(JobTraceEntriesViewerTab.this, false);
+                        }
+                    });
                 }
 
             } catch (Throwable e) {

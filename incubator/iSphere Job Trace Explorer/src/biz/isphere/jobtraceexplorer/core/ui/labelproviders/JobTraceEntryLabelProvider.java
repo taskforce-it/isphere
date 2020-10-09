@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
@@ -89,8 +90,28 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         JobTraceEntry jobTraceEntry = (JobTraceEntry)object;
 
         switch (fieldIdMapping[index]) {
-        // case ID:
-        // return jobTraceEntry.getValueForUi(ColumnsDAO.RRN_OUTPUT_FILE);
+        case NANOS_SINE_STARTED:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.NANOS_SINE_STARTED);
+        case TIMESTAMP:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.TIMESTAMP);
+        case PGM_NAME:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.PGM_NAME);
+        case PGM_LIB:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.PGM_LIB);
+        case MODULE_NAME:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.MODULE_NAME);
+        case HLL_STMT_NBR:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.HLL_STMT_NBR);
+        case PROC_NAME:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.PROC_NAME);
+        case CALL_LEVEL:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.CALL_LEVEL);
+        case EVENT_SUB_TYPE:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.EVENT_SUB_TYPE);
+        case CALLER_HLL_STMT_NBR:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.CALLER_HLL_STMT_NBR);
+        case CALLER_PROC_NAME:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.CALLER_PROC_NAME);
         default:
             break;
         }

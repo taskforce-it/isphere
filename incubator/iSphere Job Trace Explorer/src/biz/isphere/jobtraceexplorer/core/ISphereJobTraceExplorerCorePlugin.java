@@ -1,5 +1,6 @@
 package biz.isphere.jobtraceexplorer.core;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -14,6 +15,7 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
 
     private static final String ICON_PATH = "icons/";
     public static final String IMAGE_REFRESH = "refresh.gif";
+    public static final String IMAGE_OPEN_JOB_TRACE_SESSION = "open_jobtrace_session.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$
@@ -81,4 +83,13 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
         return ResourceManager.getPluginImage(PLUGIN_ID, ICON_PATH + path);
     }
 
+    /**
+     * Convenience method to log error messages to the application log.
+     * 
+     * @param message Message
+     * @param e The exception that has produced the error
+     */
+    public static void logError(String message, Throwable e) {
+        plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
+    }
 }

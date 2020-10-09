@@ -59,7 +59,7 @@ import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 /**
  * This widget is a viewer for the job trace entries of an output file of the
  * DSPJRN command. It is created by a sub-class of the
- * {@link AbstractTypeViewerFactory}. It is used by the "Job Trace Explorer"
+ * {@link JobTraceViewerFactory}. It is used by the "Job Trace Explorer"
  * view to create the tabs for the opened output files of the DSPJRN command.
  * 
  * @see JobTraceEntry

@@ -19,7 +19,31 @@ public class Messages extends NLS {
     public static String ButtonLabel_Filter;
     public static String ButtonTooltip_Filter;
 
-    public static String ColDesc_LongFieldName_QTITIMN;
+    public static String LongFieldName_Nanoseconds_since_collection_started;
+    public static String LongFieldName_Timestamp;
+    public static String LongFieldName_Program_name;
+    public static String LongFieldName_Program_library;
+    public static String LongFieldName_Module_name;
+    public static String LongFieldName_Module_library;
+    public static String LongFieldName_HLL_statement_number;
+    public static String LongFieldName_Procedure_name;
+    public static String LongFieldName_Invocation_call_level;
+    public static String LongFieldName_Event_subtype_description;
+    public static String LongFieldName_Caller_HLL_statement_number;
+    public static String LongFieldName_Caller_procedure_name;
+
+    public static String Tooltip_Nanoseconds_since_collection_started;
+    public static String Tooltip_Timestamp;
+    public static String Tooltip_Program_name;
+    public static String Tooltip_Program_library;
+    public static String Tooltip_Module_name;
+    public static String Tooltip_Module_library;
+    public static String Tooltip_HLL_statement_number;
+    public static String Tooltip_Procedure_name;
+    public static String Tooltip_Invocation_call_level;
+    public static String Tooltip_Event_subtype_description;
+    public static String Tooltip_Caller_HLL_statement_number;
+    public static String Tooltip_Caller_procedure_name;
 
     public static String Status_Loading_job_trace_entries;
 
@@ -27,6 +51,8 @@ public class Messages extends NLS {
 
     public static String DisplayJobTraceEntriesDialog_Title;
     public static String MessageDialog_Load_Job_Trace_Entries_Title;
+
+    public static String JobTraceExplorerView_OpenJobTraceSession;
 
     public static String Number_of_job_trace_entries_A_more_items_available;
     public static String Number_of_job_trace_entries_A_of_B;

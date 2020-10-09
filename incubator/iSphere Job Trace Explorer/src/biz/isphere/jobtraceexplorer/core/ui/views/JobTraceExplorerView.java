@@ -41,7 +41,9 @@ import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedException;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.actions.GenericRefreshAction;
+import biz.isphere.jobtraceexplorer.core.ui.actions.OpenJobTraceAction;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewerTab;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
@@ -51,7 +53,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
 
     // private EditSqlAction editSqlAction;
-    // private OpenJournalOutfileAction openJournalOutputFileAction;
+    private OpenJobTraceAction openJobTraceSession;
     // private ResetColumnSizeAction resetColumnSizeAction;
     // private ToggleHighlightUserEntriesAction
     // toggleHighlightUserEntriesAction;
@@ -142,17 +144,16 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
         // resetColumnSizeAction = new ResetColumnSizeAction(getShell());
 
-        // openJournalOutputFileAction = new
-        // OpenJournalOutfileAction(getShell()) {
-        // @Override
-        // public void postRunAction() {
-        // OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
-        // if (outputFile != null) {
-        // String whereClause = openJournalOutputFileAction.getWhereClause();
-        // createJournalTab(outputFile, whereClause);
-        // }
-        // }
-        // };
+        openJobTraceSession = new OpenJobTraceAction(getShell()) {
+            @Override
+            public void postRunAction() {
+                JobTraceSession jobTraceSession = openJobTraceSession.getJobTraceSession();
+                if (jobTraceSession != null) {
+                    String whereClause = openJobTraceSession.getWhereClause();
+                    createJobTraceTab(jobTraceSession, whereClause);
+                }
+            }
+        };
 
         // editSqlAction = new EditSqlAction(getShell()) {
         // @Override
@@ -184,13 +185,13 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         IMenuManager viewMenu = actionBars.getMenuManager();
     }
 
-    public void createJobTraceTab(String libraryName, String sessionID) {
+    public void createJobTraceTab(JobTraceSession jobTraceSession, String whereClause) {
 
         JobTraceEntriesViewerTab jobTraceEntriesViewer = null;
 
         try {
 
-            jobTraceEntriesViewer = new JobTraceEntriesViewerTab(tabFolder, libraryName, sessionID, new SqlEditorSelectionListener());
+            jobTraceEntriesViewer = new JobTraceEntriesViewerTab(tabFolder, jobTraceSession, whereClause, new SqlEditorSelectionListener());
 
             jobTraceEntriesViewer.addSelectionChangedListener(this);
 
@@ -376,7 +377,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     private void initializeToolBar() {
 
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
-        // toolBarManager.add(openJournalOutputFileAction);
+        toolBarManager.add(openJobTraceSession);
         // toolBarManager.add(editSqlAction);
         toolBarManager.add(new Separator());
         // toolBarManager.add(toggleHighlightUserEntriesAction);
@@ -406,7 +407,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
             // editSqlAction.setChecked(tabItem.isSqlEditorVisible());
         }
 
-        // openJournalOutputFileAction.setEnabled(true);
+        openJobTraceSession.setEnabled(true);
 
         int numEntries = 0;
         JobTraceEntryColumn[] columns = null;

@@ -8,7 +8,6 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.model;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
@@ -24,34 +23,19 @@ import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
 public class JobTraceEntryColumn {
 
     private JobTraceEntryColumnUI columnDef;
+
     private boolean resizable;
     private boolean moveable;
-
-    private int style;
-    private String columnHeading;
-    private String tooltipText;
-    private int width;
     private Color color;
 
-    public JobTraceEntryColumn(JobTraceEntryColumnUI columnDef, String tooltipText, int width) {
-        this(columnDef, columnDef.columnName(), tooltipText, width, SWT.NONE);
-    }
-
-    public JobTraceEntryColumn(JobTraceEntryColumnUI columnDef, String tooltipText, int width, int style) {
-        this(columnDef, columnDef.columnName(), tooltipText, width, style);
-    }
-
-    private JobTraceEntryColumn(JobTraceEntryColumnUI columnDef, String columnHeading, String tooltipText, int width, int style) {
+    public JobTraceEntryColumn(JobTraceEntryColumnUI columnDef) {
 
         this.columnDef = columnDef;
+
         this.resizable = true;
         this.moveable = true;
         this.color = null;
 
-        this.columnHeading = columnHeading;
-        this.tooltipText = tooltipText;
-        this.width = width;
-        this.style = style;
     }
 
     public JobTraceEntryColumnUI getColumnDef() {
@@ -63,51 +47,27 @@ public class JobTraceEntryColumn {
     }
 
     public int getStyle() {
-        return style;
-    }
-
-    public void setStyle(int style) {
-        this.style = style;
+        return columnDef.style();
     }
 
     public String getColumnHeading() {
-        return notNull(columnHeading);
-    }
-
-    public void setColumnHeading(String columnHeading) {
-        this.columnHeading = columnHeading;
+        return notNull(columnDef.columnText());
     }
 
     public String getTooltipText() {
-        return notNull(tooltipText);
-    }
-
-    public void setTooltipText(String tooltipText) {
-        this.tooltipText = tooltipText;
+        return notNull(columnDef.columnTooltip());
     }
 
     public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
+        return columnDef.width();
     }
 
     public boolean isResizable() {
         return resizable;
     }
 
-    public void setResizable(boolean resizable) {
-        this.resizable = resizable;
-    }
-
     public boolean isMovebale() {
         return moveable;
-    }
-
-    public void setMovebale(boolean moveable) {
-        this.moveable = moveable;
     }
 
     private String notNull(String text) {
