@@ -127,12 +127,27 @@ public class JobTraceEntry {
         return proposals;
     }
 
+    // //////////////////////////////////////////////////////////
+    // / SQLJep Getters
+    // //////////////////////////////////////////////////////////
+
     public static Comparable[] getSampleRow() {
 
         long now = new java.util.Date().getTime();
 
         JobTraceEntry jobTraceEntry = new JobTraceEntry(null);
         jobTraceEntry.setNanosSinceStarted(new BigInteger("9207031548"));
+        jobTraceEntry.setTimestamp(new java.sql.Timestamp(now));
+        jobTraceEntry.setProgramName("SPLF");
+        jobTraceEntry.setProgramLibrary("ISPHEREDVP");
+        jobTraceEntry.setModuleName("SPLF");
+        jobTraceEntry.setModuleLibrary("ISPHEREDVP");
+        jobTraceEntry.setHLLStmtNbr(1256);
+        jobTraceEntry.setProcedureName("SPLF_CLEAR");
+        jobTraceEntry.setCallLevel(8);
+        jobTraceEntry.setEventSubType(ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT);
+        jobTraceEntry.setCallerHLLStmtNbr(0);
+        jobTraceEntry.setCallerProcedureName("*ccsidConvProc");
 
         return jobTraceEntry.getRow();
     }
