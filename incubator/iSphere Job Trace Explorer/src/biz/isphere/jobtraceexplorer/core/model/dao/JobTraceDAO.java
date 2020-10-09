@@ -12,13 +12,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
@@ -80,18 +80,20 @@ public class JobTraceDAO {
 
     private static final String SQL_WHERE_NO_IBM_DATA = 
         "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +
-        "AND i.QPRPQL not like 'QXMLLIB%' "                 +
-        "AND i.QPRPNM not in ('_CL_PEP') "                  +
-        "AND i.QPRPNM not like '_QRN%' ";
+        "AND i.QPRPQL  not like 'QXMLLIB%' "                  +
+        "AND i.QPRPNM  not in ('_CL_PEP') "                   +
+        "AND i.QPRPNM  not like '_QRN%' "                     +
+        "AND ci.QPRPNM  not in ('_CL_PEP') "                  +
+        "AND ci.QPRPNM not like '_QRN%' ";
 
     private static final String SQL_ORDER_BY =
         "ORDER BY x.QTITIMN";
 
     private static final String[] OVRDBF_CMD =
-      { "OVRDBF FILE(%S/QAYPETIDX) TOFILE(*FILE) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
-        "OVRDBF FILE(%S/QAYPETBRKT) TOFILE(*FILE) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
-        "OVRDBF FILE(%S/QAYPEPROCI) TOFILE(*FILE) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
-        "OVRDBF FILE(%S/QAYPEEVENT) TOFILE(*FILE) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" };
+      { "OVRDBF FILE(QAYPETIDX)  TOFILE(%S/QAYPETIDX ) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
+        "OVRDBF FILE(QAYPETBRKT) TOFILE(%S/QAYPETBRKT) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
+        "OVRDBF FILE(QAYPEPROCI) TOFILE(%S/QAYPEPROCI) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
+        "OVRDBF FILE(QAYPEEVENT) TOFILE(%S/QAYPEEVENT) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" };
 
     private static final String[] DLTOVR_CMD =
       { "DLTOVR FILE(QAYPETIDX) LVL(*JOB)" ,
@@ -119,6 +121,7 @@ public class JobTraceDAO {
 
         AS400 system = null;
         Connection jdbcConnection = null;
+        Statement statement = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -129,29 +132,28 @@ public class JobTraceDAO {
 
             system = IBMiHostContributionsHandler.getSystem(jobTraceSession.getConnectionName());
 
-            isTableOverWrite = overWriteTables(system, jobTraceSession);
-            if (isTableOverWrite) {
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(jobTraceSession.getConnectionName());
+            preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(whereClause));
 
-                jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(jobTraceSession.getConnectionName());
-                preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(whereClause));
-                resultSet = preparedStatement.executeQuery();
+            statement = jdbcConnection.createStatement();
+            isTableOverWrite = overWriteTables(statement, jobTraceSession);
+            resultSet = preparedStatement.executeQuery();
 
-                Date startTime = new Date();
+            Date startTime = new Date();
 
-                while (resultSet.next() && !isDataOverflow && !isCanceled(monitor, jobTraceEntries)) {
+            while (resultSet.next() && !isDataOverflow && !isCanceled(monitor, jobTraceEntries)) {
 
-                    if (jobTraceEntries.getNumberOfRowsDownloaded() < maxNumRows) {
+                if (jobTraceEntries.getNumberOfRowsDownloaded() < maxNumRows) {
 
-                        id++;
+                    id++;
 
-                        JobTraceEntry jobTraceEntry = new JobTraceEntry(jobTraceSession);
+                    JobTraceEntry jobTraceEntry = new JobTraceEntry(jobTraceSession);
 
-                        JobTraceEntry populatedJobTraceEntry = populateJobTraceEntry(resultSet, jobTraceEntry);
-                        jobTraceEntries.add(populatedJobTraceEntry);
+                    JobTraceEntry populatedJobTraceEntry = populateJobTraceEntry(resultSet, jobTraceEntry);
+                    jobTraceEntries.add(populatedJobTraceEntry);
 
-                    } else {
-                        isDataOverflow = true;
-                    }
+                } else {
+                    isDataOverflow = true;
                 }
             }
 
@@ -159,11 +161,17 @@ public class JobTraceDAO {
             ISphereJobTraceExplorerCorePlugin.logError("*** Could not load trace data " + jobTraceSession.toString() + " ***", e);
         } finally {
             if (isTableOverWrite) {
-                deleteTableOverWrites(system);
+                deleteTableOverWrites(statement);
             }
             if (resultSet != null) {
                 try {
                     resultSet.close();
+                } catch (SQLException e) {
+                }
+            }
+            if (statement != null) {
+                try {
+                    statement.close();
                 } catch (SQLException e) {
                 }
             }
@@ -187,12 +195,12 @@ public class JobTraceDAO {
         return jobTraceEntries;
     }
 
-    private boolean overWriteTables(AS400 system, JobTraceSession jobTraceSession) {
+    private boolean overWriteTables(Statement statement, JobTraceSession jobTraceSession) {
 
         for (String ovrDbfCmd : OVRDBF_CMD) {
-            String cmd = String.format(ovrDbfCmd, jobTraceSession.getLibraryName(), jobTraceSession.getSessionID());
+            ovrDbfCmd = String.format(ovrDbfCmd, jobTraceSession.getLibraryName(), jobTraceSession.getSessionID());
             try {
-                ISphereHelper.executeCommand(system, cmd);
+                executeCommand(statement, ovrDbfCmd);
             } catch (Exception e) {
                 ISphereJobTraceExplorerCorePlugin.logError("*** Could not overwrite job trace tables " + jobTraceSession.toString() + " ***", e);
                 return false;
@@ -202,15 +210,22 @@ public class JobTraceDAO {
         return true;
     }
 
-    private void deleteTableOverWrites(AS400 system) {
+    private void deleteTableOverWrites(Statement statement) {
 
         for (String dltOvrCmd : DLTOVR_CMD) {
             try {
-                ISphereHelper.executeCommand(system, dltOvrCmd);
+                executeCommand(statement, dltOvrCmd);
             } catch (Exception e) {
                 // Ignore error messages
             }
         }
+    }
+
+    private void executeCommand(Statement statement, String cmd) throws SQLException {
+
+        cmd = "CALL QSYS.QCMDEXC('" + cmd + "', CAST(" + cmd.length() + " AS DECIMAL(15, 5)))";
+
+        statement.execute(cmd);
     }
 
     private String getSQLStatement(String whereClause) {
