@@ -38,6 +38,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -59,7 +60,6 @@ import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
-import biz.isphere.journalexplorer.core.ui.actions.ResetColumnSizeAction;
 import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
@@ -174,7 +174,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
      */
     private void createActions() {
 
-        resetColumnSizeAction = new ResetColumnSizeAction(getShell());
+        resetColumnSizeAction = new ResetColumnSizeAction();
 
         exportToExcelAction = new ExportToExcelAction(getShell());
 

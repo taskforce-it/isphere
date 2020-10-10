@@ -137,7 +137,6 @@ public class Messages extends NLS {
     public static String Explore_job_log;
     public static String Edit_SQL;
     public static String Exort_to_Excel;
-    public static String Reset_Column_Size;
     public static String SaveDialog_Excel_Workbook;
     public static String SaveDialog_All_Files;
 

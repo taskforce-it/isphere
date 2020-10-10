@@ -40,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -49,7 +50,6 @@ import biz.isphere.joblogexplorer.action.EditSqlAction;
 import biz.isphere.joblogexplorer.action.ExportToExcelAction;
 import biz.isphere.joblogexplorer.action.OpenJobLogAction;
 import biz.isphere.joblogexplorer.action.RefreshAction;
-import biz.isphere.joblogexplorer.action.ResetColumnSizeAction;
 import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
@@ -381,13 +381,13 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             editSqlAction.setChecked(tabItem.isSqlEditorVisible());
             editSqlAction.setTabItem(tabItem);
             resetColumnSizeAction.setEnabled(true);
-            resetColumnSizeAction.setTabItem(tabItem);
+            resetColumnSizeAction.setViewer(tabItem);
         } else {
             editSqlAction.setEnabled(false);
             editSqlAction.setChecked(false);
             editSqlAction.setTabItem(null);
             resetColumnSizeAction.setEnabled(false);
-            resetColumnSizeAction.setTabItem(null);
+            resetColumnSizeAction.setViewer(null);
         }
     }
 
