@@ -60,7 +60,10 @@ public class Messages extends NLS {
     public static String Returned_to;
 
     // Job status
-    public static String Status_Loading_job_trace_entries;
+    public static String Status_Loading_job_trace_entries_of_session_A;
+    public static String Status_Preparing_to_load_job_trace_entries;
+    public static String Status_Executing_query;
+    public static String Status_Receiving_job_trace_entries;
 
     // Actions
     public static String Action_ReloadEntries;

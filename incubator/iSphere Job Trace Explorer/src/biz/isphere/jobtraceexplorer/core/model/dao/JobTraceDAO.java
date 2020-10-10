@@ -11,14 +11,17 @@ package biz.isphere.jobtraceexplorer.core.model.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.base.internal.SqlHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
+import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
@@ -56,6 +59,21 @@ public class JobTraceDAO {
      */
 
     // @formatter:off
+    
+    
+    private static final String SQL_FROM_CLAUSE = 
+        "FROM QAYPETIDX x "                                   +
+        "LEFT JOIN QAYPETBRKT t on x.QRECN = t.QRECN "        +
+        "LEFT JOIN QAYPEPROCI i on i.QPRKEY = t.QTBTBT "      +
+        "LEFT JOIN QAYPEEVENT v on x.QTITY  =  v.QEVTY AND "  +
+                                  "x.QTISTY  =  v.QEVSTY "    +
+        "LEFT JOIN QAYPEPROCI ci on ci.QPRKEY = t.QTBCTB ";
+
+    
+    private static final String SQL_COUNT_STATEMENT = 
+        "SELECT COUNT(x.QTITIMN) " +
+         SQL_FROM_CLAUSE;      
+        
     private static final String SQL_STATEMENT = 
         "SELECT 0              as \"ID\"                  , " +
                "x.QTITIMN      as \"NANOS_SINE_STARTED\"  , " +
@@ -69,13 +87,8 @@ public class JobTraceDAO {
                "t.QTBCLL       as \"CALL_LEVEL\"          , " +
                "v.QEVSSN       as \"EVENT_SUB_TYPE\"      , " +
                "t.QTBCHL       as \"CALLER_HLL_STMT_NBR\" , " +
-               "ci.QPRPNM      as \"CALLER_PROC_NAME\"      " + 
-        "FROM QAYPETIDX x "                                   +
-        "LEFT JOIN QAYPETBRKT t on x.QRECN = t.QRECN "        +
-        "LEFT JOIN QAYPEPROCI i on i.QPRKEY = t.QTBTBT "      +
-        "LEFT JOIN QAYPEEVENT v on x.QTITY  =  v.QEVTY AND "  +
-                                  "x.QTISTY  =  v.QEVSTY "    +
-        "LEFT JOIN QAYPEPROCI ci on ci.QPRKEY = t.QTBCTB ";
+               "ci.QPRPNM      as \"CALLER_PROC_NAME\"      " +
+         SQL_FROM_CLAUSE;      
 
     private static final String SQL_WHERE_NO_IBM_DATA = 
         "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +                     /* Exclude IBM Libraries */
@@ -127,15 +140,27 @@ public class JobTraceDAO {
 
         try {
 
+            monitor.setTaskName(Messages.Status_Preparing_to_load_job_trace_entries);
+
             jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(jobTraceSession.getConnectionName());
 
             sqlHelper = new SqlHelper(jdbcConnection);
             isTableOverWrite = overWriteTables(sqlHelper, jobTraceSession);
 
+            // TODO: SQL WHERE clause
+            int numRowsAvailable = getNumRowsAvailable(sqlHelper, "");
+
             preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(whereClause));
+
+            monitor.setTaskName(Messages.Status_Executing_query);
+
             resultSet = preparedStatement.executeQuery();
 
+            monitor.beginTask(Messages.Status_Receiving_job_trace_entries, numRowsAvailable);
+
             while (resultSet.next() && !isDataOverflow && !isCanceled(monitor, jobTraceEntries)) {
+
+                monitor.worked(1);
 
                 if (jobTraceEntries.getNumberOfRowsDownloaded() < maxNumRows) {
 
@@ -150,11 +175,15 @@ public class JobTraceDAO {
             }
 
         } catch (Throwable e) {
-            ISphereJobTraceExplorerCorePlugin.logError("*** Could not load trace data " + jobTraceSession.toString() + " ***", e);
+            ISphereJobTraceExplorerCorePlugin.logError("*** Could not load trace data " + jobTraceSession.toString() + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
         } finally {
+
+            monitor.done();
+
             if (isTableOverWrite) {
                 deleteTableOverWrites(sqlHelper);
             }
+
             sqlHelper.close(resultSet);
             sqlHelper.close(preparedStatement);
         }
@@ -204,6 +233,16 @@ public class JobTraceDAO {
         return buffer.toString();
     }
 
+    private String getSQLCountStatement(String whereClause) {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(SQL_COUNT_STATEMENT);
+        buffer.append(SQL_WHERE_NO_IBM_DATA);
+
+        return buffer.toString();
+    }
+
     private long timeElapsed(Date startTime) {
         return (new Date().getTime() - startTime.getTime());
     }
@@ -214,6 +253,39 @@ public class JobTraceDAO {
             return true;
         }
         return false;
+    }
+
+    private int getNumRowsAvailable(SqlHelper sqlHelper, String whereClause) {
+
+        int numRowsAvailable = Integer.MAX_VALUE;
+
+        String sqlCountStatement = getSQLCountStatement(whereClause);
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            Connection jdbcConnection = sqlHelper.getConnection();
+            preparedStatement = jdbcConnection.prepareStatement(sqlCountStatement);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                numRowsAvailable = resultSet.getInt(1);
+            } else {
+                numRowsAvailable = Integer.MAX_VALUE;
+            }
+
+        } catch (SQLException e) {
+            ISpherePlugin.logError("*** Could not execute SQL statement: '" + sqlCountStatement + "' ***", e);
+        } finally {
+            try {
+                sqlHelper.close(preparedStatement);
+                sqlHelper.close(resultSet);
+            } catch (Throwable e) {
+            }
+        }
+
+        return numRowsAvailable;
     }
 
     private JobTraceEntry populateJobTraceEntry(ResultSet resultSet, JobTraceEntry jobTraceEntry) throws Exception {

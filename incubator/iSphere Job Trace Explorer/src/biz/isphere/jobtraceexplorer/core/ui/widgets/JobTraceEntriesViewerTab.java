@@ -122,7 +122,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         private String filterWhereClause;
 
         public OpenJobTraceSessionJob(JobTraceExplorerView view, JobTraceSession jobTraceSession, String whereClause) {
-            super(Messages.Status_Loading_job_trace_entries);
+            super(Messages.bind(Messages.Status_Loading_job_trace_entries_of_session_A, jobTraceSession.getQualifiedName()));
 
             this.view = view;
             this.jobTraceSession = jobTraceSession;
@@ -133,8 +133,6 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         public IStatus run(IProgressMonitor monitor) {
 
             try {
-
-                monitor.beginTask(Messages.Status_Loading_job_trace_entries, IProgressMonitor.UNKNOWN);
 
                 JobTraceDAO jobTraceDAO = new JobTraceDAO(jobTraceSession);
                 final JobTraceEntries data = jobTraceDAO.load(whereClause, monitor);
@@ -167,8 +165,6 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
                     });
                 }
 
-            } finally {
-                monitor.done();
             }
 
             return Status.OK_STATUS;
@@ -182,7 +178,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         private String whereClause;
 
         public FilterJobTraceSessionDataJob(JobTraceExplorerView view, String whereClause) {
-            super(Messages.Status_Loading_job_trace_entries);
+            super(Messages.Status_Loading_job_trace_entries_of_session_A);
 
             this.view = view;
             this.whereClause = whereClause;
