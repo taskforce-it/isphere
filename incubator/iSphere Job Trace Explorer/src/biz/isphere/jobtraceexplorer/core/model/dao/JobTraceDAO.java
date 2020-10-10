@@ -11,21 +11,19 @@ package biz.isphere.jobtraceexplorer.core.model.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
-
-import com.ibm.as400.access.AS400;
+import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
 
 /**
  * This class retrieves journal entries from the journal a given object is
@@ -59,7 +57,8 @@ public class JobTraceDAO {
 
     // @formatter:off
     private static final String SQL_STATEMENT = 
-        "SELECT x.QTITIMN      as \"NANOS_SINE_STARTED\"  , " +
+        "SELECT 0              as \"ID\"                  , " +
+               "x.QTITIMN      as \"NANOS_SINE_STARTED\"  , " +
                "x.QTITSP       as \"TIMESTAMP\"           , " +
                "i.QPRPGN       as \"PGM_NAME\"            , " +
                "i.QPRPQL       as \"PGM_LIB\"             , " +
@@ -79,12 +78,10 @@ public class JobTraceDAO {
         "LEFT JOIN QAYPEPROCI ci on ci.QPRKEY = t.QTBCTB ";
 
     private static final String SQL_WHERE_NO_IBM_DATA = 
-        "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +
-        "AND i.QPRPQL  not like 'QXMLLIB%' "                  +
-        "AND i.QPRPNM  not in ('_CL_PEP') "                   +
-        "AND i.QPRPNM  not like '_QRN%' "                     +
-        "AND ci.QPRPNM  not in ('_CL_PEP') "                  +
-        "AND ci.QPRPNM not like '_QRN%' ";
+        "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +                     /* Exclude IBM Libraries */
+        "AND i.QPRPQL  not like 'QXMLLIB%' "                  +                     /* Exclude IBM Xerces Parser */
+        "AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' )) " + /* Exclude RPG Entry Point Procedures */ 
+        "AND i.QPRPNM not in ('*ccsidConvProc') ";                                  /* Exclude Special RPG Procedures */ 
 
     private static final String SQL_ORDER_BY =
         "ORDER BY x.QTITIMN";
@@ -112,40 +109,35 @@ public class JobTraceDAO {
 
     public JobTraceEntries load(String whereClause, IProgressMonitor monitor) {
 
-        int maxNumRows = 17; // Preferences.getInstance().getMaximumNumberOfRowsToFetch();
+        int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
         JobTraceEntries jobTraceEntries = new JobTraceEntries(maxNumRows);
 
         List<IBMiMessage> messages = null;
-        int id = 0;
 
-        AS400 system = null;
         Connection jdbcConnection = null;
-        Statement statement = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        SqlHelper sqlHelper = null;
 
         boolean isTableOverWrite = false;
         boolean isDataOverflow = false;
 
+        Date startTime = new Date();
+
         try {
 
-            system = IBMiHostContributionsHandler.getSystem(jobTraceSession.getConnectionName());
-
             jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(jobTraceSession.getConnectionName());
+
+            sqlHelper = new SqlHelper(jdbcConnection);
+            isTableOverWrite = overWriteTables(sqlHelper, jobTraceSession);
+
             preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(whereClause));
-
-            statement = jdbcConnection.createStatement();
-            isTableOverWrite = overWriteTables(statement, jobTraceSession);
             resultSet = preparedStatement.executeQuery();
-
-            Date startTime = new Date();
 
             while (resultSet.next() && !isDataOverflow && !isCanceled(monitor, jobTraceEntries)) {
 
                 if (jobTraceEntries.getNumberOfRowsDownloaded() < maxNumRows) {
-
-                    id++;
 
                     JobTraceEntry jobTraceEntry = new JobTraceEntry(jobTraceSession);
 
@@ -161,26 +153,10 @@ public class JobTraceDAO {
             ISphereJobTraceExplorerCorePlugin.logError("*** Could not load trace data " + jobTraceSession.toString() + " ***", e);
         } finally {
             if (isTableOverWrite) {
-                deleteTableOverWrites(statement);
+                deleteTableOverWrites(sqlHelper);
             }
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                }
-            }
+            sqlHelper.close(resultSet);
+            sqlHelper.close(preparedStatement);
         }
 
         // System.out.println("mSecs total: " + timeElapsed(startTime) +
@@ -195,12 +171,12 @@ public class JobTraceDAO {
         return jobTraceEntries;
     }
 
-    private boolean overWriteTables(Statement statement, JobTraceSession jobTraceSession) {
+    private boolean overWriteTables(SqlHelper sqlHelper, JobTraceSession jobTraceSession) {
 
         for (String ovrDbfCmd : OVRDBF_CMD) {
             ovrDbfCmd = String.format(ovrDbfCmd, jobTraceSession.getLibraryName(), jobTraceSession.getSessionID());
             try {
-                executeCommand(statement, ovrDbfCmd);
+                sqlHelper.executeSystemCommand(ovrDbfCmd);
             } catch (Exception e) {
                 ISphereJobTraceExplorerCorePlugin.logError("*** Could not overwrite job trace tables " + jobTraceSession.toString() + " ***", e);
                 return false;
@@ -210,22 +186,11 @@ public class JobTraceDAO {
         return true;
     }
 
-    private void deleteTableOverWrites(Statement statement) {
+    private void deleteTableOverWrites(SqlHelper sqlHelper) {
 
         for (String dltOvrCmd : DLTOVR_CMD) {
-            try {
-                executeCommand(statement, dltOvrCmd);
-            } catch (Exception e) {
-                // Ignore error messages
-            }
+            sqlHelper.executeSystemCommandChecked(dltOvrCmd);
         }
-    }
-
-    private void executeCommand(Statement statement, String cmd) throws SQLException {
-
-        cmd = "CALL QSYS.QCMDEXC('" + cmd + "', CAST(" + cmd.length() + " AS DECIMAL(15, 5)))";
-
-        statement.execute(cmd);
     }
 
     private String getSQLStatement(String whereClause) {
@@ -266,6 +231,14 @@ public class JobTraceDAO {
         jobTraceEntry.setEventSubType(resultSet.getString(ColumnsDAO.EVENT_SUB_TYPE.index()));
         jobTraceEntry.setCallerHLLStmtNbr(resultSet.getInt(ColumnsDAO.CALLER_HLL_STMT_NBR.index()));
         jobTraceEntry.setCallerProcedureName(resultSet.getString(ColumnsDAO.CALLER_PROC_NAME.index()));
+
+        if (ColumnsDAO.EVENT_SUB_TYPE_PRCENTRY.equals(jobTraceEntry.getEventSubType())) {
+            jobTraceEntry.setCallLevel(resultSet.getInt(ColumnsDAO.CALL_LEVEL.index()));
+            jobTraceEntry.setCallerCallLevel(jobTraceEntry.getCallLevel() - 1);
+        } else {
+            jobTraceEntry.setCallerCallLevel(resultSet.getInt(ColumnsDAO.CALL_LEVEL.index()));
+            jobTraceEntry.setCallLevel(jobTraceEntry.getCallLevel() + 1);
+        }
 
         return jobTraceEntry;
     }

@@ -20,6 +20,7 @@ import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
  * This class defines the UI names for the columns of a journal entry record.
  */
 public enum JobTraceEntryColumnUI {
+    ID (ColumnsDAO.ID.name(), ColumnsDAO.ID.description(), Messages.Tooltip_ID, 40),
     NANOS_SINE_STARTED (
         ColumnsDAO.NANOS_SINE_STARTED.name(),
         ColumnsDAO.NANOS_SINE_STARTED.description(),
@@ -38,7 +39,12 @@ public enum JobTraceEntryColumnUI {
         ColumnsDAO.CALLER_HLL_STMT_NBR.description(),
         Messages.Tooltip_Caller_HLL_statement_number,
         40),
-    CALLER_PROC_NAME (ColumnsDAO.CALLER_PROC_NAME.name(), ColumnsDAO.CALLER_PROC_NAME.description(), Messages.Tooltip_Caller_procedure_name, 160);
+    CALLER_PROC_NAME (ColumnsDAO.CALLER_PROC_NAME.name(), ColumnsDAO.CALLER_PROC_NAME.description(), Messages.Tooltip_Caller_procedure_name, 160),
+    CALLER_CALL_LEVEL (
+        ColumnsDAO.CALLER_CALL_LEVEL.name(),
+        ColumnsDAO.CALLER_CALL_LEVEL.description(),
+        Messages.Tooltip_Caller_Invocation_call_level,
+        80);
 
     private static Map<String, JobTraceEntryColumnUI> values;
 

@@ -94,6 +94,7 @@ public class JobTraceEntries {
         }
 
         getItems().add(jobTraceEntry);
+        jobTraceEntry.setId(jobTraceEntries.size());
     }
 
     public List<JobTraceEntry> getItems() {

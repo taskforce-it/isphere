@@ -64,7 +64,7 @@ public abstract class OpenJobTraceAction extends Action {
         //
         // if (result == Window.OK) {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "iSphere")) {
-            jobTraceSession = new JobTraceSession("iSphere", "RADDATZ400", "ZZ0633V_01");
+            jobTraceSession = new JobTraceSession("iSphere", "RADDATZ400", "DEMO3E");
             whereClause = "";
         }
         // }

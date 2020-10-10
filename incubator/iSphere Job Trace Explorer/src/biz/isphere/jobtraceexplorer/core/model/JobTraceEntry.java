@@ -46,6 +46,7 @@ public class JobTraceEntry {
     private static List<ContentAssistProposal> proposals;
     static {
         proposals = new LinkedList<ContentAssistProposal>();
+        proposals.add(new ContentAssistProposal(ColumnsDAO.ID.systemColumnName(), ColumnsDAO.ID.type() + " - " + ColumnsDAO.ID.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.NANOS_SINE_STARTED.systemColumnName(), ColumnsDAO.NANOS_SINE_STARTED.type() + " - "
             + ColumnsDAO.NANOS_SINE_STARTED.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.systemColumnName(), ColumnsDAO.TIMESTAMP.type() + " - "
@@ -70,11 +71,14 @@ public class JobTraceEntry {
             + ColumnsDAO.CALLER_HLL_STMT_NBR.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_PROC_NAME.systemColumnName(), ColumnsDAO.CALLER_PROC_NAME.type() + " - "
             + ColumnsDAO.CALLER_PROC_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_CALL_LEVEL.systemColumnName(), ColumnsDAO.CALLER_CALL_LEVEL.type() + " - "
+            + ColumnsDAO.CALLER_CALL_LEVEL.description()));
     }
 
     private String connectionName;
     private String libraryName;
     private String sessionID;
+    private int id;
 
     private BigInteger nanosSinceStarted;
     private Timestamp timestamp;
@@ -88,8 +92,10 @@ public class JobTraceEntry {
     private String eventSubType;
     private int callerHLLStmtNbr;
     private String callerProcedureName;
+    private int callerCallLevel;
 
     // Transient values, set on demand
+
     private JobTraceSession jobTraceSession;
     private transient DecimalFormat bin8Formatter;
     private transient SimpleDateFormat timestampFormatter;
@@ -136,6 +142,7 @@ public class JobTraceEntry {
         long now = new java.util.Date().getTime();
 
         JobTraceEntry jobTraceEntry = new JobTraceEntry(null);
+        jobTraceEntry.setId(1);
         jobTraceEntry.setNanosSinceStarted(new BigInteger("9207031548"));
         jobTraceEntry.setTimestamp(new java.sql.Timestamp(now));
         jobTraceEntry.setProgramName("SPLF");
@@ -148,6 +155,8 @@ public class JobTraceEntry {
         jobTraceEntry.setEventSubType(ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT);
         jobTraceEntry.setCallerHLLStmtNbr(0);
         jobTraceEntry.setCallerProcedureName("*ccsidConvProc");
+        jobTraceEntry.setCallerHLLStmtNbr(177);
+        jobTraceEntry.setCallerCallLevel(7);
 
         return jobTraceEntry.getRow();
     }
@@ -167,6 +176,14 @@ public class JobTraceEntry {
 
     public String getConnectionName() {
         return connectionName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     // //////////////////////////////////////////////////////////
@@ -194,7 +211,7 @@ public class JobTraceEntry {
     }
 
     public void setProgramName(String programName) {
-        this.programName = programName.trim();
+        this.programName = nullSave(programName);
     }
 
     public String getProgramLibrary() {
@@ -202,7 +219,7 @@ public class JobTraceEntry {
     }
 
     public void setProgramLibrary(String programLibrary) {
-        this.programLibrary = programLibrary.trim();
+        this.programLibrary = nullSave(programLibrary);
     }
 
     public String getModuleName() {
@@ -210,7 +227,7 @@ public class JobTraceEntry {
     }
 
     public void setModuleName(String moduleName) {
-        this.moduleName = moduleName.trim();
+        this.moduleName = nullSave(moduleName);
     }
 
     public String getModuleLibrary() {
@@ -218,7 +235,7 @@ public class JobTraceEntry {
     }
 
     public void setModuleLibrary(String moduleLibrary) {
-        this.moduleLibrary = moduleLibrary.trim();
+        this.moduleLibrary = nullSave(moduleLibrary);
     }
 
     public int getHLLStmtNbr() {
@@ -234,7 +251,7 @@ public class JobTraceEntry {
     }
 
     public void setProcedureName(String procedureName) {
-        this.procedureName = procedureName.trim();
+        this.procedureName = nullSave(procedureName);
     }
 
     public int getCallLevel() {
@@ -250,7 +267,7 @@ public class JobTraceEntry {
     }
 
     public void setEventSubType(String eventSubType) {
-        this.eventSubType = eventSubType.trim();
+        this.eventSubType = nullSave(eventSubType);
     }
 
     public int getCallerHLLStmtNbr() {
@@ -266,7 +283,15 @@ public class JobTraceEntry {
     }
 
     public void setCallerProcedureName(String procedureName) {
-        this.callerProcedureName = procedureName;
+        this.callerProcedureName = nullSave(procedureName);
+    }
+
+    public int getCallerCallLevel() {
+        return callerCallLevel;
+    }
+
+    public void setCallerCallLevel(int callerCallLevel) {
+        this.callerCallLevel = callerCallLevel;
     }
 
     // //////////////////////////////////////////////////////////
@@ -275,9 +300,9 @@ public class JobTraceEntry {
 
     public String getValueForUi(ColumnsDAO columnsDAO) {
 
-        boolean isSwitchProcExit = true;
-
-        if (ColumnsDAO.NANOS_SINE_STARTED.equals(columnsDAO)) {
+        if (ColumnsDAO.ID.equals(columnsDAO)) {
+            return toString(getId());
+        } else if (ColumnsDAO.NANOS_SINE_STARTED.equals(columnsDAO)) {
             return toString(getNanosSinceStarted());
         } else if (ColumnsDAO.TIMESTAMP.equals(columnsDAO)) {
             return toString(getTimestamp());
@@ -290,47 +315,29 @@ public class JobTraceEntry {
         } else if (ColumnsDAO.MODULE_LIBRARY.equals(columnsDAO)) {
             return toString(getModuleLibrary());
         } else if (ColumnsDAO.HLL_STMT_NBR.equals(columnsDAO)) {
-            if (isProcedureExit(isSwitchProcExit)) {
-                return toString(getCallerHLLStmtNbr());
-            } else {
-                return toString(getHLLStmtNbr());
-            }
+            return toString(getHLLStmtNbr());
         } else if (ColumnsDAO.PROC_NAME.equals(columnsDAO)) {
-            if (isProcedureExit(isSwitchProcExit)) {
-                return toString(getCallerProcedureName());
-            } else {
-                return toString(getProcedureName());
-            }
+            return toString(getProcedureName());
         } else if (ColumnsDAO.CALL_LEVEL.equals(columnsDAO)) {
             return toString(getCallLevel());
         } else if (ColumnsDAO.EVENT_SUB_TYPE.equals(columnsDAO)) {
-            return eventSubTypeToExt(isSwitchProcExit, getEventSubType());
+            return eventSubTypeToExt(getEventSubType());
         } else if (ColumnsDAO.MODULE_LIBRARY.equals(columnsDAO)) {
             return toString(getCallerHLLStmtNbr());
         } else if (ColumnsDAO.CALLER_HLL_STMT_NBR.equals(columnsDAO)) {
-            if (isProcedureExit(isSwitchProcExit)) {
-                return toString(getHLLStmtNbr());
-            } else {
-                return toString(getCallerHLLStmtNbr());
-            }
+            return toString(getCallerHLLStmtNbr());
         } else if (ColumnsDAO.CALLER_PROC_NAME.equals(columnsDAO)) {
-            if (isProcedureExit(isSwitchProcExit)) {
-                return toString(getProcedureName());
-            } else {
-                return toString(getCallerProcedureName());
-            }
+            return toString(getCallerProcedureName());
+        } else if (ColumnsDAO.CALLER_CALL_LEVEL.equals(columnsDAO)) {
+            return toString(getCallerCallLevel());
         }
 
         return "?"; //$NON-NLS-1$
     }
 
-    private String eventSubTypeToExt(boolean isSwitchProcExit, String eventSubType) {
+    private String eventSubTypeToExt(String eventSubType) {
         if (ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(eventSubType)) {
-            if (isSwitchProcExit) {
-                return "returned from";
-            } else {
-                return "returns to";
-            }
+            return "returns to";
         } else {
             return "called by";
         }
@@ -338,6 +345,15 @@ public class JobTraceEntry {
 
     private boolean isProcedureExit(boolean enabled) {
         return enabled && ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(getEventSubType());
+    }
+
+    private String nullSave(String value) {
+
+        if (value == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return value.trim();
     }
 
     private String toString(BigInteger unsignedBin8Value) {

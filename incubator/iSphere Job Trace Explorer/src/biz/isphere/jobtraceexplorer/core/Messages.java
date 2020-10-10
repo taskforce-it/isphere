@@ -18,7 +18,11 @@ public class Messages extends NLS {
 
     public static String ButtonLabel_Filter;
     public static String ButtonTooltip_Filter;
+    public static String GroupLabel_Limitation_Properties;
+    public static String ButtonLabel_Maximum_number_of_rows_to_fetch;
+    public static String ButtonTooltip_Maximum_number_of_rows_to_fetch_tooltip;
 
+    public static String LongFieldName_ID;
     public static String LongFieldName_Nanoseconds_since_collection_started;
     public static String LongFieldName_Timestamp;
     public static String LongFieldName_Program_name;
@@ -31,7 +35,9 @@ public class Messages extends NLS {
     public static String LongFieldName_Event_subtype_description;
     public static String LongFieldName_Caller_HLL_statement_number;
     public static String LongFieldName_Caller_procedure_name;
+    public static String LongFieldName_Caller_Invocation_call_level;
 
+    public static String Tooltip_ID;
     public static String Tooltip_Nanoseconds_since_collection_started;
     public static String Tooltip_Timestamp;
     public static String Tooltip_Program_name;
@@ -44,6 +50,10 @@ public class Messages extends NLS {
     public static String Tooltip_Event_subtype_description;
     public static String Tooltip_Caller_HLL_statement_number;
     public static String Tooltip_Caller_procedure_name;
+    public static String Tooltip_Caller_Invocation_call_level;
+
+    public static String Called_by;
+    public static String Returned_to;
 
     public static String Status_Loading_job_trace_entries;
 

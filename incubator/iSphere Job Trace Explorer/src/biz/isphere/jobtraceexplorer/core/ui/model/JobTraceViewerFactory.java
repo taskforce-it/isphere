@@ -35,6 +35,7 @@ public class JobTraceViewerFactory {
 
     // @formatter:off
     private static JobTraceEntryColumnUI[] jobTraceEntryColumns = { 
+        JobTraceEntryColumnUI.ID,
         JobTraceEntryColumnUI.NANOS_SINE_STARTED,
         JobTraceEntryColumnUI.TIMESTAMP,
         JobTraceEntryColumnUI.PGM_NAME,
@@ -45,7 +46,8 @@ public class JobTraceViewerFactory {
         JobTraceEntryColumnUI.CALL_LEVEL,
         JobTraceEntryColumnUI.EVENT_SUB_TYPE, 
         JobTraceEntryColumnUI.CALLER_HLL_STMT_NBR, 
-        JobTraceEntryColumnUI.CALLER_PROC_NAME 
+        JobTraceEntryColumnUI.CALLER_PROC_NAME, 
+        JobTraceEntryColumnUI.CALLER_CALL_LEVEL
     };
     // @formatter:on
 
@@ -141,6 +143,7 @@ public class JobTraceViewerFactory {
 
         List<JobTraceEntryColumn> columns = new LinkedList<JobTraceEntryColumn>();
 
+        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.ID));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.NANOS_SINE_STARTED));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.TIMESTAMP));
 
@@ -158,6 +161,7 @@ public class JobTraceViewerFactory {
         // Caller
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.CALLER_HLL_STMT_NBR));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.CALLER_PROC_NAME));
+        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.CALLER_CALL_LEVEL));
 
         return sortColumnsAndApplyAppearanceAttributes(columns.toArray(new JobTraceEntryColumn[columns.size()]));
     }

@@ -11,6 +11,7 @@ package biz.isphere.jobtraceexplorer.core.model.dao;
 import biz.isphere.jobtraceexplorer.core.Messages;
 
 public enum ColumnsDAO {
+    ID ("ID", "INTEGER", Messages.LongFieldName_ID),
     NANOS_SINE_STARTED ("QTITIMN", "BIGINT", Messages.LongFieldName_Nanoseconds_since_collection_started),
     TIMESTAMP ("QTITSP", "TIMESTAMP", Messages.LongFieldName_Timestamp),
     PGM_NAME ("QPRPGN", "CHAR(30)", Messages.LongFieldName_Program_name),
@@ -22,7 +23,8 @@ public enum ColumnsDAO {
     CALL_LEVEL ("QTBCLL", "INTEGER", Messages.LongFieldName_Invocation_call_level),
     EVENT_SUB_TYPE ("QEVSSN", "VARCHAR(15)", Messages.LongFieldName_Event_subtype_description),
     CALLER_HLL_STMT_NBR ("QTBCHL", "INTEGER", Messages.LongFieldName_Caller_HLL_statement_number),
-    CALLER_PROC_NAME ("QPRPNM", "VARCHAR(256)", Messages.LongFieldName_Caller_procedure_name);
+    CALLER_PROC_NAME ("QPRPNM", "VARCHAR(256)", Messages.LongFieldName_Caller_procedure_name),
+    CALLER_CALL_LEVEL ("QTBCLL", "INTEGER", Messages.LongFieldName_Caller_Invocation_call_level);
 
     public static final String EVENT_SUB_TYPE_PRCENTRY = "*PRCENTRY"; //$NON-NLS-1$
     public static final String EVENT_SUB_TYPE_PRCEXIT = "*PRCEXIT"; //$NON-NLS-1$

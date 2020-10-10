@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,
  biz.isphere.core,
- biz.isphere.common.libraries
+ biz.isphere.common.libraries,
+ biz.isphere.jobtraceexplorer.rse
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

@@ -11,3 +11,4 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.core
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
+Export-Package: biz.isphere.jobtraceexplorer.rse.shared.ui.perspectives

@@ -90,6 +90,8 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         JobTraceEntry jobTraceEntry = (JobTraceEntry)object;
 
         switch (fieldIdMapping[index]) {
+        case ID:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.ID);
         case NANOS_SINE_STARTED:
             return jobTraceEntry.getValueForUi(ColumnsDAO.NANOS_SINE_STARTED);
         case TIMESTAMP:
@@ -112,6 +114,8 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
             return jobTraceEntry.getValueForUi(ColumnsDAO.CALLER_HLL_STMT_NBR);
         case CALLER_PROC_NAME:
             return jobTraceEntry.getValueForUi(ColumnsDAO.CALLER_PROC_NAME);
+        case CALLER_CALL_LEVEL:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.CALLER_CALL_LEVEL);
         default:
             break;
         }
