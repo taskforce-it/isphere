@@ -36,17 +36,23 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </requires>
 
    <plugin
-         id="biz.isphere.jobtraceexplorer"
+         id="biz.isphere.jobtraceexplorer.rse"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="biz.isphere.jobtraceexplorer.rse"
+         id="biz.isphere.jobtraceexplorer.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="biz.isphere.jobtraceexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
