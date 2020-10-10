@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
+import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 
 public class JobTraceEntry {
@@ -334,9 +335,9 @@ public class JobTraceEntry {
 
     private String eventSubTypeToExt(String eventSubType) {
         if (ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(eventSubType)) {
-            return "returns to";
+            return Messages.Returned_to;
         } else {
-            return "called by";
+            return Messages.Called_by;
         }
     }
 
