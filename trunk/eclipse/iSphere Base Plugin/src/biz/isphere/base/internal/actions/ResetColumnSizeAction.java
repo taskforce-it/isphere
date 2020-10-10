@@ -16,26 +16,26 @@ import biz.isphere.base.internal.IResizableTableColumnsViewer;
 
 public class ResetColumnSizeAction extends Action {
 
-    private IResizableTableColumnsViewer tabItem;
+    private IResizableTableColumnsViewer viewer;
 
-    public ResetColumnSizeAction(IResizableTableColumnsViewer workWithSpooledFilesPanel) {
+    public ResetColumnSizeAction(IResizableTableColumnsViewer viewer) {
         super(Messages.Reset_Column_Size, Action.AS_PUSH_BUTTON);
         setToolTipText(Messages.Tooltip_Reset_Column_Size);
         setImageDescriptor(ISphereBasePlugin.getDefault().getImageRegistry().getDescriptor(ISphereBasePlugin.IMAGE_RESET_COLUMN_SIZE));
-        setTabItem(workWithSpooledFilesPanel);
+        setViewer(viewer);
     }
 
-    public void setTabItem(IResizableTableColumnsViewer tabItem) {
-        this.tabItem = tabItem;
+    public void setViewer(IResizableTableColumnsViewer tabItem) {
+        this.viewer = tabItem;
     }
 
     @Override
     public void run() {
 
-        if (tabItem == null) {
+        if (viewer == null) {
             return;
         }
 
-        tabItem.resetColumnSizes();
+        viewer.resetColumnSizes();
     }
 }
