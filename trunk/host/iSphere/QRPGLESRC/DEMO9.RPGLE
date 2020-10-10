@@ -28,6 +28,7 @@
       //*------------------------------------------------------------------------------------------*
 
      hBNDDIR('ISPHERE': 'QC2LE')
+      /copy qcpysrc,h_spec
 
      fQSYSPRT   o    f  141        printer usropn oflind(*in70)
 

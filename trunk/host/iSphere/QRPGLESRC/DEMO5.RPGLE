@@ -28,6 +28,7 @@
       //*------------------------------------------------------------------------------------------*
 
      hBNDDIR('ISPHERE')
+      /copy qcpysrc,h_spec
 
       /copy qcpysrc,types
       /copy qcpysrc,iqmhrtvm

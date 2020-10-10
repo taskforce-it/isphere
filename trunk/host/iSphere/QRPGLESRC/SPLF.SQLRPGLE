@@ -21,7 +21,8 @@
       //*         >>PARM<<  CLOSQLCSR(*ENDMOD);                                                    *
       //*         >>PARM<<  DBGVIEW(*NONE);                                                        *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
-      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         >>PARM--  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
