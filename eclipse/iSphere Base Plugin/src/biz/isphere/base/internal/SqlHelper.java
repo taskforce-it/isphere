@@ -90,6 +90,10 @@ public final class SqlHelper {
         return qualifiedName.toString();
     }
 
+    public Connection getConnection() {
+        return jdbcConnection;
+    }
+
     private String appendQuotedName(StringBuilder buffer, String name) {
         buffer.append(nameQuotes);
         buffer.append(name);
