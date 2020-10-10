@@ -40,6 +40,7 @@ import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dialog.ConfirmErrorsDialog;
@@ -80,7 +81,7 @@ import biz.isphere.joblogexplorer.model.JobLogReader;
 
 import com.ibm.as400.access.AS400;
 
-public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatusChangedListener {
+public class JobLogExplorerTab extends CTabItem implements IResizableTableColumnsViewer, IJobLogExplorerStatusChangedListener {
 
     private static final String EMPTY = ""; //$NON-NLS-1$
 
@@ -218,7 +219,7 @@ public class JobLogExplorerTab extends CTabItem implements IJobLogExplorerStatus
         return tableViewerPanel.getTotalNumberOfMessages();
     }
 
-    public void resetColumnSize() {
+    public void resetColumnSizes() {
         tableViewerPanel.resetColumnSize();
     }
 

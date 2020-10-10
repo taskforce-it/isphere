@@ -38,6 +38,7 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -63,8 +64,8 @@ import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
  * @see JobTraceEntry
  * @see JobTraceEntryViewerView
  */
-public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implements ISelectionChangedListener, ISelectionProvider,
-    IPropertyChangeListener {
+public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener,
+    ISelectionProvider, IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 

@@ -42,6 +42,7 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
@@ -73,8 +74,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements ISelectionChangedListener, ISelectionProvider,
-    IPropertyChangeListener {
+public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener,
+    ISelectionProvider, IPropertyChangeListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 

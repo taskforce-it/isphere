@@ -18,6 +18,10 @@ public class ResetColumnSizeAction extends Action {
 
     private IResizableTableColumnsViewer viewer;
 
+    public ResetColumnSizeAction() {
+        this(null);
+    }
+
     public ResetColumnSizeAction(IResizableTableColumnsViewer viewer) {
         super(Messages.Reset_Column_Size, Action.AS_PUSH_BUTTON);
         setToolTipText(Messages.Tooltip_Reset_Column_Size);

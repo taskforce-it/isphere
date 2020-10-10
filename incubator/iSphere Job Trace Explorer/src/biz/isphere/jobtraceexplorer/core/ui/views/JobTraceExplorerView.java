@@ -30,6 +30,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -51,7 +52,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
     // private EditSqlAction editSqlAction;
     private OpenJobTraceAction openJobTraceSession;
-    // private ResetColumnSizeAction resetColumnSizeAction;
+    private ResetColumnSizeAction resetColumnSizeAction;
     // private ToggleHighlightUserEntriesAction
     // toggleHighlightUserEntriesAction;
     private GenericRefreshAction reloadEntriesAction;
@@ -139,7 +140,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
      */
     private void createActions() {
 
-        // resetColumnSizeAction = new ResetColumnSizeAction(getShell());
+        resetColumnSizeAction = new ResetColumnSizeAction();
 
         openJobTraceSession = new OpenJobTraceAction(getShell()) {
             @Override
@@ -379,7 +380,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         toolBarManager.add(new Separator());
         // toolBarManager.add(toggleHighlightUserEntriesAction);
         toolBarManager.add(new Separator());
-        // toolBarManager.add(resetColumnSizeAction);
+        toolBarManager.add(resetColumnSizeAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(reloadEntriesAction);
     }
@@ -429,12 +430,12 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
         if (numEntries == 0) {
             // toggleHighlightUserEntriesAction.setEnabled(false);
-            // resetColumnSizeAction.setEnabled(false);
-            // resetColumnSizeAction.setViewer(null);
+            resetColumnSizeAction.setEnabled(false);
+            resetColumnSizeAction.setViewer(null);
         } else {
             // toggleHighlightUserEntriesAction.setEnabled(true);
-            // resetColumnSizeAction.setEnabled(true);
-            // resetColumnSizeAction.setViewer(getSelectedViewer());
+            resetColumnSizeAction.setEnabled(true);
+            resetColumnSizeAction.setViewer(getSelectedViewer());
         }
 
     }
