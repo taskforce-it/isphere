@@ -4,9 +4,6 @@
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Initial idea and development: Isaac Ramirez Herrera
- * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
 package biz.isphere.jobtraceexplorer.core.model;

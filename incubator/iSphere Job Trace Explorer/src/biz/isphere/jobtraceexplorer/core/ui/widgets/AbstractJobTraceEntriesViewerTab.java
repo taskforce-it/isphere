@@ -4,9 +4,6 @@
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Initial idea and development: Isaac Ramirez Herrera
- * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
 package biz.isphere.jobtraceexplorer.core.ui.widgets;
@@ -54,13 +51,14 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
 /**
  * This widget is a viewer for the job trace entries of an output file of the
  * DSPJRN command. It is created by a sub-class of the
- * {@link JobTraceViewerFactory}. It is used by the "Job Trace Explorer"
- * view to create the tabs for the opened output files of the DSPJRN command.
+ * {@link JobTraceViewerFactory}. It is used by the "Job Trace Explorer" view to
+ * create the tabs for the opened output files of the DSPJRN command.
  * 
  * @see JobTraceEntry
  * @see JobTraceEntryViewerView
