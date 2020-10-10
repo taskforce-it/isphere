@@ -53,8 +53,6 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     // private EditSqlAction editSqlAction;
     private OpenJobTraceAction openJobTraceSession;
     private ResetColumnSizeAction resetColumnSizeAction;
-    // private ToggleHighlightUserEntriesAction
-    // toggleHighlightUserEntriesAction;
     private GenericRefreshAction reloadEntriesAction;
 
     private CTabFolder tabFolder;
@@ -161,9 +159,6 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         // return;
         // }
         // };
-
-        // toggleHighlightUserEntriesAction = new
-        // ToggleHighlightUserEntriesAction();
 
         reloadEntriesAction = new GenericRefreshAction() {
             @Override
@@ -378,8 +373,6 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         toolBarManager.add(openJobTraceSession);
         // toolBarManager.add(editSqlAction);
         toolBarManager.add(new Separator());
-        // toolBarManager.add(toggleHighlightUserEntriesAction);
-        toolBarManager.add(new Separator());
         toolBarManager.add(resetColumnSizeAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(reloadEntriesAction);
@@ -429,11 +422,9 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         }
 
         if (numEntries == 0) {
-            // toggleHighlightUserEntriesAction.setEnabled(false);
             resetColumnSizeAction.setEnabled(false);
             resetColumnSizeAction.setViewer(null);
         } else {
-            // toggleHighlightUserEntriesAction.setEnabled(true);
             resetColumnSizeAction.setEnabled(true);
             resetColumnSizeAction.setViewer(getSelectedViewer());
         }
