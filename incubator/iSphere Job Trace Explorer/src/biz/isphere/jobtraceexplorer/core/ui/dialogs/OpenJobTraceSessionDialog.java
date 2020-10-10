@@ -199,7 +199,7 @@ public class OpenJobTraceSessionDialog extends XDialog {
             return;
         }
 
-        txtLibraryName.setFocus();
+        txtSessionID.setFocus();
     }
 
     private void loadValues() {
