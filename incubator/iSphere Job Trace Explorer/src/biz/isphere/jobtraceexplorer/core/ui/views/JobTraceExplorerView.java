@@ -207,13 +207,13 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     public void handleDataLoadException(AbstractJobTraceEntriesViewerTab tabItem, Throwable e) {
 
         if (e instanceof ParseException) {
-            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.MessageDialog_Load_Job_Trace_Entries_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof NoJobTraceEntriesLoadedException) {
-            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.MessageDialog_Load_Job_Trace_Entries_Title, e.getLocalizedMessage());
             return;
         } else if (e instanceof SQLSyntaxErrorException) {
-            MessageDialog.openInformation(getShell(), Messages.DisplayJobTraceEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.MessageDialog_Load_Job_Trace_Entries_Title, e.getLocalizedMessage());
         } else {
             ISpherePlugin.logError("*** Error in method JobTraceExplorerView.handleDataLoadException() ***", e); //$NON-NLS-1$
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
