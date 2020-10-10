@@ -9,6 +9,7 @@
 package biz.isphere.jobtraceexplorer.core.ui.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -17,6 +18,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
+import biz.isphere.jobtraceexplorer.core.ui.dialogs.OpenJobTraceSessionDialog;
 
 public abstract class OpenJobTraceAction extends Action {
 
@@ -54,20 +56,21 @@ public abstract class OpenJobTraceAction extends Action {
 
     private void performOpenJournalOutputFile() {
 
-        // OpenJournalOutputFileDialog openJournalOutputFileDialog = new
-        // OpenJournalOutputFileDialog(shell);
-        // openJournalOutputFileDialog.create();
-        // int result = openJournalOutputFileDialog.open();
-        //
-        // jobTraceSession = null;
-        // whereClause = null;
-        //
-        // if (result == Window.OK) {
-        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "iSphere")) {
-            jobTraceSession = new JobTraceSession("iSphere", "RADDATZ400", "DEMO3E");
-            whereClause = "";
+        OpenJobTraceSessionDialog openJournalOutputFileDialog = new OpenJobTraceSessionDialog(shell);
+        openJournalOutputFileDialog.create();
+        int result = openJournalOutputFileDialog.open();
+
+        jobTraceSession = null;
+        whereClause = null;
+
+        if (result == Window.OK) {
+            if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                openJournalOutputFileDialog.getConnectionName())) {
+                jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibraryName(),
+                    openJournalOutputFileDialog.getSessionID());
+                whereClause = "";
+            }
         }
-        // }
     }
 
     protected abstract void postRunAction();
