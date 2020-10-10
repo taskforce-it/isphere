@@ -28,6 +28,7 @@
       //*------------------------------------------------------------------------------------------*
 
      hBNDDIR('ISPHERE': 'QC2LE')
+      /copy qcpysrc,h_spec
 
       /copy qcpysrc,types
       /copy qcpysrc,iqsdrtvmv
