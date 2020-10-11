@@ -105,6 +105,7 @@ public class JobTraceViewerFactory {
     public TableViewer createTableViewer(Composite container, DialogSettingsManager dialogSettingsManager) {
 
         TableViewer tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
+        tableViewer.setUseHashlookup(true);
         Table table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         table.setLinesVisible(true);

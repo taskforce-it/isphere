@@ -302,6 +302,10 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     public abstract boolean isLoading();
 
+    public abstract JobTraceEntry getSelectedItem();
+
+    public abstract void setSelectedItem(JobTraceEntry jobTraceEntry);
+
     protected void setInputData(JobTraceEntries data) {
 
         this.data = data;

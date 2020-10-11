@@ -13,10 +13,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -86,6 +88,32 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         }
 
         return true;
+    }
+
+    public JobTraceEntry getSelectedItem() {
+
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index < 0) {
+            return null;
+        }
+
+        TableItem tableItem = tableViewer.getTable().getItem(index);
+        JobTraceEntry jobTraceEntry = (JobTraceEntry)tableItem.getData();
+
+        return jobTraceEntry;
+    }
+
+    public void setSelectedItem(JobTraceEntry jobTraceEntry) {
+
+        if (jobTraceEntry == null) {
+            return;
+        }
+
+        tableViewer.setSelection(new StructuredSelection(jobTraceEntry));
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index >= 0) {
+            tableViewer.getTable().setTopIndex(index);
+        }
     }
 
     public void closeJobTraceSession() {
