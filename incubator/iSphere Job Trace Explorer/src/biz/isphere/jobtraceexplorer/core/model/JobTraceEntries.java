@@ -21,28 +21,37 @@ import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 
 public class JobTraceEntries {
 
+    private JobTraceSession jobTraceSession;
     private List<JobTraceEntry> jobTraceEntries;
-
+    private transient List<JobTraceEntry> filteredJobTraceEntries;
     private boolean isOverflow;
-
     private int numAvailableRows;
 
     private List<IBMiMessage> messages;
-
     private boolean isCanceled;
 
-    private transient List<JobTraceEntry> filteredJobTraceEntries;
-
     public JobTraceEntries() {
-        this(0);
+        this(null, 0);
     }
 
-    public JobTraceEntries(int initialCapacity) {
+    public JobTraceEntries(JobTraceSession jobTraceSession, int initialCapacity) {
 
+        this.jobTraceSession = jobTraceSession;
         this.jobTraceEntries = new ArrayList<JobTraceEntry>(initialCapacity);
         this.filteredJobTraceEntries = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
+    }
+
+    public boolean isSameSession(JobTraceSession jobTraceSession) {
+
+        if (this.jobTraceSession == null && jobTraceSession == null) {
+            return true;
+        } else if (this.jobTraceSession != null) {
+            return this.jobTraceSession.equals(jobTraceSession);
+        } else {
+            return false;
+        }
     }
 
     public void applyFilter(String whereClause) throws ParseException {

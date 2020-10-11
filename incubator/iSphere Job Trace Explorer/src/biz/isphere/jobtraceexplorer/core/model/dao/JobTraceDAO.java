@@ -124,7 +124,7 @@ public class JobTraceDAO {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-        JobTraceEntries jobTraceEntries = new JobTraceEntries(maxNumRows);
+        JobTraceEntries jobTraceEntries = new JobTraceEntries(jobTraceSession, maxNumRows);
 
         List<IBMiMessage> messages = null;
 
@@ -164,7 +164,7 @@ public class JobTraceDAO {
 
                 if (jobTraceEntries.getNumberOfRowsDownloaded() < maxNumRows) {
 
-                    JobTraceEntry jobTraceEntry = new JobTraceEntry(jobTraceSession);
+                    JobTraceEntry jobTraceEntry = new JobTraceEntry();
 
                     JobTraceEntry populatedJobTraceEntry = populateJobTraceEntry(resultSet, jobTraceEntry);
                     jobTraceEntries.add(populatedJobTraceEntry);
