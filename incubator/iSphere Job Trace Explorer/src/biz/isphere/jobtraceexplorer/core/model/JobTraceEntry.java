@@ -73,11 +73,7 @@ public class JobTraceEntry {
             + ColumnsDAO.CALLER_CALL_LEVEL.description()));
     }
 
-    private String connectionName;
-    private String libraryName;
-    private String sessionID;
     private int id;
-
     private BigInteger nanosSinceStarted;
     private Timestamp timestamp;
     private String programName;
@@ -94,7 +90,6 @@ public class JobTraceEntry {
 
     // Transient values, set on demand
 
-    private JobTraceSession jobTraceSession;
     private transient DecimalFormat bin8Formatter;
     private transient SimpleDateFormat timestampFormatter;
 
@@ -104,23 +99,10 @@ public class JobTraceEntry {
      * 
      * @param outputFile
      */
-    public JobTraceEntry(JobTraceSession jobTraceSession) {
-
-        if (jobTraceSession != null) {
-            this.connectionName = jobTraceSession.getConnectionName();
-            this.libraryName = jobTraceSession.getLibraryName();
-            this.sessionID = jobTraceSession.getSessionID();
-        }
+    public JobTraceEntry() {
 
         this.bin8Formatter = new DecimalFormat("00000000000000000000");
         this.timestampFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); //$NON-NLS-1$
-    }
-
-    public JobTraceSession getJobTraceSession() {
-        if (jobTraceSession == null) {
-            jobTraceSession = new JobTraceSession(this.connectionName, this.libraryName, this.sessionID);
-        }
-        return jobTraceSession;
     }
 
     public static HashMap<String, Integer> getColumnMapping() {
@@ -139,7 +121,7 @@ public class JobTraceEntry {
 
         long now = new java.util.Date().getTime();
 
-        JobTraceEntry jobTraceEntry = new JobTraceEntry(null);
+        JobTraceEntry jobTraceEntry = new JobTraceEntry();
         jobTraceEntry.setId(1);
         jobTraceEntry.setNanosSinceStarted(new BigInteger("9207031548"));
         jobTraceEntry.setTimestamp(new java.sql.Timestamp(now));
@@ -151,9 +133,8 @@ public class JobTraceEntry {
         jobTraceEntry.setProcedureName("SPLF_CLEAR");
         jobTraceEntry.setCallLevel(8);
         jobTraceEntry.setEventSubType(ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT);
-        jobTraceEntry.setCallerHLLStmtNbr(0);
-        jobTraceEntry.setCallerProcedureName("*ccsidConvProc");
         jobTraceEntry.setCallerHLLStmtNbr(177);
+        jobTraceEntry.setCallerProcedureName("*ccsidConvProc");
         jobTraceEntry.setCallerCallLevel(7);
 
         return jobTraceEntry.getRow();
@@ -171,10 +152,6 @@ public class JobTraceEntry {
     // //////////////////////////////////////////////////////////
     // / Getters / Setters
     // //////////////////////////////////////////////////////////
-
-    public String getConnectionName() {
-        return connectionName;
-    }
 
     public int getId() {
         return id;
@@ -373,5 +350,67 @@ public class JobTraceEntry {
         }
 
         return timestampFormatter.format(timestampValue);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 17;
+        int result = 1;
+        result = prime * result + callLevel;
+        result = prime * result + callerCallLevel;
+        result = prime * result + callerHLLStmtNbr;
+        result = prime * result + ((callerProcedureName == null) ? 0 : callerProcedureName.hashCode());
+        result = prime * result + ((eventSubType == null) ? 0 : eventSubType.hashCode());
+        result = prime * result + hllStmtNbr;
+        result = prime * result + id;
+        result = prime * result + ((moduleLibrary == null) ? 0 : moduleLibrary.hashCode());
+        result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
+        result = prime * result + ((nanosSinceStarted == null) ? 0 : nanosSinceStarted.hashCode());
+        result = prime * result + ((procedureName == null) ? 0 : procedureName.hashCode());
+        result = prime * result + ((programLibrary == null) ? 0 : programLibrary.hashCode());
+        result = prime * result + ((programName == null) ? 0 : programName.hashCode());
+        result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        JobTraceEntry other = (JobTraceEntry)obj;
+        if (callLevel != other.callLevel) return false;
+        if (callerCallLevel != other.callerCallLevel) return false;
+        if (callerHLLStmtNbr != other.callerHLLStmtNbr) return false;
+        if (callerProcedureName == null) {
+            if (other.callerProcedureName != null) return false;
+        } else if (!callerProcedureName.equals(other.callerProcedureName)) return false;
+        if (eventSubType == null) {
+            if (other.eventSubType != null) return false;
+        } else if (!eventSubType.equals(other.eventSubType)) return false;
+        if (hllStmtNbr != other.hllStmtNbr) return false;
+        if (id != other.id) return false;
+        if (moduleLibrary == null) {
+            if (other.moduleLibrary != null) return false;
+        } else if (!moduleLibrary.equals(other.moduleLibrary)) return false;
+        if (moduleName == null) {
+            if (other.moduleName != null) return false;
+        } else if (!moduleName.equals(other.moduleName)) return false;
+        if (nanosSinceStarted == null) {
+            if (other.nanosSinceStarted != null) return false;
+        } else if (!nanosSinceStarted.equals(other.nanosSinceStarted)) return false;
+        if (procedureName == null) {
+            if (other.procedureName != null) return false;
+        } else if (!procedureName.equals(other.procedureName)) return false;
+        if (programLibrary == null) {
+            if (other.programLibrary != null) return false;
+        } else if (!programLibrary.equals(other.programLibrary)) return false;
+        if (programName == null) {
+            if (other.programName != null) return false;
+        } else if (!programName.equals(other.programName)) return false;
+        if (timestamp == null) {
+            if (other.timestamp != null) return false;
+        } else if (!timestamp.equals(other.timestamp)) return false;
+        return true;
     }
 }
