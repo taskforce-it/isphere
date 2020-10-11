@@ -14,28 +14,30 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.ui.actions.AbstractJobTraceEntryAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcEnterAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcExitAction;
 
 public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
+    private Menu parentMenu;
     private TableViewer tableViewer;
-    private Menu menuTableMembers;
-    private Shell shell;
-    private MenuItem jumpToProcEnterMenuItem;
-    private MenuItem jumpToProcExitMenuItem;
 
-    public JobTraceEntryMenuAdapter(Menu menuTableMembers, TableViewer tableViewer) {
+    private Shell shell;
+
+    private MenuItem menuItemJumpToProcEnter;
+    private MenuItem menuItemJumpToProcExit;
+
+    public JobTraceEntryMenuAdapter(Menu parentMenu, TableViewer tableViewer) {
+        this.parentMenu = parentMenu;
         this.tableViewer = tableViewer;
+
         this.shell = tableViewer.getControl().getShell();
-        this.menuTableMembers = menuTableMembers;
     }
 
     @Override
@@ -45,8 +47,8 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
-        dispose(jumpToProcEnterMenuItem);
-        dispose(jumpToProcExitMenuItem);
+        dispose(menuItemJumpToProcEnter);
+        dispose(menuItemJumpToProcExit);
     }
 
     private int selectedItemsCount() {
@@ -70,7 +72,7 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     private void dispose(MenuItem menuItem) {
 
-        if (!((menuItem == null) || (menuItem.isDisposed()))) {
+        if (menuItem != null && !menuItem.isDisposed()) {
             menuItem.dispose();
         }
     }
@@ -80,34 +82,22 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
         if (selectedItemsCount() == 1) {
 
             if (getSelectedItem().isProcExit()) {
-                jumpToProcEnterMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-                final JumpToProcEnterAction jumpToProcEnterAction = new JumpToProcEnterAction(shell);
-                jumpToProcEnterMenuItem.setText(jumpToProcEnterAction.getText());
-                jumpToProcEnterMenuItem.setImage(jumpToProcEnterAction.getImage());
-                jumpToProcEnterMenuItem.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        jumpToProcEnterAction.setTableViewer(tableViewer);
-                        jumpToProcEnterAction.setSelectedItems(getSelection());
-                        jumpToProcEnterAction.run();
-                    }
-                });
+                menuItemJumpToProcEnter = createMenuItem(new JumpToProcEnterAction(shell, tableViewer));
             }
 
             if (getSelectedItem().isProcEntry()) {
-                jumpToProcExitMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-                final JumpToProcExitAction jumpToProcExitAction = new JumpToProcExitAction(shell);
-                jumpToProcExitMenuItem.setText(jumpToProcExitAction.getText());
-                jumpToProcExitMenuItem.setImage(jumpToProcExitAction.getImage());
-                jumpToProcExitMenuItem.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        jumpToProcExitAction.setTableViewer(tableViewer);
-                        jumpToProcExitAction.setSelectedItems(getSelection());
-                        jumpToProcExitAction.run();
-                    }
-                });
+                menuItemJumpToProcExit = createMenuItem(new JumpToProcExitAction(shell, tableViewer));
             }
         }
+    }
+
+    private MenuItem createMenuItem(AbstractJobTraceEntryAction action) {
+
+        MenuItem menuItem = new MenuItem(parentMenu, SWT.NONE);
+        menuItem.setText(action.getText());
+        menuItem.setImage(action.getImage());
+        menuItem.addSelectionListener(new ActionSelectionListener(action));
+
+        return menuItem;
     }
 }

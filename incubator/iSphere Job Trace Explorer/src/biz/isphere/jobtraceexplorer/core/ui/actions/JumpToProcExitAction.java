@@ -8,42 +8,26 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.actions;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 
-public class JumpToProcExitAction extends Action {
+public class JumpToProcExitAction extends AbstractJobTraceEntryAction {
 
     private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_JUMP_PROC_EXIT;
 
-    private Shell shell;
-    private TableViewer tableViewer;
-    private JobTraceEntry selectedItem;
+    public JumpToProcExitAction(Shell shell, TableViewer tableViewer) {
+        super(shell, tableViewer);
 
-    public JumpToProcExitAction(Shell shell) {
-        super(Messages.MenuItem_Jump_to_proc_exit);
-
-        this.shell = shell;
-
+        setText(Messages.MenuItem_Jump_to_proc_exit);
         setImageDescriptor(ISphereJobTraceExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
     public Image getImage() {
         return ISphereJobTraceExplorerCorePlugin.getDefault().getImage(IMAGE);
-    }
-
-    public void setTableViewer(TableViewer tableViewer) {
-        this.tableViewer = tableViewer;
-    }
-
-    public void setSelectedItems(StructuredSelection selection) {
-        this.selectedItem = (JobTraceEntry)selection.getFirstElement();
     }
 
     @Override
@@ -53,26 +37,21 @@ public class JumpToProcExitAction extends Action {
 
     private void performJumpToProcExit() {
 
-        int index = tableViewer.getTable().getSelectionIndex();
-        JobTraceEntry selectedItem = getElementAt(index);
-        int callLevel = selectedItem.getCallLevel();
+        int index = getSelectionIndex();
+        if (!isValidIndex(index)) {
+            return;
+        }
+
+        int callLevel = getElementAt(index).getCallLevel();
 
         index++;
 
-        while (index < tableViewer.getTable().getItemCount() && callLevel != getElementAt(index).getCallLevel()) {
+        while (isValidIndex(index) && callLevel != getElementAt(index).getCallLevel()) {
             index++;
         }
 
-        if (index >= 0 && index < tableViewer.getTable().getItemCount()) {
-            tableViewer.setSelection(new StructuredSelection(getElementAt(index)));
-            tableViewer.getTable().setTopIndex(index);
+        if (isValidIndex(index)) {
+            setPositionTo(index);
         }
-    }
-
-    private JobTraceEntry getElementAt(int index) {
-
-        JobTraceEntry jobTraceEntry = (JobTraceEntry)tableViewer.getElementAt(index);
-
-        return jobTraceEntry;
     }
 }
