@@ -68,6 +68,8 @@ public class Messages extends NLS {
     // Actions
     public static String Action_ReloadEntries;
     public static String JobTraceExplorerView_OpenJobTraceSession;
+    public static String MenuItem_Jump_to_proc_enter;
+    public static String MenuItem_Jump_to_proc_exit;
 
     // Dialog titles
     public static String MessageDialog_Open_Job_Trace_Session_Title;

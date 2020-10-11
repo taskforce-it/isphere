@@ -310,16 +310,20 @@ public class JobTraceEntry {
         return "?"; //$NON-NLS-1$
     }
 
+    public boolean isProcEntry() {
+        return ColumnsDAO.EVENT_SUB_TYPE_PRCENTRY.equals(eventSubType);
+    }
+
+    public boolean isProcExit() {
+        return ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(eventSubType);
+    }
+
     private String eventSubTypeToExt(String eventSubType) {
-        if (ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(eventSubType)) {
+        if (isProcExit()) {
             return Messages.Returned_to;
         } else {
             return Messages.Called_by;
         }
-    }
-
-    private boolean isProcedureExit(boolean enabled) {
-        return enabled && ColumnsDAO.EVENT_SUB_TYPE_PRCEXIT.equals(getEventSubType());
     }
 
     private String nullSave(String value) {

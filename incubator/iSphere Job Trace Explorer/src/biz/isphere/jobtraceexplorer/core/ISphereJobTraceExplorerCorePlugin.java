@@ -16,6 +16,8 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     private static final String ICON_PATH = "icons/";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_OPEN_JOB_TRACE_SESSION = "open_jobtrace_session.png";
+    public static final String IMAGE_JUMP_PROC_ENTER = "jump_proc_enter.png";
+    public static final String IMAGE_JUMP_PROC_EXIT = "jump_proc_exit.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$
@@ -66,6 +68,9 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     protected void initializeImageRegistry(ImageRegistry reg) {
         super.initializeImageRegistry(reg);
         reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
+        reg.put(IMAGE_OPEN_JOB_TRACE_SESSION, getImageDescriptor(IMAGE_OPEN_JOB_TRACE_SESSION));
+        reg.put(IMAGE_JUMP_PROC_ENTER, getImageDescriptor(IMAGE_JUMP_PROC_ENTER));
+        reg.put(IMAGE_JUMP_PROC_EXIT, getImageDescriptor(IMAGE_JUMP_PROC_EXIT));
     }
 
     /**
