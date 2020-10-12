@@ -78,7 +78,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private TableViewer tableViewer;
     private JobTraceEntries data;
     private SqlEditor sqlEditor;
-    private String filterClause;
+    private String filterWhereClause;
     private String selectClause;
 
     public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
@@ -91,7 +91,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
         this.loadJobTraceEntriesSelectionListener = loadJobTraceEntriesSelectionListener;
-        this.filterClause = null;
+        this.filterWhereClause = null;
         this.selectClause = null;
 
         // Preferences.getInstance().addPropertyChangeListener(this);
@@ -118,7 +118,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             sqlEditor = WidgetFactory.createSqlEditor(getContainer(), getClass().getSimpleName(), getDialogSettingsManager());
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJobTraceEntriesSelectionListener);
-            sqlEditor.setWhereClause(getFilterClause());
+            sqlEditor.setWhereClause(getFilterWhereClause());
             GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.heightHint = 120;
             sqlEditor.setLayoutData(gd);
@@ -168,20 +168,12 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
     }
 
-    protected void setSelectClause(String whereClause) {
-        this.selectClause = whereClause;
-    }
-
-    public String getSelectClause() {
-        return selectClause;
-    }
-
     private void setFilterClause(String whereClause) {
-        this.filterClause = whereClause;
+        this.filterWhereClause = whereClause;
     }
 
-    public String getFilterClause() {
-        return filterClause;
+    public String getFilterWhereClause() {
+        return filterWhereClause;
     }
 
     public void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
@@ -209,7 +201,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     private boolean hasWhereClause() {
 
-        if (!StringHelper.isNullOrEmpty(filterClause) && filterClause.length() > 0) {
+        if (!StringHelper.isNullOrEmpty(filterWhereClause) && filterWhereClause.length() > 0) {
             return true;
         }
 
@@ -294,7 +286,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     protected abstract TableViewer createTableViewer(Composite container);
 
-    public abstract void openJobTraceSession(JobTraceExplorerView view, String whereClause, String filterWhereClause) throws Exception;
+    public abstract void openJobTraceSession(JobTraceExplorerView view, String filterWhereClause) throws Exception;
 
     public abstract void filterJobTraceSession(JobTraceExplorerView view, String whereClause) throws Exception;
 

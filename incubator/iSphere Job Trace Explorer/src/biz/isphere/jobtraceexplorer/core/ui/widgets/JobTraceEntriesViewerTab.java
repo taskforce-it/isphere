@@ -49,7 +49,6 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
         this.jobTraceSession = jobTraceSession;
 
-        setSelectClause(null);
         setSqlEditorVisibility(false);
 
         initializeComponents();
@@ -119,21 +118,21 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         setInputData(null);
     }
 
-    public void openJobTraceSession(final JobTraceExplorerView view, String whereClause, String filterWhereClause) throws Exception {
+    public void openJobTraceSession(final JobTraceExplorerView view, String filterWhereClause) throws Exception {
 
         tableViewer.getTable().setEnabled(false);
 
         setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(view, jobTraceSession, whereClause);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(view, jobTraceSession);
         loadJobTraceDataJob.schedule();
     }
 
-    public void filterJobTraceSession(final JobTraceExplorerView view, String whereClause) throws Exception {
+    public void filterJobTraceSession(final JobTraceExplorerView view, String filterWhereClause) throws Exception {
 
         setSqlEditorEnabled(false);
 
-        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(view, whereClause);
+        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(view, filterWhereClause);
         filterJobTraceDataJob.schedule();
     }
 
@@ -145,15 +144,13 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
         private JobTraceExplorerView view;
         private JobTraceSession jobTraceSession;
-        private String whereClause;
         private String filterWhereClause;
 
-        public OpenJobTraceSessionJob(JobTraceExplorerView view, JobTraceSession jobTraceSession, String whereClause) {
+        public OpenJobTraceSessionJob(JobTraceExplorerView view, JobTraceSession jobTraceSession) {
             super(Messages.bind(Messages.Status_Loading_job_trace_entries_of_session_A, jobTraceSession.getQualifiedName()));
 
             this.view = view;
             this.jobTraceSession = jobTraceSession;
-            this.whereClause = whereClause;
             this.filterWhereClause = ""; // filterWhereClause;
         }
 
@@ -162,7 +159,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
             try {
 
                 JobTraceDAO jobTraceDAO = new JobTraceDAO(jobTraceSession);
-                final JobTraceEntries data = jobTraceDAO.load(whereClause, monitor);
+                final JobTraceEntries data = jobTraceDAO.load(monitor);
                 data.applyFilter(filterWhereClause);
 
                 IBMiMessage[] messages = data.getMessages();

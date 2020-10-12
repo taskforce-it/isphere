@@ -282,25 +282,23 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
     private void performLoadJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
 
-        String initialWhereClause = tabItem.getSelectClause();
-        String filterWhereClause = tabItem.getFilterClause();
+        String filterWhereClause = tabItem.getFilterWhereClause();
 
-        tabItem.validateWhereClause(getViewSite().getShell(), initialWhereClause);
         tabItem.validateWhereClause(getViewSite().getShell(), filterWhereClause);
 
         tabItem.closeJobTraceSession();
         updateStatusLine();
-        tabItem.openJobTraceSession(this, initialWhereClause, filterWhereClause);
+        tabItem.openJobTraceSession(this, filterWhereClause);
     }
 
     private void performFilterJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
 
-        tabItem.validateWhereClause(getViewSite().getShell(), tabItem.getFilterClause());
+        tabItem.validateWhereClause(getViewSite().getShell(), tabItem.getFilterWhereClause());
 
         tabItem.storeSqlEditorHistory();
         refreshSqlEditorHistory();
 
-        tabItem.filterJobTraceSession(this, tabItem.getFilterClause());
+        tabItem.filterJobTraceSession(this, tabItem.getFilterWhereClause());
     }
 
     private void refreshSqlEditorHistory() {

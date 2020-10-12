@@ -120,7 +120,7 @@ public class JobTraceDAO {
         this.jobTraceSession = jobTraceSession;
     }
 
-    public JobTraceEntries load(String whereClause, IProgressMonitor monitor) {
+    public JobTraceEntries load(IProgressMonitor monitor) {
 
         JobTraceEntries jobTraceEntries = new JobTraceEntries(jobTraceSession);
 
@@ -150,7 +150,7 @@ public class JobTraceDAO {
             // TODO: SQL WHERE clause
             int numRowsAvailable = getNumRowsAvailable(sqlHelper, "");
 
-            preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(whereClause));
+            preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(jobTraceSession.getWhereClause()));
 
             monitor.setTaskName(Messages.Status_Executing_query);
 
