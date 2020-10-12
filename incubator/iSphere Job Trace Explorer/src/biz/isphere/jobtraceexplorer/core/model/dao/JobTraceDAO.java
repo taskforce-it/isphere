@@ -297,6 +297,7 @@ public class JobTraceDAO {
         jobTraceEntry.setProgramName(resultSet.getString(ColumnsDAO.PGM_NAME.index()));
         jobTraceEntry.setProgramLibrary(resultSet.getString(ColumnsDAO.PGM_LIB.index()));
         jobTraceEntry.setModuleName(resultSet.getString(ColumnsDAO.MODULE_NAME.index()));
+        jobTraceEntry.setModuleLibrary(resultSet.getString(ColumnsDAO.MODULE_LIBRARY.index()));
         jobTraceEntry.setHLLStmtNbr(resultSet.getInt(ColumnsDAO.HLL_STMT_NBR.index()));
         jobTraceEntry.setProcedureName(resultSet.getString(ColumnsDAO.PROC_NAME.index()));
         jobTraceEntry.setCallLevel(resultSet.getInt(ColumnsDAO.CALL_LEVEL.index()));

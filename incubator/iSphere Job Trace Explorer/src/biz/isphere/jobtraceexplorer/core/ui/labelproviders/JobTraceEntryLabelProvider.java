@@ -105,6 +105,8 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
             return jobTraceEntry.getValueForUi(ColumnsDAO.PGM_LIB);
         case MODULE_NAME:
             return jobTraceEntry.getValueForUi(ColumnsDAO.MODULE_NAME);
+        case MODULE_LIBRARY:
+            return jobTraceEntry.getValueForUi(ColumnsDAO.MODULE_LIBRARY);
         case HLL_STMT_NBR:
             return jobTraceEntry.getValueForUi(ColumnsDAO.HLL_STMT_NBR);
         case PROC_NAME:

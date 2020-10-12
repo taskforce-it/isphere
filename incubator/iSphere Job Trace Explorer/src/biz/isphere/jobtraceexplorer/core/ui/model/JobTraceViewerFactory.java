@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.popupmenus.JobTraceEntryMenuAdapter;
@@ -41,6 +42,7 @@ public class JobTraceViewerFactory {
         JobTraceEntryColumnUI.PGM_NAME,
         JobTraceEntryColumnUI.PGM_LIB,
         JobTraceEntryColumnUI.MODULE_NAME, 
+        JobTraceEntryColumnUI.MODULE_LIBRARY, 
         JobTraceEntryColumnUI.HLL_STMT_NBR,
         JobTraceEntryColumnUI.PROC_NAME, 
         JobTraceEntryColumnUI.CALL_LEVEL,
@@ -53,6 +55,7 @@ public class JobTraceViewerFactory {
 
     private static final String NAME = "NAME";
     private static final String DEFAULT_WIDTH = "DEFAULT_WIDTH";
+    private static final String SYSTEM_COLUMN_INDEX = "COLUMN_INDEX";
 
     private Set<String> columnNames;
     private JobTraceEntryColumnUI[] fieldIdMapping;
@@ -63,6 +66,14 @@ public class JobTraceViewerFactory {
         this.fieldIdMapping = new JobTraceEntryColumnUI[columnNames.size()];
     }
 
+    /**
+     * Returns the column name of a table column of a table viewer produced by
+     * {@link JobTraceViewerFactory}.
+     * 
+     * @param tableColumn - table column of a {@link TableViewer} produced by
+     *        {@link JobTraceViewerFactory}
+     * @return column index
+     */
     public static String getColumnName(TableColumn column) {
 
         if (column == null) {
@@ -77,6 +88,14 @@ public class JobTraceViewerFactory {
         return name;
     }
 
+    /**
+     * Returns the default column size of a table column of a table viewer
+     * produced by {@link JobTraceViewerFactory}.
+     * 
+     * @param tableColumn - table column of a {@link TableViewer} produced by
+     *        {@link JobTraceViewerFactory}
+     * @return column index
+     */
     public static int getDefaultColumnSize(TableColumn column) {
 
         if (column == null) {
@@ -89,6 +108,25 @@ public class JobTraceViewerFactory {
         }
 
         return width.intValue();
+    }
+
+    /**
+     * Returns the column index for accessing row data
+     * {@link JobTraceEntry#getRow()}. The associated table viewer must have
+     * been produced by {@link JobTraceViewerFactory}.
+     * 
+     * @param tableColumn - table column of a {@link TableViewer} produced in
+     *        {@link JobTraceViewerFactory}
+     * @return column index
+     */
+    public static int getColumnIndex(TableColumn tableColumn) {
+
+        Object columnIndex = tableColumn.getData(SYSTEM_COLUMN_INDEX);
+        if (columnIndex instanceof Integer) {
+            return (Integer)columnIndex;
+        }
+
+        return -1;
     }
 
     private Set<String> getColumnNames(Set<JobTraceEntryColumnUI> columnNamesEnum) {
@@ -121,6 +159,7 @@ public class JobTraceViewerFactory {
             if (columnNames.contains(column.getName())) {
                 fieldIdMapping[i] = column.getColumnDef();
                 newColumn = dialogSettingsManager.createResizableTableColumn(table, column.getStyle(), column.getName(), column.getWidth());
+                newColumn.setData(SYSTEM_COLUMN_INDEX, new Integer(column.getColumnIndex()));
                 newColumn.setText(column.getColumnHeading());
                 newColumn.setToolTipText(column.getTooltipText());
                 newColumn.setMoveable(column.isMovebale());
@@ -152,6 +191,7 @@ public class JobTraceViewerFactory {
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PGM_NAME));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PGM_LIB));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MODULE_NAME));
+        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MODULE_LIBRARY));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.HLL_STMT_NBR));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PROC_NAME));
 

@@ -50,6 +50,10 @@ public class JobTraceEntryColumn {
         return columnDef.style();
     }
 
+    public int getColumnIndex() {
+        return columnDef.columnIndex();
+    }
+
     public String getColumnHeading() {
         return notNull(columnDef.columnText());
     }
