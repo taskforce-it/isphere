@@ -64,6 +64,8 @@ public class Messages extends NLS {
     public static String Status_Preparing_to_load_job_trace_entries;
     public static String Status_Executing_query;
     public static String Status_Receiving_job_trace_entries;
+    public static String Status_Searching_for_procedure_exit;
+    public static String Status_Searching_for_procedure_entry;
 
     // Actions
     public static String Action_ReloadEntries;

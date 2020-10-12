@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.HighlightedAttribute;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
@@ -63,7 +64,7 @@ public class JobTraceEntryActionHandler {
 
         final int itemCount = getItemCountUI();
 
-        new Job("handleJumpToProcEntry") {
+        new Job(Messages.Status_Searching_for_procedure_exit) {
 
             @Override
             protected IStatus run(IProgressMonitor monitor) {
@@ -71,7 +72,7 @@ public class JobTraceEntryActionHandler {
                 final int indexPosTo = findProcEntry(index, itemCount, monitor);
 
                 if (isValidIndex(indexPosTo, itemCount)) {
-                    new UIJob(getShell().getDisplay(), "handleJumpToProcEntryUI") {
+                    new UIJob(getShell().getDisplay(), Messages.Status_Searching_for_procedure_exit) {
 
                         @Override
                         public IStatus runInUIThread(IProgressMonitor arg0) {
@@ -109,7 +110,7 @@ public class JobTraceEntryActionHandler {
 
         final int itemCount = getItemCountUI();
 
-        new Job("handleJumpToProcExit") {
+        new Job(Messages.Status_Searching_for_procedure_entry) {
 
             @Override
             protected IStatus run(IProgressMonitor monitor) {
@@ -117,7 +118,7 @@ public class JobTraceEntryActionHandler {
                 final int indexPosTo = findProcExit(index, itemCount, monitor);
 
                 if (isValidIndex(indexPosTo, itemCount)) {
-                    new UIJob(getShell().getDisplay(), "handleJumpToProcExitUI") {
+                    new UIJob(getShell().getDisplay(), Messages.Status_Searching_for_procedure_entry) {
 
                         @Override
                         public IStatus runInUIThread(IProgressMonitor arg0) {
@@ -205,40 +206,30 @@ public class JobTraceEntryActionHandler {
     // //////////////////////////////////////////////////////////
 
     private int findProcExit(int index, int itemCount, IProgressMonitor monitor) {
-
-        try {
-
-            beginTaskChecked(monitor, "findProcExit", itemCount);
-
-            int callLevel = getElementAt(index, itemCount).getCallLevel();
-
-            index++;
-
-            while (isValidIndex(index, itemCount) && callLevel != getElementAt(index, itemCount).getCallLevel()) {
-                monitorWorkedChecked(monitor, 1);
-                index++;
-            }
-
-        } finally {
-            monitorDoneChecked(monitor);
-        }
-
-        return index;
+        return findProcEntryOrExit(index, itemCount, 1, monitor);
     }
 
     private int findProcEntry(int index, int itemCount, IProgressMonitor monitor) {
+        return findProcEntryOrExit(index, itemCount, -1, monitor);
+    }
+
+    private int findProcEntryOrExit(int index, int itemCount, int direction, IProgressMonitor monitor) {
 
         try {
 
-            beginTaskChecked(monitor, "findProcExit", itemCount);
+            beginTaskChecked(monitor, "", index); //$NON-NLS-1$
 
             int callLevel = getElementAt(index, itemCount).getCallLevel();
 
-            index--;
+            index = index + direction;
 
+            int count = 0;
             while (isValidIndex(index, itemCount) && callLevel != getElementAt(index, itemCount).getCallLevel()) {
-                monitorWorkedChecked(monitor, 1);
-                index--;
+                if (count % 500 == 0) {
+                    monitorWorkedChecked(monitor, 500);
+                }
+                index = index + direction;
+                count++;
             }
 
         } finally {
