@@ -56,6 +56,8 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
         if (jobTraceEntry.isHighlighted()) {
             return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+        } else if (jobTraceEntry.getParent().isHighlighted(index, jobTraceEntry.getValueForUi(index))) {
+            return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
         }
 
         return null;

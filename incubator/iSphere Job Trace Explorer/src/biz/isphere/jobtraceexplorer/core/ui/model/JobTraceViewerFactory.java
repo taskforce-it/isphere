@@ -16,11 +16,16 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
@@ -53,9 +58,8 @@ public class JobTraceViewerFactory {
     };
     // @formatter:on
 
-    private static final String NAME = "NAME";
-    private static final String DEFAULT_WIDTH = "DEFAULT_WIDTH";
-    private static final String SYSTEM_COLUMN_INDEX = "COLUMN_INDEX";
+    private static final String COLUMN_NAME = "COLUMN_NAME";
+    private static final String MOUSE_CURSOR_LOCATION = "MOUSE_CURSOR_LOCATION";
 
     private Set<String> columnNames;
     private JobTraceEntryColumnUI[] fieldIdMapping;
@@ -67,50 +71,6 @@ public class JobTraceViewerFactory {
     }
 
     /**
-     * Returns the column name of a table column of a table viewer produced by
-     * {@link JobTraceViewerFactory}.
-     * 
-     * @param tableColumn - table column of a {@link TableViewer} produced by
-     *        {@link JobTraceViewerFactory}
-     * @return column index
-     */
-    public static String getColumnName(TableColumn column) {
-
-        if (column == null) {
-            return null;
-        }
-
-        String name = (String)column.getData(NAME);
-        if (name == null) {
-            return null;
-        }
-
-        return name;
-    }
-
-    /**
-     * Returns the default column size of a table column of a table viewer
-     * produced by {@link JobTraceViewerFactory}.
-     * 
-     * @param tableColumn - table column of a {@link TableViewer} produced by
-     *        {@link JobTraceViewerFactory}
-     * @return column index
-     */
-    public static int getDefaultColumnSize(TableColumn column) {
-
-        if (column == null) {
-            return -1;
-        }
-
-        Integer width = (Integer)column.getData(DEFAULT_WIDTH);
-        if (width == null) {
-            return -1;
-        }
-
-        return width.intValue();
-    }
-
-    /**
      * Returns the column index for accessing row data
      * {@link JobTraceEntry#getRow()}. The associated table viewer must have
      * been produced by {@link JobTraceViewerFactory}.
@@ -119,14 +79,24 @@ public class JobTraceViewerFactory {
      *        {@link JobTraceViewerFactory}
      * @return column index
      */
-    public static int getColumnIndex(TableColumn tableColumn) {
+    public static String getColumnName(TableColumn tableColumn) {
 
-        Object columnIndex = tableColumn.getData(SYSTEM_COLUMN_INDEX);
-        if (columnIndex instanceof Integer) {
-            return (Integer)columnIndex;
+        Object columnName = tableColumn.getData(COLUMN_NAME);
+        if (columnName instanceof String) {
+            return (String)columnName;
         }
 
-        return -1;
+        return null;
+    }
+
+    public static MouseCursorLocation getMouseCursorLocation(TableViewer tableViewer) {
+
+        Object object = tableViewer.getTable().getData(MOUSE_CURSOR_LOCATION);
+        if (object instanceof MouseCursorLocation) {
+            return (MouseCursorLocation)object;
+        }
+
+        return null;
     }
 
     private Set<String> getColumnNames(Set<JobTraceEntryColumnUI> columnNamesEnum) {
@@ -143,6 +113,7 @@ public class JobTraceViewerFactory {
     public TableViewer createTableViewer(Composite container, DialogSettingsManager dialogSettingsManager) {
 
         TableViewer tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI | SWT.READ_ONLY | SWT.VIRTUAL);
+        tableViewer.getTable().addListener(SWT.MouseDown, new MouseLocationListener());
         tableViewer.setUseHashlookup(true);
         Table table = tableViewer.getTable();
         table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -159,7 +130,7 @@ public class JobTraceViewerFactory {
             if (columnNames.contains(column.getName())) {
                 fieldIdMapping[i] = column.getColumnDef();
                 newColumn = dialogSettingsManager.createResizableTableColumn(table, column.getStyle(), column.getName(), column.getWidth());
-                newColumn.setData(SYSTEM_COLUMN_INDEX, new Integer(column.getColumnIndex()));
+                newColumn.setData(COLUMN_NAME, column.getName());
                 newColumn.setText(column.getColumnHeading());
                 newColumn.setToolTipText(column.getTooltipText());
                 newColumn.setMoveable(column.isMovebale());
@@ -212,5 +183,27 @@ public class JobTraceViewerFactory {
         List<JobTraceEntryColumn> sortedColumns = Arrays.asList(journalEntryColumns);
 
         return sortedColumns.toArray(new JobTraceEntryColumn[sortedColumns.size()]);
+    }
+
+    private class MouseLocationListener implements Listener {
+        public void handleEvent(Event event) {
+            Point pt = new Point(event.x, event.y);
+            Table table = (Table)event.widget;
+            TableItem item = table.getItem(pt);
+            if (item == null) return;
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                Rectangle rect = item.getBounds(i);
+                if (rect.contains(pt)) {
+                    int index = table.indexOf(item);
+                    JobTraceEntry jobTraceEntry = (JobTraceEntry)table.getItem(index).getData();
+                    String columnName = JobTraceViewerFactory.getColumnName(table.getColumn(i));
+                    if (columnName != null) {
+                        table.setData(MOUSE_CURSOR_LOCATION, new MouseCursorLocation(jobTraceEntry, columnName, i));
+                    } else {
+                        table.setData(MOUSE_CURSOR_LOCATION, null);
+                    }
+                }
+            }
+        }
     }
 }

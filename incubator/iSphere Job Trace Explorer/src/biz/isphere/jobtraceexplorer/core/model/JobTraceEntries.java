@@ -26,9 +26,9 @@ public class JobTraceEntries {
     private transient List<JobTraceEntry> filteredJobTraceEntries;
     private boolean isOverflow;
     private int numAvailableRows;
-
     private List<IBMiMessage> messages;
     private boolean isCanceled;
+    private HighlightedAttributes highlightedAttributes;
 
     public JobTraceEntries() {
         this(null, 0);
@@ -41,6 +41,21 @@ public class JobTraceEntries {
         this.filteredJobTraceEntries = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
+        this.messages = null;
+        this.isCanceled = false;
+        this.highlightedAttributes = new HighlightedAttributes();
+    }
+
+    public void addHighlightedAttribute(HighlightedAttribute attribute) {
+        highlightedAttributes.add(attribute);
+    }
+
+    public void removeHighlightedAttribute(HighlightedAttribute attribute) {
+        highlightedAttributes.remove(attribute);
+    }
+
+    public boolean isHighlighted(int index, String value) {
+        return highlightedAttributes.isHighlighted(index, value);
     }
 
     public boolean isSameSession(JobTraceSession jobTraceSession) {
@@ -103,6 +118,7 @@ public class JobTraceEntries {
         }
 
         getItems().add(jobTraceEntry);
+        jobTraceEntry.setParent(this);
         jobTraceEntry.setId(jobTraceEntries.size());
     }
 

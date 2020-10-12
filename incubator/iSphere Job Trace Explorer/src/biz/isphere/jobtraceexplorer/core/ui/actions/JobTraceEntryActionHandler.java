@@ -11,13 +11,22 @@ package biz.isphere.jobtraceexplorer.core.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.progress.UIJob;
 
+import biz.isphere.jobtraceexplorer.core.model.HighlightedAttribute;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
+import biz.isphere.jobtraceexplorer.core.ui.model.MouseCursorLocation;
 
 /**
  * This class is a handler for Job Trace Entry actions.
@@ -35,7 +44,7 @@ public class JobTraceEntryActionHandler {
 
     /**
      * Jumps from a selected procedure <b>EXIT</b> entry to the associated
-     * procedure <b>ENTER</b> entry.
+     * procedure <b>ENTRY</b> entry.
      * <p>
      * 
      * <pre>
@@ -45,22 +54,42 @@ public class JobTraceEntryActionHandler {
      * @see ColumnsDAO#EVENT_SUB_TYPE_PRCENTRY
      * @see ColumnsDAO#EVENT_SUB_TYPE_PRCEXIT
      */
-    public void handleJumpToProcEnter() {
+    public void handleJumpToProcEntry() {
 
-        int index = getSelectionIndex();
-        if (!isValidIndex(index)) {
+        final int index = getSelectionIndexUI();
+        if (!isValidIndexUI(index)) {
             return;
         }
 
-        index = findProcEnterEntry(index);
+        final int itemCount = getItemCountUI();
 
-        if (isValidIndex(index)) {
-            setPositionTo(index);
-        }
+        new Job("handleJumpToProcEntry") {
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+
+                final int indexPosTo = findProcEntry(index, itemCount, monitor);
+
+                if (isValidIndex(indexPosTo, itemCount)) {
+                    new UIJob(getShell().getDisplay(), "handleJumpToProcEntryUI") {
+
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor arg0) {
+
+                            setPositionToUI(indexPosTo);
+
+                            return Status.OK_STATUS;
+                        }
+                    }.schedule();
+                }
+
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
     /**
-     * Jumps from a selected procedure <b>ENTER</b> entry to the associated
+     * Jumps from a selected procedure <b>ENTRY</b> entry to the associated
      * procedure <b>EXIT</b> entry.
      * <p>
      * 
@@ -73,31 +102,55 @@ public class JobTraceEntryActionHandler {
      */
     public void handleJumpToProcExit() {
 
-        int index = getSelectionIndex();
-        if (!isValidIndex(index)) {
+        final int index = getSelectionIndexUI();
+        if (!isValidIndexUI(index)) {
             return;
         }
 
-        index = findProcExitEntry(index);
+        final int itemCount = getItemCountUI();
 
-        if (isValidIndex(index)) {
-            setPositionTo(index);
-        }
+        new Job("handleJumpToProcExit") {
+
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+
+                final int indexPosTo = findProcExit(index, itemCount, monitor);
+
+                if (isValidIndex(indexPosTo, itemCount)) {
+                    new UIJob(getShell().getDisplay(), "handleJumpToProcExitUI") {
+
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor arg0) {
+
+                            setPositionToUI(indexPosTo);
+
+                            return Status.OK_STATUS;
+                        }
+                    }.schedule();
+                }
+
+                return Status.OK_STATUS;
+            }
+        }.schedule();
     }
 
+    /**
+     * Highlights the selected procedure, starting at the procedure <b>ENTRY</b>
+     * entry until the procedure <b>EXIT</b> entry.
+     */
     public void handleHighlightProc() {
 
-        int startIndex = getSelectionIndex();
-        if (!isValidIndex(startIndex)) {
+        int startIndex = getSelectionIndexUI();
+        if (!isValidIndexUI(startIndex)) {
             return;
         }
 
         int endIndex = -1;
-        JobTraceEntry jobTraceEntry = getElementAt(startIndex);
-        if (jobTraceEntry.isProcEnter()) {
-            endIndex = findProcExitEntry(startIndex);
+        JobTraceEntry jobTraceEntry = getElementAtUI(startIndex);
+        if (jobTraceEntry.isProcEntry()) {
+            endIndex = findProcExit(startIndex, getItemCountUI(), null);
         } else if (jobTraceEntry.isProcExit()) {
-            endIndex = findProcEnterEntry(startIndex);
+            endIndex = findProcEntry(startIndex, getItemCountUI(), null);
         } else {
             return;
         }
@@ -108,85 +161,157 @@ public class JobTraceEntryActionHandler {
         boolean highlighted = !jobTraceEntry.isHighlighted();
 
         List<JobTraceEntry> items = new ArrayList<JobTraceEntry>();
-        if (isValidIndex(index) && isValidIndex(endIndex)) {
+        if (isValidIndexUI(index) && isValidIndexUI(endIndex)) {
             while (index <= endIndex) {
-                jobTraceEntry = getElementAt(index);
+                jobTraceEntry = getElementAtUI(index);
                 jobTraceEntry.setHighlighted(highlighted);
                 items.add(jobTraceEntry);
                 index++;
             }
         }
 
-        updateElements(items.toArray(new JobTraceEntry[items.size()]));
+        updateElementsUI(items.toArray(new JobTraceEntry[items.size()]));
+    }
 
+    /**
+     * Highlights the selected row attribute.
+     */
+    public void handleHighlightRowAttribute() {
+
+        int startIndex = getSelectionIndexUI();
+        if (!isValidIndexUI(startIndex)) {
+            return;
+        }
+
+        MouseCursorLocation mouseCursorLocation = JobTraceViewerFactory.getMouseCursorLocation(tableViewer);
+        if (mouseCursorLocation != null) {
+            JobTraceEntry jobTraceEntry = mouseCursorLocation.getJobTraceEntry();
+            JobTraceEntries parent = jobTraceEntry.getParent();
+            int index = mouseCursorLocation.getColumnIndexUI();
+            String value = mouseCursorLocation.getJobTraceEntry().getValueForUi(index);
+            if (!parent.isHighlighted(mouseCursorLocation.getColumnIndexUI(), value)) {
+                parent.addHighlightedAttribute(new HighlightedAttribute(index, value));
+            } else {
+                parent.removeHighlightedAttribute(new HighlightedAttribute(index, value));
+            }
+
+            List<JobTraceEntry> items = jobTraceEntry.getParent().getItems();
+            updateElementsUI(items.toArray(new JobTraceEntry[items.size()]));
+        }
     }
 
     // //////////////////////////////////////////////////////////
     // / Private procedures
     // //////////////////////////////////////////////////////////
 
-    private int findProcEnterEntry(int index) {
+    private int findProcExit(int index, int itemCount, IProgressMonitor monitor) {
 
-        int callLevel = getElementAt(index).getCallLevel();
+        try {
 
-        index--;
+            beginTaskChecked(monitor, "findProcExit", itemCount);
 
-        while (isValidIndex(index) && callLevel != getElementAt(index).getCallLevel()) {
-            index--;
-        }
+            int callLevel = getElementAt(index, itemCount).getCallLevel();
 
-        return index;
-    }
-
-    private int findProcExitEntry(int index) {
-
-        int callLevel = getElementAt(index).getCallLevel();
-
-        index++;
-
-        while (isValidIndex(index) && callLevel != getElementAt(index).getCallLevel()) {
             index++;
+
+            while (isValidIndex(index, itemCount) && callLevel != getElementAt(index, itemCount).getCallLevel()) {
+                monitorWorkedChecked(monitor, 1);
+                index++;
+            }
+
+        } finally {
+            monitorDoneChecked(monitor);
         }
 
         return index;
     }
 
-    private int getItemCount() {
-        return getTable().getItemCount();
+    private int findProcEntry(int index, int itemCount, IProgressMonitor monitor) {
+
+        try {
+
+            beginTaskChecked(monitor, "findProcExit", itemCount);
+
+            int callLevel = getElementAt(index, itemCount).getCallLevel();
+
+            index--;
+
+            while (isValidIndex(index, itemCount) && callLevel != getElementAt(index, itemCount).getCallLevel()) {
+                monitorWorkedChecked(monitor, 1);
+                index--;
+            }
+
+        } finally {
+            monitorDoneChecked(monitor);
+        }
+
+        return index;
     }
 
-    private int getSelectionIndex() {
-        return getTable().getSelectionIndex();
+    private void beginTaskChecked(IProgressMonitor monitor, String taskName, int maxValue) {
+        if (monitor != null) {
+            monitor.beginTask(taskName, maxValue);
+        }
     }
 
-    private JobTraceEntry getElementAt(int index) {
+    private void monitorWorkedChecked(IProgressMonitor monitor, int worked) {
+        if (monitor != null) {
+            monitor.worked(worked);
+        }
+    }
 
-        if (isValidIndex(index)) {
-            return (JobTraceEntry)getTabelViewer().getElementAt(index);
+    private void monitorDoneChecked(IProgressMonitor monitor) {
+        if (monitor != null) {
+            monitor.done();
+        }
+    }
+
+    private JobTraceEntry getElementAt(int index, int itemCount) {
+
+        JobTraceEntries entries = (JobTraceEntries)tableViewer.getInput();
+
+        if (isValidIndex(index, itemCount)) {
+            return entries.getItem(index);
         }
 
         return null;
     }
 
-    private void updateElements(JobTraceEntry... jobtraceEntry) {
-        getTabelViewer().update(jobtraceEntry, null);
-    }
+    private boolean isValidIndex(int index, int itemCount) {
 
-    private void setPositionTo(int index) {
-
-        if (isValidIndex(index)) {
-            getTabelViewer().setSelection(new StructuredSelection(getElementAt(index)));
-            getTabelViewer().getTable().setTopIndex(index);
-        }
-    }
-
-    private boolean isValidIndex(int index) {
-
-        if (index >= 0 && index < getItemCount()) {
+        if (index >= 0 && index < itemCount) {
             return true;
         }
 
         return false;
+    }
+
+    private int getItemCountUI() {
+        return getTable().getItemCount();
+    }
+
+    private int getSelectionIndexUI() {
+        return getTable().getSelectionIndex();
+    }
+
+    private JobTraceEntry getElementAtUI(int index) {
+        return getElementAt(index, getItemCountUI());
+    }
+
+    private void updateElementsUI(JobTraceEntry... jobtraceEntry) {
+        getTabelViewer().update(jobtraceEntry, null);
+    }
+
+    private void setPositionToUI(int index) {
+
+        if (isValidIndexUI(index)) {
+            getTabelViewer().setSelection(new StructuredSelection(getElementAtUI(index)));
+            getTabelViewer().getTable().setTopIndex(index);
+        }
+    }
+
+    private boolean isValidIndexUI(int index) {
+        return isValidIndex(index, getItemCountUI());
     }
 
     private Table getTable() {

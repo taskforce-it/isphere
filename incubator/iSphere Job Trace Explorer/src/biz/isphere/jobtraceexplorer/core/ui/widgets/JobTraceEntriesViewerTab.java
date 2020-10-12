@@ -29,6 +29,7 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
+import biz.isphere.jobtraceexplorer.core.ui.model.MouseCursorLocation;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
 /**
@@ -43,6 +44,8 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private TableViewer tableViewer;
     private JobTraceSession jobTraceSession;
+
+    private MouseCursorLocation mouseCursorLocation;
 
     public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, String whereClause,
         SelectionListener loadJobTraceEntriesSelectionListener) {
@@ -250,4 +253,27 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         }
 
     };
+
+    // private class MouseLocationListener implements Listener {
+    // public void handleEvent(Event event) {
+    // Point pt = new Point(event.x, event.y);
+    // Table table = (Table)event.widget;
+    // TableItem item = table.getItem(pt);
+    // if (item == null) return;
+    // for (int i = 0; i < table.getColumnCount(); i++) {
+    // Rectangle rect = item.getBounds(i);
+    // if (rect.contains(pt)) {
+    // int index = table.indexOf(item);
+    // JobTraceEntry jobTraceEntry =
+    // (JobTraceEntry)table.getItem(index).getData();
+    // int columnIndex =
+    // JobTraceViewerFactory.getColumnIndex(table.getColumn(i));
+    // if (columnIndex >= 0) {
+    // JobTraceEntriesViewerTab.this.mouseCursorLocation = new
+    // MouseCursorLocation(jobTraceEntry, columnIndex);
+    // }
+    // }
+    // }
+    // }
+    // }
 }

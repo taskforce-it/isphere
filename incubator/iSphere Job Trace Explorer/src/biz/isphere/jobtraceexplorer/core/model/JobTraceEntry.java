@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.jobtraceexplorer.core.Messages;
@@ -92,6 +93,7 @@ public class JobTraceEntry {
 
     // Transient values, set on demand
 
+    private transient JobTraceEntries parent;
     private transient DecimalFormat bin8Formatter;
     private transient SimpleDateFormat timestampFormatter;
 
@@ -109,6 +111,17 @@ public class JobTraceEntry {
 
     public static HashMap<String, Integer> getColumnMapping() {
         return columnMappings;
+    }
+
+    public static String getColumnName(int index) {
+
+        for (Entry<String, Integer> mapping : columnMappings.entrySet()) {
+            if (mapping.getValue().intValue() == index) {
+                return mapping.getKey();
+            }
+        }
+
+        return null;
     }
 
     public static List<ContentAssistProposal> getContentAssistProposals() {
@@ -167,6 +180,14 @@ public class JobTraceEntry {
     // //////////////////////////////////////////////////////////
     // / Getters / Setters
     // //////////////////////////////////////////////////////////
+
+    public JobTraceEntries getParent() {
+        return parent;
+    }
+
+    public void setParent(JobTraceEntries parent) {
+        this.parent = parent;
+    }
 
     public int getId() {
         return id;
@@ -296,6 +317,14 @@ public class JobTraceEntry {
         this.isHighlighted = isHighlighted;
     }
 
+    public String getValueForUi(int index) {
+        return getValueForUi(ColumnsDAO.values()[index]);
+    }
+
+    public String getValueForUi(String columnName) {
+        return getValueForUi(ColumnsDAO.valueOf(columnName));
+    }
+
     public String getValueForUi(ColumnsDAO columnsDAO) {
 
         if (ColumnsDAO.ID.equals(columnsDAO)) {
@@ -333,7 +362,7 @@ public class JobTraceEntry {
         return "?"; //$NON-NLS-1$
     }
 
-    public boolean isProcEnter() {
+    public boolean isProcEntry() {
         return ColumnsDAO.EVENT_SUB_TYPE_PRCENTRY.equals(eventSubType);
     }
 

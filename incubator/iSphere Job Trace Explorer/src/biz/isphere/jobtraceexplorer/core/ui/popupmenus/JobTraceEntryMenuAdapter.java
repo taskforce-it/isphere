@@ -20,8 +20,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.ui.actions.AbstractJobTraceEntryAction;
+import biz.isphere.jobtraceexplorer.core.ui.actions.HighlightAttributeAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.HighlightProcAction;
-import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcEnterAction;
+import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcEntryAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcExitAction;
 
 public class JobTraceEntryMenuAdapter extends MenuAdapter {
@@ -31,7 +32,9 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     private Shell shell;
 
+    private MenuItem menuItemHighlightRowAttribute;
     private MenuItem menuItemHighlightProc;
+    private MenuItem menuItemProcedureSeparator;
     private MenuItem menuItemJumpToProcEnter;
     private MenuItem menuItemJumpToProcExit;
 
@@ -49,7 +52,9 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
+        dispose(menuItemHighlightRowAttribute);
         dispose(menuItemHighlightProc);
+        dispose(menuItemProcedureSeparator);
         dispose(menuItemJumpToProcEnter);
         dispose(menuItemJumpToProcExit);
     }
@@ -73,9 +78,22 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
         return jobTraceEntry;
     }
 
+    private boolean isMenuItem(MenuItem menuItem) {
+        return !isDisposed(menuItem);
+    }
+
+    private boolean isDisposed(MenuItem menuItem) {
+
+        if (menuItem == null || menuItem.isDisposed()) {
+            return true;
+        }
+
+        return false;
+    }
+
     private void dispose(MenuItem menuItem) {
 
-        if (menuItem != null && !menuItem.isDisposed()) {
+        if (!isDisposed(menuItem)) {
             menuItem.dispose();
         }
     }
@@ -84,18 +102,31 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
         if (selectedItemsCount() == 1) {
 
-            if (getSelectedItem().isProcEnter() || getSelectedItem().isProcExit()) {
+            if (getSelectedItem().isProcEntry() || getSelectedItem().isProcExit()) {
+                menuItemHighlightRowAttribute = createMenuItem(new HighlightAttributeAction(shell, tableViewer));
                 menuItemHighlightProc = createMenuItem(new HighlightProcAction(shell, tableViewer));
             }
 
             if (getSelectedItem().isProcExit()) {
-                menuItemJumpToProcEnter = createMenuItem(new JumpToProcEnterAction(shell, tableViewer));
+                addProcedureSeparator();
+                menuItemJumpToProcEnter = createMenuItem(new JumpToProcEntryAction(shell, tableViewer));
             }
 
-            if (getSelectedItem().isProcEnter()) {
+            if (getSelectedItem().isProcEntry()) {
+                addProcedureSeparator();
                 menuItemJumpToProcExit = createMenuItem(new JumpToProcExitAction(shell, tableViewer));
             }
         }
+    }
+
+    private void addProcedureSeparator() {
+
+        if (isMenuItem(menuItemHighlightRowAttribute) || isMenuItem(menuItemHighlightProc)) {
+            if (!isMenuItem(menuItemProcedureSeparator)) {
+                menuItemProcedureSeparator = new MenuItem(parentMenu, SWT.SEPARATOR);
+            }
+        }
+
     }
 
     private MenuItem createMenuItem(AbstractJobTraceEntryAction action) {
