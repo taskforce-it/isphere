@@ -8,9 +8,9 @@
 
 package biz.isphere.jobtraceexplorer.core.model;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.medfoster.sqljep.ParseException;
@@ -31,13 +31,13 @@ public class JobTraceEntries {
     private HighlightedAttributes highlightedAttributes;
 
     public JobTraceEntries() {
-        this(null, 0);
+        this(null);
     }
 
-    public JobTraceEntries(JobTraceSession jobTraceSession, int initialCapacity) {
+    public JobTraceEntries(JobTraceSession jobTraceSession) {
 
         this.jobTraceSession = jobTraceSession;
-        this.jobTraceEntries = new ArrayList<JobTraceEntry>(initialCapacity);
+        this.jobTraceEntries = new LinkedList<JobTraceEntry>();
         this.filteredJobTraceEntries = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
@@ -82,7 +82,7 @@ public class JobTraceEntries {
         RowJEP sqljep = new RowJEP(whereClause);
         sqljep.parseExpression(columnMapping);
 
-        filteredJobTraceEntries = new ArrayList<JobTraceEntry>(jobTraceEntries.size());
+        filteredJobTraceEntries = new LinkedList<JobTraceEntry>();
 
         for (JobTraceEntry jobTraceEntry : jobTraceEntries) {
             Comparable<?>[] row = jobTraceEntry.getRow();

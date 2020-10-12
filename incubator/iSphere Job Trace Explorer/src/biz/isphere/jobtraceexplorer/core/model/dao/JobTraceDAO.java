@@ -122,9 +122,7 @@ public class JobTraceDAO {
 
     public JobTraceEntries load(String whereClause, IProgressMonitor monitor) {
 
-        int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
-
-        JobTraceEntries jobTraceEntries = new JobTraceEntries(jobTraceSession, maxNumRows);
+        JobTraceEntries jobTraceEntries = new JobTraceEntries(jobTraceSession);
 
         List<IBMiMessage> messages = null;
 
@@ -146,6 +144,8 @@ public class JobTraceDAO {
 
             sqlHelper = new SqlHelper(jdbcConnection);
             isTableOverWrite = overWriteTables(sqlHelper, jobTraceSession);
+
+            int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
             // TODO: SQL WHERE clause
             int numRowsAvailable = getNumRowsAvailable(sqlHelper, "");
