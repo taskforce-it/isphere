@@ -29,7 +29,6 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
-import biz.isphere.jobtraceexplorer.core.ui.model.MouseCursorLocation;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
 /**
@@ -44,8 +43,6 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private TableViewer tableViewer;
     private JobTraceSession jobTraceSession;
-
-    private MouseCursorLocation mouseCursorLocation;
 
     public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, String whereClause,
         SelectionListener loadJobTraceEntriesSelectionListener) {
