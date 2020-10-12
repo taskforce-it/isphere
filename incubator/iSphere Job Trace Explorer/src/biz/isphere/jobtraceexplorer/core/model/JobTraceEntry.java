@@ -44,34 +44,23 @@ public class JobTraceEntry {
 
     private static List<ContentAssistProposal> proposals;
     static {
+        // @formatter:off
         proposals = new LinkedList<ContentAssistProposal>();
         proposals.add(new ContentAssistProposal(ColumnsDAO.ID.systemColumnName(), ColumnsDAO.ID.type() + " - " + ColumnsDAO.ID.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.NANOS_SINE_STARTED.systemColumnName(), ColumnsDAO.NANOS_SINE_STARTED.type() + " - "
-            + ColumnsDAO.NANOS_SINE_STARTED.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.systemColumnName(), ColumnsDAO.TIMESTAMP.type() + " - "
-            + ColumnsDAO.TIMESTAMP.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_NAME.systemColumnName(), ColumnsDAO.PGM_NAME.type() + " - "
-            + ColumnsDAO.PGM_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_LIB.systemColumnName(), ColumnsDAO.PGM_LIB.type() + " - "
-            + ColumnsDAO.PGM_LIB.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_NAME.systemColumnName(), ColumnsDAO.MODULE_NAME.type() + " - "
-            + ColumnsDAO.MODULE_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_LIBRARY.systemColumnName(), ColumnsDAO.MODULE_LIBRARY.type() + " - "
-            + ColumnsDAO.MODULE_LIBRARY.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.HLL_STMT_NBR.systemColumnName(), ColumnsDAO.HLL_STMT_NBR.type() + " - "
-            + ColumnsDAO.HLL_STMT_NBR.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.systemColumnName(), ColumnsDAO.PROC_NAME.type() + " - "
-            + ColumnsDAO.PROC_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.type() + " - "
-            + ColumnsDAO.CALL_LEVEL.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.EVENT_SUB_TYPE.systemColumnName(), ColumnsDAO.EVENT_SUB_TYPE.type() + " - "
-            + ColumnsDAO.EVENT_SUB_TYPE.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_HLL_STMT_NBR.systemColumnName(), ColumnsDAO.CALLER_HLL_STMT_NBR.type() + " - "
-            + ColumnsDAO.CALLER_HLL_STMT_NBR.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_PROC_NAME.systemColumnName(), ColumnsDAO.CALLER_PROC_NAME.type() + " - "
-            + ColumnsDAO.CALLER_PROC_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_CALL_LEVEL.systemColumnName(), ColumnsDAO.CALLER_CALL_LEVEL.type() + " - "
-            + ColumnsDAO.CALLER_CALL_LEVEL.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.NANOS_SINE_STARTED.name(), ColumnsDAO.NANOS_SINE_STARTED.type() + " - " + ColumnsDAO.NANOS_SINE_STARTED.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.name(), ColumnsDAO.TIMESTAMP.type() + " - " + ColumnsDAO.TIMESTAMP.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_NAME.name(), ColumnsDAO.PGM_NAME.type() + " - " + ColumnsDAO.PGM_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_LIB.name(), ColumnsDAO.PGM_LIB.type() + " - " + ColumnsDAO.PGM_LIB.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_NAME.name(), ColumnsDAO.MODULE_NAME.type() + " - " + ColumnsDAO.MODULE_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_LIBRARY.name(), ColumnsDAO.MODULE_LIBRARY.type() + " - " + ColumnsDAO.MODULE_LIBRARY.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.HLL_STMT_NBR.name(), ColumnsDAO.HLL_STMT_NBR.type() + " - " + ColumnsDAO.HLL_STMT_NBR.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.name(), ColumnsDAO.PROC_NAME.type() + " - " + ColumnsDAO.PROC_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.type() + " - " + ColumnsDAO.CALL_LEVEL.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.EVENT_SUB_TYPE.name(), ColumnsDAO.EVENT_SUB_TYPE.type() + " - " + ColumnsDAO.EVENT_SUB_TYPE.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_HLL_STMT_NBR.name(), ColumnsDAO.CALLER_HLL_STMT_NBR.type() + " - " + ColumnsDAO.CALLER_HLL_STMT_NBR.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_PROC_NAME.name(), ColumnsDAO.CALLER_PROC_NAME.type() + " - " + ColumnsDAO.CALLER_PROC_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_CALL_LEVEL.name(), ColumnsDAO.CALLER_CALL_LEVEL.type() + " - " + ColumnsDAO.CALLER_CALL_LEVEL.description()));
+        // @formatter:on
     }
 
     private int id;
