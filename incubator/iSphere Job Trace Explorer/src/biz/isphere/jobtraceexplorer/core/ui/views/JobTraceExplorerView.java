@@ -147,8 +147,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
             public void postRunAction() {
                 JobTraceSession jobTraceSession = openJobTraceSession.getJobTraceSession();
                 if (jobTraceSession != null) {
-                    String whereClause = openJobTraceSession.getWhereClause();
-                    createJobTraceTab(jobTraceSession, whereClause);
+                    createJobTraceTab(jobTraceSession);
                 }
             }
         };
@@ -180,7 +179,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         IMenuManager viewMenu = actionBars.getMenuManager();
     }
 
-    public void createJobTraceTab(JobTraceSession jobTraceSession, String whereClause) {
+    public void createJobTraceTab(JobTraceSession jobTraceSession) {
 
         if (jobTraceSession == null) {
             throw new IllegalArgumentException("Parameter 'jobTraceSession' must not be [null]."); //$NON-NLS-1$
@@ -192,7 +191,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
             jobTraceEntriesViewer = findExplorerTab(jobTraceSession);
             if (jobTraceEntriesViewer == null) {
-                jobTraceEntriesViewer = new JobTraceEntriesViewerTab(tabFolder, jobTraceSession, whereClause, new SqlEditorSelectionListener());
+                jobTraceEntriesViewer = new JobTraceEntriesViewerTab(tabFolder, jobTraceSession, new SqlEditorSelectionListener());
                 jobTraceEntriesViewer.addSelectionChangedListener(this);
                 tabFolder.setSelection(jobTraceEntriesViewer);
                 performLoadJobTraceEntries(jobTraceEntriesViewer);

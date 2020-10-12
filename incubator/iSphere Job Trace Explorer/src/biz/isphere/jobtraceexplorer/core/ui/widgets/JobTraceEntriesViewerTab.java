@@ -44,8 +44,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
     private TableViewer tableViewer;
     private JobTraceSession jobTraceSession;
 
-    public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, String whereClause,
-        SelectionListener loadJobTraceEntriesSelectionListener) {
+    public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, null, loadJobTraceEntriesSelectionListener);
 
         this.jobTraceSession = jobTraceSession;

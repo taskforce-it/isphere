@@ -14,10 +14,22 @@ public class JobTraceSession {
     private String libraryName;
     private String sessionID;
 
+    private String whereClause;
+
     public JobTraceSession(String connectionName, String libraryName, String sessionID) {
         this.connectionName = connectionName;
         this.libraryName = libraryName;
         this.sessionID = sessionID;
+
+        this.whereClause = null;
+    }
+
+    public String getWhereClause() {
+        return whereClause;
+    }
+
+    public void setWhereClause() {
+        this.whereClause = whereClause;
     }
 
     public String getConnectionName() {

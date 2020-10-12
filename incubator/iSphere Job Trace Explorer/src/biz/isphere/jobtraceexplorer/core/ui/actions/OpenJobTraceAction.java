@@ -26,7 +26,6 @@ public abstract class OpenJobTraceAction extends Action {
 
     private Shell shell;
     private JobTraceSession jobTraceSession;
-    private String whereClause;
 
     public OpenJobTraceAction(Shell shell) {
         super(Messages.JobTraceExplorerView_OpenJobTraceSession);
@@ -50,10 +49,6 @@ public abstract class OpenJobTraceAction extends Action {
         return jobTraceSession;
     }
 
-    public String getWhereClause() {
-        return whereClause;
-    }
-
     private void performOpenJournalOutputFile() {
 
         OpenJobTraceSessionDialog openJournalOutputFileDialog = new OpenJobTraceSessionDialog(shell);
@@ -61,14 +56,12 @@ public abstract class OpenJobTraceAction extends Action {
         int result = openJournalOutputFileDialog.open();
 
         jobTraceSession = null;
-        whereClause = null;
 
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 openJournalOutputFileDialog.getConnectionName())) {
                 jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibraryName(),
                     openJournalOutputFileDialog.getSessionID());
-                whereClause = "";
             }
         }
     }
