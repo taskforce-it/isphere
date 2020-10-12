@@ -40,6 +40,7 @@ import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedExcep
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
+import biz.isphere.jobtraceexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.OpenJobTraceAction;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
@@ -50,7 +51,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
     public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
 
-    // private EditSqlAction editSqlAction;
+    private EditSqlAction editSqlAction;
     private OpenJobTraceAction openJobTraceSession;
     private ResetColumnSizeAction resetColumnSizeAction;
     private GenericRefreshAction reloadEntriesAction;
@@ -152,14 +153,14 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
             }
         };
 
-        // editSqlAction = new EditSqlAction(getShell()) {
-        // @Override
-        // public void postRunAction() {
-        // AbstractJobTraceEntriesViewerTab tabItem = getSelectedViewer();
-        // tabItem.setSqlEditorVisibility(editSqlAction.isChecked());
-        // return;
-        // }
-        // };
+        editSqlAction = new EditSqlAction(getShell()) {
+            @Override
+            public void postRunAction() {
+                AbstractJobTraceEntriesViewerTab tabItem = getSelectedViewer();
+                tabItem.setSqlEditorVisibility(editSqlAction.isChecked());
+                return;
+            }
+        };
 
         reloadEntriesAction = new GenericRefreshAction() {
             @Override
@@ -400,7 +401,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
 
         IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(openJobTraceSession);
-        // toolBarManager.add(editSqlAction);
+        toolBarManager.add(editSqlAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(resetColumnSizeAction);
         toolBarManager.add(new Separator());
@@ -420,11 +421,11 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     private void setActionEnablement(AbstractJobTraceEntriesViewerTab tabItem) {
 
         if (tabItem == null || tabItem.getInput() == null) {
-            // editSqlAction.setEnabled(false);
-            // editSqlAction.setChecked(false);
+            editSqlAction.setEnabled(false);
+            editSqlAction.setChecked(false);
         } else {
-            // editSqlAction.setEnabled(tabItem.hasSqlEditor());
-            // editSqlAction.setChecked(tabItem.isSqlEditorVisible());
+            editSqlAction.setEnabled(tabItem.hasSqlEditor());
+            editSqlAction.setChecked(tabItem.isSqlEditorVisible());
         }
 
         openJobTraceSession.setEnabled(true);

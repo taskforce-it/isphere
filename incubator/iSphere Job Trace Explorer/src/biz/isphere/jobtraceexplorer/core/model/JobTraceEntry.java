@@ -22,11 +22,10 @@ import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 
 public class JobTraceEntry {
 
-    private static final int QTITIMN = 0;
-
     private static HashMap<String, Integer> columnMappings;
     static {
         columnMappings = new HashMap<String, Integer>();
+        columnMappings.put(ColumnsDAO.ID.name(), ColumnsDAO.ID.ordinal());
         columnMappings.put(ColumnsDAO.NANOS_SINE_STARTED.name(), ColumnsDAO.NANOS_SINE_STARTED.ordinal());
         columnMappings.put(ColumnsDAO.TIMESTAMP.name(), ColumnsDAO.TIMESTAMP.ordinal());
         columnMappings.put(ColumnsDAO.PGM_NAME.name(), ColumnsDAO.PGM_NAME.ordinal());
@@ -39,6 +38,7 @@ public class JobTraceEntry {
         columnMappings.put(ColumnsDAO.EVENT_SUB_TYPE.name(), ColumnsDAO.EVENT_SUB_TYPE.ordinal());
         columnMappings.put(ColumnsDAO.CALLER_HLL_STMT_NBR.name(), ColumnsDAO.CALLER_HLL_STMT_NBR.ordinal());
         columnMappings.put(ColumnsDAO.CALLER_PROC_NAME.name(), ColumnsDAO.CALLER_PROC_NAME.ordinal());
+        columnMappings.put(ColumnsDAO.CALLER_CALL_LEVEL.name(), ColumnsDAO.CALLER_CALL_LEVEL.ordinal());
     }
 
     private static List<ContentAssistProposal> proposals;
@@ -61,7 +61,7 @@ public class JobTraceEntry {
             + ColumnsDAO.HLL_STMT_NBR.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.systemColumnName(), ColumnsDAO.PROC_NAME.type() + " - "
             + ColumnsDAO.PROC_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.systemColumnName(), ColumnsDAO.CALL_LEVEL.type() + " - "
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.type() + " - "
             + ColumnsDAO.CALL_LEVEL.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.EVENT_SUB_TYPE.systemColumnName(), ColumnsDAO.EVENT_SUB_TYPE.type() + " - "
             + ColumnsDAO.EVENT_SUB_TYPE.description()));
@@ -146,7 +146,20 @@ public class JobTraceEntry {
 
         Comparable[] row = new Comparable[columnMappings.size()];
 
-        row[QTITIMN] = getNanosSinceStarted();
+        row[ColumnsDAO.ID.ordinal()] = getId();
+        row[ColumnsDAO.NANOS_SINE_STARTED.ordinal()] = getNanosSinceStarted();
+        row[ColumnsDAO.TIMESTAMP.ordinal()] = getTimestamp();
+        row[ColumnsDAO.PGM_NAME.ordinal()] = getProgramName();
+        row[ColumnsDAO.PGM_LIB.ordinal()] = getProgramLibrary();
+        row[ColumnsDAO.MODULE_NAME.ordinal()] = getModuleName();
+        row[ColumnsDAO.MODULE_LIBRARY.ordinal()] = getModuleLibrary();
+        row[ColumnsDAO.HLL_STMT_NBR.ordinal()] = getHLLStmtNbr();
+        row[ColumnsDAO.PROC_NAME.ordinal()] = getProcedureName();
+        row[ColumnsDAO.CALL_LEVEL.ordinal()] = getCallLevel();
+        row[ColumnsDAO.EVENT_SUB_TYPE.ordinal()] = getEventSubType();
+        row[ColumnsDAO.CALLER_HLL_STMT_NBR.ordinal()] = getCallerHLLStmtNbr();
+        row[ColumnsDAO.CALLER_PROC_NAME.ordinal()] = getCallerProcedureName();
+        row[ColumnsDAO.CALLER_CALL_LEVEL.ordinal()] = getCallerCallLevel();
 
         return row;
     }
