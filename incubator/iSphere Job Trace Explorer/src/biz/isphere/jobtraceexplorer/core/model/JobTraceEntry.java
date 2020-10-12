@@ -88,6 +88,8 @@ public class JobTraceEntry {
     private String callerProcedureName;
     private int callerCallLevel;
 
+    private transient boolean isHighlighted;
+
     // Transient values, set on demand
 
     private transient DecimalFormat bin8Formatter;
@@ -273,6 +275,14 @@ public class JobTraceEntry {
     // / UI specific methods
     // //////////////////////////////////////////////////////////
 
+    public boolean isHighlighted() {
+        return isHighlighted;
+    }
+
+    public void setHighlighted(boolean isHighlighted) {
+        this.isHighlighted = isHighlighted;
+    }
+
     public String getValueForUi(ColumnsDAO columnsDAO) {
 
         if (ColumnsDAO.ID.equals(columnsDAO)) {
@@ -310,7 +320,7 @@ public class JobTraceEntry {
         return "?"; //$NON-NLS-1$
     }
 
-    public boolean isProcEntry() {
+    public boolean isProcEnter() {
         return ColumnsDAO.EVENT_SUB_TYPE_PRCENTRY.equals(eventSubType);
     }
 

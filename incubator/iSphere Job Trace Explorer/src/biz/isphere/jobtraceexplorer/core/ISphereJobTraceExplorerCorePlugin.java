@@ -18,6 +18,7 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_OPEN_JOB_TRACE_SESSION = "open_jobtrace_session.png";
     public static final String IMAGE_JUMP_PROC_ENTER = "jump_proc_enter.png";
     public static final String IMAGE_JUMP_PROC_EXIT = "jump_proc_exit.png";
+    public static final String IMAGE_HIGHLIGHT_PROC = "highlight.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$
@@ -71,6 +72,7 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_OPEN_JOB_TRACE_SESSION, getImageDescriptor(IMAGE_OPEN_JOB_TRACE_SESSION));
         reg.put(IMAGE_JUMP_PROC_ENTER, getImageDescriptor(IMAGE_JUMP_PROC_ENTER));
         reg.put(IMAGE_JUMP_PROC_EXIT, getImageDescriptor(IMAGE_JUMP_PROC_EXIT));
+        reg.put(IMAGE_HIGHLIGHT_PROC, getImageDescriptor(IMAGE_HIGHLIGHT_PROC));
     }
 
     /**

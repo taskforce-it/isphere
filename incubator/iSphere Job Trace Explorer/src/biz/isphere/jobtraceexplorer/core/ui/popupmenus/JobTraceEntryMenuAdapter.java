@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.ui.actions.AbstractJobTraceEntryAction;
+import biz.isphere.jobtraceexplorer.core.ui.actions.HighlightProcAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcEnterAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcExitAction;
 
@@ -30,6 +31,7 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     private Shell shell;
 
+    private MenuItem menuItemHighlightProc;
     private MenuItem menuItemJumpToProcEnter;
     private MenuItem menuItemJumpToProcExit;
 
@@ -47,6 +49,7 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
+        dispose(menuItemHighlightProc);
         dispose(menuItemJumpToProcEnter);
         dispose(menuItemJumpToProcExit);
     }
@@ -81,11 +84,15 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
         if (selectedItemsCount() == 1) {
 
+            if (getSelectedItem().isProcEnter() || getSelectedItem().isProcExit()) {
+                menuItemHighlightProc = createMenuItem(new HighlightProcAction(shell, tableViewer));
+            }
+
             if (getSelectedItem().isProcExit()) {
                 menuItemJumpToProcEnter = createMenuItem(new JumpToProcEnterAction(shell, tableViewer));
             }
 
-            if (getSelectedItem().isProcEntry()) {
+            if (getSelectedItem().isProcEnter()) {
                 menuItemJumpToProcExit = createMenuItem(new JumpToProcExitAction(shell, tableViewer));
             }
         }

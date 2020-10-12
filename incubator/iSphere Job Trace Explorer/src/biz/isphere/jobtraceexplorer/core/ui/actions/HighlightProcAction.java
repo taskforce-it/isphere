@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,14 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 
-public class JumpToProcExitAction extends AbstractJobTraceEntryAction {
+public class HighlightProcAction extends AbstractJobTraceEntryAction {
 
-    private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_JUMP_PROC_EXIT;
+    private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_HIGHLIGHT_PROC;
 
-    public JumpToProcExitAction(Shell shell, TableViewer tableViewer) {
+    public HighlightProcAction(Shell shell, TableViewer tableViewer) {
         super(shell, tableViewer);
 
-        setText(Messages.MenuItem_Jump_to_procedure_exit);
+        setText(Messages.MenuItem_Highlight_procedure);
         setImageDescriptor(ISphereJobTraceExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
@@ -32,6 +32,6 @@ public class JumpToProcExitAction extends AbstractJobTraceEntryAction {
 
     @Override
     public void run() {
-        getHandler().handleJumpToProcExit();
+        getHandler().handleHighlightProc();
     }
 }

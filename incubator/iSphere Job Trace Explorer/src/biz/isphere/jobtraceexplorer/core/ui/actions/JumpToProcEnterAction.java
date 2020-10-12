@@ -22,7 +22,7 @@ public class JumpToProcEnterAction extends AbstractJobTraceEntryAction {
     public JumpToProcEnterAction(Shell shell, TableViewer tableViewer) {
         super(shell, tableViewer);
 
-        setText(Messages.MenuItem_Jump_to_proc_enter);
+        setText(Messages.MenuItem_Jump_to_procedure_enter);
         setImageDescriptor(ISphereJobTraceExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 
@@ -32,26 +32,6 @@ public class JumpToProcEnterAction extends AbstractJobTraceEntryAction {
 
     @Override
     public void run() {
-        performJumpToProcEnter();
-    }
-
-    private void performJumpToProcEnter() {
-
-        int index = getSelectionIndex();
-        if (!isValidIndex(index)) {
-            return;
-        }
-
-        int callLevel = getElementAt(index).getCallLevel();
-
-        index--;
-
-        while (isValidIndex(index) && callLevel != getElementAt(index).getCallLevel()) {
-            index--;
-        }
-
-        if (isValidIndex(index)) {
-            setPositionTo(index);
-        }
+        getHandler().handleJumpToProcEnter();
     }
 }

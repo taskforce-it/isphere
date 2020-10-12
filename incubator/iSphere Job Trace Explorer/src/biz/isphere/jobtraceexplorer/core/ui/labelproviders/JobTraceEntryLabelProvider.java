@@ -13,8 +13,10 @@ import java.text.SimpleDateFormat;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
@@ -47,12 +49,16 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
 
     public Color getBackground(Object element, int index) {
 
-        if (element instanceof JobTraceEntry) {
-            JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
-            return null;
-        } else {
+        if (!(element instanceof JobTraceEntry)) {
             return null;
         }
+
+        JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
+        if (jobTraceEntry.isHighlighted()) {
+            return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+        }
+
+        return null;
     }
 
     public Color getForeground(Object element, int index) {
