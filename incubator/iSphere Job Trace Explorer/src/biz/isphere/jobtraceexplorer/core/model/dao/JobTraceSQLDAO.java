@@ -32,7 +32,7 @@ import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
  * This class retrieves journal entries from the journal a given object is
  * associated to.
  */
-public class JobTraceDAO {
+public class JobTraceSQLDAO {
 
     /**
      * SQL statement for querying the job trace session data. Tables and their
@@ -55,7 +55,7 @@ public class JobTraceDAO {
      * relation between the caller and the callee.
      * <p>
      * 
-     * @see biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO
+     * @see biz.isphere.jobtraceexplorer.core.model.dao.JobTraceSQLDAO
      */
 
     // @formatter:off
@@ -115,7 +115,7 @@ public class JobTraceDAO {
 
     private JobTraceSessionSQL jobTraceSession;
 
-    public JobTraceDAO(JobTraceSessionSQL jobTraceSession) throws Exception {
+    public JobTraceSQLDAO(JobTraceSessionSQL jobTraceSession) throws Exception {
 
         this.jobTraceSession = jobTraceSession;
     }

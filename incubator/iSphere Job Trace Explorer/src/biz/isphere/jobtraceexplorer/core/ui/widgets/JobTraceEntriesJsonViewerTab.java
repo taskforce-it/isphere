@@ -15,11 +15,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 
-import biz.isphere.core.json.JsonImporter;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionJson;
+import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceJsonDAO;
 import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 
 /**
@@ -92,13 +92,10 @@ public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerT
 
             try {
 
-                jobTraceSession.getJobTraceEntries().reset();
+                jobTraceSession.getJobTraceEntries().fullReset();
 
-                JsonImporter<JobTraceSessionJson> importer = new JsonImporter<JobTraceSessionJson>(JobTraceSessionJson.class);
-                jobTraceSession = importer.execute(postRun.getShell(), jobTraceSession.getFileName());
-                for (JobTraceEntry jobTraceEntry : jobTraceSession.getJobTraceEntries().getItems()) {
-                    jobTraceEntry.setParent(jobTraceSession.getJobTraceEntries());
-                }
+                JobTraceJsonDAO jobTraceDAO = new JobTraceJsonDAO(jobTraceSession);
+                jobTraceSession = jobTraceDAO.load(monitor);
 
                 jobTraceSession.getJobTraceEntries().applyFilter();
 

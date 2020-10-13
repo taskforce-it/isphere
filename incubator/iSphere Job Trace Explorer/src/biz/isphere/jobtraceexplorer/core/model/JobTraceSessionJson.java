@@ -27,6 +27,10 @@ public class JobTraceSessionJson extends JobTraceSessionSQL implements JsonSeria
         return fileName;
     }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 89;

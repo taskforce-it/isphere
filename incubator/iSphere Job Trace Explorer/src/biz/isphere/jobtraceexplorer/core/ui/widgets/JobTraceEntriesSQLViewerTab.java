@@ -19,7 +19,7 @@ import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionSQL;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
-import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO;
+import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceSQLDAO;
 import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 
 /**
@@ -91,10 +91,11 @@ public class JobTraceEntriesSQLViewerTab extends AbstractJobTraceEntriesViewerTa
 
             try {
 
-                jobTraceSession.getJobTraceEntries().reset();
+                jobTraceSession.getJobTraceEntries().fullReset();
 
-                JobTraceDAO jobTraceDAO = new JobTraceDAO(jobTraceSession);
+                JobTraceSQLDAO jobTraceDAO = new JobTraceSQLDAO(jobTraceSession);
                 jobTraceSession = jobTraceDAO.load(monitor);
+
                 jobTraceSession.getJobTraceEntries().applyFilter();
 
                 IBMiMessage[] messages = jobTraceSession.getJobTraceEntries().getMessages();

@@ -186,6 +186,14 @@ public class JobTraceEntries {
     }
 
     public void reset() {
+        reset(false);
+    }
+
+    public void fullReset() {
+        reset(true);
+    }
+
+    private void reset(boolean fullReset) {
 
         this.jobTraceEntries = new LinkedList<JobTraceEntry>();
         this.filteredJobTraceEntries = null;
@@ -193,14 +201,17 @@ public class JobTraceEntries {
         this.numAvailableRows = -1;
         this.messages = null;
         this.isCanceled = false;
+
+        if (fullReset) {
+            this.highlightedAttributes = new HighlightedAttributes();
+        }
     }
 
     private void initialize() {
 
-        reset();
+        reset(true);
 
         this.filterWhereClause = null;
-        this.highlightedAttributes = new HighlightedAttributes();
     }
 
     public void setMessages(List<IBMiMessage> messages) {
