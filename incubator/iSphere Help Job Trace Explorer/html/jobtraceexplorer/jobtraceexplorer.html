@@ -10,14 +10,15 @@
 <body>
 <h1>Job Trace Explorer</h1>
 <a href="https://sourceforge.net/projects/isphere/" target="_blank">
-<img src="assets/joblogexplorer.png" 
+<img src="assets/jobtraceexplorer.png" 
      style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
-The Job Log Explorer is supposed to be used for viewing and filtering the job log
-messages fast and easily. You can open it from the context menus of a remote job, a
-remote spooled file or a local spooled file (Text format).
+The Job Trace Explorer is supposed to be used for viewing and filtering the job trace
+entries produced by the STRTRC/ENDTRC commands.
 <p>
 <ul>
 <li><a href="#opening_the_job_trace_explorer_perspective">Opening the Job Trace Explorer Perspective</a></li>
+<li><a href="#open_job_trace_session">Open Job Trace Session</a></li>
+<li><a href="#filtering_job_trace_entries">Filtering Job Trace Entries</a></li>
 </ul>
 <p>
 <a id="#opening_the_job_trace_explorer_perspective"></a>
@@ -25,20 +26,71 @@ remote spooled file or a local spooled file (Text format).
 <p>
 You can open the Job Trace Explorer perspective from 'Window -> Open Perspective -> Other...'. The perspective looks like that: 
 <p>
-<img src="assets/jobtraceexplorer_view.png" align="middle">
+<img src="assets/job_trace_explorer_view.png" align="middle">
 <p>
 The following actions are available:
 <p>
 <table>
-<tr><td valign="middle"><img src="assets/open_jobtrace.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Open a dialog for selecting the trace session.</td></tr>
+<tr><td valign="middle"><img src="assets/open_jobtrace_session.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Open a dialog for selecting the trace session.</td></tr>
 <tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job trace entries.<br>(Local operation that does not contact the host system.)</td></tr>
 <tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
 <tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
 </table>
 <p>
-The properties of the job trace are displayed in the Eclipse <i>Properties</i> view:
+<a id="#open_job_trace_session"></a>
+<h2>Open Job Trace Session</h2>
 <p>
-<img src="assets/jobtraceexplorer_properties.png" align="middle">
+Click the <i>Open Job Trace Session</i> button at the top of the Job Trace Explorer view: 
+<p>
+<img src="assets/open_jobtrace_session.png" align="middle">
+<p>
+Select the connection and fill in the session ID and library name and click the [OK] button.
+<p>
+<img src="assets/open_jobtrace_session_dialog.png" align="middle">
+<p>
+<a id="filtering_job_trace_entries"></a>
+<h2>Filtering Job Trace Entries</h2>
+<p>
+You can use the SQL editor to filter job trace entries. Click the <i>Edit SQL</i> button at the top of 
+the <i>Job Trace Explorer</i> view to open the SQL editor:
+<p>
+<img src="assets/edit_sql.png" align="middle">
+<p>
+The <i>SQL Editor</i> is used to enter a SQL WHERE condition for selecting a subset of the available job trace entries 
+entries. Enter the WHERE condition and then click the <i>Execute</i> button or press <i>Ctrl+Enter</i> to execute
+the query. Refer to the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html"><i>SQL Reference</i></a> to see the list of available functions.
+<p>
+<img src="assets/sql_editor.png" align="middle">
+<p>
+Use Ctrl+SPACE for content assistance.
+<p>
+<img src="assets/content_assistance.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Ctrl+SPACE</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Add Field</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Clear</td><td valign="top">-</td><td valign="top">Clears the where condition.</td></tr>
+<tr><td valign="top">Ctrl+ENTER</td><td valign="top">-</td><td valign="top">See: Filter</td></tr>
+<tr><td valign="top">Filter</td><td valign="top">-</td><td valign="top">Executes the query with the current where condition to create a subsetted list of the available job trace entries.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Filtering job trace entries is a local task, which does not reload the
+		                                  entries from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause is applied to the records that have been downloaded to the PC. It must be specified in
+		                   the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html">iSphere SQL</a> syntax, which in most cases
+		                   matches the IBM i SQL syntax.
+		</td>
+	</tr>
+</table>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
