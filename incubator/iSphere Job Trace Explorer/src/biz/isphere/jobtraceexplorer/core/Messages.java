@@ -66,10 +66,14 @@ public class Messages extends NLS {
     public static String Status_Receiving_job_trace_entries;
     public static String Status_Searching_for_procedure_exit;
     public static String Status_Searching_for_procedure_entry;
+    public static String Status_Exporting_to_Json;
+    public static String Status_Importing_from_Json;
 
     // Actions
     public static String Action_ReloadEntries;
     public static String JobTraceExplorerView_OpenJobTraceSession;
+    public static String JobTraceExplorerView_Export_to_Json;
+    public static String JobTraceExplorerView_Import_from_Json;
     public static String MenuItem_Jump_to_procedure_entry;
     public static String MenuItem_Jump_to_procedure_exit;
     public static String MenuItem_Highlight_procedure;
@@ -79,6 +83,7 @@ public class Messages extends NLS {
     // Dialog titles
     public static String MessageDialog_Open_Job_Trace_Session_Title;
     public static String MessageDialog_Load_Job_Trace_Entries_Title;
+    public static String MessageDialog_Information;
 
     // Open Job Trace Session Dialog
     public static String OpenJobTraceSessionDialog_Connection;
@@ -94,6 +99,8 @@ public class Messages extends NLS {
     public static String Number_of_job_trace_entries_A_of_B;
     public static String Number_of_job_trace_entries_A;
     public static String subsetted_list;
+    public static String Display_Export_Result;
+    public static String Finished_exporting_data_to_file_A;
 
     // Error Messages
     public static String Error_No_connections_available;

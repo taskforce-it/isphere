@@ -20,27 +20,29 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 
+import com.google.gson.annotations.Expose;
+
 public class JobTraceEntries {
 
+    @Expose(serialize = true, deserialize = true)
     private List<JobTraceEntry> jobTraceEntries;
-    private transient List<JobTraceEntry> filteredJobTraceEntries;
+    @Expose(serialize = true, deserialize = true)
     private String filterWhereClause;
+    @Expose(serialize = true, deserialize = true)
     private boolean isOverflow;
+    @Expose(serialize = true, deserialize = true)
     private int numAvailableRows;
+    @Expose(serialize = true, deserialize = true)
     private List<IBMiMessage> messages;
+    @Expose(serialize = true, deserialize = true)
     private boolean isCanceled;
+    @Expose(serialize = true, deserialize = true)
     private HighlightedAttributes highlightedAttributes;
 
-    public JobTraceEntries() {
+    private transient List<JobTraceEntry> filteredJobTraceEntries;
 
-        this.jobTraceEntries = new LinkedList<JobTraceEntry>();
-        this.filteredJobTraceEntries = null;
-        this.filterWhereClause = null;
-        this.isOverflow = false;
-        this.numAvailableRows = -1;
-        this.messages = null;
-        this.isCanceled = false;
-        this.highlightedAttributes = new HighlightedAttributes();
+    public JobTraceEntries() {
+        initialize();
     }
 
     public void addHighlightedAttribute(HighlightedAttribute attribute) {
@@ -183,10 +185,22 @@ public class JobTraceEntries {
         return jobTraceEntries.size();
     }
 
-    public void clear() {
+    public void reset() {
 
-        removeFilter();
-        jobTraceEntries.clear();
+        this.jobTraceEntries = new LinkedList<JobTraceEntry>();
+        this.filteredJobTraceEntries = null;
+        this.isOverflow = false;
+        this.numAvailableRows = -1;
+        this.messages = null;
+        this.isCanceled = false;
+    }
+
+    private void initialize() {
+
+        reset();
+
+        this.filterWhereClause = null;
+        this.highlightedAttributes = new HighlightedAttributes();
     }
 
     public void setMessages(List<IBMiMessage> messages) {

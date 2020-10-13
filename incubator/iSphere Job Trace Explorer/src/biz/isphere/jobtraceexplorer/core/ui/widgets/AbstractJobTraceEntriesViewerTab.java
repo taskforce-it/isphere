@@ -14,6 +14,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -32,17 +37,20 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
+import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
@@ -63,7 +71,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     private DialogSettingsManager dialogSettingsManager = null;
 
-    private JobTraceSession jobTraceSession;
+    private AbstractJobTraceSession jobTraceSession;
     private Composite container;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
@@ -73,7 +81,8 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private JobTraceEntries data;
     private SqlEditor sqlEditor;
 
-    public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
+    public AbstractJobTraceEntriesViewerTab(CTabFolder parent, AbstractJobTraceSession jobTraceSession,
+        SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
@@ -84,31 +93,34 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         this.isSqlEditorVisible = false;
         this.loadJobTraceEntriesSelectionListener = loadJobTraceEntriesSelectionListener;
 
-        // Preferences.getInstance().addPropertyChangeListener(this);
+        setSqlEditorVisibility(false);
+
+        initializeComponents();
     }
 
-    protected String getLabel() {
+    /*
+     * View
+     */
+
+    private String getLabel() {
         return jobTraceSession.toString();
     }
 
-    protected String getTooltip() {
+    private String getTooltip() {
         return jobTraceSession.toString();
     }
 
-    protected JobTraceSession getJobTraceSession() {
+    public AbstractJobTraceSession getJobTraceSession() {
         return jobTraceSession;
     }
 
-    public boolean isSameSession(JobTraceSession otherJobTraceSession) {
-
-        if (this.jobTraceSession == null && otherJobTraceSession == null) {
-            return true;
-        } else if (this.jobTraceSession != null) {
-            return this.jobTraceSession.equals(otherJobTraceSession);
-        } else {
-            return false;
-        }
+    protected void setTableViewerEnabled(boolean enabled) {
+        tableViewer.getTable().setEnabled(enabled);
     }
+
+    /*
+     * SQL Editor
+     */
 
     private ContentAssistProposal[] getContentAssistProposals() {
 
@@ -189,15 +201,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return jobTraceSession.getJobTraceEntries().hasFilterWhereClause();
     }
 
-    private boolean isAvailable(Control control) {
-
-        if (control != null && !control.isDisposed()) {
-            return true;
-        }
-
-        return false;
-    }
-
     protected void initializeComponents() {
 
         setText(getLabel());
@@ -246,34 +249,29 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         setSqlEditorEnablement();
     }
 
-    private void setSqlEditorEnablement() {
-
-        if (hasSqlEditor()) {
-            if (isSqlEditorVisible()) {
-                createSqlEditor();
-            } else {
-                destroySqlEditor();
-            }
-        }
-    }
-
-    public JobTraceEntryColumn[] getColumns() {
-        return getLabelProvider().getColumns();
-    }
-
-    protected abstract TableViewer createTableViewer(Composite container);
+    /*
+     * Job Trace Session (input data)
+     */
 
     public abstract void openJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
-    public abstract void filterJobTraceSession(IDataLoadPostRun postRun) throws Exception;
+    public abstract void reloadJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
-    public abstract void closeJobTraceSession();
+    public boolean isSameSession(AbstractJobTraceSession otherJobTraceSession) {
 
-    public abstract boolean isLoading();
+        if (this.jobTraceSession == null && otherJobTraceSession == null) {
+            return true;
+        } else if (this.jobTraceSession != null) {
+            return this.jobTraceSession.equals(otherJobTraceSession);
+        } else {
+            return false;
+        }
+    }
 
-    public abstract JobTraceEntry getSelectedItem();
-
-    public abstract void setSelectedItem(JobTraceEntry jobTraceEntry);
+    public void setJobTraceSession(AbstractJobTraceSession jobTraceSession) {
+        this.jobTraceSession = jobTraceSession;
+        setInputData(jobTraceSession.getJobTraceEntries());
+    }
 
     protected void setInputData(JobTraceEntries data) {
 
@@ -286,26 +284,61 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         if (data != null) {
             tableViewer.setItemCount(data.size());
             tableViewer.setInput(data);
-            tableViewer.getTable().setEnabled(true);
+            setTableViewerEnabled(true);
         } else {
             tableViewer.setItemCount(0);
-            tableViewer.getTable().setEnabled(false);
+            setTableViewerEnabled(false);
         }
 
         tableViewer.setSelection(null);
+    }
+
+    public JobTraceEntry getSelectedItem() {
+
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index < 0) {
+            return null;
+        }
+
+        TableItem tableItem = tableViewer.getTable().getItem(index);
+        JobTraceEntry jobTraceEntry = (JobTraceEntry)tableItem.getData();
+
+        return jobTraceEntry;
+    }
+
+    public void setSelectedItem(JobTraceEntry jobTraceEntry) {
+
+        if (jobTraceEntry == null) {
+            return;
+        }
+
+        tableViewer.setSelection(new StructuredSelection(jobTraceEntry));
+        int index = tableViewer.getTable().getSelectionIndex();
+        if (index >= 0) {
+            tableViewer.getTable().setTopIndex(index);
+        }
+    }
+
+    public void filterJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
+
+        setSqlEditorEnabled(false);
+
+        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(postRun);
+        filterJobTraceDataJob.schedule();
+    }
+
+    public JobTraceEntryColumn[] getColumns() {
+        return getLabelProvider().getColumns();
     }
 
     @Override
     public void dispose() {
 
         if (data != null) {
-
-            data.clear();
             data = null;
         }
 
         if (tableViewer != null) {
-
             tableViewer.getTable().dispose();
             tableViewer = null;
         }
@@ -381,4 +414,99 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             return;
         }
     }
+
+    protected TableViewer createTableViewer(Composite container) {
+
+        try {
+
+            tableViewer = new JobTraceViewerFactory().createTableViewer(container, getDialogSettingsManager());
+            tableViewer.addSelectionChangedListener(this);
+            setTableViewerEnabled(false);
+
+            return tableViewer;
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Error in method JobTraceEntriesSQLViewerTab.createTableViewer() ***", e);
+            MessageDialog.openError(getParent().getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            return null;
+        }
+    }
+
+    public boolean isLoading() {
+
+        if (tableViewer.getTable().isEnabled()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void setSqlEditorEnablement() {
+
+        if (hasSqlEditor()) {
+            if (isSqlEditorVisible()) {
+                createSqlEditor();
+            } else {
+                destroySqlEditor();
+            }
+        }
+    }
+
+    private boolean isAvailable(Control control) {
+
+        if (control != null && !control.isDisposed()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private class FilterJobTraceSessionDataJob extends Job {
+
+        private IDataLoadPostRun postRun;
+
+        public FilterJobTraceSessionDataJob(IDataLoadPostRun postRun) {
+            super(Messages.Status_Loading_job_trace_entries_of_session_A);
+
+            this.postRun = postRun;
+        }
+
+        public IStatus run(IProgressMonitor monitor) {
+
+            final JobTraceEntries data = getInput();
+
+            try {
+
+                data.applyFilter();
+
+                if (!isDisposed()) {
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setInputData(data);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            postRun.finishDataLoading(AbstractJobTraceEntriesViewerTab.this, true);
+                        }
+                    });
+                }
+
+            } catch (Throwable e) {
+
+                if (!isDisposed()) {
+                    final Throwable e1 = e;
+                    getDisplay().asyncExec(new Runnable() {
+                        public void run() {
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
+                            postRun.handleDataLoadException(AbstractJobTraceEntriesViewerTab.this, e1);
+                        }
+                    });
+                }
+
+            }
+
+            return Status.OK_STATUS;
+        }
+
+    };
 }

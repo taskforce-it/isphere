@@ -11,6 +11,7 @@ package biz.isphere.jobtraceexplorer.core.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
+import biz.isphere.base.internal.FileHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 
 /**
@@ -43,6 +44,12 @@ public final class Preferences {
     public static final String LIMITATIONS = DOMAIN + "LIMITATIONS."; //$NON-NLS-1$
 
     public static final String MAX_NUM_ROWS_TO_FETCH = LIMITATIONS + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
+
+    public static final String EXPORT_JOURNAL_ENTRIES = DOMAIN + "EXPORT_JOB_TRACE_ENTRIES."; //$NON-NLS-1$
+
+    public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
+
+    public static final String EXPORT_FILE_JSON = DOMAIN + "EXPORT_FILE_JSON"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -88,12 +95,32 @@ public final class Preferences {
         return maxNumRows;
     }
 
+    public String getExportPath() {
+
+        return preferenceStore.getString(EXPORT_PATH);
+    }
+
+    public String getExportFileJson() {
+
+        return preferenceStore.getString(EXPORT_FILE_JSON);
+    }
+
     /*
      * Preferences: SETTER
      */
 
     public void setMaximumNumberOfRowsToFetch(int maxNumRows) {
         preferenceStore.setValue(MAX_NUM_ROWS_TO_FETCH, maxNumRows);
+    }
+
+    public void setExportPath(String exportPath) {
+
+        preferenceStore.setValue(EXPORT_PATH, exportPath);
+    }
+
+    public void setExportFileJson(String exportFile) {
+
+        preferenceStore.setValue(EXPORT_FILE_JSON, exportFile);
     }
 
     /*
@@ -107,6 +134,9 @@ public final class Preferences {
     public void initializeDefaultPreferences() {
 
         preferenceStore.setDefault(MAX_NUM_ROWS_TO_FETCH, getInitialMaximumNumberOfRowsToFetch());
+
+        preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
+        preferenceStore.setDefault(EXPORT_FILE_JSON, getInitialExportFileJson());
     }
 
     /*
@@ -115,6 +145,14 @@ public final class Preferences {
 
     public int getInitialMaximumNumberOfRowsToFetch() {
         return 1000;
+    }
+
+    public String getInitialExportPath() {
+        return FileHelper.getDefaultRootDirectory();
+    }
+
+    public String getInitialExportFileJson() {
+        return "ExportJobTraceEntries"; //$NON-NLS-1$
     }
 
     /*

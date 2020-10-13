@@ -22,13 +22,13 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
-import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
 
 /**
  * This class is the label provider for a "Job Trace Entry" column.
  * 
  * @see JobTraceEntryColumn
- * @see JobTraceEntriesViewerTab
+ * @see JobTraceEntriesSQLViewerTab
  */
 public class JobTraceEntryLabelProvider extends LabelProvider implements ITableLabelProvider, ITableColorProvider {
 

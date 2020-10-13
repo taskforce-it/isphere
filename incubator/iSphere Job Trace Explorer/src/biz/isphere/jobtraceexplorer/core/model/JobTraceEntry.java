@@ -21,6 +21,8 @@ import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 
+import com.google.gson.annotations.Expose;
+
 public class JobTraceEntry {
 
     private static HashMap<String, Integer> columnMappings;
@@ -63,22 +65,37 @@ public class JobTraceEntry {
         // @formatter:on
     }
 
+    @Expose(serialize = true, deserialize = true)
     private int id;
+    @Expose(serialize = true, deserialize = true)
     private BigInteger nanosSinceStarted;
+    @Expose(serialize = true, deserialize = true)
     private Timestamp timestamp;
+    @Expose(serialize = true, deserialize = true)
     private String programName;
+    @Expose(serialize = true, deserialize = true)
     private String programLibrary;
+    @Expose(serialize = true, deserialize = true)
     private String moduleName;
+    @Expose(serialize = true, deserialize = true)
     private String moduleLibrary;
+    @Expose(serialize = true, deserialize = true)
     private int hllStmtNbr;
+    @Expose(serialize = true, deserialize = true)
     private String procedureName;
+    @Expose(serialize = true, deserialize = true)
     private int callLevel;
+    @Expose(serialize = true, deserialize = true)
     private String eventSubType;
+    @Expose(serialize = true, deserialize = true)
     private int callerHLLStmtNbr;
+    @Expose(serialize = true, deserialize = true)
     private String callerProcedureName;
+    @Expose(serialize = true, deserialize = true)
     private int callerCallLevel;
 
-    private transient boolean isHighlighted;
+    @Expose(serialize = true, deserialize = true)
+    private boolean isHighlighted;
 
     // Transient values, set on demand
 

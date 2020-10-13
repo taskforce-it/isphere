@@ -10,8 +10,8 @@ package biz.isphere.jobtraceexplorer.core.model;
 
 public class HighlightedAttribute {
 
-    private int index;
-    private String value;
+    private transient int index;
+    private transient String value;
 
     public HighlightedAttribute(int index, String value) {
         this.index = index;

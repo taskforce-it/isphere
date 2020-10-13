@@ -11,13 +11,13 @@ package biz.isphere.jobtraceexplorer.core.ui.model;
 import org.eclipse.swt.graphics.Color;
 
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
-import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
 
 /**
  * This class represents a column of the "Job Trace Entries Viewer" widget. It
  * defines the properties of the column, such as column heading, color, width.
  * 
- * @see JobTraceEntriesViewerTab
+ * @see JobTraceEntriesSQLViewerTab
  * @see JobTraceEntryLabelProvider
  */
 public class JobTraceEntryColumn {

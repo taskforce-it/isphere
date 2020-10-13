@@ -13,8 +13,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.annotations.Expose;
+
 public class HighlightedAttributes {
 
+    @Expose(serialize = true, deserialize = true)
     private Map<Integer, Set<String>> attributes;
 
     public HighlightedAttributes() {
@@ -35,6 +38,10 @@ public class HighlightedAttributes {
 
     public boolean isHighlighted(int index, String value) {
         return getValues(index).contains(value);
+    }
+
+    public void clear() {
+        attributes.clear();
     }
 
     private Set<String> getValues(HighlightedAttribute attribute) {

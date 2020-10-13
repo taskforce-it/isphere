@@ -8,17 +8,26 @@
 
 package biz.isphere.jobtraceexplorer.core.model;
 
-public class JobTraceSession {
+import biz.isphere.core.json.JsonSerializable;
 
+import com.google.gson.annotations.Expose;
+
+public abstract class AbstractJobTraceSession implements JsonSerializable {
+
+    @Expose(serialize = true, deserialize = true)
     private String connectionName;
+    @Expose(serialize = true, deserialize = true)
     private String libraryName;
+    @Expose(serialize = true, deserialize = true)
     private String sessionID;
 
+    @Expose(serialize = true, deserialize = true)
     private String whereClause;
 
+    @Expose(serialize = true, deserialize = true)
     private JobTraceEntries jobTraceEntries;
 
-    public JobTraceSession(String connectionName, String libraryName, String sessionID) {
+    public AbstractJobTraceSession(String connectionName, String libraryName, String sessionID) {
         this.connectionName = connectionName;
         this.libraryName = libraryName;
         this.sessionID = sessionID;
@@ -80,7 +89,7 @@ public class JobTraceSession {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        JobTraceSession other = (JobTraceSession)obj;
+        AbstractJobTraceSession other = (AbstractJobTraceSession)obj;
         if (connectionName == null) {
             if (other.connectionName != null) return false;
         } else if (!connectionName.equals(other.connectionName)) return false;

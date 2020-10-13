@@ -17,7 +17,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionSQL;
 import biz.isphere.jobtraceexplorer.core.ui.dialogs.OpenJobTraceSessionDialog;
 
 public abstract class OpenJobTraceAction extends Action {
@@ -25,7 +25,7 @@ public abstract class OpenJobTraceAction extends Action {
     private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_OPEN_JOB_TRACE_SESSION;
 
     private Shell shell;
-    private JobTraceSession jobTraceSession;
+    private JobTraceSessionSQL jobTraceSession;
 
     public OpenJobTraceAction(Shell shell) {
         super(Messages.JobTraceExplorerView_OpenJobTraceSession);
@@ -45,7 +45,7 @@ public abstract class OpenJobTraceAction extends Action {
         postRunAction();
     }
 
-    public JobTraceSession getJobTraceSession() {
+    public JobTraceSessionSQL getJobTraceSession() {
         return jobTraceSession;
     }
 
@@ -60,8 +60,8 @@ public abstract class OpenJobTraceAction extends Action {
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 openJournalOutputFileDialog.getConnectionName())) {
-                jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibraryName(),
-                    openJournalOutputFileDialog.getSessionID());
+                jobTraceSession = new JobTraceSessionSQL(openJournalOutputFileDialog.getConnectionName(),
+                    openJournalOutputFileDialog.getLibraryName(), openJournalOutputFileDialog.getSessionID());
                 jobTraceSession.setWhereClause(""); // //$NON-NLS-1$
             }
         }

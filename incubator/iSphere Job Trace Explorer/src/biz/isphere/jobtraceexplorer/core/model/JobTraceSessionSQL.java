@@ -6,18 +6,11 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.jobtraceexplorer.core.ui.views;
+package biz.isphere.jobtraceexplorer.core.model;
 
-import org.eclipse.swt.widgets.Shell;
+public class JobTraceSessionSQL extends AbstractJobTraceSession {
 
-import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewerTab;
-
-public interface IDataLoadPostRun {
-
-    public void finishDataLoading(AbstractJobTraceEntriesViewerTab tabItem, boolean isFilter);
-
-    public void handleDataLoadException(AbstractJobTraceEntriesViewerTab tabItem, Throwable e);
-
-    public Shell getShell();
-
+    public JobTraceSessionSQL(String connectionName, String libraryName, String sessionID) {
+        super(connectionName, libraryName, sessionID);
+    }
 }
