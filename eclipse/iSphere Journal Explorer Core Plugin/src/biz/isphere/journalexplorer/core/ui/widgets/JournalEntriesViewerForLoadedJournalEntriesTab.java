@@ -24,10 +24,10 @@ import org.eclipse.swt.widgets.Composite;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.json.JsonImporter;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
-import biz.isphere.journalexplorer.core.export.json.JsonImporter;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
@@ -144,7 +144,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
                 monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
 
-                JsonImporter importer = new JsonImporter();
+                JsonImporter<JournalEntries> importer = new JsonImporter<JournalEntries>(JournalEntries.class);
 
                 final JournalEntries data = importer.execute(view.getViewSite().getShell(), fileName);
 
