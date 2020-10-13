@@ -28,7 +28,7 @@ public class JobTraceSession {
         return whereClause;
     }
 
-    public void setWhereClause() {
+    public void setWhereClause(String whereClause) {
         this.whereClause = whereClause;
     }
 
