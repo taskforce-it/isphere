@@ -75,6 +75,21 @@ public final class StringHelper {
     }
 
     /**
+     * Returns an empty string for a <code>null</code> value.
+     * 
+     * @param value - string checked for a <code>null</code> value
+     * @return string that is not null
+     */
+    public static String notNull(String value) {
+
+        if (value == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return value;
+    }
+
+    /**
      * Removes trailing spaces from a specified input string.
      * 
      * @param aString that is trimmed right
