@@ -17,13 +17,14 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 
 public class JobTraceEntries {
 
-    private JobTraceSession jobTraceSession;
     private List<JobTraceEntry> jobTraceEntries;
     private transient List<JobTraceEntry> filteredJobTraceEntries;
+    private String filterWhereClause;
     private boolean isOverflow;
     private int numAvailableRows;
     private List<IBMiMessage> messages;
@@ -31,14 +32,10 @@ public class JobTraceEntries {
     private HighlightedAttributes highlightedAttributes;
 
     public JobTraceEntries() {
-        this(null);
-    }
 
-    public JobTraceEntries(JobTraceSession jobTraceSession) {
-
-        this.jobTraceSession = jobTraceSession;
         this.jobTraceEntries = new LinkedList<JobTraceEntry>();
         this.filteredJobTraceEntries = null;
+        this.filterWhereClause = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
         this.messages = null;
@@ -58,28 +55,51 @@ public class JobTraceEntries {
         return highlightedAttributes.isHighlighted(index, value);
     }
 
-    public boolean isSameSession(JobTraceSession jobTraceSession) {
+    public String getFilterWhereClause() {
+        return StringHelper.notNull(filterWhereClause);
+    }
 
-        if (this.jobTraceSession == null && jobTraceSession == null) {
-            return true;
-        } else if (this.jobTraceSession != null) {
-            return this.jobTraceSession.equals(jobTraceSession);
-        } else {
-            return false;
+    public void setFilterWhereClause(String filterWhereClause) {
+
+        if (this.filterWhereClause == filterWhereClause) {
+            return;
+        }
+
+        this.filterWhereClause = filterWhereClause;
+
+        if (StringHelper.isNullOrEmpty(this.filterWhereClause)) {
+            removeFilter();
         }
     }
 
-    public void applyFilter(String whereClause) throws ParseException {
+    public boolean isFiltered() {
+
+        if (filteredJobTraceEntries != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean hasFilterWhereClause() {
+
+        if (!StringHelper.isNullOrEmpty(filterWhereClause)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void applyFilter() throws ParseException {
 
         Date startTime = new Date();
 
-        if (StringHelper.isNullOrEmpty(whereClause)) {
-            removeFilter();
+        if (!hasFilterWhereClause()) {
             return;
         }
 
         HashMap<String, Integer> columnMapping = JobTraceEntry.getColumnMapping();
-        RowJEP sqljep = new RowJEP(whereClause);
+        RowJEP sqljep = new RowJEP(filterWhereClause);
         sqljep.parseExpression(columnMapping);
 
         filteredJobTraceEntries = new LinkedList<JobTraceEntry>();
@@ -91,8 +111,7 @@ public class JobTraceEntries {
             }
         }
 
-        // System.out.println("mSecs total: " + timeElapsed(startTime) +
-        // ", FILTER-CLAUSE: " + whereClause);
+        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime) + ", FILTER-CLAUSE: " + filterWhereClause);
     }
 
     private long timeElapsed(Date startTime) {
@@ -113,7 +132,7 @@ public class JobTraceEntries {
 
     public void add(JobTraceEntry jobTraceEntry) {
 
-        if (filteredJobTraceEntries != null) {
+        if (isFiltered()) {
             throw new IllegalAccessError("Cannot add entry when filter is active."); //$NON-NLS-1$
         }
 
@@ -124,7 +143,7 @@ public class JobTraceEntries {
 
     public List<JobTraceEntry> getItems() {
 
-        if (filteredJobTraceEntries != null) {
+        if (isFiltered()) {
             return filteredJobTraceEntries;
         } else {
             return jobTraceEntries;
@@ -167,7 +186,7 @@ public class JobTraceEntries {
     public void clear() {
 
         removeFilter();
-        getItems().clear();
+        jobTraceEntries.clear();
     }
 
     public void setMessages(List<IBMiMessage> messages) {

@@ -122,8 +122,6 @@ public class JobTraceDAO {
 
     public JobTraceEntries load(IProgressMonitor monitor) {
 
-        JobTraceEntries jobTraceEntries = new JobTraceEntries(jobTraceSession);
-
         List<IBMiMessage> messages = null;
 
         Connection jdbcConnection = null;
@@ -147,8 +145,7 @@ public class JobTraceDAO {
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-            // TODO: SQL WHERE clause
-            int numRowsAvailable = getNumRowsAvailable(sqlHelper, "");
+            int numRowsAvailable = getNumRowsAvailable(sqlHelper, jobTraceSession.getWhereClause());
 
             preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(jobTraceSession.getWhereClause()));
 
@@ -157,6 +154,8 @@ public class JobTraceDAO {
             resultSet = preparedStatement.executeQuery();
 
             monitor.beginTask(Messages.Status_Receiving_job_trace_entries, numRowsAvailable);
+
+            JobTraceEntries jobTraceEntries = jobTraceSession.getJobTraceEntries();
 
             while (resultSet.next() && !isDataOverflow && !isCanceled(monitor, jobTraceEntries)) {
 
@@ -188,16 +187,15 @@ public class JobTraceDAO {
             sqlHelper.close(preparedStatement);
         }
 
-        // System.out.println("mSecs total: " + timeElapsed(startTime) +
-        // ", WHERE-CLAUSE: " + whereClause);
+        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime) + ", WHERE-CLAUSE: " + jobTraceSession.getWhereClause());
 
         if (isDataOverflow) {
-            jobTraceEntries.setOverflow(true, -1);
+            jobTraceSession.getJobTraceEntries().setOverflow(true, -1);
         }
 
-        jobTraceEntries.setMessages(messages);
+        jobTraceSession.getJobTraceEntries().setMessages(messages);
 
-        return jobTraceEntries;
+        return jobTraceSession.getJobTraceEntries();
     }
 
     private boolean overWriteTables(SqlHelper sqlHelper, JobTraceSession jobTraceSession) {

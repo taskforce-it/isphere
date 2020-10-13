@@ -121,7 +121,7 @@ public class JobTraceEntry {
     // / SQLJep Getters
     // //////////////////////////////////////////////////////////
 
-    public static Comparable[] getSampleRow() {
+    public static Comparable<?>[] getSampleRow() {
 
         long now = new java.util.Date().getTime();
 
@@ -144,9 +144,9 @@ public class JobTraceEntry {
         return jobTraceEntry.getRow();
     }
 
-    public Comparable[] getRow() {
+    public Comparable<?>[] getRow() {
 
-        Comparable[] row = new Comparable[columnMappings.size()];
+        Comparable<?>[] row = new Comparable[columnMappings.size()];
 
         row[ColumnsDAO.ID.ordinal()] = getId();
         row[ColumnsDAO.NANOS_SINE_STARTED.ordinal()] = getNanosSinceStarted();

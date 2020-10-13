@@ -62,6 +62,7 @@ public abstract class OpenJobTraceAction extends Action {
                 openJournalOutputFileDialog.getConnectionName())) {
                 jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibraryName(),
                     openJournalOutputFileDialog.getSessionID());
+                jobTraceSession.setWhereClause(""); // //$NON-NLS-1$
             }
         }
     }

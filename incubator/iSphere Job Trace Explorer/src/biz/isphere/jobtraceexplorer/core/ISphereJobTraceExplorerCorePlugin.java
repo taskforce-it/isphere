@@ -103,4 +103,13 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     public static void logError(String message, Throwable e) {
         plugin.getLog().log(new Status(Status.ERROR, PLUGIN_ID, Status.ERROR, message, e));
     }
+
+    /**
+     * Writes a debug message to system out.
+     * 
+     * @param message - debug message
+     */
+    public static void debug(String message) {
+        // System.out.println(message);
+    }
 }

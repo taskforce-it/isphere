@@ -16,20 +16,15 @@ public class JobTraceSession {
 
     private String whereClause;
 
+    private JobTraceEntries jobTraceEntries;
+
     public JobTraceSession(String connectionName, String libraryName, String sessionID) {
         this.connectionName = connectionName;
         this.libraryName = libraryName;
         this.sessionID = sessionID;
 
         this.whereClause = null;
-    }
-
-    public String getWhereClause() {
-        return whereClause;
-    }
-
-    public void setWhereClause(String whereClause) {
-        this.whereClause = whereClause;
+        this.jobTraceEntries = null;
     }
 
     public String getConnectionName() {
@@ -46,6 +41,23 @@ public class JobTraceSession {
 
     public String getQualifiedName() {
         return libraryName + ":" + sessionID; //$NON-NLS-1$
+    }
+
+    public String getWhereClause() {
+        return whereClause;
+    }
+
+    public void setWhereClause(String whereClause) {
+        this.whereClause = whereClause;
+    }
+
+    public JobTraceEntries getJobTraceEntries() {
+
+        if (jobTraceEntries == null) {
+            jobTraceEntries = new JobTraceEntries();
+        }
+
+        return jobTraceEntries;
     }
 
     @Override

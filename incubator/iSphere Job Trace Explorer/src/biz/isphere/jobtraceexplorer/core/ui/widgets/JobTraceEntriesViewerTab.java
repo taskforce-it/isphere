@@ -29,7 +29,7 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
-import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
+import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 
 /**
  * This widget is a viewer for the job trace entries loaded from a job trace
@@ -42,24 +42,13 @@ import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private TableViewer tableViewer;
-    private JobTraceSession jobTraceSession;
 
     public JobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
-        super(parent, null, loadJobTraceEntriesSelectionListener);
-
-        this.jobTraceSession = jobTraceSession;
+        super(parent, jobTraceSession, loadJobTraceEntriesSelectionListener);
 
         setSqlEditorVisibility(false);
 
         initializeComponents();
-    }
-
-    protected String getLabel() {
-        return jobTraceSession.toString();
-    }
-
-    protected String getTooltip() {
-        return jobTraceSession.toString(); //$NON-NLS-1$
     }
 
     protected TableViewer createTableViewer(Composite container) {
@@ -118,21 +107,21 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         setInputData(null);
     }
 
-    public void openJobTraceSession(final JobTraceExplorerView view, String filterWhereClause) throws Exception {
+    public void openJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
         tableViewer.getTable().setEnabled(false);
 
         setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(view, jobTraceSession);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(postRun, getJobTraceSession());
         loadJobTraceDataJob.schedule();
     }
 
-    public void filterJobTraceSession(final JobTraceExplorerView view, String filterWhereClause) throws Exception {
+    public void filterJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
         setSqlEditorEnabled(false);
 
-        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(view, filterWhereClause);
+        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(postRun);
         filterJobTraceDataJob.schedule();
     }
 
@@ -142,16 +131,14 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private class OpenJobTraceSessionJob extends Job {
 
-        private JobTraceExplorerView view;
+        private IDataLoadPostRun postRun;
         private JobTraceSession jobTraceSession;
-        private String filterWhereClause;
 
-        public OpenJobTraceSessionJob(JobTraceExplorerView view, JobTraceSession jobTraceSession) {
+        public OpenJobTraceSessionJob(IDataLoadPostRun postRun, JobTraceSession jobTraceSession) {
             super(Messages.bind(Messages.Status_Loading_job_trace_entries_of_session_A, jobTraceSession.getQualifiedName()));
 
-            this.view = view;
+            this.postRun = postRun;
             this.jobTraceSession = jobTraceSession;
-            this.filterWhereClause = ""; // filterWhereClause;
         }
 
         public IStatus run(IProgressMonitor monitor) {
@@ -160,7 +147,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
                 JobTraceDAO jobTraceDAO = new JobTraceDAO(jobTraceSession);
                 final JobTraceEntries data = jobTraceDAO.load(monitor);
-                data.applyFilter(filterWhereClause);
+                data.applyFilter();
 
                 IBMiMessage[] messages = data.getMessages();
                 if (messages.length != 0) {
@@ -171,7 +158,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setInputData(data);
-                            view.finishDataLoading(JobTraceEntriesViewerTab.this, false);
+                            postRun.finishDataLoading(JobTraceEntriesViewerTab.this, false);
                         }
                     });
                 }
@@ -184,7 +171,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
                         public void run() {
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.handleDataLoadException(JobTraceEntriesViewerTab.this, e1);
+                            postRun.handleDataLoadException(JobTraceEntriesViewerTab.this, e1);
                         }
                     });
                 }
@@ -198,14 +185,12 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
     private class FilterJobTraceSessionDataJob extends Job {
 
-        private JobTraceExplorerView view;
-        private String whereClause;
+        private IDataLoadPostRun postRun;
 
-        public FilterJobTraceSessionDataJob(JobTraceExplorerView view, String whereClause) {
+        public FilterJobTraceSessionDataJob(IDataLoadPostRun postRun) {
             super(Messages.Status_Loading_job_trace_entries_of_session_A);
 
-            this.view = view;
-            this.whereClause = whereClause;
+            this.postRun = postRun;
         }
 
         public IStatus run(IProgressMonitor monitor) {
@@ -214,7 +199,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
 
             try {
 
-                data.applyFilter(whereClause);
+                data.applyFilter();
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
@@ -222,7 +207,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
                             setInputData(data);
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.finishDataLoading(JobTraceEntriesViewerTab.this, true);
+                            postRun.finishDataLoading(JobTraceEntriesViewerTab.this, true);
                         }
                     });
                 }
@@ -235,7 +220,7 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
                         public void run() {
                             setSqlEditorEnabled(true);
                             setFocusOnSqlEditor();
-                            view.handleDataLoadException(JobTraceEntriesViewerTab.this, e1);
+                            postRun.handleDataLoadException(JobTraceEntriesViewerTab.this, e1);
                         }
                     });
                 }
@@ -246,27 +231,4 @@ public class JobTraceEntriesViewerTab extends AbstractJobTraceEntriesViewerTab {
         }
 
     };
-
-    // private class MouseLocationListener implements Listener {
-    // public void handleEvent(Event event) {
-    // Point pt = new Point(event.x, event.y);
-    // Table table = (Table)event.widget;
-    // TableItem item = table.getItem(pt);
-    // if (item == null) return;
-    // for (int i = 0; i < table.getColumnCount(); i++) {
-    // Rectangle rect = item.getBounds(i);
-    // if (rect.contains(pt)) {
-    // int index = table.indexOf(item);
-    // JobTraceEntry jobTraceEntry =
-    // (JobTraceEntry)table.getItem(index).getData();
-    // int columnIndex =
-    // JobTraceViewerFactory.getColumnIndex(table.getColumn(i));
-    // if (columnIndex >= 0) {
-    // JobTraceEntriesViewerTab.this.mouseCursorLocation = new
-    // MouseCursorLocation(jobTraceEntry, columnIndex);
-    // }
-    // }
-    // }
-    // }
-    // }
 }

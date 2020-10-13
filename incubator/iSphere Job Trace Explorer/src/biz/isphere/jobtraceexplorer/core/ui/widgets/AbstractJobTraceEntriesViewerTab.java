@@ -8,7 +8,6 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.widgets;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,16 +32,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.medfoster.sqljep.ParseException;
-import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
@@ -53,7 +47,7 @@ import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerConte
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
-import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
+import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 
 /**
  * This widget is a viewer for the job trace entries of an output file of the
@@ -78,8 +72,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private TableViewer tableViewer;
     private JobTraceEntries data;
     private SqlEditor sqlEditor;
-    private String filterWhereClause;
-    private String selectClause;
 
     public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, SWT.NONE);
@@ -91,18 +83,31 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
         this.loadJobTraceEntriesSelectionListener = loadJobTraceEntriesSelectionListener;
-        this.filterWhereClause = null;
-        this.selectClause = null;
 
         // Preferences.getInstance().addPropertyChangeListener(this);
     }
 
-    protected abstract String getLabel();
+    protected String getLabel() {
+        return jobTraceSession.toString();
+    }
 
-    protected abstract String getTooltip();
+    protected String getTooltip() {
+        return jobTraceSession.toString();
+    }
 
-    protected JobTraceSession getOutputFile() {
+    protected JobTraceSession getJobTraceSession() {
         return jobTraceSession;
+    }
+
+    public boolean isSameSession(JobTraceSession otherJobTraceSession) {
+
+        if (this.jobTraceSession == null && otherJobTraceSession == null) {
+            return true;
+        } else if (this.jobTraceSession != null) {
+            return this.jobTraceSession.equals(otherJobTraceSession);
+        } else {
+            return false;
+        }
     }
 
     private ContentAssistProposal[] getContentAssistProposals() {
@@ -128,7 +133,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             sqlEditor.setBtnExecuteToolTipText(Messages.ButtonTooltip_Filter);
             sqlEditor.addModifyListener(new ModifyListener() {
                 public void modifyText(ModifyEvent event) {
-                    setFilterClause(sqlEditor.getWhereClause().trim());
+                    setFilterWhereClause(sqlEditor.getWhereClause());
                 }
             });
         }
@@ -168,31 +173,12 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
     }
 
-    private void setFilterClause(String whereClause) {
-        this.filterWhereClause = whereClause;
+    private void setFilterWhereClause(String filterWhereClause) {
+        jobTraceSession.getJobTraceEntries().setFilterWhereClause(filterWhereClause);
     }
 
     public String getFilterWhereClause() {
-        return filterWhereClause;
-    }
-
-    public void validateWhereClause(Shell shell, String whereClause) throws SQLSyntaxErrorException {
-
-        if (StringHelper.isNullOrEmpty(whereClause)) {
-            return;
-        }
-
-        try {
-
-            HashMap<String, Integer> columnMapping = JobTraceEntry.getColumnMapping();
-            RowJEP sqljep = new RowJEP(whereClause);
-            sqljep.parseExpression(columnMapping);
-            sqljep.getValue(JobTraceEntry.getSampleRow());
-
-        } catch (ParseException e) {
-            throw new SQLSyntaxErrorException(e);
-        }
-
+        return jobTraceSession.getJobTraceEntries().getFilterWhereClause();
     }
 
     public boolean isFiltered() {
@@ -200,16 +186,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     }
 
     private boolean hasWhereClause() {
-
-        if (!StringHelper.isNullOrEmpty(filterWhereClause) && filterWhereClause.length() > 0) {
-            return true;
-        }
-
-        if (!StringHelper.isNullOrEmpty(selectClause) && selectClause.length() > 0) {
-            return true;
-        }
-
-        return false;
+        return jobTraceSession.getJobTraceEntries().hasFilterWhereClause();
     }
 
     private boolean isAvailable(Control control) {
@@ -286,9 +263,9 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     protected abstract TableViewer createTableViewer(Composite container);
 
-    public abstract void openJobTraceSession(JobTraceExplorerView view, String filterWhereClause) throws Exception;
+    public abstract void openJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
-    public abstract void filterJobTraceSession(JobTraceExplorerView view, String whereClause) throws Exception;
+    public abstract void filterJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
     public abstract void closeJobTraceSession();
 
@@ -334,13 +311,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
 
         super.dispose();
-    }
-
-    private void refreshTable() {
-        if (tableViewer != null) {
-            tableViewer.refresh(true);
-        }
-
     }
 
     public StructuredSelection getSelection() {

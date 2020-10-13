@@ -8,13 +8,13 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.views;
 
-import org.eclipse.jface.action.IMenuManager;
+import java.util.HashMap;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
@@ -28,8 +28,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
@@ -43,11 +45,10 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.OpenJobTraceAction;
-import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewerTab;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesViewerTab;
 
-public class JobTraceExplorerView extends ViewPart implements ISelectionChangedListener, SelectionListener {
+public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, ISelectionChangedListener, SelectionListener {
 
     public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
 
@@ -175,8 +176,8 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
      */
     private void initializeMenu() {
 
-        IActionBars actionBars = getViewSite().getActionBars();
-        IMenuManager viewMenu = actionBars.getMenuManager();
+        // IActionBars actionBars = getViewSite().getActionBars();
+        // IMenuManager viewMenu = actionBars.getMenuManager();
     }
 
     public void createJobTraceTab(JobTraceSession jobTraceSession) {
@@ -185,7 +186,7 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
             throw new IllegalArgumentException("Parameter 'jobTraceSession' must not be [null]."); //$NON-NLS-1$
         }
 
-        JobTraceEntriesViewerTab jobTraceEntriesViewer = null;
+        AbstractJobTraceEntriesViewerTab jobTraceEntriesViewer = null;
 
         try {
 
@@ -227,13 +228,12 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         updateStatusLine();
     }
 
-    private JobTraceEntriesViewerTab findExplorerTab(JobTraceSession input) {
+    private AbstractJobTraceEntriesViewerTab findExplorerTab(JobTraceSession input) {
 
         CTabItem[] tabItems = tabFolder.getItems();
         for (CTabItem tabItem : tabItems) {
-            JobTraceEntriesViewerTab jobTraceEntriesViewerTab = (JobTraceEntriesViewerTab)tabItem;
-            JobTraceEntries tabInput = jobTraceEntriesViewerTab.getInput();
-            if (tabInput == null || tabInput.isSameSession(input)) {
+            AbstractJobTraceEntriesViewerTab jobTraceEntriesViewerTab = (AbstractJobTraceEntriesViewerTab)tabItem;
+            if (jobTraceEntriesViewerTab.isSameSession(input)) {
                 return jobTraceEntriesViewerTab;
             }
         }
@@ -283,22 +283,22 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
     private void performLoadJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
 
         String filterWhereClause = tabItem.getFilterWhereClause();
-
-        tabItem.validateWhereClause(getViewSite().getShell(), filterWhereClause);
+        validateWhereClause(filterWhereClause);
 
         tabItem.closeJobTraceSession();
         updateStatusLine();
-        tabItem.openJobTraceSession(this, filterWhereClause);
+        tabItem.openJobTraceSession(this);
     }
 
     private void performFilterJobTraceEntries(AbstractJobTraceEntriesViewerTab tabItem) throws Exception {
 
-        tabItem.validateWhereClause(getViewSite().getShell(), tabItem.getFilterWhereClause());
+        String filterWhereClause = tabItem.getFilterWhereClause();
+        validateWhereClause(filterWhereClause);
 
         tabItem.storeSqlEditorHistory();
         refreshSqlEditorHistory();
 
-        tabItem.filterJobTraceSession(this, tabItem.getFilterWhereClause());
+        tabItem.filterJobTraceSession(this);
     }
 
     private void refreshSqlEditorHistory() {
@@ -335,6 +335,24 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
                 tabItem.setSelectedItem(currentJobTraceEntry);
                 currentJobTraceEntry = null;
             }
+        }
+    }
+
+    private void validateWhereClause(String whereClause) throws SQLSyntaxErrorException {
+
+        if (StringHelper.isNullOrEmpty(whereClause)) {
+            return;
+        }
+
+        try {
+
+            HashMap<String, Integer> columnMapping = JobTraceEntry.getColumnMapping();
+            RowJEP sqljep = new RowJEP(whereClause);
+            sqljep.parseExpression(columnMapping);
+            sqljep.getValue(JobTraceEntry.getSampleRow());
+
+        } catch (ParseException e) {
+            throw new SQLSyntaxErrorException(e);
         }
     }
 
@@ -428,18 +446,14 @@ public class JobTraceExplorerView extends ViewPart implements ISelectionChangedL
         openJobTraceSession.setEnabled(true);
 
         int numEntries = 0;
-        JobTraceEntryColumn[] columns = null;
         JobTraceEntries jobTraceEntries = null;
-        StructuredSelection selection = new StructuredSelection(new JobTraceEntry[0]);
+
         if (tabItem != null) {
 
-            columns = tabItem.getColumns();
             jobTraceEntries = tabItem.getInput();
             if (jobTraceEntries != null) {
                 numEntries = jobTraceEntries.size();
             }
-
-            selection = tabItem.getSelection();
         }
 
         if (tabItem == null || tabItem.isLoading()) {
