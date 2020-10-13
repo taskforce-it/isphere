@@ -21,11 +21,11 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.core.json.JsonExporter;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.export.json.JsonExporter;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
@@ -83,7 +83,7 @@ public class SaveJournalEntriesAction extends Action {
 
                 try {
 
-                    JsonExporter exporter = new JsonExporter();
+                    JsonExporter<JournalEntries> exporter = new JsonExporter<JournalEntries>();
                     exporter.execute(shell, selectedItems, exportPath);
 
                     displayResultJob = new UIJob(Messages.Display_Export_Result) {

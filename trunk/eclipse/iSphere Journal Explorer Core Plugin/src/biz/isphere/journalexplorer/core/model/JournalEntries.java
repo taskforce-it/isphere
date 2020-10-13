@@ -17,11 +17,12 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
 import com.google.gson.annotations.Expose;
 
-public class JournalEntries {
+public class JournalEntries implements JsonSerializable {
 
     @Expose(serialize = true, deserialize = true)
     private List<JournalEntry> journalEntries;
