@@ -31,7 +31,7 @@ public class JsonImporter<M extends JsonSerializable> {
 
     public M execute(Shell shell, String file) {
 
-        if (file == null) {
+        if (file == null && shell != null) {
             IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.SAVE);
             dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$
             dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$
