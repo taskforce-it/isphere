@@ -22,6 +22,8 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
     public static final String IMAGE_HIGHLIGHT_ATTR = "highlight_attribute.png";
     public static final String IMAGE_JSON = "json.png";
+    public static final String IMAGE_HIDE_PROCEDURE = "hide_proc.png";
+    public static final String IMAGE_SHOW_PROCEDURE = "show_proc.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$

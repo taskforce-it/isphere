@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.base.internal.SqlHelper;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
@@ -120,7 +119,7 @@ public class JobTraceSQLDAO {
         this.jobTraceSession = jobTraceSession;
     }
 
-    public JobTraceSession load(IProgressMonitor monitor) {
+    public JobTraceSession load(IProgressMonitor monitor) throws Exception {
 
         List<IBMiMessage> messages = null;
 
@@ -173,8 +172,6 @@ public class JobTraceSQLDAO {
                 }
             }
 
-        } catch (Throwable e) {
-            ISphereJobTraceExplorerCorePlugin.logError("*** Could not load trace data " + jobTraceSession.toString() + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
         } finally {
 
             monitor.done();
@@ -187,7 +184,7 @@ public class JobTraceSQLDAO {
             sqlHelper.close(preparedStatement);
         }
 
-        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime) + ", WHERE-CLAUSE: " + jobTraceSession.getWhereClause());
+        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime) + ", WHERE-CLAUSE: " + jobTraceSession.getWhereClause()); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (isDataOverflow) {
             jobTraceSession.getJobTraceEntries().setOverflow(true, -1);
@@ -253,9 +250,9 @@ public class JobTraceSQLDAO {
         return false;
     }
 
-    private int getNumRowsAvailable(SqlHelper sqlHelper, String whereClause) {
+    private int getNumRowsAvailable(SqlHelper sqlHelper, String whereClause) throws SQLException {
 
-        int numRowsAvailable = Integer.MAX_VALUE;
+        int numRowsAvailable = 0;
 
         String sqlCountStatement = getSQLCountStatement(whereClause);
         PreparedStatement preparedStatement = null;
@@ -273,8 +270,6 @@ public class JobTraceSQLDAO {
                 numRowsAvailable = Integer.MAX_VALUE;
             }
 
-        } catch (SQLException e) {
-            ISpherePlugin.logError("*** Could not execute SQL statement: '" + sqlCountStatement + "' ***", e);
         } finally {
             try {
                 sqlHelper.close(preparedStatement);

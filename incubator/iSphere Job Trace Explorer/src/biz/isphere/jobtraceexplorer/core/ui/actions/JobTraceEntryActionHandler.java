@@ -8,6 +8,7 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.actions;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Shell;
@@ -201,6 +203,103 @@ public class JobTraceEntryActionHandler {
         }
     }
 
+    /**
+     * Excludes the selected procedure.
+     */
+    public void handleExcludeProc() {
+
+        int startIndex = getSelectionIndexUI();
+        if (!isValidIndexUI(startIndex)) {
+            return;
+        }
+
+        int endIndex = -1;
+        JobTraceEntry jobTraceEntry = getElementAtUI(startIndex);
+        if (jobTraceEntry.isProcEntry()) {
+            endIndex = findProcExit(startIndex, getItemCountUI(), null);
+        } else if (jobTraceEntry.isProcExit()) {
+            endIndex = findProcEntry(startIndex, getItemCountUI(), null);
+        } else {
+            return;
+        }
+
+        int index = Math.min(startIndex, endIndex) + 1;
+        endIndex = Math.max(startIndex, endIndex) - 1;
+
+        if ((endIndex - index) <= 0) {
+            MessageDialog.openInformation(getShell(), Messages.MenuItem_Exclude_procedure, Messages.There_is_nothing_to_hide);
+            return;
+        }
+
+        JobTraceEntry startEntry = getElementAtUI(startIndex);
+
+        JobTraceEntries jobTraceEntries = startEntry.getParent();
+
+        BigInteger key = startEntry.getNanosSinceStarted();
+
+        List<JobTraceEntry> excludedEntries = new ArrayList<JobTraceEntry>();
+        if (isValidIndexUI(index) && isValidIndexUI(endIndex)) {
+            while (index <= endIndex) {
+                jobTraceEntry = getElementAtUI(index);
+                excludedEntries.add(jobTraceEntry);
+                index++;
+            }
+        }
+
+        JobTraceEntry endEntry = getElementAtUI(index);
+
+        startEntry.setExcludedEntriesKey(key);
+        endEntry.setExcludedEntriesKey(key);
+
+        jobTraceEntries.excludeJobTraceEntries(key, excludedEntries);
+
+        getTableViewer().refresh();
+
+        getTableViewer().setSelection(new StructuredSelection(startEntry));
+    }
+
+    /**
+     * Excludes the selected procedure.
+     */
+    public void handleIncludeProc() {
+
+        int startIndex = getSelectionIndexUI();
+        if (!isValidIndexUI(startIndex)) {
+            return;
+        }
+
+        int endIndex = -1;
+        JobTraceEntry jobTraceEntry = getElementAtUI(startIndex);
+        if (jobTraceEntry.isProcEntry()) {
+            endIndex = findProcExit(startIndex, getItemCountUI(), null);
+        } else if (jobTraceEntry.isProcExit()) {
+            endIndex = findProcEntry(startIndex, getItemCountUI(), null);
+        } else {
+            return;
+        }
+
+        int index = Math.min(startIndex, endIndex);
+        endIndex = Math.max(startIndex, endIndex);
+
+        if ((endIndex - index) < 0) {
+            return;
+        }
+
+        JobTraceEntry startEntry = getElementAtUI(index);
+        JobTraceEntries jobTraceEntries = startEntry.getParent();
+        BigInteger key = startEntry.getNanosSinceStarted();
+        JobTraceEntry endEntry = getElementAtUI(index);
+
+        jobTraceEntries.includeJobTraceEntries(index + 1, key);
+
+        startEntry.setExcludedEntriesKey(null);
+        endEntry.setExcludedEntriesKey(null);
+
+        getTableViewer().refresh();
+
+        getTableViewer().setSelection(new StructuredSelection(startEntry));
+    }
+
     // //////////////////////////////////////////////////////////
     // / Private procedures
     // //////////////////////////////////////////////////////////
@@ -290,14 +389,14 @@ public class JobTraceEntryActionHandler {
     }
 
     private void updateElementsUI(JobTraceEntry... jobtraceEntry) {
-        getTabelViewer().update(jobtraceEntry, null);
+        getTableViewer().update(jobtraceEntry, null);
     }
 
     private void setPositionToUI(int index) {
 
         if (isValidIndexUI(index)) {
-            getTabelViewer().setSelection(new StructuredSelection(getElementAtUI(index)));
-            getTabelViewer().getTable().setTopIndex(index);
+            getTableViewer().setSelection(new StructuredSelection(getElementAtUI(index)));
+            getTableViewer().getTable().setTopIndex(index);
         }
     }
 
@@ -309,7 +408,7 @@ public class JobTraceEntryActionHandler {
         return tableViewer.getTable();
     }
 
-    private TableViewer getTabelViewer() {
+    private TableViewer getTableViewer() {
         return tableViewer;
     }
 

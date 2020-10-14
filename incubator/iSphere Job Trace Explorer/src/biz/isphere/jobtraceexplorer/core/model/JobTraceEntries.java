@@ -8,6 +8,8 @@
 
 package biz.isphere.jobtraceexplorer.core.model;
 
+import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,6 +40,8 @@ public class JobTraceEntries {
     private boolean isCanceled;
     @Expose(serialize = true, deserialize = true)
     private HighlightedAttributes highlightedAttributes;
+    @Expose(serialize = true, deserialize = true)
+    private ExcludedEntries excludedEntries;
 
     private transient List<JobTraceEntry> filteredJobTraceEntries;
 
@@ -55,6 +59,30 @@ public class JobTraceEntries {
 
     public boolean isHighlighted(int index, String value) {
         return highlightedAttributes.isHighlighted(index, value);
+    }
+
+    public void excludeJobTraceEntries(BigInteger nanosSinceStarted, List<JobTraceEntry> excludedJobTraceEntries) {
+
+        this.excludedEntries.addAll(nanosSinceStarted, excludedJobTraceEntries);
+        this.jobTraceEntries.removeAll(excludedJobTraceEntries);
+    }
+
+    public void includeJobTraceEntries(int index, BigInteger nanonsSinceStarted) {
+
+        JobTraceEntry[] excludedJobTraceEntries = excludedEntries.getAll(nanonsSinceStarted);
+        jobTraceEntries.addAll(index, Arrays.asList(excludedJobTraceEntries));
+        excludedEntries.removeAll(nanonsSinceStarted);
+    }
+
+    public boolean isExcluded(BigInteger nanosSinceStarted) {
+        if (excludedEntries == null) {
+            return false;
+        }
+        return excludedEntries.isExcluded(nanosSinceStarted);
+    }
+
+    public void setHighlightedExcludedEntries(BigInteger nanosSinceStarted, boolean isHighlighted) {
+        excludedEntries.setHighlighted(nanosSinceStarted, isHighlighted);
     }
 
     public String getFilterWhereClause() {
@@ -204,6 +232,7 @@ public class JobTraceEntries {
 
         if (fullReset) {
             this.highlightedAttributes = new HighlightedAttributes();
+            this.excludedEntries = new ExcludedEntries();
         }
     }
 

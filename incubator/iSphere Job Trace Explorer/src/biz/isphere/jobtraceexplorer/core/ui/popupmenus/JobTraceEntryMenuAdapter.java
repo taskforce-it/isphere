@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.ui.actions.AbstractJobTraceEntryAction;
+import biz.isphere.jobtraceexplorer.core.ui.actions.ExcludeProcAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.HighlightAttributeAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.HighlightProcAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.JumpToProcEntryAction;
@@ -34,15 +35,20 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     private MenuItem menuItemHighlightRowAttribute;
     private MenuItem menuItemHighlightProc;
+    private MenuItem menuItemExcludeProc;
     private MenuItem menuItemProcedureSeparator;
     private MenuItem menuItemJumpToProcEnter;
     private MenuItem menuItemJumpToProcExit;
+
+    private boolean needProcedureSeparator;
 
     public JobTraceEntryMenuAdapter(Menu parentMenu, TableViewer tableViewer) {
         this.parentMenu = parentMenu;
         this.tableViewer = tableViewer;
 
         this.shell = tableViewer.getControl().getShell();
+
+        this.needProcedureSeparator = false;
     }
 
     @Override
@@ -52,11 +58,15 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
     }
 
     public void destroyMenuItems() {
+
         dispose(menuItemHighlightRowAttribute);
         dispose(menuItemHighlightProc);
+        dispose(menuItemExcludeProc);
         dispose(menuItemProcedureSeparator);
         dispose(menuItemJumpToProcEnter);
         dispose(menuItemJumpToProcExit);
+
+        this.needProcedureSeparator = false;
     }
 
     private int selectedItemsCount() {
@@ -105,6 +115,8 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
             if (getSelectedItem().isProcEntry() || getSelectedItem().isProcExit()) {
                 menuItemHighlightRowAttribute = createMenuItem(new HighlightAttributeAction(shell, tableViewer));
                 menuItemHighlightProc = createMenuItem(new HighlightProcAction(shell, tableViewer));
+                menuItemExcludeProc = createMenuItem(new ExcludeProcAction(shell, tableViewer, getSelectedItem().isExcluded()));
+                needProcedureSeparator = true;
             }
 
             if (getSelectedItem().isProcExit()) {
@@ -121,7 +133,7 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     private void addProcedureSeparator() {
 
-        if (isMenuItem(menuItemHighlightRowAttribute) || isMenuItem(menuItemHighlightProc)) {
+        if (needProcedureSeparator) {
             if (!isMenuItem(menuItemProcedureSeparator)) {
                 menuItemProcedureSeparator = new MenuItem(parentMenu, SWT.SEPARATOR);
             }

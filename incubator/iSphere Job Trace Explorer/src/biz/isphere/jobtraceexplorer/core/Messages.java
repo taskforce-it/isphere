@@ -86,6 +86,8 @@ public class Messages extends NLS {
     public static String MenuItem_Highlight_procedure;
     public static String MenuItem_Highlight_attribute;
     public static String MenuItem_Edit_sql;
+    public static String MenuItem_Exclude_procedure;
+    public static String MenuItem_Include_procedure;
 
     // Dialog titles
     public static String MessageDialog_Open_Job_Trace_Session_Title;
@@ -108,6 +110,7 @@ public class Messages extends NLS {
     public static String subsetted_list;
     public static String Display_Export_Result;
     public static String Finished_exporting_data_to_file_A;
+    public static String There_is_nothing_to_hide;
 
     // Error Messages
     public static String Error_No_connections_available;

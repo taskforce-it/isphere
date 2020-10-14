@@ -96,6 +96,8 @@ public class JobTraceEntry {
 
     @Expose(serialize = true, deserialize = true)
     private boolean isHighlighted;
+    @Expose(serialize = true, deserialize = true)
+    private BigInteger excludedEntriesKey;
 
     // Transient values, set on demand
 
@@ -321,6 +323,22 @@ public class JobTraceEntry {
 
     public void setHighlighted(boolean isHighlighted) {
         this.isHighlighted = isHighlighted;
+        if (isExcluded()) {
+            getParent().setHighlightedExcludedEntries(nanosSinceStarted, this.isHighlighted);
+        }
+    }
+
+    public boolean isExcluded() {
+
+        if (excludedEntriesKey != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void setExcludedEntriesKey(BigInteger excludedEntriesKey) {
+        this.excludedEntriesKey = excludedEntriesKey;
     }
 
     public String getValueForUi(int index) {
