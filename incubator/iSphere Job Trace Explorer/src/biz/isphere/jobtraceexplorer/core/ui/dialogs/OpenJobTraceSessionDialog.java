@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
@@ -157,7 +158,18 @@ public class OpenJobTraceSessionDialog extends XDialog {
             return false;
         }
 
+        if (!hasSession(system, libraryName, sessionID)) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.Error_Job_trace_session_B_not_found_in_library_A, libraryName, sessionID));
+            txtSessionID.setFocus();
+            return false;
+        }
+
         return true;
+    }
+
+    private boolean hasSession(AS400 system, String libraryName, String memberName) {
+        return ISphereHelper.checkMember(system, libraryName, "QAYPETIDX", memberName); //$NON-NLS-1$
     }
 
     private GridData createLayoutData() {

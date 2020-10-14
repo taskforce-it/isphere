@@ -116,6 +116,7 @@ public class Messages extends NLS {
     public static String Error_No_connections_available;
     public static String Error_AllDataRequired;
     public static String Error_Connection_A_not_found_or_not_available;
+    public static String Error_Job_trace_session_B_not_found_in_library_A;
 
     // Warnings
     public static String Warning_Not_all_job_trace_entries_loaded;
