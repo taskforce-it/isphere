@@ -44,6 +44,7 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
      */
     public JobTraceSession() {
         this.isFileSession = true;
+        initialize();
     }
 
     /**
@@ -55,6 +56,7 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
     public JobTraceSession(String fileName) {
         this.fileName = fileName;
         this.isFileSession = true;
+        initialize();
     }
 
     /**
@@ -70,12 +72,16 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         this.connectionName = connectionName;
         this.libraryName = libraryName;
         this.sessionID = sessionID;
+        this.isFileSession = false;
+
+        initialize();
+    }
+
+    private void initialize() {
 
         this.whereClause = null;
         this.isIBMDataExcluded = true;
         this.jobTraceEntries = null;
-
-        this.isFileSession = false;
     }
 
     public String getConnectionName() {
