@@ -8,6 +8,8 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.popupmenus;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -110,21 +112,48 @@ public class JobTraceEntryMenuAdapter extends MenuAdapter {
 
     public void createMenuItems() {
 
-        if (selectedItemsCount() == 1) {
+        StructuredSelection selection = getSelection();
+        Iterator<JobTraceEntry> iterator = selection.iterator();
 
-            if (getSelectedItem().isProcEntry() || getSelectedItem().isProcExit()) {
+        boolean isProcEntry = true;
+        boolean isProcExit = true;
+        boolean isProcEntryOrExit = true;
+
+        while (iterator.hasNext() && (isProcEntry || isProcExit)) {
+            JobTraceEntry jobTraceEntry = (JobTraceEntry)iterator.next();
+            if (!jobTraceEntry.isProcEntry()) {
+                isProcEntry = false;
+            }
+            if (!jobTraceEntry.isProcExit()) {
+                isProcExit = false;
+            }
+            if (!(jobTraceEntry.isProcEntry() || jobTraceEntry.isProcExit())) {
+                isProcEntryOrExit = false;
+            }
+        }
+
+        if (selectedItemsCount() == 1) {
+            if (isProcEntryOrExit) {
                 menuItemHighlightRowAttribute = createMenuItem(new HighlightAttributeAction(shell, tableViewer));
+                needProcedureSeparator = true;
+            }
+        }
+
+        if (selectedItemsCount() >= 1) {
+            if (isProcEntryOrExit) {
                 menuItemHighlightProc = createMenuItem(new HighlightProcAction(shell, tableViewer));
                 menuItemExcludeProc = createMenuItem(new ExcludeProcAction(shell, tableViewer, getSelectedItem().isExcluded()));
                 needProcedureSeparator = true;
             }
+        }
 
-            if (getSelectedItem().isProcExit()) {
+        if (selectedItemsCount() == 1) {
+            if (isProcExit) {
                 addProcedureSeparator();
                 menuItemJumpToProcEnter = createMenuItem(new JumpToProcEntryAction(shell, tableViewer));
             }
 
-            if (getSelectedItem().isProcEntry()) {
+            if (isProcEntry) {
                 addProcedureSeparator();
                 menuItemJumpToProcExit = createMenuItem(new JumpToProcExitAction(shell, tableViewer));
             }

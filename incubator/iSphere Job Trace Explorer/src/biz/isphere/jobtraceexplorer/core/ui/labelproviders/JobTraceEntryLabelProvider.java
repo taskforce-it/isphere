@@ -54,6 +54,11 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         }
 
         JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
+
+        if (jobTraceEntry.isExcluded() && fieldIdMapping[index] == JobTraceEntryColumnUI.PROC_NAME) {
+            return Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY);
+        }
+
         if (jobTraceEntry.isHighlighted()) {
             return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
         } else if (jobTraceEntry.getParent().isHighlighted(index, jobTraceEntry.getValueForUi(index))) {

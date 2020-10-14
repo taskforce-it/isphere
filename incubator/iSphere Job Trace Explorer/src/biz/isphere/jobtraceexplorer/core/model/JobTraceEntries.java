@@ -61,17 +61,29 @@ public class JobTraceEntries {
         return highlightedAttributes.isHighlighted(index, value);
     }
 
-    public void excludeJobTraceEntries(BigInteger nanosSinceStarted, List<JobTraceEntry> excludedJobTraceEntries) {
+    public int excludeJobTraceEntries(BigInteger nanosSinceStarted, List<JobTraceEntry> excludedJobTraceEntries) {
+
+        int count = jobTraceEntries.size();
 
         this.excludedEntries.addAll(nanosSinceStarted, excludedJobTraceEntries);
         this.jobTraceEntries.removeAll(excludedJobTraceEntries);
+
+        count = count - jobTraceEntries.size();
+
+        return count;
     }
 
-    public void includeJobTraceEntries(int index, BigInteger nanonsSinceStarted) {
+    public int includeJobTraceEntries(int index, BigInteger nanonsSinceStarted) {
+
+        int count = jobTraceEntries.size();
 
         JobTraceEntry[] excludedJobTraceEntries = excludedEntries.getAll(nanonsSinceStarted);
         jobTraceEntries.addAll(index, Arrays.asList(excludedJobTraceEntries));
         excludedEntries.removeAll(nanonsSinceStarted);
+
+        count = jobTraceEntries.size() - count;
+
+        return count;
     }
 
     public boolean isExcluded(BigInteger nanosSinceStarted) {

@@ -47,9 +47,9 @@ public class ExcludeProcAction extends AbstractJobTraceEntryAction {
     @Override
     public void run() {
         if (!this.isExcluded) {
-            getHandler().handleExcludeProc();
+            getHandler().handleHideProc();
         } else {
-            getHandler().handleIncludeProc();
+            getHandler().handleShowProc();
         }
     }
 }
