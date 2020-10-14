@@ -316,6 +316,10 @@ public class ISphereHelper {
         return checkObject(system, new QSYSObjectPathName(library, object, type));
     }
 
+    public static boolean checkMember(AS400 system, String library, String file, String member) {
+        return checkObject(system, new QSYSObjectPathName(library, file, member, "MBR"));
+    }
+
     public static boolean checkObject(AS400 system, String path) {
         return checkObject(system, new QSYSObjectPathName(path));
     }
@@ -324,13 +328,25 @@ public class ISphereHelper {
 
         StringBuilder command = new StringBuilder();
         command.append("CHKOBJ OBJ("); //$NON-NLS-1$
+
         command.append(pathName.getLibraryName());
-        command.append("/"); //$NON-NLS-1$
+        command.append("/"); //$NON-NLS-1$0
         command.append(pathName.getObjectName());
+
         command.append(") OBJTYPE("); //$NON-NLS-1$
-        command.append("*"); //$NON-NLS-1$
-        command.append(pathName.getObjectType());
+        if (isMember(pathName)) {
+            command.append("*FILE"); //$NON-NLS-1$
+        } else {
+            command.append("*"); //$NON-NLS-1$
+            command.append(pathName.getObjectType());
+        }
         command.append(")"); //$NON-NLS-1$
+
+        if (isMember(pathName)) {
+            command.append(" MBR(");
+            command.append(pathName.getMemberName());
+            command.append(")");
+        }
 
         try {
             String message = executeCommand(system, command.toString());
@@ -339,6 +355,17 @@ public class ISphereHelper {
             }
         } catch (Exception e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
+
+        return false;
+    }
+
+    private static boolean isMember(QSYSObjectPathName pathName) {
+
+        if ("MBR".equals(pathName.getObjectType())) {
+            if (!StringHelper.isNullOrEmpty(pathName.getMemberName())) {
+                return true;
+            }
         }
 
         return false;
