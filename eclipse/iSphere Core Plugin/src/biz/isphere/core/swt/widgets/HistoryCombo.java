@@ -175,17 +175,20 @@ public class HistoryCombo {
 
         currentHistoryItems = new LinkedHashSet<String>(Arrays.asList(cboHistory.getItems()));
 
-        int count = dialogSettingsmanager.loadIntValue(getCountKey(), 0);
-        if (count > 0) {
+        if (this.dialogSettingsmanager != null) {
 
-            for (int i = 0; i < Math.min(count, maxSize); i++) {
-                String historyItem = dialogSettingsmanager.loadValue(getKey(i), null);
-                if (!StringHelper.isNullOrEmpty(historyItem)) {
-                    currentHistoryItems.add(historyItem);
+            int count = this.dialogSettingsmanager.loadIntValue(getCountKey(), 0);
+            if (count > 0) {
+
+                for (int i = 0; i < Math.min(count, maxSize); i++) {
+                    String historyItem = this.dialogSettingsmanager.loadValue(getKey(i), null);
+                    if (!StringHelper.isNullOrEmpty(historyItem)) {
+                        currentHistoryItems.add(historyItem);
+                    }
                 }
-            }
 
-            setHistoryItems(currentHistoryItems);
+                setHistoryItems(currentHistoryItems);
+            }
         }
     }
 
