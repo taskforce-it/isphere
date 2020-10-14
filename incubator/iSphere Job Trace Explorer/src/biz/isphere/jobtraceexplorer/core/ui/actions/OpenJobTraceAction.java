@@ -60,8 +60,9 @@ public abstract class OpenJobTraceAction extends Action {
         if (result == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 openJournalOutputFileDialog.getConnectionName())) {
-                jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(),
-                    openJournalOutputFileDialog.getLibraryName(), openJournalOutputFileDialog.getSessionID());
+                jobTraceSession = new JobTraceSession(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibraryName(),
+                    openJournalOutputFileDialog.getSessionID());
+                jobTraceSession.setExcludeIBMData(openJournalOutputFileDialog.isIBMDataExcluded());
                 jobTraceSession.setWhereClause(""); // //$NON-NLS-1$
             }
         }

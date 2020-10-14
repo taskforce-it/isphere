@@ -27,6 +27,8 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
 
     @Expose(serialize = true, deserialize = true)
     private String whereClause;
+    @Expose(serialize = true, deserialize = true)
+    private Boolean isIBMDataExcluded;
 
     @Expose(serialize = true, deserialize = true)
     private JobTraceEntries jobTraceEntries;
@@ -70,6 +72,7 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         this.sessionID = sessionID;
 
         this.whereClause = null;
+        this.isIBMDataExcluded = true;
         this.jobTraceEntries = null;
 
         this.isFileSession = false;
@@ -101,6 +104,14 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
 
     public void setWhereClause(String whereClause) {
         this.whereClause = whereClause;
+    }
+
+    public boolean isIBMDataExcluded() {
+        return isIBMDataExcluded;
+    }
+
+    public void setExcludeIBMData(boolean isExcluded) {
+        this.isIBMDataExcluded = isExcluded;
     }
 
     public String getFileName() {
@@ -141,22 +152,23 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
     }
 
     /**
-     * Produces a hash code with attribute 'whereClause'.
+     * Produces a hash code with attributes 'whereClause' and
+     * 'isIBMDataExcluded'.
      */
     @Override
     public int hashCode() {
         final int prime = 67;
         int result = 1;
         result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
-        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
-        result = prime * result + ((jobTraceEntries == null) ? 0 : jobTraceEntries.hashCode());
         result = prime * result + ((libraryName == null) ? 0 : libraryName.hashCode());
         result = prime * result + ((sessionID == null) ? 0 : sessionID.hashCode());
+        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
         return result;
     }
 
     /**
-     * Compares the object without attribute 'whereClause'.
+     * Compares the object without attribute 'whereClause' and
+     * 'isIBMDataExcluded'.
      * 
      * @param obj - the other object
      */
@@ -169,18 +181,15 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         if (connectionName == null) {
             if (other.connectionName != null) return false;
         } else if (!connectionName.equals(other.connectionName)) return false;
-        if (fileName == null) {
-            if (other.fileName != null) return false;
-        } else if (!fileName.equals(other.fileName)) return false;
-        if (jobTraceEntries == null) {
-            if (other.jobTraceEntries != null) return false;
-        } else if (!jobTraceEntries.equals(other.jobTraceEntries)) return false;
         if (libraryName == null) {
             if (other.libraryName != null) return false;
         } else if (!libraryName.equals(other.libraryName)) return false;
         if (sessionID == null) {
             if (other.sessionID != null) return false;
         } else if (!sessionID.equals(other.sessionID)) return false;
+        if (fileName == null) {
+            if (other.fileName != null) return false;
+        } else if (!fileName.equals(other.fileName)) return false;
         return true;
     }
 }

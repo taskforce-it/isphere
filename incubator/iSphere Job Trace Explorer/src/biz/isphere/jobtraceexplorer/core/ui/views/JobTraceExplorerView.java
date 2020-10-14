@@ -228,6 +228,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
                 tabFolder.setSelection(jobTraceEntriesViewer);
                 performLoadJobTraceEntries(jobTraceEntriesViewer);
             } else {
+                jobTraceEntriesViewer.getJobTraceSession().setExcludeIBMData(jobTraceSession.isIBMDataExcluded());
                 performReloadJobTraceEntries(jobTraceEntriesViewer);
             }
 

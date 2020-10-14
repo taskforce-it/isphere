@@ -20,6 +20,7 @@ public class JobTraceSessionPropertySource implements IPropertySource {
     private static final String PROPERTY_LIBRARY_NAME = "biz.isphere.jobtraceexplorer.core.model.JobTraceSession.libraryName";//$NON-NLS-1$
     private static final String PROPERTY_SESSION_ID = "biz.isphere.jobtraceexplorer.core.model.JobTraceSession.sessionID";//$NON-NLS-1$
     private static final String PROPERTY_WHERE_CLAUSE = "biz.isphere.jobtraceexplorer.core.model.JobTraceSession.whereClause";//$NON-NLS-1$
+    private static final String PROPERTY_IS_IBM_DATA_EXCLUDED = "biz.isphere.jobtraceexplorer.core.model.JobTraceSession.isIBMDataExcluded";//$NON-NLS-1$
     private static final String PROPERTY_FILE_NAME = "biz.isphere.jobtraceexplorer.core.model.JobTraceSession.fileName";//$NON-NLS-1$
 
     private JobTraceSession jobTraceSession;
@@ -46,10 +47,12 @@ public class JobTraceSessionPropertySource implements IPropertySource {
 
             PropertyDescriptor whereClause = createPropertyDescriptor(PROPERTY_WHERE_CLAUSE, Messages.Property_where_clause, null);
 
+            PropertyDescriptor isIBMDataExcluded = createPropertyDescriptor(PROPERTY_IS_IBM_DATA_EXCLUDED, Messages.Property_IBM_data_excluded, null);
+
             PropertyDescriptor fileName = createPropertyDescriptor(PROPERTY_FILE_NAME, Messages.Property_file_name, null);
 
             // Read-only (instance of PropertyDescriptor)
-            propertyDescriptors = new IPropertyDescriptor[] { connectionName, libraryName, sessionID, whereClause, fileName };
+            propertyDescriptors = new IPropertyDescriptor[] { connectionName, libraryName, sessionID, whereClause, isIBMDataExcluded, fileName };
         }
 
         return propertyDescriptors;
@@ -72,6 +75,8 @@ public class JobTraceSessionPropertySource implements IPropertySource {
             return jobTraceSession.getSessionID();
         } else if (name.equals(PROPERTY_WHERE_CLAUSE)) {
             return jobTraceSession.getWhereClause();
+        } else if (name.equals(PROPERTY_IS_IBM_DATA_EXCLUDED)) {
+            return !jobTraceSession.isIBMDataExcluded();
         } else if (name.equals(PROPERTY_FILE_NAME)) {
             return jobTraceSession.getFileName();
         } else {

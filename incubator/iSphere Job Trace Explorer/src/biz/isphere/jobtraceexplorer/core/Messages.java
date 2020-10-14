@@ -23,6 +23,8 @@ public class Messages extends NLS {
     public static String GroupLabel_Limitation_Properties;
     public static String ButtonLabel_Maximum_number_of_rows_to_fetch;
     public static String ButtonTooltip_Maximum_number_of_rows_to_fetch_tooltip;
+    public static String ButtonLabel_Exclude_IBM_data_SQL_WHERE_clause;
+    public static String ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause;
 
     // Column descriptions and tooltips
     public static String LongFieldName_ID;
@@ -64,6 +66,7 @@ public class Messages extends NLS {
     public static String Property_library_name;
     public static String Property_session_ID;
     public static String Property_where_clause;
+    public static String Property_IBM_data_excluded;
     public static String Property_file_name;
 
     // Job status
@@ -98,10 +101,12 @@ public class Messages extends NLS {
     public static String OpenJobTraceSessionDialog_Connection;
     public static String OpenJobTraceSessionDialog_SessionID;
     public static String OpenJobTraceSessionDialog_Library;
+    public static String OpenJobTraceSessionDialog_Exclude_IBM_Data;
 
     public static String Tooltip_OpenJobTraceSessionDialog_Connection;
     public static String Tooltip_OpenJobTraceSessionDialog_SessionID;
     public static String Tooltip_OpenJobTraceSessionDialog_Library;
+    public static String Tooltip_OpenJobTraceSessionDialog_Exclude_IBM_data;
 
     // Messages
     public static String Number_of_job_trace_entries_A_more_items_available;

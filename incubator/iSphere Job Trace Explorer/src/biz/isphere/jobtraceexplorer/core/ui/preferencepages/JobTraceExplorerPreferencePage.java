@@ -36,6 +36,7 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
 
     private Group groupLimits;
     private Text textMaxNumRowsToFetch;
+    private Text textSQLWhereNoIBMData;
 
     public JobTraceExplorerPreferencePage() {
         super();
@@ -78,11 +79,19 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         textMaxNumRowsToFetch.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         textMaxNumRowsToFetch.setTextLimit(5);
         textMaxNumRowsToFetch.addModifyListener(new ModifyListener() {
-
             public void modifyText(ModifyEvent event) {
                 maxNumRowsToFetch = IntHelper.tryParseInt(textMaxNumRowsToFetch.getText(), preferences.getInitialMaximumNumberOfRowsToFetch());
             }
         });
+
+        Label labelExcludeIBMClause = new Label(container, SWT.NONE);
+        labelExcludeIBMClause.setLayoutData(getLayoutData(1));
+        labelExcludeIBMClause.setText(Messages.ButtonLabel_Exclude_IBM_data_SQL_WHERE_clause);
+        labelExcludeIBMClause.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
+
+        textSQLWhereNoIBMData = WidgetFactory.createMultilineText(container, true, true);
+        textSQLWhereNoIBMData.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
+        textSQLWhereNoIBMData.setLayoutData(getLayoutData(1, true, 200, 250));
     }
 
     @Override
@@ -106,11 +115,13 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
     protected void setStoreToValues() {
 
         preferences.setMaximumNumberOfRowsToFetch(maxNumRowsToFetch);
+        preferences.setExcludeIBMDataSQLWhereClause(textSQLWhereNoIBMData.getText());
     }
 
     protected void setScreenToValues() {
 
         maxNumRowsToFetch = preferences.getMaximumNumberOfRowsToFetch();
+        textSQLWhereNoIBMData.setText(preferences.getExcludeIBMDataSQLWhereClause());
 
         setScreenValues();
     }
@@ -118,6 +129,7 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
     protected void setScreenToDefaultValues() {
 
         maxNumRowsToFetch = preferences.getInitialMaximumNumberOfRowsToFetch();
+        textSQLWhereNoIBMData.setText(preferences.getInitialExcludeIBMDataSQLWhereClause());
 
         setScreenValues();
     }
@@ -127,6 +139,19 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         textMaxNumRowsToFetch.setText(Integer.toString(maxNumRowsToFetch));
 
         setControlsEnablement();
+    }
+
+    private GridData getLayoutData(int horizontalSpan) {
+        return getLayoutData(horizontalSpan, false, SWT.DEFAULT, SWT.DEFAULT);
+    }
+
+    private GridData getLayoutData(int horizontalSpan, boolean grabVerticalSpace, int widthHint, int heightHint) {
+
+        GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, grabVerticalSpace, horizontalSpan, 1);
+        gridData.widthHint = widthHint;
+        gridData.heightHint = heightHint;
+
+        return gridData;
     }
 
     private void setControlsEnablement() {

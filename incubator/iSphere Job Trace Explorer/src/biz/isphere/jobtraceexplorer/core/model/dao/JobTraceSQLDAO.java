@@ -89,7 +89,7 @@ public class JobTraceSQLDAO {
                "ci.QPRPNM      as \"CALLER_PROC_NAME\"      " +
          SQL_FROM_CLAUSE;      
 
-    private static final String SQL_WHERE_NO_IBM_DATA = 
+    public static final String SQL_WHERE_NO_IBM_DATA = 
         "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +                     /* Exclude IBM Libraries */
         "AND i.QPRPQL  not like 'QXMLLIB%' "                  +                     /* Exclude IBM Xerces Parser */
         "AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' )) " + /* Exclude RPG Entry Point Procedures */ 
@@ -113,10 +113,13 @@ public class JobTraceSQLDAO {
     // @formatter:on
 
     private JobTraceSession jobTraceSession;
+    private String sqlWhereNoIBMData;
 
     public JobTraceSQLDAO(JobTraceSession jobTraceSession) throws Exception {
 
         this.jobTraceSession = jobTraceSession;
+
+        this.sqlWhereNoIBMData = Preferences.getInstance().getExcludeIBMDataSQLWhereClause();
     }
 
     public JobTraceSession load(IProgressMonitor monitor) throws Exception {
@@ -222,7 +225,11 @@ public class JobTraceSQLDAO {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(SQL_STATEMENT);
-        buffer.append(SQL_WHERE_NO_IBM_DATA);
+
+        if (jobTraceSession.isIBMDataExcluded()) {
+            buffer.append(sqlWhereNoIBMData);
+        }
+
         buffer.append(SQL_ORDER_BY);
 
         return buffer.toString();
@@ -233,7 +240,10 @@ public class JobTraceSQLDAO {
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(SQL_COUNT_STATEMENT);
-        buffer.append(SQL_WHERE_NO_IBM_DATA);
+
+        if (jobTraceSession.isIBMDataExcluded()) {
+            buffer.append(sqlWhereNoIBMData);
+        }
 
         return buffer.toString();
     }

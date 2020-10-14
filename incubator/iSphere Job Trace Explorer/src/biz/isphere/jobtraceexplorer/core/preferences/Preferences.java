@@ -13,6 +13,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
+import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceSQLDAO;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -50,6 +51,10 @@ public final class Preferences {
     public static final String EXPORT_PATH = DOMAIN + "EXPORT_PATH"; //$NON-NLS-1$
 
     public static final String EXPORT_FILE_JSON = DOMAIN + "EXPORT_FILE_JSON"; //$NON-NLS-1$
+
+    public static final String LOAD_JOB_TRACE_DATA = DOMAIN + "LOAD_JOB_TRACE_DATA."; //$NON-NLS-1$
+
+    public static final String SQL_WHERE_NO_IBM_DATA = LOAD_JOB_TRACE_DATA + "SQL_WHERE_NO_IBM_DATA"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -96,13 +101,15 @@ public final class Preferences {
     }
 
     public String getExportPath() {
-
         return preferenceStore.getString(EXPORT_PATH);
     }
 
     public String getExportFileJson() {
-
         return preferenceStore.getString(EXPORT_FILE_JSON);
+    }
+
+    public String getExcludeIBMDataSQLWhereClause() {
+        return preferenceStore.getString(SQL_WHERE_NO_IBM_DATA);
     }
 
     /*
@@ -114,13 +121,15 @@ public final class Preferences {
     }
 
     public void setExportPath(String exportPath) {
-
         preferenceStore.setValue(EXPORT_PATH, exportPath);
     }
 
     public void setExportFileJson(String exportFile) {
-
         preferenceStore.setValue(EXPORT_FILE_JSON, exportFile);
+    }
+
+    public void setExcludeIBMDataSQLWhereClause(String sqlWhereClause) {
+        preferenceStore.setValue(SQL_WHERE_NO_IBM_DATA, sqlWhereClause);
     }
 
     /*
@@ -137,6 +146,7 @@ public final class Preferences {
 
         preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
         preferenceStore.setDefault(EXPORT_FILE_JSON, getInitialExportFileJson());
+        preferenceStore.setDefault(SQL_WHERE_NO_IBM_DATA, getInitialExcludeIBMDataSQLWhereClause());
     }
 
     /*
@@ -153,6 +163,10 @@ public final class Preferences {
 
     public String getInitialExportFileJson() {
         return "ExportJobTraceEntries"; //$NON-NLS-1$
+    }
+
+    public String getInitialExcludeIBMDataSQLWhereClause() {
+        return JobTraceSQLDAO.SQL_WHERE_NO_IBM_DATA;
     }
 
     /*

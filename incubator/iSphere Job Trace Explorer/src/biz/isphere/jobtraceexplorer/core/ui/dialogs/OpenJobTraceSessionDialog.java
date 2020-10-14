@@ -20,9 +20,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -44,15 +47,18 @@ public class OpenJobTraceSessionDialog extends XDialog {
     private static final String CONNECTION = "CONNECTION"; //$NON-NLS-1$
     private static final String SESSION_ID = "SESSION_ID"; //$NON-NLS-1$
     private static final String LIBRARY_NAME = "LIBRARY_NAME"; //$NON-NLS-1$
+    private static final String EXCLUDE_IBM_DATA = "SQL_WHERE_NO_IBM_DATA"; //$NON-NLS-1$
 
     private ComboViewer cmbConnections;
     private HistoryCombo txtSessionID;
     private HistoryCombo txtLibraryName;
+    private Button chkExcludeIBMData;
 
     private Composite container;
     private String connectionName;
     private String sessionID;
     private String libraryName;
+    private boolean isIBMDataExcluded;
 
     public OpenJobTraceSessionDialog(Shell shell) {
         super(shell);
@@ -86,6 +92,12 @@ public class OpenJobTraceSessionDialog extends XDialog {
         txtLibraryName.setLayoutData(createLayoutData());
         txtLibraryName.setToolTipText(Messages.Tooltip_OpenJobTraceSessionDialog_Library);
 
+        WidgetFactory.createLineFiller(container);
+
+        chkExcludeIBMData = WidgetFactory.createCheckbox(container, Messages.OpenJobTraceSessionDialog_Exclude_IBM_Data);
+        chkExcludeIBMData.setLayoutData(createSpanLayoutData(2));
+        chkExcludeIBMData.setToolTipText(Messages.Tooltip_OpenJobTraceSessionDialog_Exclude_IBM_data);
+
         configureControls();
 
         loadValues();
@@ -113,6 +125,10 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
     public String getLibraryName() {
         return libraryName;
+    }
+
+    public boolean isIBMDataExcluded() {
+        return isIBMDataExcluded;
     }
 
     @Override
@@ -229,6 +245,10 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
         txtSessionID.setText(loadValue(SESSION_ID, ""));
         txtLibraryName.setText(loadValue(LIBRARY_NAME, ""));
+
+        // isIBMDataExcluded = loadBooleanValue(SQL_WHERE_NO_IBM_DATA, true);
+        isIBMDataExcluded = true;
+        chkExcludeIBMData.setSelection(isIBMDataExcluded);
     }
 
     private void storeValues() {
@@ -236,6 +256,7 @@ public class OpenJobTraceSessionDialog extends XDialog {
         storeValue(CONNECTION, connectionName);
         storeValue(SESSION_ID, sessionID);
         storeValue(LIBRARY_NAME, libraryName);
+        storeValue(EXCLUDE_IBM_DATA, isIBMDataExcluded);
 
         updateAndStoreHistory(txtSessionID, sessionID);
         updateAndStoreHistory(txtLibraryName, libraryName);
@@ -276,6 +297,18 @@ public class OpenJobTraceSessionDialog extends XDialog {
             public void modifyText(ModifyEvent event) {
                 libraryName = txtLibraryName.getText().trim();
                 return;
+            }
+        });
+
+        chkExcludeIBMData.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                isIBMDataExcluded = chkExcludeIBMData.getSelection();
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
             }
         });
     }
