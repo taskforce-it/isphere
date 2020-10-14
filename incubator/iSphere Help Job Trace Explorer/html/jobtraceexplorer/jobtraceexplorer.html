@@ -10,16 +10,45 @@
 <body>
 <h1>Job Trace Explorer</h1>
 <a href="https://sourceforge.net/projects/isphere/" target="_blank">
-<img src="assets/jobtraceexplorer.png" 
+<img src="assets/jobtrace_explorer.png" 
      style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
 The Job Trace Explorer is supposed to be used for viewing and filtering the job trace
 entries produced by the STRTRC/ENDTRC commands.
 <p>
+The data is stored in several files (QAYPE*) at the end of the trace session. These files are
+joined by the <i>iSphere Job Trace Explorer</i> when loading the job trace entries into the
+view.
+<p>
+IBM related entries are excluded to reduce the number of items.
+<p>
 <ul>
+<li><a href="#tracing_a_job">Tracing a Job</a></li>
 <li><a href="#opening_the_job_trace_explorer_perspective">Opening the Job Trace Explorer Perspective</a></li>
 <li><a href="#open_job_trace_session">Open Job Trace Session</a></li>
 <li><a href="#filtering_job_trace_entries">Filtering Job Trace Entries</a></li>
+<li><a href="#excluded_job_trace_entries">Excluded Job Trace Entries</a></li>
 </ul>
+<p>
+<a id="#tracing_a_job"></a>
+<h2>Tracing a Job</h2>
+<p>
+A job trace is started with command STRTRC as shown here:
+<p>
+<div class="codeCommand">
+STRTRC SSNID(DEMO3) MAXSTG(200000)
+</div>
+<p>
+Please notice, that the default value of parameter <i>Maximum storage to use</i> (MAXSTG)
+is often to small for storing the complete session data. For example it requires 200000 k
+for capturing the job trace entries of the iSphere demo program DEMO3.
+<p>
+An active job trace session is terminated with command ENDTRC:
+<p>
+<div class="codeCommand">
+ENDTRC SSNID(DEMO3) DTALIB(RADDATZ400)
+</div>
+<p>
+The data is stored in several files, all starting with QAYPE*.
 <p>
 <a id="#opening_the_job_trace_explorer_perspective"></a>
 <h2>Opening the Job Trace Explorer Perspective</h2>
@@ -35,6 +64,22 @@ The following actions are available:
 <tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job trace entries.<br>(Local operation that does not contact the host system.)</td></tr>
 <tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
 <tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+Options of the table context menu:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/highlight_attribute.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Highlight attribute. Right-click a table cell and select this option to highlight the selected value wherever it is in the table.</td></tr>
+<tr><td valign="middle"><img src="assets/highlight.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Highlight procedure. Right-click a procedure <i>ENTRY (called by)</i> or <i>EXIT (returned to)</i> row to highlight the selected procedure.</td></tr>
+<tr><td valign="middle"><img src="assets/jump_proc_entry.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Jump to procedure exit. Right-click a procedure <i>ENTRY (called by)</i> row to jump to the end of the procedure.</td></tr>
+<tr><td valign="middle"><img src="assets/jump_proc_exit.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Jump to procedure entry. Right-click a procedure <i>EXIT (returned to)</i> row to jump to the beginning of the procedure.</td></tr>
+</table>
+<p>
+The available options of the view menu are:
+<p>
+<table>
+<tr><td valign="top">Open</td><td width="10px">&nbsp;</td><td valign="middle">Loads a job trace session from a Json file that was created with the <i>Save</i> option.</td></tr>
+<tr><td valign="top">Save</td><td width="10px">&nbsp;</td><td valign="middle">Saves a job trace session to a Json file on the PC.</td></tr>
 </table>
 <p>
 <a id="#open_job_trace_session"></a>
@@ -91,6 +136,18 @@ The following actions are available:
 		</td>
 	</tr>
 </table>
+<p>
+<a id="#excluded_job_trace_entries"></a>
+<h2>Excluded Job Trace Entries</h2>
+<p>
+The <i>iSphere Job Trace Explorer</i> uses the following SQL WHERE clause to exclude entries related to IBM: 
+<p>
+<div class="codeCommand">
+WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA')                             <span style="color:green">/* Exclude IBM Libraries */</span><br>
+AND i.QPRPQL  not like 'QXMLLIB%'                                          <span style="color:green">/* Exclude IBM Xerces Parser */</span><br>
+AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' ))     <span style="color:green">/* Exclude RPG Entry Point Procedures */</span><br> 
+AND i.QPRPNM not in ('*ccsidConvProc')                                     <span style="color:green">/* Exclude Special RPG Procedures */</span> 
+</div>
 <p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
