@@ -16,7 +16,7 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     private static final String ICON_PATH = "icons/";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_OPEN_JOB_TRACE_SESSION = "open_jobtrace_session.png";
-    public static final String IMAGE_JUMP_PROC_ENTER = "jump_proc_enter.png";
+    public static final String IMAGE_JUMP_PROC_ENTER = "jump_proc_entry.png";
     public static final String IMAGE_JUMP_PROC_EXIT = "jump_proc_exit.png";
     public static final String IMAGE_HIGHLIGHT_PROC = "highlight.png";
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
