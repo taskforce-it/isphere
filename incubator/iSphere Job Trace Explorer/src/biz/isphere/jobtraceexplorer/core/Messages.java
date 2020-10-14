@@ -59,6 +59,13 @@ public class Messages extends NLS {
     public static String Called_by;
     public static String Returned_to;
 
+    // Properties
+    public static String Property_connection_name;
+    public static String Property_library_name;
+    public static String Property_session_ID;
+    public static String Property_where_clause;
+    public static String Property_file_name;
+
     // Job status
     public static String Status_Loading_job_trace_entries_of_session_A;
     public static String Status_Preparing_to_load_job_trace_entries;

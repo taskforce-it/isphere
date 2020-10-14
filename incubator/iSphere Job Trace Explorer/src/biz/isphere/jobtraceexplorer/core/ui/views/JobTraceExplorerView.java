@@ -10,12 +10,16 @@ package biz.isphere.jobtraceexplorer.core.ui.views;
 
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
@@ -40,11 +44,9 @@ import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedException;
-import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionJson;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionSQL;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.jobtraceexplorer.core.ui.actions.LoadJobTraceEntriesAction;
@@ -54,7 +56,7 @@ import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewe
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesJsonViewerTab;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
 
-public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, ISelectionChangedListener, SelectionListener {
+public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, ISelectionChangedListener, SelectionListener, ISelectionProvider {
 
     public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
 
@@ -67,8 +69,12 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
     private SaveJobTraceEntriesAction saveJournalEntriesAction;
 
     private CTabFolder tabFolder;
+    private ListenerList selectionChangedListeners;
 
     public JobTraceExplorerView() {
+        super();
+
+        this.selectionChangedListeners = new ListenerList();
     }
 
     /**
@@ -125,6 +131,8 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
             }
         });
 
+        getSite().setSelectionProvider(this);
+
         createActions();
         initializeToolBar();
         initializeMenu();
@@ -154,7 +162,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         openJobTraceSession = new OpenJobTraceAction(getShell()) {
             @Override
             public void postRunAction() {
-                JobTraceSessionSQL jobTraceSession = openJobTraceSession.getJobTraceSession();
+                JobTraceSession jobTraceSession = openJobTraceSession.getJobTraceSession();
                 if (jobTraceSession != null) {
                     createJobTraceTab(jobTraceSession);
                 }
@@ -203,7 +211,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         viewMenu.add(saveJournalEntriesAction);
     }
 
-    public void createJobTraceTab(JobTraceSessionSQL jobTraceSession) {
+    public void createJobTraceTab(JobTraceSession jobTraceSession) {
 
         if (jobTraceSession == null) {
             throw new IllegalArgumentException("Parameter 'jobTraceSession' must not be [null]."); //$NON-NLS-1$
@@ -238,7 +246,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
         try {
 
-            JobTraceSessionJson jobTraceSession = new JobTraceSessionJson(fileName);
+            JobTraceSession jobTraceSession = new JobTraceSession(fileName);
 
             jobTraceEntriesViewer = findExplorerTab(jobTraceSession);
             if (jobTraceEntriesViewer == null) {
@@ -276,7 +284,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         updateStatusLine();
     }
 
-    private AbstractJobTraceEntriesViewerTab findExplorerTab(AbstractJobTraceSession input) {
+    private AbstractJobTraceEntriesViewerTab findExplorerTab(JobTraceSession input) {
 
         CTabItem[] tabItems = tabFolder.getItems();
         for (CTabItem tabItem : tabItems) {
@@ -349,7 +357,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
     public void finishDataLoading(AbstractJobTraceEntriesViewerTab tabItem, boolean isFilter) {
 
-        if (tabItem != null) {
+        if (tabItem != null && !tabItem.isDisposed()) {
             JobTraceEntries jobTraceEntries = tabItem.getInput();
             if (jobTraceEntries != null) {
                 if (jobTraceEntries.isCanceled()) {
@@ -431,6 +439,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
         setStatusLineText(message);
         setActionEnablement(tabItem);
+        fireSelectionChanged();
     }
 
     private void clearStatusLine() {
@@ -530,6 +539,39 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
     public void widgetDefaultSelected(SelectionEvent event) {
         widgetSelected(event);
+    }
+
+    /**
+     * ISelectionProvider interface.
+     */
+    private void fireSelectionChanged() {
+
+        SelectionChangedEvent event = new SelectionChangedEvent(this, getSelection());
+
+        Object[] listeners = selectionChangedListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
+            listener.selectionChanged(event);
+        }
+    }
+
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.add(listener);
+    }
+
+    public ISelection getSelection() {
+        if (getSelectedViewer() == null || getSelectedViewer().getJobTraceSession() == null) {
+            return new StructuredSelection(new Object[0]);
+        }
+        return new StructuredSelection(getSelectedViewer().getJobTraceSession());
+    }
+
+    public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+        selectionChangedListeners.remove(listener);
+    }
+
+    public void setSelection(ISelection selection) {
+        return;
     }
 
     private class SqlEditorSelectionListener implements SelectionListener {

@@ -8,19 +8,14 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.widgets;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 
-import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionJson;
-import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceJsonDAO;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.jobs.OpenJobTraceSessionJsonJob;
 
 /**
  * This widget is a viewer for the job trace entries loaded from a job trace
@@ -32,8 +27,7 @@ import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
  */
 public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerTab {
 
-    public JobTraceEntriesJsonViewerTab(CTabFolder parent, AbstractJobTraceSession jobTraceSession,
-        SelectionListener loadJobTraceEntriesSelectionListener) {
+    public JobTraceEntriesJsonViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, jobTraceSession, loadJobTraceEntriesSelectionListener);
     }
 
@@ -46,7 +40,7 @@ public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerT
         setTableViewerEnabled(false);
         setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(postRun, getJobTraceSession(), selectedItem);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getJobTraceSession(), selectedItem);
         loadJobTraceDataJob.schedule();
     }
 
@@ -57,74 +51,12 @@ public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerT
         setTableViewerEnabled(false);
         setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(postRun, getJobTraceSession());
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getJobTraceSession());
         loadJobTraceDataJob.schedule();
     }
 
-    public boolean hasSqlEditor() {
-        return true;
-    }
-
     @Override
-    public JobTraceSessionJson getJobTraceSession() {
-        return (JobTraceSessionJson)super.getJobTraceSession();
-    }
-
-    private class OpenJobTraceSessionJob extends Job {
-
-        private IDataLoadPostRun postRun;
-        private JobTraceSessionJson jobTraceSession;
-        private JobTraceEntry selectedItem;
-
-        public OpenJobTraceSessionJob(IDataLoadPostRun postRun, JobTraceSessionJson jobTraceSession) {
-            this(postRun, jobTraceSession, null);
-        }
-
-        public OpenJobTraceSessionJob(IDataLoadPostRun postRun, JobTraceSessionJson jobTraceSession, JobTraceEntry selectedItem) {
-            super(Messages.bind(Messages.Status_Loading_job_trace_entries_of_session_A, jobTraceSession.getQualifiedName()));
-
-            this.postRun = postRun;
-            this.jobTraceSession = jobTraceSession;
-            this.selectedItem = selectedItem;
-        }
-
-        public IStatus run(IProgressMonitor monitor) {
-
-            try {
-
-                jobTraceSession.getJobTraceEntries().fullReset();
-
-                JobTraceJsonDAO jobTraceDAO = new JobTraceJsonDAO(jobTraceSession);
-                jobTraceSession = jobTraceDAO.load(monitor);
-
-                jobTraceSession.getJobTraceEntries().applyFilter();
-
-                if (!isDisposed()) {
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            setJobTraceSession(jobTraceSession);
-                            setSelectedItem(selectedItem);
-                            postRun.finishDataLoading(JobTraceEntriesJsonViewerTab.this, false);
-                        }
-                    });
-                }
-
-            } catch (Throwable e) {
-
-                if (!isDisposed()) {
-                    final Throwable e1 = e;
-                    getDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            setSqlEditorEnabled(true);
-                            setFocusOnSqlEditor();
-                            postRun.handleDataLoadException(JobTraceEntriesJsonViewerTab.this, e1);
-                        }
-                    });
-                }
-
-            }
-
-            return Status.OK_STATUS;
-        }
+    public JobTraceSession getJobTraceSession() {
+        return (JobTraceSession)super.getJobTraceSession();
     }
 }

@@ -24,7 +24,7 @@ import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionSQL;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.api.IBMiMessage;
 import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
 
@@ -113,14 +113,14 @@ public class JobTraceSQLDAO {
          
     // @formatter:on
 
-    private JobTraceSessionSQL jobTraceSession;
+    private JobTraceSession jobTraceSession;
 
-    public JobTraceSQLDAO(JobTraceSessionSQL jobTraceSession) throws Exception {
+    public JobTraceSQLDAO(JobTraceSession jobTraceSession) throws Exception {
 
         this.jobTraceSession = jobTraceSession;
     }
 
-    public JobTraceSessionSQL load(IProgressMonitor monitor) {
+    public JobTraceSession load(IProgressMonitor monitor) {
 
         List<IBMiMessage> messages = null;
 
@@ -198,7 +198,7 @@ public class JobTraceSQLDAO {
         return jobTraceSession;
     }
 
-    private boolean overWriteTables(SqlHelper sqlHelper, JobTraceSessionSQL jobTraceSession) {
+    private boolean overWriteTables(SqlHelper sqlHelper, JobTraceSession jobTraceSession) {
 
         for (String ovrDbfCmd : OVRDBF_CMD) {
             ovrDbfCmd = String.format(ovrDbfCmd, jobTraceSession.getLibraryName(), jobTraceSession.getSessionID());

@@ -26,7 +26,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
 
 public class SaveJobTraceEntriesAction extends Action {
@@ -34,7 +34,7 @@ public class SaveJobTraceEntriesAction extends Action {
     private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_JSON;
 
     private Shell shell;
-    private AbstractJobTraceSession selectedItems;
+    private JobTraceSession selectedItems;
 
     public SaveJobTraceEntriesAction(Shell shell) {
         super(Messages.JobTraceExplorerView_Export_to_Json);
@@ -48,7 +48,7 @@ public class SaveJobTraceEntriesAction extends Action {
         return ISphereJobTraceExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
-    public void setSelectedItems(AbstractJobTraceSession selectedItems) {
+    public void setSelectedItems(JobTraceSession selectedItems) {
         this.selectedItems = selectedItems;
     }
 

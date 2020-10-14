@@ -7,6 +7,7 @@ Bundle-Activator: biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCoreP
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.views,
  org.eclipse.core.runtime,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base,

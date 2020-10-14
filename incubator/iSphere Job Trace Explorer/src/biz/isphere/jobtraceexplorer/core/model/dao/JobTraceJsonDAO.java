@@ -16,7 +16,7 @@ import biz.isphere.core.json.JsonImporter;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionJson;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 
 /**
  * This class retrieves journal entries from the journal a given object is
@@ -24,14 +24,14 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSessionJson;
  */
 public class JobTraceJsonDAO {
 
-    private JobTraceSessionJson jobTraceSession;
+    private JobTraceSession jobTraceSession;
 
-    public JobTraceJsonDAO(JobTraceSessionJson jobTraceSession) throws Exception {
+    public JobTraceJsonDAO(JobTraceSession jobTraceSession) throws Exception {
 
         this.jobTraceSession = jobTraceSession;
     }
 
-    public JobTraceSessionJson load(IProgressMonitor monitor) {
+    public JobTraceSession load(IProgressMonitor monitor) {
 
         Date startTime = new Date();
 
@@ -39,11 +39,11 @@ public class JobTraceJsonDAO {
 
             monitor.setTaskName(Messages.Status_Preparing_to_load_job_trace_entries);
 
-            JsonImporter<JobTraceSessionJson> importer = new JsonImporter<JobTraceSessionJson>(JobTraceSessionJson.class);
+            JsonImporter<JobTraceSession> importer = new JsonImporter<JobTraceSession>(JobTraceSession.class);
+
             String fileName = jobTraceSession.getFileName();
             jobTraceSession = importer.execute(null, fileName);
-
-            jobTraceSession.setFileName(fileName);
+            jobTraceSession.updateFileName(fileName);
 
             for (JobTraceEntry jobTraceEntry : jobTraceSession.getJobTraceEntries().getItems()) {
                 jobTraceEntry.setParent(jobTraceSession.getJobTraceEntries());

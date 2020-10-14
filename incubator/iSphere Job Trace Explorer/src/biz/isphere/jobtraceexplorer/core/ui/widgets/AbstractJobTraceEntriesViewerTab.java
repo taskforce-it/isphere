@@ -48,9 +48,9 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
@@ -71,7 +71,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     private DialogSettingsManager dialogSettingsManager = null;
 
-    private AbstractJobTraceSession jobTraceSession;
+    private JobTraceSession jobTraceSession;
     private Composite container;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
@@ -81,8 +81,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private JobTraceEntries data;
     private SqlEditor sqlEditor;
 
-    public AbstractJobTraceEntriesViewerTab(CTabFolder parent, AbstractJobTraceSession jobTraceSession,
-        SelectionListener loadJobTraceEntriesSelectionListener) {
+    public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
@@ -110,7 +109,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return jobTraceSession.toString();
     }
 
-    public AbstractJobTraceSession getJobTraceSession() {
+    public JobTraceSession getJobTraceSession() {
         return jobTraceSession;
     }
 
@@ -161,7 +160,11 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
     }
 
-    protected void setSqlEditorEnabled(boolean enabled) {
+    public boolean hasSqlEditor() {
+        return true;
+    }
+
+    public void setSqlEditorEnabled(boolean enabled) {
 
         if (isSqlEditorVisible()) {
             sqlEditor.setEnabled(enabled);
@@ -230,10 +233,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         dialogSettingsManager.resetColumnWidths(tableViewer.getTable());
     }
 
-    public boolean hasSqlEditor() {
-        return false;
-    }
-
     public boolean isSqlEditorVisible() {
         return isSqlEditorVisible;
     }
@@ -257,7 +256,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     public abstract void reloadJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
-    public boolean isSameSession(AbstractJobTraceSession otherJobTraceSession) {
+    public boolean isSameSession(JobTraceSession otherJobTraceSession) {
 
         if (this.jobTraceSession == null && otherJobTraceSession == null) {
             return true;
@@ -268,7 +267,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
     }
 
-    public void setJobTraceSession(AbstractJobTraceSession jobTraceSession) {
+    public void setJobTraceSession(JobTraceSession jobTraceSession) {
         this.jobTraceSession = jobTraceSession;
         setInputData(jobTraceSession.getJobTraceEntries());
     }

@@ -8,11 +8,15 @@
 
 package biz.isphere.jobtraceexplorer.core.model;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertySource;
+
+import biz.isphere.core.json.JsonImporter;
 import biz.isphere.core.json.JsonSerializable;
 
 import com.google.gson.annotations.Expose;
 
-public abstract class AbstractJobTraceSession implements JsonSerializable {
+public class JobTraceSession implements JsonSerializable, IAdaptable {
 
     @Expose(serialize = true, deserialize = true)
     private String connectionName;
@@ -26,14 +30,49 @@ public abstract class AbstractJobTraceSession implements JsonSerializable {
 
     @Expose(serialize = true, deserialize = true)
     private JobTraceEntries jobTraceEntries;
+    @Expose(serialize = true, deserialize = true)
+    private String fileName;
 
-    public AbstractJobTraceSession(String connectionName, String libraryName, String sessionID) {
+    private transient boolean isFileSession;
+    private transient JobTraceSessionPropertySource propertySource;
+
+    /**
+     * Produces a new JobTraceSession object. This constructor is exclusively
+     * used by the {@link JsonImporter}.
+     */
+    public JobTraceSession() {
+        this.isFileSession = true;
+    }
+
+    /**
+     * Produces a new JobTraceSession object. This constructor is used when
+     * loading job trace entries from a Json file.
+     * 
+     * @param fileName - Json file that stores a job trace session
+     */
+    public JobTraceSession(String fileName) {
+        this.fileName = fileName;
+        this.isFileSession = true;
+    }
+
+    /**
+     * Produces a new JobTraceSession object. This constructor is used when
+     * loading job trace entries from a job trace database.
+     * 
+     * @param connectionName - connection of the remote system
+     * @param libraryName - name of the library, where the job trace session is
+     *        stored
+     * @param sessionID - session ID of the job trace session
+     */
+    public JobTraceSession(String connectionName, String libraryName, String sessionID) {
         this.connectionName = connectionName;
         this.libraryName = libraryName;
         this.sessionID = sessionID;
 
         this.whereClause = null;
         this.jobTraceEntries = null;
+
+        this.isFileSession = false;
     }
 
     public String getConnectionName() {
@@ -49,7 +88,11 @@ public abstract class AbstractJobTraceSession implements JsonSerializable {
     }
 
     public String getQualifiedName() {
-        return libraryName + ":" + sessionID; //$NON-NLS-1$
+        if (isFileSession) {
+            return fileName;
+        } else {
+            return libraryName + ":" + sessionID; //$NON-NLS-1$
+        }
     }
 
     public String getWhereClause() {
@@ -58,6 +101,19 @@ public abstract class AbstractJobTraceSession implements JsonSerializable {
 
     public void setWhereClause(String whereClause) {
         this.whereClause = whereClause;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void updateFileName(String fileName) {
+
+        if (!isFileSession) {
+            throw new IllegalAccessError("Method not allowed, when session is not a file session."); //$NON-NLS-1$
+        }
+
+        this.fileName = fileName;
     }
 
     public JobTraceEntries getJobTraceEntries() {
@@ -69,30 +125,56 @@ public abstract class AbstractJobTraceSession implements JsonSerializable {
         return jobTraceEntries;
     }
 
+    public Object getAdapter(Class adapter) {
+        if (adapter == IPropertySource.class) {
+            if (propertySource == null) {
+                propertySource = new JobTraceSessionPropertySource(this);
+            }
+            return propertySource;
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return getQualifiedName();
     }
 
+    /**
+     * Produces a hash code with attribute 'whereClause'.
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
+        final int prime = 67;
         int result = 1;
         result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
+        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
+        result = prime * result + ((jobTraceEntries == null) ? 0 : jobTraceEntries.hashCode());
         result = prime * result + ((libraryName == null) ? 0 : libraryName.hashCode());
         result = prime * result + ((sessionID == null) ? 0 : sessionID.hashCode());
         return result;
     }
 
+    /**
+     * Compares the object without attribute 'whereClause'.
+     * 
+     * @param obj - the other object
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        AbstractJobTraceSession other = (AbstractJobTraceSession)obj;
+        JobTraceSession other = (JobTraceSession)obj;
         if (connectionName == null) {
             if (other.connectionName != null) return false;
         } else if (!connectionName.equals(other.connectionName)) return false;
+        if (fileName == null) {
+            if (other.fileName != null) return false;
+        } else if (!fileName.equals(other.fileName)) return false;
+        if (jobTraceEntries == null) {
+            if (other.jobTraceEntries != null) return false;
+        } else if (!jobTraceEntries.equals(other.jobTraceEntries)) return false;
         if (libraryName == null) {
             if (other.libraryName != null) return false;
         } else if (!libraryName.equals(other.libraryName)) return false;
@@ -101,5 +183,4 @@ public abstract class AbstractJobTraceSession implements JsonSerializable {
         } else if (!sessionID.equals(other.sessionID)) return false;
         return true;
     }
-
 }
