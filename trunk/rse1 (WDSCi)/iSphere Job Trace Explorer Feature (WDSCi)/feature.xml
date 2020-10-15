@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="biz.isphere.jobtraceexplorer.rse"
+      label="iSphere Job Trace Explorer for RDi 8.0+ (optional)"
+      version="3.7.3.b007"
+      provider-name="iSphere Project Team"
+      plugin="biz.isphere.core">
+
+   <description url="https://sourceforge.net/projects/isphere/">
+      iSphere Journal Explorer for RDi 8.0+
+The &quot;iSphere Job Trace Explorer Feature (RDi)&quot; provides a set of views for exploring job traces recored with the STRTRC command. It can be started from menu &apos;Window -&gt; Show View&apos;.
+   </description>
+
+   <copyright url="https://sourceforge.net/projects/isphere/">
+      iSphere Journal Explorer for RDi 8.0+
+The &quot;iSphere Journal Explorer Feature (RDi)&quot; provides a set of
+view
+for exploring journals. It can be started from menu
+&apos;Window -&gt; Show View&apos;.
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/cpl-v10.html">
+      This program and the accompanying materials are made available
+under the terms of the Common Public License v1.0 which accompanies
+this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html.
+   </license>
+
+   <url>
+      <discovery label="iSphere Project Home" url="https://sourceforge.net/projects/isphere/"/>
+      <discovery label="Tools/400" url="http://www.tools400.de"/>
+      <discovery label="Task Force IT-Consulting GmbH" url="http://www.taskforce-it.de/"/>
+   </url>
+
+   <requires>
+      <import feature="biz.isphere.core" version="3.7.3.b007" match="perfect"/>
+   </requires>
+
+   <plugin
+         id="biz.isphere.jobtraceexplorer.rse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="biz.isphere.jobtraceexplorer.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="biz.isphere.jobtraceexplorer.help"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>
