@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 import biz.isphere.base.internal.DialogSettingsManager;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
@@ -183,10 +182,7 @@ public class SqlEditor extends Composite {
         labelWhere.setText(Messages.SqlEditor_WHERE);
         labelWhere.setToolTipText(Messages.Tooltip_SqlEditor_Text);
 
-        helpItem = new Label(wherePanel, SWT.NONE);
-        helpItem.setLayoutData(new GridData());
-        helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
-        helpItem.addMouseListener(new DisplaySQLHelpListener());
+        helpItem = DisplaySQLHelpListener.createLabel(wherePanel);
 
         new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
