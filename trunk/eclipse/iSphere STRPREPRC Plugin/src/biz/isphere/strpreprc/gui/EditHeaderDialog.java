@@ -10,11 +10,8 @@ package biz.isphere.strpreprc.gui;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -120,25 +117,6 @@ public class EditHeaderDialog extends XDialog {
                 textParameters.setSelectedRange(1, 0);
                 textParameters.setSelectedRange(0, 0);
                 textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-            }
-        });
-        textParameters.addKeyListener(new KeyAdapter() {
-
-            public void keyReleased(KeyEvent e) {
-                if (!e.doit) {
-                    return;
-                }
-                if (e.stateMask == SWT.CTRL) {
-                    switch (e.character) {
-                    case ' ':
-                        textParameters.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-                        break;
-
-                    case '\032':
-                        textParameters.doOperation(ITextOperationTarget.UNDO);
-                    }
-
-                }
             }
         });
 
