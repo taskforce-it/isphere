@@ -11,11 +11,9 @@ package biz.isphere.core.swt.widgets.sqleditor;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -261,28 +259,6 @@ public class SqlEditor extends Composite {
 
             private boolean isCtrlEnter(KeyEvent event) {
                 return event.stateMask == SWT.CTRL && event.character == SWT.CR;
-            }
-        });
-
-        textSqlEditor.addKeyListener(new KeyAdapter() {
-
-            public void keyReleased(KeyEvent e) {
-
-                if (!e.doit) {
-                    return;
-                }
-
-                if (e.stateMask == SWT.CTRL) {
-                    switch (e.character) {
-                    case ' ':
-                        textSqlEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-                        break;
-
-                    case '\032': // Ctrl-z (Undo)
-                        textSqlEditor.doOperation(ITextOperationTarget.UNDO);
-                    }
-
-                }
             }
         });
 
