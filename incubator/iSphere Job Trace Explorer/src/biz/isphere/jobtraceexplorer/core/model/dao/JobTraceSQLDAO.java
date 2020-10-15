@@ -79,8 +79,8 @@ public class JobTraceSQLDAO {
                "x.QTITSP       as \"TIMESTAMP\"           , " +
                "i.QPRPGN       as \"PGM_NAME\"            , " +
                "i.QPRPQL       as \"PGM_LIB\"             , " +
-               "i.QPRMNM       as \"MODULE_NAME\"         , " +
-               "i.QPRMQL       as \"MODULE_LIBRARY\"      , " +
+               "i.QPRMNM       as \"MOD_NAME\"            , " +
+               "i.QPRMQL       as \"MOD_LIB\"             , " +
                "t.QTBHLL       as \"HLL_STMT_NBR\"        , " +
                "i.QPRPNM       as \"PROC_NAME\"           , " +
                "t.QTBCLL       as \"CALL_LEVEL\"          , " +
@@ -299,8 +299,8 @@ public class JobTraceSQLDAO {
         jobTraceEntry.setTimestamp(resultSet.getTimestamp(ColumnsDAO.TIMESTAMP.index()));
         jobTraceEntry.setProgramName(resultSet.getString(ColumnsDAO.PGM_NAME.index()));
         jobTraceEntry.setProgramLibrary(resultSet.getString(ColumnsDAO.PGM_LIB.index()));
-        jobTraceEntry.setModuleName(resultSet.getString(ColumnsDAO.MODULE_NAME.index()));
-        jobTraceEntry.setModuleLibrary(resultSet.getString(ColumnsDAO.MODULE_LIBRARY.index()));
+        jobTraceEntry.setModuleName(resultSet.getString(ColumnsDAO.MOD_NAME.index()));
+        jobTraceEntry.setModuleLibrary(resultSet.getString(ColumnsDAO.MOD_LIB.index()));
         jobTraceEntry.setHLLStmtNbr(resultSet.getInt(ColumnsDAO.HLL_STMT_NBR.index()));
         jobTraceEntry.setProcedureName(resultSet.getString(ColumnsDAO.PROC_NAME.index()));
         jobTraceEntry.setCallLevel(resultSet.getInt(ColumnsDAO.CALL_LEVEL.index()));

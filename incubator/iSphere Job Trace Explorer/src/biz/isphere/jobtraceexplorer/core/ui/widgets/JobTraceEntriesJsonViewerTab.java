@@ -37,7 +37,7 @@ public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerT
 
         setInputData(null);
 
-        setTableViewerEnabled(false);
+        setEnabled(false);
         setSqlEditorEnabled(false);
 
         Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getJobTraceSession(), selectedItem);
@@ -48,7 +48,7 @@ public class JobTraceEntriesJsonViewerTab extends AbstractJobTraceEntriesViewerT
 
         setInputData(null);
 
-        setTableViewerEnabled(false);
+        setEnabled(false);
         setSqlEditorEnabled(false);
 
         Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getJobTraceSession());

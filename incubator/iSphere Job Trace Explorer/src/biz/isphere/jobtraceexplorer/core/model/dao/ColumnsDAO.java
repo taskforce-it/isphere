@@ -16,8 +16,8 @@ public enum ColumnsDAO {
     TIMESTAMP ("QTITSP", "TIMESTAMP", Messages.LongFieldName_Timestamp),
     PGM_NAME ("QPRPGN", "CHAR(30)", Messages.LongFieldName_Program_name),
     PGM_LIB ("QPRPQL", "CHAR(10)", Messages.LongFieldName_Program_library),
-    MODULE_NAME ("QPRMNM", "VARCHAR(256", Messages.LongFieldName_Module_name),
-    MODULE_LIBRARY ("QPRMQL", "CHAR(10", Messages.LongFieldName_Module_library),
+    MOD_NAME ("QPRMNM", "VARCHAR(256", Messages.LongFieldName_Module_name),
+    MOD_LIB ("QPRMQL", "CHAR(10", Messages.LongFieldName_Module_library),
     HLL_STMT_NBR ("QTBHLL", "INTEGER", Messages.LongFieldName_HLL_statement_number),
     PROC_NAME ("QPRPNM", "VARCHAR(256)", Messages.LongFieldName_Procedure_name),
     CALL_LEVEL ("QTBCLL", "INTEGER", Messages.LongFieldName_Invocation_call_level),
@@ -55,7 +55,7 @@ public enum ColumnsDAO {
         return ordinal() + 1;
     }
 
-    public static final String[] ALL = new String[] { NANOS_SINE_STARTED.name(), TIMESTAMP.name(), PGM_NAME.name(), PGM_LIB.name(),
-        MODULE_NAME.name(), MODULE_LIBRARY.name(), HLL_STMT_NBR.name(), PROC_NAME.name(), CALL_LEVEL.name(), EVENT_SUB_TYPE.name(),
-        CALLER_HLL_STMT_NBR.name(), CALLER_PROC_NAME.name() };
+    public static final String[] ALL = new String[] { NANOS_SINE_STARTED.name(), TIMESTAMP.name(), PGM_NAME.name(), PGM_LIB.name(), MOD_NAME.name(),
+        MOD_LIB.name(), HLL_STMT_NBR.name(), PROC_NAME.name(), CALL_LEVEL.name(), EVENT_SUB_TYPE.name(), CALLER_HLL_STMT_NBR.name(),
+        CALLER_PROC_NAME.name() };
 }

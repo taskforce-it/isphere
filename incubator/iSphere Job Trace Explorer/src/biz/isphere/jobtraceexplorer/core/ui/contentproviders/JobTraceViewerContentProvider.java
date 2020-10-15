@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 
 public class JobTraceViewerContentProvider implements ILazyContentProvider {
 
@@ -46,5 +47,14 @@ public class JobTraceViewerContentProvider implements ILazyContentProvider {
 
     public JobTraceEntries getInput() {
         return inputData;
+    }
+
+    public JobTraceEntry getElementAt(int index) {
+
+        if (index >= 0 && index < inputData.size()) {
+            return inputData.getItem(index);
+        }
+
+        return null;
     }
 }

@@ -103,6 +103,12 @@ public class Messages extends NLS {
     public static String OpenJobTraceSessionDialog_Library;
     public static String OpenJobTraceSessionDialog_Exclude_IBM_Data;
 
+    // Filter panel
+    public static String Label_Text;
+    public static String ButtonTooltip_Text_tooltip;
+    public static String ButtonTooltip_Search_up;
+    public static String ButtonTooltip_Search_down;
+
     public static String Tooltip_OpenJobTraceSessionDialog_Connection;
     public static String Tooltip_OpenJobTraceSessionDialog_SessionID;
     public static String Tooltip_OpenJobTraceSessionDialog_Library;

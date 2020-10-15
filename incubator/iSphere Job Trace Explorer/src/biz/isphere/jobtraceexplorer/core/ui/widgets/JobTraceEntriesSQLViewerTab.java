@@ -37,7 +37,7 @@ public class JobTraceEntriesSQLViewerTab extends AbstractJobTraceEntriesViewerTa
 
         setInputData(null);
 
-        setTableViewerEnabled(false);
+        setEnabled(false);
         setSqlEditorEnabled(false);
 
         Job loadJobTraceDataJob = new OpenJobTraceSessionSQLJob(this, postRun, getJobTraceSession(), selectedItem);
@@ -48,7 +48,7 @@ public class JobTraceEntriesSQLViewerTab extends AbstractJobTraceEntriesViewerTa
 
         setInputData(null);
 
-        setTableViewerEnabled(false);
+        setEnabled(false);
         setSqlEditorEnabled(false);
 
         Job loadJobTraceDataJob = new OpenJobTraceSessionSQLJob(this, postRun, getJobTraceSession());

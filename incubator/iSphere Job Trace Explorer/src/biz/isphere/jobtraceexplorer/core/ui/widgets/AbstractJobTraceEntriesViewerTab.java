@@ -8,6 +8,7 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.widgets;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,16 +33,22 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.medfoster.sqljep.ParseException;
+import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -54,6 +61,7 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
+import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
 import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 
@@ -67,12 +75,13 @@ import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
  * @see JobTraceEntryViewerView
  */
 public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener,
-    ISelectionProvider, IPropertyChangeListener {
+    ISelectionProvider, IPropertyChangeListener, SelectionListener {
 
     private DialogSettingsManager dialogSettingsManager = null;
 
     private JobTraceSession jobTraceSession;
     private Composite container;
+    private JobTraceExplorerFilterPanel filterPanel;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
     private SelectionListener loadJobTraceEntriesSelectionListener;
@@ -87,14 +96,13 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         setSqlEditorVisibility(false);
 
         this.jobTraceSession = jobTraceSession;
-        this.container = new Composite(parent, SWT.NONE);
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
         this.loadJobTraceEntriesSelectionListener = loadJobTraceEntriesSelectionListener;
 
         setSqlEditorVisibility(false);
 
-        initializeComponents();
+        initializeComponents(parent);
     }
 
     /*
@@ -113,8 +121,14 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return jobTraceSession;
     }
 
-    protected void setTableViewerEnabled(boolean enabled) {
+    protected void setEnabled(boolean enabled) {
         tableViewer.getTable().setEnabled(enabled);
+        if (isSqlEditorVisible()) {
+            filterPanel.setEnabled(false);
+            setSqlEditorEnabled(enabled);
+        } else {
+            filterPanel.setEnabled(enabled);
+        }
     }
 
     /*
@@ -204,19 +218,35 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return jobTraceSession.getJobTraceEntries().hasFilterWhereClause();
     }
 
-    protected void initializeComponents() {
+    private void initializeComponents(CTabFolder parent) {
 
         setText(getLabel());
         setToolTipText(getTooltip());
 
+        this.container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        tableViewer = createTableViewer(container);
+
+        createFilterPanel(container);
+        createMainPanel(container);
+
         container.layout(true);
         setControl(container);
     }
 
-    protected DialogSettingsManager getDialogSettingsManager() {
+    private void createFilterPanel(Composite parent) {
+
+        filterPanel = new JobTraceExplorerFilterPanel(parent, SWT.NONE);
+        filterPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        filterPanel.addFilterChangedListener(this);
+    }
+
+    private void createMainPanel(Composite parent) {
+
+        tableViewer = createTableViewer(parent);
+    }
+
+    private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISphereJobTraceExplorerCorePlugin.getDefault().getDialogSettings(),
@@ -225,7 +255,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return dialogSettingsManager;
     }
 
-    protected Composite getContainer() {
+    private Composite getContainer() {
         return container;
     }
 
@@ -283,10 +313,10 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         if (data != null) {
             tableViewer.setItemCount(data.size());
             tableViewer.setInput(data);
-            setTableViewerEnabled(true);
+            setEnabled(true);
         } else {
             tableViewer.setItemCount(0);
-            setTableViewerEnabled(false);
+            setEnabled(false);
         }
 
         tableViewer.setSelection(null);
@@ -299,8 +329,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             return null;
         }
 
-        TableItem tableItem = tableViewer.getTable().getItem(index);
-        JobTraceEntry jobTraceEntry = (JobTraceEntry)tableItem.getData();
+        JobTraceEntry jobTraceEntry = getElementAt(index);
 
         return jobTraceEntry;
     }
@@ -320,7 +349,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     public void filterJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
-        setSqlEditorEnabled(false);
+        setEnabled(false);
 
         Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(postRun);
         filterJobTraceDataJob.schedule();
@@ -386,6 +415,10 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return (JobTraceViewerContentProvider)tableViewer.getContentProvider();
     }
 
+    private JobTraceEntry getElementAt(int index) {
+        return getContentProvider().getElementAt(index);
+    }
+
     private JobTraceEntryLabelProvider getLabelProvider() {
         return (JobTraceEntryLabelProvider)tableViewer.getLabelProvider();
     }
@@ -414,13 +447,13 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
     }
 
-    protected TableViewer createTableViewer(Composite container) {
+    private TableViewer createTableViewer(Composite container) {
 
         try {
 
             tableViewer = new JobTraceViewerFactory().createTableViewer(container, getDialogSettingsManager());
             tableViewer.addSelectionChangedListener(this);
-            setTableViewerEnabled(false);
+            setEnabled(false);
 
             return tableViewer;
 
@@ -460,6 +493,227 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return false;
     }
 
+    public void widgetDefaultSelected(SelectionEvent event) {
+        widgetSelected(event);
+    }
+
+    /*
+     * Filter Panel Listener
+     */
+
+    public void widgetSelected(SelectionEvent event) {
+
+        switch (event.detail) {
+        case JobTraceExplorerFilterPanelEvents.SEARCH_UP:
+            doSearchUp(event.text);
+            break;
+
+        case JobTraceExplorerFilterPanelEvents.SEARCH_DOWN:
+            doSearchDown(event.text);
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    private void doSearchUp(String text) {
+
+        if (StringHelper.isNullOrEmpty(text)) {
+            return;
+        }
+
+        boolean isSQLExpression = isSQLExpression(text);
+        doSearchUp(text, isSQLExpression, tableViewer.getTable().getSelectionIndex(), 0);
+    }
+
+    private void doSearchUp(String text, boolean isSQLExpression, int startIndex, int minIndex) {
+
+        Table table = tableViewer.getTable();
+        if (table == null || table.getItemCount() <= 0) {
+            return;
+        }
+
+        boolean isNegated = false;
+        String searchArg = null;
+        if (!isSQLExpression) {
+            searchArg = text.toLowerCase();
+            // if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
+            // searchArg = searchArg.substring(1);
+            // isNegated = true;
+            // }
+            if (!searchArg.startsWith(StringHelper.WILDCARD_GROUP) && !searchArg.endsWith(StringHelper.WILDCARD_GROUP)) {
+                searchArg = StringHelper.WILDCARD_GROUP + searchArg + StringHelper.WILDCARD_GROUP;
+            }
+        } else {
+            searchArg = text;
+        }
+
+        int currentIndex = startIndex;
+        if (currentIndex < 0) {
+            currentIndex = table.getItemCount();
+        }
+
+        currentIndex--;
+
+        while (currentIndex >= minIndex) {
+            JobTraceEntry jobTraceEntry = getElementAt(currentIndex);
+            if (isMatch(isNegated, searchArg, isSQLExpression, jobTraceEntry)) {
+                table.setSelection(currentIndex);
+                return; // Found!
+            }
+            currentIndex--;
+        }
+
+        Display.getCurrent().beep();
+
+        if (startIndex < table.getItemCount() - 1) {
+            doSearchUp(text, isSQLExpression, table.getItemCount(), startIndex);
+        }
+    }
+
+    private void doSearchDown(String text) {
+
+        if (StringHelper.isNullOrEmpty(text)) {
+            return;
+        }
+
+        boolean isSQLExpression = isSQLExpression(text);
+        doSearchDown(text, isSQLExpression, tableViewer.getTable().getSelectionIndex(), tableViewer.getTable().getItemCount() - 1);
+    }
+
+    private void doSearchDown(String text, boolean isSQLExpression, int startIndex, int maxIndex) {
+
+        Table table = tableViewer.getTable();
+        if (table == null || table.getItemCount() <= 0) {
+            return;
+        }
+
+        boolean isNegated = false;
+        String searchArg = null;
+        if (!isSQLExpression) {
+            searchArg = text.toLowerCase().trim();
+            // if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
+            // searchArg = searchArg.substring(1);
+            // isNegated = true;
+            // }
+            if (!searchArg.startsWith(StringHelper.WILDCARD_GROUP) && !searchArg.endsWith(StringHelper.WILDCARD_GROUP)) {
+                searchArg = StringHelper.WILDCARD_GROUP + searchArg + StringHelper.WILDCARD_GROUP;
+            }
+        } else {
+            searchArg = text.trim();
+        }
+
+        int currentIndex = startIndex;
+        if (currentIndex > maxIndex) {
+            currentIndex = -1;
+        }
+
+        currentIndex++;
+
+        while (currentIndex <= maxIndex) {
+            JobTraceEntry jobTraceEntry = getElementAt(currentIndex);
+            if (isMatch(isNegated, searchArg, isSQLExpression, jobTraceEntry)) {
+                table.setSelection(currentIndex);
+                return; // Found!
+            }
+            currentIndex++;
+        }
+
+        Display.getCurrent().beep();
+
+        if (startIndex > 0) {
+            doSearchDown(text, isSQLExpression, -1, startIndex);
+        }
+    }
+
+    private boolean isSQLExpression(String searchArgument) {
+
+        try {
+
+            RowJEP sqljep = new RowJEP(searchArgument);
+            sqljep.parseExpression(JobTraceEntry.getColumnMapping());
+
+            return true;
+
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    private boolean isMatch(boolean isNegated, String searchArg, boolean isSQLExpression, JobTraceEntry jobTraceEntry) {
+
+        if (isSQLExpression) {
+            return isMatchSQL(searchArg, jobTraceEntry);
+        } else {
+            return isMatchText(isNegated, searchArg, jobTraceEntry);
+        }
+    }
+
+    private boolean isMatchSQL(String filterWhereClause, JobTraceEntry jobTraceEntry) {
+
+        try {
+
+            HashMap<String, Integer> columnMapping = JobTraceEntry.getColumnMapping();
+            RowJEP sqljep = new RowJEP(filterWhereClause);
+            sqljep.parseExpression(columnMapping);
+
+            Comparable<?>[] row = jobTraceEntry.getRow();
+            return (Boolean)sqljep.getValue(row);
+
+        } catch (ParseException e) {
+            ISphereJobTraceExplorerCorePlugin.logError("*** Failed matching WHERE clause in isMatchSQL(" + filterWhereClause + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+
+        return false;
+    }
+
+    private boolean isMatchText(boolean isNegated, String searchArg, JobTraceEntry jobTraceEntry) {
+
+        int[] indices = getTextColumnIndices();
+
+        for (int i = 0; i < indices.length; i++) {
+            TableColumn tableColumn = tableViewer.getTable().getColumn(indices[i]);
+            String columnName = JobTraceViewerFactory.getColumnName(tableColumn);
+            String uiValue = jobTraceEntry.getValueForUi(columnName);
+            if (StringHelper.matchesGeneric(uiValue.toLowerCase(), searchArg)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int[] getTextColumnIndices() {
+
+        List<Integer> indices = new LinkedList<Integer>();
+
+        TableColumn[] tableColumns = tableViewer.getTable().getColumns();
+        for (int i = 0; i < tableColumns.length; i++) {
+            if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PGM_NAME)) {
+                indices.add(i);
+            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PGM_LIB)) {
+                indices.add(i);
+            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.MOD_NAME)) {
+                indices.add(i);
+            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.MOD_LIB)) {
+                indices.add(i);
+            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PROC_NAME)) {
+                indices.add(i);
+            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.CALLER_PROC_NAME)) {
+                indices.add(i);
+            }
+
+        }
+
+        int[] tIndices = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            tIndices[i] = indices.get(i);
+        }
+
+        return tIndices;
+    }
+
     private class FilterJobTraceSessionDataJob extends Job {
 
         private IDataLoadPostRun postRun;
@@ -482,7 +736,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setInputData(data);
-                            setSqlEditorEnabled(true);
+                            setEnabled(true);
                             setFocusOnSqlEditor();
                             postRun.finishDataLoading(AbstractJobTraceEntriesViewerTab.this, true);
                         }
@@ -495,7 +749,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
                     final Throwable e1 = e;
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
-                            setSqlEditorEnabled(true);
+                            setEnabled(true);
                             setFocusOnSqlEditor();
                             postRun.handleDataLoadException(AbstractJobTraceEntriesViewerTab.this, e1);
                         }

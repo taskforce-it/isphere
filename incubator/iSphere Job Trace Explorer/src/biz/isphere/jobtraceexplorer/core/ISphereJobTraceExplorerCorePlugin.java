@@ -24,6 +24,8 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_JSON = "json.png";
     public static final String IMAGE_HIDE_PROCEDURE = "hide_proc.png";
     public static final String IMAGE_SHOW_PROCEDURE = "show_proc.png";
+    public static final String IMAGE_SEARCH_UP = "search_up_small.png";
+    public static final String IMAGE_SEARCH_DOWN = "search_down_small.png";
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.jobtraceexplorer.core"; //$NON-NLS-1$
@@ -81,6 +83,8 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_EDIT_SQL));
         reg.put(IMAGE_HIGHLIGHT_ATTR, getImageDescriptor(IMAGE_HIGHLIGHT_ATTR));
         reg.put(IMAGE_JSON, getImageDescriptor(IMAGE_JSON));
+        reg.put(IMAGE_SEARCH_UP, getImageDescriptor(IMAGE_SEARCH_UP));
+        reg.put(IMAGE_SEARCH_DOWN, getImageDescriptor(IMAGE_SEARCH_DOWN));
     }
 
     /**

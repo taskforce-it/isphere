@@ -33,8 +33,8 @@ public class JobTraceEntry {
         columnMappings.put(ColumnsDAO.TIMESTAMP.name(), ColumnsDAO.TIMESTAMP.ordinal());
         columnMappings.put(ColumnsDAO.PGM_NAME.name(), ColumnsDAO.PGM_NAME.ordinal());
         columnMappings.put(ColumnsDAO.PGM_LIB.name(), ColumnsDAO.PGM_LIB.ordinal());
-        columnMappings.put(ColumnsDAO.MODULE_NAME.name(), ColumnsDAO.MODULE_NAME.ordinal());
-        columnMappings.put(ColumnsDAO.MODULE_LIBRARY.name(), ColumnsDAO.MODULE_LIBRARY.ordinal());
+        columnMappings.put(ColumnsDAO.MOD_NAME.name(), ColumnsDAO.MOD_NAME.ordinal());
+        columnMappings.put(ColumnsDAO.MOD_LIB.name(), ColumnsDAO.MOD_LIB.ordinal());
         columnMappings.put(ColumnsDAO.HLL_STMT_NBR.name(), ColumnsDAO.HLL_STMT_NBR.ordinal());
         columnMappings.put(ColumnsDAO.PROC_NAME.name(), ColumnsDAO.PROC_NAME.ordinal());
         columnMappings.put(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.ordinal());
@@ -53,8 +53,8 @@ public class JobTraceEntry {
         proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.name(), ColumnsDAO.TIMESTAMP.type() + " - " + ColumnsDAO.TIMESTAMP.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_NAME.name(), ColumnsDAO.PGM_NAME.type() + " - " + ColumnsDAO.PGM_NAME.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_LIB.name(), ColumnsDAO.PGM_LIB.type() + " - " + ColumnsDAO.PGM_LIB.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_NAME.name(), ColumnsDAO.MODULE_NAME.type() + " - " + ColumnsDAO.MODULE_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MODULE_LIBRARY.name(), ColumnsDAO.MODULE_LIBRARY.type() + " - " + ColumnsDAO.MODULE_LIBRARY.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_NAME.name(), ColumnsDAO.MOD_NAME.type() + " - " + ColumnsDAO.MOD_NAME.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_LIB.name(), ColumnsDAO.MOD_LIB.type() + " - " + ColumnsDAO.MOD_LIB.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.HLL_STMT_NBR.name(), ColumnsDAO.HLL_STMT_NBR.type() + " - " + ColumnsDAO.HLL_STMT_NBR.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.name(), ColumnsDAO.PROC_NAME.type() + " - " + ColumnsDAO.PROC_NAME.description()));
         proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.type() + " - " + ColumnsDAO.CALL_LEVEL.description()));
@@ -172,8 +172,8 @@ public class JobTraceEntry {
         row[ColumnsDAO.TIMESTAMP.ordinal()] = getTimestamp();
         row[ColumnsDAO.PGM_NAME.ordinal()] = getProgramName();
         row[ColumnsDAO.PGM_LIB.ordinal()] = getProgramLibrary();
-        row[ColumnsDAO.MODULE_NAME.ordinal()] = getModuleName();
-        row[ColumnsDAO.MODULE_LIBRARY.ordinal()] = getModuleLibrary();
+        row[ColumnsDAO.MOD_NAME.ordinal()] = getModuleName();
+        row[ColumnsDAO.MOD_LIB.ordinal()] = getModuleLibrary();
         row[ColumnsDAO.HLL_STMT_NBR.ordinal()] = getHLLStmtNbr();
         row[ColumnsDAO.PROC_NAME.ordinal()] = getProcedureName();
         row[ColumnsDAO.CALL_LEVEL.ordinal()] = getCallLevel();
@@ -361,9 +361,9 @@ public class JobTraceEntry {
             return toString(getProgramName());
         } else if (ColumnsDAO.PGM_LIB.equals(columnsDAO)) {
             return toString(getProgramLibrary());
-        } else if (ColumnsDAO.MODULE_NAME.equals(columnsDAO)) {
+        } else if (ColumnsDAO.MOD_NAME.equals(columnsDAO)) {
             return toString(getModuleName());
-        } else if (ColumnsDAO.MODULE_LIBRARY.equals(columnsDAO)) {
+        } else if (ColumnsDAO.MOD_LIB.equals(columnsDAO)) {
             return toString(getModuleLibrary());
         } else if (ColumnsDAO.HLL_STMT_NBR.equals(columnsDAO)) {
             return toString(getHLLStmtNbr());
@@ -373,8 +373,6 @@ public class JobTraceEntry {
             return toString(getCallLevel());
         } else if (ColumnsDAO.EVENT_SUB_TYPE.equals(columnsDAO)) {
             return eventSubTypeToExt(getEventSubType());
-        } else if (ColumnsDAO.MODULE_LIBRARY.equals(columnsDAO)) {
-            return toString(getCallerHLLStmtNbr());
         } else if (ColumnsDAO.CALLER_HLL_STMT_NBR.equals(columnsDAO)) {
             return toString(getCallerHLLStmtNbr());
         } else if (ColumnsDAO.CALLER_PROC_NAME.equals(columnsDAO)) {

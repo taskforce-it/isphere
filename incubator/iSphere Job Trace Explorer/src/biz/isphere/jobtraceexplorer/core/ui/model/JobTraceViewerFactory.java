@@ -46,8 +46,8 @@ public class JobTraceViewerFactory {
         JobTraceEntryColumnUI.TIMESTAMP,
         JobTraceEntryColumnUI.PGM_NAME,
         JobTraceEntryColumnUI.PGM_LIB,
-        JobTraceEntryColumnUI.MODULE_NAME, 
-        JobTraceEntryColumnUI.MODULE_LIBRARY, 
+        JobTraceEntryColumnUI.MOD_NAME, 
+        JobTraceEntryColumnUI.MOD_LIB, 
         JobTraceEntryColumnUI.HLL_STMT_NBR,
         JobTraceEntryColumnUI.PROC_NAME, 
         JobTraceEntryColumnUI.CALL_LEVEL,
@@ -87,6 +87,19 @@ public class JobTraceViewerFactory {
         }
 
         return null;
+    }
+
+    public static boolean isColumn(TableColumn tableColumn, JobTraceEntryColumnUI columnUI) {
+
+        String columnName = getColumnName(tableColumn);
+
+        if (JobTraceEntryColumnUI.find(columnName) != null) {
+            if (columnUI.columnName().matches(columnName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static MouseCursorLocation getMouseCursorLocation(TableViewer tableViewer) {
@@ -161,8 +174,8 @@ public class JobTraceViewerFactory {
         // Program module and procedure
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PGM_NAME));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PGM_LIB));
-        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MODULE_NAME));
-        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MODULE_LIBRARY));
+        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MOD_NAME));
+        columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.MOD_LIB));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.HLL_STMT_NBR));
         columns.add(new JobTraceEntryColumn(JobTraceEntryColumnUI.PROC_NAME));
 
