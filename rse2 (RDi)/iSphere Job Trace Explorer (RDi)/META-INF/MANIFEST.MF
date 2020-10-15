@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Job Trace Explorer (RDi)
+Bundle-SymbolicName: biz.isphere.jobtraceexplorer.rse;singleton:=true
+Bundle-Version: 3.7.3.b007
+Bundle-Activator: biz.isphere.jobtraceexplorer.rse.ISphereJobTraceExplorerRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ biz.isphere.base,
+ biz.isphere.core
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Export-Package: biz.isphere.jobtraceexplorer.rse.shared.ui.perspectives
