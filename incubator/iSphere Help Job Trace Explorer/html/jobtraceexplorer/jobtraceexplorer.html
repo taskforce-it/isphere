@@ -25,6 +25,7 @@ IBM related entries are excluded to reduce the number of items.
 <li><a href="#tracing_a_job">Tracing a Job</a></li>
 <li><a href="#opening_the_job_trace_explorer_perspective">Opening the Job Trace Explorer Perspective</a></li>
 <li><a href="#open_job_trace_session">Open Job Trace Session</a></li>
+<li><a href="#searching_for_job_trace_entries">Searching For Job Trace Entries</a></li>
 <li><a href="#filtering_job_trace_entries">Filtering Job Trace Entries</a></li>
 <li><a href="#excluded_job_trace_entries">Excluded Job Trace Entries</a></li>
 </ul>
@@ -99,6 +100,38 @@ Use the <i>Exclude IBM data</i> checkbox to specify whether or not to exclude IB
 due to the large amount of extra data, depending on the kind of the program that has been traced.
 <p>
 The default value of this checkbox is always <i>true</i>. 
+<p>
+<a id="searching_for_job_trace_entries"></a>
+<h2>Searching For Job Trace Entries</h2>
+<p>
+Use the text search controls at the top of the <i>Job Trace Explorer</i> view to search for job trace entries:
+<p>
+<img src="assets/search_panel_text.png" align="middle">
+<p>
+Enter a search argument and press one of the buttons next to the text field to start your search (up or down
+the list). You can search for simple strings or generic strings using the wildcard characters <i>*</i> and <i>?</i>.
+<p>
+<table>
+<tr><td valign="top">*</td><td valign="top">&nbsp;</td><td valign="top">Replaces a group of characters.</td></tr>
+<tr><td valign="top">?</td><td valign="top">&nbsp;</td><td valign="top">Replaces a single character.</td></tr>
+</table>
+<p>
+The following columns are searched:
+<p>
+<ul>
+<li>Program name (PGM_NAME)</li>
+<li>Program library (PGM_LIB)</li>
+<li>Module name (MOD_NAME)</li>
+<li>Module library (MOD_LIB)</li>
+<li>Procedure name (PROC_NAME)</li>
+<li>Caller procedure name (CALLER_PROC_NAME)</li>
+</ul>
+<p>
+For more advanced searches you can enter SQL statement as shown below:
+<p>
+<img src="assets/search_panel_sql.png" align="middle">
+<p>
+Use Ctrl+Space for content assist. See also <a href="#filtering_job_log_messages">Filtering Job Log Messages</a>.
 <p>
 <a id="filtering_job_trace_entries"></a>
 <h2>Filtering Job Trace Entries</h2>
