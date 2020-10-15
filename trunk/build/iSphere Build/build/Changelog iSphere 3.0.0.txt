@@ -2,6 +2,8 @@
 Changelog: iSphere 3.7.3.r
 --------------------------
 
+ • Added new feature "iSphere Job Trace Explorer" for analyzing job
+   traces produced with the STRTRC/ENDTRC commands.
  • Enhanced the "iSphere Journal Explorer", to check the iSphere
    library, when attempting to display the journal entries of a
  • Added option to open the "iSphere Journal Explorer" from the
