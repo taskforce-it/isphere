@@ -36,6 +36,9 @@
    <feature url="features/biz.isphere.journalexplorer.rse_3.7.3.b007.jar" id="biz.isphere.journalexplorer.rse" version="3.7.3.b007">
       <category name="iSphere Journal Explorer for WDSCi 7.0"/>
    </feature>
+   <feature url="features/biz.isphere.jobtraceexplorer.rse_3.7.3.b007.jar" id="biz.isphere.jobtraceexplorer.rse" version="3.7.3.b007">
+      <category name="iSphere Job Trace Explorer for WDSCi 7.0"/>
+   </feature>
    <category-def name="iSphere for WDSCi 7.0 (Base Component)" label="iSphere for WDSCi 7.0 (Base Component)">
       <description>
          iSphere for WDSCi 7.0. Base component of the iSphere plug-in.
@@ -54,6 +57,11 @@
    <category-def name="iSphere Job Log Explorer for WDSCi 7.0" label="iSphere Job Log Explorer for WDSCi 7.0">
       <description>
          Plug-in that adds an editor for exploring job log spooled files. Requires installing the iSphere base component &quot;iSphere for WDSCi 7.0&quot;.
+      </description>
+   </category-def>
+   <category-def name="iSphere Job Trace Explorer for WDSCi 7.0" label="iSphere Job Trace Explorer for WDSCi 7.0">
+      <description>
+         Plug-in that adds an editor for exploring job traces produced with the STRTRC/ENDTRC commands. Requires installing the iSphere base component &quot;iSphere for RDi 8.0+&quot;.
       </description>
    </category-def>
    <category-def name="iSphere Journal Explorer for WDSCi 7.0" label="iSphere Journal Explorer for WDSCi 7.0">
