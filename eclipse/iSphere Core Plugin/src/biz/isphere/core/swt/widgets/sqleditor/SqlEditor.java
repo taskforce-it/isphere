@@ -189,7 +189,7 @@ public class SqlEditor extends Composite {
         helpItem = new Label(wherePanel, SWT.NONE);
         helpItem.setLayoutData(new GridData());
         helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
-        helpItem.addMouseListener(new DisplayHelpListener());
+        helpItem.addMouseListener(new DisplaySQLHelpListener());
 
         new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
@@ -353,11 +353,10 @@ public class SqlEditor extends Composite {
         super.dispose();
     }
 
-    private class DisplayHelpListener extends MouseAdapter {
+    private class DisplaySQLHelpListener extends MouseAdapter {
         @Override
         public void mouseUp(MouseEvent event) {
-            PlatformUI.getWorkbench().getHelpSystem()
-                .displayHelpResource("/biz.isphere.journalexplorer.help/html/journalexplorer/sql_reference.html");
+            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.base.help/html/sql/sql_reference.html");
         }
     }
 }
