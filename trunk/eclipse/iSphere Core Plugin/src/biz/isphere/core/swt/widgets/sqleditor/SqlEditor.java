@@ -16,8 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -29,7 +27,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.ISpherePlugin;
@@ -351,12 +348,5 @@ public class SqlEditor extends Composite {
         cboHistory.removeSelectionListener(selectionListener);
         textSqlEditor.dispose();
         super.dispose();
-    }
-
-    private class DisplaySQLHelpListener extends MouseAdapter {
-        @Override
-        public void mouseUp(MouseEvent event) {
-            PlatformUI.getWorkbench().getHelpSystem().displayHelpResource("/biz.isphere.base.help/html/sql/sql_reference.html");
-        }
     }
 }
