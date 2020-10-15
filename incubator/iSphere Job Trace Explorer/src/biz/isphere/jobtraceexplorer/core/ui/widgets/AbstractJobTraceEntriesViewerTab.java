@@ -8,7 +8,6 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.widgets;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
@@ -61,9 +59,11 @@ import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
-import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
 import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.ISearchComparer;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerSQL;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerText;
 
 /**
  * This widget is a viewer for the job trace entries of an output file of the
@@ -81,7 +81,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     private JobTraceSession jobTraceSession;
     private Composite container;
-    private JobTraceExplorerFilterPanel filterPanel;
+    private JobTraceExplorerSearchPanel filterPanel;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
     private SelectionListener loadJobTraceEntriesSelectionListener;
@@ -236,7 +236,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     private void createFilterPanel(Composite parent) {
 
-        filterPanel = new JobTraceExplorerFilterPanel(parent, SWT.NONE);
+        filterPanel = new JobTraceExplorerSearchPanel(parent, SWT.NONE);
         filterPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         filterPanel.addFilterChangedListener(this);
     }
@@ -534,19 +534,13 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             return;
         }
 
-        boolean isNegated = false;
-        String searchArg = null;
+        ISearchComparer searchConfig = null;
         if (!isSQLExpression) {
-            searchArg = text.toLowerCase();
-            // if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
-            // searchArg = searchArg.substring(1);
-            // isNegated = true;
-            // }
-            if (!searchArg.startsWith(StringHelper.WILDCARD_GROUP) && !searchArg.endsWith(StringHelper.WILDCARD_GROUP)) {
-                searchArg = StringHelper.WILDCARD_GROUP + searchArg + StringHelper.WILDCARD_GROUP;
-            }
+            searchConfig = new SearchComparerText(tableViewer.getTable().getColumns());
+            searchConfig.setWhereClause(text);
         } else {
-            searchArg = text;
+            searchConfig = new SearchComparerSQL(JobTraceEntry.getColumnMapping());
+            searchConfig.setWhereClause(text);
         }
 
         int currentIndex = startIndex;
@@ -558,7 +552,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
         while (currentIndex >= minIndex) {
             JobTraceEntry jobTraceEntry = getElementAt(currentIndex);
-            if (isMatch(isNegated, searchArg, isSQLExpression, jobTraceEntry)) {
+            if (searchConfig.isMatch(jobTraceEntry)) {
                 table.setSelection(currentIndex);
                 return; // Found!
             }
@@ -589,19 +583,13 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
             return;
         }
 
-        boolean isNegated = false;
-        String searchArg = null;
+        ISearchComparer searchConfig = null;
         if (!isSQLExpression) {
-            searchArg = text.toLowerCase().trim();
-            // if (searchArg.startsWith(NEGATED_MARKER)) { // $NON-NLS-1$
-            // searchArg = searchArg.substring(1);
-            // isNegated = true;
-            // }
-            if (!searchArg.startsWith(StringHelper.WILDCARD_GROUP) && !searchArg.endsWith(StringHelper.WILDCARD_GROUP)) {
-                searchArg = StringHelper.WILDCARD_GROUP + searchArg + StringHelper.WILDCARD_GROUP;
-            }
+            searchConfig = new SearchComparerText(tableViewer.getTable().getColumns());
+            searchConfig.setWhereClause(text);
         } else {
-            searchArg = text.trim();
+            searchConfig = new SearchComparerSQL(JobTraceEntry.getColumnMapping());
+            searchConfig.setWhereClause(text);
         }
 
         int currentIndex = startIndex;
@@ -613,7 +601,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
         while (currentIndex <= maxIndex) {
             JobTraceEntry jobTraceEntry = getElementAt(currentIndex);
-            if (isMatch(isNegated, searchArg, isSQLExpression, jobTraceEntry)) {
+            if (searchConfig.isMatch(jobTraceEntry)) {
                 table.setSelection(currentIndex);
                 return; // Found!
             }
@@ -639,79 +627,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         } catch (ParseException e) {
             return false;
         }
-    }
-
-    private boolean isMatch(boolean isNegated, String searchArg, boolean isSQLExpression, JobTraceEntry jobTraceEntry) {
-
-        if (isSQLExpression) {
-            return isMatchSQL(searchArg, jobTraceEntry);
-        } else {
-            return isMatchText(isNegated, searchArg, jobTraceEntry);
-        }
-    }
-
-    private boolean isMatchSQL(String filterWhereClause, JobTraceEntry jobTraceEntry) {
-
-        try {
-
-            HashMap<String, Integer> columnMapping = JobTraceEntry.getColumnMapping();
-            RowJEP sqljep = new RowJEP(filterWhereClause);
-            sqljep.parseExpression(columnMapping);
-
-            Comparable<?>[] row = jobTraceEntry.getRow();
-            return (Boolean)sqljep.getValue(row);
-
-        } catch (ParseException e) {
-            ISphereJobTraceExplorerCorePlugin.logError("*** Failed matching WHERE clause in isMatchSQL(" + filterWhereClause + ") ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-
-        return false;
-    }
-
-    private boolean isMatchText(boolean isNegated, String searchArg, JobTraceEntry jobTraceEntry) {
-
-        int[] indices = getTextColumnIndices();
-
-        for (int i = 0; i < indices.length; i++) {
-            TableColumn tableColumn = tableViewer.getTable().getColumn(indices[i]);
-            String columnName = JobTraceViewerFactory.getColumnName(tableColumn);
-            String uiValue = jobTraceEntry.getValueForUi(columnName);
-            if (StringHelper.matchesGeneric(uiValue.toLowerCase(), searchArg)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private int[] getTextColumnIndices() {
-
-        List<Integer> indices = new LinkedList<Integer>();
-
-        TableColumn[] tableColumns = tableViewer.getTable().getColumns();
-        for (int i = 0; i < tableColumns.length; i++) {
-            if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PGM_NAME)) {
-                indices.add(i);
-            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PGM_LIB)) {
-                indices.add(i);
-            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.MOD_NAME)) {
-                indices.add(i);
-            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.MOD_LIB)) {
-                indices.add(i);
-            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.PROC_NAME)) {
-                indices.add(i);
-            } else if (JobTraceViewerFactory.isColumn(tableColumns[i], JobTraceEntryColumnUI.CALLER_PROC_NAME)) {
-                indices.add(i);
-            }
-
-        }
-
-        int[] tIndices = new int[indices.size()];
-        for (int i = 0; i < indices.size(); i++) {
-            tIndices[i] = indices.get(i);
-        }
-
-        return tIndices;
     }
 
     private class FilterJobTraceSessionDataJob extends Job {

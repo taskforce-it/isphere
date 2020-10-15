@@ -26,11 +26,12 @@ import org.eclipse.swt.widgets.Label;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.sqleditor.DisplaySQLHelpListener;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 
-public class JobTraceExplorerFilterPanel extends Composite {
+public class JobTraceExplorerSearchPanel extends Composite {
 
     private ContentAssistText textSearch;
 
@@ -39,7 +40,7 @@ public class JobTraceExplorerFilterPanel extends Composite {
 
     private List<SelectionListener> filterChangedListeners;
 
-    public JobTraceExplorerFilterPanel(Composite parent, int style) {
+    public JobTraceExplorerSearchPanel(Composite parent, int style) {
         super(parent, style);
 
         this.filterChangedListeners = new ArrayList<SelectionListener>();
@@ -73,7 +74,7 @@ public class JobTraceExplorerFilterPanel extends Composite {
     private void createTextSearchControls(Composite parent) {
 
         Composite textSearchArea = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = createGridLayout(5, false);
+        GridLayout gridLayout = createGridLayout(6, false);
         textSearchArea.setLayout(gridLayout);
         textSearchArea.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
 
@@ -99,6 +100,8 @@ public class JobTraceExplorerFilterPanel extends Composite {
         buttonDown.setImage(ISphereJobTraceExplorerCorePlugin.getDefault().getImage(ISphereJobTraceExplorerCorePlugin.IMAGE_SEARCH_DOWN));
         buttonDown.setToolTipText(Messages.ButtonTooltip_Search_down);
         buttonDown.addSelectionListener(new SearchDownSelectionListener());
+
+        DisplaySQLHelpListener.createLabel(textSearchArea);
 
         final Label dummy = new Label(textSearchArea, SWT.NONE);
         dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
