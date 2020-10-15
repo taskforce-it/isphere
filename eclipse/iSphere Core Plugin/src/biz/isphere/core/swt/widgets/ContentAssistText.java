@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
@@ -19,10 +21,13 @@ import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -45,15 +50,15 @@ public class ContentAssistText {
     private SourceViewer sourceViewer;
     private TextTraverseListener traverseListener;
     private boolean traverseEnabled;
+    private CtrlSpaceKeyAdapter crtlSpaceKeyAdapter;
+    private DisableEnterKeyListener disableEnterKeyAdapter;
+    private UndoKeyAdapter undoKeyAdapter;
 
     public ContentAssistText(Composite parent) {
         this(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP);
-
-        this.traverseEnabled = false;
     }
 
     public ContentAssistText(Composite parent, int style) {
-        // super(parent, null, null, false, style);
 
         this.configuration = (ContentAssistEditorConfiguration)configuration;
 
@@ -84,6 +89,88 @@ public class ContentAssistText {
             }
 
         });
+
+        enableEnterKey(true);
+        enableCrtlSpace(true);
+        enableUndo(true);
+    }
+
+    public boolean enableCrtlSpace(boolean enabled) {
+
+        boolean oldEnabled;
+        if (crtlSpaceKeyAdapter != null) {
+            oldEnabled = true;
+        } else {
+            oldEnabled = false;
+        }
+
+        if (oldEnabled == enabled) {
+            return oldEnabled;
+        }
+
+        if (sourceViewer != null && !sourceViewer.getTextWidget().isDisposed()) {
+            if (enabled) {
+                crtlSpaceKeyAdapter = new CtrlSpaceKeyAdapter();
+                sourceViewer.getTextWidget().addKeyListener(crtlSpaceKeyAdapter);
+            } else {
+                sourceViewer.getTextWidget().removeKeyListener(crtlSpaceKeyAdapter);
+                crtlSpaceKeyAdapter = null;
+            }
+        }
+
+        return oldEnabled;
+    }
+
+    public boolean enableEnterKey(boolean enabled) {
+
+        boolean oldEnabled;
+        if (disableEnterKeyAdapter == null) {
+            oldEnabled = true;
+        } else {
+            oldEnabled = false;
+        }
+
+        if (oldEnabled == enabled) {
+            return oldEnabled;
+        }
+
+        if (sourceViewer != null && !sourceViewer.getTextWidget().isDisposed()) {
+            if (enabled) {
+                sourceViewer.getTextWidget().removeVerifyKeyListener(disableEnterKeyAdapter);
+                disableEnterKeyAdapter = null;
+            } else {
+                disableEnterKeyAdapter = new DisableEnterKeyListener();
+                sourceViewer.getTextWidget().addVerifyKeyListener(disableEnterKeyAdapter);
+            }
+        }
+
+        return oldEnabled;
+    }
+
+    public boolean enableUndo(boolean enabled) {
+
+        boolean oldEnabled;
+        if (disableEnterKeyAdapter == null) {
+            oldEnabled = true;
+        } else {
+            oldEnabled = false;
+        }
+
+        if (oldEnabled == enabled) {
+            return oldEnabled;
+        }
+
+        if (sourceViewer != null && !sourceViewer.getTextWidget().isDisposed()) {
+            if (enabled) {
+                undoKeyAdapter = new UndoKeyAdapter();
+                sourceViewer.getTextWidget().addKeyListener(undoKeyAdapter);
+            } else {
+                sourceViewer.getTextWidget().removeKeyListener(undoKeyAdapter);
+                undoKeyAdapter = null;
+            }
+        }
+
+        return oldEnabled;
     }
 
     public void setEnabled(boolean enabled) {
@@ -158,7 +245,14 @@ public class ContentAssistText {
     }
 
     public void doOperation(int operation) {
-        sourceViewer.doOperation(operation);
+
+        if (operation == ISourceViewer.CONTENTASSIST_PROPOSALS) {
+            boolean oldEnabled = enableEnterKey(true);
+            sourceViewer.doOperation(operation);
+            enableEnterKey(oldEnabled);
+        } else {
+            sourceViewer.doOperation(operation);
+        }
     }
 
     public void setSelectedRange(int selectionOffset, int selectionLength) {
@@ -253,4 +347,53 @@ public class ContentAssistText {
         }
 
     }
+
+    private class DisableEnterKeyListener implements VerifyKeyListener {
+
+        public void verifyKey(VerifyEvent e) {
+
+            if (e.keyCode == SWT.CR || e.keyCode == SWT.KEYPAD_CR) {
+                e.doit = false;
+                return;
+            }
+        }
+    };
+
+    private class CtrlSpaceKeyAdapter extends KeyAdapter {
+
+        public void keyReleased(KeyEvent e) {
+
+            if (!e.doit) {
+                return;
+            }
+
+            if (e.stateMask == SWT.CTRL) {
+                switch (e.character) {
+                case ' ':
+                    doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
+                    break;
+                }
+
+            }
+        }
+    };
+
+    private class UndoKeyAdapter extends KeyAdapter {
+
+        public void keyReleased(KeyEvent e) {
+
+            if (!e.doit) {
+                return;
+            }
+
+            if (e.stateMask == SWT.CTRL) {
+                switch (e.character) {
+                case '\032':
+                    doOperation(ITextOperationTarget.UNDO);
+                    break;
+                }
+
+            }
+        }
+    };
 }

@@ -782,7 +782,19 @@ public final class WidgetFactory {
      * @return text field with content assistance
      */
     public static ContentAssistText createContentAssistText(Composite parent) {
-        return WidgetFactory.getInstance().produceContentAssistText(parent, SWT.BORDER, false);
+        return WidgetFactory.getInstance().produceContentAssistText(parent, false);
+    }
+
+    /**
+     * Produces a text field with a border and content assistance. If the text
+     * does not fit into the field, a vertical scroll bar is displayed.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return text field with content assistance
+     */
+    public static ContentAssistText createContentAssistText(Composite parent, int style) {
+        return WidgetFactory.getInstance().produceContentAssistText(parent, style, false);
     }
 
     /**
@@ -908,9 +920,14 @@ public final class WidgetFactory {
         return text;
     }
 
+    private ContentAssistText produceContentAssistText(Composite parent, boolean autoSelect) {
+        int style = SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP;
+        return produceContentAssistText(parent, style, autoSelect);
+    }
+
     private ContentAssistText produceContentAssistText(Composite parent, int style, boolean autoSelect) {
 
-        ContentAssistText text = new ContentAssistText(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | style);
+        ContentAssistText text = new ContentAssistText(parent, style);
 
         if (autoSelect) {
             text.addFocusListener(new SelectAllFocusListener());
