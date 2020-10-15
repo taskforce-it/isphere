@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Job Trace Explorer</title>
+</head>
+
+<body>
+<h1>Job Trace Explorer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/jobtrace_explorer.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The Job Trace Explorer is supposed to be used for viewing and filtering the job trace
+entries produced by the STRTRC/ENDTRC commands.
+<p>
+The data is stored in several files (QAYPE*) at the end of the trace session. These files are
+joined by the <i>iSphere Job Trace Explorer</i> when loading the job trace entries into the
+view.
+<p>
+IBM related entries are excluded to reduce the number of items.
+<p>
+<ul>
+<li><a href="#tracing_a_job">Tracing a Job</a></li>
+<li><a href="#opening_the_job_trace_explorer_perspective">Opening the Job Trace Explorer Perspective</a></li>
+<li><a href="#open_job_trace_session">Open Job Trace Session</a></li>
+<li><a href="#searching_for_job_trace_entries">Searching For Job Trace Entries</a></li>
+<li><a href="#filtering_job_trace_entries">Filtering Job Trace Entries</a></li>
+<li><a href="#excluded_job_trace_entries">Excluded Job Trace Entries</a></li>
+</ul>
+<p>
+<a id="#tracing_a_job"></a>
+<h2>Tracing a Job</h2>
+<p>
+A job trace is started with command STRTRC as shown here:
+<p>
+<div class="codeCommand">
+STRTRC SSNID(DEMO3) MAXSTG(200000)
+</div>
+<p>
+Please notice, that the default value of parameter <i>Maximum storage to use</i> (MAXSTG)
+is often to small for storing the complete session data. For example it requires 200000 k
+for capturing the job trace entries of the iSphere demo program DEMO3.
+<p>
+An active job trace session is terminated with command ENDTRC:
+<p>
+<div class="codeCommand">
+ENDTRC SSNID(DEMO3) DTALIB(RADDATZ400)
+</div>
+<p>
+The data is stored in several files, all starting with QAYPE*.
+<p>
+<a id="#opening_the_job_trace_explorer_perspective"></a>
+<h2>Opening the Job Trace Explorer Perspective</h2>
+<p>
+You can open the Job Trace Explorer perspective from 'Window -> Open Perspective -> Other...'. The perspective looks like that: 
+<p>
+<img src="assets/job_trace_explorer_view.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/open_jobtrace_session.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Open a dialog for selecting the trace session.</td></tr>
+<tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job trace entries.<br>(Local operation that does not contact the host system.)</td></tr>
+<tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+Options of the table context menu:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/highlight_attribute.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Highlight attribute. Right-click a table cell and select this option to highlight the selected value wherever it is in the table.</td></tr>
+<tr><td valign="middle"><img src="assets/highlight.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Highlight procedure. Right-click a procedure <i>ENTRY (called by)</i> or <i>EXIT (returned to)</i> row to highlight the selected procedure.</td></tr>
+<tr><td valign="middle"><img src="assets/jump_proc_entry.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Jump to procedure exit. Right-click a procedure <i>ENTRY (called by)</i> row to jump to the end of the procedure.</td></tr>
+<tr><td valign="middle"><img src="assets/jump_proc_exit.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Jump to procedure entry. Right-click a procedure <i>EXIT (returned to)</i> row to jump to the beginning of the procedure.</td></tr>
+<tr><td valign="middle"><img src="assets/hide_proc.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Hide procedure. Right-click a procedure row to hide it from the view.</td></tr>
+<tr><td valign="middle"><img src="assets/show_proc.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Show procedure. Right-click a procedure row to show it again.</td></tr>
+</table>
+<p>
+The available options of the view menu are:
+<p>
+<table>
+<tr><td valign="top">Open</td><td width="10px">&nbsp;</td><td valign="middle">Loads a job trace session from a Json file that was created with the <i>Save</i> option.</td></tr>
+<tr><td valign="top">Save</td><td width="10px">&nbsp;</td><td valign="middle">Saves a job trace session to a Json file on the PC.</td></tr>
+</table>
+<p>
+<a id="#open_job_trace_session"></a>
+<h2>Open Job Trace Session</h2>
+<p>
+Click the <i>Open Job Trace Session</i> button at the top of the Job Trace Explorer view: 
+<p>
+<img src="assets/open_jobtrace_session.png" align="middle">
+<p>
+Select the connection and fill in the session ID and library name and click the [OK] button.
+<p>
+<img src="assets/open_jobtrace_session_dialog.png" align="middle">
+<p>
+Use the <i>Exclude IBM data</i> checkbox to specify whether or not to exclude IBM related trace entries. It is highly recommended to exclude IBM related entries
+due to the large amount of extra data, depending on the kind of the program that has been traced.
+<p>
+The default value of this checkbox is always <i>true</i>. 
+<p>
+<a id="searching_for_job_trace_entries"></a>
+<h2>Searching For Job Trace Entries</h2>
+<p>
+Use the text search controls at the top of the <i>Job Trace Explorer</i> view to search for job trace entries:
+<p>
+<img src="assets/search_panel_text.png" align="middle">
+<p>
+Enter a search argument and press one of the buttons next to the text field to start your search (up or down
+the list). You can search for simple strings or generic strings using the wildcard characters <i>*</i> and <i>?</i>.
+<p>
+<table>
+<tr><td valign="top">*</td><td valign="top">&nbsp;</td><td valign="top">Replaces a group of characters.</td></tr>
+<tr><td valign="top">?</td><td valign="top">&nbsp;</td><td valign="top">Replaces a single character.</td></tr>
+</table>
+<p>
+The following columns are searched:
+<p>
+<ul>
+<li>Program name (PGM_NAME)</li>
+<li>Program library (PGM_LIB)</li>
+<li>Module name (MOD_NAME)</li>
+<li>Module library (MOD_LIB)</li>
+<li>Procedure name (PROC_NAME)</li>
+<li>Caller procedure name (CALLER_PROC_NAME)</li>
+</ul>
+<p>
+For more advanced searches you can enter SQL statement as shown below:
+<p>
+<img src="assets/search_panel_sql.png" align="middle">
+<p>
+Use Ctrl+Space for content assist. See also <a href="#filtering_job_log_messages">Filtering Job Log Messages</a>.
+<p>
+<a id="filtering_job_trace_entries"></a>
+<h2>Filtering Job Trace Entries</h2>
+<p>
+You can use the SQL editor to filter job trace entries. Click the <i>Edit SQL</i> button at the top of 
+the <i>Job Trace Explorer</i> view to open the SQL editor:
+<p>
+<img src="assets/edit_sql.png" align="middle">
+<p>
+The <i>SQL Editor</i> is used to enter a SQL WHERE condition for selecting a subset of the available job trace entries 
+entries. Enter the WHERE condition and then click the <i>Execute</i> button or press <i>Ctrl+Enter</i> to execute
+the query. Refer to the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html"><i>SQL Reference</i></a> to see the list of available functions.
+<p>
+<img src="assets/sql_editor.png" align="middle">
+<p>
+Use Ctrl+SPACE for content assistance.
+<p>
+<img src="assets/content_assistance.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Ctrl+SPACE</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Add Field</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Clear</td><td valign="top">-</td><td valign="top">Clears the where condition.</td></tr>
+<tr><td valign="top">Ctrl+ENTER</td><td valign="top">-</td><td valign="top">See: Filter</td></tr>
+<tr><td valign="top">Filter</td><td valign="top">-</td><td valign="top">Executes the query with the current where condition to create a subsetted list of the available job trace entries.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Filtering job trace entries is a local task, which does not reload the
+		                                  entries from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause is applied to the records that have been downloaded to the PC. It must be specified in
+		                   the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html">iSphere SQL</a> syntax, which in most cases
+		                   matches the IBM i SQL syntax.
+		</td>
+	</tr>
+</table>
+<p>
+<a id="#excluded_job_trace_entries"></a>
+<h2>Excluded Job Trace Entries</h2>
+<p>
+The <i>iSphere Job Trace Explorer</i> uses the following SQL WHERE clause to exclude entries related to IBM: 
+<p>
+<div class="codeCommand">
+WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA')                             <span style="color:green">/* Exclude IBM Libraries */</span><br>
+AND i.QPRPQL  not like 'QXMLLIB%'                                          <span style="color:green">/* Exclude IBM Xerces Parser */</span><br>
+AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' ))     <span style="color:green">/* Exclude RPG Entry Point Procedures */</span><br> 
+AND i.QPRPNM not in ('*ccsidConvProc')                                     <span style="color:green">/* Exclude Special RPG Procedures */</span> 
+</div>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
