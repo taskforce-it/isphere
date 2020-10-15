@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 
 public final class StringHelper {
 
+    public static final String WILDCARD_GROUP = "*"; //$NON-NLS-1$
+    public static final String WILDCARD_CHARACTER = "?"; //$NON-NLS-1$
+
     /**
      * Splits a given string of tokens into pieces using a given separator.
      * 
@@ -385,7 +388,7 @@ public final class StringHelper {
             return false;
         }
 
-        if ("*".equals(pattern)) {
+        if (WILDCARD_GROUP.equals(pattern)) {
             return true;
         }
 
@@ -405,7 +408,8 @@ public final class StringHelper {
          * </ul>
          */
 
-        pattern = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", ".") + "$";
+        pattern = "^" + pattern.replaceAll("\\" + WILDCARD_GROUP, ".*");
+        pattern = pattern.replaceAll("\\" + WILDCARD_CHARACTER, ".") + "$";
 
         Pattern regexPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
         Matcher matcher = regexPattern.matcher(text);
