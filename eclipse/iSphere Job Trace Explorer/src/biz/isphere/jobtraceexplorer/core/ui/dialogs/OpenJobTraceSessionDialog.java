@@ -301,12 +301,10 @@ public class OpenJobTraceSessionDialog extends XDialog {
         });
 
         chkExcludeIBMData.addSelectionListener(new SelectionListener() {
-            @Override
             public void widgetSelected(SelectionEvent event) {
                 isIBMDataExcluded = chkExcludeIBMData.getSelection();
             }
 
-            @Override
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }
