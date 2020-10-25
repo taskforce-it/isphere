@@ -1,5 +1,5 @@
 
-Changelog: iSphere 3.7.3.r
+Changelog: iSphere 3.8.0.r
 --------------------------
 
  • Added new feature "iSphere Job Trace Explorer" for analyzing job
