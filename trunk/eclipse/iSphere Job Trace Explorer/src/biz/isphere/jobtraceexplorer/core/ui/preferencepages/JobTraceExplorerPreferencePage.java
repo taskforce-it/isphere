@@ -56,6 +56,8 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(1, false));
 
+        createGroupDefaults(container);
+
         createGroupLimits(container);
 
         setScreenToValues();
@@ -63,9 +65,21 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         return container;
     }
 
-    private void createGroupLimits(Composite container) {
+    private void createGroupDefaults(Composite parent) {
 
-        groupLimits = new Group(container, SWT.NONE);
+        Label labelExcludeIBMClause = new Label(parent, SWT.NONE);
+        labelExcludeIBMClause.setLayoutData(getLayoutData(1));
+        labelExcludeIBMClause.setText(Messages.ButtonLabel_Exclude_IBM_data_SQL_WHERE_clause);
+        labelExcludeIBMClause.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
+
+        textSQLWhereNoIBMData = WidgetFactory.createMultilineText(parent, true, true);
+        textSQLWhereNoIBMData.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
+        textSQLWhereNoIBMData.setLayoutData(getLayoutData(1, false, 200, 250));
+    }
+
+    private void createGroupLimits(Composite parent) {
+
+        groupLimits = new Group(parent, SWT.NONE);
         groupLimits.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         groupLimits.setLayout(new GridLayout(2, false));
         groupLimits.setText(Messages.GroupLabel_Limitation_Properties);
@@ -83,15 +97,6 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
                 maxNumRowsToFetch = IntHelper.tryParseInt(textMaxNumRowsToFetch.getText(), preferences.getInitialMaximumNumberOfRowsToFetch());
             }
         });
-
-        Label labelExcludeIBMClause = new Label(container, SWT.NONE);
-        labelExcludeIBMClause.setLayoutData(getLayoutData(1));
-        labelExcludeIBMClause.setText(Messages.ButtonLabel_Exclude_IBM_data_SQL_WHERE_clause);
-        labelExcludeIBMClause.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
-
-        textSQLWhereNoIBMData = WidgetFactory.createMultilineText(container, true, true);
-        textSQLWhereNoIBMData.setToolTipText(Messages.ButtonTooltip_Exclude_IBM_data_SQL_WHERE_clause);
-        textSQLWhereNoIBMData.setLayoutData(getLayoutData(1, true, 200, 250));
     }
 
     @Override
