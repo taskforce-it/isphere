@@ -154,7 +154,7 @@ public final class Preferences {
      */
 
     public int getInitialMaximumNumberOfRowsToFetch() {
-        return 1000;
+        return 5000;
     }
 
     public String getInitialExportPath() {

@@ -90,13 +90,13 @@ public class JobTraceSQLDAO {
          SQL_FROM_CLAUSE;      
 
     public static final String SQL_WHERE_NO_IBM_DATA = 
-        "WHERE i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +                     /* Exclude IBM Libraries */
+        "i.QPRPQL not in ('QSYS', 'QTCP', 'QPDA') "     +                           /* Exclude IBM Libraries */
         "AND i.QPRPQL  not like 'QXMLLIB%' "                  +                     /* Exclude IBM Xerces Parser */
         "AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' )) " + /* Exclude RPG Entry Point Procedures */ 
         "AND i.QPRPNM not in ('*ccsidConvProc') ";                                  /* Exclude Special RPG Procedures */ 
 
     private static final String SQL_ORDER_BY =
-        "ORDER BY x.QTITIMN";
+        " ORDER BY x.QTITIMN";
 
     private static final String[] OVRDBF_CMD =
       { "OVRDBF FILE(QAYPETIDX)  TOFILE(%S/QAYPETIDX ) MBR(%S) SECURE(*YES) OVRSCOPE(*JOB)" ,
@@ -227,7 +227,7 @@ public class JobTraceSQLDAO {
         buffer.append(SQL_STATEMENT);
 
         if (jobTraceSession.isIBMDataExcluded()) {
-            buffer.append(sqlWhereNoIBMData);
+            appendWhereClause(buffer);
         }
 
         buffer.append(SQL_ORDER_BY);
@@ -242,10 +242,15 @@ public class JobTraceSQLDAO {
         buffer.append(SQL_COUNT_STATEMENT);
 
         if (jobTraceSession.isIBMDataExcluded()) {
-            buffer.append(sqlWhereNoIBMData);
+            appendWhereClause(buffer);
         }
 
         return buffer.toString();
+    }
+
+    private void appendWhereClause(StringBuilder buffer) {
+        buffer.append(" WHERE "); //$NON-NLS-1$
+        buffer.append(sqlWhereNoIBMData);
     }
 
     private long timeElapsed(Date startTime) {
