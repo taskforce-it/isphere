@@ -189,6 +189,40 @@ AND (t.QTBCHL > 0 or ( t.QTBCHL = 0 and i.QPRPNM not like '_QRNI_%' ))     <span
 AND i.QPRPNM not in ('*ccsidConvProc')                                     <span style="color:green">/* Exclude Special RPG Procedures */</span> 
 </div>
 <p>
+The used correlation IDs are:
+<p>
+<table border="1" cellspacing="0" cellpadding="5">
+<tr><td valign="top">QAYPETIDX</td><td valign="top">x</td><td valign="top">PEX TRACE INDEX DATA</td></tr>
+<tr><td valign="top">QAYPETBRKT</td><td valign="top">t</td><td valign="top">PEX TRACE JOB STYLE BRACKETING EVENT</td></tr>
+<tr><td valign="top">QAYPEPROCI</td><td valign="top">i</td><td valign="top">PEX PROC RESOLUTION DATA</td></tr>
+<tr><td valign="top">QAYPEEVENT</td><td valign="top">v</td><td valign="top">PEX EVENT MAPPING DATA</td></tr>
+<tr><td valign="top">QAYPEPROCI</td><td valign="top">ci</td><td valign="top">PEX PROC RESOLUTION DATA (caller procedure)</td></tr>
+</table>
+<p>
+The base SQL without the WHERE clause looks like that:
+<p>
+<div class="codeCommand">
+SELECT 0 AS "ID",<br>
+ x.QTITIMN AS "NANOS_SINE_STARTED",<br>
+ x.QTITSP AS "TIMESTAMP",<br>
+ i.QPRPGN AS "PGM_NAME",<br>
+ i.QPRPQL AS "PGM_LIB",<br>
+ i.QPRMNM AS "MOD_NAME",<br>
+ i.QPRMQL AS "MOD_LIB",<br>
+ t.QTBHLL AS "HLL_STMT_NBR",<br>
+ i.QPRPNM AS "PROC_NAME",<br>
+ t.QTBCLL AS "CALL_LEVEL",<br>
+ v.QEVSSN AS "EVENT_SUB_TYPE",<br>
+ t.QTBCHL AS "CALLER_HLL_STMT_NBR",<br>
+ ci.QPRPNM AS "CALLER_PROC_NAME"<br>
+FROM QAYPETIDX x<br>
+LEFT JOIN QAYPETBRKT t ON x.QRECN = t.QRECN<br>
+LEFT JOIN QAYPEPROCI i ON i.QPRKEY = t.QTBTBT<br>
+LEFT JOIN QAYPEEVENT v ON x.QTITY = v.QEVTY AND x.QTISTY = v.QEVSTY<br>
+LEFT JOIN QAYPEPROCI ci ON ci.QPRKEY = t.QTBCTB<br>
+ORDER BY x.QTITIMN
+</div>
+<p>
 <iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>
 </html>
