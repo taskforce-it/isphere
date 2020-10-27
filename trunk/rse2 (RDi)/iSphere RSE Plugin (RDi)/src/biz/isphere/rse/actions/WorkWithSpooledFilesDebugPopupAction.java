@@ -145,6 +145,28 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         return null;
     }
 
+    // @formatter:off
+    // Available with RDi 9.6:
+    // -----------------------
+    // Hello Thomas,
+    //  
+    // The debug team has looked at your requirements.
+    // 
+    // For the job name, this is something they have accepted as a future requirement but
+    // for the connection name, it is currently officially supported via: 
+    // 
+    // import com.ibm.etools.iseries.debug.internal.core.AS400ConfigurationConstants;
+    // 
+    // IDebugTarget pdtdebugTarget = ...
+    // String connectionName = pdtdebugTarget.getLaunch().getLaunchConfiguration().getAttribute(AS400ConfigurationConstants.RESID_CONNECTION_NAME, "");
+    // 
+    // There are no plans to provide an alternative API to get this information.
+    //  
+    // I hope this helps,
+    //
+    // Edmund Reinhardt
+    // @formatter:on
+
     private boolean isIBMiJob(ISelection selection) {
 
         if (selection instanceof IStructuredSelection) {
