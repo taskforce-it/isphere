@@ -76,7 +76,7 @@ public class JobTraceExplorerSearchPanel extends Composite {
         Composite textSearchArea = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = createGridLayout(6, false);
         textSearchArea.setLayout(gridLayout);
-        textSearchArea.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
+        textSearchArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         Label labelSearch = new Label(textSearchArea, SWT.NONE);
         labelSearch.setText(Messages.Label_Text);
