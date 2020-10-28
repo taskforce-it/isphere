@@ -558,7 +558,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     public Map<String, String> getPinProperties() {
 
-        if (!inputData.isPersistable()) {
+        if (inputData != null && !inputData.isPersistable()) {
             pinProperties.clear();
             return pinProperties;
         }
