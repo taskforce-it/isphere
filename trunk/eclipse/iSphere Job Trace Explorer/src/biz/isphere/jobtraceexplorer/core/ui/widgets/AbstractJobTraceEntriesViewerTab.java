@@ -225,7 +225,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
         this.container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
-        container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         createFilterPanel(container);
         createMainPanel(container);
