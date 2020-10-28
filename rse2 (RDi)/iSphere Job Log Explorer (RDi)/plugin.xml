@@ -131,11 +131,11 @@
          <action
                label="%menu_Job_Log_Explorer"
                icon="icons/joblog_explorer.png"
-               class="biz.isphere.joblogexplorer.action.OpenJobLogDebugPopupAction"
+               class="biz.isphere.joblogexplorer.rse.action.OpenJobLogDebugPopupAction"
                menubarPath="group.browsewith" 
                enablesFor="1"
                state="false"
-               id="biz.isphere.joblogexplorer.action.OpenJobLogDebugPopupAction">
+               id="biz.isphere.joblogexplorer.rse.action.OpenJobLogDebugPopupAction">
          </action>
       </viewerContribution>
 
