@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Help Lpex Editor Extensions (Optional)
 Bundle-SymbolicName: biz.isphere.lpex.comments.help;singleton:=true
-Bundle-Version: 3.8.0.b001
+Bundle-Version: 3.8.0.b002
 Bundle-Localization: plugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.help,
