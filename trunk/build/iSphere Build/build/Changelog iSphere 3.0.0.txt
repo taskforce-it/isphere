@@ -2,6 +2,11 @@
 Changelog: iSphere 3.8.0.r
 --------------------------
 
+ • Fixed NPE in AbstractWorkWithSpooledFilesView.
+
+Changelog: iSphere 3.8.0.b002
+-----------------------------
+
  • Fixed background color in ContentAssistText.
  • Fixed Job Trace Explorer perspective.
  • Aligned Look & Feel of all "Explorer" perspectives. 
