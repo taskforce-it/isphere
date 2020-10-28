@@ -16,8 +16,8 @@ import biz.isphere.journalexplorer.core.model.MetaColumn;
 import com.ibm.as400.access.AS400;
 
 /**
- * Format RVFD0100 of the iSphere Retrieve OutputFile Field Description (QDBTRVFD)
- * API.
+ * Format RVFD0100 of the iSphere Retrieve OutputFile Field Description
+ * (QDBTRVFD) API.
  * 
  * @author Thomas Raddatz
  */

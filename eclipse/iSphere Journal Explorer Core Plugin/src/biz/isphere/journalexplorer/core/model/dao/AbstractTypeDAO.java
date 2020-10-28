@@ -144,8 +144,8 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
 
         try {
 
-            command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getFileName(),
-                outputFile.getLibraryName(), outputFile.getFileName(), outputFile.getMemberName());
+            command = String.format("OVRDBF FILE(%s) TOFILE(%s/%s) MBR(%s) OVRSCOPE(*JOB)", outputFile.getFileName(), outputFile.getLibraryName(),
+                outputFile.getFileName(), outputFile.getMemberName());
             command = "CALL QSYS.QCMDEXC('" + command + "', CAST(" + command.length() + " AS DECIMAL(15, 5)))";
             statement.execute(command);
 
