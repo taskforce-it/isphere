@@ -36,7 +36,7 @@ public abstract class AbstractJobLogExplorerPerspectiveLayout implements IPerspe
         IFolderLayout folder;
 
         // Place remote system view to left of editor area.
-        folder = layout.createFolder(NAV_FOLDER_ID, IPageLayout.LEFT, 0.25F, editorArea);
+        folder = layout.createFolder(NAV_FOLDER_ID, IPageLayout.LEFT, 0.2F, editorArea);
         folder.addView(getRemoveSystemsViewID());
 
         // Place properties view below remote system view.
