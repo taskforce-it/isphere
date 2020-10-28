@@ -62,7 +62,18 @@ public class ContentAssistText {
 
         this.configuration = (ContentAssistEditorConfiguration)configuration;
 
-        this.sourceViewer = new SourceViewer(parent, null, null, false, style);
+        /*
+         * Ugly hack to fix background issue. Without that hack the background
+         * color is light-grey in Eclipse 4.6, when the style does not define a
+         * vertical or horizontal scroll bar.
+         */
+        if (!isScrollable(style)) {
+            this.sourceViewer = new SourceViewer(parent, null, null, false, style | SWT.V_SCROLL);
+            this.sourceViewer.getTextWidget().getVerticalBar().setVisible(false);
+        } else {
+            this.sourceViewer = new SourceViewer(parent, null, null, false, style);
+        }
+
         this.sourceViewer.setDocument(new Document());
         this.sourceViewer.getTextWidget().addFocusListener(new FocusListener() {
             public void focusLost(FocusEvent paramFocusEvent) {
@@ -93,6 +104,10 @@ public class ContentAssistText {
         enableEnterKey(true);
         enableCrtlSpace(true);
         enableUndo(true);
+    }
+
+    private boolean isScrollable(int style) {
+        return (style & (SWT.V_SCROLL | SWT.H_SCROLL)) != 0;
     }
 
     public boolean enableCrtlSpace(boolean enabled) {
