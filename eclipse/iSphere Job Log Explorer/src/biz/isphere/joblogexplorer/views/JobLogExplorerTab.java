@@ -87,13 +87,14 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     private final static String SASH_WEIGHTS = "SASH_WEIGHTS_"; //$NON-NLS-1$
 
+    private CTabFolder tabFolder;
+    private SelectionListener sqlEditorSelectionListener;
+
     private Composite container;
     private JobLogExplorerTableViewer tableViewerPanel;
     private JobLogExplorerFilterPanel filterPanel;
     private SashForm sashForm;
     private JobLogExplorerDetailsViewer detailsPanel;
-
-    SelectionListener sqlEditorSelectionListener;
 
     private List<IJobLogExplorerStatusChangedListener> statusChangedListeners;
 
@@ -106,12 +107,12 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     public JobLogExplorerTab(CTabFolder parent, SelectionListener sqlEditorSelectionListener) {
         super(parent, SWT.NONE);
+        initializeComponents(parent, sqlEditorSelectionListener);
+    }
 
-        this.sqlEditorSelectionListener = sqlEditorSelectionListener;
-
-        this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
-
-        initializeComponents(parent);
+    public JobLogExplorerTab(CTabFolder parent, SelectionListener sqlEditorSelectionListener, int index) {
+        super(parent, SWT.NONE, index);
+        initializeComponents(parent, sqlEditorSelectionListener);
     }
 
     public void setEnabled(boolean enabled) {
@@ -223,14 +224,18 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         tableViewerPanel.resetColumnSize();
     }
 
-    private void initializeComponents(CTabFolder parent) {
+    private void initializeComponents(CTabFolder parent, SelectionListener sqlEditorSelectionListener) {
+
+        this.tabFolder = parent;
+        this.sqlEditorSelectionListener = sqlEditorSelectionListener;
+        this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
 
         this.container = new Composite(parent, SWT.NONE);
         container.setLayout(createGridLayoutNoMargin());
         container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createFilterPanel();
-        createMainPanel(filterPanel);
+        createFilterPanel(container);
+        createMainPanel(container);
 
         filterPanel.addFilterChangedListener(tableViewerPanel);
 
@@ -239,13 +244,13 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     }
 
-    private void createFilterPanel() {
+    private void createFilterPanel(Composite parent) {
 
         if (!isAvailable(filterPanel)) {
-            filterPanel = new JobLogExplorerFilterPanel(container, SWT.NONE);
+            filterPanel = new JobLogExplorerFilterPanel(parent, SWT.NONE);
             filterPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             setFilterPanelOptions();
-            container.layout(true);
+            parent.layout(true);
         }
     }
 
@@ -257,7 +262,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         }
     }
 
-    private void createMainPanel(JobLogExplorerFilterPanel filterPanel) {
+    private void createMainPanel(Composite parent) {
 
         sashForm = new SashForm(container, SWT.NONE);
         GridData sashFormLayoutData = new GridData(GridData.FILL_BOTH);
