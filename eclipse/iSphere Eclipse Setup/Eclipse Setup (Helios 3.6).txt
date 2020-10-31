@@ -16,6 +16,16 @@ from:
 
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-local-update-site-1.12.xx.zip
 
+For RDi 9.5 it is recommended to install the SVNKit and SVN plug-in
+from:
+
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\org.tmatesoft.svn_1.10.2.eclipse.zip
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-4.3.0.zip
+
+For RDi 9.6 it is recommended to install the SVN plug-in
+from:
+
+   Eclipse Marketplace
 		
 Repository Location:
 --------------------
