@@ -30,7 +30,9 @@ from:
 Repository Location:
 --------------------
 
-   https://svn.code.sf.net/p/isphere/code/trunk
+   https://svn.code.sf.net/p/irpgunit/code
+   https://svn.code.sf.net/p/isphere/code
+   https://svn.code.sf.net/p/rapid-fire/code
 
    Password: Your SourceForge password.
 
@@ -49,15 +51,24 @@ project from:
 
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\Java_Scoped_Template_Variables.zip
 
-For WDSCi set the Ant home diretory to:
+For WDSCi and RDP 8.0 use Ant of RDP 8.0:
 
    c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
 
-For RDi and WDSCi add classpath variable ANT_HOME to the Java build path:
+For RDi 9.5.1.3+ use Ant of RDI 9.5.1.3:
+
+   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
+
+Set Ant home to the appropriate version (see above):
+
+   Preferences - Ant - Runtime
+
+
+Add classpath variable ANT_HOME to the appropriate version (see above):
 
    Preferences - Java - Build path - Classpath variables
 
-   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
+   ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
 
 Optionally install HTML editor:
 
@@ -85,8 +96,19 @@ a) Preferences -> Java -> Installed JREs (
    RDP 8.0 and RDi 9.1+:
    ---------------------
 
+   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
+   JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
+
    JRE home:   C:\Programme_x86\IBM\SDP_080\jdk   (example path)
    JRE name:   JRE 1.6.0 IBM J9                   (must be spelled as shown)
+
+   Flagged as "Default JRE".
+
+   RDi 9.5.1.3+:
+   -------------
+
+   JRE home:   C:\Programme_x86\IBM\SDP_095\jdk   (example path)
+   JRE name:   JRE 1.8.0 IBM J9                   (must be spelled as shown)
 
    Flagged as "Default JRE".
 
