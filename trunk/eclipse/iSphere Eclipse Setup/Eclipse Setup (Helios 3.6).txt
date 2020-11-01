@@ -223,20 +223,6 @@ a) Map the [Enter] key to "splittLine":
 Usefull plug-ins:
 =================
 
-WindowBuilder Pro Update Site:
-
-RDi 8.0:
---------
-
-Name:     Eclipse 3.6 WindowBuilder Repo
-Location: http://download.eclipse.org/windowbuilder/WB/release/R201306261200/3.6/
-
-RDi 9.0/9.1:
-------------
-
-Name:     WindowBuilder Pro Eclipse Update Site
-Location: http://download.eclipse.org/windowbuilder/WB/integration/4.2/
-
 Eclipse Plug-in Spy:
 
 RDi 8.0:
@@ -279,8 +265,14 @@ Configuration:
 
    See also: https://github.com/java-decompiler/jd-eclipse
 
-RDi 9.0/9.1:
-------------
+RDi 9.5:
+--------
+
+Name:     Enhanced Class Decompiler
+Location: ${workspace_loc}\iSphere Eclipse Setup\plug-ins\ecd_3.1.1.201811062102.zip
+
+RDi 9.6:
+--------
 
 Name:     Enhanced Class Decompiler
 Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
