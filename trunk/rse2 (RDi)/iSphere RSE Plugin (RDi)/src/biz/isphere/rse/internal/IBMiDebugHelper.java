@@ -49,7 +49,7 @@ public final class IBMiDebugHelper {
 
         /*
          * Try to get the connection name from the debuggee process as described
-         * by Edmund Reinhardt.
+         * by Edmund Reinhardt. Works fine for 9.5.1.3+
          */
         if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
             try {
