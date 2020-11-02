@@ -124,13 +124,8 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
 
     private ColorSelector createColorSelector(Group parent, String label) {
 
-        new Label(groupColors, SWT.NONE).setText(label);
-
+        new Label(parent, SWT.NONE).setText(label);
         ColorSelector colorSelector = WidgetFactory.createColorSelector(parent);
-        // Label labelSystemDefault = new Label(parent, SWT.NONE);
-        // labelSystemDefault.setText("(system default)");
-        // colorSelector.getButton().setData(labelSystemDefault);
-        // colorSelector.addListener(new ColorChangeListener(colorSelector));
 
         return colorSelector;
     }
