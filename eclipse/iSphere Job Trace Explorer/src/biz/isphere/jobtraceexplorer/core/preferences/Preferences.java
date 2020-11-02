@@ -9,11 +9,17 @@
 package biz.isphere.jobtraceexplorer.core.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.internal.ColorHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceSQLDAO;
+import biz.isphere.jobtraceexplorer.core.ui.preferencepages.HighlightColor;
 
 /**
  * Class to manage access to the preferences of the plugin.
@@ -25,6 +31,8 @@ import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceSQLDAO;
  * @author Thomas Raddatz
  */
 public final class Preferences {
+
+    private static String DELIMITER = "|"; //$NON-NLS-1$
 
     /**
      * The instance of this Singleton class.
@@ -42,6 +50,8 @@ public final class Preferences {
 
     private static final String DOMAIN = ISphereJobTraceExplorerCorePlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
+    private static final String COLORS = DOMAIN + "COLORS."; //$NON-NLS-1$
+
     public static final String LIMITATIONS = DOMAIN + "LIMITATIONS."; //$NON-NLS-1$
 
     public static final String MAX_NUM_ROWS_TO_FETCH = LIMITATIONS + "MAX_NUM_ROWS_TO_FETCH"; //$NON-NLS-1$
@@ -55,6 +65,8 @@ public final class Preferences {
     public static final String LOAD_JOB_TRACE_DATA = DOMAIN + "LOAD_JOB_TRACE_DATA."; //$NON-NLS-1$
 
     public static final String SQL_WHERE_NO_IBM_DATA = LOAD_JOB_TRACE_DATA + "SQL_WHERE_NO_IBM_DATA"; //$NON-NLS-1$
+
+    private ColorRegistry colorRegistry;
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -112,6 +124,10 @@ public final class Preferences {
         return preferenceStore.getString(SQL_WHERE_NO_IBM_DATA);
     }
 
+    public Color getColorSeverity(HighlightColor highlight) {
+        return loadColor(highlight);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -132,6 +148,10 @@ public final class Preferences {
         preferenceStore.setValue(SQL_WHERE_NO_IBM_DATA, sqlWhereClause);
     }
 
+    public void setColorSeverity(HighlightColor highlight, RGB rgb) {
+        storeColor(highlight, rgb);
+    }
+
     /*
      * Others
      */
@@ -147,6 +167,11 @@ public final class Preferences {
         preferenceStore.setDefault(EXPORT_PATH, getInitialExportPath());
         preferenceStore.setDefault(EXPORT_FILE_JSON, getInitialExportFileJson());
         preferenceStore.setDefault(SQL_WHERE_NO_IBM_DATA, getInitialExcludeIBMDataSQLWhereClause());
+
+        preferenceStore.setDefault(getColorKey(HighlightColor.ATTRIBUTES), rgbToString(getDefaultColorSeverity(HighlightColor.ATTRIBUTES)));
+        preferenceStore.setDefault(getColorKey(HighlightColor.PROCEDURES), rgbToString(getDefaultColorSeverity(HighlightColor.PROCEDURES)));
+        preferenceStore.setDefault(getColorKey(HighlightColor.HIDDEN_PROCEDURES),
+            rgbToString(getDefaultColorSeverity(HighlightColor.HIDDEN_PROCEDURES)));
     }
 
     /*
@@ -169,6 +194,20 @@ public final class Preferences {
         return JobTraceSQLDAO.SQL_WHERE_NO_IBM_DATA;
     }
 
+    public RGB getDefaultColorSeverity(HighlightColor severity) {
+
+        if (severity == HighlightColor.ATTRIBUTES) {
+            return new RGB(185, 255, 185);
+        } else if (severity == HighlightColor.PROCEDURES) {
+            return new RGB(255, 255, 190);
+        } else if (severity == HighlightColor.HIDDEN_PROCEDURES) {
+            return new RGB(225, 225, 225);
+        } else {
+            Color color = ColorHelper.getListBackground();
+            return color.getRGB();
+        }
+    }
+
     /*
      * Property change listeners
      */
@@ -179,5 +218,64 @@ public final class Preferences {
 
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
         preferenceStore.removePropertyChangeListener(listener);
+    }
+
+    /*
+     * Helpers
+     */
+
+    private void storeColor(HighlightColor highlight, RGB rgb) {
+
+        String colorKey = getColorKey(highlight);
+
+        preferenceStore.setValue(colorKey, rgbToString(rgb));
+        getColorRegistry().put(colorKey, rgb);
+    }
+
+    private String rgbToString(RGB rgb) {
+        return rgb.red + DELIMITER + rgb.green + DELIMITER + rgb.blue;
+    }
+
+    private Color loadColor(HighlightColor highlight) {
+
+        String colorKey = getColorKey(highlight);
+
+        Color color = getColorRegistry().get(colorKey);
+        if (color == null) {
+
+            String rgb = preferenceStore.getString(colorKey);
+
+            String[] rgbParts = rgb.split("\\" + DELIMITER); //$NON-NLS-1$
+            if (rgbParts.length < 3) {
+                return null;
+            }
+
+            int red = IntHelper.tryParseInt(rgbParts[0], -1);
+            int green = IntHelper.tryParseInt(rgbParts[1], -1);
+            int blue = IntHelper.tryParseInt(rgbParts[2], -1);
+
+            if (red < 0 || green < 0 || blue < 0) {
+                return null;
+            }
+
+            getColorRegistry().put(colorKey, new RGB(red, green, blue));
+            color = getColorRegistry().get(colorKey);
+        }
+
+        return color;
+    }
+
+    private String getColorKey(HighlightColor highlight) {
+
+        return COLORS + highlight.key();
+    }
+
+    private ColorRegistry getColorRegistry() {
+
+        if (colorRegistry == null) {
+            colorRegistry = new ColorRegistry();
+        }
+
+        return colorRegistry;
     }
 }

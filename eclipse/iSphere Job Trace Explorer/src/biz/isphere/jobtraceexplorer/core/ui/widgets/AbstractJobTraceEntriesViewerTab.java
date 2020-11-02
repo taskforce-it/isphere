@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.progress.UIJob;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
@@ -90,6 +91,8 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private JobTraceEntries data;
     private SqlEditor sqlEditor;
 
+    private UpdateTableViewerJob updateTableViewerJob;
+
     public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
@@ -103,6 +106,36 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         setSqlEditorVisibility(false);
 
         initializeComponents(parent);
+        registerPropertyChangeListener();
+    }
+
+    private void registerPropertyChangeListener() {
+
+        ISphereJobTraceExplorerCorePlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                String propertyName = event.getProperty();
+                if (propertyName.startsWith("biz.isphere.jobtraceexplorer.core.COLORS.")) { //$NON-NLS-1$
+                    new UIJob("") {
+
+                        @Override
+                        public IStatus runInUIThread(IProgressMonitor arg0) {
+                            tableViewer.refresh(true);
+                            return Status.OK_STATUS;
+                        }
+                    };
+                    if (updateTableViewerJob != null) {
+                        updateTableViewerJob.cancel();
+                        updateTableViewerJob = null;
+                    }
+                    updateTableViewerJob = new UpdateTableViewerJob();
+                    updateTableViewerJob.schedule(100);
+                    /*
+                     * Delay update for 100 mSecs to cancel updating the table
+                     * viewer, when multiple colors have changed.
+                     */
+                }
+            }
+        });
     }
 
     /*
@@ -677,4 +710,18 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
 
     };
+
+    private class UpdateTableViewerJob extends UIJob {
+
+        public UpdateTableViewerJob() {
+            super(""); //$NON-NLS-1$
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor arg0) {
+            tableViewer.refresh();
+            updateTableViewerJob = null;
+            return Status.OK_STATUS;
+        }
+    }
 }

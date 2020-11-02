@@ -20,6 +20,13 @@ public class Messages extends NLS {
     public static String ButtonLabel_Filter;
     public static String ButtonTooltip_Filter;
 
+    public static String GroupLabel_Colors;
+    public static String ColorLabel_HighlighAttributes;
+    public static String ColorTooltip_HighlighAttributes;
+    public static String ColorLabel_HighlighProcedures;
+    public static String ColorTooltip_HighlighProcedures;
+    public static String ColorLabel_HighlighHiddenProcedures;
+    public static String ColorTooltip_HighlighHiddenProcedures;
     public static String GroupLabel_Limitation_Properties;
     public static String ButtonLabel_Maximum_number_of_rows_to_fetch;
     public static String ButtonTooltip_Maximum_number_of_rows_to_fetch_tooltip;
