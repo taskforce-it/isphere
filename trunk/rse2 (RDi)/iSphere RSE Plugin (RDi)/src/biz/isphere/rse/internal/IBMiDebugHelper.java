@@ -45,6 +45,15 @@ public final class IBMiDebugHelper {
     // Edmund Reinhardt
     // @formatter:on
 
+    /**
+     * Returns the name of the RSE connection that is assigned to a given
+     * {@link DebuggeeProcess}.
+     * 
+     * @param debuggeeProcess - The debuggee process that is asked for the RSE
+     *        connection name
+     * @return connection name
+     * @throws UnknownHostException
+     */
     public static String getConnectionName(DebuggeeProcess debuggeeProcess) throws UnknownHostException {
 
         /*
@@ -71,6 +80,13 @@ public final class IBMiDebugHelper {
         return connectionName;
     }
 
+    /**
+     * Returns the host name of the TCP/IP connection that is assigned to a
+     * given {@link DebuggeeProcess}.
+     * 
+     * @param debuggeeProcess - The debuggee process that is asked for host name
+     * @return host name
+     */
     public static String getHostName(DebuggeeProcess debuggeeProcess) {
 
         if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
