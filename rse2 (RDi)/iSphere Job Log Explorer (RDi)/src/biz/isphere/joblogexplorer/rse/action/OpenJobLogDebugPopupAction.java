@@ -8,7 +8,6 @@
 
 package biz.isphere.joblogexplorer.rse.action;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.eclipse.debug.core.model.IProcess;
@@ -20,15 +19,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.joblogexplorer.jobs.rse.JobLogActiveJobLoader;
 import biz.isphere.joblogexplorer.rse.Messages;
-
-import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
-import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
+import biz.isphere.rse.internal.IBMiDebugHelper;
 
 @SuppressWarnings("restriction")
 public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
@@ -44,10 +42,17 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
 
-            String hostName = getHostName(debuggeeProcess);
-            String connectionName = getConnectionName(hostName);
+            String connectionName;
+            try {
+                connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
+            } catch (UnknownHostException e) {
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                return;
+            }
+
             if (StringHelper.isNullOrEmpty(connectionName)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Error_Connection_not_found_A, hostName));
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Error_Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
                 return;
             }
 
@@ -76,39 +81,6 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
 
     private String getJobName(IProcess debuggeeProcess) {
         return debuggeeProcess.getAttribute(null);
-    }
-
-    private String getConnectionName(String hostName) {
-
-        if (!StringHelper.isNullOrEmpty(hostName)) {
-
-            String tcpAddr = null;
-
-            try {
-                tcpAddr = InetAddress.getByName(hostName).getHostAddress();
-            } catch (UnknownHostException e1) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e1));
-            }
-
-            if (!StringHelper.isNullOrEmpty(tcpAddr)) {
-                String connectionName = IBMiHostContributionsHandler.getConnectionNameByIPAddr(tcpAddr, true);
-                return connectionName;
-            }
-        }
-
-        return null;
-    }
-
-    private String getHostName(DebuggeeProcess debuggeeProcess) {
-
-        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
-            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
-
-            String hostName = debugTarget.getSocket().getInetAddress().getHostName();
-            return hostName;
-        }
-
-        return null;
     }
 
     private boolean isIBMiJob(ISelection selection) {

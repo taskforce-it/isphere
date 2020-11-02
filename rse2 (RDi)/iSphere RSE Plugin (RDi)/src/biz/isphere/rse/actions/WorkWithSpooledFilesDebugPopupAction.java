@@ -8,7 +8,6 @@
 
 package biz.isphere.rse.actions;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.eclipse.debug.core.model.IProcess;
@@ -22,20 +21,19 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.internal.IBMiDebugHelper;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
 import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
-
-import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
-import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
 
 @SuppressWarnings("restriction")
 public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate {
@@ -51,10 +49,16 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
 
             DebuggeeProcess debuggeeProcess = (DebuggeeProcess)selectedObject;
 
-            String hostName = getHostName(debuggeeProcess);
-            String connectionName = getConnectionName(hostName);
+            String connectionName;
+            try {
+                connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
+            } catch (UnknownHostException e) {
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                return;
+            }
+
             if (StringHelper.isNullOrEmpty(connectionName)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Connection_not_found_A, hostName));
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
                 return;
             }
 
@@ -111,61 +115,6 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
     private String getJobName(IProcess debuggeeProcess) {
         return debuggeeProcess.getAttribute(null);
     }
-
-    private String getConnectionName(String hostName) {
-
-        if (!StringHelper.isNullOrEmpty(hostName)) {
-
-            String tcpAddr = null;
-
-            try {
-                tcpAddr = InetAddress.getByName(hostName).getHostAddress();
-            } catch (UnknownHostException e1) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e1));
-            }
-
-            if (!StringHelper.isNullOrEmpty(tcpAddr)) {
-                String connectionName = IBMiHostContributionsHandler.getConnectionNameByIPAddr(tcpAddr, true);
-                return connectionName;
-            }
-        }
-
-        return null;
-    }
-
-    private String getHostName(DebuggeeProcess debuggeeProcess) {
-
-        if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
-            PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
-
-            String hostName = debugTarget.getSocket().getInetAddress().getHostName();
-            return hostName;
-        }
-
-        return null;
-    }
-
-    // @formatter:off
-    // Available with RDi 9.6:
-    // -----------------------
-    // Hello Thomas,
-    //  
-    // The debug team has looked at your requirements.
-    // 
-    // For the job name, this is something they have accepted as a future requirement but
-    // for the connection name, it is currently officially supported via: 
-    // 
-    // import com.ibm.etools.iseries.debug.internal.core.AS400ConfigurationConstants;
-    // 
-    // IDebugTarget pdtdebugTarget = ...
-    // String connectionName = pdtdebugTarget.getLaunch().getLaunchConfiguration().getAttribute(AS400ConfigurationConstants.RESID_CONNECTION_NAME, "");
-    // 
-    // There are no plans to provide an alternative API to get this information.
-    //  
-    // I hope this helps,
-    //
-    // Edmund Reinhardt
-    // @formatter:on
 
     private boolean isIBMiJob(ISelection selection) {
 
