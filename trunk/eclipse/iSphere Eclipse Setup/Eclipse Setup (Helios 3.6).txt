@@ -36,20 +36,24 @@ Repository Location:
 
    Password: Your SourceForge password.
 
-	
-Eclipse Plug-ins:
------------------
+
+Required Plug-ins:
+------------------
 
 Install the "iSphere Ant Plugin", which is required to build the iSphere
 project from:
 
-   plug-ins\iSphere_Ant_Contribution.zip
+   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\iSphere_Ant_Contribution.zip
 
 Install the "Java Scoped Template Variables Plugin", which is required
 if you work on the iSphere and Rapid Fire plug-in in the same workspace
 project from:
 
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\Java_Scoped_Template_Variables.zip
+
+
+Ant Home:
+---------
 
 For WDSCi and RDP 8.0 use Ant of RDP 8.0:
 
@@ -70,7 +74,11 @@ Add classpath variable ANT_HOME to the appropriate version (see above):
 
    ANT_HOME:   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
 
-Optionally install HTML editor:
+
+Optional Plug-ins:
+------------------
+
+HTML editor:
 
    Name:     Helios Milestone Repository
    Location: http://download.eclipse.org/releases/helios
@@ -162,7 +170,7 @@ h) Preferences - i Projects:
     [x] Remove sequence numbers and date fields on download
     [ ] Generate sequence number warnings
     [x] Limit sequence number warnings: 10
-    [x] Enable add and remove sequence number actions 
+    [x] Enable add and remove sequence number actions
 
 i) Preferences - i Projects - Build and Compile (optionally):
 
