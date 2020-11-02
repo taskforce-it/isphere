@@ -5,11 +5,11 @@ import java.net.UnknownHostException;
 
 import org.eclipse.core.runtime.CoreException;
 
-import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
-import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
-
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+
+import com.ibm.debug.pdt.internal.core.PDTDebugTarget;
+import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
 
 public final class IBMiDebugHelper {
 
@@ -47,6 +47,10 @@ public final class IBMiDebugHelper {
 
     public static String getConnectionName(DebuggeeProcess debuggeeProcess) throws UnknownHostException {
 
+        /*
+         * Try to get the connection name from the debuggee process as described
+         * by Edmund Reinhardt.
+         */
         if (debuggeeProcess.getDebugTarget() instanceof PDTDebugTarget) {
             try {
                 PDTDebugTarget debugTarget = (PDTDebugTarget)debuggeeProcess.getDebugTarget();
