@@ -8,6 +8,7 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.preferencepages;
 
+import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -34,6 +35,10 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
 
     private biz.isphere.jobtraceexplorer.core.preferences.Preferences preferences;
 
+    private ColorSelector buttonAttributesColor;
+    private ColorSelector buttonProcedureColor;
+    private ColorSelector buttonHiddenProceduresColor;
+
     private Group groupLimits;
     private Text textMaxNumRowsToFetch;
     private Text textSQLWhereNoIBMData;
@@ -56,13 +61,36 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(1, false));
 
-        createGroupDefaults(container);
-
+        createGroupColors(container);
         createGroupLimits(container);
+        createGroupDefaults(container);
 
         setScreenToValues();
 
         return container;
+    }
+
+    private void createGroupColors(Composite parent) {
+
+        Group groupColors = new Group(parent, SWT.NONE);
+        groupColors.setText(Messages.GroupLabel_Colors);
+        groupColors.setLayout(new GridLayout(2, false));
+        groupColors.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        buttonAttributesColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighAttributes);
+        buttonAttributesColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighAttributes);
+        buttonProcedureColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighProcedures);
+        buttonProcedureColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighProcedures);
+        buttonHiddenProceduresColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighHiddenProcedures);
+        buttonHiddenProceduresColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighHiddenProcedures);
+    }
+
+    private ColorSelector createColorSelector(Group parent, String label) {
+
+        new Label(parent, SWT.NONE).setText(label);
+        ColorSelector colorSelector = WidgetFactory.createColorSelector(parent);
+
+        return colorSelector;
     }
 
     private void createGroupDefaults(Composite parent) {
@@ -121,12 +149,20 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
 
         preferences.setMaximumNumberOfRowsToFetch(maxNumRowsToFetch);
         preferences.setExcludeIBMDataSQLWhereClause(textSQLWhereNoIBMData.getText());
+
+        preferences.setColorSeverity(HighlightColor.ATTRIBUTES, buttonAttributesColor.getColorValue());
+        preferences.setColorSeverity(HighlightColor.PROCEDURES, buttonProcedureColor.getColorValue());
+        preferences.setColorSeverity(HighlightColor.HIDDEN_PROCEDURES, buttonHiddenProceduresColor.getColorValue());
     }
 
     protected void setScreenToValues() {
 
         maxNumRowsToFetch = preferences.getMaximumNumberOfRowsToFetch();
         textSQLWhereNoIBMData.setText(preferences.getExcludeIBMDataSQLWhereClause());
+
+        buttonAttributesColor.setColorValue(preferences.getColorSeverity(HighlightColor.ATTRIBUTES).getRGB());
+        buttonProcedureColor.setColorValue(preferences.getColorSeverity(HighlightColor.PROCEDURES).getRGB());
+        buttonHiddenProceduresColor.setColorValue(preferences.getColorSeverity(HighlightColor.HIDDEN_PROCEDURES).getRGB());
 
         setScreenValues();
     }
@@ -135,6 +171,10 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
 
         maxNumRowsToFetch = preferences.getInitialMaximumNumberOfRowsToFetch();
         textSQLWhereNoIBMData.setText(preferences.getInitialExcludeIBMDataSQLWhereClause());
+
+        buttonAttributesColor.setColorValue(preferences.getDefaultColorSeverity(HighlightColor.ATTRIBUTES));
+        buttonProcedureColor.setColorValue(preferences.getDefaultColorSeverity(HighlightColor.PROCEDURES));
+        buttonHiddenProceduresColor.setColorValue(preferences.getDefaultColorSeverity(HighlightColor.HIDDEN_PROCEDURES));
 
         setScreenValues();
     }

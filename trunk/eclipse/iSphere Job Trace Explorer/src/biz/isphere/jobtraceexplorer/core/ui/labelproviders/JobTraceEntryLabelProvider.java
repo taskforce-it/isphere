@@ -13,15 +13,15 @@ import java.text.SimpleDateFormat;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumn;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceEntryColumnUI;
+import biz.isphere.jobtraceexplorer.core.ui.preferencepages.HighlightColor;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
 
 /**
@@ -56,13 +56,13 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
 
         if (jobTraceEntry.isExcluded() && fieldIdMapping[index] == JobTraceEntryColumnUI.PROC_NAME) {
-            return Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+            return Preferences.getInstance().getColorSeverity(HighlightColor.HIDDEN_PROCEDURES);
         }
 
-        if (jobTraceEntry.isHighlighted()) {
-            return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-        } else if (jobTraceEntry.getParent().isHighlighted(index, jobTraceEntry.getValueForUi(index))) {
-            return Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+        if (jobTraceEntry.getParent().isHighlighted(index, jobTraceEntry.getValueForUi(index))) {
+            return Preferences.getInstance().getColorSeverity(HighlightColor.ATTRIBUTES);
+        } else if (jobTraceEntry.isHighlighted()) {
+            return Preferences.getInstance().getColorSeverity(HighlightColor.PROCEDURES);
         }
 
         return null;
