@@ -63,7 +63,7 @@ public final class IBMiDebugHelper {
         }
 
         /*
-         * Fallback to TCP/IP address.
+         * Fallback to TCP/IP address for RDP 8.0.
          */
         String hostName = getHostName(debuggeeProcess);
         String connectionName = getConnectionName(hostName);
