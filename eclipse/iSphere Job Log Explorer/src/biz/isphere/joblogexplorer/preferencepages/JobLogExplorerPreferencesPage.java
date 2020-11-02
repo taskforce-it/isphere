@@ -85,7 +85,7 @@ public class JobLogExplorerPreferencesPage extends PreferencePage implements IWo
     private void createGroupColors(Composite parent) {
 
         groupColors = new Group(parent, SWT.NONE);
-        groupColors.setText("Messages.Parser_Settings");
+        groupColors.setText(Messages.Colors);
         groupColors.setLayout(new GridLayout(2, false));
         groupColors.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
