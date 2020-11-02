@@ -227,6 +227,9 @@ public class JobTraceEntryActionHandler {
                 endIndex = findProcExit(startIndex, getItemCountUI(), null);
             } else if (jobTraceEntry.isProcExit()) {
                 endIndex = findProcEntry(startIndex, getItemCountUI(), null);
+                int index = startIndex;
+                startIndex = endIndex;
+                endIndex = index;
             } else {
                 return;
             }
