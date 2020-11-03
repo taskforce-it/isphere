@@ -163,8 +163,6 @@ public class JobTraceEntryActionHandler {
             int index = Math.min(startIndex, endIndex);
             endIndex = Math.max(startIndex, endIndex);
 
-            JobTraceEntries jobTraceEntries = jobTraceEntry.getParent();
-
             boolean highlighted = !jobTraceEntry.isHighlighted();
 
             List<JobTraceEntry> items = new ArrayList<JobTraceEntry>();
@@ -172,9 +170,7 @@ public class JobTraceEntryActionHandler {
                 while (index <= endIndex) {
                     jobTraceEntry = getElementAtUI(index);
                     jobTraceEntry.setHighlighted(highlighted);
-                    if (!jobTraceEntries.isExcluded(jobTraceEntry.getNanosSinceStarted())) {
-                        items.add(jobTraceEntry);
-                    }
+                    items.add(jobTraceEntry);
                     index++;
                 }
             }
