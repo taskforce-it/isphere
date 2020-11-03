@@ -22,7 +22,7 @@ public class HighlightAttributeAction extends AbstractJobTraceEntryAction {
     public HighlightAttributeAction(Shell shell, TableViewer tableViewer) {
         super(shell, tableViewer);
 
-        setText(Messages.MenuItem_Highlight_attribute);
+        setText(Messages.MenuItem_Highlight_value);
         setImageDescriptor(ISphereJobTraceExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
     }
 

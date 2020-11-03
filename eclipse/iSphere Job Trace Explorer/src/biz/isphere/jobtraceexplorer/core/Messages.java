@@ -21,8 +21,8 @@ public class Messages extends NLS {
     public static String ButtonTooltip_Filter;
 
     public static String GroupLabel_Colors;
-    public static String ColorLabel_HighlighAttributes;
-    public static String ColorTooltip_HighlighAttributes;
+    public static String ColorLabel_HighlighValues;
+    public static String ColorTooltip_HighlighValues;
     public static String ColorLabel_HighlighProcedures;
     public static String ColorTooltip_HighlighProcedures;
     public static String ColorLabel_HighlighHiddenProcedures;
@@ -94,7 +94,7 @@ public class Messages extends NLS {
     public static String MenuItem_Jump_to_procedure_entry;
     public static String MenuItem_Jump_to_procedure_exit;
     public static String MenuItem_Highlight_procedure;
-    public static String MenuItem_Highlight_attribute;
+    public static String MenuItem_Highlight_value;
     public static String MenuItem_Edit_sql;
     public static String MenuItem_Exclude_procedure;
     public static String MenuItem_Include_procedure;
