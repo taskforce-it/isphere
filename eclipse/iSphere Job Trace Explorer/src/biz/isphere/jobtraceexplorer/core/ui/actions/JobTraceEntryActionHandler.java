@@ -251,8 +251,8 @@ public class JobTraceEntryActionHandler {
             List<JobTraceEntry> excludedEntries = new ArrayList<JobTraceEntry>();
             if (isValidIndexUI(index) && isValidIndexUI(endIndex)) {
                 while (index <= endIndex) {
-                    jobTraceEntry = getElementAtUI(index);
-                    excludedEntries.add(jobTraceEntry);
+                    JobTraceEntry tempJobTraceEntry = getElementAtUI(index);
+                    excludedEntries.add(tempJobTraceEntry);
                     index++;
                 }
             }
@@ -267,7 +267,7 @@ public class JobTraceEntryActionHandler {
 
             getTableViewer().refresh();
 
-            getTableViewer().setSelection(new StructuredSelection(startEntry));
+            getTableViewer().setSelection(new StructuredSelection(jobTraceEntry));
         }
     }
 
@@ -317,7 +317,7 @@ public class JobTraceEntryActionHandler {
 
             getTableViewer().refresh();
 
-            getTableViewer().setSelection(new StructuredSelection(startEntry));
+            getTableViewer().setSelection(new StructuredSelection(jobTraceEntry));
         }
     }
 
