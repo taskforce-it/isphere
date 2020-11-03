@@ -201,8 +201,7 @@ public class JobTraceEntryActionHandler {
                 parent.removeHighlightedAttribute(new HighlightedAttribute(index, value));
             }
 
-            List<JobTraceEntry> items = jobTraceEntry.getParent().getItems();
-            updateElementsUI(items.toArray(new JobTraceEntry[items.size()]));
+            getTableViewer().refresh();
         }
     }
 
