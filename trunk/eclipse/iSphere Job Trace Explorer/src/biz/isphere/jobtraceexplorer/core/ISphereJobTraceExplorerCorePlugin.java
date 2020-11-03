@@ -28,7 +28,7 @@ public class ISphereJobTraceExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_JUMP_PROC_EXIT = "jump_proc_exit.png";
     public static final String IMAGE_HIGHLIGHT_PROC = "highlight.png";
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
-    public static final String IMAGE_HIGHLIGHT_ATTR = "highlight_attribute.png";
+    public static final String IMAGE_HIGHLIGHT_ATTR = "highlight_value.png";
     public static final String IMAGE_JSON = "json.png";
     public static final String IMAGE_HIDE_PROCEDURE = "hide_proc.png";
     public static final String IMAGE_SHOW_PROCEDURE = "show_proc.png";

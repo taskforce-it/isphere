@@ -77,8 +77,8 @@ public class JobTraceExplorerPreferencePage extends PreferencePage implements IW
         groupColors.setLayout(new GridLayout(2, false));
         groupColors.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        buttonAttributesColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighAttributes);
-        buttonAttributesColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighAttributes);
+        buttonAttributesColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighValues);
+        buttonAttributesColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighValues);
         buttonProcedureColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighProcedures);
         buttonProcedureColor.getButton().setToolTipText(Messages.ColorTooltip_HighlighProcedures);
         buttonHiddenProceduresColor = createColorSelector(groupColors, Messages.ColorLabel_HighlighHiddenProcedures);
