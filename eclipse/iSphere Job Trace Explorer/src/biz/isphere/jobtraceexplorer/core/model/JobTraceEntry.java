@@ -491,4 +491,16 @@ public class JobTraceEntry {
         } else if (!timestamp.equals(other.timestamp)) return false;
         return true;
     }
+    
+    @Override
+    public String toString() {
+        
+        StringBuilder buffer = new StringBuilder();
+        
+        buffer.append(getNanosSinceStarted().toString());
+        buffer.append(":");
+        buffer.append(getProcedureName());
+        
+        return buffer.toString();
+    }
 }
