@@ -55,7 +55,7 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
 
         JobTraceEntry jobTraceEntry = (JobTraceEntry)element;
 
-        if (jobTraceEntry.isExcluded() && fieldIdMapping[index] == JobTraceEntryColumnUI.PROC_NAME) {
+        if (jobTraceEntry.isExcluded() && isMarkerFieldForHiddenProcedures(index)) {
             return Preferences.getInstance().getColorSeverity(HighlightColor.HIDDEN_PROCEDURES);
         }
 
@@ -66,6 +66,15 @@ public class JobTraceEntryLabelProvider extends LabelProvider implements ITableL
         }
 
         return null;
+    }
+
+    private boolean isMarkerFieldForHiddenProcedures(int index) {
+        
+        if (fieldIdMapping[index] == JobTraceEntryColumnUI.PROC_NAME) {
+            return true;
+        }
+        
+        return false;
     }
 
     public Color getForeground(Object element, int index) {
