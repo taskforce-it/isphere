@@ -165,6 +165,12 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     }
 
     public void cleanup() {
+
+        // TODO: activate with 4.0 (move from CompareAction)
+        // if (editable) {
+        // removeIgnoreFile();
+        // }
+
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);
             if (ancestorTemp != null) {
