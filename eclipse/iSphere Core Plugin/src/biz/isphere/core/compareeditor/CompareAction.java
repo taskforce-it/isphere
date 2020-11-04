@@ -156,6 +156,8 @@ public class CompareAction {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
                             if (editorPart.getEditorInput() == fInput) {
+                                // TODO: remove in 4.0 (move to
+                                // CompareInput.cleanUp()
                                 if (cc.isLeftEditable()) {
                                     fInput.removeIgnoreFile();
                                 }
@@ -336,10 +338,12 @@ public class CompareAction {
         return null;
     }
 
+    @CMOne(info = "Don`t change/remove this method due to CMOne compatibility reasons.")
     public void addCleanupListener(CleanupListener cleanupListener) {
         this.cleanupListener.add(cleanupListener);
     }
 
+    @CMOne(info = "Don`t change/remove this method due to CMOne compatibility reasons.")
     public void removeCleanupListener(CleanupListener cleanupListener) {
         this.cleanupListener.remove(cleanupListener);
     }
