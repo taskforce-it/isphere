@@ -44,7 +44,7 @@
       <topic label="Who am I (WHOAMI)" href="html/utilities/whoami/whoami.html" />
    </topic>
    <topic label="Troubleshooting" >
-      <topic label="RSE Object Descoration is Missing" href="html/troubleshooting/rse_object_decoration/rse_object_decoration.html" />
+      <topic label="RSE Object Decoration is Missing" href="html/troubleshooting/rse_object_decoration/rse_object_decoration.html" />
       <topic label="Debugging Server Jobs" href="html/troubleshooting/debugging_server_jobs/debugging_server_jobs.html" />
       <topic label="SSL Connection Problems" href="html/troubleshooting/ssl_connections/ssl_connections.html" />
    </topic>
