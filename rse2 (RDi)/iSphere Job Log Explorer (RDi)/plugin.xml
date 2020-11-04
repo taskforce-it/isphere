@@ -134,7 +134,6 @@
                class="biz.isphere.joblogexplorer.rse.action.OpenJobLogDebugPopupAction"
                menubarPath="group.browsewith" 
                enablesFor="1"
-               state="false"
                id="biz.isphere.joblogexplorer.rse.action.OpenJobLogDebugPopupAction">
          </action>
       </viewerContribution>
