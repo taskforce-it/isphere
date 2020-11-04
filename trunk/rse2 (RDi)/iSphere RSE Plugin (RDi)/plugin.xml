@@ -1382,7 +1382,6 @@
                class="biz.isphere.rse.actions.CopyQualifiedJobNameDebugPopupAction"
                menubarPath="additions" 
                enablesFor="1"
-               state="false"
                id="biz.isphere.rse.actions.CopyQualifiedJobNameDebugPopupAction">
          </action>
 
@@ -1392,7 +1391,6 @@
                class="biz.isphere.rse.actions.WorkWithSpooledFilesDebugPopupAction"
                menubarPath="group.workwith" 
                enablesFor="1"
-               state="false"
                id="biz.isphere.rse.actions.WorkWithSpooledFilesDebugPopupAction">
          </action>
       </viewerContribution>
