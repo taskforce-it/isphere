@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         }
     }
 
-    public void setInput(AbstractJobLogExplorerInput input) {
+    public void setInput(AbstractJobLogExplorerInput input, boolean isReload) {
 
         jobLogExplorerInput = input;
 
@@ -133,26 +133,26 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
         if (jobLogExplorerInput instanceof JobLogExplorerFileInput) {
             JobLogExplorerFileInput fileInput = (JobLogExplorerFileInput)jobLogExplorerInput;
-            ParseSpooledFileJob job = new ParseSpooledFileJob(fileInput, tableViewerPanel, filterPanel);
+            ParseSpooledFileJob job = new ParseSpooledFileJob(fileInput, tableViewerPanel, filterPanel, isReload);
             job.schedule();
         } else if (jobLogExplorerInput instanceof JobLogExplorerJobInput) {
             JobLogExplorerJobInput jobInput = (JobLogExplorerJobInput)jobLogExplorerInput;
-            LoadJobLogJob job = new LoadJobLogJob(jobInput, tableViewerPanel, filterPanel);
+            LoadJobLogJob job = new LoadJobLogJob(jobInput, tableViewerPanel, filterPanel, isReload);
             job.schedule();
         } else if (jobLogExplorerInput instanceof JobLogExplorerSpooledFileInput) {
             JobLogExplorerSpooledFileInput spooledFileInput = (JobLogExplorerSpooledFileInput)jobLogExplorerInput;
-            LoadSpooledFileJob job = new LoadSpooledFileJob(spooledFileInput, tableViewerPanel, filterPanel);
+            LoadSpooledFileJob job = new LoadSpooledFileJob(spooledFileInput, tableViewerPanel, filterPanel, isReload);
             job.schedule();
         } else {
             jobLogExplorerInput = null;
-            SetEditorInputJob job = new SetEditorInputJob(new JobLog(), tableViewerPanel, filterPanel);
+            SetEditorInputJob job = new SetEditorInputJob(new JobLog(), tableViewerPanel, filterPanel, isReload);
             job.schedule();
         }
 
     }
 
     public void refresh() {
-        setInput(getInput());
+        setInput(getInput(), true);
     }
 
     public AbstractJobLogExplorerInput getInput() {
@@ -426,10 +426,10 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
     }
 
     private void handleDataLoadException(String message, Throwable e) {
-        handleDataLoadException(message, e, false);
+        handleDataLoadException(message, e, false, false);
     }
 
-    private void handleDataLoadException(String message, Throwable e, boolean addToErrorLog) {
+    private void handleDataLoadException(String message, Throwable e, boolean addToErrorLog, boolean isReload) {
 
         if (message != null) {
             if (addToErrorLog) {
@@ -440,6 +440,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         final JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(
             JobLogExplorerStatusChangedEvent.EventType.DATA_LOAD_ERROR, this);
         status.setException(message, e);
+        status.setReload(isReload);
 
         if (Display.getCurrent() == null) {
             UIJob job = new UIJob(EMPTY) {
@@ -568,13 +569,16 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private JobLogExplorerFileInput fileInput;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
+        private boolean isReload;
 
-        public ParseSpooledFileJob(JobLogExplorerFileInput fileInput, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
+        public ParseSpooledFileJob(JobLogExplorerFileInput fileInput, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel,
+            boolean isReload) {
             super(Messages.Job_Parsing_job_log);
 
             this.fileInput = fileInput;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
+            this.isReload = isReload;
         }
 
         @Override
@@ -585,12 +589,12 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 JobLogParser reader = new JobLogParser(monitor);
                 final JobLog jobLog = reader.loadFromStmf(fileInput.getPath());
 
-                new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
+                new SetEditorInputJob(jobLog, viewer, filterPanel, isReload).schedule();
 
             } catch (InvalidJobLogFormatException e) {
-                handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e);
+                handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e, false, isReload);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to parse spooled file ***", e, true); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to parse spooled file ***", e, true, isReload); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -602,13 +606,16 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private JobLogExplorerJobInput jobInput;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
+        private boolean isReload;
 
-        public LoadJobLogJob(JobLogExplorerJobInput jobInput, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
+        public LoadJobLogJob(JobLogExplorerJobInput jobInput, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel,
+            boolean isReload) {
             super(Messages.Job_Loading_job_log);
 
             this.jobInput = jobInput;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
+            this.isReload = isReload;
         }
 
         @Override
@@ -621,17 +628,17 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 JobLogReader reader = new JobLogReader();
                 final JobLog jobLog = reader.loadFromJob(as400, jobInput.getJobName(), jobInput.getUserName(), jobInput.getJobNumber());
 
-                new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
+                new SetEditorInputJob(jobLog, viewer, filterPanel, isReload).schedule();
 
             } catch (JobNotFoundException e) {
                 handleDataLoadException(Messages.bind(Messages.Job_C_B_A_not_found, new Object[] { jobInput.getJobName(), jobInput.getUserName(),
-                    jobInput.getJobNumber() }), e);
+                    jobInput.getJobNumber() }), e, false, isReload);
             } catch (JobLogNotLoadedException e) {
                 handleDataLoadException(
                     Messages.bind(Messages.Could_not_load_job_log_of_job_C_B_A_Reason_D, new Object[] { jobInput.getJobName(),
-                        jobInput.getUserName(), jobInput.getJobNumber(), ExceptionHelper.getLocalizedMessage(e) }), e);
+                        jobInput.getUserName(), jobInput.getJobNumber(), ExceptionHelper.getLocalizedMessage(e) }), e, false, isReload);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to retrieve job log ***", e, true); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to retrieve job log ***", e, true, isReload); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -644,14 +651,16 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private JobLogExplorerSpooledFileInput spooledFileInput;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
+        private boolean isReload;
 
         public LoadSpooledFileJob(JobLogExplorerSpooledFileInput spooledFileInput, JobLogExplorerTableViewer viewer,
-            JobLogExplorerFilterPanel filterPanel) {
+            JobLogExplorerFilterPanel filterPanel, boolean isReload) {
             super(Messages.Job_Parsing_job_log);
 
             this.spooledFileInput = spooledFileInput;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
+            this.isReload = isReload;
         }
 
         @Override
@@ -673,12 +682,12 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 JobLogParser reader = new JobLogParser(monitor);
                 final JobLog jobLog = reader.loadFromStmf(editorInput.getPath());
 
-                new SetEditorInputJob(jobLog, viewer, filterPanel).schedule();
+                new SetEditorInputJob(jobLog, viewer, filterPanel, isReload).schedule();
 
             } catch (InvalidJobLogFormatException e) {
-                handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e);
+                handleDataLoadException(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log, e, false, isReload);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to parse job log from spooled file ***", e, true); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to parse job log from spooled file ***", e, true, isReload); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -690,13 +699,15 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private JobLog jobLog;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
+        private boolean isReload;
 
-        public SetEditorInputJob(JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel) {
+        public SetEditorInputJob(JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel, boolean isReload) {
             super(EMPTY);
 
             this.jobLog = jobLog;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
+            this.isReload = isReload;
         }
 
         @Override
@@ -728,7 +739,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 }
 
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to set job log data ***", e, true); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to set job log data ***", e, true, isReload); //$NON-NLS-1$
             }
 
             JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(
