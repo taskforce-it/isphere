@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere STRPREPRC Plugin
 Bundle-SymbolicName: biz.isphere.strpreprc;singleton:=true
-Bundle-Version: 3.8.0.b003
+Bundle-Version: 3.8.0.r
 Bundle-Activator: biz.isphere.strpreprc.ISphereStrPrePrcPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
