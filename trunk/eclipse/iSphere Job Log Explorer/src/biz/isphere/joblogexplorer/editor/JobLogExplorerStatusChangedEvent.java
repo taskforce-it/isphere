@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class JobLogExplorerStatusChangedEvent {
     private int numberOfMessagesSelected;
     private String message;
     private Throwable throwable;
+    private boolean isReload;
 
     public JobLogExplorerStatusChangedEvent(EventType eventType, Object source) {
         this.eventType = eventType;
@@ -34,6 +35,7 @@ public class JobLogExplorerStatusChangedEvent {
         this.source = source;
         this.numberOfMessages = data.numberOfMessages;
         this.numberOfMessagesSelected = data.numberOfMessagesSelected;
+        this.isReload = false;
     }
 
     public EventType getEventType() {
@@ -75,6 +77,14 @@ public class JobLogExplorerStatusChangedEvent {
     public void setException(String message, Throwable throwable) {
         this.message = message;
         this.throwable = throwable;
+    }
+
+    public boolean isReload() {
+        return isReload;
+    }
+
+    public void setReload(boolean isReload) {
+        this.isReload = isReload;
     }
 
     @Override
