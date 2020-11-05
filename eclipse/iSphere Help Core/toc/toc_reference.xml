@@ -23,6 +23,8 @@
     <topic label="Monitor"  href="html/dataspaces/monitor/dataspacemonitor.html" />
     <topic label="Preferences"  href="html/dataspaces/preferences/preferences.html" />
   </topic>
+  <topic label="Debugger Additions"  href="html/debuggeradditions/debuggeradditions.html"> 
+  </topic>
   <topic label="Display Module View"  href="html/displaymoduleview/displaymoduleview.html"> 
   </topic>
   <topic label="iSphere Core" href="html/core/core.html"> 
