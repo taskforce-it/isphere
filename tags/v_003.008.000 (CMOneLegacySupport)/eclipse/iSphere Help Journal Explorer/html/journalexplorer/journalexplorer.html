@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Journal Explorer</title>
+</head>
+
+<body>
+<h1>Journal Explorer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/journalexplorer.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The Journal Explorer is a set of views bound to a perspective, used for exploring IBM i journal 
+entries that have been exported to an output file. The following types of output files of the 
+DSPJRN command are supported:
+<ul>
+<li>*TYPE1</li>
+<li>*TYPE2</li>
+<li>*TYPE3</li>
+<li>*TYPE4</li>
+<li>*TYPE5</li>
+</ul>
+<p>
+You can also launch the iSphere Journal Explorer from the context menu of a physical file or a 
+journal.
+<ul>
+<li><a href="#opening_the_journal_explorer_perspective">Opening the Journal Explorer Perspective</a></li>
+<li><a href="#journal_explorer_view">Journal Explorer View</a></li>
+<li><a href="#creating_an_output_file">Creating an Output File</a></li>
+<li><a href="#opening_an_output_file">Opening an Output File</a></li>
+<li><a href="#loading_journal_entries_of_a_specific_file">Loading Journal Entries of a Specific File</a></li>
+<li><a href="#loading_journal_entries_of_a_journal">Loading Journal Entries of a Journal</a>
+<li><a href="#filtering_journal_entries">Filtering Journal Entries</a></li>
+<li><a href="#journal_entry_details_view">Journal Entry Details View</a></li>
+<li><a href="#journal_entry_viewer_view">Journal Entry Viewer View</a></li>
+</ul> 
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Your IBM i must be at least a release level V5R4M0 to retrieve journal 
+		                 entries from a journal receiver. However exploring an output file is possible
+		                 at lower releases.</td>
+	</tr>
+</table>
+<p>
+<a id="opening_the_journal_explorer_perspective"></a>
+<h2>Opening the Journal Explorer Perspective</h2>
+<p>
+You can open the Journal Explorer perspective from <i>'Window -> Open Perspective -> Other...'</i>. The
+perspective looks like that: 
+<p>
+<img src="assets/journal_explorer_perspective.png" align="middle">
+<p>
+The columns can be colored on the <a href="./preferences/preferences.html">preferences</a> page of the <i>Journal Explorer</i>. By 
+default the <i>#RRN</i> and the <i>job</i> and <i>object</i> related columns are color-coded.
+<p>
+<a id="#journal_explorer_view"></a>
+<h2>Journal Explorer View</h2>
+<p>
+The <i>Journal Explorer</i> view displays the journal entries of all open output files. Output 
+files are opened in individual tabs. The properties of a selected journal entry are displayed in 
+the <i>Journal Entry Details</i> view, which by default is at the right hand side of 
+the <i>Journal Explorer</i> view.
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/open_output_file.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an output file created by the DSPJRN command.</td></tr>
+<tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the journal entries.<br>(Local operation that does not contact the host system.)</td></tr>
+<tr><td valign="middle"><img src="assets/export_to_excel.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Exports all journal entries to Excel.</td></tr>
+<tr><td valign="middle"><img src="assets/compare_side_by_side.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Compares the selected journal entries and shows the result side by side.</td></tr>
+<tr><td valign="middle"><img src="assets/highlight_user_entries.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Highlights user-created journal entries.</td></tr>
+<tr><td valign="middle"><img src="assets/configure_parsers.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens a dialog for configuring the parsers.</td></tr>
+<tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the journal entries form the output file or the journal receiver.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+The available options of the view menu are:
+<p>
+<table>
+<tr><td valign="top">Open</td><td width="10px">&nbsp;</td><td valign="middle">Loads the journal entries from a Json file that was created with the <i>Save</i> option.</td></tr>
+<tr><td valign="top">Save</td><td width="10px">&nbsp;</td><td valign="middle">Saves all journal entries to a Json file on the PC.</td></tr>
+</table>
+<p>
+<a id="creating_an_output_file"></a>
+<h2>Creating an Output File</h2>
+<p>
+Output files of *TYPE1 or *TYPE2 are created like this:
+<p>
+<div class="codeCommand">
+DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
+JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE1)<br>
+ENTDTALEN(5000)
+</div>
+<p>
+For output files of *TYPE3 use the following command:
+<p>
+<div class="codeCommand">
+DSPJRN JRN(ISPHEREDVP/JRN) RCVRNG(*CURCHAIN)<br>
+JRNCDE((R *ALLSLT) (U)) ENTTYP(*ALL)<br> 
+OUTPUT(*OUTFILE) OUTFILFMT(*TYPE3)<br>
+ENTDTALEN(*VARLEN 24182 5000) NULLINDLEN(*VARLEN 8000 500)
+</div>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Please check your journal attributes, if fields are unexpectedly empty. You
+		                      need to specify parameter FIXLENDTA when creating the journal if you want to see fields 
+		                      like <i>Program library name</i>, <i>System sequence number</i>, <i>Remote address</i>,
+		                      <i>Thread identifier</i>, <i>Logical unit of work</i> or <i>Transaction identifier</i>. Use
+		                      to change the journal afterwards:<p>
+		                      CHGJRN ... JRNRCV(*GEN) FIXLENDTA(*JOB *USR *PGM *PGMLIB *SYSSEQ *RMTADR *THD *LUW *XID)
+		                      </td>
+	</tr>
+</table>
+<p>
+<a id="opening_an_output_file"></a>
+<h2>Opening an Output File</h2>
+<p>
+Click the <i>Open journal output file</i> button at the top of the <i>Journal Explorer</i> view:
+<p>
+<img src="assets/open_output_file.png" align="middle">
+<p>
+Fill in the library, file and member names and click the [OK] button.
+<p>
+<img src="assets/open_output_file_dialog.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Connection</td><td width="10px">&nbsp;</td><td valign="top">Specifies the connection the output file is loaded from.</td></tr>
+<tr><td valign="top">Library</td><td width="10px">&nbsp;</td><td valign="top">Specifies the name of the output file.</td></tr>
+<tr><td valign="top">File</td><td width="10px">&nbsp;</td><td valign="top">Specifies the name of the library where the output file is stored.</td></tr>
+<tr><td valign="top">Member</td><td width="10px">&nbsp;</td><td valign="top">Specifies the name of the member of the output file.</td></tr>
+<tr><td valign="top">WHERE</td><td width="10px">&nbsp;</td><td valign="top">Specifies a SQL WHERE clause to select a subset of the records of the output file.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause specified here is applied to the records of the
+		                   output file created by the DSPJRN command. It must be specified in IBM i SQL
+		                   syntax.
+		</td>
+	</tr>
+</table>
+<p>
+<a id="#loading_journal_entries_of_a_specific_file"></a>
+<h2>Loading Journal Entries of a Specific File</h2>
+<p>
+Right-click one or more journaled physical files in the <i>Remote System Explorer</i> perspective
+and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
+and click the [OK] button. The journal entries are retrieved by the QjoRetrieveJournalEntries API. 
+<p>
+<img src="assets/loading_journal_entries_of_physical_file_dialog.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Start date</td><td width="10px">&nbsp;</td><td valign="top">Specifies the date of the first journal entry being retrieved.</td></tr>
+<tr><td valign="top">Start time</td><td width="10px">&nbsp;</td><td valign="top">Specifies the time of the first journal entry being retrieved.</td></tr>
+<tr><td valign="top">End date</td><td width="10px">&nbsp;</td><td valign="top">Specifies the creation date of the last journal entry being retrieved.</td></tr>
+<tr><td valign="top">End time</td><td width="10px">&nbsp;</td><td valign="top">Specifies the creation time of the last journal entry being retrieved.</td></tr>
+<tr><td valign="top">Fast date presets</td><td width="10px">&nbsp;</td><td valign="top">Click one of the available options to quickly select a time span.</td></tr>
+<tr><td valign="top">Display record entries only</td><td width="10px">&nbsp;</td><td valign="top">Specifies whether to retrieve only journal entries of record level operations.</td></tr>
+<tr><td valign="top">List of record entry types</td><td width="10px">&nbsp;</td><td valign="top">Specifies the journal entry types that are retrieved.</td></tr>
+<tr><td valign="top">Label: [none]</td><td width="10px">&nbsp;</td><td valign="top">Deselects all selected journal entry types.</td></tr>
+<tr><td valign="top">Label: [all]</td><td width="10px">&nbsp;</td><td valign="top">Selects all journal entry types.</td></tr>
+<tr><td valign="top">Label: [insert]</td><td width="10px">&nbsp;</td><td valign="top">Selects all journal entry types that are related to 'write' operations.<br>Use the CTRL or ALT key or double-click to negate the operation.</td></tr>
+<tr><td valign="top">Label: [update]</td><td width="10px">&nbsp;</td><td valign=top>Selects all journal entry types that are related to 'update' operations.<br>Use the CTRL or ALT key or double-click to negate the operation.</td></tr>
+<tr><td valign="top">Label: [delete]</td><td width="10px">&nbsp;</td><td valign="top">Selects all journal entry types that are related to 'delete' operations.<br>Use the CTRL or ALT key or double-click to negate the operation.</td></tr>
+</table>
+<p>
+The Journal Explorer opens multiple tabs when it is started for a group of selected files. The files are grouped by
+<i>Connection</i> and <i>Journal</i>.
+<p>
+<table>
+<tr><th>One file selected</th><th>Two or more files selected</th></tr>
+<tr><td align="center"><img src="assets/selected_one_file.png"></td><td align="center"><img src="assets/selected_two_files.png"></td></tr>
+<tr><td align="center">Tab shows the name of the selected file.</td><td align="center">Tab shows the name of the associated journal.</td></tr>
+</table>
+<p>
+<a id="#loading_journal_entries_of_a_journal"></a>
+<h2>Loading Journal Entries of a Journal</h2>
+<p>
+Loading journal entries of a journal basically works the same as loading journal entries of a file.
+<p>
+Right-click one or more journals in the <i>Remote System Explorer</i> perspective
+and select <i>Display Journal Entries...</i>. Select the range of journal entries that you want to explore
+and click the [OK] button.
+<p>	
+<a id="filtering_journal_entries"></a>
+<h2>Filtering Journal Entries</h2>
+<p>
+Click the <i>Edit SQL</i> button at the top of the <i>Journal Explorer</i> view to open the SQL editor:
+<p>
+<img src="assets/edit_sql.png" align="middle">
+<p>
+The <i>SQL Editor</i> is used to enter a SQL WHERE condition for selecting a subset of the available journal 
+entries. Enter the WHERE condition and then click the <i>Execute</i> button or press <i>Ctrl+Enter</i> to execute
+the query. Refer to the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html"><i>SQL Reference</i></a> to see the list of available functions.
+<p>
+<img src="assets/sql_editor.png" align="middle">
+<p>
+Use Ctrl+SPACE for content assistance.
+<p>
+<img src="assets/content_assistance.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Ctrl+SPACE</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Add Field</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Clear</td><td valign="top">-</td><td valign="top">Clears the where condition.</td></tr>
+<tr><td valign="top">Ctrl+ENTER</td><td valign="top">-</td><td valign="top">See: Filter</td></tr>
+<tr><td valign="top">Filter</td><td valign="top">-</td><td valign="top">Executes the query with the current where condition to create a subsetted list of the downloaded journal entries.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Filtering journal entries is a local task, which does not reload the
+		                                  journal entries from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause is applied to the records that have been downloaded to the PC. It must be specified in
+		                   the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html">iSphere SQL</a> syntax, which in most cases
+		                   matches the IBM i SQL syntax.
+		</td>
+	</tr>
+</table>
+<p>
+<a id="#journal_entry_details_view"></a>
+<h2>Journal Entry Details View</h2>
+<p>
+The <i>Journal Entry Details</i> view displays the details of a journal entry, selected from 
+the <i>Journal Explorer</i> or <i>Journal Entry Viewer</i> view. 
+<p>
+<a id="journal_entry_viewer_view"></a>
+<h2>Journal Entry Viewer View</h2>
+<p>
+The <i>Journal Entry Viewer</i> displays the selected journal entries of all open journal output 
+files. It can be used as a workbench for analyzing journal entries.
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/collapse_all.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Collapses the whole tree.</td></tr>
+<tr><td valign="middle"><img src="assets/compare_journal_entries.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Compares the selected journal entries. Properties that are different are highlighted.</td></tr>
+<tr><td valign="middle"><img src="assets/compare_side_by_side.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Compares the selected journal entries and shows the result side by side.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Re-parses the journal entries.</td></tr>
+</table>
+<p>
+Example of highlighted user-created journal entries:
+<p>
+<img src="assets/highlighted_user_entries.png" />
+<p>
+Example of compared journal entries:
+<p>
+<img src="assets/compared_journal_entries.png" />
+<p>
+Example of a side-by-side compare:
+<p>
+<img src="assets/side_by_side_compare.png" />
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

@@ -1,0 +1,40 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/* Copyright (c) 2012-2014 iSphere Project Owners                             */
+/* All rights reserved. This program and the accompanying materials           */
+/* are made available under the terms of the Common Public License v1.0       */
+/* which accompanies this distribution, and is available at                   */
+/* http://www.eclipse.org/legal/cpl-v10.html                                  */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/* 5250 Emulator - Editor                                                     */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+/* STRPREPRC Compile Options:                                                 */
+/*   >>PRE-COMPILER<<                                                         */
+/*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                                */
+/*                              SRCFILE(&SL/&SF) SRCMBR(&SM);                 */
+/*       >>COMPILE<<                                                          */
+/*         >>PARM<<  DFTACTGRP(*NO);                                          */
+/*         >>PARM<<  ACTGRP(ISPHERE);                                         */
+/*         >>PARM<<  DBGVIEW(*NONE);                                          */
+/*         >>PARM<<  OPTIMIZE(*FULL);                                         */
+/*         >>PARM<<  OPTION(*EVENTF);                                         */
+/*         >>PARM<<  TGTRLS(&TR);                                             */
+/*       >>END-COMPILE<<                                                      */
+/*       >>EXECUTE<<                                                          */
+/*   >>END-PRE-COMPILER<<                                                     */
+/*----------------------------------------------------------------------------*/
+
+             PGM        PARM(&LIB &SRCF &MBR &MODE)
+             DCLF       FILE(EDITOR)
+             RTVJOBA    USRLIBL(&LIBL) CURLIB(&CURLIB)
+             IF         COND(&CURLIB *EQ '*NONE') THEN(CHGVAR +
+                          VAR(&CURLIB) VALUE('*CRTDFT'))
+             IF         COND(&LIBL *EQ ' ') THEN(CHGVAR VAR(&LIBL) +
+                          VALUE('*NONE'))
+ STEP010:    SNDRCVF    RCDFMT(HEADER)
+             IF         COND(&IN03 *EQ '1') THEN(GOTO CMDLBL(STEP999))
+             GOTO       CMDLBL(STEP010)
+ STEP999:    ENDPGM
