@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-Version: 3.0.5.r
-X-Bundle-Update-Library: false
-X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Bugfix: Fixed performance issue that has been introduced with bug fix of ticket #42.\nEnabled the "Delete" key to delete spooled files of the iSphere Spooled Files subsystem.
-X-Beta-Version: 3.0.6.b001
-X-Beta-Update-Library: false
-X-Beta-Update-Library-Info: .
-X-Beta-Info: Added the iSphere specific keys to "KeyMapper" to fix issue of hidden fast cursor up/down keys.\nUpdated iSphere help with instructions how to enable SSL sessions.
