@@ -79,6 +79,12 @@
         </table>
 		</div>
         <p/>
+        <div class="section">
+		<table width="100%">
+        <tr><td class="notice" ><b>Notice</b>: iSphere v3.8.x is the last version that is compatible with RDP 8.0 and WDSCi 7.0. The next iSphere version will require at least RDi 9.5.1.3.</td></tr> 
+        </table>
+		</div>
+        <p/>
         
         <h2 class="release">Features</h2>
         <div class="section">
