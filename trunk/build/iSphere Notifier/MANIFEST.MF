@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 3.7.2.r
-X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: Updated STRPREPRC command to v1.18. Added >>INCLUDE<< tag.
-X-Bundle-Info: Added replacement variable "&PAGES" to spooled file decorator.\nUpdated STRPREPRC command to v1.18.\nUpdated Italian translation.\nThoroughly enabled SSL. 
-X-Beta-Version: 3.7.3.b007
+Bundle-Version: 3.8.0.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Last version for RDP 8.0 and WDSCi 7.0.\nAdded new feature "Job Trace Explorer".\nAdded menu options to stack entry context menu. (debugger view)\nAdded options for saving the items of a spooled file filter as (Text|HTML|PDF).
+X-Beta-Version: 3.8.0.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Various improvements and fixes of iSphere Journal and Job Log explorers.\nInternal changes as requested by CMOne.
+X-Beta-Info: Last version for RDP 8.0 and WDSCi 7.0.\nAdded new feature "Job Trace Explorer".\nAdded menu options to stack entry context menu. (debugger view)\nAdded options for saving the items of a spooled file filter as (Text|HTML|PDF).
