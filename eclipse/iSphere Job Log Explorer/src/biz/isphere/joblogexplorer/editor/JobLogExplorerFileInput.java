@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,13 @@ package biz.isphere.joblogexplorer.editor;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
+import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
+import biz.isphere.joblogexplorer.model.JobLog;
+import biz.isphere.joblogexplorer.model.JobLogParser;
 
 public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
 
@@ -39,6 +45,14 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
 
     public String getOriginalFileName() {
         return originalFileName;
+    }
+
+    public JobLog load(IProgressMonitor monitor) throws JobLogNotLoadedException, InvalidJobLogFormatException {
+
+        JobLogParser reader = new JobLogParser(monitor);
+        final JobLog jobLog = reader.loadFromStmf(getPath());
+
+        return jobLog;
     }
 
     /*

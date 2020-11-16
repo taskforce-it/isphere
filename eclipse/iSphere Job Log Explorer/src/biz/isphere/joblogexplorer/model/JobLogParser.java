@@ -27,6 +27,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
+import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.preferences.Preferences;
 
 public class JobLogParser {
@@ -76,7 +77,7 @@ public class JobLogParser {
      * @return the job log
      * @throws InvalidJobLogFormatException
      */
-    public JobLog loadFromStmf(String pathName) throws InvalidJobLogFormatException {
+    public JobLog loadFromStmf(String pathName) throws JobLogNotLoadedException, InvalidJobLogFormatException {
 
         BufferedReader br = null;
         jobLog = new JobLog();
@@ -125,7 +126,7 @@ public class JobLogParser {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new JobLogNotLoadedException(pathName, e.getLocalizedMessage());
         } finally {
             try {
                 if (br != null) br.close();
