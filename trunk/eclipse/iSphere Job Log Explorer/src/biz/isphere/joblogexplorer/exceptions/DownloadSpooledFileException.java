@@ -8,14 +8,12 @@
 
 package biz.isphere.joblogexplorer.exceptions;
 
-import biz.isphere.joblogexplorer.Messages;
+public class DownloadSpooledFileException extends BasicJobLogLoaderException {
 
-public class InvalidJobLogFormatException extends BasicJobLogLoaderException {
+    private static final long serialVersionUID = -5774432537841998966L;
 
-    private static final long serialVersionUID = 411713919999706178L;
-
-    public InvalidJobLogFormatException() {
-        super(Messages.Invalid_job_log_Format_Could_not_find_first_line_of_job_log);
+    public DownloadSpooledFileException(String message) {
+        super(message);
     }
 
     @Override

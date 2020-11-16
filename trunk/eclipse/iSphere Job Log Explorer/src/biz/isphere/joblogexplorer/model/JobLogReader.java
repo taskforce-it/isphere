@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
 package biz.isphere.joblogexplorer.model;
 
 import java.io.UnsupportedEncodingException;
-
-import com.ibm.as400.access.AS400;
 
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -25,6 +23,8 @@ import biz.isphere.joblogexplorer.api.retrievejobinformation.QUSRJOBI;
 import biz.isphere.joblogexplorer.api.retrievenetworkattributes.QWCRNETA;
 import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
+
+import com.ibm.as400.access.AS400;
 
 public class JobLogReader implements JobLogListener {
 
@@ -41,7 +41,7 @@ public class JobLogReader implements JobLogListener {
      * @param jobNumber - Job number.
      * @return the job log
      * @throws JobNotFoundException
-     * @throws JobLogNotLoadedException
+     * @throws
      */
     public JobLog loadFromJob(String connectionName, String jobName, String jobUser, String jobNumber) throws JobNotFoundException,
         JobLogNotLoadedException {
@@ -58,7 +58,7 @@ public class JobLogReader implements JobLogListener {
      * @param jobUser - Job user name.
      * @param jobNumber - Job number.
      * @return the job log
-     * @throws JobLogNotLoadedException
+     * @throws
      */
     public JobLog loadFromJob(AS400 as400, String jobName, String jobUser, String jobNumber) throws JobNotFoundException, JobLogNotLoadedException {
 
@@ -100,10 +100,9 @@ public class JobLogReader implements JobLogListener {
             if (!rc) {
                 String errorID = qusrjobi.getErrorMessageID();
                 if (JOB_NOT_FOUND_MSGID.equals(errorID)) {
-                    // Job not found
-                    throw new JobNotFoundException(qusrjobi.getErrorMessage());
+                    throw new JobNotFoundException(jobName, jobUser, jobNumber, qusrjobi.getErrorMessage());
                 }
-                throw new JobLogNotLoadedException(qusrjobi.getErrorMessage());
+                throw new JobLogNotLoadedException(jobName, jobUser, jobNumber, qusrjobi.getErrorMessage());
             }
 
             jobLog.setJobDescriptionName(jobi0400.getJobDescriptionName());
@@ -120,10 +119,9 @@ public class JobLogReader implements JobLogListener {
             if (!rc) {
                 String errorID = qusrjobi.getErrorMessageID();
                 if (JOB_NOT_FOUND_MSGID.equals(errorID)) {
-                    // Job not found
-                    throw new JobNotFoundException(qgyljbl.getErrorMessage());
+                    throw new JobNotFoundException(jobLog.getJobName(), jobLog.getJobUserName(), jobLog.getJobNumber(), qgyljbl.getErrorMessage());
                 }
-                throw new JobLogNotLoadedException(qgyljbl.getErrorMessage());
+                throw new JobLogNotLoadedException(jobLog.getJobName(), jobLog.getJobUserName(), jobLog.getJobNumber(), qgyljbl.getErrorMessage());
             }
 
             requestHandle = qgyljbl.getRequestHandle();
