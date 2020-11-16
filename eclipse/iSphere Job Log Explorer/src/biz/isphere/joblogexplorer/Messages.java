@@ -118,6 +118,7 @@ public class Messages extends NLS {
 
     public static String E_R_R_O_R;
     public static String Job_C_B_A_not_found;
+    public static String Could_not_load_job_log_from_file_A_Reason_B;
     public static String Could_not_load_job_log_of_job_C_B_A_Reason_D;
     public static String Could_not_load_job_log_parser_configuration;
 
