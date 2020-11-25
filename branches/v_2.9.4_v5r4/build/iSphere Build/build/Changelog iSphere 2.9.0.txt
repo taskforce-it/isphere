@@ -1,4 +1,8 @@
 
+Changelog: iSphere 2.9.5.r
+--------------------------
+ • Compiled library to V5R4. Special thanks to Joe Pluta for his work. 
+
 Changelog: iSphere 2.9.4.r
 --------------------------
  • Fixed CCSID problem when copying members between connections. 
