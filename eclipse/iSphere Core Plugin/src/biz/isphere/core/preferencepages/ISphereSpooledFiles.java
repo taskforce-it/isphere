@@ -327,8 +327,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
             }
         });
 
-        String colorsAndFonts = Messages.bind(Messages.Change_viewer_font_Basic_Text_Font, new String[] {
-            "<a href=\"org.eclipse.ui.preferencePages.ColorsAndFonts\">", "</a>" });
+        String colorsAndFonts = Messages.bind(Messages.Change_viewer_font_Basic_Text_Font,
+            new String[] { "<a href=\"org.eclipse.ui.preferencePages.ColorsAndFonts\">", "</a>" });
 
         Link lnkJavaTaskTags = new Link(groupConversionText, SWT.MULTI | SWT.WRAP);
         lnkJavaTaskTags.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 3, 1));
@@ -621,7 +621,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CODPAG, Messages.Code_page);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_FMT, Messages.Format);
 
-        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_STATUS, Messages.Format);
+        createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_STATUS, Messages.Status);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME_STAMP, Messages.Creation_Timestamp);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CDATE, Messages.Creation_Date);
         createSpooledFileVariable(groupSubstitutionVariables, "&" + SpooledFile.VARIABLE_CTIME, Messages.Creation_Time);
