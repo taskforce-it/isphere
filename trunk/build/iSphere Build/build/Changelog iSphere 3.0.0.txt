@@ -1,4 +1,11 @@
 
+Changelog: iSphere 3.8.1.r
+--------------------------
+
+ • Fixed description of spooled file decorator variable &STATUS
+   on preferences page.
+ • Added spooled file decorator variable &FORMTYPE.
+
 Changelog: iSphere 3.8.0.r
 --------------------------
 
