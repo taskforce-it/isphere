@@ -10,9 +10,6 @@ package biz.isphere.core.sourcefilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -73,19 +70,14 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     @Override
     protected String[] getItems() {
 
+        ArrayList<String> selectedItems = new ArrayList<String>();
+
         SourceFileSearchFilter filter = new SourceFileSearchFilter();
         SearchOptions searchOptions = getSearchOptions();
 
-        ArrayList<String> selectedItems = new ArrayList<String>();
-        SortedSet<String> keys = new TreeSet<String>(searchElements.keySet());
-
-        Iterator<String> _iterator = keys.iterator();
-        while (_iterator.hasNext()) {
-            String key = _iterator.next();
-            SearchElement value = searchElements.get(key);
-            if (filter.isItemSelected(value, searchOptions)) {
-                selectedItems.add(value.toString());
-            }
+        ArrayList<SearchElement> selectedSearchElements = filter.applyFilter(searchElements.values(), searchOptions);
+        for (SearchElement searchElement : selectedSearchElements) {
+            selectedItems.add(searchElement.toString());
         }
 
         String[] _items = new String[selectedItems.size()];
