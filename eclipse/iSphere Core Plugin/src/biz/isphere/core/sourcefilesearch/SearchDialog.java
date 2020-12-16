@@ -34,6 +34,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.GenericSearchOption;
@@ -51,11 +52,19 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     private Combo filterSrcTypeCombo;
     private RefreshJob refreshJob = new RefreshJob();
 
+    /**
+     * Constructor used by whom? CMOne?
+     */
+    @CMOne(info = "Do not change the constructor. May be used by CMOne.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, false, false);
         this.searchElements = searchElements;
     }
 
+    /**
+     * Constructor used by CMOne and SourceFileSearchAction.
+     */
+    @CMOne(info = "Do not change the constructor.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true, SearchOptionConfig
             .getAdditionalLineModeSearchOptions());
