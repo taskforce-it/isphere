@@ -83,6 +83,7 @@ public class SpooledFile implements IPropertySource {
     public static final String VARIABLE_CDATE = "&CDATE";
     public static final String VARIABLE_CTIME = "&CTIME";
     public static final String VARIABLE_USRDTA = "&USRDTA";
+    public static final String VARIABLE_FORM_TYPE = "&FORMTYPE";
 
     public static final String VARIABLE_OUTQ = "&OUTQ";
     public static final String VARIABLE_OUTQLIB = "&OUTQLIB";
@@ -930,6 +931,7 @@ public class SpooledFile implements IPropertySource {
             mask = replace(mask, VARIABLE_CDATE, getCreationDateFormatted());
             mask = replace(mask, VARIABLE_CTIME, getCreationTimeFormatted());
             mask = replace(mask, VARIABLE_USRDTA, getUserData());
+            mask = replace(mask, VARIABLE_FORM_TYPE, getFormType());
 
             mask = replace(mask, VARIABLE_OUTQLIB, getOutputQueueLibrary());
             mask = replace(mask, VARIABLE_OUTQ, getOutputQueue());
