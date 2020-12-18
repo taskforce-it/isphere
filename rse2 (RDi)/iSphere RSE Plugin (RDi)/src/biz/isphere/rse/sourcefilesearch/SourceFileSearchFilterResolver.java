@@ -11,9 +11,10 @@ package biz.isphere.rse.sourcefilesearch;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
@@ -35,19 +36,27 @@ public class SourceFileSearchFilterResolver {
     private HashMap<String, SearchElement> _searchElements;
     private ISeriesObjectFilterString _objectFilterString;
     private SourceFileSearchDelegate _delegate;
+    private IProgressMonitor monitor;
 
     public SourceFileSearchFilterResolver(Shell shell, IBMiConnection connection) {
-        this._shell = shell;
-        this._connection = connection;
+        this(shell, connection, null);
     }
 
-    public HashMap<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) {
+    public SourceFileSearchFilterResolver(Shell shell, IBMiConnection connection, IProgressMonitor monitor) {
+        this._shell = shell;
+        this._connection = connection;
+        this.monitor = monitor;
+    }
+
+    public HashMap<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
 
         _searchElements = new HashMap<String, SearchElement>();
 
-        boolean _continue = true;
-
         for (int idx = 0; idx < _selectedElements.size(); idx++) {
+
+            if (isCanceled()) {
+                break;
+            }
 
             Object _object = _selectedElements.get(idx);
 
@@ -56,32 +65,31 @@ public class SourceFileSearchFilterResolver {
                 IQSYSResource element = (IQSYSResource)_object;
 
                 if (ResourceTypeUtil.isLibrary(element)) {
-                    _continue = addElementsFromLibrary(element);
+                    addElementsFromLibrary(element);
                 } else if ((ResourceTypeUtil.isSourceFile(element))) {
                     addElementsFromSourceFile(element.getLibrary(), element.getName());
                 } else if (ResourceTypeUtil.isMember(element)) {
                     addElement(element);
-                }
-                if (!_continue) {
-                    break;
                 }
 
             } else if ((_object instanceof SystemFilterReference)) {
 
                 SystemFilterReference filterReference = (SystemFilterReference)_object;
                 String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                if (!addElementsFromFilterString(_filterStrings)) {
-                    break;
-                }
+                addElementsFromFilterString(_filterStrings);
 
             } else if ((_object instanceof ISystemFilterStringReference)) {
 
                 ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference)_object;
                 String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
-                if (!addElementsFromFilterString(_filterStrings)) {
-                    break;
-                }
+                addElementsFromFilterString(_filterStrings);
 
+            } else if ((_object instanceof ISystemFilter)) {
+
+                ISystemFilter systemFilter = (ISystemFilter)_object;
+                for (String filterString : systemFilter.getFilterStrings()) {
+                    addElementsFromFilterString(filterString);
+                }
             }
 
         }
@@ -111,7 +119,7 @@ public class SourceFileSearchFilterResolver {
 
     }
 
-    private void addElementsFromSourceFile(String library, String sourceFile) {
+    private void addElementsFromSourceFile(String library, String sourceFile) throws InterruptedException, Exception {
 
         ISeriesMemberFilterString _memberFilterString = new ISeriesMemberFilterString();
         _memberFilterString.setLibrary(library);
@@ -122,23 +130,16 @@ public class SourceFileSearchFilterResolver {
         addElementsFromFilterString(_memberFilterString.toString());
     }
 
-    private boolean addElementsFromLibrary(IQSYSResource element) {
+    private void addElementsFromLibrary(IQSYSResource element) throws InterruptedException, Exception {
 
         getObjectFilterString().setLibrary(element.getName());
 
-        return addElementsFromFilterString(_objectFilterString.toString());
+        addElementsFromFilterString(_objectFilterString.toString());
     }
 
-    private boolean addElementsFromFilterString(String... filterStrings) {
+    private void addElementsFromFilterString(String... filterStrings) throws InterruptedException, Exception {
 
-        try {
-            return getSourceFileSearchDelegate().addElementsFromFilterString(_searchElements, filterStrings);
-        } catch (InterruptedException localInterruptedException) {
-            return false;
-        } catch (Exception e) {
-            SystemMessageDialog.displayExceptionMessage(_shell, e);
-            return false;
-        }
+        getSourceFileSearchDelegate().addElementsFromFilterString(_searchElements, filterStrings);
     }
 
     private ISeriesObjectFilterString getObjectFilterString() {
@@ -157,9 +158,18 @@ public class SourceFileSearchFilterResolver {
     private SourceFileSearchDelegate getSourceFileSearchDelegate() {
 
         if (_delegate == null) {
-            _delegate = new SourceFileSearchDelegate(_shell, _connection);
+            _delegate = new SourceFileSearchDelegate(_shell, _connection, monitor);
         }
 
         return _delegate;
+    }
+
+    private boolean isCanceled() {
+
+        if (monitor == null) {
+            return false;
+        }
+
+        return monitor.isCanceled();
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     private List listArea;
     private Label labelNumElem;
     private boolean isClosing;
+    private boolean hasListBox = true;
 
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
@@ -103,11 +104,15 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         Composite container = (Composite)super.createDialogArea(parent);
         container.setLayout(new FillLayout());
 
-        sashForm = new SashForm(container, SWT.VERTICAL);
-        Composite upperArea = new Composite(sashForm, SWT.NONE);
+        Composite upperArea;
+        if (hasListBox) {
+            sashForm = new SashForm(container, SWT.VERTICAL);
+            upperArea = new Composite(sashForm, SWT.NONE);
+        } else {
+            upperArea = new Composite(container, SWT.NONE);
+        }
+
         upperArea.setLayout(new GridLayout(1, false));
-        Composite lowerArea = new Composite(sashForm, SWT.NONE);
-        lowerArea.setLayout(new GridLayout(1, false));
 
         if (_editor) {
             createSearchStringEditorGroup(upperArea);
@@ -115,11 +120,18 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
 
         createColumnsGroup(upperArea);
         createOptionsGroup(upperArea);
-        createListArea(lowerArea);
+
+        if (hasListBox) {
+            Composite lowerArea = new Composite(sashForm, SWT.NONE);
+            lowerArea.setLayout(new GridLayout(1, false));
+            createListArea(lowerArea);
+        }
 
         loadScreenValues();
 
-        sashForm.setWeights(sashFormWeights);
+        if (hasListBox) {
+            sashForm.setWeights(sashFormWeights);
+        }
 
         return container;
     }
@@ -243,6 +255,10 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         buttonCaseYes.setSelection(false);
     }
 
+    public void setListBoxEnabled(boolean enabled) {
+        hasListBox = enabled;
+    }
+
     public void setOKButtonEnablement() {
         if (okButton == null) {
             return;
@@ -323,21 +339,9 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
             }
             setElementsSearchOptions(_searchOptions);
 
-            StringBuilder tBuffer = new StringBuilder();
-            for (SearchArgument searchArgument : searchArguments) {
-                if (searchArgument.getString().trim().length() > 0) {
-                    if (tBuffer.length() > 0) {
-                        tBuffer.append("/");
-                    }
-                    tBuffer.append(searchArgument.getString());
-                }
-            }
-            _string = tBuffer.toString();
-
         } else {
 
             setSearchArgument(textString.getText());
-            _string = textString.getText().trim();
 
             if (buttonCaseNo.getSelection()) {
                 _case = SearchOptions.CASE_IGNORE;
@@ -350,6 +354,8 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
             setElementsSearchOptions(_searchOptions);
 
         }
+
+        _string = _searchOptions.getCombinedSearchString();
     }
 
     @Override
@@ -487,12 +493,19 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     }
 
     private void saveSashFormWeights() {
-        sashFormWeights = sashForm.getWeights();
-        storeValue(SASH_FORM_WEIGHTS_UPPER, sashFormWeights[0]);
-        storeValue(SASH_FORM_WEIGHTS_LOWER, sashFormWeights[1]);
+        if (sashForm != null) {
+            sashFormWeights = sashForm.getWeights();
+            storeValue(SASH_FORM_WEIGHTS_UPPER, sashFormWeights[0]);
+            storeValue(SASH_FORM_WEIGHTS_LOWER, sashFormWeights[1]);
+        }
     }
 
     protected void refreshListArea() {
+
+        if (listArea == null) {
+            return;
+        }
+
         listArea.setItems(getItems());
         labelNumElem.setText(Messages.Items_colon + " " + listArea.getItemCount()); //$NON-NLS-1$
     }

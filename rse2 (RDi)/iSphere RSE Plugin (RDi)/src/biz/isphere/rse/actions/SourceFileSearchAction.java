@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,12 +21,13 @@ import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
@@ -37,17 +38,18 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvid
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcefilesearch.SearchDialog;
 import biz.isphere.core.sourcefilesearch.SearchElement;
-import biz.isphere.core.sourcefilesearch.SearchExec;
-import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.sourcefilesearch.RSESearchExec;
 import biz.isphere.rse.sourcefilesearch.SourceFileSearchFilterResolver;
 
 public class SourceFileSearchAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
     protected Shell _shell;
+    protected IWorkbenchWindow _workbenchWindow;
     private IBMiConnection _connection;
     private boolean _multipleConnection;
     private ArrayList<Object> _selectedElements;
@@ -130,7 +132,21 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                 }
             }
 
-           HashMap<String, SearchElement> _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
+            HashMap<String, SearchElement> _searchElements = null;
+
+            try {
+                if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
+                    _searchElements = null;
+                } else {
+                    _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
+                }
+            } catch (InterruptedException e) {
+                SystemMessageDialog.displayExceptionMessage(_shell, e);
+                return;
+            } catch (Exception e) {
+                SystemMessageDialog.displayExceptionMessage(_shell, e);
+                return;
+            }
 
             AS400 as400 = null;
             Connection jdbcConnection = null;
@@ -149,14 +165,12 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                     SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
                     if (dialog.open() == Dialog.OK) {
 
-                        SearchPostRun postRun = new SearchPostRun();
-                        postRun.setConnection(_connection);
-                        postRun.setConnectionName(connectionName);
-                        postRun.setSearchString(dialog.getCombinedSearchString());
-                        postRun.setSearchElements(_searchElements);
-                        postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-
-                        new SearchExec().execute(connectionName, jdbcConnection, dialog.getSearchOptions(), dialog.getSelectedElements(), postRun);
+                        RSESearchExec searchExec = new RSESearchExec(_workbenchWindow, _connection);
+                        if (_searchElements == null) {
+                            searchExec.resolveAndExecute(_selectedElements, dialog.getSearchOptions());
+                        } else {
+                            searchExec.execute(dialog.getSelectedElements(), dialog.getSearchOptions());
+                        }
 
                     }
 
@@ -191,6 +205,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
 
         _shell = workbenchPart.getSite().getShell();
+        _workbenchWindow = workbenchPart.getSite().getWorkbenchWindow();
 
     }
 

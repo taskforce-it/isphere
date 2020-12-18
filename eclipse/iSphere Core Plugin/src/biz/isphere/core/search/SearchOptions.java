@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class SearchOptions implements Serializable {
         for (SearchArgument searchArgument : searchArguments) {
             c++;
             buffer.append(NEW_LINE);
-            buffer.append("#" + c + ": " + searchArgument.toText()); //$NON-NLS-#1$ //$NON-NLS-2$
+            buffer.append("#" + c + ": " + searchArgument.toText()); // $NON-NLS-#1$ //$NON-NLS-2$
         }
 
         if (hasGenericOptions()) {
@@ -175,5 +175,23 @@ public class SearchOptions implements Serializable {
         }
 
         return buffer.toString();
+    }
+
+    public String getCombinedSearchString() {
+
+        StringBuilder tBuffer = new StringBuilder();
+
+        if (searchArguments != null) {
+            for (SearchArgument searchArgument : searchArguments) {
+                if (searchArgument.getString().trim().length() > 0) {
+                    if (tBuffer.length() > 0) {
+                        tBuffer.append("/");
+                    }
+                    tBuffer.append(searchArgument.getString());
+                }
+            }
+        }
+
+        return tBuffer.toString();
     }
 }
