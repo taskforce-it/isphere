@@ -34,7 +34,7 @@ public class SourceFileSearchFilter {
         return selectedSearchElements;
     }
 
-    public boolean isItemSelected(SearchElement item, SearchOptions searchOptions) {
+    private boolean isItemSelected(SearchElement item, SearchOptions searchOptions) {
 
         if (searchOptions == null) {
             return true;
