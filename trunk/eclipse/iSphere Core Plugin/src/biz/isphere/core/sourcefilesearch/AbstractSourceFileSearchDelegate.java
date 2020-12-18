@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,23 +8,32 @@
 
 package biz.isphere.core.sourcefilesearch;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
-
-import biz.isphere.core.internal.ISeries;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.exception.InvalidFilterException;
+
 public abstract class AbstractSourceFileSearchDelegate {
 
     private Shell shell;
+    private IProgressMonitor monitor;
 
     public AbstractSourceFileSearchDelegate(Shell shell) {
+        this(shell, null);
+    }
+
+    public AbstractSourceFileSearchDelegate(Shell shell, IProgressMonitor monitor) {
         this.shell = shell;
+        this.monitor = monitor;
     }
 
     public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String sourceFile, String sourceMember)
@@ -46,6 +55,10 @@ public abstract class AbstractSourceFileSearchDelegate {
 
         for (int idx = 0; idx < filterStrings.length; idx++) {
 
+            if (isCanceled()) {
+                break;
+            }
+
             children = resolveFilterString(filterStrings[idx]);
 
             if ((children != null) && (children.length != 0)) {
@@ -53,9 +66,12 @@ public abstract class AbstractSourceFileSearchDelegate {
                 Object firstObject = children[0];
 
                 if (isSystemMessageObject(firstObject)) {
-                    displaySystemErrorMessage(firstObject);
+                    throwSystemErrorMessage(firstObject);
                 } else {
                     for (int idx2 = 0; idx2 < children.length; idx2++) {
+                        if (isCanceled()) {
+                            break;
+                        }
                         Object element = children[idx2];
                         if (isLibrary(element)) {
                             doContinue = addElementsFromLibrary(searchElements, element);
@@ -76,7 +92,7 @@ public abstract class AbstractSourceFileSearchDelegate {
         return true;
     }
 
-    protected abstract void displaySystemErrorMessage(Object object);
+    protected abstract void throwSystemErrorMessage(Object object) throws InvalidFilterException;
 
     protected abstract boolean isSystemMessageObject(Object object);
 
@@ -103,7 +119,7 @@ public abstract class AbstractSourceFileSearchDelegate {
         } catch (InterruptedException localInterruptedException) {
             return false;
         } catch (Exception e) {
-            displaySystemErrorMessage(e);
+            throwSystemErrorMessage(e);
             return false;
         }
 
@@ -113,11 +129,16 @@ public abstract class AbstractSourceFileSearchDelegate {
 
         Object firstObject = sourceFiles[0];
         if (isSystemMessageObject(firstObject)) {
-            displaySystemErrorMessage(firstObject);
+            throwSystemErrorMessage(firstObject);
             return true;
         }
 
         for (int idx2 = 0; idx2 < sourceFiles.length; idx2++) {
+
+            if (isCanceled()) {
+                break;
+            }
+
             Object element = sourceFiles[idx2];
             if (isSourceFile(element)) {
                 addElementsFromSourceFile(searchElements, getResourceLibrary(element), getResourceName(element));
@@ -161,7 +182,7 @@ public abstract class AbstractSourceFileSearchDelegate {
      * @param searchElements - list of elements that are searched
      * @param sourceMember - message file that is added to the list
      */
-    public void addElement(HashMap<String, SearchElement> searchElements, Object sourceMember) {
+    private void addElement(HashMap<String, SearchElement> searchElements, Object sourceMember) {
 
         String library = getMemberResourceLibrary(sourceMember);
         String file = getMemberResourceFile(sourceMember);
@@ -169,16 +190,32 @@ public abstract class AbstractSourceFileSearchDelegate {
         String type = getMemberResourceType(sourceMember);
         String description = getMemberResourceDescription(sourceMember);
 
-        String tKey = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
+        SearchElement aSearchElement = new SearchElement();
+        aSearchElement.setLibrary(library);
+        aSearchElement.setFile(file);
+        aSearchElement.setMember(member);
+        aSearchElement.setType(type);
+        aSearchElement.setDescription(description);
+
+        addSearchElement(searchElements, aSearchElement);
+    }
+
+    private void addSearchElement(HashMap<String, SearchElement> searchElements, SearchElement aSearchElement) {
+        String tKey = aSearchElement.getLibrary() + "-" + aSearchElement.getFile() + "-" + aSearchElement.getMember(); //$NON-NLS-1$ //$NON-NLS-2$
         if (!searchElements.containsKey(tKey)) {
-            SearchElement aSearchElement = new SearchElement();
-            aSearchElement.setLibrary(library);
-            aSearchElement.setFile(file);
-            aSearchElement.setMember(member);
-            aSearchElement.setType(type);
-            aSearchElement.setDescription(description);
             searchElements.put(tKey, aSearchElement);
         }
+    }
+
+    public HashMap<String, SearchElement> createHashMap(ArrayList<SearchElement> filteredElements) {
+
+        HashMap<String, SearchElement> map = new HashMap<String, SearchElement>();
+
+        for (SearchElement searchElement : filteredElements) {
+            addSearchElement(map, searchElement);
+        }
+
+        return map;
     }
 
     protected Shell getShell() {
@@ -187,4 +224,12 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract Object[] resolveFilterString(String filterString) throws Exception;
 
+    private boolean isCanceled() {
+
+        if (monitor == null) {
+            return false;
+        }
+
+        return monitor.isCanceled();
+    }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, false, false);
         this.searchElements = searchElements;
+        setListBoxEnabled(hasSearchElements());
     }
 
     /**
@@ -69,6 +70,16 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
         super(parentShell, SearchArgument.MAX_SOURCE_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true, SearchOptionConfig
             .getAdditionalLineModeSearchOptions());
         this.searchElements = searchElements;
+        setListBoxEnabled(hasSearchElements());
+    }
+
+    private boolean hasSearchElements() {
+
+        if (searchElements != null) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -79,12 +90,14 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     @Override
     protected String[] getItems() {
 
+        if (searchElements == null) {
+            return new String[0];
+        }
+
         ArrayList<String> selectedItems = new ArrayList<String>();
 
         SourceFileSearchFilter filter = new SourceFileSearchFilter();
-        SearchOptions searchOptions = getSearchOptions();
-
-        ArrayList<SearchElement> selectedSearchElements = filter.applyFilter(searchElements.values(), searchOptions);
+        ArrayList<SearchElement> selectedSearchElements = filter.applyFilter(searchElements.values(), getSearchOptions());
         for (SearchElement searchElement : selectedSearchElements) {
             selectedItems.add(searchElement.toString());
         }
@@ -97,6 +110,10 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     @Override
     public ArrayList<SearchElement> getSelectedElements() {
+
+        if (searchElements == null) {
+            return new ArrayList<SearchElement>();
+        }
 
         SourceFileSearchFilter filter = new SourceFileSearchFilter();
 
@@ -163,7 +180,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
             return;
         }
 
-        if (getSelectedElements().size() == 0) {
+        if (hasSearchElements() && getSelectedElements().size() == 0) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_objects_found_that_match_the_selection_criteria);
             return;
         }

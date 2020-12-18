@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 
 package biz.isphere.rse.sourcefilesearch;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,8 +41,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
@@ -51,16 +57,16 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.GenericSearchOption;
 import biz.isphere.core.search.MatchOption;
 import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcefilesearch.SearchElement;
-import biz.isphere.core.sourcefilesearch.SearchExec;
-import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.core.sourcefilesearch.SourceFileSearchFilter;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.WidgetHelper;
@@ -69,11 +75,6 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -759,8 +760,6 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             return false;
         }
 
-        storeScreenValues();
-
         try {
 
             StructuredSelection tSelection = (StructuredSelection)connectionCombo.getSelection();
@@ -771,24 +770,23 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 return false;
             }
 
-            HashMap<String, SearchElement> searchElements;
-            if (filterRadioButton.getSelection()) {
-                searchElements = loadFilterSearchElements(tConnection, getFilter());
-            } else {
-                searchElements = loadSourceMemberSearchElements(tConnection, getSourceFileLibrary(), getSourceFile(), getSourceMember());
+            if (!filterRadioButton.getSelection()) {
+
+                AS400 system = tConnection.getAS400ToolboxObject();
+                if (!ISphereHelper.checkLibrary(system, getSourceFileLibrary())) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, getSourceFileLibrary()));
+                    sourceFilePrompt.getLibraryCombo().setFocus();
+                    return false;
+                }
+
+                if (!ISphereHelper.checkObject(system, getSourceFileLibrary(), getSourceFile(), ISeries.FILE)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.File_A_in_library_B_not_found, getSourceFile(), getSourceFileLibrary()));
+                    sourceFilePrompt.getObjectCombo().setFocus();
+                    return false;
+                }
             }
 
-            if (searchElements.isEmpty()) {
-                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
-                return false;
-            }
-
-            SearchPostRun postRun = new SearchPostRun();
-            postRun.setConnection(tConnection);
-            postRun.setConnectionName(tConnection.getConnectionName());
-            postRun.setSearchString(getCombinedSearchString());
-            postRun.setSearchElements(searchElements);
-            postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+            storeScreenValues();
 
             int startColumn;
             int endColumn;
@@ -809,21 +807,45 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
             searchOptions.setGenericOption(GenericSearchOption.Key.SRCMBR_SRC_TYPE, getSourceType());
 
-            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
+            IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
-            SourceFileSearchFilter filter = new SourceFileSearchFilter();
-            ArrayList<SearchElement> selectedElements = filter.applyFilter(searchElements.values(), searchOptions);
+            if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
 
-            if (selectedElements.size() == 0) {
-                MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
-                return false;
+                if (filterRadioButton.getSelection()) {
+                    ArrayList<Object> selectedFilters = new ArrayList<Object>();
+                    selectedFilters.add(getFilter());
+                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(selectedFilters, searchOptions);
+                } else {
+                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(getSourceFileLibrary(), getSourceFile(), getSourceMember(),
+                        searchOptions);
+                }
+            } else {
+
+                HashMap<String, SearchElement> searchElements;
+
+                if (filterRadioButton.getSelection()) {
+                    searchElements = loadFilterSearchElements(tConnection, getFilter());
+                } else {
+                    searchElements = loadSourceMemberSearchElements(tConnection, getSourceFileLibrary(), getSourceFile(), getSourceMember());
+                }
+
+                SourceFileSearchFilter filter = new SourceFileSearchFilter();
+                ArrayList<SearchElement> selectedElements = filter.applyFilter(searchElements.values(), searchOptions);
+
+                if (selectedElements.size() == 0) {
+                    MessageDialog.openInformation(getShell(), Messages.Information, Messages.No_objects_found_that_match_the_selection_criteria);
+                    return false;
+                }
+
+                new RSESearchExec(workbenchWindow, tConnection).execute(selectedElements, searchOptions);
             }
 
-            new SearchExec().execute(tConnection.getConnectionName(), jdbcConnection, searchOptions, selectedElements, postRun);
-
         } catch (Exception e) {
-            ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            if (!(e instanceof InvalidFilterException)) {
+                ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            }
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            return false;
         }
 
         return true;
@@ -846,18 +868,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         return searchElements;
     }
 
-    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws InterruptedException {
+    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
 
-        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+        ArrayList<Object> selectedFilters = new ArrayList<Object>();
+        selectedFilters.add(getFilter());
 
-        try {
-
-            SourceFileSearchDelegate delegate = new SourceFileSearchDelegate(getShell(), connection);
-            delegate.addElementsFromFilterString(searchElements, filter.getFilterStrings());
-
-        } catch (Throwable e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
+        SourceFileSearchFilterResolver filterResolver = new SourceFileSearchFilterResolver(getShell(), connection);
+        HashMap<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
 
         return searchElements;
     }

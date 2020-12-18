@@ -269,6 +269,12 @@ public class Messages extends NLS {
     public static String Yes;
 
     public static String iSphere_Source_File_Search;
+    
+    public static String Resolving_filters;
+    
+    public static String Resolving_objects;
+    
+    public static String Searching;
 
     public static String iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B;
 
@@ -964,6 +970,10 @@ public class Messages extends NLS {
 
     public static String Tooltip_Specifies_the_folder_to_save_source_file_search_results_to;
 
+    public static String Batch_resolve_enabled_colon;
+
+    public static String Batch_resolve_enabled_Tooltip;
+
     public static String Auto_save_enabled_colon;
 
     public static String Auto_save_enabled_Tooltip;
@@ -1637,7 +1647,7 @@ public class Messages extends NLS {
     public static String SaveAsPDF;
 
     public static String SaveAsHTML;
-
+    
     /*
      * Warning messages
      */

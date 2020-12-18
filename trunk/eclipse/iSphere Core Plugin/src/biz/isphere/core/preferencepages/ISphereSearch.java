@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private static final String MODE_VIEW = "*BROWSE"; //$NON-NLS-1$
     private static final String MODE_EDIT = "*EDIT"; //$NON-NLS-1$
 
+    private Button buttonBatchResolveEnabled;
     private Combo comboSourceFileSearchEditMode;
     private Text textSourceFileSearchSaveDirectory;
     private Button buttonSourceFileSearchAutoSaveEnabled;
@@ -93,6 +94,26 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         group.setLayout(new GridLayout(3, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group.setText(Messages.Source_file_search);
+
+        Label labelBatchResolveEnabled = new Label(group, SWT.NONE);
+        labelBatchResolveEnabled.setLayoutData(createLabelLayoutData());
+        labelBatchResolveEnabled.setText(Messages.Batch_resolve_enabled_colon);
+
+        buttonBatchResolveEnabled = WidgetFactory.createCheckbox(group);
+        buttonBatchResolveEnabled.setToolTipText(Messages.Batch_resolve_enabled_Tooltip);
+        buttonBatchResolveEnabled.setLayoutData(createTextLayoutData(2));
+        buttonBatchResolveEnabled.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                if (validateSourceFileSearchAutoSaveEnabled()) {
+                    checkAllValues();
+                    setControlsEnablement();
+                }
+            }
+
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+            }
+        });
 
         Label labelSoureFileSearchEditMode = new Label(group, SWT.NONE);
         labelSoureFileSearchEditMode.setLayoutData(createLabelLayoutData());
@@ -316,6 +337,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Preferences preferences = Preferences.getInstance();
 
+        preferences.setSourceFileSearchBatchResolveEnabled(buttonBatchResolveEnabled.getSelection());
         preferences.setSourceFileSearchResultsEditEnabled(getComboSourceFileSearchEditMode());
         preferences.setSourceFileSearchResultsSaveDirectory(textSourceFileSearchSaveDirectory.getText());
         preferences.setSourceFileSearchResultsAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled.getSelection());
@@ -334,6 +356,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Preferences preferences = Preferences.getInstance();
 
+         buttonBatchResolveEnabled.setSelection(preferences.isSourceFileSearchBatchResolveEnabled());
         setComboSourceFileSearchEditMode(preferences.isSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getSourceFileSearchResultsSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
@@ -353,6 +376,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Preferences preferences = Preferences.getInstance();
 
+        buttonBatchResolveEnabled.setSelection(preferences.getDefaultSourceFileSearchBatchResolveEnabled());
         setComboSourceFileSearchEditMode(preferences.getDefaultSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getDefaultSourceFileSearchResultsSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultSourceFileSearchResultsAutoSaveEnabled());
@@ -392,6 +416,11 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         comboSourceFileSearchEditMode.setItems(textViews);
     }
 
+    private boolean validateBatchResolveEnabled() {
+
+        return true;
+    }
+
     private boolean validateSourceFileSearchEditMode() {
 
         if (comboSourceFileSearchEditMode == null) {
@@ -408,7 +437,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
     private boolean validateSourceFileSearchAutoSaveEnabled() {
 
-        return validateSearchAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled);
+        return true;
     }
 
     private boolean validateSourceFileSearchAutoSaveFileName() {
@@ -423,7 +452,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
     private boolean validateMessageFileSearchAutoSaveEnabled() {
 
-        return validateSearchAutoSaveEnabled(buttonMessageFileSearchAutoSaveEnabled);
+        return true;
     }
 
     private boolean validateMessageFileSearchAutoSaveFileName() {
@@ -461,15 +490,6 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         return clearError();
     }
 
-    private boolean validateSearchAutoSaveEnabled(Button buttonAutoSaveEnabled) {
-
-        if (buttonAutoSaveEnabled == null) {
-            return true;
-        }
-
-        return true;
-    }
-
     private boolean validateSearchAutoSaveFileName(Text textFileName) {
 
         if (textFileName == null) {
@@ -486,6 +506,10 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     }
 
     private boolean checkAllValues() {
+
+        if (!validateBatchResolveEnabled()) {
+            return false;
+        }
 
         if (!validateSourceFileSearchEditMode()) {
             return false;

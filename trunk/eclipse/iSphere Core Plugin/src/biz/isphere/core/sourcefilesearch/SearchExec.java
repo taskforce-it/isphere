@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -30,8 +32,6 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.search.SearchOptions;
-
-import com.ibm.as400.access.AS400;
 
 public class SearchExec {
 
@@ -50,7 +50,7 @@ public class SearchExec {
         public Search(AS400 _as400, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
             ISearchPostRun _searchPostRun) {
 
-            super("iSphere Source File Search"); //$NON-NLS-1$
+            super(Messages.iSphere_Source_File_Search);
 
             this._as400 = _as400;
             this._jdbcConnection = _jdbcConnection;
@@ -65,7 +65,7 @@ public class SearchExec {
         public Search(String connectionName, Connection _jdbcConnection, SearchOptions _searchOptions, ArrayList<SearchElement> _searchElements,
             ISearchPostRun _searchPostRun) {
 
-            super("iSphere Source File Search"); //$NON-NLS-1$
+            super(Messages.iSphere_Source_File_Search);
 
             this._as400 = IBMiHostContributionsHandler.getSystem(connectionName);
             this._jdbcConnection = _jdbcConnection;
@@ -116,7 +116,7 @@ public class SearchExec {
 
                             int _numberOfSearchElements = new FNDSTR_getNumberOfSearchElements().run(_as400, _handle);
 
-                            monitor.beginTask("Searching", _numberOfSearchElements); //$NON-NLS-1$
+                            monitor.beginTask(Messages.Searching, _numberOfSearchElements); //$NON-NLS-1$
 
                             // Start the search job on the host.
                             new DoSearch(_as400, _handle, _searchOptions, monitor).start();
