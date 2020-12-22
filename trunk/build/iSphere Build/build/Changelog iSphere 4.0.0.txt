@@ -2,6 +2,9 @@
 Changelog: iSphere 4.0.0.b001
 -----------------------------
 
+ • Added toolbar buttons for closing all search result tabs to the
+   iSphere Source File Search and iSphere Message File Search result
+   views. 
  • Changed iSphere source file search to optionally resolve filters
    and objects in batch. Added switch on iSphere "Search" preferences
    page.
@@ -9,9 +12,9 @@ Changelog: iSphere 4.0.0.b001
 Changelog: iSphere 3.8.1.r
 --------------------------
 
+ • Added spooled file decorator variable &FORMTYPE.
  • Fixed description of spooled file decorator variable &STATUS
    on preferences page.
- • Added spooled file decorator variable &FORMTYPE.
 
 Changelog: iSphere 3.8.0.r
 --------------------------

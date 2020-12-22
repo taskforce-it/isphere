@@ -62,6 +62,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionExportToMemberFilter;
     private Action actionExportToExcel;
     private Action actionRemoveTabItem;
+    private Action actionRemoveAllTabItems;
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
     private DisableEditAction actionDisableEdit;
@@ -174,6 +175,19 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS));
         actionRemoveTabItem.setEnabled(false);
 
+        actionRemoveAllTabItems = new Action("") { //$NON-NLS-1$
+            @Override
+            public void run() {
+                if (MessageDialog.openQuestion(shell, Messages.Question,
+                    Messages.bind(Messages.Question_close_all_tabs, tabFolderSearchResults.getItemCount()))) {
+                    removeAllTabItems();
+                }
+            }
+        };
+        actionRemoveAllTabItems.setToolTipText(Messages.Remove_tab_item);
+        actionRemoveAllTabItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS_MINUS));
+        actionRemoveAllTabItems.setEnabled(false);
+
         actionRemoveSelectedItems = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
@@ -240,6 +254,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         toolbarManager.add(actionExportToExcel);
         toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveTabItem);
+        toolbarManager.add(actionRemoveAllTabItems);
     }
 
     private void initializeMenu() {
@@ -468,34 +483,35 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     public void selectionChanged(SelectionChangedEvent event) {
 
-        boolean hasViewer;
-        boolean hasTabItems;
-        boolean hasMultipleTabItems;
+        boolean hasSelectedViewer;
+        boolean hasItems;
         boolean hasSelectedItems;
+        boolean hasMultipleTabItems;
         SearchResultViewer _searchResultViewer = getSelectedViewer();
 
         if (_searchResultViewer == null) {
-            hasViewer = false;
-            hasTabItems = false;
-            hasMultipleTabItems = false;
+            hasSelectedViewer = false;
+            hasItems = false;
             hasSelectedItems = false;
+            hasMultipleTabItems = false;
             actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         } else {
-            hasViewer = true;
-            hasTabItems = tabFolderSearchResults.getItemCount() > 0;
-            hasMultipleTabItems = tabFolderSearchResults.getItemCount() > 1;
+            hasSelectedViewer = true;
+            hasItems = tabFolderSearchResults.getItemCount() > 0;
             hasSelectedItems = _searchResultViewer.hasSelectedItems();
+            hasMultipleTabItems = tabFolderSearchResults.getItemCount() > 1;
             actionDisableEdit.setEditEnabled(_searchResultViewer.isEditEnabled());
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
         actionInvertSelectedItems.setEnabled(hasSelectedItems);
-        actionExportToMemberFilter.setEnabled(hasTabItems);
-        actionExportToExcel.setEnabled(hasTabItems);
-        actionRemoveTabItem.setEnabled(hasViewer);
-        actionDisableEdit.setEnabled(hasTabItems);
+        actionExportToMemberFilter.setEnabled(hasItems);
+        actionExportToExcel.setEnabled(hasItems);
+        actionRemoveTabItem.setEnabled(hasSelectedViewer);
+        actionRemoveAllTabItems.setEnabled(hasMultipleTabItems);
+        actionDisableEdit.setEnabled(hasItems);
 
-        actionSaveSearchResult.setEnabled(hasTabItems);
+        actionSaveSearchResult.setEnabled(hasItems);
         actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
         actionLoadSearchResult.setEnabled(true);
         actionEnableAutoSave.setEnabled(true);

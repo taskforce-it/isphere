@@ -269,11 +269,11 @@ public class Messages extends NLS {
     public static String Yes;
 
     public static String iSphere_Source_File_Search;
-    
+
     public static String Resolving_filters;
-    
+
     public static String Resolving_objects;
-    
+
     public static String Searching;
 
     public static String iSphere_library_A_does_not_exist_on_system_B_Please_transfer_iSphere_library_A_to_system_B;
@@ -988,6 +988,8 @@ public class Messages extends NLS {
 
     public static String Question_replace_search_results;
 
+    public static String Question_close_all_tabs;
+
     public static String Label_Decorations_RSE_host_objects;
 
     public static String Label_Decorations_RSE_host_objects_Description;
@@ -1647,7 +1649,7 @@ public class Messages extends NLS {
     public static String SaveAsPDF;
 
     public static String SaveAsHTML;
-    
+
     /*
      * Warning messages
      */

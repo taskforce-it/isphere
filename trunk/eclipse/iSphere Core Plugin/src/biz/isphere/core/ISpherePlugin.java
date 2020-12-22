@@ -84,6 +84,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_COMPARE = "compare.gif";
     public static final String IMAGE_BINDING_DIRECTORY = "binding_directory.gif";
     public static final String IMAGE_MINUS = "minus.gif";
+    public static final String IMAGE_MINUS_MINUS = "minus_minus.gif";
     public static final String IMAGE_SOURCE_FILE_SEARCH = "source_file_search.gif";
     public static final String IMAGE_MESSAGE_FILE_SEARCH = "message_file_search.png";
     public static final String IMAGE_SELECT_ALL = "select_all.gif";
@@ -265,6 +266,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_COMPARE, getImageDescriptor(IMAGE_COMPARE));
         reg.put(IMAGE_BINDING_DIRECTORY, getImageDescriptor(IMAGE_BINDING_DIRECTORY));
         reg.put(IMAGE_MINUS, getImageDescriptor(IMAGE_MINUS));
+        reg.put(IMAGE_MINUS_MINUS, getImageDescriptor(IMAGE_MINUS_MINUS));
         reg.put(IMAGE_SOURCE_FILE_SEARCH, getImageDescriptor(IMAGE_SOURCE_FILE_SEARCH));
         reg.put(IMAGE_MESSAGE_FILE_SEARCH, getImageDescriptor(IMAGE_MESSAGE_FILE_SEARCH));
         reg.put(IMAGE_SELECT_ALL, getImageDescriptor(IMAGE_SELECT_ALL));
