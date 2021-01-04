@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/13/2020">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/04/2021">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -2311,6 +2311,48 @@ e expected format is: &P >>INCLUDE<< [Library]/File Member;'          +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0033                    */
+     /* Objekt erstellt.                                            */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0033) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0033) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Object created.'                                                     +
+                ) +
+                SEV(10) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0034                    */
+     /* Fehlernachricht &1 wurde aufgrund von MONMSG ignoriert.     */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0034) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0034) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Error message &1 ignored due to MONMSG.'                             +
+                ) +
+                SEV(10) +
+                FMT( +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
      /*-------------------------------------------------------------*/
      /*   Cmd-ADDMSGD für Message-ID :   PRZ0035                    */
      /* Library &1 not found.                                       */
@@ -3165,6 +3207,48 @@ as richtige Format ist:&P >>INCLUDE<< [Bibliothek]/Datei Teildatei;'  +
                 CCSID( 65535) +
                 /*  -EOF-  */
 
+     /* ----------------------------------------------------------- */
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0033                    */
+     /* Objekt erstellt.                                            */
+     /* ----------------------------------------------------------- */
+
+             RMVMSGD MSGID(PRZ0033) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0033) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Objekt erstellt.'                                                    +
+                ) +
+                SEV(10) +
+     /*   Keine Ersatzvariablen definiert!                          */ +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
+     /*-------------------------------------------------------------*/
+     /*   Cmd-ADDMSGD für Message-ID :   PRZ0034                    */
+     /* Fehlernachricht &1 wurde aufgrund von MONMSG ignoriert.     */
+     /*-------------------------------------------------------------*/
+
+             RMVMSGD MSGID(PRZ0034) MSGF(&LI/STRPREPRC)
+             MONMSG  MSGID(CPF2419)     /* MsgID nicht gefunden */
+
+             ADDMSGD +
+                MSGID(PRZ0034) +
+                MSGF(&LI/STRPREPRC) +
+                MSG(+
+'Fehlernachricht &1 wurde aufgrund von MONMSG ignoriert.'             +
+                ) +
+                SEV(10) +
+                FMT( +
+                    (*CHAR 0010) +
+                ) +
+                ALROPT(*NO) +
+                CCSID( 65535) +
+                /*  -EOF-  */
+
      /*-------------------------------------------------------------*/
      /*   Cmd-ADDMSGD für Message-ID :   PRZ0035                    */
      /* Bibliothek &1 nicht gefunden.                               */
@@ -3285,13 +3369,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.18.0 - 26.04.2020 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.18.1 - 04.01.2021 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.18.0'
+     d                 C                   '1.18.1'
      d STRPREPRC_DATE...
-     d                 C                   '26.04.2020'
+     d                 C                   '04.01.2021'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3371,6 +3455,7 @@ srccssid=  "01141">
      D                                     ')
      D  i_obj                        10a   const
      D  i_lib                        10a   const
+     D  i_append                       n   const
      D  i_qEventf                          const  likeds(qObj_t)
      D                                            options(*nopass)
 
@@ -3382,8 +3467,7 @@ srccssid=  "01141">
      D  i_srcLib                     10a   const
      D  i_srcMbr                     10a   const
      D  i_lineNumber                 10i 0 const
-     D  i_threshold                  10i 0 const options(*nopass)
-     D  i_ovrMsgSev                  10i 0 const options(*nopass)
+     D  i_isAbnEnd                     n   const
 
      D closeEventFile...
      D                 pr                  extproc('STRPREPRC4_+
@@ -4177,6 +4261,54 @@ srccssid=  "01141">
      d  PRZ00323                    010A   INZ(*BLANKS)
      d  PRZ00324                    006P 2 INZ(*ZEROS )
      d PRZ0032_SIZE    s              8B 0 INZ(0036)
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0033  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0033   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Objekt erstellt.                             "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      *---------------------------------------------------------------
+      * Datenstruktur für Message-ID : PRZ0033
+      *
+      * Objekt erstellt.
+      *
+     D PRZ0033         DS
+      *   Keine Ersatzvariablen definiert!
+     D PRZ0033_SIZE    S              8B 0 INZ(0000)
+      *
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing PRZ0034  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "PRZ0034   "
+mbrtype =  "RPGLE     "
+mbrtext =  "MSG: Fehlernachricht  1 wurde aufgrund von MONMSG "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      // ---------------------------------------------------------------
+      //  Data structure for message ID: PRZ0034
+
+      //  Fehlernachricht &1 wurde aufgrund von MONMSG ignoriert.
+
+     d PRZ0034         ds
+     d  PRZ00341                     10A   inz(*BLANKS)
+     d PRZ0034_SIZE    s             10I 0 inz(10)
 
 ]]>  </copysrc>
 </mbr>
@@ -5323,6 +5455,9 @@ srccssid=  "01141">
 .*                                                                     *
 .*  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
 .*                                                                     *
+.*  22.12.2020  Th.Raddatz    Fixed description of special value       *
+.*                            *ADDJOBLOG of command parameter OPTION.  *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
@@ -5723,9 +5858,10 @@ wird.
 :PT.:PV.*EVENTF:EPV.
 :PD.Es wird eine Ereignisdatei zur Verwendung durch Client-Tools erstellt.
 :PT.:PK DEF.*NOJOBLOG:EPK.
-:PD.Es werden keine zusätzlichen Jobprotokolleinträge zur Ausgabe hinzugefügt.
-Das Jobprotokoll wird unabhängig von der Vorgabe *NOJOBLOG auch dann
-geschrieben, wenn der Erstellungsbefehl keine Ereignisdatei ausgegeben hat.
+:PD.Es werden keine zusätzlichen Jobprotokolleinträge zu einer von einem
+IBM Erstellungsbefehl erzeugten Ereignisdatei hinzugefügt. Kommt es jedoch
+zu einem Fehler und ist keine Ereignisdatei vorhanden, wird eine Ereignisdatei
+mit Joblogeinträgen erstellt.
 :PT.:PV.*ADDJOBLOG:EPV.
 :PD.Einer durch einen IBM Erstellungsbefehl erzeugten Ereignisdatei werden
 Jobprotokolleinträge hinzugefügt. Diese Auswahl ist nur in Verbindung mit
@@ -6744,6 +6880,9 @@ srccssid=  "01141">
 .*                                                                     *
 .*  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
 .*                                                                     *
+.*  22.12.2020  Th.Raddatz    Fixed description of special value       *
+.*                            *ADDJOBLOG of command parameter OPTION.  *
+.*                                                                     *
 .*=====================================================================*
 .* >>PRE-COMPILER<<                                                    *
 .*   >>CRTCMD<< CRTPNLGRP    PNLGRP(&LI/STRPREPRCP) +                  *
@@ -7124,9 +7263,9 @@ job log.
 :PT.:PV.*EVENTF:EPV.
 :PD.Create an Event File for use by client tooling.
 :PT.:PK DEF.*NOJOBLOG:EPK.
-:PD.Job log entries are not added to an IBM created event file. Job log
-entries also also added (regardless of *NOJOBLOG), when the IBM object
-creation command did not create an event file.
+:PD.Job log entries are not added to an IBM created event file. But in case
+there is an error and there is no event file, an event file is created and
+job log entries are added.
 :PT.:PV.*ADDJOBLOG:EPV.
 :PD.Job log entries are added to an event file that was created by an
 IBM object creation command. This option can only be specified in
@@ -8034,6 +8173,1308 @@ Beispiel:
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing STRPREPRCT  type SQLRPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "STRPREPRCT"
+mbrtype =  "SQLRPGLE  "
+mbrtext =  "STRPREPRC Self-Test                               "
+srcfile =  "QSTRPREPRC"
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+**free
+//=====================================================================
+//  STRPREPRC - SelfTest.
+//=====================================================================
+//  Command to create the service program:
+//  RUCRTRPG TSTPGM(RPGUNIT/STRPREPRCT) SRCFILE(QSTRPREPRC)
+//=====================================================================
+//  Tools/400 STRPREPRC instructions:
+//   >>PRE-COMPILER<<
+//     >>CRTCMD<<  RUCRTRPG    TSTPGM(&LI/&OB) +
+//                             SRCFILE(&SL/&SF) +
+//                             SRCMBR(&SM);
+//     >>COMPILE<<
+//       >>PARM<< RPGPPOPT(*LVL2);
+//       >>PARM<< DBGVIEW(*NONE);
+//       >>PARM<< POPTION(*EVENTF);
+//       >>PARM<< COMPILEOPT('DBGVIEW(*LIST)');
+//       >>PARM<< BNDDIR(*N);
+//     >>END-COMPILE<<
+//     >>EXECUTE<<
+//   >>END-PRE-COMPILER<<
+//=====================================================================
+ctl-opt NoMain Option(*SrcStmt : *NoDebugIO);
+
+/include qinclude,TESTCASE                  iRPGUnit Test Suite
+
+exec sql
+  SET OPTION
+    NAMING =*SQL, COMMIT = *NONE, CLOSQLCSR = *ENDACTGRP, DATFMT = *ISO, TIMFMT = *ISO,
+    DFTRDBCOL = QTEMP, DYNDFTCOL = *YES;
+
+// ------------------------------------------------------------
+//  Global Program Status.
+// ------------------------------------------------------------
+
+dcl-ds g_status qualified;
+  srcSeq int(10);
+  srcSeq2 int(10);
+  sql likeds(sql_status_t) inz(*likeds);
+end-ds;
+
+dcl-ds sql_status_t qualified template;
+  ignSQLWarn ind inz(*off);
+end-ds;
+
+// ------------------------------------------------------------
+//  Global type templates.
+// ------------------------------------------------------------
+dcl-ds errCode_t qualified template;
+  bytPrv       int(10) inz(%size(errCode_t));
+  bytAvl       int(10) inz;
+  excId        char(7) inz;
+  reserved_1   char(1) inz;
+  excDta       char(100) inz;
+end-ds;
+
+// ------------------------------------------------------------
+//  Set up test suite.
+// ------------------------------------------------------------
+dcl-proc setUpSuite export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  if (not exist('QTEMP': 'RUNIT_TST': '*FILE'));
+    runCmd('CRTSRCPF FILE(QTEMP/RUNIT_TST) RCDLEN(112) MBR(*NONE)');
+  endif;
+
+  if (not exist('QTEMP': 'RUNIT_TST': '*FILE': 'TESTCASE'));
+    runCmd('ADDPFM FILE(QTEMP/RUNIT_TST) MBR(TESTCASE) +
+              TEXT(''STRPREPRD - SelfTest'') SRCTYPE(CLLE)');
+  endif;
+
+  if (not exist('QTEMP': 'RUNIT_TST': '*FILE': 'TESTCASE2'));
+    runCmd('ADDPFM FILE(QTEMP/RUNIT_TST) MBR(TESTCASE2) +
+              TEXT(''STRPREPRD - SelfTest'') SRCTYPE(CLLE)');
+  else;
+    runCmd('CLRPFM FILE(QTEMP/RUNIT_TST) MBR(TESTCASE2)');
+  endif;
+
+  if (not exist('QTEMP': 'EVFEVENT': '*FILE'));
+    runCmd('CRTPF FILE(QTEMP/EVFEVENT) RCDLEN(400) MAXMBRS(*NOMAX) CCSID(*HEX)');
+    runCmd('RMVM FILE(QTEMP/EVFEVENT) MBR(*ALL)');
+  endif;
+
+  exec sql
+    CREATE ALIAS qtemp.testmbr FOR qtemp.RUNIT_TST (TESTCASE);
+  assert(not isSqlError(sqlState));
+
+  exec sql
+    CREATE ALIAS qtemp.testmbr2 FOR qtemp.RUNIT_TST (TESTCASE2);
+  assert(not isSqlError(sqlState));
+
+  exec sql
+    CREATE ALIAS qtemp.eventfile FOR qtemp.EVFEVENT (TESTCASE);
+  assert(not isSqlError(sqlState));
+
+  append2('/* ---------------------------------------------------------------- */': 100);
+  append2('/*     Produces an compile error.                                   */');
+  append2('/* ---------------------------------------------------------------- */');
+  append2('PGM');
+  append2('  CHGVAR &LIB ''FOO''');
+  append2('ENDPGM');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Tear down test case.
+// ------------------------------------------------------------
+dcl-proc tearDownSuite export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  exec sql
+    DROP ALIAS qtemp.testmbr;
+
+  exec sql
+    DROP ALIAS qtemp.testmbr2;
+
+  exec sql
+    DROP ALIAS qtemp.eventfile;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Set up test case.
+// ------------------------------------------------------------
+dcl-proc setUp export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  exec sql
+    DELETE FROM testmbr;
+  setIgnSQLWarn(*on);
+  assert(not isSqlError(sqlState));
+
+  if (exist('QTEMP': 'EVFEVENT': '*FILE'));
+    if (exist('QTEMP': 'EVFEVENT': '*FILE': 'TESTCASE'));
+      exec sql
+        DELETE FROM eventfile;
+      setIgnSQLWarn(*on);
+      assert(not isSqlError(sqlState));
+    endif;
+  endif;
+
+  if (exist('QTEMP': 'RUNIT_TST': '*FILE'));
+    if (exist('QTEMP': 'RUNIT_TST': '*FILE': 'DUMMY'));
+      runCmd('RMVM FILE(QTEMP/RUNIT_TST) MBR(DUMMY)');
+    endif;
+  endif;
+
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_NOEVENTF_NOJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);          */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*NOEVENTF *NOJOBLOG) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to STRPREPRC OPTION(*NOEVENTF).
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_NOEVENTF_NOJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_ERR) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*NOEVENTF *NOJOBLOG) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (001)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_EVENTF_NOJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log
+//    error messages. (replacement for compile listing)
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_EVENTF_NOJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_ERR) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (002)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+
+  assertMsgID('CPF7312': 'S'); // File not found
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_EVENTF_ADDJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log
+//    error messages. (replacement for compile listing)
+// ------------------------------------------------------------
+dcl-proc test_PreCommand_EVENTF_ADDJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the pre-compile command.                */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_ERR) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE)');
+    fail('STRPREPRC should have thown an error (003)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('*NONE'); // *NONE, because parameters SRCLIB, SRCFILE and SRCMBR
+  // had not been specified.
+  assertNoJobLog();
+
+  assertMsgId('CPF7312': 'S'); // File not found
+  assertMsgId('CPF7306': 'T'); // Member not added
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_Execute_NOEVENTF_NOJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>EXECUTE<<                                                      */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*NOEVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to STRPREPRC OPTION(*NOEVENTF).
+// ------------------------------------------------------------
+dcl-proc test_Execute_NOEVENTF_NOJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*NOEVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>EXECUTE<<                                                      */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log
+//    error messages. (replacement for compile listing)
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPF0821': 'T'); // Module not created
+  assertMsgID('PRZ0029': 'S'); // STRPREPRZ messages
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log
+//    warning messages. (additional job log messages)
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('PRZ0029': 'W'); // STRPREPRZ warning messages,
+                               // due to OPTION(*ADDJOBLOG).
+  assertMsgID('PRZ0033': 'W'); // Object created.
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log
+//    error messages. (replacement for compile listing)
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE );                           */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPF0821': 'T'); // Module not created
+  assertMsgID('PRZ0029': 'S'); // STRPREPRZ error messages
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*EVENTF) +             */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>EXECUTE<<                                                      */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL &LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPD0726': 'W'); // Variable &LIB declared but not referred to
+  assertMsgID('CPD0791': 'I'); // No labels used in program
+
+  assertNoMsgId('PRZ0029');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPD0081': 'S'); // Variable name required for parameter VAR.
+
+  assertNoMsgId('PRZ0029');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
+
+  assertNoMsgId('PRZ0029');
+
+end-proc;
+
+// ------------------------------------------------------------
+//    FILEID 001 for member TESTCASE with compile messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE );                           */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertNoJobLog();
+  assertMsgID('CPD0081': 'S'); // Variable name required for parameter VAR.
+
+  assertNoMsgId('PRZ0029');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_OK_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertEmpty();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with job log messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_OK_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertFileID_001('TESTCASE'); // Added due to *ADDJOBLOG and *NOEVENTF
+  assertNoJobLog();
+  assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
+
+  assertMsgID('PRZ0029': 'W'); // STRPREPRZ messages
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    Empty EVFEVENT file, due to no errors.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_OK_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *NOEVENTF) +    */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_ERR) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE'); // Added due to *ERROR in *POSTCMD
+  assertNoJobLog();
+
+  assertMsgID('CPF7312': 'S'); // File not found
+  assertMsgId('CPF7306': 'T'); // Member not added
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+//    FILEID 999 for *JOBLOG with *POSTCMD error messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_OK_ERROR export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<   ADDPFM FILE(QTEMP/RUNIT_ERR) MBR(DUMMY);             */');
+  append('/*   >>CMD<<   RMVM   FILE(QTEMP/RUNIT_TST) MBR(DUMMY);             */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE'); // Added due to *ERROR in *POSTCMD
+  assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
+
+  assertFileID_999('*JOBLOG'); // Job log of *POSTCMD
+  assertMsgID('CPF7312': 'S'); // File not found
+  assertMsgId('CPF7306': 'T'); // Member not added
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_OK_OK export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+            OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+            SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+
+  assertFileID_001('TESTCASE'); // Added due to *ERROR in *POSTCMD
+  assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
+  assertNoJobLog();
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Expected:
+//    FILEID 001 for member TESTCASE with compile messages.
+//    FILEID 999 for *JOBLOG with *POSTCMD joblog  messages.
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_OK_ERROR_COPY export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 1);
+  append('/*     Succesfully executes the pre-compile and main commands.      */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*GEN   *EVENTF) +      */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/*   >>CMD<<   CRTCLMOD   MODULE(&LI/TESTCASE2) SRCFILE(&SL/&SF) +  */');
+  append('/*                        SRCMBR(TESTCASE2) OPTION(*EVENTF) +       */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *ADDJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE'); // Added due to *ERROR in *POSTCMD
+  assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
+
+  assertFileID_999('*JOBLOG'); // Job log of *POSTCMD
+  assertMsgID('CPF0821': 'T'); // Module TESTCASE2 not created.
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Assert that the event file is empty.
+// ------------------------------------------------------------
+dcl-proc assertEmpty;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  dcl-s count int(10);
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile;
+  assert(not isSqlError(sqlState));
+
+  assert(count = 0: 'The event file must not contain any entries at all');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Assert that the event file does not contain any *JOBLOG
+//  entries.
+// ------------------------------------------------------------
+dcl-proc assertNoJobLog;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  dcl-s count int(10);
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile
+      WHERE evfevent like 'FILEID % *JOBLOG %';
+  assert(not isSqlError(sqlState));
+
+  assert(count = 0: 'The event file must not contain a FILEID for *JOBLOG');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Asserts that the event file contains a file ID 001 section.
+// ------------------------------------------------------------
+dcl-proc assertFileID_001;
+  dcl-pi *n extproc(*dclcase);
+    i_section  varchar(10) const;
+  end-pi;
+
+  dcl-s argument varchar(100);
+  dcl-s count int(10);
+
+  argument = 'FILEID     0 001 %(' + i_section + ')%';
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile
+      WHERE evfevent like :argument;
+  assert(not isSqlError(sqlState));
+
+  assert(count = 1: 'Error messages must be related to file ID 001');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Asserts that the event file contains a file ID 999 section.
+// ------------------------------------------------------------
+dcl-proc assertFileID_999;
+  dcl-pi *n extproc(*dclcase);
+    i_section  varchar(10) const;
+  end-pi;
+
+  dcl-s argument varchar(100);
+  dcl-s count int(10);
+
+  argument = 'FILEID     0 999 % ' + i_section + ' %';
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile
+      WHERE evfevent like :argument;
+  assert(not isSqlError(sqlState));
+
+  assert(count = 1: 'Error messages must be related to file ID 999 (job log)');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Asserts that the event file contains a message
+//  with the specified message id.
+// ------------------------------------------------------------
+dcl-proc assertMsgID;
+  dcl-pi *n extproc(*dclcase);
+    i_msgID  varchar(7) const;
+    i_severity char(1) options(*nopass) const;
+  end-pi;
+
+  dcl-s argument varchar(100);
+  dcl-s count int(10);
+
+  if (%parms() >= %parmnum(i_severity));
+    argument = 'ERROR % ' + i_msgID + ' ' + i_severity + ' %';
+  else;
+    argument = 'ERROR % ' + i_msgID + ' %';
+  endif;
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile
+      WHERE evfevent like :argument;
+
+  assert(not isSqlError(sqlState));
+
+  assert(count >= 1: 'Event file must contain a message with ID: ' + i_msgID);
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Asserts that the event file does not contains a message
+//  with the specified message id.
+// ------------------------------------------------------------
+dcl-proc assertNoMsgID;
+  dcl-pi *n extproc(*dclcase);
+    i_msgID  varchar(7) const;
+    i_severity char(1) options(*nopass) const;
+  end-pi;
+
+  dcl-s argument varchar(100);
+  dcl-s count int(10);
+
+  if (%parms() >= %parmnum(i_severity));
+    argument = 'ERROR % ' + i_msgID + ' ' + i_severity + ' %';
+  else;
+    argument = 'ERROR % ' + i_msgID + ' %';
+  endif;
+
+  exec sql
+    SELECT count(evfevent) INTO :count FROM eventfile
+      WHERE evfevent like :argument;
+
+  assert(not isSqlError(sqlState));
+
+  assert(count = 0: 'Event file must not contain a message with ID: ' + i_msgID);
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Appends a row to member 'testcase' of file.
+// ------------------------------------------------------------
+dcl-proc append export;
+  dcl-pi *n extproc(*dclcase);
+    i_data varchar(100) const;
+    i_srcSeq int(10) options(*nopass) const;
+  end-pi;
+
+  dcl-s isPrepared ind inz(*off) static;
+
+  dcl-s srcSeq zoned(6:2);
+  dcl-s data like(i_data);
+
+  if (%parms() >= %parmnum(i_srcSeq));
+    g_status.srcSeq = i_srcSeq;
+  endif;
+
+  if (not isPrepared);
+    exec sql
+      prepare append_row from
+        'INSERT INTO testmbr (SRCSEQ, SRCDTA, SRCDAT) VALUES(?, ?, 0)';
+    assert(not isSqlError(sqlState));
+    isPrepared = *on;
+  endif;
+
+  srcSeq = g_status.srcSeq;
+  data = i_data;
+
+  exec sql
+    EXECUTE append_row USING :srcSeq, :data;
+  assert(not isSqlError(sqlState));
+
+  g_status.srcSeq += 100;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Appends a row to member 'testcase2' of file.
+// ------------------------------------------------------------
+dcl-proc append2 export;
+  dcl-pi *n extproc(*dclcase);
+    i_data varchar(100) const;
+    i_srcSeq int(10) options(*nopass) const;
+  end-pi;
+
+  dcl-s isPrepared ind inz(*off) static;
+
+  dcl-s srcSeq zoned(6:2);
+  dcl-s data like(i_data);
+
+  if (%parms() >= %parmnum(i_srcSeq));
+    g_status.srcSeq2 = i_srcSeq;
+  endif;
+
+  if (not isPrepared);
+    exec sql
+      prepare append_row from
+        'INSERT INTO testmbr2 (SRCSEQ, SRCDTA, SRCDAT) VALUES(?, ?, 0)';
+    assert(not isSqlError(sqlState));
+    isPrepared = *on;
+  endif;
+
+  srcSeq = g_status.srcSeq2;
+  data = i_data;
+
+  exec sql
+    EXECUTE append_row USING :srcSeq, :data;
+  assert(not isSqlError(sqlState));
+
+  g_status.srcSeq2 += 100;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Returns *on, when the last SQL statement ended with an
+//  error, else *off;
+// ------------------------------------------------------------
+dcl-proc setIgnSQLWarn;
+  dcl-pi *n extproc(*dclcase);
+    i_ignore ind const;
+  end-pi;
+
+  g_status.sql.ignSQLWarn = i_ignore;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Returns *on, when the last SQL statement ended with an
+//  error, else *off;
+// ------------------------------------------------------------
+dcl-proc isSQLError;
+  dcl-pi *n ind extproc(*dclcase);
+    i_state   char(5) const;
+  end-pi;
+
+  dcl-ds sqlState qualified;
+    class char(2);
+    qualifier char(3);
+  end-ds;
+
+  dcl-ds sql likeds(sql_status_t);
+
+  sqlState = i_state;
+  sql = g_status.sql;
+
+  reset g_status.sql;
+
+  select;
+  // SQL code 00: Unqualified Successful Completion
+  when (sqlState = '00000');
+    // Execution of the operation was successful and did not
+    // result in any type of warning or exception condition.
+    return *off;
+
+  // SQL code 01: Warning
+  When (sqlState.class = '01');
+    // Valid warning SQLSTATEs returned by an SQL routine.
+    // Also used for RAISE_ERROR and SIGNAL.
+    if (sql.ignSQLWarn);
+      return *off;
+    else;
+      return *on;
+    endif;
+
+  // SQL code 02: No data
+  When (sqlState = '02000');
+    return *off;
+
+  other;
+    // Other problem or error
+    return *on;
+  endsl;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Returns the SQL statement that was executed at last.
+// ------------------------------------------------------------
+dcl-proc getLastSqlStmt;
+  dcl-pi *n varchar(1024) extproc(*dclcase) end-pi;
+
+  dcl-pr QUSRJOBI extpgm('QUSRJOBI');
+    o_rcvVar     char(65535) options(*varsize);
+    i_lenRcvVar  int(10)     const;
+    i_format     char(8)     const;
+    i_qJob       char(26)    const;
+    i_intJobId   char(16)    const;
+    io_errCode   char(65535) options(*nopass: *varsize);
+  End-Pr;
+
+  dcl-ds jobi0900 qualified;
+    bytRtn        int(10);
+    bytAvl        int(10);
+    offSetCurStmt int(10) pos(77);
+    stmtSize      int(10) pos(81);
+    status        int(10) pos(85);
+    ccsid         int(10) pos(89);
+    reserved_1    char(1024);
+  End-Ds;
+
+  dcl-ds statement qualified based(pStatement);
+    value char(1024);
+  end-ds;
+
+  dcl-ds errCode likeds(errCode_t) inz(*likeds);
+
+  QUSRJOBI(jobi0900: %size(jobi0900): 'JOBI0900': '*': '': errCode);
+
+  if (jobi0900.stmtSize > 0);
+    pStatement = %addr(jobi0900) + jobi0900.offSetCurStmt;
+    return %subst(statement.value: 1: jobi0900.stmtSize);
+  else;
+    return 'SQL statement could not be retri.';
+  endif;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Returns *ON, when the specified object exists, eöse *OFF.
+// ------------------------------------------------------------
+dcl-proc exist;
+  dcl-pi *n ind extproc(*dclcase);
+    i_lib varchar(10) const;
+    i_obj varchar(10) const;
+    i_type varchar(10) const;
+    i_mbr varchar(10) options(*nopass: *omit) const;
+  end-pi;
+
+  // Retrieve Object Description (QUSROBJD) API
+  dcl-pr QUSROBJD extpgm('QUSROBJD');
+    o_rcvVar     char(65535) options(*varsize);
+    i_lenRcvVar  int(10)     const;
+    i_format     char(8)     const;
+    i_qObj       char(20)    const;
+    i_type       char(10)    const;
+    io_errCode   char(65535) options(*nopass: *varsize);
+  end-pr;
+
+  dcl-ds objd0100 qualified;
+    bytRet       int(10);
+    bytAvl       int(10);
+    name         char(10);
+    lib          char(10);
+    type         char(10);
+    rtnLib       char(10);
+    auxStgP      int(10);
+    owner        char(10);
+    domain       char(2);
+    crtDatTim    char(13);
+    chgDatTim    char(13);
+  end-ds;
+
+  // Retrieve Member Description (QUSRMBRD) API
+  dcl-pr QUSRMBRD extpgm('QUSRMBRD');
+    o_rcvVar     char(65535) options(*varsize);
+    i_lenRcvVar  int(10)     const;
+    i_format     char(8)     const;
+    i_qFile      char(20)    const;
+    i_mbr        char(10)    const;
+    i_ovrPrc     char(1)     const;
+    io_errCode   char(65535) options(*nopass: *varsize);
+  end-pr;
+
+  dcl-ds mbrd0100 qualified;
+    bytRet       int(10);
+    bytAvl       int(10);
+    file         char(10);
+    lib          char(10);
+    mbr          char(10);
+    attr         char(10);
+    srcType      char(10);
+    crtDatTim    char(13);
+    srcChgDatTim char(13);
+    text         char(50);
+    isSrcFile    char(1);
+  end-ds;
+
+  dcl-ds errCode likeds(errCode_t) inz(*likeds);
+
+  dcl-ds qObj qualified;
+    name         char(10);
+    lib          char(10);
+  end-ds;
+
+  clear qObj;
+  qObj.name = i_obj;
+  qObj.lib = i_lib;
+
+  if (i_type = '*FILE' and %parms() >= %parmnum(i_mbr));
+    QUSRMBRD(mbrd0100: %size(mbrd0100): 'MBRD0100': qObj: i_mbr: '0': errCode);
+  else;
+    QUSROBJD(objd0100: %size(objd0100): 'OBJD0100': qObj: i_type: errCode);
+  endif;
+
+  return errCode.bytAvl = 0;
+
+end-proc;
+
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing SDS  type RPGLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -8680,6 +10121,17 @@ srccssid=  "01141">
       *                                                                     *
       *  26.04.2020  Th.Raddatz    Added 'INCLUDE' tag.                     *
       *                                                                     *
+      *  23.12.2020  Th.Raddatz    Fixed content auf g_srcFile.* variables. *
+      *                            Fixed error message when attempting to   *
+      *                            execute an empty command.                *
+      *                            Fixed decision when to append the job    *
+      *                            log messages to the EVFEVENT file.       *
+      *                            Added iRPGUnit test suite STRPREPRCT.    *
+      *                                                                     *
+      *  04.01.2021  Th.Raddatz    Added messages:                          *
+      *                              PRZ0033 - Objekt created               *
+      *                              PRZ0034 - Error message ignored ...    *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -8985,6 +10437,9 @@ srccssid=  "01141">
      D  doAppendJobLog...
      D                                 n   inz(cFalse)
       *
+     D g_enforceJobLogOnError...
+     D                 s               n
+      *
      D g_execOpt...
      D                 ds                  likeds(execOpt_t)
       *
@@ -9011,7 +10466,8 @@ srccssid=  "01141">
      D                 s             10i 0
       *
      D MODE_PRECMDS    c                   1
-     D MODE_POSTCMDS   c                   2
+     D MODE_EXECUTE    c                   2
+     D MODE_POSTCMDS   c                   3
       *
       /copy QSTRPREPRC,SDS
       *
@@ -9271,7 +10727,7 @@ srccssid=  "01141">
      D                 PR
      D                                     extproc('writeJobLogToEventf')
      D  i_qEventf                          const  likeds(qObj_t)
-     D  i_chgMsgs                      n   const
+     D  i_isAbnEnd                     n   const
       *
      D replaceVar...
      D                 PR
@@ -9439,9 +10895,11 @@ srccssid=  "01141">
          g_pgmCmdExc = i_pgmCmdExc;
          g_libPgmCmdExc = i_libPgmCmdExc;
 
-         g_srcFile.name = i_srcFile;
-         g_srcFile.lib = i_srcLib;
-         g_srcFile.mbr = i_srcMbr;
+         g_srcFile.name = getSpcValDft(i_srcFile: i_useSrcFile);
+         g_srcFile.lib = getSpcValDft(i_srcLib: i_useSrcLib);
+         g_srcFile.mbr = getSpcValDft(i_srcMbr: i_useSrcMbr);
+
+         g_enforceJobLogOnError = *on;
 
          if (%parms() >= 36 and i_option.numE > 0);
             for i = 1 to i_option.numE;
@@ -9473,7 +10931,7 @@ srccssid=  "01141">
                prepareEventFile();
             on-error;
                clear PRZ0026;
-               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_DIAG));
                endAbnormal();
             endmon;
          endif;
@@ -10295,22 +11753,29 @@ srccssid=  "01141">
      D  i_cmd                              value  like(cmdLong_t)
      D  i_cmdChgObjD                       value  like(cmdLong_t)
       *
+     D msg             ds                  likeds(msg_t)
+      *
       *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
       /COPY QSTRPREPRC,PRZ0026
+      *  ... Objekt erstellt.
+      /COPY QSTRPREPRC,PRZ0033
       /free
 
-         g_prePostCmdsMode = MODE_POSTCMDS;
-
          if (not isExecOpt(EXEC_CRTCMD));
+            g_prePostCmdsMode = MODE_POSTCMDS;
             return;
          endif;
+
+         g_prePostCmdsMode = MODE_EXECUTE;
+
+         g_enforceJobLogOnError = *off;
 
          if (g_option.isEventf);
             monitor;
                prepareEventFile();
             on-error;
                clear PRZ0026;
-               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_DIAG));
                endAbnormal();
             endmon;
          endif;
@@ -10326,6 +11791,10 @@ srccssid=  "01141">
                endAbnormal();
             endif;
          else;
+            clear PRZ0033;
+            msg = f_newMsg('PRZ0033': PRZ0033: cMsg_Info);
+            f_sndPgmMsg(msg: cMsg_Same: cMsg_ToMyself);
+
             // Write event file, but change messages greater or
             // equal to "error" to "warning".
             if (%scan(cEVENTF_YES: i_cmd) > 0);
@@ -10338,6 +11807,9 @@ srccssid=  "01141">
          if (i_cmdChgObjD <> '');
             performCmd(i_cmdChgObjD);
          endif;
+
+         g_enforceJobLogOnError = *on;
+         g_prePostCmdsMode = MODE_POSTCMDS;
 
       /end-free
      p                 e
@@ -10352,9 +11824,12 @@ srccssid=  "01141">
       *
      D errMsgId        s                   like(msgId_t)
      D monMsgIds       ds                  likeds(monMsgIds_t)
+     D msg             ds                  likeds(msg_t)
       *
       *  ... EVFEVENT Datei konnte nicht zur Ausgabe vorbereitet werden.
       /COPY QSTRPREPRC,PRZ0026
+      *  ... Fehlernachricht &1 wurde aufgrund von MONMSG ignoriert.
+      /COPY QSTRPREPRC,PRZ0034
       /free
 
          if (g_prePostCmdsMode = MODE_PRECMDS and
@@ -10372,7 +11847,7 @@ srccssid=  "01141">
                prepareEventFile();
             on-error;
                clear PRZ0026;
-               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_DIAG));
                endAbnormal();
             endmon;
          endif;
@@ -10384,7 +11859,10 @@ srccssid=  "01141">
          if (not executeCmd(cTrue: i_cmd: errMsgId));
             monMsgIds = loadMonitoredMessageIDs();
             if (isMonitoredMessageId(errMsgId: monMsgIds));
-               // TODO: remove job log entries
+               clear PRZ0034;
+               PRZ00341 = errMsgId;
+               msg = f_newMsg('PRZ0034': PRZ0034: cMsg_Info);
+               f_sndPgmMsg(msg: cMsg_Same: cMsg_ToMyself);
             else;
                if (%scan(cEVENTF_YES: i_cmd) > 0);
                   endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
@@ -10664,7 +12142,7 @@ srccssid=  "01141">
                prepareEventFile();
             on-error;
                clear PRZ0026;
-               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_DIAG));
                endAbnormal();
             endmon;
          endif;
@@ -10708,7 +12186,7 @@ srccssid=  "01141">
                prepareEventFile();
             on-error;
                clear PRZ0026;
-               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_ESCAPE));
+               sendMsg(f_newMsg('PRZ0026': PRZ0026: cTYPE_DIAG));
                endAbnormal();
             endmon;
          endif;
@@ -11630,7 +13108,11 @@ srccssid=  "01141">
          on-error;
          endmon;
 
-         appendToJobLog(i_cmd);
+         if (%trim(i_cmd) = '');
+           appendToJobLog('Command validation error: Command is missing');
+         else;
+           appendToJobLog(i_cmd);
+         endif;
 
          return cFalse;
 
@@ -11794,8 +13276,6 @@ srccssid=  "01141">
      D stackQual       ds
      D  stackQualMod                 10a   inz('*NONE')
      D  stackQualPgm                 10a   inz('*NONE')
-     D stackDataType   s             10a   inz('*CHAR')
-     D ccsid           s             10i 0 inz(0)
       *
      D errCode         ds                  likeds(errCode_t) inz
       *
@@ -11945,7 +13425,7 @@ srccssid=  "01141">
          endif;
 
          if (g_option.isEventf);
-            writeJobLogToEventf(qEventf: cFalse);
+            writeJobLogToEventf(qEventf: cTrue);
          endif;
 
          if (%open(SRCFILE));
@@ -11992,7 +13472,7 @@ srccssid=  "01141">
          endif;
 
          if (g_option.isEventf);
-            writeJobLogToEventf(qEventf: cTrue);
+            writeJobLogToEventf(qEventf: cFalse);
          endif;
 
       /end-free
@@ -12011,9 +13491,11 @@ srccssid=  "01141">
      P                 b
      D                 pi
      D  i_qEventf                          const  likeds(qObj_t)
-     D  i_chgMsgs                      n   const
+     D  i_isAbnEnd                     n   const
       *
      D isEmpty         s               n
+     D doAppend        s               n
+     D doAppendJobLog  s               n
       *  ... EVFEVENT Datei in Bibliothek &1 oder das Job Protokoll konnte nicht geöffnet
       /COPY QSTRPREPRC,PRZ0025
       /free
@@ -12021,31 +13503,37 @@ srccssid=  "01141">
          monitor;
 
             // Event file of IBM object creation command
-            if (i_qEventf.lib <> '' and i_qEventf.name <> '');
-               isEmpty = isEmptyEventFile(i_qEventf.lib: i_qEventf.name);
+            if (g_eventf.lib <> '' and g_eventf.mbr <> '');
+               isEmpty = isEmptyEventFile(g_eventf.lib: g_eventf.mbr);
             else;
                isEmpty = cTrue;
             endif;
 
-            g_eventf.isOpen =
-               openEventFile(g_eventf.mbr: g_eventf.lib: i_qEventf);
+            select; // g_prePostCmdsMode
+            when (g_prePostCmdsMode = MODE_PRECMDS);
+               doAppendJobLog = i_isAbnEnd;
+            when (g_prePostCmdsMode = MODE_EXECUTE);
+               doAppendJobLog = isEmpty and
+                                (i_isAbnEnd or g_option.doAppendJobLog);
+            when (g_prePostCmdsMode = MODE_POSTCMDS);
+               doAppendJobLog = i_isAbnEnd;
+            other;
+               doAppendJobLog = cFalse;
+            endsl;
 
-            if (g_eventf.isOpen);
-
-               if (isEmpty or g_option.doAppendJobLog);
-                  // Append job log messages to event file
-                  if (i_chgMsgs);
-                     writeEventFile(
-                        g_srcFile.name: g_srcFile.lib: g_srcFile.mbr
-                        : f1_line_number
-                        : EVF_MSG_SEVERITY_ERROR: EVF_MSG_SEVERITY_WARNING);
-                  else;
-                     writeEventFile(
-                        g_srcFile.name: g_srcFile.lib: g_srcFile.mbr
-                        : f1_line_number);
-                  endif;
+            if (doAppendJobLog);
+               doAppend = not isEmpty;
+               // TODO: Copy compile listing from pre/post-command if available
+               //       instead of appending the job log???
+               // g_eventf.isOpen = openEventFile(g_eventf.mbr: g_eventf.lib
+               //                                 : doAppend: i_qEventf);
+               g_eventf.isOpen = openEventFile(
+                                    g_eventf.mbr: g_eventf.lib: doAppend);
+               if (g_eventf.isOpen);
+                  writeEventFile(
+                     g_srcFile.name: g_srcFile.lib: g_srcFile.mbr
+                     : f1_line_number: i_isAbnEnd);
                endif;
-
             endif;
 
          on-error;
@@ -12485,6 +13973,9 @@ srccssid=  "01141">
       *                            modus 'new', when the event file is      *
       *                            empty.                                   *
       *                                                                     *
+      *  22.12.2020  Th.Raddatz    Changed writing job log entries as ERROR *
+      *                            entries, in case of compilation errors.  *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -12700,13 +14191,13 @@ srccssid=  "01141">
      D                 pi              n
      D  i_obj                        10a   const
      D  i_lib                        10a   const
+     D  i_append                       n   const
      D  i_qEventf                          const  likeds(qObj_t)
      D                                            options(*nopass)
 
-     D p_qEventf       c                   3
+     D p_qEventf       c                   4
 
      D qEventf         ds                  likeds(i_qEventf)
-     D msg             ds                  likeds(msg_t)
      D rtnLib          s                   like(i_lib)
       /free
 
@@ -12720,16 +14211,13 @@ srccssid=  "01141">
             clear qEventf;
          endif;
 
+         g_status.openForAppend = i_append;
          g_status.copyEvents = cFalse;
-         g_status.openForAppend = cFalse;
 
          if (qEventf.name <> '' and qEventf.lib <> '');
-            if (qEventf.name = i_obj and qEventf.lib = i_lib);
-               g_status.openForAppend =
-                  not isEmptyEventFile(qEventf.lib: qEventf.name);
-            else;
-               g_status.copyEvents = cTrue;
-            endif;
+           if (qEventf.name <> i_obj or qEventf.lib <> i_lib);
+             g_status.copyEvents = cTrue;
+           endif;
          endif;
 
          if (g_status.openForAppend);
@@ -12792,13 +14280,8 @@ srccssid=  "01141">
      D  i_srcLib                     10a   const
      D  i_srcMbr                     10a   const
      D  i_lineNumber                 10i 0 const
-     D  i_threshold                  10i 0 const options(*nopass)
-     D  i_ovrMsgSev                  10i 0 const options(*nopass)
+     D  i_isAbnEnd                     n   const
 
-     D p_ovrMsgSev     c                   6
-
-     D threshold       s                   like(i_threshold)
-     D ovrMsgSev       s                   like(i_ovrMsgSev)
      D path            s                   like(evf_path_t)
 
      D hJobLog         s                   like(JobLog_handle_t) inz
@@ -12822,14 +14305,6 @@ srccssid=  "01141">
 
         if (not g_status.haveJobLog);
            return;
-        endif;
-
-        if (%parms() >= p_ovrMsgSev);
-           ovrMsgSev = i_ovrMsgSev;
-           threshold = i_threshold;
-        else;
-           ovrMsgSev = -1;
-           threshold = -1;
         endif;
 
         if (not g_status.openForAppend);
@@ -12874,8 +14349,10 @@ srccssid=  "01141">
               lineNumber = 0;
            endif;
 
-           if (ovrMsgSev <> -1 and jobLogEntry.msgSeverity >= threshold);
-              jobLogEntry.msgSeverity = ovrMsgSev;
+           if (not i_isAbnEnd);
+              if (jobLogEntry.msgSeverity >= EVF_MSG_SEVERITY_ERROR);
+                 jobLogEntry.msgSeverity = EVF_MSG_SEVERITY_WARNING;
+              endif;
            endif;
 
            if (sourceId = SOURCE_ID);
@@ -12885,13 +14362,21 @@ srccssid=  "01141">
                                 : jobLogEntry.msgSeverity
                                 : jobLogEntry.msgText);
            else;
-              Eventf_writeError(sourceId
-                                : lineNumber
-                                : jobLogEntry.msgID
-                                : jobLogEntry.msgSeverity
-                                : jobLogEntry.msgText
-                                : EVF_SEVERITY_WARNING
-                                : EVF_ANNOTATION_BOTTOM);
+              if (i_isAbnEnd);
+                 Eventf_writeError(sourceId
+                                   : lineNumber
+                                   : jobLogEntry.msgID
+                                   : jobLogEntry.msgSeverity
+                                   : jobLogEntry.msgText);
+              else;
+                 Eventf_writeError(sourceId
+                                   : lineNumber
+                                   : jobLogEntry.msgID
+                                   : jobLogEntry.msgSeverity
+                                   : jobLogEntry.msgText
+                                   : EVF_SEVERITY_WARNING
+                                   : EVF_ANNOTATION_BOTTOM);
+              endif;
            endif;
         enddo;
 
