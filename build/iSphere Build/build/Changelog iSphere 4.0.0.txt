@@ -8,6 +8,7 @@ Changelog: iSphere 4.0.0.b001
  • Changed iSphere source file search to optionally resolve filters
    and objects in batch. Added switch on iSphere "Search" preferences
    page.
+ • Updated STRPREPRC command to v1.19. Improved error reporting.
 
 Changelog: iSphere 3.8.1.r
 --------------------------
