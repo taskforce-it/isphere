@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/07/2021">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/26/2021">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3369,13 +3369,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.19 - 07.01.2021 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.19.1 - 26.01.2021 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.19.0'
+     d                 C                   '1.19.1'
      d STRPREPRC_DATE...
-     d                 C                   '07.01.2021'
+     d                 C                   '26.01.2021'
       *
 ]]>  </copysrc>
 </mbr>
@@ -10370,6 +10370,10 @@ srccssid=  "01141">
       *                              PRZ0033 - Objekt created               *
       *                              PRZ0034 - Error message ignored ...    *
       *                                                                     *
+      *  26.01.2021  Th.Raddatz    Fixed problem that parameter &LX was     *
+      *                            not replaced when the library list was   *
+      *                            empty.                                   *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -11919,6 +11923,9 @@ srccssid=  "01141">
          if (i_variables.prvLibl.usrLibl.numE >= 1);
             replaceVar(
                '&LX': libListToStr(i_variables.prvLibl.usrLibl): cmdString);
+         else;
+            replaceVar(
+               '&LX': '*NONE': cmdString);
          endif;
 
          // Ersetzen Parameter Sonderwert  (*LX)
@@ -11950,6 +11957,7 @@ srccssid=  "01141">
             PRZ00231 = posOfVar;
             PRZ00232 = cmdString;
             sendMsg(f_newMsg('PRZ0023': PRZ0023: cTYPE_DIAG));
+            appendToJobLog(i_cmd);
             endAbnormal();
          endif;
 
