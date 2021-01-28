@@ -104,7 +104,8 @@ public class SpooledFileBaseFilterStringEditPane {
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.From_date + ":");
         startingDateCombo = WidgetFactory.createReadOnlyCombo(composite_prompts);
-        startingDateCombo.setItems(new String[] { "*", ISpooledFileFilter.EXACTLY, "*TODAY", "*YESTERDAY", "*LASTWEEK", "*LASTMONTH" });
+        startingDateCombo.setItems(new String[] { "*", ISpooledFileFilter.EXACTLY, ISpooledFileFilter.TODAY, ISpooledFileFilter.YESTERDAY,
+            ISpooledFileFilter.LASTWEEK, ISpooledFileFilter.LASTMONTH });
         startingDateCombo.setText(ISpooledFileFilter.EXACTLY);
         startingDateCombo.setLayoutData(createLayoutData(1));
         startingDateCombo.addSelectionListener(new SelectionAdapter() {
@@ -136,7 +137,7 @@ public class SpooledFileBaseFilterStringEditPane {
 
         new Label(composite_prompts, SWT.NONE).setText(Messages.To_date + ":");
         endingDateCombo = WidgetFactory.createReadOnlyCombo(composite_prompts);
-        endingDateCombo.setItems(new String[] { "*", ISpooledFileFilter.EXACTLY });
+        endingDateCombo.setItems(new String[] { "*", ISpooledFileFilter.EXACTLY, ISpooledFileFilter.TODAY });
         endingDateCombo.setText("*");
         endingDateCombo.setLayoutData(createLayoutData(1));
         endingDateCombo.addSelectionListener(new SelectionAdapter() {
