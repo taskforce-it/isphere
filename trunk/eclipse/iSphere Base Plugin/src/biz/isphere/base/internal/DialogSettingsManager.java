@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,7 +259,7 @@ public class DialogSettingsManager {
      * {@link biz.isphere.base.internal.actions.ResetColumnSizeAction} action
      * for resetting the column sizes.
      * 
-     * @param table
+     * @param table - table that contains the columns
      */
     public void resetColumnWidths(Table table) {
 
@@ -271,6 +271,30 @@ public class DialogSettingsManager {
         }
 
         table.setVisible(true);
+    }
+
+    /**
+     * Returns the table column identified by the specified name.
+     * 
+     * @param table - table that contains the columns
+     * @param columnName - name of the column that is search for
+     * @return column identified by name
+     */
+    public TableColumn getColumn(Table table, String columnName) {
+
+        if (table == null || columnName == null) {
+            return null;
+        }
+
+        int numTableColumns = table.getColumnCount();
+        for (int i = 0; i < numTableColumns; i++) {
+            TableColumn column = table.getColumn(i);
+            if (columnName.equals(getColumnName(column))) {
+                return column;
+            }
+        }
+
+        return null;
     }
 
     /**

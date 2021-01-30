@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -381,6 +381,47 @@ public class SpooledFile implements IPropertySource {
 
     public void setConnectionName(String connectionName) {
         this.connectionName = connectionName;
+    }
+
+    public Object getAttributeValue(SpooledFileAttributes sortAttribute) {
+
+        if (sortAttribute == SpooledFileAttributes.STATUS) {
+            return getStatus();
+        } else if (sortAttribute == SpooledFileAttributes.FILE) {
+            return getFile();
+        } else if (sortAttribute == SpooledFileAttributes.FILE_NUMBER) {
+            return getFileNumber();
+        } else if (sortAttribute == SpooledFileAttributes.JOB_NAME) {
+            return getJobName();
+        } else if (sortAttribute == SpooledFileAttributes.JOB_USER) {
+            return getJobUser();
+        } else if (sortAttribute == SpooledFileAttributes.JOB_NUMBER) {
+            return getJobNumber();
+        } else if (sortAttribute == SpooledFileAttributes.JOB_SYSTEM) {
+            return getJobSystem();
+        } else if (sortAttribute == SpooledFileAttributes.CREATION_DATE) {
+            return getCreationDateAsDate();
+        } else if (sortAttribute == SpooledFileAttributes.CREATION_TIME) {
+            return getCreationTimeAsDate();
+        } else if (sortAttribute == SpooledFileAttributes.OUTPUT_QUEUE) {
+            return getOutputQueue();
+        } else if (sortAttribute == SpooledFileAttributes.OUTPUT_PRIORITY) {
+            return getOutputPriority();
+        } else if (sortAttribute == SpooledFileAttributes.USER_DATA) {
+            return getUserData();
+        } else if (sortAttribute == SpooledFileAttributes.FORM_TYPE) {
+            return getFormType();
+        } else if (sortAttribute == SpooledFileAttributes.COPIES) {
+            return getCopies();
+        } else if (sortAttribute == SpooledFileAttributes.PAGES) {
+            return getPages();
+        } else if (sortAttribute == SpooledFileAttributes.CURRENT_PAGE) {
+            return getCurrentPage();
+        } else if (sortAttribute == SpooledFileAttributes.CREATION_TIMESTAMP) {
+            return getCreationTimestamp();
+        }
+
+        return null;
     }
 
     private com.ibm.as400.access.SpooledFile getToolboxSpooledFile() {
