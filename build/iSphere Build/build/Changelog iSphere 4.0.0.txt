@@ -6,6 +6,9 @@ Changelog: iSphere 4.0.0.b002
    iSphere spooled file filter.
  • Fixed problem that the sort order was not restored when loading a
    pinned iSphere "Spooled Files" view.
+ • Changed persistence attribute 'sortColumnIndex' from column index
+   to column name. Sort order of pinned iSphere 'Spooled File' views
+   will be lost.   
 
 Changelog: iSphere 4.0.0.b001
 -----------------------------

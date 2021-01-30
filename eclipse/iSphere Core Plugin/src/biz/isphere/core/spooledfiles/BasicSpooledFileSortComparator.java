@@ -11,35 +11,33 @@ package biz.isphere.core.spooledfiles;
 import java.util.Comparator;
 import java.util.Date;
 
-import biz.isphere.core.spooledfiles.view.rse.Columns;
-
 /**
  * Basic class for comparing spooled files when sorting them.
  */
 public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
 
-    private Columns sortColumn;
+    private SpooledFileAttributes sortAttribute;
     private boolean isReverseOrder;
 
     public BasicSpooledFileSortComparator() {
         this(null, false);
     }
 
-    public BasicSpooledFileSortComparator(Columns columnIndex) {
-        this(columnIndex, false);
+    public BasicSpooledFileSortComparator(SpooledFileAttributes attribute) {
+        this(attribute, false);
     }
 
-    public BasicSpooledFileSortComparator(Columns columnIndex, boolean reverseOrder) {
-        this.sortColumn = columnIndex;
+    public BasicSpooledFileSortComparator(SpooledFileAttributes attribute, boolean reverseOrder) {
+        this.sortAttribute = attribute;
         this.isReverseOrder = reverseOrder;
     }
 
-    public Columns getSortColumn() {
-        return sortColumn;
+    public SpooledFileAttributes getSortAttribute() {
+        return sortAttribute;
     }
 
-    public void setColumnIndex(Columns columnIndex) {
-        this.sortColumn = columnIndex;
+    public void setSortAttribute(SpooledFileAttributes attribute) {
+        this.sortAttribute = attribute;
     }
 
     public boolean isReverseOrder() {
@@ -52,7 +50,7 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
 
     public int compare(SpooledFile o1, SpooledFile o2) {
 
-        if (sortColumn == null) {
+        if (sortAttribute == null) {
             return 0;
         }
 
@@ -60,11 +58,11 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
         Object value2;
 
         if (isReverseOrder) {
-            value1 = getColumnValue(o1);
-            value2 = getColumnValue(o2);
+            value1 = o1.getAttributeValue(sortAttribute);
+            value2 = o2.getAttributeValue(sortAttribute);
         } else {
-            value1 = getColumnValue(o2);
-            value2 = getColumnValue(o1);
+            value1 = o2.getAttributeValue(sortAttribute);
+            value2 = o1.getAttributeValue(sortAttribute);
         }
 
         if (value1 == null) {
@@ -83,50 +81,4 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
             throw new RuntimeException("Unsupported object type: " + value1.getClass().getName());
         }
     }
-
-    public Object getColumnValue(SpooledFile spooledFile) {
-
-        if (spooledFile == null) {
-            return null;
-        }
-
-        if (sortColumn == Columns.STATUS) {
-            return spooledFile.getStatus();
-        } else if (sortColumn == Columns.FILE) {
-            return spooledFile.getFile();
-        } else if (sortColumn == Columns.FILE_NUMBER) {
-            return spooledFile.getFileNumber();
-        } else if (sortColumn == Columns.JOB_NAME) {
-            return spooledFile.getJobName();
-        } else if (sortColumn == Columns.JOB_USER) {
-            return spooledFile.getJobUser();
-        } else if (sortColumn == Columns.JOB_NUMBER) {
-            return spooledFile.getJobNumber();
-        } else if (sortColumn == Columns.JOB_SYSTEM) {
-            return spooledFile.getJobSystem();
-        } else if (sortColumn == Columns.CREATION_DATE) {
-            return spooledFile.getCreationDateAsDate();
-        } else if (sortColumn == Columns.CREATION_TIME) {
-            return spooledFile.getCreationTimeAsDate();
-        } else if (sortColumn == Columns.OUTPUT_QUEUE) {
-            return spooledFile.getOutputQueue();
-        } else if (sortColumn == Columns.OUTPUT_PRIORITY) {
-            return spooledFile.getOutputPriority();
-        } else if (sortColumn == Columns.USER_DATA) {
-            return spooledFile.getUserData();
-        } else if (sortColumn == Columns.FORM_TYPE) {
-            return spooledFile.getFormType();
-        } else if (sortColumn == Columns.COPIES) {
-            return spooledFile.getCopies();
-        } else if (sortColumn == Columns.PAGES) {
-            return spooledFile.getPages();
-        } else if (sortColumn == Columns.CURRENT_PAGE) {
-            return spooledFile.getCurrentPage();
-        } else if (sortColumn == Columns.CREATION_TIMESTAMP) {
-            return spooledFile.getCreationTimestamp();
-        }
-
-        return null;
-    }
-
 }

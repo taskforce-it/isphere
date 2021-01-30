@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.DialogSettingsManager;
-import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.spooledfiles.BasicSpooledFileSortComparator;
 import biz.isphere.core.spooledfiles.SpooledFile;
-import biz.isphere.core.spooledfiles.view.rse.Columns;
+import biz.isphere.core.spooledfiles.SpooledFileAttributes;
 
 /**
  * This table sorter automatically stores the sort properties in
@@ -34,7 +33,7 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
     private static final String SORT_UP = "Up"; //$NON-NLS-1$
     private static final String SORT_DOWN = "Down"; //$NON-NLS-1$
     private static final String SORT_NONE = "None"; //$NON-NLS-1$
-    private static final int SORT_INDEX_NULL = -1;
+    private static final String SORT_COLUMN_INDEX_NULL = ""; //$NON-NLS-1$
 
     private TableViewer tableViewer;
     private Table table;
@@ -51,14 +50,19 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         setSortColumnInternally(null, SORT_NONE);
     }
 
-    private int getSortColumnIndex() {
+    private String getSortColumnName() {
 
-        Columns sortColumn = comparator.getSortColumn();
+        SpooledFileAttributes sortColumn = comparator.getSortAttribute();
         if (sortColumn == null) {
-            return SORT_INDEX_NULL;
+            return SORT_COLUMN_INDEX_NULL;
         }
 
-        return sortColumn.ordinal();
+        TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortColumn.attributeName);
+        if (tableColumn == null) {
+            return SORT_COLUMN_INDEX_NULL;
+        }
+
+        return sortColumn.attributeName;
     }
 
     public String getSortDirection() {
@@ -84,20 +88,10 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
             return;
         }
 
-        String sortColumnIndex = dialogSettingsManager.loadValue(SORT_COLUMN_INDEX, null);
-        if (sortColumnIndex == null) {
-            return;
-        }
-
+        String sortAttributeName = dialogSettingsManager.loadValue(SORT_COLUMN_INDEX, null);
+        TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortAttributeName);
         String sortOrder = dialogSettingsManager.loadValue(SORT_DIRECTION, null);
-        if (sortOrder == null) {
-            return;
-        }
-
-        int columnIndex = IntHelper.tryParseInt(sortColumnIndex, SORT_INDEX_NULL);
-        if (columnIndex >= 0 && columnIndex < table.getColumnCount()) {
-            setSortColumnInternally(table.getColumn(columnIndex), sortOrder);
-        }
+        setSortColumnInternally(tableColumn, sortOrder);
     }
 
     public void refresh() {
@@ -140,10 +134,10 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
         if (direction == SWT.NONE) {
             this.table.setSortColumn(null);
-            this.comparator.setColumnIndex(null);
+            this.comparator.setSortAttribute(null);
         } else {
             this.table.setSortColumn(column);
-            this.comparator.setColumnIndex(getColumnIndex(column));
+            this.comparator.setSortAttribute(getSortAttribute(column));
         }
 
         if (table.getSortDirection() == SWT.DOWN) {
@@ -156,13 +150,13 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
     private void storeSortProperties() {
 
         if (dialogSettingsManager != null) {
-            dialogSettingsManager.storeValue(SORT_COLUMN_INDEX, Integer.toString(getSortColumnIndex()));
+            dialogSettingsManager.storeValue(SORT_COLUMN_INDEX, getSortColumnName());
             dialogSettingsManager.storeValue(SORT_DIRECTION, getSortDirection());
         }
     }
 
-    private Columns getColumnIndex(TableColumn column) {
-        return Columns.getByName(dialogSettingsManager.getColumnName(column));
+    private SpooledFileAttributes getSortAttribute(TableColumn column) {
+        return SpooledFileAttributes.getByName(dialogSettingsManager.getColumnName(column));
     }
 
     @Override

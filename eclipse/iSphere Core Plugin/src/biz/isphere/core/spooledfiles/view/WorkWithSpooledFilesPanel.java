@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,6 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
-import biz.isphere.core.spooledfiles.view.rse.Columns;
 
 public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, ControlListener, IPostSelectionProvider {
 
@@ -242,8 +241,8 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
             }
         });
 
-        Columns[] columns = Columns.values();
-        for (Columns column : columns) {
+        WorkWithSpooledFilesTableColumns[] columns = WorkWithSpooledFilesTableColumns.getDefaultColumns();
+        for (WorkWithSpooledFilesTableColumns column : columns) {
             createColumn(table, column, sortListener);
         }
 
@@ -252,11 +251,11 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         tableSorter.setPreviousSortOrder();
     }
 
-    private TableColumn createColumn(Table table, Columns column, Listener sortListener) {
+    private TableColumn createColumn(Table table, WorkWithSpooledFilesTableColumns column, Listener sortListener) {
         return createColumn(table, column, sortListener, SWT.LEFT);
     }
 
-    private TableColumn createColumn(Table table, Columns column, Listener sortListener, int style) {
+    private TableColumn createColumn(Table table, WorkWithSpooledFilesTableColumns column, Listener sortListener, int style) {
 
         TableColumn tableColumn = getDialogSettingsManager().createResizableTableColumn(table, style, column.name, column.width, column.index);
         tableColumn.setText(column.label);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
-import biz.isphere.core.spooledfiles.view.rse.Columns;
 
 public class WorkWithSpooledFilesLabelProvider extends LabelProvider implements ITableLabelProvider {
 
@@ -27,39 +26,39 @@ public class WorkWithSpooledFilesLabelProvider extends LabelProvider implements 
     public String getColumnText(Object element, int columnIndex) {
 
         SpooledFile spooledFile = (SpooledFile)element;
-        if (columnIndex == Columns.STATUS.ordinal()) {
+        if (columnIndex == WorkWithSpooledFilesTableColumns.STATUS.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.STATUS);
-        } else if (columnIndex == Columns.FILE.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.FILE.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.FILE);
-        } else if (columnIndex == Columns.FILE_NUMBER.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.FILE_NUMBER.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.FILE_NUMBER);
-        } else if (columnIndex == Columns.JOB_NAME.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.JOB_NAME.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.JOB_NAME);
-        } else if (columnIndex == Columns.JOB_USER.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.JOB_USER.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.JOB_USER);
-        } else if (columnIndex == Columns.JOB_NUMBER.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.JOB_NUMBER.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.JOB_NUMBER);
-        } else if (columnIndex == Columns.JOB_SYSTEM.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.JOB_SYSTEM.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.JOB_SYSTEM);
-        } else if (columnIndex == Columns.CREATION_DATE.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.CREATION_DATE.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.CREATION_DATE);
-        } else if (columnIndex == Columns.CREATION_TIME.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.CREATION_TIME.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.CREATION_TIME);
-        } else if (columnIndex == Columns.OUTPUT_QUEUE.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.OUTPUT_QUEUE.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.OUTPUT_QUEUE);
-        } else if (columnIndex == Columns.OUTPUT_PRIORITY.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.OUTPUT_PRIORITY.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.OUTPUT_PRIORITY);
-        } else if (columnIndex == Columns.USER_DATA.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.USER_DATA.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.USER_DATA);
-        } else if (columnIndex == Columns.FORM_TYPE.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.FORM_TYPE.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.FORM_TYPE);
-        } else if (columnIndex == Columns.COPIES.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.COPIES.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.COPIES);
-        } else if (columnIndex == Columns.PAGES.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.PAGES.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.PAGES);
-        } else if (columnIndex == Columns.CURRENT_PAGE.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.CURRENT_PAGE.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.CURRENT_PAGE);
-        } else if (columnIndex == Columns.CREATION_TIMESTAMP.ordinal()) {
+        } else if (columnIndex == WorkWithSpooledFilesTableColumns.CREATION_TIMESTAMP.index) {
             return getColumnText(spooledFile, SpooledFileBaseResourceAdapter.CREATION_TIMESTAMP);
         }
 
