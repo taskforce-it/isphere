@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.spooledfiles.view;
+package biz.isphere.core.spooledfiles.view.rse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +55,21 @@ public enum Columns {
         return names.toArray(new String[names.size()]);
     }
 
+    public static Columns getByName(String columnName) {
+
+        for (Columns column : Columns.values()) {
+            if (column.name.equals(columnName)) {
+                return column;
+            }
+        }
+
+        throw new RuntimeException("Column [" + columnName + "] not found.");
+    }
+
     /**
      * Specifies the order of the table columns from left to right.
      */
-    public interface ColumnIndex {
+    private interface ColumnIndex {
         public static int STATUS = 0;
         public static int FILE = 1;
         public static int FILE_NUMBER = 2;

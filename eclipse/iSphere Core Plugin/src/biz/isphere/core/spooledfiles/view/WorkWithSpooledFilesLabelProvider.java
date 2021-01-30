@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.Image;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileBaseResourceAdapter;
+import biz.isphere.core.spooledfiles.view.rse.Columns;
 
 public class WorkWithSpooledFilesLabelProvider extends LabelProvider implements ITableLabelProvider {
 

@@ -44,6 +44,7 @@ import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
+import biz.isphere.core.spooledfiles.view.rse.Columns;
 
 public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, ControlListener, IPostSelectionProvider {
 
