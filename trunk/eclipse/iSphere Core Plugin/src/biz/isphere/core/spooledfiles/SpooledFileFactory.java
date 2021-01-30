@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,15 @@ public class SpooledFileFactory {
         return new SpooledFile[0];
     }
 
+    /**
+     * Loads and returns an unsorted list of spooled files as provided by the
+     * IBM API.
+     * 
+     * @param connectionName - name of the RSE connection
+     * @param jdbcConnection - Jdbc connection for loading the spooled files
+     * @param filter - filter data that is passed to the API
+     * @return unsorted but filtered list of spooled files
+     */
     public static synchronized SpooledFile[] getSpooledFiles(String connectionName, Connection jdbcConnection, SpooledFileFilter filter) {
 
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
@@ -129,15 +138,6 @@ public class SpooledFileFactory {
                     int handle = new SPLF_build().run(as400);
 
                     if (handle > 0) {
-
-                        // String _separator;
-                        // try {
-                        // _separator =
-                        // jdbcConnection.getMetaData().getCatalogSeparator();
-                        // } catch (SQLException e) {
-                        // _separator = ".";
-                        // e.printStackTrace();
-                        // }
 
                         SqlHelper sqlHelper = new SqlHelper(jdbcConnection);
 
