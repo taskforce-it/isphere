@@ -47,10 +47,10 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         this.table = tableViewer.getTable();
         this.dialogSettingsManager = dialogSettingsManager;
 
-        setSortColumn(null, SORT_NONE);
+        setSortColumnInternally(null, SORT_NONE);
     }
 
-    public int getSortColumnIndex() {
+    private int getSortColumnIndex() {
         return columnIndex;
     }
 
@@ -68,21 +68,7 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
     public void setSortColumn(TableColumn column) {
         setSortProperties(column, changeSortDirection(column));
-    }
-
-    public void setSortColumn(TableColumn column, String direction) {
-
-        if (column == null) {
-            setSortProperties(null, SWT.NONE);
-        } else {
-            if (SORT_UP.equals(direction)) {
-                setSortProperties(column, SWT.UP);
-            } else if (SORT_DOWN.equals(direction)) {
-                setSortProperties(column, SWT.DOWN);
-            } else {
-                setSortProperties(column, SWT.NONE);
-            }
-        }
+        storeSortProperties();
     }
 
     public void setPreviousSortOrder() {
@@ -103,7 +89,7 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
         int columnIndex = IntHelper.tryParseInt(sortColumnIndex, -1);
         if (columnIndex >= 0 && columnIndex < table.getColumnCount()) {
-            setSortColumn(table.getColumn(columnIndex), sortOrder);
+            setSortColumnInternally(table.getColumn(columnIndex), sortOrder);
         }
     }
 
@@ -126,6 +112,21 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         }
     }
 
+    private void setSortColumnInternally(TableColumn column, String direction) {
+
+        if (column == null) {
+            setSortProperties(null, SWT.NONE);
+        } else {
+            if (SORT_UP.equals(direction)) {
+                setSortProperties(column, SWT.UP);
+            } else if (SORT_DOWN.equals(direction)) {
+                setSortProperties(column, SWT.DOWN);
+            } else {
+                setSortProperties(column, SWT.NONE);
+            }
+        }
+    }
+
     private void setSortProperties(TableColumn column, int direction) {
 
         table.setSortDirection(direction);
@@ -139,10 +140,13 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         }
 
         if (table.getSortDirection() == SWT.DOWN) {
-            isReverseOrder = true;
+            this.isReverseOrder = true;
         } else {
-            isReverseOrder = false;
+            this.isReverseOrder = false;
         }
+    }
+
+    private void storeSortProperties() {
 
         if (dialogSettingsManager != null) {
             dialogSettingsManager.storeValue(SORT_COLUMN_INDEX, Integer.toString(getSortColumnIndex()));
@@ -164,18 +168,18 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
     @Override
     public int compare(Viewer viewer, Object e1, Object e2) {
 
-        if (columnIndex == -1) {
+        if (getSortColumnIndex() == -1) {
             return 0;
         }
 
         Object value1;
         Object value2;
         if (isReverseOrder) {
-            value1 = getColumnValue((SpooledFile)e2, columnIndex);
-            value2 = getColumnValue((SpooledFile)e1, columnIndex);
+            value1 = getColumnValue((SpooledFile)e2, getSortColumnIndex());
+            value2 = getColumnValue((SpooledFile)e1, getSortColumnIndex());
         } else {
-            value1 = getColumnValue((SpooledFile)e1, columnIndex);
-            value2 = getColumnValue((SpooledFile)e2, columnIndex);
+            value1 = getColumnValue((SpooledFile)e1, getSortColumnIndex());
+            value2 = getColumnValue((SpooledFile)e2, getSortColumnIndex());
         }
 
         if (value1 == null) {
@@ -195,7 +199,7 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         return super.compare(viewer, value1, value2);
     }
 
-    public Object getColumnValue(SpooledFile spooledFile, int columnIndex) {
+    private Object getColumnValue(SpooledFile spooledFile, int columnIndex) {
 
         if (columnIndex == Columns.STATUS.ordinal()) {
             return spooledFile.getStatus();
