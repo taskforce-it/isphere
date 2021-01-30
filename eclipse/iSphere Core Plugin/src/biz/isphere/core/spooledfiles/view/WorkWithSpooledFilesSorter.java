@@ -8,8 +8,6 @@
 
 package biz.isphere.core.spooledfiles.view;
 
-import java.util.Date;
-
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -19,7 +17,9 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.core.spooledfiles.BasicSpooledFileSortComparator;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.view.rse.Columns;
 
 /**
  * This table sorter automatically stores the sort properties in
@@ -34,24 +34,31 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
     private static final String SORT_UP = "Up"; //$NON-NLS-1$
     private static final String SORT_DOWN = "Down"; //$NON-NLS-1$
     private static final String SORT_NONE = "None"; //$NON-NLS-1$
+    private static final int SORT_INDEX_NULL = -1;
 
     private TableViewer tableViewer;
     private Table table;
     private DialogSettingsManager dialogSettingsManager;
 
-    private int columnIndex;
-    private boolean isReverseOrder;
+    private BasicSpooledFileSortComparator comparator;
 
     public WorkWithSpooledFilesSorter(TableViewer tableViewer, DialogSettingsManager dialogSettingsManager) {
         this.tableViewer = tableViewer;
         this.table = tableViewer.getTable();
         this.dialogSettingsManager = dialogSettingsManager;
+        this.comparator = new BasicSpooledFileSortComparator();
 
         setSortColumnInternally(null, SORT_NONE);
     }
 
     private int getSortColumnIndex() {
-        return columnIndex;
+
+        Columns sortColumn = comparator.getSortColumn();
+        if (sortColumn == null) {
+            return SORT_INDEX_NULL;
+        }
+
+        return sortColumn.ordinal();
     }
 
     public String getSortDirection() {
@@ -87,7 +94,7 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
             return;
         }
 
-        int columnIndex = IntHelper.tryParseInt(sortColumnIndex, -1);
+        int columnIndex = IntHelper.tryParseInt(sortColumnIndex, SORT_INDEX_NULL);
         if (columnIndex >= 0 && columnIndex < table.getColumnCount()) {
             setSortColumnInternally(table.getColumn(columnIndex), sortOrder);
         }
@@ -133,16 +140,16 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
         if (direction == SWT.NONE) {
             this.table.setSortColumn(null);
-            this.columnIndex = -1;
+            this.comparator.setColumnIndex(null);
         } else {
             this.table.setSortColumn(column);
-            this.columnIndex = getColumnIndex(column);
+            this.comparator.setColumnIndex(getColumnIndex(column));
         }
 
         if (table.getSortDirection() == SWT.DOWN) {
-            this.isReverseOrder = true;
+            this.comparator.setReverseOrder(true);
         } else {
-            this.isReverseOrder = false;
+            this.comparator.setReverseOrder(false);
         }
     }
 
@@ -154,89 +161,12 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         }
     }
 
-    private int getColumnIndex(TableColumn column) {
-
-        for (int i = 0; i < table.getColumnCount(); i++) {
-            if (column.equals(table.getColumn(i))) {
-                return i;
-            }
-        }
-
-        return -1;
+    private Columns getColumnIndex(TableColumn column) {
+        return Columns.getByName(dialogSettingsManager.getColumnName(column));
     }
 
     @Override
     public int compare(Viewer viewer, Object e1, Object e2) {
-
-        if (getSortColumnIndex() == -1) {
-            return 0;
-        }
-
-        Object value1;
-        Object value2;
-        if (isReverseOrder) {
-            value1 = getColumnValue((SpooledFile)e2, getSortColumnIndex());
-            value2 = getColumnValue((SpooledFile)e1, getSortColumnIndex());
-        } else {
-            value1 = getColumnValue((SpooledFile)e1, getSortColumnIndex());
-            value2 = getColumnValue((SpooledFile)e2, getSortColumnIndex());
-        }
-
-        if (value1 == null) {
-            return -1;
-        } else if (value2 == null) {
-            return 1;
-        } else if ((value1 instanceof String)) {
-            return ((String)value1).compareTo((String)value2);
-        } else if ((value1 instanceof Date)) {
-            return ((Date)value1).compareTo((Date)value2);
-        } else if ((value1 instanceof Long)) {
-            return ((Long)value1).compareTo((Long)value2);
-        } else if ((value1 instanceof Integer)) {
-            return ((Integer)value1).compareTo((Integer)value2);
-        }
-
-        return super.compare(viewer, value1, value2);
-    }
-
-    private Object getColumnValue(SpooledFile spooledFile, int columnIndex) {
-
-        if (columnIndex == Columns.STATUS.ordinal()) {
-            return spooledFile.getStatus();
-        } else if (columnIndex == Columns.FILE.ordinal()) {
-            return spooledFile.getFile();
-        } else if (columnIndex == Columns.FILE_NUMBER.ordinal()) {
-            return spooledFile.getFileNumber();
-        } else if (columnIndex == Columns.JOB_NAME.ordinal()) {
-            return spooledFile.getJobName();
-        } else if (columnIndex == Columns.JOB_USER.ordinal()) {
-            return spooledFile.getJobUser();
-        } else if (columnIndex == Columns.JOB_NUMBER.ordinal()) {
-            return spooledFile.getJobNumber();
-        } else if (columnIndex == Columns.JOB_SYSTEM.ordinal()) {
-            return spooledFile.getJobSystem();
-        } else if (columnIndex == Columns.CREATION_DATE.ordinal()) {
-            return spooledFile.getCreationDateAsDate();
-        } else if (columnIndex == Columns.CREATION_TIME.ordinal()) {
-            return spooledFile.getCreationTimeAsDate();
-        } else if (columnIndex == Columns.OUTPUT_QUEUE.ordinal()) {
-            return spooledFile.getOutputQueue();
-        } else if (columnIndex == Columns.OUTPUT_PRIORITY.ordinal()) {
-            return spooledFile.getOutputPriority();
-        } else if (columnIndex == Columns.USER_DATA.ordinal()) {
-            return spooledFile.getUserData();
-        } else if (columnIndex == Columns.FORM_TYPE.ordinal()) {
-            return spooledFile.getFormType();
-        } else if (columnIndex == Columns.COPIES.ordinal()) {
-            return spooledFile.getCopies();
-        } else if (columnIndex == Columns.PAGES.ordinal()) {
-            return spooledFile.getPages();
-        } else if (columnIndex == Columns.CURRENT_PAGE.ordinal()) {
-            return spooledFile.getCurrentPage();
-        } else if (columnIndex == Columns.CREATION_TIMESTAMP.ordinal()) {
-            return spooledFile.getCreationTimestamp();
-        }
-
-        return null;
+        return comparator.compare((SpooledFile)e1, (SpooledFile)e2);
     }
 }
