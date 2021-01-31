@@ -163,6 +163,7 @@ f) For RDi and WDSCi add classpath variable IBM_SHARED_PLUGINS to the Java build
 
 g) Preferences - General - Editors - Text Editors - Spelling:
 
+   Platform dictionary:      English (United States)
    User defined dictionary:  ${workspace_loc}\iSphere Eclipse Setup\Spelling\dictionary_en.txt
 
 h) Preferences - i Projects:
