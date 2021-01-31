@@ -203,7 +203,7 @@ public class DialogSettingsManager {
     }
 
     /**
-     * Produces a resizable table column for a given table.
+     * Produces a movable and resizable table column for a given table.
      * 
      * @param table - Table, the column is added to.
      * @param style - The style of column to construct.
