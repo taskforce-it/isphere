@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1191,6 +1191,8 @@ public class Messages extends NLS {
     public static String Version_colon;
 
     public static String Use_connection_specific_settings;
+
+    public static String Merge_filters_and_sort_items_by_creation_time;
 
     public static String Load_spooled_files_asynchronously;
 

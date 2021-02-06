@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,8 @@ public final class Preferences {
     private static final String SPOOLED_FILE_NAME_SIMPLE = "*SIMPLE"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILE_NAME_QUALIFIED = "*QUALIFIED"; //$NON-NLS-1$
+
+    private static final String SPOOLED_FILES_MERGE_FILTERS = DOMAIN + "SPOOLED_FILES.MERGE.FILTERS"; //$NON-NLS-1$
 
     private static final String SPOOLED_FILES_LOAD_ASYNCHRONOUSLY = DOMAIN + "SPOOLED_FILES.LOAD.ASYNCHRONOUSLY"; //$NON-NLS-1$
 
@@ -334,6 +336,10 @@ public final class Preferences {
 
     public String getSourceFileSearchExportDirectory() {
         return preferenceStore.getString(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY);
+    }
+
+    public boolean isMergeSpooledFileFilters() {
+        return preferenceStore.getBoolean(SPOOLED_FILES_MERGE_FILTERS);
     }
 
     public boolean isLoadSpooledFilesAsynchronousliy() {
@@ -662,6 +668,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY, aPath);
     }
 
+    public void setMergeSpooledFileFilters(boolean mergeFilters) {
+        preferenceStore.setValue(SPOOLED_FILES_MERGE_FILTERS, mergeFilters);
+    }
+
     public void setLoadSpooledFilesAsynchronousliy(boolean asynchronously) {
         preferenceStore.setValue(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, asynchronously);
     }
@@ -888,6 +898,7 @@ public final class Preferences {
         preferenceStore.setDefault(URL_FOR_UPDATES, getDefaultURLForUpdates());
         preferenceStore.setDefault(LAST_VERSION_FOR_UPDATES, getDefaultLastVersionForUpdates());
 
+        preferenceStore.setDefault(SPOOLED_FILES_MERGE_FILTERS, getDefaultMergeSpooledFileFilters());
         preferenceStore.setDefault(SPOOLED_FILES_LOAD_ASYNCHRONOUSLY, getDefaultLoadSpooledFilesAsynchronously());
         preferenceStore.setDefault(SPOOLED_FILES_SUGGESTED_FILE_NAME, getDefaultSpooledFilesSuggestedFileName());
         preferenceStore.setDefault(SPOOLED_FILES_DEFAULT_FORMAT, getDefaultSpooledFileConversionDefaultFormat());
@@ -1042,6 +1053,10 @@ public final class Preferences {
      */
     public String getDefaultLastVersionForUpdates() {
         return "0.0.0.r";
+    }
+
+    public boolean getDefaultMergeSpooledFileFilters() {
+        return false;
     }
 
     public boolean getDefaultLoadSpooledFilesAsynchronously() {

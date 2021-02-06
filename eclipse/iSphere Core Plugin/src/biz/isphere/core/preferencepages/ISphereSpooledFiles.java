@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,8 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
     private Group groupSubstitutionVariables;
 
     // Tab "General"
+    private Button buttonMergeFilters;
+    private boolean isMergeFilters;
     private Button buttonLoadAsynchronously;
     private boolean isLoadAsynchronously;
     private Text textMaxNumSpooledFiles;
@@ -147,6 +149,16 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
         container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+        buttonMergeFilters = WidgetFactory.createCheckbox(container);
+        buttonMergeFilters.setLayoutData(createGroupLayoutData());
+        buttonMergeFilters.setText(Messages.Merge_filters_and_sort_items_by_creation_time);
+        buttonMergeFilters.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                isMergeFilters = buttonMergeFilters.getSelection();
+            }
+        });
 
         buttonLoadAsynchronously = WidgetFactory.createCheckbox(container);
         buttonLoadAsynchronously.setLayoutData(createGroupLayoutData());
@@ -763,6 +775,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setStoreToValues() {
 
+        Preferences.getInstance().setMergeSpooledFileFilters(isMergeFilters);
         Preferences.getInstance().setLoadSpooledFilesAsynchronousliy(isLoadAsynchronously);
         Preferences.getInstance().setSpooledFileDefaultFormat(defaultFormat);
 
@@ -790,6 +803,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToValues() {
 
+        isMergeFilters = Preferences.getInstance().isMergeSpooledFileFilters();
         isLoadAsynchronously = Preferences.getInstance().isLoadSpooledFilesAsynchronousliy();
         defaultFormat = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
 
@@ -820,6 +834,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenToDefaultValues() {
 
+        isMergeFilters = Preferences.getInstance().getDefaultMergeSpooledFileFilters();
         isLoadAsynchronously = Preferences.getInstance().getDefaultLoadSpooledFilesAsynchronously();
         defaultFormat = Preferences.getInstance().getDefaultSpooledFileConversionDefaultFormat();
 
@@ -850,6 +865,7 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
 
     protected void setScreenValues() {
 
+        buttonMergeFilters.setSelection(isMergeFilters);
         buttonLoadAsynchronously.setSelection(isLoadAsynchronously);
 
         buttonDefaultFormatText.setSelection(false);

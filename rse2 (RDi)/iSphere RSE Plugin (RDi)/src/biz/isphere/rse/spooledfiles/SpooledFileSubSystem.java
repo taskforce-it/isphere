@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@ package biz.isphere.rse.spooledfiles;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
@@ -28,8 +29,10 @@ import org.eclipse.rse.ui.actions.SystemRefreshAction;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.spooledfiles.ISpooledFileSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.SpooledFileAttributes;
 import biz.isphere.core.spooledfiles.SpooledFileBaseSubSystem;
 import biz.isphere.core.spooledfiles.SpooledFileSubSystemAttributes;
 import biz.isphere.core.spooledfiles.SpooledFileTextDecoration;
@@ -79,6 +82,22 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
         return internalResolveFilterString(filterString, monitor);
+    }
+
+    public Object[] internalResolveFilterStrings(String[] filterStrings, IProgressMonitor monitor) throws InvocationTargetException,
+        InterruptedException {
+
+        Object[] objects = super.internalResolveFilterStrings(filterStrings, monitor);
+
+        if (Preferences.getInstance().isMergeSpooledFileFilters()) {
+            SpooledFileAttributes sortAttribute = SpooledFileAttributes.CREATION_TIMESTAMP;
+            if (sortAttribute != null) {
+                SpooledFileSortComparator spooledFileSortComparator = new SpooledFileSortComparator(sortAttribute);
+                Arrays.sort(objects, spooledFileSortComparator);
+            }
+        }
+
+        return objects;
     }
 
     public QSYSCommandSubSystem getCmdSubSystem() {
