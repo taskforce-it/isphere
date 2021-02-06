@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,7 +200,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         disableAutoRefreshViewAction = new DisableAutoRefreshViewAction(this);
 
         pinViewAction = new PinViewAction(this);
-        pinViewAction.setChecked(getViewManager().isPinned(this));
 
         resetColumnSizeAction = new ResetColumnSizeAction(workWithSpooledFilesPanel);
 
@@ -257,14 +256,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * setInputData(WorkWithSpooledFilesInputData inputData).
      */
     private void restoreData() {
+        
+        setPinned(true);
 
-        Set<String> keySet = new HashSet<String>();
-        keySet.add(CONNECTION_NAME);
-        keySet.add(FILTER_POOL_NAME);
-        keySet.add(FILTER_NAME);
-        keySet.add(FILTER_STRING);
-
-        pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, keySet);
+        pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, getPinKeys());
         if (pinProperties.size() == 0) {
             setPinned(false);
             return;
@@ -281,6 +276,8 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
             setPinned(false);
             return;
         }
+
+        workWithSpooledFilesPanel.restoreData(pinProperties);
 
         setSubTitle(connectionName, filterName);
 
@@ -541,6 +538,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     public void setPinned(boolean pinned) {
 
         pinViewAction.setChecked(pinned);
+        workWithSpooledFilesPanel.setPinned(pinned);
 
         if (pinned) {
             updatePinProperties();
@@ -554,6 +552,19 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         }
 
         return inputData.getContentId();
+    }
+
+    private Set<String> getPinKeys() {
+        
+        Set<String> keySet = new HashSet<String>();
+        keySet.add(CONNECTION_NAME);
+        keySet.add(FILTER_POOL_NAME);
+        keySet.add(FILTER_NAME);
+        keySet.add(FILTER_STRING);
+
+        keySet.addAll(workWithSpooledFilesPanel.getPinKeys());
+        
+        return keySet;
     }
 
     public Map<String, String> getPinProperties() {

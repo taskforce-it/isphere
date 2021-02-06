@@ -23,8 +23,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -39,21 +39,22 @@ import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
 
-public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, ControlListener, IPostSelectionProvider {
+public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, IPostSelectionProvider {
 
     /*
      * View pin properties
      */
-    private static final String TABLE_COLUMN = "tableColumn_"; //$NON-NLS-1$
-    private static final String COLUMN_ORDER = "columnOrder"; //$NON-NLS-1$
     private static final String SORT_COLUMN_INDEX = "sortColumnIndex"; //$NON-NLS-1$
     private static final String SORT_DIRECTION = "sortDirection"; //$NON-NLS-1$
+    private static final String COLUMN_ORDER = "columnOrder"; //$NON-NLS-1$
+    private static final String COLUMN_WIDTH = "columnWidth_"; //$NON-NLS-1$
 
     private WorkWithSpooledFilesHelper workWithSpooledFilesHelper;
 
@@ -206,20 +207,6 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
     private void createTableViewer() {
 
         tableViewer = new TableViewer(this, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
-
-        tableSorter = new WorkWithSpooledFilesSorter(tableViewer, getDialogSettingsManager());
-        tableViewer.setSorter(tableSorter);
-        tableViewer.setUseHashlookup(true);
-
-        Listener sortListener = new Listener() {
-            public void handleEvent(Event e) {
-                TableColumn column = (TableColumn)e.widget;
-                tableSorter.setSortColumn(column);
-                tableSorter.refresh();
-                updateSortPinProperties();
-            }
-        };
-
         table = tableViewer.getTable();
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -241,14 +228,47 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
             }
         });
 
+        tableViewer.setLabelProvider(new WorkWithSpooledFilesLabelProvider());
+        tableViewer.setContentProvider(new WorkWithSpooledFilesContentProvider());
+
+        Listener sortListener = new Listener() {
+            public void handleEvent(Event e) {
+                TableColumn column = (TableColumn)e.widget;
+                tableSorter.setSortColumn(column);
+                tableSorter.refresh();
+                updateSortPinProperties();
+            }
+        };
+
         WorkWithSpooledFilesTableColumns[] columns = WorkWithSpooledFilesTableColumns.getDefaultColumns();
         for (WorkWithSpooledFilesTableColumns column : columns) {
             createColumn(table, column, sortListener);
         }
 
-        tableViewer.setLabelProvider(new WorkWithSpooledFilesLabelProvider());
-        tableViewer.setContentProvider(new WorkWithSpooledFilesContentProvider());
-        tableSorter.setPreviousSortOrder();
+        tableSorter = new WorkWithSpooledFilesSorter(tableViewer, getDialogSettingsManager());
+        tableViewer.setSorter(tableSorter);
+        tableViewer.setUseHashlookup(true);
+
+        ControlAdapter columnResizeListener = new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent event) {
+                TableColumn column = (TableColumn)event.getSource();
+                updateColumnResizeProperties(column);
+            }
+        };
+
+        Listener columnMoveListener = new Listener() {
+            public void handleEvent(Event event) {
+                TableColumn column = (TableColumn)event.widget;
+                Table table = column.getParent();
+                updateColumnMoveProperties(table);
+            }
+        };
+
+        for (TableColumn column : table.getColumns()) {
+            column.addControlListener(columnResizeListener);
+            column.addListener(SWT.Move, columnMoveListener);
+        }
     }
 
     private TableColumn createColumn(Table table, WorkWithSpooledFilesTableColumns column, Listener sortListener) {
@@ -261,93 +281,93 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         tableColumn.setText(column.label);
 
         tableColumn.addListener(SWT.Selection, sortListener);
-        tableColumn.addControlListener(this);
 
         return tableColumn;
     }
 
-    private void updateColumnWidthPinProperty(TableColumn column) {
+    public void setPinned(boolean pinned) {
 
-        // if (pinProperties == null) {
-        // return;
-        // }
-        //
-        // pinProperties.put(getPinPropertiesKey(column),
-        // Integer.toString(column.getWidth()));
+        if (pinned) {
+            dialogSettingsManager.setSaveTableStatusEnabled(table, false);
+        } else {
+            dialogSettingsManager.setSaveTableStatusEnabled(table, true);
+        }
     }
 
-    private void updateSortPinProperties() {
+    public Set<String> getPinKeys() {
 
-        // if (pinProperties == null) {
-        // return;
-        // }
-        //
-        // pinProperties.put(SORT_DIRECTION, tableSorter.getSortDirection());
-        // pinProperties.put(SORT_COLUMN_INDEX,
-        // Integer.toString(tableSorter.getSortColumnIndex()));
-    }
+        Set<String> keySet = new HashSet<String>();
+        keySet.add(SORT_COLUMN_INDEX);
+        keySet.add(SORT_DIRECTION);
+        keySet.add(COLUMN_ORDER);
 
-    private void updateColumnOrderPinProperty() {
+        for (TableColumn column : table.getColumns()) {
+            String columnName = dialogSettingsManager.getColumnName(column);
+            keySet.add(COLUMN_WIDTH + columnName);
+        }
 
-        // if (pinProperties == null) {
-        // return;
-        // }
-        //
-        // pinProperties.put(COLUMN_ORDER,
-        // IntHelper.toString(table.getColumnOrder()));
+        return keySet;
     }
 
     public Map<String, String> getPinProperties() {
         return pinProperties;
     }
 
-    // public void restoreData(Map<String, String> pinProperties) {
-    //
-    /*
-     * Restore column width
-     */
-    // for (TableColumn column : table.getColumns()) {
-    // String key = getPinPropertiesKey(column);
-    // Object object = pinProperties.get(key);
-    // if (object instanceof String) {
-    // int columnWidth = IntHelper.tryParseInt((String)object, -1);
-    // if (columnWidth != -1) {
-    // column.setWidth(columnWidth);
-    // }
-    // }
-    //
-    // updateColumnWidthPinProperty(column);
-    // }
-    //
-    /*
-     * Restore sort column
-     */
-    // String sortColumnIndex = pinProperties.get(SORT_COLUMN_INDEX);
-    // int columnIndex = IntHelper.tryParseInt(sortColumnIndex, -1);
-    // if (columnIndex >= 0 && columnIndex < table.getColumnCount()) {
-    // String sortDirection = pinProperties.get(SORT_DIRECTION);
-    // tableSorter.setSortColumn(table.getColumn(columnIndex),
-    // sortDirection);
-    // }
-    //
-    // updateSortPinProperties();
-    //
-    /*
-     * Restore column order
-     */
-    // int[] columnOrder =
-    // IntHelper.toIntArray(pinProperties.get(COLUMN_ORDER));
-    // if (columnOrder.length == table.getColumnCount()) {
-    // table.setColumnOrder(columnOrder);
-    // }
-    //
-    // updateColumnOrderPinProperty();
-    // }
+    private void updateSortPinProperties() {
 
-    // private String getPinPropertiesKey(TableColumn column) {
-    // String columnName = getDialogSettingsManager().getColumnName(column);
-    // return TABLE_COLUMN + columnName;
-    // }
+        if (pinProperties == null) {
+            return;
+        }
+
+        pinProperties.put(SORT_DIRECTION, tableSorter.getSortDirection());
+        pinProperties.put(SORT_COLUMN_INDEX, tableSorter.getSortColumnName());
+    }
+
+    private void updateColumnResizeProperties(TableColumn column) {
+
+        String columnName = dialogSettingsManager.getColumnName(column);
+        pinProperties.put(COLUMN_WIDTH + columnName, Integer.toString(column.getWidth()));
+    }
+
+    private void updateColumnMoveProperties(Table table) {
+
+        int[] columnOrder = table.getColumnOrder();
+        pinProperties.put(COLUMN_ORDER, IntHelper.toString(columnOrder));
+    }
+
+    public void restoreData(Map<String, String> pinProperties) {
+
+        try {
+
+            String sortAttributeName = pinProperties.get(SORT_COLUMN_INDEX);
+            String sortOrder = pinProperties.get(SORT_DIRECTION);
+
+            TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortAttributeName);
+            tableSorter.setSortColumn(tableColumn, sortOrder);
+
+            String columnOrder = pinProperties.get(COLUMN_ORDER);
+            int[] columnOrderArray = IntHelper.toIntArray(columnOrder);
+            if (columnOrderArray.length == table.getColumnCount()) {
+                table.setColumnOrder(columnOrderArray);
+            }
+
+            String prefix = COLUMN_WIDTH;
+            for (Map.Entry<String, String> entry : pinProperties.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    String columnName = key.substring(prefix.length());
+                    TableColumn column = dialogSettingsManager.getColumn(table, columnName);
+                    int width = IntHelper.tryParseInt(entry.getValue(), -1);
+                    if (width > 0) {
+                        column.setWidth(width);
+                    }
+                }
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Error restoring pinned view 'Work With Spooled Files' ***", e); //$NON-NLS-1$
+        }
+    }
 
     private DialogSettingsManager getDialogSettingsManager() {
 
@@ -355,19 +375,6 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
             dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         }
         return dialogSettingsManager;
-    }
-
-    /*
-     * ControlListener methods
-     */
-
-    public void controlMoved(ControlEvent event) {
-        updateColumnOrderPinProperty();
-    }
-
-    public void controlResized(ControlEvent event) {
-        TableColumn column = (TableColumn)event.getSource();
-        updateColumnWidthPinProperty(column);
     }
 
     /*
