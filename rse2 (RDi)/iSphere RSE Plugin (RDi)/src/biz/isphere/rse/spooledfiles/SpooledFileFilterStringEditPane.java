@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import biz.isphere.core.spooledfiles.SpooledFileBaseFilterStringEditPane;
 public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane {
 
     private SpooledFileBaseFilterStringEditPane base = new SpooledFileBaseFilterStringEditPane();
+    private EditPaneModifyListener keyListener;
 
     public SpooledFileFilterStringEditPane(Shell shell) {
         super(shell);
@@ -35,11 +36,7 @@ public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane 
         Composite composite_prompts = SystemWidgetHelpers.createComposite(parent, nbrColumns);
         ((GridLayout)composite_prompts.getLayout()).marginWidth = 0;
 
-        ModifyListener keyListener = new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                validateStringInput();
-            }
-        };
+        keyListener = new EditPaneModifyListener();
 
         base.createContents(composite_prompts, keyListener, inputFilterString);
 
@@ -59,7 +56,13 @@ public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane 
 
     @Override
     protected void resetFields() {
-        base.resetFields();
+        boolean oldEnabledState = keyListener.isEnabled();
+        try {
+            keyListener.setEnabled(false);
+            base.resetFields();
+        } finally {
+            keyListener.setEnabled(oldEnabledState);
+        }
     }
 
     @Override
@@ -94,4 +97,25 @@ public class SpooledFileFilterStringEditPane extends SystemFilterStringEditPane 
         return systemMessage;
     }
 
+    private class EditPaneModifyListener implements ModifyListener {
+        private boolean isEnabled;
+
+        public EditPaneModifyListener() {
+            this.isEnabled = true;
+        }
+
+        public boolean isEnabled() {
+            return this.isEnabled;
+        }
+
+        public void setEnabled(boolean isEnabled) {
+            this.isEnabled = isEnabled;
+        }
+
+        public void modifyText(ModifyEvent e) {
+            if (isEnabled) {
+                validateStringInput();
+            }
+        }
+    }
 }
