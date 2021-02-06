@@ -49,6 +49,10 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
     }
 
     public int compare(SpooledFile o1, SpooledFile o2) {
+        return compare(sortAttribute, isReverseOrder, o1, o2);
+    }
+
+    public int compare(SpooledFileAttributes sortAttribute, boolean isReverseOrder, SpooledFile o1, SpooledFile o2) {
 
         if (sortAttribute == null) {
             return 0;
@@ -57,7 +61,7 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
         Object value1;
         Object value2;
 
-        if (isReverseOrder) {
+        if (!isReverseOrder) {
             value1 = o1.getAttributeValue(sortAttribute);
             value2 = o2.getAttributeValue(sortAttribute);
         } else {
@@ -65,20 +69,28 @@ public class BasicSpooledFileSortComparator implements Comparator<SpooledFile> {
             value2 = o1.getAttributeValue(sortAttribute);
         }
 
+        int rc;
+
         if (value1 == null) {
-            return -1;
+            rc = -1;
         } else if (value2 == null) {
-            return 1;
+            rc = 1;
         } else if ((value1 instanceof String)) {
-            return ((String)value1).compareTo((String)value2);
+            rc = ((String)value1).compareTo((String)value2);
         } else if ((value1 instanceof Date)) {
-            return ((Date)value1).compareTo((Date)value2);
+            rc = ((Date)value1).compareTo((Date)value2);
         } else if ((value1 instanceof Long)) {
-            return ((Long)value1).compareTo((Long)value2);
+            rc = ((Long)value1).compareTo((Long)value2);
         } else if ((value1 instanceof Integer)) {
-            return ((Integer)value1).compareTo((Integer)value2);
+            rc = ((Integer)value1).compareTo((Integer)value2);
         } else {
             throw new RuntimeException("Unsupported object type: " + value1.getClass().getName());
         }
+
+        if (rc == 0 && !SpooledFileAttributes.CREATION_TIMESTAMP.equals(sortAttribute)) {
+            return compare(SpooledFileAttributes.CREATION_TIMESTAMP, false, o1, o2);
+        }
+
+        return rc;
     }
 }
