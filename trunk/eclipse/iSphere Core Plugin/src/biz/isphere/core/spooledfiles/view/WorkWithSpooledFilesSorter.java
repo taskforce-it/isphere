@@ -16,23 +16,17 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.spooledfiles.BasicSpooledFileSortComparator;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileAttributes;
 
-/**
- * This table sorter automatically stores the sort properties in
- * "dialog_settings.xml". Previously stored properties can be re-applied by
- * calling {@link #setPreviousSortOrder()}.
- */
 public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
-    private static final String SORT_COLUMN_INDEX = "sortColumnIndex"; //$NON-NLS-1$
-    private static final String SORT_DIRECTION = "sortDirection"; //$NON-NLS-1$
+    public static final String SORT_UP = "Up"; //$NON-NLS-1$
+    public static final String SORT_DOWN = "Down"; //$NON-NLS-1$
+    public static final String SORT_NONE = "None"; //$NON-NLS-1$
 
-    private static final String SORT_UP = "Up"; //$NON-NLS-1$
-    private static final String SORT_DOWN = "Down"; //$NON-NLS-1$
-    private static final String SORT_NONE = "None"; //$NON-NLS-1$
     private static final String SORT_COLUMN_INDEX_NULL = ""; //$NON-NLS-1$
 
     private TableViewer tableViewer;
@@ -47,10 +41,10 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
         this.dialogSettingsManager = dialogSettingsManager;
         this.comparator = new BasicSpooledFileSortComparator();
 
-        setSortColumnInternally(null, SORT_NONE);
+        setDefaultSortOrder();
     }
 
-    private String getSortColumnName() {
+    public String getSortColumnName() {
 
         SpooledFileAttributes sortColumn = comparator.getSortAttribute();
         if (sortColumn == null) {
@@ -79,19 +73,31 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
 
     public void setSortColumn(TableColumn column) {
         setSortProperties(column, changeSortDirection(column));
-        storeSortProperties();
     }
 
-    public void setPreviousSortOrder() {
+    public void setSortColumn(TableColumn column, String direction) {
+
+        if (SORT_UP.equals(direction) || SORT_DOWN.equals(direction) || SORT_NONE.equals(direction)) {
+            setSortColumnInternally(column, direction);
+        } else {
+            setSortColumnInternally(column, SORT_NONE);
+        }
+
+    }
+
+    private void setDefaultSortOrder() {
 
         if (dialogSettingsManager == null) {
+            setSortColumnInternally(null, SORT_NONE);
             return;
         }
 
-        String sortAttributeName = dialogSettingsManager.loadValue(SORT_COLUMN_INDEX, null);
-        TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortAttributeName);
-        String sortOrder = dialogSettingsManager.loadValue(SORT_DIRECTION, null);
-        setSortColumnInternally(tableColumn, sortOrder);
+        if (Preferences.getInstance().isMergeSpooledFileFilters()) {
+            TableColumn tableColumn = dialogSettingsManager.getColumn(table, SpooledFileAttributes.CREATION_TIMESTAMP.attributeName);
+            setSortColumnInternally(tableColumn, SORT_UP);
+        } else {
+            setSortColumnInternally(null, SORT_NONE);
+        }
     }
 
     public void refresh() {
@@ -144,14 +150,6 @@ public class WorkWithSpooledFilesSorter extends ViewerSorter {
             this.comparator.setReverseOrder(true);
         } else {
             this.comparator.setReverseOrder(false);
-        }
-    }
-
-    private void storeSortProperties() {
-
-        if (dialogSettingsManager != null) {
-            dialogSettingsManager.storeValue(SORT_COLUMN_INDEX, getSortColumnName());
-            dialogSettingsManager.storeValue(SORT_DIRECTION, getSortDirection());
         }
     }
 

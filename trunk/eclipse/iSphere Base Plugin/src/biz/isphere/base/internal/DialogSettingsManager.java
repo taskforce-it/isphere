@@ -10,6 +10,7 @@ package biz.isphere.base.internal;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -22,9 +23,10 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class DialogSettingsManager {
 
-    public static final String COLUMN_NAME = "COLUMN_NAME";
-    public static final String COLUMN_WIDTH = "COLUMN_WIDTH_";
-    public static final String COLUMN_ORDER = "COLUMN_ORDER";
+    private static final String SAVE_TABLE_PROPERTIES_ENABLED = "SAVE_TABLE_PROPERTIES_ENABLED";
+    private static final String COLUMN_NAME = "COLUMN_NAME";
+    private static final String COLUMN_WIDTH = "COLUMN_WIDTH";
+    private static final String COLUMN_ORDER = "COLUMN_ORDER";
 
     private IDialogSettings dialogSettings;
     private Class<?> section;
@@ -274,6 +276,25 @@ public class DialogSettingsManager {
     }
 
     /**
+     * Sets the column widths of the table columns provided in parameter
+     * <code>widths</code>.
+     * 
+     * @param table - table whose column widths is changed
+     * @param widths - map of column names/column widths
+     */
+    public void setColumnWidth(Table table, Map<String, Integer> widths) {
+
+        for (TableColumn column : table.getColumns()) {
+            String columnName = getColumnName(column);
+            Integer width = widths.get(columnName);
+            if (width != null) {
+                column.setWidth(width);
+            }
+        }
+
+    }
+
+    /**
      * Returns the table column identified by the specified name.
      * 
      * @param table - table that contains the columns
@@ -319,23 +340,29 @@ public class DialogSettingsManager {
     }
 
     /**
-     * Returns default index of a given resizable and moveable table column.
+     * Enables or disables saving the column properties of a given table.
      * 
-     * @param column - table column
-     * @return index of the table column
+     * @param table - the table for that saving the column properties is enabled
+     *        or disabled.
+     * @return index - saving column properties enabled status
      */
-    public int getColumnIndex(TableColumn column) {
+    public void setSaveTableStatusEnabled(Table table, boolean enabled) {
 
-        if (column == null) {
-            return -1;
+        if (table == null) {
+            return;
         }
 
-        Object objectName = column.getData(COLUMN_ORDER);
-        if (objectName instanceof Integer) {
-            return (Integer)objectName;
+        table.setData(SAVE_TABLE_PROPERTIES_ENABLED, enabled);
+    }
+
+    private boolean isSaveTableStatusEnabled(Table table) {
+
+        Object value = table.getData(SAVE_TABLE_PROPERTIES_ENABLED);
+        if (value instanceof Boolean) {
+            return (Boolean)value;
         }
 
-        return -1;
+        return true;
     }
 
     private ControlAdapter getColumnResizeListener() {
@@ -345,9 +372,12 @@ public class DialogSettingsManager {
                 @Override
                 public void controlResized(ControlEvent event) {
                     TableColumn column = (TableColumn)event.getSource();
-                    String key = produceColumnWidthKey(column);
-                    if (key != null) {
-                        storeValue(key, column.getWidth());
+                    Table table = column.getParent();
+                    if (isSaveTableStatusEnabled(table)) {
+                        String key = produceColumnWidthKey(column);
+                        if (key != null) {
+                            storeValue(key, column.getWidth());
+                        }
                     }
                 }
             };
@@ -363,8 +393,10 @@ public class DialogSettingsManager {
                 public void handleEvent(Event event) {
                     TableColumn column = (TableColumn)event.widget;
                     Table table = column.getParent();
-                    int[] columnOrder = table.getColumnOrder();
-                    storeValue(COLUMN_ORDER, columnOrder);
+                    if (isSaveTableStatusEnabled(table)) {
+                        int[] columnOrder = table.getColumnOrder();
+                        storeValue(COLUMN_ORDER, columnOrder);
+                    }
                 }
             };
         }
@@ -383,7 +415,7 @@ public class DialogSettingsManager {
             return null;
         }
 
-        return COLUMN_WIDTH + columnName;
+        return COLUMN_WIDTH + "_" + columnName; //$NON-NLS-1$
     }
 
     private int getDefaultColumnWidth(TableColumn column) {
