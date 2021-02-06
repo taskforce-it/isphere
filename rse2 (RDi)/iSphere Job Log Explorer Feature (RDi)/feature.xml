@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.joblogexplorer.rse"
       label="iSphere Job Log Explorer for RDi 8.0+ (optional)"
-      version="4.0.0.b001"
+      version="4.0.0.b002"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -12,7 +12,7 @@ The &quot;iSphere Job Log Explorer Feature (RDi)&quot; provides an editor for ex
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
-      Copyright (c) 2012-2020 iSphere Project Team. All rights reserved.
+      Copyright (c) 2012-2021 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">
@@ -28,8 +28,8 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </url>
 
    <requires>
-      <import feature="biz.isphere.core" version="4.0.0.b001" match="perfect"/>
-      <import feature="biz.isphere.rse" version="4.0.0.b001" match="perfect"/>
+      <import feature="biz.isphere.core" version="4.0.0.b002" match="perfect"/>
+      <import feature="biz.isphere.rse" version="4.0.0.b002" match="perfect"/>
    </requires>
 
    <plugin
