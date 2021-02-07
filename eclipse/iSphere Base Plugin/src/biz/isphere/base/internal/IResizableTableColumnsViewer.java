@@ -10,5 +10,5 @@ package biz.isphere.base.internal;
 
 public interface IResizableTableColumnsViewer {
 
-    public void resetColumnSizes();
+    public void resetColumnWidths();
 }

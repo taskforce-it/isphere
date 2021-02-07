@@ -292,7 +292,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         return container;
     }
 
-    public void resetColumnSizes() {
+    public void resetColumnWidths() {
         dialogSettingsManager.resetColumnWidths(tableViewer.getTable());
     }
 

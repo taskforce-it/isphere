@@ -137,7 +137,7 @@ public class WorkWithSpooledFilesPanel implements IResizableTableColumnsViewer, 
     /**
      * Resets the width of the table columns to their default widths.
      */
-    public void resetColumnSizes() {
+    public void resetColumnWidths() {
         getDialogSettingsManager().resetColumnWidths(table);
     }
 
