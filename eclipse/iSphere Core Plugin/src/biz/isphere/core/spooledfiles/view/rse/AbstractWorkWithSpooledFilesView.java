@@ -256,7 +256,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * setInputData(WorkWithSpooledFilesInputData inputData).
      */
     private void restoreData() {
-        
+
         setPinned(true);
 
         pinProperties = getViewManager().getPinProperties(AbstractWorkWithSpooledFilesView.this, getPinKeys());
@@ -459,7 +459,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
             private void setInputDataChecked() {
 
-                if (isDisposed(workWithSpooledFilesPanel)) {
+                if (workWithSpooledFilesPanel.isDisposed()) {
                     return;
                 }
 
@@ -475,7 +475,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
             private void updateStatusChecked() {
 
-                if (isDisposed(workWithSpooledFilesPanel)) {
+                if (workWithSpooledFilesPanel.isDisposed()) {
                     return;
                 }
 
@@ -555,7 +555,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
     }
 
     private Set<String> getPinKeys() {
-        
+
         Set<String> keySet = new HashSet<String>();
         keySet.add(CONNECTION_NAME);
         keySet.add(FILTER_POOL_NAME);
@@ -563,7 +563,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         keySet.add(FILTER_STRING);
 
         keySet.addAll(workWithSpooledFilesPanel.getPinKeys());
-        
+
         return keySet;
     }
 
