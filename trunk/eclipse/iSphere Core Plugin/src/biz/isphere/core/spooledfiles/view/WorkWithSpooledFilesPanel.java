@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -46,7 +47,10 @@ import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
 import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.menus.WorkWithSpooledFilesMenuAdapter;
 
-public class WorkWithSpooledFilesPanel extends Composite implements IResizableTableColumnsViewer, IPostSelectionProvider {
+/**
+ * This class is a panel for displaying a list of iSphere spooled files.
+ */
+public class WorkWithSpooledFilesPanel implements IResizableTableColumnsViewer, IPostSelectionProvider {
 
     /*
      * View pin properties
@@ -60,6 +64,8 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
 
     private DialogSettingsManager dialogSettingsManager;
 
+    private Shell shell;
+    private Composite panel;
     private TableViewer tableViewer;
     private Table table;
     private WorkWithSpooledFilesSorter tableSorter;
@@ -69,13 +75,56 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
     private IDoubleClickListener doubleClickListener;
     private ITableItemChangeListener listener;
 
+    /**
+     * Constructs a new instance of this class given its parent and a style
+     * value describing its behavior and appearance.
+     * 
+     * @param parent - a widget which will be the parent of the new instance
+     *        (cannot be null)
+     * @param style - the style of widget to construct
+     */
     public WorkWithSpooledFilesPanel(Composite parent, int style) {
-        super(parent, style);
 
-        createContentArea();
+        this.shell = parent.getShell();
+
+        createContentArea(parent, style);
     }
 
-    @Override
+    /**
+     * Sets the layout which is associated with the receiver to be the argument
+     * which may be null.
+     * 
+     * @param layout - the receiver's new layout or null
+     */
+    public void setLayout(Layout layout) {
+        this.panel.setLayout(layout);
+    }
+
+    /**
+     * Sets the layout data associated with the receiver to the argument.
+     * 
+     * @param layoutData - the new layout data for the receiver.
+     */
+    public void setLayoutData(Object layoutData) {
+        this.panel.setLayoutData(layoutData);
+    }
+
+    /**
+     * Sets a listener who will be notified when a spooled file is changed.
+     * 
+     * @param listener - the listener which should be notified
+     */
+    public void setChangedListener(ITableItemChangeListener listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * Causes the receiver to have the keyboard focus, such that all keyboard
+     * events will be delivered to it. Focus reassignment will respect
+     * applicable platform constraints.
+     * 
+     * @return true if the control got focus, and false if it was unable to.
+     */
     public boolean setFocus() {
         boolean hasFocus = tableViewer.getTable().setFocus();
         if (tableViewer.getSelection().isEmpty() && tableViewer.getTable().getItemCount() > 0) {
@@ -85,10 +134,21 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         return hasFocus;
     }
 
-    public void setChangedListener(ITableItemChangeListener listener) {
-        this.listener = listener;
+    /**
+     * Resets the width of the table columns to their default widths.
+     */
+    public void resetColumnSizes() {
+        getDialogSettingsManager().resetColumnWidths(table);
     }
 
+    /**
+     * Sets the spooled files that are displayed on this panel. New spooled
+     * files are automatically selected when the input is changed.
+     * 
+     * @param connectionName - name of the remote connection the spooled files
+     *        are loaded from
+     * @param spooledFiles - array of spooled files
+     */
     public void setInput(String connectionName, SpooledFile[] spooledFiles) {
 
         SpooledFile[] oldInput = (SpooledFile[])this.tableViewer.getInput();
@@ -130,10 +190,21 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         workWithSpooledFilesHelper.addChangedListener(listener);
     }
 
+    /**
+     * Returns the number of spooled files contained in the list.
+     * 
+     * @return the number of spooled files
+     */
     public int getItemCount() {
         return tableViewer.getTable().getItemCount();
     }
 
+    /**
+     * Returns a (possibly empty) array of spooled files which are displayed on
+     * this panel.
+     * 
+     * @return spooled files contained in the list
+     */
     public SpooledFile[] getItems() {
 
         SpooledFile[] spooledFiles = new SpooledFile[tableViewer.getTable().getItemCount()];
@@ -145,10 +216,20 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         return spooledFiles;
     }
 
+    /**
+     * Returns the number of selected spooled files.
+     * 
+     * @return number of selected spooled files
+     */
     public int getSelectionCount() {
         return tableViewer.getTable().getSelectionCount();
     }
 
+    /**
+     * Returns a (possibly empty) array of selected spooled files.
+     * 
+     * @return selected spooled files
+     */
     public SpooledFile[] getSelectedItems() {
 
         SpooledFile[] spooledFiles = new SpooledFile[tableViewer.getTable().getSelectionCount()];
@@ -160,24 +241,129 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         return spooledFiles;
     }
 
+    /**
+     * Updates a given spooled file in the list.
+     * 
+     * @param spooledFile - spooled file that is updated in the list
+     */
     public void update(SpooledFile spooledFile) {
         tableViewer.update(spooledFile, null);
     }
 
+    /**
+     * Removes a list of given spooled files from the list.
+     * 
+     * @param spooledFiles - spooled files that are removed from the list
+     */
     public void remove(SpooledFile[] spooledFiles) {
         tableViewer.remove(spooledFiles);
         table.update();
     }
 
-    @Override
-    public void setLayout(Layout layout) {
+    /**
+     * Sets the 'pinned' state of the panel. Usually called by setPinned() of a
+     * view part.
+     * 
+     * @param pinned - the new pinned state
+     */
+    public void setPinned(boolean pinned) {
+
+        if (pinned) {
+            dialogSettingsManager.setSaveTableStatusEnabled(table, false);
+        } else {
+            dialogSettingsManager.setSaveTableStatusEnabled(table, true);
+        }
     }
 
-    public void setMenu(Menu menu) {
-        throw new IllegalAccessError("Do not use setMenu()."); //$NON-NLS-1$
+    /**
+     * Returns the keys of the properties that must be stored when the panel
+     * enters the 'pinned' state.
+     * 
+     * @return keys of the pinned properties
+     */
+    public Set<String> getPinKeys() {
+
+        Set<String> keySet = new HashSet<String>();
+        keySet.add(SORT_COLUMN_INDEX);
+        keySet.add(SORT_DIRECTION);
+        keySet.add(COLUMN_ORDER);
+
+        for (TableColumn column : table.getColumns()) {
+            String columnName = dialogSettingsManager.getColumnName(column);
+            keySet.add(COLUMN_WIDTH + columnName);
+        }
+
+        return keySet;
     }
 
-    public void setMenuAndDoubleClickListener(Menu menu, IDoubleClickListener listener) {
+    /**
+     * Returns the values of the pinned properties.
+     * 
+     * @return map of key/value pairs
+     */
+    public Map<String, String> getPinProperties() {
+        return pinProperties;
+    }
+
+    /**
+     * Restores the status of the panel when it is re-opened after it has been
+     * pinned.
+     * 
+     * @param pinProperties - pinned properties that had been stored when the
+     *        panel was pinned
+     */
+    public void restoreData(Map<String, String> pinProperties) {
+
+        try {
+
+            String sortAttributeName = pinProperties.get(SORT_COLUMN_INDEX);
+            String sortOrder = pinProperties.get(SORT_DIRECTION);
+
+            TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortAttributeName);
+            tableSorter.setSortColumn(tableColumn, sortOrder);
+
+            String columnOrder = pinProperties.get(COLUMN_ORDER);
+            int[] columnOrderArray = IntHelper.toIntArray(columnOrder);
+            if (columnOrderArray.length == table.getColumnCount()) {
+                table.setColumnOrder(columnOrderArray);
+            }
+
+            String prefix = COLUMN_WIDTH;
+            for (Map.Entry<String, String> entry : pinProperties.entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith(prefix)) {
+                    String columnName = key.substring(prefix.length());
+                    TableColumn column = dialogSettingsManager.getColumn(table, columnName);
+                    int width = IntHelper.tryParseInt(entry.getValue(), -1);
+                    if (width > 0) {
+                        column.setWidth(width);
+                    }
+                }
+            }
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Error restoring pinned view 'Work With Spooled Files' ***", e); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Returns true if the widget has been disposed, and false otherwise.
+     * <p>
+     * This method gets the dispose state for the widget. When a widget has been
+     * disposed, it is an error to invoke any other method (except dispose())
+     * using the widget.
+     * 
+     * @return true when the widget is disposed and false otherwise
+     */
+    public boolean isDisposed() {
+        return panel.isDisposed();
+    }
+
+    /*
+     * Start of private methods.
+     */
+
+    private void setMenuAndDoubleClickListener(Menu menu, IDoubleClickListener listener) {
 
         table.setMenu(menu);
 
@@ -192,21 +378,19 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         }
     }
 
-    public void resetColumnSizes() {
-        getDialogSettingsManager().resetColumnWidths(table);
-    }
+    private void createContentArea(Composite parent, int style) {
 
-    private void createContentArea() {
-        super.setLayout(new FillLayout());
+        panel = new Composite(parent, style);
+        panel.setLayout(new FillLayout());
 
-        createTableViewer();
+        createTableViewer(panel);
 
         this.pinProperties = new HashMap<String, String>();
     }
 
-    private void createTableViewer() {
+    private void createTableViewer(Composite parent) {
 
-        tableViewer = new TableViewer(this, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+        tableViewer = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         table = tableViewer.getTable();
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
@@ -285,34 +469,6 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         return tableColumn;
     }
 
-    public void setPinned(boolean pinned) {
-
-        if (pinned) {
-            dialogSettingsManager.setSaveTableStatusEnabled(table, false);
-        } else {
-            dialogSettingsManager.setSaveTableStatusEnabled(table, true);
-        }
-    }
-
-    public Set<String> getPinKeys() {
-
-        Set<String> keySet = new HashSet<String>();
-        keySet.add(SORT_COLUMN_INDEX);
-        keySet.add(SORT_DIRECTION);
-        keySet.add(COLUMN_ORDER);
-
-        for (TableColumn column : table.getColumns()) {
-            String columnName = dialogSettingsManager.getColumnName(column);
-            keySet.add(COLUMN_WIDTH + columnName);
-        }
-
-        return keySet;
-    }
-
-    public Map<String, String> getPinProperties() {
-        return pinProperties;
-    }
-
     private void updateSortPinProperties() {
 
         if (pinProperties == null) {
@@ -335,46 +491,16 @@ public class WorkWithSpooledFilesPanel extends Composite implements IResizableTa
         pinProperties.put(COLUMN_ORDER, IntHelper.toString(columnOrder));
     }
 
-    public void restoreData(Map<String, String> pinProperties) {
-
-        try {
-
-            String sortAttributeName = pinProperties.get(SORT_COLUMN_INDEX);
-            String sortOrder = pinProperties.get(SORT_DIRECTION);
-
-            TableColumn tableColumn = dialogSettingsManager.getColumn(table, sortAttributeName);
-            tableSorter.setSortColumn(tableColumn, sortOrder);
-
-            String columnOrder = pinProperties.get(COLUMN_ORDER);
-            int[] columnOrderArray = IntHelper.toIntArray(columnOrder);
-            if (columnOrderArray.length == table.getColumnCount()) {
-                table.setColumnOrder(columnOrderArray);
-            }
-
-            String prefix = COLUMN_WIDTH;
-            for (Map.Entry<String, String> entry : pinProperties.entrySet()) {
-                String key = entry.getKey();
-                if (key.startsWith(prefix)) {
-                    String columnName = key.substring(prefix.length());
-                    TableColumn column = dialogSettingsManager.getColumn(table, columnName);
-                    int width = IntHelper.tryParseInt(entry.getValue(), -1);
-                    if (width > 0) {
-                        column.setWidth(width);
-                    }
-                }
-            }
-
-        } catch (Throwable e) {
-            ISpherePlugin.logError("*** Error restoring pinned view 'Work With Spooled Files' ***", e); //$NON-NLS-1$
-        }
-    }
-
     private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
         }
         return dialogSettingsManager;
+    }
+
+    private Shell getShell() {
+        return this.shell;
     }
 
     /*
