@@ -40,6 +40,6 @@ public class ResetColumnSizeAction extends Action {
             return;
         }
 
-        viewer.resetColumnSizes();
+        viewer.resetColumnWidths();
     }
 }

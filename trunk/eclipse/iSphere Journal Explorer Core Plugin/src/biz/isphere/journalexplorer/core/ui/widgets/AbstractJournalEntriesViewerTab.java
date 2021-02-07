@@ -264,7 +264,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         return container;
     }
 
-    public void resetColumnSizes() {
+    public void resetColumnWidths() {
         dialogSettingsManager.resetColumnWidths(tableViewer.getTable());
     }
 

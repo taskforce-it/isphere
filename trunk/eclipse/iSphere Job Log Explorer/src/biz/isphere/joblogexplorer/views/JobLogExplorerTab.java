@@ -200,7 +200,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         return tableViewerPanel.getTotalNumberOfMessages();
     }
 
-    public void resetColumnSizes() {
+    public void resetColumnWidths() {
         tableViewerPanel.resetColumnSize();
     }
 
