@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.core.internal.QualifiedJobName;
@@ -84,6 +83,6 @@ public class CopyQualifiedJobNameDebugPopupAction implements IViewActionDelegate
     }
 
     private Shell getShell() {
-        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return shell;
     }
 }
