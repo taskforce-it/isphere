@@ -52,7 +52,7 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
             try {
                 connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
             } catch (UnknownHostException e) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
                 return;
             }
 
