@@ -14,10 +14,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -34,8 +30,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +47,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -68,7 +64,7 @@ import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
 
-public class SearchResultViewer {
+public class SearchResultViewer implements IResizableTableColumnsViewer {
 
     private String connectionName;
     private String searchString;
@@ -83,11 +79,7 @@ public class SearchResultViewer {
     private String[] statements;
     private boolean isEditMode;
 
-    static ColumnSizeUpdateJob columnSizeUpdateJob;
-    static int columnMemberSize = Preferences.getInstance().getSourceFileSearchMemberColumnWidth();
-    static int columnSrcTypeSize = Preferences.getInstance().getSourceFileSearchSrcTypeColumnWidth();
-    static int columnLastChangedDateSize = Preferences.getInstance().getSourceFileSearchLastChangedDateColumnWidth();
-    static int columnStatementsCountSize = Preferences.getInstance().getSourceFileSearchStatementsCountColumnWidth();
+    private DialogSettingsManager dialogSettingsManager;
 
     private class LabelProviderTableViewerMembers extends LabelProvider implements ITableLabelProvider {
 
@@ -96,14 +88,19 @@ public class SearchResultViewer {
         public String getColumnText(Object element, int columnIndex) {
             SearchResult searchResult = (SearchResult)element;
             if (columnIndex == 0) {
-                return searchResult.getLibrary() + "-" + searchResult.getFile() + "(" + searchResult.getMember() + ")" + " - \"" //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$ //$NON-NLS-4$
-                    + searchResult.getDescription() + "\""; //$NON-NLS-1$
+                return searchResult.getLibrary();
             } else if (columnIndex == 1) {
-                return searchResult.getSrcType();
+                return searchResult.getFile();
             } else if (columnIndex == 2) {
+                return searchResult.getMember();
+            } else if (columnIndex == 3) {
+                return searchResult.getSrcType();
+            } else if (columnIndex == 4) {
+                return searchResult.getDescription();
+            } else if (columnIndex == 5) {
                 Timestamp lastChangedDate = searchResult.getLastChangedDate();
                 return DateTimeHelper.getTimestampFormatted(lastChangedDate);
-            } else if (columnIndex == 3) {
+            } else if (columnIndex == 6) {
                 return Integer.toString(searchResult.getStatementsCount());
             }
             return UNKNOWN;
@@ -131,9 +128,15 @@ public class SearchResultViewer {
 
     private class SorterTableViewerMembers extends ViewerSorter {
 
+        private TableColumn initialColumn;
+        private int initialDirection;
         private TableViewer tableViewer;
 
         public SorterTableViewerMembers(TableViewer tableViewer, TableColumn column, int direction) {
+
+            this.initialColumn = column;
+            this.initialDirection = direction;
+
             this.tableViewer = tableViewer;
             this.tableViewer.getTable().setSortColumn(column);
             this.tableViewer.getTable().setSortDirection(direction);
@@ -141,17 +144,29 @@ public class SearchResultViewer {
 
         public void setOrder(TableColumn column) {
 
-            if (column == tableViewer.getTable().getSortColumn()) {
-                if (tableViewer.getTable().getSortDirection() == SWT.UP) {
-                    tableViewer.getTable().setSortDirection(SWT.DOWN);
-                } else {
-                    tableViewer.getTable().setSortDirection(SWT.UP);
-                }
-            } else {
-                tableViewer.getTable().setSortDirection(SWT.UP);
+            int direction = changeSortDirection(column);
+            if (direction == SWT.NONE) {
+                direction = initialDirection;
+                column = null;
             }
 
+            this.tableViewer.getTable().setSortDirection(direction);
             this.tableViewer.getTable().setSortColumn(column);
+        }
+
+        private int changeSortDirection(TableColumn column) {
+
+            if (column == tableViewer.getTable().getSortColumn()) {
+                if (tableViewer.getTable().getSortDirection() == SWT.NONE) {
+                    return SWT.UP;
+                } else if (tableViewer.getTable().getSortDirection() == SWT.UP) {
+                    return SWT.DOWN;
+                } else {
+                    return SWT.NONE;
+                }
+            } else {
+                return SWT.UP;
+            }
         }
 
         @Override
@@ -160,10 +175,20 @@ public class SearchResultViewer {
             int result;
 
             TableColumn column = tableViewer.getTable().getSortColumn();
-            if (Messages.Member.equals(column.getText())) {
+            if (column == null) {
+                column = initialColumn;
+            }
+
+            if (Messages.Library.equals(column.getText())) {
+                result = sortByLibrary(viewer, e1, e2);
+            } else if (Messages.File.equals(column.getText())) {
+                result = sortByFile(viewer, e1, e2);
+            } else if (Messages.Member.equals(column.getText())) {
                 result = sortByMember(viewer, e1, e2);
             } else if (Messages.Member_type_short.equals(column.getText())) {
                 result = sortBySrcType(viewer, e1, e2);
+            } else if (Messages.Description.equals(column.getText())) {
+                result = sortByDescription(viewer, e1, e2);
             } else if (Messages.Last_changed.equals(column.getText())) {
                 result = sortByLastChangedDate(viewer, e1, e2);
             } else if (Messages.StatementsCount.equals(column.getText())) {
@@ -179,13 +204,43 @@ public class SearchResultViewer {
             return result;
         }
 
-        private int sortByMember(Viewer viewer, Object e1, Object e2) {
+        private int sortByLibrary(Viewer viewer, Object e1, Object e2) {
 
-            int result = ((SearchResult)e1).getLibrary().compareTo(((SearchResult)e2).getLibrary());
+            int result;
+
+            result = ((SearchResult)e1).getLibrary().compareTo(((SearchResult)e2).getLibrary());
             if (result == 0) {
                 result = ((SearchResult)e1).getFile().compareTo(((SearchResult)e2).getFile());
                 if (result == 0) {
                     result = ((SearchResult)e1).getMember().compareTo(((SearchResult)e2).getMember());
+                }
+            }
+
+            return result;
+        }
+
+        private int sortByFile(Viewer viewer, Object e1, Object e2) {
+
+            int result;
+
+            result = ((SearchResult)e1).getFile().compareTo(((SearchResult)e2).getFile());
+            if (result == 0) {
+                result = ((SearchResult)e1).getLibrary().compareTo(((SearchResult)e2).getLibrary());
+                if (result == 0) {
+                    result = ((SearchResult)e1).getMember().compareTo(((SearchResult)e2).getMember());
+                }
+            }
+
+            return result;
+        }
+
+        private int sortByMember(Viewer viewer, Object e1, Object e2) {
+
+            int result = ((SearchResult)e1).getMember().compareTo(((SearchResult)e2).getMember());
+            if (result == 0) {
+                result = ((SearchResult)e1).getLibrary().compareTo(((SearchResult)e2).getLibrary());
+                if (result == 0) {
+                    result = ((SearchResult)e1).getFile().compareTo(((SearchResult)e2).getFile());
                 }
             }
 
@@ -204,26 +259,34 @@ public class SearchResultViewer {
             return result;
         }
 
+        private int sortByDescription(Viewer viewer, Object e1, Object e2) {
+
+            int result = ((SearchResult)e1).getDescription().compareTo(((SearchResult)e2).getDescription());
+            if (result == 0) {
+                result = sortByMember(viewer, e1, e2);
+            }
+
+            return result;
+        }
+
         private int sortByLastChangedDate(Viewer viewer, Object e1, Object e2) {
 
             int result = ((SearchResult)e1).getLastChangedDate().compareTo(((SearchResult)e2).getLastChangedDate());
+            if (result == 0) {
+                result = sortByMember(viewer, e1, e2);
+            }
 
             return result;
         }
 
         private int sortByStatementsCount(Viewer viewer, Object e1, Object e2) {
 
-            int count1 = ((SearchResult)e1).getStatementsCount();
-            int count2 = ((SearchResult)e2).getStatementsCount();
+            Integer count1 = ((SearchResult)e1).getStatementsCount();
+            Integer count2 = ((SearchResult)e2).getStatementsCount();
 
-            int result;
-
-            if (count1 > count2) {
-                result = 1;
-            } else if (count1 < count2) {
-                result = -1;
-            } else {
-                result = 0;
+            int result = count1.compareTo(count2);
+            if (result == 0) {
+                result = sortByMember(viewer, e1, e2);
             }
 
             return result;
@@ -247,34 +310,6 @@ public class SearchResultViewer {
 
     }
 
-    private class ColumnSizeUpdateJob extends Job {
-
-        private int memberColumnWidth = -1;
-        private int srcTypeColumnSize = -1;
-        private int lastChangedDateColumnWidth = -1;
-        private int statementsCountColumnWidth = -1;
-
-        public ColumnSizeUpdateJob(int memberColumnWidth, int srcTypeColumnSize, int lastChangedDateColumnWidth, int statementsCountColumnWidth) {
-            super("Update column width");
-            this.memberColumnWidth = memberColumnWidth;
-            this.srcTypeColumnSize = srcTypeColumnSize;
-            this.lastChangedDateColumnWidth = lastChangedDateColumnWidth;
-            this.statementsCountColumnWidth = statementsCountColumnWidth;
-        }
-
-        @Override
-        protected IStatus run(IProgressMonitor arg0) {
-
-            Preferences.getInstance().setSourceFileSearchMemberColumnWidth(memberColumnWidth);
-            Preferences.getInstance().setSourceFileSearchSrcTypeColumnWidth(srcTypeColumnSize);
-            Preferences.getInstance().setSourceFileSearchLastChangedDateColumnWidth(lastChangedDateColumnWidth);
-            Preferences.getInstance().setSourceFileSearchStatementsCountColumnWidth(statementsCountColumnWidth);
-
-            return Status.OK_STATUS;
-        }
-
-    }
-
     private class ContentProviderStatements implements IStructuredContentProvider {
 
         public Object[] getElements(Object inputElement) {
@@ -287,6 +322,24 @@ public class SearchResultViewer {
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         }
 
+    }
+
+    private class TableViewerMembersDoubleClickListener implements IDoubleClickListener {
+
+        public void doubleClick(DoubleClickEvent event) {
+
+            if (tableViewerMembers.getSelection() instanceof IStructuredSelection) {
+
+                IStructuredSelection structuredSelection = (IStructuredSelection)tableViewerMembers.getSelection();
+                SearchResult _searchResult = (SearchResult)structuredSelection.getFirstElement();
+                IEditor editor = ISpherePlugin.getEditor();
+
+                if (editor != null) {
+                    editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
+                        getEditMode());
+                }
+            }
+        }
     }
 
     private class TableMembersMenuAdapter extends MenuAdapter {
@@ -467,6 +520,39 @@ public class SearchResultViewer {
         }
     }
 
+    private class TableViewerStatementsDoubleClickListener implements IDoubleClickListener {
+
+        public void doubleClick(DoubleClickEvent event) {
+
+            if (selectedItemsMembers != null && selectedItemsMembers.length == 1) {
+
+                SearchResult _searchResult = (SearchResult)selectedItemsMembers[0];
+                if (tableViewerStatements.getSelection() instanceof IStructuredSelection) {
+
+                    IStructuredSelection structuredSelection = (IStructuredSelection)tableViewerStatements.getSelection();
+                    String statement = (String)structuredSelection.getFirstElement();
+                    int statementLine = 0;
+                    int startAt = statement.indexOf('(');
+                    int endAt = statement.indexOf(')');
+
+                    if (startAt != -1 && endAt != -1 && startAt < endAt) {
+                        String _statementLine = statement.substring(startAt + 1, endAt);
+                        try {
+                            statementLine = Integer.parseInt(_statementLine);
+                        } catch (NumberFormatException e1) {
+                        }
+                    }
+
+                    IEditor editor = ISpherePlugin.getEditor();
+                    if (editor != null) {
+                        editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
+                            statementLine, getEditMode());
+                    }
+                }
+            }
+        }
+    }
+
     private class TableStatementsMenuAdapter extends MenuAdapter {
 
         private Menu menuTableStatements;
@@ -546,24 +632,7 @@ public class SearchResultViewer {
                 setStatements();
             }
         });
-        tableViewerMembers.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                if (tableViewerMembers.getSelection() instanceof IStructuredSelection) {
-
-                    IStructuredSelection structuredSelection = (IStructuredSelection)tableViewerMembers.getSelection();
-                    SearchResult _searchResult = (SearchResult)structuredSelection.getFirstElement();
-
-                    IEditor editor = ISpherePlugin.getEditor();
-
-                    if (editor != null) {
-
-                        editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), 0,
-                            getEditMode());
-
-                    }
-                }
-            }
-        });
+        tableViewerMembers.addDoubleClickListener(new TableViewerMembersDoubleClickListener());
 
         tableViewerMembers.setLabelProvider(new LabelProviderTableViewerMembers());
         tableViewerMembers.setContentProvider(new ContentProviderTableViewerMembers());
@@ -573,56 +642,21 @@ public class SearchResultViewer {
         tableMembers.setHeaderVisible(true);
         tableMembers.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        final TableColumn tableColumnMember = new TableColumn(tableMembers, SWT.NONE);
-        tableColumnMember.setWidth(columnMemberSize);
-        tableColumnMember.setText(Messages.Member);
-        tableColumnMember.addControlListener(new ControlAdapter() {
-            @Override
-            public void controlResized(ControlEvent e) {
-                columnMemberSize = tableColumnMember.getWidth();
-                saveColumnSizes();
-            }
-        });
-
-        final TableColumn tableColumnSrcType = new TableColumn(tableMembers, SWT.NONE);
-        tableColumnSrcType.setWidth(columnSrcTypeSize);
-        tableColumnSrcType.setText(Messages.Member_type_short);
-        tableColumnSrcType.addControlListener(new ControlAdapter() {
-            @Override
-            public void controlResized(ControlEvent e) {
-                columnSrcTypeSize = tableColumnSrcType.getWidth();
-                saveColumnSizes();
-            }
-        });
-
-        final TableColumn tableColumnLastChangedDate = new TableColumn(tableMembers, SWT.NONE);
-        tableColumnLastChangedDate.setWidth(columnLastChangedDateSize);
-        tableColumnLastChangedDate.setText(Messages.Last_changed);
-        tableColumnLastChangedDate.addControlListener(new ControlAdapter() {
-            @Override
-            public void controlResized(ControlEvent e) {
-                columnLastChangedDateSize = tableColumnLastChangedDate.getWidth();
-                saveColumnSizes();
-            }
-        });
-
-        final TableColumn tableColumnStatementsCount = new TableColumn(tableMembers, SWT.NONE);
-        tableColumnStatementsCount.setWidth(columnStatementsCountSize);
-        tableColumnStatementsCount.setText(Messages.StatementsCount);
-        tableColumnStatementsCount.addControlListener(new ControlAdapter() {
-            @Override
-            public void controlResized(ControlEvent e) {
-                columnStatementsCountSize = tableColumnStatementsCount.getWidth();
-                saveColumnSizes();
-            }
-        });
+        final TableColumn tableColumnLibrary = createTableColumn(tableMembers, "library", 100, Messages.Library, 0);
+        final TableColumn tableColumnFile = createTableColumn(tableMembers, "file", 100, Messages.File, 1);
+        final TableColumn tableColumnMember = createTableColumn(tableMembers, "member", 100, Messages.Member, 2);
+        final TableColumn tableColumnSrcType = createTableColumn(tableMembers, "type", 100, Messages.Member_type_short, 3);
+        final TableColumn tableColumnDescription = createTableColumn(tableMembers, "description", 300, Messages.Description, 4);
+        final TableColumn tableColumnLastChangedDate = createTableColumn(tableMembers, "lastChanged", 120, Messages.Last_changed, 5);
+        final TableColumn tableColumnStatementsCount = createTableColumn(tableMembers, "statementCount", 80, Messages.StatementsCount, 6);
 
         final Menu menuTableMembers = new Menu(tableMembers);
         menuTableMembers.addMenuListener(new TableMembersMenuAdapter(menuTableMembers));
         tableMembers.setMenu(menuTableMembers);
 
-        final SorterTableViewerMembers sorterTableViewerMembers = new SorterTableViewerMembers(tableViewerMembers, tableColumnMember, SWT.UP);
+        final SorterTableViewerMembers sorterTableViewerMembers = new SorterTableViewerMembers(tableViewerMembers, tableColumnLibrary, SWT.UP);
         tableViewerMembers.setSorter(sorterTableViewerMembers);
+        sorterTableViewerMembers.setOrder(null);
 
         Listener sortListener = new Listener() {
             public void handleEvent(Event e) {
@@ -631,52 +665,19 @@ public class SearchResultViewer {
                 tableViewerMembers.refresh();
             }
         };
+
+        tableColumnLibrary.addListener(SWT.Selection, sortListener);
+        tableColumnFile.addListener(SWT.Selection, sortListener);
         tableColumnMember.addListener(SWT.Selection, sortListener);
         tableColumnSrcType.addListener(SWT.Selection, sortListener);
+        tableColumnDescription.addListener(SWT.Selection, sortListener);
         tableColumnLastChangedDate.addListener(SWT.Selection, sortListener);
         tableColumnStatementsCount.addListener(SWT.Selection, sortListener);
 
         tableViewerMembers.setInput(new Object());
 
         tableViewerStatements = new TableViewer(sashFormSearchResult, SWT.FULL_SELECTION | SWT.BORDER);
-        tableViewerStatements.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-
-                if (selectedItemsMembers != null && selectedItemsMembers.length == 1) {
-
-                    SearchResult _searchResult = (SearchResult)selectedItemsMembers[0];
-
-                    if (tableViewerStatements.getSelection() instanceof IStructuredSelection) {
-
-                        IStructuredSelection structuredSelection = (IStructuredSelection)tableViewerStatements.getSelection();
-
-                        String statement = (String)structuredSelection.getFirstElement();
-                        int statementLine = 0;
-                        int startAt = statement.indexOf('(');
-                        int endAt = statement.indexOf(')');
-                        if (startAt != -1 && endAt != -1 && startAt < endAt) {
-                            String _statementLine = statement.substring(startAt + 1, endAt);
-                            try {
-                                statementLine = Integer.parseInt(_statementLine);
-                            } catch (NumberFormatException e1) {
-                            }
-                        }
-
-                        IEditor editor = ISpherePlugin.getEditor();
-
-                        if (editor != null) {
-
-                            editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(),
-                                statementLine, getEditMode());
-
-                        }
-
-                    }
-
-                }
-
-            }
-        });
+        tableViewerStatements.addDoubleClickListener(new TableViewerStatementsDoubleClickListener());
         tableViewerStatements.setLabelProvider(new LabelProviderStatements());
         tableViewerStatements.setContentProvider(new ContentProviderStatements());
 
@@ -684,9 +685,7 @@ public class SearchResultViewer {
         tableStatements.setHeaderVisible(true);
         tableStatements.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        final TableColumn tableColumnStatement = new TableColumn(tableStatements, SWT.NONE);
-        tableColumnStatement.setWidth(800);
-        tableColumnStatement.setText(Messages.Statement);
+        final TableColumn tableColumnStatement = createTableColumn(tableStatements, "statement", 800, Messages.Statement, 1);
 
         final Menu menuTableStatement = new Menu(tableStatements);
         menuTableStatement.addMenuListener(new TableStatementsMenuAdapter(menuTableStatement));
@@ -699,16 +698,25 @@ public class SearchResultViewer {
 
     }
 
-    private void saveColumnSizes() {
+    private TableColumn createTableColumn(Table table, String columnName, int width, String label, int index) {
 
-        if (columnSizeUpdateJob != null) {
-            columnSizeUpdateJob.cancel();
-            columnSizeUpdateJob = null;
-        }
+        TableColumn column = getDialogSettingsManager().createResizableTableColumn(table, SWT.LEFT, columnName, width, index);
+        column.setText(label);
 
-        columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize, columnSrcTypeSize, columnLastChangedDateSize, columnStatementsCountSize);
-        columnSizeUpdateJob.schedule(500);
+        return column;
     }
+
+    // private void saveColumnSizes() {
+    //
+    // if (columnSizeUpdateJob != null) {
+    // columnSizeUpdateJob.cancel();
+    // columnSizeUpdateJob = null;
+    // }
+    //
+    // columnSizeUpdateJob = new ColumnSizeUpdateJob(columnMemberSize,
+    // columnSrcTypeSize, columnLastChangedDateSize, columnStatementsCountSize);
+    // columnSizeUpdateJob.schedule(500);
+    // }
 
     private int getStatementLine() {
 
@@ -1026,7 +1034,19 @@ public class SearchResultViewer {
         return this.isEditMode;
     }
 
+    public void resetColumnWidths() {
+        getDialogSettingsManager().resetColumnWidths(tableMembers);
+    }
+
     private Shell getShell() {
         return shell;
+    }
+
+    private DialogSettingsManager getDialogSettingsManager() {
+
+        if (dialogSettingsManager == null) {
+            dialogSettingsManager = new DialogSettingsManager(ISpherePlugin.getDefault().getDialogSettings(), getClass());
+        }
+        return dialogSettingsManager;
     }
 }

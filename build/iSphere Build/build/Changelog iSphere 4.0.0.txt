@@ -12,6 +12,7 @@ Changelog: iSphere 4.0.0.b002
    creation time.
  • Fixed problem that the sort order was not restored when loading a
    pinned iSphere "Spooled Files" view.
+ • Changed layout of iSphere Source File Search view.
  • Changed persistence attribute 'sortColumnIndex' from column index
    to column name. Sort order of pinned iSphere 'Spooled File' views
    will be lost.   

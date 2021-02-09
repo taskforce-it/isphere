@@ -119,13 +119,13 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
-    private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
+    //    private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
+    //    private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    private static final String SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
+    //    private static final String SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    private static final String SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
+    //    private static final String SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
@@ -362,21 +362,23 @@ public final class Preferences {
         return preferenceStore.getString(SPOOLED_FILES_RSE_DESCRIPTION);
     }
 
-    public int getSourceFileSearchMemberColumnWidth() {
-        return preferenceStore.getInt(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH);
-    }
+    // public int getSourceFileSearchMemberColumnWidth() {
+    // return preferenceStore.getInt(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH);
+    // }
 
-    public int getSourceFileSearchSrcTypeColumnWidth() {
-        return preferenceStore.getInt(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH);
-    }
+    // public int getSourceFileSearchSrcTypeColumnWidth() {
+    // return preferenceStore.getInt(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH);
+    // }
 
-    public int getSourceFileSearchLastChangedDateColumnWidth() {
-        return preferenceStore.getInt(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH);
-    }
+    // public int getSourceFileSearchLastChangedDateColumnWidth() {
+    // return
+    // preferenceStore.getInt(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH);
+    // }
 
-    public int getSourceFileSearchStatementsCountColumnWidth() {
-        return preferenceStore.getInt(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH);
-    }
+    // public int getSourceFileSearchStatementsCountColumnWidth() {
+    // return
+    // preferenceStore.getInt(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH);
+    // }
 
     public String getSpooledFileConversionText() {
         return preferenceStore.getString(SPOOLED_FILES_CONVERSION_TEXT);
@@ -692,21 +694,24 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_RSE_DESCRIPTION, description);
     }
 
-    public void setSourceFileSearchMemberColumnWidth(int width) {
-        preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
-    }
+    // public void setSourceFileSearchMemberColumnWidth(int width) {
+    // preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
+    // }
 
-    public void setSourceFileSearchSrcTypeColumnWidth(int width) {
-        preferenceStore.setValue(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH, width);
-    }
+    // public void setSourceFileSearchSrcTypeColumnWidth(int width) {
+    // preferenceStore.setValue(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH,
+    // width);
+    // }
 
-    public void setSourceFileSearchLastChangedDateColumnWidth(int width) {
-        preferenceStore.setValue(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, width);
-    }
+    // public void setSourceFileSearchLastChangedDateColumnWidth(int width) {
+    // preferenceStore.setValue(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH,
+    // width);
+    // }
 
-    public void setSourceFileSearchStatementsCountColumnWidth(int width) {
-        preferenceStore.setValue(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH, width);
-    }
+    // public void setSourceFileSearchStatementsCountColumnWidth(int width) {
+    // preferenceStore.setValue(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH,
+    // width);
+    // }
 
     public void setSpooledFileConversionText(String aConversionType) {
         preferenceStore.setValue(SPOOLED_FILES_CONVERSION_TEXT, aConversionType);
@@ -923,10 +928,14 @@ public final class Preferences {
         preferenceStore.setDefault(SPOOLED_FILES_PAGE_SIZE, getDefaultSpooledFilePageSize());
         preferenceStore.setDefault(SPOOLED_FILES_ADJUST_FONT_SIZE, getDefaultSpooledFileAdjustFontSize());
 
-        preferenceStore.setDefault(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, getDefaultSourceFileSearchMemberColumnWidth());
-        preferenceStore.setDefault(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH, getDefaultSourceFileSearchSrcTypeColumnWidth());
-        preferenceStore.setDefault(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH, getDefaultSourceFileSearchLastChangedDateColumnWidth());
-        preferenceStore.setDefault(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH, getDefaultSourceFileSearchStatementsCountColumnWidth());
+        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH,
+        // getDefaultSourceFileSearchMemberColumnWidth());
+        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH,
+        // getDefaultSourceFileSearchSrcTypeColumnWidth());
+        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH,
+        // getDefaultSourceFileSearchLastChangedDateColumnWidth());
+        // preferenceStore.setDefault(SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH,
+        // getDefaultSourceFileSearchStatementsCountColumnWidth());
 
         preferenceStore.setDefault(MONITOR_DTAQ_LENGTH, getDefaultDataQueueMaximumMessageLength());
         preferenceStore.setDefault(MONITOR_DTAQ_VIEW_IN_HEX, getDefaultDataQueueViewInHex());
@@ -1101,9 +1110,9 @@ public final class Preferences {
      * 
      * @return default column width
      */
-    public int getDefaultSourceFileSearchMemberColumnWidth() {
-        return 400;
-    }
+    // public int getDefaultSourceFileSearchMemberColumnWidth() {
+    // return 400;
+    // }
 
     /**
      * Returns the default width of the 'type' column of SearchResultViewer of
@@ -1111,9 +1120,9 @@ public final class Preferences {
      * 
      * @return default column width
      */
-    public int getDefaultSourceFileSearchSrcTypeColumnWidth() {
-        return 80;
-    }
+    // public int getDefaultSourceFileSearchSrcTypeColumnWidth() {
+    // return 80;
+    // }
 
     /**
      * Returns the default width of the 'last changed' column of
@@ -1121,9 +1130,9 @@ public final class Preferences {
      * 
      * @return default column width
      */
-    public int getDefaultSourceFileSearchLastChangedDateColumnWidth() {
-        return 120;
-    }
+    // public int getDefaultSourceFileSearchLastChangedDateColumnWidth() {
+    // return 120;
+    // }
 
     /**
      * Returns the default width of the 'statements count' column of
@@ -1131,9 +1140,9 @@ public final class Preferences {
      * 
      * @return default column width
      */
-    public int getDefaultSourceFileSearchStatementsCountColumnWidth() {
-        return 80;
-    }
+    // public int getDefaultSourceFileSearchStatementsCountColumnWidth() {
+    // return 80;
+    // }
 
     /**
      * Returns the default conversion type for spooled file to text conversion.
