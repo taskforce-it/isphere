@@ -16,18 +16,22 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.KeyHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.internal.IBMiDebugHelper;
@@ -36,55 +40,76 @@ import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 
 import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
 
+/**
+ * Opens a iSphere 'Work With Spooled Files' view for the job that had been
+ * stopped at a breakpoint. Holding the Ctrl key while clicking the menu option
+ * opens the view and sets the 'pinned' state.
+ */
 @SuppressWarnings("restriction")
-public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate {
+public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate, IActionDelegate2 {
 
     private Shell shell;
     private IStructuredSelection structuredSelection;
+    private boolean isCtrlKey;
+
+    public void runWithEvent(IAction action, Event event) {
+        isCtrlKey = KeyHelper.isCtrlKey(event);
+        run(action);
+    }
 
     public void run(IAction action) {
 
-        DebuggeeProcess debuggeeProcess = getFirstDebuggeeProcess(structuredSelection);
+        boolean isPinned;
+        if (structuredSelection.size() > 1 || isCtrlKey) {
+            isPinned = true;
+        } else {
+            isPinned = false;
+        }
 
-        if (debuggeeProcess != null) {
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            String connectionName;
-            try {
-                connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
-            } catch (UnknownHostException e) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-                return;
-            }
+            DebuggeeProcess debuggeeProcess = getFirstDebuggeeProcess(structuredSelection);
 
-            if (StringHelper.isNullOrEmpty(connectionName)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                    Messages.bind(Messages.Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
-                return;
-            }
+            if (debuggeeProcess != null) {
 
-            String qualifiedJobNameAttr = getJobName(debuggeeProcess);
-            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
-            if (qualifiedJobName == null) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
-                return;
-            }
+                String connectionName;
+                try {
+                    connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
+                } catch (UnknownHostException e) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                    return;
+                }
 
-            IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+                if (StringHelper.isNullOrEmpty(connectionName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                        Messages.bind(Messages.Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
+                    return;
+                }
 
-            if (window != null) {
-                IWorkbenchPage page = window.getActivePage();
-                if (page != null) {
-                    openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page);
+                String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+                QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
+                if (qualifiedJobName == null) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
+                    return;
+                }
+
+                IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+
+                if (window != null) {
+                    IWorkbenchPage page = window.getActivePage();
+                    if (page != null) {
+                        openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
+                    }
                 }
             }
         }
     }
 
-    protected void openWorkWithSpooledFilesView(String connectionName, QualifiedJobName qualifiedJobName, IWorkbenchPage page) {
+    protected void openWorkWithSpooledFilesView(String connectionName, QualifiedJobName qualifiedJobName, IWorkbenchPage page, boolean isPinned) {
 
         try {
 
-            WorkWithSpooledFilesJobInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, qualifiedJobName);
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, qualifiedJobName);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
@@ -93,6 +118,7 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
             if (view instanceof WorkWithSpooledFilesView) {
                 WorkWithSpooledFilesView wrkSplfView = (WorkWithSpooledFilesView)view;
                 wrkSplfView.setInputData(inputData);
+                wrkSplfView.setPinned(isPinned);
             }
 
         } catch (Exception e) {
@@ -143,8 +169,15 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         return false;
     }
 
+    public void init(IAction action) {
+        return;
+    }
+
     public void init(IViewPart view) {
         this.shell = view.getSite().getShell();
+    }
+
+    public void dispose() {
     }
 
     private Shell getShell() {
