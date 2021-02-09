@@ -27,6 +27,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
+import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
@@ -35,7 +36,7 @@ import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
 
 /**
- * Opens a iSpehere 'Work With Spooled Files' view for a job selected from a RSE
+ * Opens a iSphere 'Work With Spooled Files' view for a job selected from a RSE
  * job filter. Holding the Ctrl key while clicking the menu option opens the
  * view and sets the 'pinned' state.
  */
@@ -59,26 +60,29 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
             isPinned = false;
         }
 
-        Iterator<?> selectionIterator = structuredSelection.iterator();
-        while (selectionIterator.hasNext()) {
-            Object selectedObject = (Object)selectionIterator.next();
-            if (selectedObject instanceof QSYSRemoteJob) {
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-                QSYSRemoteJob remoteJob = (QSYSRemoteJob)selectedObject;
-                String absoluteName = remoteJob.getAbsoluteName();
-                QualifiedJobName qualifiedJobName = QualifiedJobName.parse(absoluteName);
-                if (qualifiedJobName == null) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, absoluteName));
-                    return;
-                }
+            Iterator<?> selectionIterator = structuredSelection.iterator();
+            while (selectionIterator.hasNext()) {
+                Object selectedObject = (Object)selectionIterator.next();
+                if (selectedObject instanceof QSYSRemoteJob) {
 
-                String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getHostAliasName();
-                if (connectionName != null) {
-                    IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
+                    QSYSRemoteJob remoteJob = (QSYSRemoteJob)selectedObject;
+                    String absoluteName = remoteJob.getAbsoluteName();
+                    QualifiedJobName qualifiedJobName = QualifiedJobName.parse(absoluteName);
+                    if (qualifiedJobName == null) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, absoluteName));
+                        return;
+                    }
+
+                    String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getHostAliasName();
+                    if (connectionName != null) {
+                        IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+                        if (window != null) {
+                            IWorkbenchPage page = window.getActivePage();
+                            if (page != null) {
+                                openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
+                            }
                         }
                     }
                 }
@@ -90,7 +94,7 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
 
         try {
 
-            WorkWithSpooledFilesJobInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, qualifiedJobName);
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, qualifiedJobName);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);
@@ -109,7 +113,12 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
     }
 
     public void selectionChanged(IAction action, ISelection selection) {
-        structuredSelection = ((IStructuredSelection)selection);
+
+        if (selection instanceof IStructuredSelection) {
+            structuredSelection = ((IStructuredSelection)selection);
+        } else {
+            structuredSelection = null;
+        }
     }
 
     public void setActivePart(IAction action, IWorkbenchPart view) {
