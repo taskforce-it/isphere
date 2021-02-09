@@ -2,6 +2,10 @@
 Changelog: iSphere 4.0.0.b002
 -----------------------------
 
+ • Added option 'Work With Spooled Files' to the job entries of a
+   RSE job filter.
+ • Added option 'Copy Qualified Name' to the job entries of a
+   RSE job filter.
  • Added special value *TODAY to the "End date" property of the
    iSphere spooled file filter.
  • Added option to merge spooled file filters and sort items by
