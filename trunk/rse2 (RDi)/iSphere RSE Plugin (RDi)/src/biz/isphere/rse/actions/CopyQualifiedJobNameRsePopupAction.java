@@ -22,6 +22,10 @@ import biz.isphere.rse.Messages;
 
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
 
+/**
+ * Copies the full qualified job name of a job selected from a RSE job filter to
+ * the clipboard.
+ */
 public class CopyQualifiedJobNameRsePopupAction implements IObjectActionDelegate {
 
     private Shell shell;
@@ -49,11 +53,11 @@ public class CopyQualifiedJobNameRsePopupAction implements IObjectActionDelegate
         structuredSelection = ((IStructuredSelection)selection);
     }
 
-    private Shell getShell() {
-        return shell;
-    }
-
     public void setActivePart(IAction action, IWorkbenchPart view) {
         this.shell = view.getSite().getShell();
+    }
+
+    private Shell getShell() {
+        return shell;
     }
 }
