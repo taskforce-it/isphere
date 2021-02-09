@@ -90,4 +90,15 @@ public class SearchResult implements Serializable {
     public void setLastChangedDate(Timestamp lastChangedDate) {
         this.lastChangedDate = lastChangedDate;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(library);
+        buffer.append("/");
+        buffer.append(file);
+        buffer.append(".");
+        buffer.append(member);
+        return buffer.toString();
+    }
 }

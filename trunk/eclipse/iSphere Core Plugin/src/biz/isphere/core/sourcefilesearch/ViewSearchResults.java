@@ -40,6 +40,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.base.swt.widgets.CloseTabOnDoubleClickListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -65,6 +66,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionRemoveAllTabItems;
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
+    private ResetColumnSizeAction resetColumnSizeAction;
     private DisableEditAction actionDisableEdit;
     private Action actionLoadSearchResult;
     private Action actionSaveSearchResult;
@@ -209,6 +211,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             .getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
+        resetColumnSizeAction = new ResetColumnSizeAction();
+
         actionDisableEdit = new DisableEditAction();
         actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         actionDisableEdit.setEnabled(false);
@@ -245,6 +249,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     private void initializeToolBar() {
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+        toolbarManager.add(resetColumnSizeAction);
         toolbarManager.add(actionDisableEdit);
         toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveSelectedItems);
@@ -515,6 +520,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
         actionLoadSearchResult.setEnabled(true);
         actionEnableAutoSave.setEnabled(true);
+
+        resetColumnSizeAction.setEnabled(true);
+        resetColumnSizeAction.setViewer(getSelectedViewer());
     }
 
     private SearchResultViewer getSelectedViewer() {
