@@ -194,7 +194,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             } else if (Messages.StatementsCount.equals(column.getText())) {
                 result = sortByStatementsCount(viewer, e1, e2);
             } else {
-                result = sortByMember(viewer, e1, e2);
+                result = sortByLibrary(viewer, e1, e2);
             }
 
             if (tableViewer.getTable().getSortDirection() == SWT.DOWN) {
