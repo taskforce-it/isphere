@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Job Trace Explorer (RDi)
 Bundle-SymbolicName: biz.isphere.jobtraceexplorer.rse;singleton:=true
-Bundle-Version: 4.0.0.b002
+Bundle-Version: 4.0.0.b003
 Bundle-Activator: biz.isphere.jobtraceexplorer.rse.ISphereJobTraceExplorerRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,

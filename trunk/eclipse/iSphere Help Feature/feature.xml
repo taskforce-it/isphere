@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.help"
       label="iSphere Help (optional)"
-      version="4.0.0.b002"
+      version="4.0.0.b003"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
