@@ -14,12 +14,15 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import biz.isphere.base.internal.KeyHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
@@ -31,16 +34,26 @@ import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
 
-@SuppressWarnings("restriction")
-public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate {
+/**
+ * Opens a iSpehere 'Work With Spooled Files' view for a job selected from a RSE
+ * job filter. Holding the Ctrl key while clicking the menu option opens the
+ * view and sets the 'pinned' state.
+ */
+public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate, IActionDelegate2 {
 
     private Shell shell;
     private IStructuredSelection structuredSelection;
+    private boolean isCtrlKey;
+
+    public void runWithEvent(IAction action, Event event) {
+        isCtrlKey = KeyHelper.isCtrlKey(event);
+        run(action);
+    }
 
     public void run(IAction action) {
 
         boolean isPinned;
-        if (structuredSelection.size() > 1) {
+        if (structuredSelection.size() > 1 || isCtrlKey) {
             isPinned = true;
         } else {
             isPinned = false;
@@ -99,11 +112,17 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
         structuredSelection = ((IStructuredSelection)selection);
     }
 
-    private Shell getShell() {
-        return shell;
-    }
-
     public void setActivePart(IAction action, IWorkbenchPart view) {
         this.shell = view.getSite().getShell();
+    }
+
+    public void init(IAction action) {
+    }
+
+    public void dispose() {
+    }
+
+    private Shell getShell() {
+        return shell;
     }
 }
