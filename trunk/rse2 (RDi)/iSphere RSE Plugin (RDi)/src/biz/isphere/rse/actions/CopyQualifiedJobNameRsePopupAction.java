@@ -8,6 +8,8 @@
 
 package biz.isphere.rse.actions;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -28,24 +30,39 @@ import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
  */
 public class CopyQualifiedJobNameRsePopupAction implements IObjectActionDelegate {
 
+    private static final String LINE_FEED = "\n";
+
     private Shell shell;
     private IStructuredSelection structuredSelection;
 
     public void run(IAction action) {
 
-        Object selectedObject = structuredSelection.getFirstElement();
+        StringBuilder buffer = new StringBuilder();
 
-        if (selectedObject instanceof QSYSRemoteJob) {
+        if (structuredSelection != null && !structuredSelection.isEmpty()) {
+            Iterator<?> selectionIterator = structuredSelection.iterator();
+            while (selectionIterator.hasNext()) {
+                Object selectedObject = (Object)selectionIterator.next();
+                if (selectedObject instanceof QSYSRemoteJob) {
 
-            QSYSRemoteJob remoteJob = (QSYSRemoteJob)selectedObject;
-            String absoluteName = remoteJob.getAbsoluteName();
-            QualifiedJobName qualifiedJobName = QualifiedJobName.parse(absoluteName);
-            if (qualifiedJobName == null) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, absoluteName));
-                return;
+                    QSYSRemoteJob remoteJob = (QSYSRemoteJob)selectedObject;
+                    String absoluteName = remoteJob.getAbsoluteName();
+                    QualifiedJobName qualifiedJobName = QualifiedJobName.parse(absoluteName);
+                    if (qualifiedJobName == null) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, absoluteName));
+                        return;
+                    }
+
+                    if (buffer.length() > 0) {
+                        buffer.append(LINE_FEED);
+                    }
+                    buffer.append(qualifiedJobName.getQualifiedJobName());
+                }
             }
+        }
 
-            ClipboardHelper.setText(qualifiedJobName.getQualifiedJobName());
+        if (buffer.length() > 0) {
+            ClipboardHelper.setText(buffer.toString());
         }
     }
 
