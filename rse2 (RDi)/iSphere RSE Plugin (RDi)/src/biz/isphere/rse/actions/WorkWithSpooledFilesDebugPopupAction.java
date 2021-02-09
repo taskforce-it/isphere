@@ -9,6 +9,7 @@
 package biz.isphere.rse.actions;
 
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.IAction;
@@ -68,37 +69,40 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            DebuggeeProcess debuggeeProcess = getFirstDebuggeeProcess(structuredSelection);
+            Iterator<?> selectionIterator = structuredSelection.iterator();
+            while (selectionIterator.hasNext()) {
 
-            if (debuggeeProcess != null) {
+                DebuggeeProcess debuggeeProcess = getDebuggeeProcess(selectionIterator.next());
+                if (debuggeeProcess != null) {
 
-                String connectionName;
-                try {
-                    connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
-                } catch (UnknownHostException e) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-                    return;
-                }
+                    String connectionName;
+                    try {
+                        connectionName = IBMiDebugHelper.getConnectionName(debuggeeProcess);
+                    } catch (UnknownHostException e) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                        return;
+                    }
 
-                if (StringHelper.isNullOrEmpty(connectionName)) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                        Messages.bind(Messages.Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
-                    return;
-                }
+                    if (StringHelper.isNullOrEmpty(connectionName)) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                            Messages.bind(Messages.Connection_not_found_A, IBMiDebugHelper.getHostName(debuggeeProcess)));
+                        return;
+                    }
 
-                String qualifiedJobNameAttr = getJobName(debuggeeProcess);
-                QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
-                if (qualifiedJobName == null) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
-                    return;
-                }
+                    String qualifiedJobNameAttr = getJobName(debuggeeProcess);
+                    QualifiedJobName qualifiedJobName = QualifiedJobName.parse(qualifiedJobNameAttr);
+                    if (qualifiedJobName == null) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Invalid_job_name_A, qualifiedJobNameAttr));
+                        return;
+                    }
 
-                IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+                    IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 
-                if (window != null) {
-                    IWorkbenchPage page = window.getActivePage();
-                    if (page != null) {
-                        openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
+                    if (window != null) {
+                        IWorkbenchPage page = window.getActivePage();
+                        if (page != null) {
+                            openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
+                        }
                     }
                 }
             }
@@ -145,9 +149,16 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
         if (selection instanceof StructuredSelection) {
             StructuredSelection structuredSelection = (StructuredSelection)selection;
             Object firstObject = structuredSelection.getFirstElement();
-            if (isIBMiJob(firstObject)) {
-                return (DebuggeeProcess)firstObject;
-            }
+            return getDebuggeeProcess(firstObject);
+        }
+
+        return null;
+    }
+
+    private DebuggeeProcess getDebuggeeProcess(Object selectedObject) {
+
+        if (isIBMiJob(selectedObject)) {
+            return (DebuggeeProcess)selectedObject;
         }
 
         return null;
