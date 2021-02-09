@@ -101,6 +101,35 @@
       	
       	<!--
       	  ==========================================
+      	    Job Contributions
+      	  ==========================================
+      	-->
+         
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob"
+            id="biz.isphere.core.menu.job">
+            
+	         <action
+                class="biz.isphere.rse.actions.CopyQualifiedJobNameRsePopupAction"
+                enablesFor="1"
+                id="biz.isphere.rse.actions.CopyQualifiedJobNameRsePopupAction"
+                label="%iSphere_Copy_Qualified_Job_Name"
+                icon="icons/copy_qualified_job_name.png"
+                menubarPath="additions">
+	         </action>
+            
+	         <action
+                class="biz.isphere.rse.actions.WorkWithSpooledFilesRsePopupAction"
+                enablesFor="*"
+                id="biz.isphere.rse.actions.WorkWithSpooledFilesRsePopupAction"
+                label="%iSphere_Work_With_Spooled_Files"
+	            icon="icons/spooled_files.gif"
+                menubarPath="group.workwith">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
       	    Modules Contributions
       	  ==========================================
       	-->
