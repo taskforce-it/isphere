@@ -75,20 +75,6 @@ public class CheckNotifier {
         System.out.println("Release info:           " + xReleaseInfo);
         System.out.println("Release update library: " + xReleaseUpdateLibrary);
 
-        String xBetaVersion = getString(manifest, "X-Beta-Version");
-        new Version(xBetaVersion);
-
-        String xBetaUpdateLibrary = getString(manifest, "X-Beta-Update-Library");
-        assertTrue("true".equals(xBetaUpdateLibrary) || "false".equals(xBetaUpdateLibrary));
-
-        String xBetaInfo = getString(manifest, "X-Beta-Info", true);
-        assertTrue(xBetaInfo == null || xBetaInfo.length() > 0);
-
-        System.out.println();
-        System.out.println("Beta version:           " + xReleaseVersion);
-        System.out.println("Beta info:              " + xReleaseInfo);
-        System.out.println("Beta update library:    " + xReleaseUpdateLibrary);
-
         System.out.println("** Finished testing release properties **");
     }
 
