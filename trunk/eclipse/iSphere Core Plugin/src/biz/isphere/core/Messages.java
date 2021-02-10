@@ -192,6 +192,8 @@ public class Messages extends NLS {
 
     public static String Remove_tab_item;
 
+    public static String Remove_all_tab_items;
+
     public static String Right;
 
     public static String Select_all;

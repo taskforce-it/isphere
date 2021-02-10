@@ -184,7 +184,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 }
             }
         };
-        actionRemoveAllTabItems.setToolTipText(Messages.Remove_tab_item);
+        actionRemoveAllTabItems.setToolTipText(Messages.Remove_all_tab_items);
         actionRemoveAllTabItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS_MINUS));
         actionRemoveAllTabItems.setEnabled(false);
 
