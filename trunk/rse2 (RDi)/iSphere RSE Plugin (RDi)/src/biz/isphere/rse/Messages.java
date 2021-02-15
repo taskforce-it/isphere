@@ -150,6 +150,8 @@ public class Messages extends NLS {
 
     public static String Connection_not_found_A;
 
+    public static String Connection_is_offline;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

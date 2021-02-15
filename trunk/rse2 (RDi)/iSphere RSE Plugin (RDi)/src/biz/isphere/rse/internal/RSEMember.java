@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.rse.services.clientserver.messages.SystemMessage;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
@@ -91,6 +93,11 @@ public class RSEMember extends Member {
 
     @Override
     public boolean download(IProgressMonitor monitor) throws Exception {
+        if (_editableMember.getISeriesConnection().isOffline()) {
+            String connectionName = _editableMember.getISeriesConnection().getConnectionName();
+            String message = Messages.bind(Messages.Connection_is_offline, connectionName);
+            throw new SystemMessageException(new SystemMessage("RSE", "ISPHERE", "0", SystemMessage.ERROR, message, ""));
+        }
         return _editableMember.download(monitor);
     }
 
