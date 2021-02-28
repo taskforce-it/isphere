@@ -26,8 +26,6 @@ import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.rse.shared.model.DatatypeConverterDelegate;
-import biz.isphere.journalexplorer.rse.shared.model.JournalEntryDelegate;
 
 import com.google.gson.annotations.Expose;
 import com.ibm.as400.access.AS400Text;

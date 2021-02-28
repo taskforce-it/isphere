@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.shared.model;
+package biz.isphere.journalexplorer.core.model;
 
 import java.sql.Time;
 import java.util.Calendar;
