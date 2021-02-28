@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.b003
+-----------------------------
+
+ • Refactored iSphere Journal Explorer plug-in and moved as much
+   classes as possible to the journal explorer core plug-in. 
+
 Changelog: iSphere 4.0.0.b002
 -----------------------------
 
