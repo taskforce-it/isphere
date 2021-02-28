@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.shared.model;
+package biz.isphere.journalexplorer.core.internals;
 
+import biz.isphere.journalexplorer.base.as400.access.AS400DecDouble;
+import biz.isphere.journalexplorer.base.as400.access.AS400DecReal;
 import biz.isphere.journalexplorer.base.interfaces.IJoesdParserDelegate;
-import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DecDouble;
-import biz.isphere.journalexplorer.rse.shared.as400fields.AS400DecReal;
 
 import com.ibm.as400.access.AS400Date;
 import com.ibm.as400.access.AS400Time;
