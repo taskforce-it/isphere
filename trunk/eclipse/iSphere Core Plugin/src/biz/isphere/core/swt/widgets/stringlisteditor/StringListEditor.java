@@ -42,8 +42,6 @@ import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.Messages;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-import com.ibm.etools.iseries.util.NlsUtil;
-
 /**
  * Implements a string list editor with options for adding, removing and moving
  * items.
@@ -414,7 +412,7 @@ public class StringListEditor extends Composite implements SelectionListener {
                 itemToAdd = itemToAdd.trim();
 
                 if (itemToAdd.length() > 0) {
-                    itemToAdd = NlsUtil.toUpperCase(itemToAdd);
+                    itemToAdd = itemToAdd.toUpperCase();
                     Item item = new Item(itemToAdd);
                     itemsList.add(item);
                     textItem.setText(""); //$NON-NLS-1$

@@ -14,15 +14,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
+
+import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectTypeAttrList;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
-
-import biz.isphere.core.internal.exception.InvalidFilterException;
-import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
 
 public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
@@ -36,6 +40,29 @@ public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
         super(shell, monitor);
 
         this.connection = connection;
+    }
+
+    protected String produceMemberFilterString(String library, String sourceFile, String sourceMember, String memberType) {
+
+        ISeriesMemberFilterString memberFilterString = new ISeriesMemberFilterString();
+        memberFilterString.setLibrary(library);
+        memberFilterString.setFile(sourceFile);
+        memberFilterString.setMember(sourceMember);
+        memberFilterString.setMemberType(memberType);
+
+        return memberFilterString.toString();
+    }
+
+    protected String produceLibraryFilterString(String library) {
+
+        com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
+        objectFilterString.setLibrary(library);
+        objectFilterString.setObject("*"); //$NON-NLS-1$
+        objectFilterString.setObjectType(ISeries.FILE);
+        String attributes = "*FILE:PF-SRC *FILE:PF38-SRC"; //$NON-NLS-1$
+        objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
+
+        return objectFilterString.toString();
     }
 
     protected Object[] resolveFilterString(String filterString) throws Exception {

@@ -14,8 +14,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.internal.ISeries;
 
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-
 public abstract class AbstractMessageFileSearchDelegate {
 
     private Shell shell;
@@ -24,15 +22,11 @@ public abstract class AbstractMessageFileSearchDelegate {
         this.shell = shell;
     }
 
-    public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String messageFile)
-        throws Exception {
+    public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String messageFile) throws Exception {
 
-        ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
-        objectFilterString.setLibrary(library);
-        objectFilterString.setObject(messageFile);
-        objectFilterString.setObjectType(ISeries.MSGF); //$NON-NLS-1$
+        String objectFilterString = produceFilterString(library, messageFile, ISeries.MSGF);
 
-        return addElementsFromFilterString(searchElements, objectFilterString.toString());
+        return addElementsFromFilterString(searchElements, objectFilterString);
     }
 
     public boolean addElementsFromFilterString(HashMap<String, SearchElement> searchElements, String... filterStrings) throws Exception {
@@ -71,6 +65,8 @@ public abstract class AbstractMessageFileSearchDelegate {
 
     }
 
+    protected abstract String produceFilterString(String library, String messageFile, String objectType);
+
     protected abstract void displaySystemErrorMessage(Object object);
 
     protected abstract boolean isSystemMessageObject(Object object);
@@ -81,14 +77,9 @@ public abstract class AbstractMessageFileSearchDelegate {
 
     private boolean addElementsFromLibrary(HashMap<String, SearchElement> searchElements, Object library) throws Exception {
 
+        String filterString = produceFilterString(getResourceName(library), "*", ISeries.MSGF);
+
         Object[] messageFiles = null;
-
-        ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
-        objectFilterString.setObject("*"); //$NON-NLS-1$
-        objectFilterString.setObjectType(ISeries.MSGF);
-
-        objectFilterString.setLibrary(getResourceName(library));
-        String filterString = objectFilterString.toString();
 
         try {
             messageFiles = resolveFilterString(filterString);

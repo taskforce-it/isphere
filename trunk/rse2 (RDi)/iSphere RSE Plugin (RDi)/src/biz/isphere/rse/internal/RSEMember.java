@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.rse.services.clientserver.messages.SystemMessage;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
 
@@ -135,9 +136,8 @@ public class RSEMember extends Member {
 
         try {
 
-            ISeriesHostObjectLock lock = queryLocks();
-            if (lock != null) {
-                return getMemberLockedMessages(lock);
+            if (isLocked()) {
+                return getMemberLockedMessages();
             }
             if (monitor != null) {
                 monitor.beginTask(NLS.bind(QSYSResources.MSG_UPLOAD_PROGRESS, _editableMember.getMember().getAbsoluteName()), -1);
@@ -158,15 +158,27 @@ public class RSEMember extends Member {
         return null;
     }
 
-    public ISeriesHostObjectLock queryLocks() throws Exception {
-        return _editableMember.queryLocks();
+    public boolean isLocked() throws Exception {
+
+        if (_editableMember.queryLocks() != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public String getMemberLockedMessages(ISeriesHostObjectLock lock) {
+    public String getMemberLockedMessages() {
 
-        if (lock != null) {
-            return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
-                getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
+        try {
+
+            if (isLocked()) {
+                ISeriesHostObjectLock lock = _editableMember.queryLocks();
+                return Messages.bind(Messages.Member_C_of_file_A_slash_B_is_locked_by_job_F_slash_E_slash_D, new Object[] { getLibrary(),
+                    getSourceFile(), getMember(), lock.getJobName(), lock.getJobUser(), lock.getJobNumber() });
+            }
+
+        } catch (Exception e) {
+            return ExceptionHelper.getLocalizedMessage(e);
         }
 
         return null;

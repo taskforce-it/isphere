@@ -32,8 +32,6 @@ import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
 
-import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
-
 /**
  * This class is used when RDi is the host application.
  * 
@@ -84,9 +82,8 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         try {
 
             if (editable) {
-                ISeriesHostObjectLock lock = leftMember.queryLocks();
-                if (lock != null) {
-                    MessageDialogAsync.displayError(leftMember.getMemberLockedMessages(lock));
+                if (leftMember.isLocked()) {
+                    MessageDialogAsync.displayError(leftMember.getMemberLockedMessages());
                     editable = false;
                 }
             }

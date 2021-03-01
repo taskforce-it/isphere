@@ -23,8 +23,6 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
-import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
-
 public class IProjectMember extends Member {
 
     private IFile file;
@@ -99,11 +97,11 @@ public class IProjectMember extends Member {
         throw produceUnsupportedOperationException();
     }
 
-    public ISeriesHostObjectLock queryLocks() throws Exception {
+    public boolean isLocked() throws Exception {
         throw produceUnsupportedOperationException();
     }
 
-    public String getMemberLockedMessages(ISeriesHostObjectLock lock) {
+    public String getMemberLockedMessages() {
         throw produceUnsupportedOperationException();
     }
 

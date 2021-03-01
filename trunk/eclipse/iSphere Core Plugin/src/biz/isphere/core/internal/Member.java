@@ -11,8 +11,6 @@ package biz.isphere.core.internal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
-
 public abstract class Member {
 
     public abstract String getConnection();
@@ -71,9 +69,9 @@ public abstract class Member {
 
     public abstract void setArchiveTime(String archiveTime);
 
-    public abstract ISeriesHostObjectLock queryLocks() throws Exception;
+    public abstract boolean isLocked() throws Exception;
 
-    public abstract String getMemberLockedMessages(ISeriesHostObjectLock lock);
+    public abstract String getMemberLockedMessages();
 
     public boolean hasSequenceNumbersAndDateFields() {
         return true;

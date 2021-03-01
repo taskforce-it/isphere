@@ -34,8 +34,6 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.Member;
 
-import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
-
 public class CompareAction {
 
     private ArrayList<CleanupListener> cleanupListener = new ArrayList<CleanupListener>();
@@ -95,11 +93,9 @@ public class CompareAction {
             public void run() {
 
                 if (cc.isLeftEditable()) {
-                    ISeriesHostObjectLock lock;
                     try {
-                        lock = leftMember.queryLocks();
-                        if (lock != null) {
-                            throw new Exception(leftMember.getMemberLockedMessages(lock));
+                        if (leftMember.isLocked()) {
+                            throw new Exception(leftMember.getMemberLockedMessages());
                         }
                     } catch (Exception e) {
                         MessageDialog.openError(getShell(), Messages.Compare_source_members, ExceptionHelper.getLocalizedMessage(e));
