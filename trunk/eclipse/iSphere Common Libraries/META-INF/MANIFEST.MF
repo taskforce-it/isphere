@@ -10,10 +10,14 @@ Bundle-ClassPath: .,
  mail.jar,
  jxl.jar,
  sqljep-0.2.3.r.jar,
- gson-2.4.jar
+ gson-2.4.jar,
+ jt400.jar
 Bundle-Vendor: iSphere Project Team
 Export-Package: com.google.gson,
  com.google.gson.annotations,
+ com.ibm.as400.access,
+ com.ibm.as400.data,
+ com.ibm.as400.vaccess,
  com.sun.activation.registries,
  com.sun.activation.viewers,
  com.sun.mail.handlers,
