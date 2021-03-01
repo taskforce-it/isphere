@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.messagefilesearch.AbstractMessageFileSearchDelegate;
 
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
@@ -28,6 +29,16 @@ public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate
         super(shell);
 
         this.connection = connection;
+    }
+
+    protected String produceFilterString(String library, String messageFile, String objectType) {
+
+        ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
+        objectFilterString.setObject(messageFile);
+        objectFilterString.setObjectType(objectType); //$NON-NLS-1$
+        objectFilterString.setLibrary(library);
+
+        return objectFilterString.toString();
     }
 
     protected Object[] resolveFilterString(String filterString) throws Exception {

@@ -7,6 +7,7 @@ Changelog: iSphere 4.0.0.b003
  • Updated jt400.jar to the one shipped with RDi 9.5.1.3.
  • Moved jt400.jar from the iSphere Emulator Base to the iSphere
    Common Libraries plug-in.
+ • Removed RDi specific references from iSphere Core plug-in.
 
 Changelog: iSphere 4.0.0.b002
 -----------------------------

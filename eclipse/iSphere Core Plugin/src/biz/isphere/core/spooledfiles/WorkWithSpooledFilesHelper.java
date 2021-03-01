@@ -28,8 +28,6 @@ import biz.isphere.core.spooledfiles.view.events.ITableItemChangeListener;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent;
 import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType;
 
-import com.ibm.as400.ui.util.CommandPrompter;
-
 public class WorkWithSpooledFilesHelper {
 
     private Shell shell;
@@ -60,7 +58,7 @@ public class WorkWithSpooledFilesHelper {
                 ICLPrompter command = IBMiHostContributionsHandler.getCLPrompter(connectionName);
                 command.setCommandString(spooledFile.getCommandChangeAttribute());
                 command.setParent(Display.getCurrent().getActiveShell());
-                if (command.showDialog() == CommandPrompter.OK) {
+                if (command.showDialog() == ICLPrompter.OK) {
 
                     String message = spooledFile.changeAttribute(command.getCommandString());
                     if (handleErrorMessage(message)) {
