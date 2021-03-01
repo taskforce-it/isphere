@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere IBM i Contributions
+      	  ==========================================
+      	-->
+
+	<extension
+		point="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions">
+		<client
+            class="com.ibm.etools.iseries.toolbox.ibmi.contributions.extension.point.XIBMiContributions">
+		</client>
+	</extension>
+
+</plugin>
