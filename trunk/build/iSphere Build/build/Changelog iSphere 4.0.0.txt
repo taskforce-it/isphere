@@ -1,5 +1,5 @@
 
-Changelog: iSphere 4.0.0.b003
+Changelog: iSphere 4.0.0.b004
 -----------------------------
 
  • Refactored iSphere Journal Explorer plug-in and moved as much
@@ -9,21 +9,24 @@ Changelog: iSphere 4.0.0.b003
  • Added option to display only changed fields, when comparing
    records in the iSphere Journal Explorer.
 
-Changelog: iSphere 4.0.0.b002
+Changelog: iSphere 4.0.0.b003
 -----------------------------
 
  • Added option 'Work With Spooled Files' to the job entries of a
    RSE job filter.
  • Added option 'Copy Qualified Name' to the job entries of a
    RSE job filter.
+ • Changed layout of iSphere Source File Search view.
+ • Changed layout of iSphere Message File Search view.
+
+Changelog: iSphere 4.0.0.b002
+-----------------------------
  • Added special value *TODAY to the "End date" property of the
    iSphere spooled file filter.
  • Added option to merge spooled file filters and sort items by
    creation time.
  • Fixed problem that the sort order was not restored when loading a
    pinned iSphere "Spooled Files" view.
- • Changed layout of iSphere Source File Search view.
- • Changed layout of iSphere Message File Search view.
  • Changed persistence attribute 'sortColumnIndex' from column index
    to column name. Sort order of pinned iSphere 'Spooled File' views
    will be lost.   
