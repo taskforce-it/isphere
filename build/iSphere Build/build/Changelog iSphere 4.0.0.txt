@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.b005
+-----------------------------
+
+ • Changed compare side-by-side compare dialog of iSphere Journal
+   Explorer to resize the columns of both sides together.
+
 Changelog: iSphere 4.0.0.b004
 -----------------------------
 

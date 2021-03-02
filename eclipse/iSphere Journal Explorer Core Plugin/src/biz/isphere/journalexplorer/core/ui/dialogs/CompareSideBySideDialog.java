@@ -11,6 +11,8 @@
 
 package biz.isphere.journalexplorer.core.ui.dialogs;
 
+import java.util.Set;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -38,6 +40,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class CompareSideBySideDialog extends XDialog {
 
+    private static final String COLUMN_WIDTH = "COLUMN_WIDTH_"; //$NON-NLS-1$
     private final static String DISPLAY_CHANGED_RECORDS_ONLY = "DISPLAY_CHANGED_RECORDS_ONLY"; //$NON-NLS-1$
 
     private Button chkDisplayChangedFieldsOnly;
@@ -120,6 +123,17 @@ public class CompareSideBySideDialog extends XDialog {
         // Expand both horizontally and vertically
         sc.setExpandHorizontal(true);
         sc.setExpandVertical(true);
+
+        addColumnResizeListener(leftEntry, rightEntry);
+        addColumnResizeListener(rightEntry, leftEntry);
+    }
+
+    private ColumnResizeListener addColumnResizeListener(JournalEntryDetailsViewer viewer, JournalEntryDetailsViewer connectedViewer) {
+
+        ColumnResizeListener columnResizeListener = new ColumnResizeListener(viewer, connectedViewer);
+        viewer.setColumnResizeListener(columnResizeListener);
+
+        return columnResizeListener;
     }
 
     private void createOptionsPanel(Composite parent) {
@@ -200,15 +214,30 @@ public class CompareSideBySideDialog extends XDialog {
 
     private void storeScreenValues() {
 
-        getDialogBoundsSettings().put(DISPLAY_CHANGED_RECORDS_ONLY, leftEntry.isDisplayChangedFieldsOnly());
+        storeValue(DISPLAY_CHANGED_RECORDS_ONLY, leftEntry.isDisplayChangedFieldsOnly());
+
+        Set<String> columnNames = leftEntry.getColumnNames();
+        for (String columnName : columnNames) {
+            int width = leftEntry.getColumnWidth(columnName);
+            storeValue(COLUMN_WIDTH + columnName, width);
+        }
     }
 
     private void loadScreenValues() {
 
-        chkDisplayChangedFieldsOnly.setSelection(getDialogBoundsSettings().getBoolean(DISPLAY_CHANGED_RECORDS_ONLY));
+        chkDisplayChangedFieldsOnly.setSelection(loadBooleanValue(DISPLAY_CHANGED_RECORDS_ONLY, false));
 
         leftEntry.setDisplayChangedFieldsOnly(chkDisplayChangedFieldsOnly.getSelection());
         rightEntry.setDisplayChangedFieldsOnly(chkDisplayChangedFieldsOnly.getSelection());
+
+        Set<String> columnNames = leftEntry.getColumnNames();
+        for (String columnName : columnNames) {
+            int width = loadIntValue(COLUMN_WIDTH + columnName, -1);
+            if (width > 0) {
+                leftEntry.setColumnWidth(columnName, width);
+                rightEntry.setColumnWidth(columnName, width);
+            }
+        }
     }
 
     /**
