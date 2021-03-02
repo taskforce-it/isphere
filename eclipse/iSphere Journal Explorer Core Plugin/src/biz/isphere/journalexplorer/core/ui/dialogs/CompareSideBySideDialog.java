@@ -78,7 +78,7 @@ public class CompareSideBySideDialog extends XDialog {
 
     private void createComparePanel(Composite container) {
 
-        Composite mainPanel = new Composite(container, SWT.NONE);
+        Composite mainPanel = new Composite(container, SWT.BORDER);
         mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         FillLayout fl_container = new FillLayout(SWT.HORIZONTAL);
@@ -92,11 +92,7 @@ public class CompareSideBySideDialog extends XDialog {
         sideBySideLayout.marginWidth = 0;
         sideBySideContainer.setLayout(sideBySideLayout);
 
-        Composite leftComposite = new Composite(sideBySideContainer, SWT.BORDER);
-        GridLayout leftGridLayout = new GridLayout(1, false);
-        leftGridLayout.marginHeight = 0;
-        leftGridLayout.marginWidth = 0;
-        leftComposite.setLayout(leftGridLayout);
+        Composite leftComposite = new Composite(sideBySideContainer, SWT.NONE);
         leftComposite.setLayout(new GridLayout(1, false));
         leftComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -107,11 +103,7 @@ public class CompareSideBySideDialog extends XDialog {
         Tree leftTree = leftEntry.getTree();
         leftTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        Composite rightComposite = new Composite(sideBySideContainer, SWT.BORDER);
-        GridLayout rightGridLayout = new GridLayout(1, false);
-        rightGridLayout.marginHeight = 0;
-        rightGridLayout.marginWidth = 0;
-        rightComposite.setLayout(rightGridLayout);
+        Composite rightComposite = new Composite(sideBySideContainer, SWT.NONE);
         rightComposite.setLayout(new GridLayout(1, false));
         rightComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
