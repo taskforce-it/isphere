@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/itext.jar,
+ lib/jt400.jar,
  lib/jython.jar,
  lib/jythonlib.jar,
  lib/smtp.jar,
