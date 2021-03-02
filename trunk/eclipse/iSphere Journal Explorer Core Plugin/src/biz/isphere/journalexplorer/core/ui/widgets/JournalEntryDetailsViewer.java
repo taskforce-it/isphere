@@ -14,6 +14,8 @@ package biz.isphere.journalexplorer.core.ui.widgets;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +27,8 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
+import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
@@ -36,8 +40,12 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabel
  */
 public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyChangeListener {
 
+    private DisplayChangedFieldsOnlyFilter displayChangedFieldsOnlyFilter;
+
     public JournalEntryDetailsViewer(Composite parent) {
         this(parent, 240);
+
+        this.displayChangedFieldsOnlyFilter = null;
     }
 
     private JournalEntryDetailsViewer(Composite parent, int minValueColumnWidth) {
@@ -75,6 +83,28 @@ public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyCh
         treeAutoSizeListener.addResizableColumn(property, 1, 120, 240);
         treeAutoSizeListener.addResizableColumn(value, 1, minValueColumnWidth);
         tree.addControlListener(treeAutoSizeListener);
+    }
+
+    public boolean isDisplayChangedFieldsOnly() {
+
+        if (displayChangedFieldsOnlyFilter != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void setDisplayChangedFieldsOnly(boolean enabled) {
+
+        if (enabled && displayChangedFieldsOnlyFilter == null) {
+            displayChangedFieldsOnlyFilter = new DisplayChangedFieldsOnlyFilter();
+            addFilter(displayChangedFieldsOnlyFilter);
+            refresh();
+        } else if (!enabled && displayChangedFieldsOnlyFilter != null) {
+            removeFilter(displayChangedFieldsOnlyFilter);
+            displayChangedFieldsOnlyFilter = null;
+            refresh();
+        }
     }
 
     public void setAsSelectionProvider(SelectionProviderIntermediate selectionProvider) {
@@ -115,5 +145,26 @@ public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyCh
 
     public void dispose() {
         Preferences.getInstance().removePropertyChangeListener(this);
+    }
+
+    class DisplayChangedFieldsOnlyFilter extends ViewerFilter {
+
+        @Override
+        public boolean select(Viewer viewer, Object parentElement, Object element) {
+
+            if (element instanceof JournalProperty) {
+                JournalProperty property = (JournalProperty)element;
+                if (property.parent instanceof JournalProperty) {
+                    JournalProperty parentProperty = (JournalProperty)property.parent;
+                    if (ColumnsDAO.JOESD.equals(parentProperty.name)) {
+                        if (!property.highlighted) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }

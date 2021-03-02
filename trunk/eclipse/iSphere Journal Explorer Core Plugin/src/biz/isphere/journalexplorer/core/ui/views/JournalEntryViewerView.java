@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -39,9 +40,11 @@ import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CollapseAllAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.actions.DisplayChangedFieldsOnlyAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
+import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
@@ -56,11 +59,16 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"; //$NON-NLS-1$
 
+    private final static String DISPLAY_CHANGED_RECORDS_ONLY = "DISPLAY_CHANGED_RECORDS_ONLY"; //$NON-NLS-1$
+
+    private DialogSettingsManager dialogSettingsManager = null;
+
     private JournalEntryDetailsViewer viewer;
 
     private CollapseAllAction collapseAllAction;
     private CompareJournalPropertiesAction compareJournalPropertiesAction;
     private CompareSideBySideAction compareSideBySideAction;
+    private DisplayChangedFieldsOnlyAction displayChangesOnlyAction;
     private GenericRefreshAction reParseJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
@@ -74,7 +82,9 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
         viewer = new JournalEntryDetailsViewer(parent);
         viewer.addSelectionChangedListener(this);
+
         getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
+
         createActions();
         createToolBar();
         setActionEnablement(getSelection());
@@ -89,6 +99,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
         viewer.setAsSelectionProvider(selectionProviderIntermediate);
         getSite().setSelectionProvider(selectionProviderIntermediate);
+
+        loadScreenValues();
     }
 
     @Override
@@ -110,6 +122,13 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
         compareSideBySideAction.setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(
             ISphereJournalExplorerCorePlugin.IMAGE_HORIZONTAL_RESULTS_VIEW));
+
+        displayChangesOnlyAction = new DisplayChangedFieldsOnlyAction(getSite().getShell()) {
+            public void run() {
+                viewer.setDisplayChangedFieldsOnly(displayChangesOnlyAction.isChecked());
+                storeScreenValues();
+            };
+        };
 
         reParseJournalEntriesAction = new GenericRefreshAction() {
             @Override
@@ -145,6 +164,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         toolBarManager.add(new Separator());
         toolBarManager.add(compareJournalPropertiesAction);
         toolBarManager.add(compareSideBySideAction);
+        toolBarManager.add(new Separator());
+        toolBarManager.add(displayChangesOnlyAction);
         toolBarManager.add(new Separator());
         toolBarManager.add(reParseJournalEntriesAction);
     }
@@ -240,6 +261,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
             compareJournalPropertiesAction.setEnabled(false);
         }
 
+        displayChangesOnlyAction.setEnabled(true);
+
         Object[] items = getInput();
 
         if (items != null && items.length > 0) {
@@ -287,5 +310,23 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         }
 
         return null;
+    }
+
+    private void storeScreenValues() {
+        getDialogSettingsManager().storeValue(DISPLAY_CHANGED_RECORDS_ONLY, displayChangesOnlyAction.isChecked());
+    }
+
+    private void loadScreenValues() {
+        displayChangesOnlyAction.setChecked(getDialogSettingsManager().loadBooleanValue(DISPLAY_CHANGED_RECORDS_ONLY, false));
+        viewer.setDisplayChangedFieldsOnly(displayChangesOnlyAction.isChecked());
+    }
+
+    private DialogSettingsManager getDialogSettingsManager() {
+
+        if (dialogSettingsManager == null) {
+            dialogSettingsManager = new DialogSettingsManager(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings(),
+                AbstractJournalEntriesViewerTab.class);
+        }
+        return dialogSettingsManager;
     }
 }

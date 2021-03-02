@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class Messages extends NLS {
     public static String JournalEntryView_Edit_SQL;
     public static String JournalEntryView_ReloadEntries;
     public static String JournalEntryView_CompareSideBySide;
+    public static String JournalEntryView_DisplayChangedFieldsOnly;
     public static String JournalEntryView_UncomparableEntries;
     public static String JournalEntryViewer_Property;
     public static String JournalEntryViewer_Value;
@@ -118,6 +119,9 @@ public class Messages extends NLS {
     public static String Number_of_journal_entries_A_of_B;
     public static String Number_of_journal_entries_A_more_items_available;
     public static String subsetted_list;
+
+    public static String CompareSideBySideDialog_Label_Changed_records_only;
+    public static String CompareSideBySideDialog_Tooltip_Changed_records_only;
 
     public static String DisplayJournalEntriesDialog_Title;
     public static String DisplayJournalEntriesDialog_From_date_colon;

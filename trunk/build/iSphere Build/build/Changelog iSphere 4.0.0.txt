@@ -6,6 +6,8 @@ Changelog: iSphere 4.0.0.b003
    classes as possible to the journal explorer core plug-in.
  • Updated jt400.jar to the one shipped with RDi 9.5.1.3.
  • Removed RDi specific references from iSphere Core plug-in.
+ • Added option to display only changed fields, when comparing
+   records in the iSphere Journal Explorer.
 
 Changelog: iSphere 4.0.0.b002
 -----------------------------
