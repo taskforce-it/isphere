@@ -11,6 +11,11 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -31,6 +36,7 @@ import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
+import biz.isphere.journalexplorer.core.ui.dialogs.ColumnResizeListener;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
 
 /**
@@ -40,19 +46,60 @@ import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabel
  */
 public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyChangeListener {
 
+    private static final String COLUMN_KEY = "ID";
+    private static final String COLUMN_PROPERTY = "PROPERTY";
+    private static final String COLUMN_VALUE = "VALUE";
+
     private DisplayChangedFieldsOnlyFilter displayChangedFieldsOnlyFilter;
+    private Map<String, TreeColumn> columnsByName;
+    private ColumnResizeListener columnResizeListener;
+    private TreeAutoSizeControlListener treeAutoSizeListener;
 
     public JournalEntryDetailsViewer(Composite parent) {
         this(parent, 240);
-
-        this.displayChangedFieldsOnlyFilter = null;
     }
 
     private JournalEntryDetailsViewer(Composite parent, int minValueColumnWidth) {
         super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        this.initializeComponents(minValueColumnWidth);
+
+        this.displayChangedFieldsOnlyFilter = null;
+        this.columnsByName = new HashMap<String, TreeColumn>();
+        this.columnResizeListener = null;
+
+        initializeComponents(minValueColumnWidth);
 
         Preferences.getInstance().addPropertyChangeListener(this);
+    }
+
+    public Set<String> getColumnNames() {
+
+        Set<String> columnNames = new HashSet<String>();
+
+        for (TreeColumn column : getTree().getColumns()) {
+            String columnName = (String)column.getData(COLUMN_KEY);
+            columnNames.add(columnName);
+        }
+
+        return columnNames;
+    }
+
+    public int getColumnWidth(String columName) {
+
+        TreeColumn column = columnsByName.get(columName);
+        int width = column.getWidth();
+
+        return width;
+    }
+
+    public void setColumnWidth(String columName, int width) {
+
+        TreeColumn column = columnsByName.get(columName);
+        column.setWidth(width);
+
+        if (treeAutoSizeListener != null) {
+            getTree().removeControlListener(treeAutoSizeListener);
+            treeAutoSizeListener = null;
+        }
     }
 
     @Override
@@ -73,16 +120,43 @@ public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyCh
         property.setAlignment(SWT.LEFT);
         property.setWidth(240);
         property.setText(Messages.JournalEntryViewer_Property);
+        property.setData(COLUMN_KEY, COLUMN_PROPERTY);
+        columnsByName.put(COLUMN_PROPERTY, property);
 
         TreeColumn value = new TreeColumn(tree, SWT.LEFT);
         value.setAlignment(SWT.LEFT);
         value.setWidth(240);
         value.setText(Messages.JournalEntryViewer_Value);
+        value.setData(COLUMN_KEY, COLUMN_VALUE);
+        columnsByName.put(COLUMN_VALUE, value);
 
-        TreeAutoSizeControlListener treeAutoSizeListener = new TreeAutoSizeControlListener(tree, TreeAutoSizeControlListener.USE_FULL_WIDTH);
+        treeAutoSizeListener = new TreeAutoSizeControlListener(tree, TreeAutoSizeControlListener.USE_FULL_WIDTH);
         treeAutoSizeListener.addResizableColumn(property, 1, 120, 240);
         treeAutoSizeListener.addResizableColumn(value, 1, minValueColumnWidth);
         tree.addControlListener(treeAutoSizeListener);
+    }
+
+    public void setColumnResizeListener(ColumnResizeListener columnResizeListener) {
+
+        this.columnResizeListener = columnResizeListener;
+
+        for (TreeColumn column : getTree().getColumns()) {
+            column.addControlListener(this.columnResizeListener);
+        }
+    }
+
+    public String getColumnName(TreeColumn column) {
+
+        String columnName = (String)column.getData(COLUMN_KEY);
+
+        return columnName;
+    }
+
+    public void setConnectedColumnWidth(TreeColumn column) {
+
+        String columnName = (String)column.getData(COLUMN_KEY);
+        TreeColumn connectedColumn = columnsByName.get(columnName);
+        connectedColumn.setWidth(column.getWidth());
     }
 
     public boolean isDisplayChangedFieldsOnly() {

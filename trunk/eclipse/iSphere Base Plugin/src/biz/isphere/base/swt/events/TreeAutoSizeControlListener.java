@@ -158,7 +158,7 @@ public class TreeAutoSizeControlListener extends ControlAdapter {
      */
     private void resizeTableColumns() {
 
-        int clientWidth = getClientWidth();
+        int clientWidth = getClientWidth() - 4;
         int fixedColumnsWidth = getTotalWidthOfRemainingColumns();
         int totalColumnsWeight = initialTotalColumnsWeight;
 
