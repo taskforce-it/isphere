@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,13 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -26,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JournalEntryComparator;
@@ -34,6 +38,9 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class CompareSideBySideDialog extends XDialog {
 
+    private final static String DISPLAY_CHANGED_RECORDS_ONLY = "DISPLAY_CHANGED_RECORDS_ONLY"; //$NON-NLS-1$
+
+    private Button chkDisplayChangedFieldsOnly;
     private JournalEntryDetailsViewer leftEntry;
     private JournalEntryDetailsViewer rightEntry;
     private Label lblLeftEntry;
@@ -59,18 +66,37 @@ public class CompareSideBySideDialog extends XDialog {
     protected Control createDialogArea(Composite parent) {
 
         Composite container = (Composite)super.createDialogArea(parent);
-        FillLayout fl_container = new FillLayout(SWT.HORIZONTAL);
-        fl_container.marginHeight = 5;
-        fl_container.marginWidth = 5;
-        fl_container.spacing = 5;
-        container.setLayout(fl_container);
 
-        sc = new ScrolledComposite(container, SWT.H_SCROLL | SWT.V_SCROLL);
+        createComparePanel(container);
+
+        createOptionsPanel(parent);
+
+        loadScreenValues();
+
+        return container;
+    }
+
+    private void createComparePanel(Composite container) {
+
+        Composite mainPanel = new Composite(container, SWT.NONE);
+        mainPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        FillLayout fl_container = new FillLayout(SWT.HORIZONTAL);
+        mainPanel.setLayout(fl_container);
+
+        sc = new ScrolledComposite(mainPanel, SWT.H_SCROLL | SWT.V_SCROLL);
 
         sideBySideContainer = new Composite(sc, SWT.NONE);
-        sideBySideContainer.setLayout(new GridLayout(2, true));
+        GridLayout sideBySideLayout = new GridLayout(2, true);
+        sideBySideLayout.marginHeight = 0;
+        sideBySideLayout.marginWidth = 0;
+        sideBySideContainer.setLayout(sideBySideLayout);
 
         Composite leftComposite = new Composite(sideBySideContainer, SWT.BORDER);
+        GridLayout leftGridLayout = new GridLayout(1, false);
+        leftGridLayout.marginHeight = 0;
+        leftGridLayout.marginWidth = 0;
+        leftComposite.setLayout(leftGridLayout);
         leftComposite.setLayout(new GridLayout(1, false));
         leftComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -82,6 +108,10 @@ public class CompareSideBySideDialog extends XDialog {
         leftTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Composite rightComposite = new Composite(sideBySideContainer, SWT.BORDER);
+        GridLayout rightGridLayout = new GridLayout(1, false);
+        rightGridLayout.marginHeight = 0;
+        rightGridLayout.marginWidth = 0;
+        rightComposite.setLayout(rightGridLayout);
         rightComposite.setLayout(new GridLayout(1, false));
         rightComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -98,8 +128,35 @@ public class CompareSideBySideDialog extends XDialog {
         // Expand both horizontally and vertically
         sc.setExpandHorizontal(true);
         sc.setExpandVertical(true);
+    }
 
-        return container;
+    private void createOptionsPanel(Composite parent) {
+
+        Composite optionsPanel = new Composite(parent, SWT.NONE);
+        GridLayout gl_optionsPanel = new GridLayout();
+        gl_optionsPanel.marginBottom = 20;
+        optionsPanel.setLayout(gl_optionsPanel);
+        optionsPanel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+        chkDisplayChangedFieldsOnly = WidgetFactory.createCheckbox(optionsPanel, Messages.CompareSideBySideDialog_Label_Changed_records_only);
+        chkDisplayChangedFieldsOnly.setToolTipText(Messages.CompareSideBySideDialog_Tooltip_Changed_records_only);
+        chkDisplayChangedFieldsOnly.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                setDisplayChangedFieldsOnly(leftEntry, chkDisplayChangedFieldsOnly.getSelection());
+                setDisplayChangedFieldsOnly(rightEntry, chkDisplayChangedFieldsOnly.getSelection());
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+
+            private void setDisplayChangedFieldsOnly(JournalEntryDetailsViewer viewer, boolean enabled) {
+                if (viewer != null) {
+                    viewer.setDisplayChangedFieldsOnly(enabled);
+                }
+            }
+        });
     }
 
     public void setInput(JournalProperties leftEntryData, JournalProperties rightEntryData) {
@@ -141,10 +198,25 @@ public class CompareSideBySideDialog extends XDialog {
     @Override
     public boolean close() {
 
+        storeScreenValues();
+
         leftEntry.dispose();
         rightEntry.dispose();
 
         return super.close();
+    }
+
+    private void storeScreenValues() {
+
+        getDialogBoundsSettings().put(DISPLAY_CHANGED_RECORDS_ONLY, leftEntry.isDisplayChangedFieldsOnly());
+    }
+
+    private void loadScreenValues() {
+
+        chkDisplayChangedFieldsOnly.setSelection(getDialogBoundsSettings().getBoolean(DISPLAY_CHANGED_RECORDS_ONLY));
+
+        leftEntry.setDisplayChangedFieldsOnly(chkDisplayChangedFieldsOnly.getSelection());
+        rightEntry.setDisplayChangedFieldsOnly(chkDisplayChangedFieldsOnly.getSelection());
     }
 
     /**

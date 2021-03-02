@@ -33,6 +33,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_DETAILS = "details.png";
     public static final String IMAGE_HIGHLIGHT = "highlight.png";
     public static final String IMAGE_HORIZONTAL_RESULTS_VIEW = "horizontal_results_view.gif";
+    public static final String IMAGE_CHANGES_ONLY = "changes_only.gif";
     public static final String IMAGE_JOURNAL_EXPLORER = "journal_explorer.png";
     public static final String IMAGE_CONFIGURE_PARSERS = "configure_parsers.gif";
     public static final String IMAGE_REFRESH = "refresh.gif";
@@ -103,6 +104,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_DETAILS, getImageDescriptor(IMAGE_DETAILS));
         reg.put(IMAGE_HIGHLIGHT, getImageDescriptor(IMAGE_HIGHLIGHT));
         reg.put(IMAGE_HORIZONTAL_RESULTS_VIEW, getImageDescriptor(IMAGE_HORIZONTAL_RESULTS_VIEW));
+        reg.put(IMAGE_CHANGES_ONLY, getImageDescriptor(IMAGE_CHANGES_ONLY));
         reg.put(IMAGE_JOURNAL_EXPLORER, getImageDescriptor(IMAGE_JOURNAL_EXPLORER));
         reg.put(IMAGE_CONFIGURE_PARSERS, getImageDescriptor(IMAGE_CONFIGURE_PARSERS));
         reg.put(IMAGE_REFRESH, getImageDescriptor(IMAGE_REFRESH));
