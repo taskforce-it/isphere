@@ -14,6 +14,7 @@ package biz.isphere.journalexplorer.core.ui.views;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -29,10 +30,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.core.internal.listener.PartCloseAdapter;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -44,7 +47,6 @@ import biz.isphere.journalexplorer.core.ui.actions.DisplayChangedFieldsOnlyActio
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
-import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
@@ -59,6 +61,7 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView"; //$NON-NLS-1$
 
+    private static final String COLUMN_WIDTH = "COLUMN_WIDTH_"; //$NON-NLS-1$
     private final static String DISPLAY_CHANGED_RECORDS_ONLY = "DISPLAY_CHANGED_RECORDS_ONLY"; //$NON-NLS-1$
 
     private DialogSettingsManager dialogSettingsManager = null;
@@ -101,12 +104,21 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         getSite().setSelectionProvider(selectionProviderIntermediate);
 
         loadScreenValues();
+
+        addPartCloseListener(parent);
+    }
+
+    private void addPartCloseListener(Composite parent) {
+
+        new PartCloseListener(getSite().getPage());
     }
 
     @Override
     public void dispose() {
+
         ISelectionService selectionService = getSite().getWorkbenchWindow().getSelectionService();
         selectionService.removeSelectionListener(this);
+
         viewer.dispose();
 
         super.dispose();
@@ -313,20 +325,60 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
     }
 
     private void storeScreenValues() {
+
         getDialogSettingsManager().storeValue(DISPLAY_CHANGED_RECORDS_ONLY, displayChangesOnlyAction.isChecked());
+
+        Set<String> columnNames = viewer.getColumnNames();
+        for (String columnName : columnNames) {
+            int width = viewer.getColumnWidth(columnName);
+            getDialogSettingsManager().storeValue(COLUMN_WIDTH + columnName, width);
+        }
     }
 
     private void loadScreenValues() {
+
         displayChangesOnlyAction.setChecked(getDialogSettingsManager().loadBooleanValue(DISPLAY_CHANGED_RECORDS_ONLY, false));
         viewer.setDisplayChangedFieldsOnly(displayChangesOnlyAction.isChecked());
+
+        Set<String> columnNames = viewer.getColumnNames();
+        for (String columnName : columnNames) {
+            int width = getDialogSettingsManager().loadIntValue(COLUMN_WIDTH + columnName, -1);
+            if (width > 0) {
+                viewer.setColumnWidth(columnName, width);
+            }
+        }
     }
 
     private DialogSettingsManager getDialogSettingsManager() {
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISphereJournalExplorerCorePlugin.getDefault().getDialogSettings(),
-                AbstractJournalEntriesViewerTab.class);
+                JournalEntryViewerView.class);
         }
         return dialogSettingsManager;
+    }
+
+    private class PartCloseListener extends PartCloseAdapter {
+
+        public PartCloseListener(IWorkbenchPage page) {
+            super(page);
+        }
+
+        public void partOpened(IWorkbenchPart paramIWorkbenchPart) {
+        }
+
+        public void partDeactivated(IWorkbenchPart paramIWorkbenchPart) {
+        }
+
+        public void partClosed(IWorkbenchPart paramIWorkbenchPart) {
+            storeScreenValues();
+            super.partClosed(paramIWorkbenchPart);
+        }
+
+        public void partBroughtToTop(IWorkbenchPart paramIWorkbenchPart) {
+        }
+
+        public void partActivated(IWorkbenchPart paramIWorkbenchPart) {
+        }
     }
 }
