@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -226,10 +227,12 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
                 TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 
                 viewer.setInput(input.toArray());
+                viewer.setSelection(new StructuredSelection(input.toArray()));
 
                 // Restore tree state
                 viewer.setExpandedElements(expandedElements);
                 viewer.setExpandedTreePaths(expandedTreePaths);
+
             }
         }
 
