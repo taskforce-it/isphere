@@ -227,7 +227,10 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
                 TreePath[] expandedTreePaths = viewer.getExpandedTreePaths();
 
                 viewer.setInput(input.toArray());
-                viewer.setSelection(new StructuredSelection(input.toArray()));
+
+                if (input.size() == 2 && sameTables(input.toArray())) {
+                    viewer.setSelection(new StructuredSelection(input.toArray()));
+                }
 
                 // Restore tree state
                 viewer.setExpandedElements(expandedElements);
@@ -237,6 +240,29 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
         }
 
         setActionEnablement(getSelection());
+    }
+
+    private boolean sameTables(Object[] array) {
+
+        String objectName = null;
+        String objectLibrary = null;
+
+        for (Object object : array) {
+            if (object instanceof JournalProperties) {
+                JournalProperties properties = (JournalProperties)object;
+                if (objectName != null && objectLibrary != null) {
+                    if (!objectName.equals(properties.getJournalEntry().getObjectName())
+                        || !objectLibrary.equals(properties.getJournalEntry().getObjectLibrary())) {
+                        return false;
+                    }
+                }
+                objectName = properties.getJournalEntry().getObjectName();
+                objectLibrary = properties.getJournalEntry().getObjectLibrary();
+            }
+
+        }
+
+        return true;
     }
 
     public void selectionChanged(SelectionChangedEvent event) {
