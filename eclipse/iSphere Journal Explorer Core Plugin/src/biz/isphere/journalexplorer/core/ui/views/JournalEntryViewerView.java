@@ -230,6 +230,8 @@ public class JournalEntryViewerView extends ViewPart implements ISelectionListen
 
                 if (input.size() == 2 && sameTables(input.toArray())) {
                     viewer.setSelection(new StructuredSelection(input.toArray()));
+                } else {
+                    viewer.setSelection(null);
                 }
 
                 // Restore tree state
