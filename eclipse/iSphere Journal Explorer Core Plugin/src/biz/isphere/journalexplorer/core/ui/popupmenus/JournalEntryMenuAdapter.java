@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
+import biz.isphere.journalexplorer.core.ui.widgets.actions.CopyJournalPropertyToClipboardAction;
 
 public class JournalEntryMenuAdapter extends MenuAdapter {
 
@@ -31,6 +32,9 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     private Shell shell;
     private MenuItem compareSideBySideMenuItem;
     private MenuItem exportToExcelMenuItem;
+    private MenuItem separator;
+    private MenuItem copyAllToClipboardMenuItem;
+    private MenuItem copyValuesToClipboardMenuItem;
 
     public JournalEntryMenuAdapter(Menu menuTableMembers, TableViewer tableViewer) {
         this.tableViewer = tableViewer;
@@ -47,6 +51,9 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     public void destroyMenuItems() {
         dispose(exportToExcelMenuItem);
         dispose(compareSideBySideMenuItem);
+        dispose(separator);
+        dispose(copyAllToClipboardMenuItem);
+        dispose(copyValuesToClipboardMenuItem);
     }
 
     private int selectedItemsCount() {
@@ -72,7 +79,33 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
 
     public void createMenuItems() {
 
+        if (selectedItemsCount() == 1) {
+            copyAllToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CopyJournalPropertyToClipboardAction copyAllToClipboardAction = new CopyJournalPropertyToClipboardAction(true);
+            copyAllToClipboardMenuItem.setText(copyAllToClipboardAction.getText());
+            copyAllToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    copyAllToClipboardAction.setSelectedItems(getSelection());
+                    copyAllToClipboardAction.run();
+                }
+            });
+
+            copyValuesToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CopyJournalPropertyToClipboardAction copyValueToClipboardAction = new CopyJournalPropertyToClipboardAction(false);
+            copyValuesToClipboardMenuItem.setText(copyValueToClipboardAction.getText());
+            copyValuesToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    copyValueToClipboardAction.setSelectedItems(getSelection());
+                    copyValueToClipboardAction.run();
+                }
+            });
+        }
+
         if (selectedItemsCount() > 0) {
+            separator = new MenuItem(menuTableMembers, SWT.SEPARATOR);
+
             exportToExcelMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
             final ExportToExcelAction exportToExcelAction = new ExportToExcelAction(shell);
             exportToExcelMenuItem.setText(exportToExcelAction.getText());

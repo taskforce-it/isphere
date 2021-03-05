@@ -276,6 +276,10 @@ public class Messages extends NLS {
     public static String JournalPropertyValue_null;
     public static String JournalPropertyValue_not_available;
 
+    public static String CopyAction_fileProperty;
+    public static String CopyValueAction_text;
+    public static String CopyAllAction_text;
+
     public static String ExcelExport_Headline;
     public static String Finished_exporting_data_to_file_A;
     public static String Exporting_to_Excel;

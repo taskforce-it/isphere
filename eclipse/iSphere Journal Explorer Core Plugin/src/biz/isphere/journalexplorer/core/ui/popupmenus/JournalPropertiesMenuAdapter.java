@@ -28,6 +28,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.ui.actions.CompareJournalPropertiesAction;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
+import biz.isphere.journalexplorer.core.ui.widgets.actions.CopyJournalPropertyToClipboardAction;
 
 public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
@@ -36,6 +37,9 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
     private Shell shell;
     private MenuItem compareJournalPropertiesMenuItem;
     private MenuItem compareSideBySideMenuItem;
+    private MenuItem separator;
+    private MenuItem copyAllToClipboardMenuItem;
+    private MenuItem copyValuesToClipboardMenuItem;
 
     public JournalPropertiesMenuAdapter(Menu menuTableMembers, TreeViewer treeViewer) {
         this.treeViewer = treeViewer;
@@ -52,9 +56,16 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
     public void destroyMenuItems() {
         dispose(compareJournalPropertiesMenuItem);
         dispose(compareSideBySideMenuItem);
+        dispose(separator);
+        dispose(copyAllToClipboardMenuItem);
+        dispose(copyValuesToClipboardMenuItem);
     }
 
     private int selectedItemsCount() {
+        return getSelectedItems().size();
+    }
+
+    private int selectedJournalEntriesCount() {
         return getSelectedJournalEntries().size();
     }
 
@@ -72,6 +83,22 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
         }
 
         return new StructuredSelection(journalProperties.toArray(new JournalProperties[journalProperties.size()]));
+    }
+
+    private StructuredSelection getSelectedItems() {
+
+        if (treeViewer != null && (treeViewer.getControl() instanceof Tree)) {
+            Tree tree = (Tree)treeViewer.getControl();
+            List<Object> items = new LinkedList<Object>();
+            for (TreeItem treeItem : tree.getSelection()) {
+                Object journalProperties = treeItem.getData();
+                items.add(journalProperties);
+            }
+
+            return new StructuredSelection(items.toArray(new Object[items.size()]));
+        }
+
+        return new StructuredSelection(new Object[0]);
     }
 
     private StructuredSelection getSelectedJournalEntries() {
@@ -102,30 +129,57 @@ public class JournalPropertiesMenuAdapter extends MenuAdapter {
 
     public void createMenuItems() {
 
-        if (selectedItemsCount() == 2) {
-            compareJournalPropertiesMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final CompareJournalPropertiesAction compareJournalPropertiesAction = new CompareJournalPropertiesAction(treeViewer);
-            compareJournalPropertiesMenuItem.setText(compareJournalPropertiesAction.getText());
-            compareJournalPropertiesMenuItem.setImage(compareJournalPropertiesAction.getImage());
-            compareJournalPropertiesMenuItem.addSelectionListener(new SelectionAdapter() {
+        if (selectedItemsCount() > 0) {
+
+            copyAllToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CopyJournalPropertyToClipboardAction copyAllToClipboardAction = new CopyJournalPropertyToClipboardAction(true);
+            copyAllToClipboardMenuItem.setText(copyAllToClipboardAction.getText());
+            copyAllToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    compareJournalPropertiesAction.setSelectedItems(getSelectedJournalProperties());
-                    compareJournalPropertiesAction.run();
+                    copyAllToClipboardAction.setSelectedItems(getSelectedItems());
+                    copyAllToClipboardAction.run();
                 }
             });
 
-            compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
-            final CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
-            compareSideBySideMenuItem.setText(compareSideBySideAction.getText());
-            compareSideBySideMenuItem.setImage(compareSideBySideAction.getImage());
-            compareSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
+            copyValuesToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+            final CopyJournalPropertyToClipboardAction copyValueToClipboardAction = new CopyJournalPropertyToClipboardAction(false);
+            copyValuesToClipboardMenuItem.setText(copyValueToClipboardAction.getText());
+            copyValuesToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    compareSideBySideAction.setSelectedItems(getSelectedJournalEntries());
-                    compareSideBySideAction.run();
+                    copyValueToClipboardAction.setSelectedItems(getSelectedItems());
+                    copyValueToClipboardAction.run();
                 }
             });
+
+            if (selectedJournalEntriesCount() == 2) {
+                separator = new MenuItem(menuTableMembers, SWT.SEPARATOR);
+
+                compareJournalPropertiesMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+                final CompareJournalPropertiesAction compareJournalPropertiesAction = new CompareJournalPropertiesAction(treeViewer);
+                compareJournalPropertiesMenuItem.setText(compareJournalPropertiesAction.getText());
+                compareJournalPropertiesMenuItem.setImage(compareJournalPropertiesAction.getImage());
+                compareJournalPropertiesMenuItem.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        compareJournalPropertiesAction.setSelectedItems(getSelectedJournalProperties());
+                        compareJournalPropertiesAction.run();
+                    }
+                });
+
+                compareSideBySideMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
+                final CompareSideBySideAction compareSideBySideAction = new CompareSideBySideAction(shell);
+                compareSideBySideMenuItem.setText(compareSideBySideAction.getText());
+                compareSideBySideMenuItem.setImage(compareSideBySideAction.getImage());
+                compareSideBySideMenuItem.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        compareSideBySideAction.setSelectedItems(getSelectedJournalEntries());
+                        compareSideBySideAction.run();
+                    }
+                });
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ Changelog: iSphere 4.0.0.b005
    Explorer to resize the columns of both sides together.
  • Changed compare view of iSphere Journal Explorer to store the
    column sizes.
+ • Added "Copy" and "Copy value" actions to context menu of journal
+   entry details viewer.
 
 Changelog: iSphere 4.0.0.b004
 -----------------------------
