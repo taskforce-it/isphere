@@ -17,5 +17,6 @@ X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
  Added option 'Copy Qualified Name' to job entries of a RSE job filter.\n
  Added option 'Display changed fields only' to iSphere Journal Explorer.\n
  Added preferences option to merge spooled file filters and sort items by creation time.\n
+ Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
  Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
  Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.

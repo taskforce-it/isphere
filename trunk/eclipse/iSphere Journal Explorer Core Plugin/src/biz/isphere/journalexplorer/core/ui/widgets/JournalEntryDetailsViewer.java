@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
@@ -38,6 +40,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.dialogs.ColumnResizeListener;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalPropertiesLabelProvider;
+import biz.isphere.journalexplorer.core.ui.widgets.menues.JournalEntryMenuAdapter;
 
 /**
  * This widget display the properties of a journal entry item.
@@ -67,8 +70,20 @@ public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyCh
         this.columnResizeListener = null;
 
         initializeComponents(minValueColumnWidth);
+        createContextMenu();
 
         Preferences.getInstance().addPropertyChangeListener(this);
+    }
+
+    private void createContextMenu() {
+
+        MenuManager menuMgr = new MenuManager();
+
+        Menu menu = menuMgr.createContextMenu(this.getControl());
+        menuMgr.addMenuListener(new JournalEntryMenuAdapter(this));
+
+        menuMgr.setRemoveAllWhenShown(true);
+        this.getControl().setMenu(menu);
     }
 
     public Set<String> getColumnNames() {
