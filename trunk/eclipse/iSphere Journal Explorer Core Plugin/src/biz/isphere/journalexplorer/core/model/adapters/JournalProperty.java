@@ -65,4 +65,9 @@ public class JournalProperty implements Comparable<JournalProperty> {
     public boolean isNullValue() {
         return nullValue;
     }
+
+    @Override
+    public String toString() {
+        return label + "=" + value;
+    }
 }

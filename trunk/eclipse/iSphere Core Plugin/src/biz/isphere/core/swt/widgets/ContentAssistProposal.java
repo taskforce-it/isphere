@@ -30,4 +30,8 @@ public class ContentAssistProposal {
         return label;
     }
 
+    @Override
+    public String toString() {
+        return label + "=" + value;
+    }
 }
