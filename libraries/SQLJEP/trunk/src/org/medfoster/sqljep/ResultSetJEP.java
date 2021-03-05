@@ -27,7 +27,7 @@ import java.util.Map;
  * 	try {
  * 		sqljep.addConstant("sysdate", new java.util.Date());
  * 		sqljep.parseExpression(rs);
- * 		whille (rs.next()) {
+ * 		while (rs.next()) {
  * 			System.out.println(sqljep.getValue());
  * 		}
  * 	}
