@@ -88,7 +88,7 @@ public class StrPrePrcParser extends AbstractStrPrePrcParser {
             ContentAssistProposal proposal;
             for (int i = 0; i < values.length; i++) {
                 if (labels != null && i < labels.length - 1 && labels[i].trim().length() > 0) {
-                    proposal = new ContentAssistProposal(values[i], labels[i]);
+                    proposal = new ContentAssistProposal(values[i], values[i] + " - " + labels[i]);
                 } else {
                     proposal = new ContentAssistProposal(values[i]);
                 }

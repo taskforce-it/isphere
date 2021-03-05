@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,21 +48,25 @@ public class JobTraceEntry {
     static {
         // @formatter:off
         proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new ContentAssistProposal(ColumnsDAO.ID.systemColumnName(), ColumnsDAO.ID.type() + " - " + ColumnsDAO.ID.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.NANOS_SINE_STARTED.name(), ColumnsDAO.NANOS_SINE_STARTED.type() + " - " + ColumnsDAO.NANOS_SINE_STARTED.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.name(), ColumnsDAO.TIMESTAMP.type() + " - " + ColumnsDAO.TIMESTAMP.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_NAME.name(), ColumnsDAO.PGM_NAME.type() + " - " + ColumnsDAO.PGM_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_LIB.name(), ColumnsDAO.PGM_LIB.type() + " - " + ColumnsDAO.PGM_LIB.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_NAME.name(), ColumnsDAO.MOD_NAME.type() + " - " + ColumnsDAO.MOD_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_LIB.name(), ColumnsDAO.MOD_LIB.type() + " - " + ColumnsDAO.MOD_LIB.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.HLL_STMT_NBR.name(), ColumnsDAO.HLL_STMT_NBR.type() + " - " + ColumnsDAO.HLL_STMT_NBR.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.name(), ColumnsDAO.PROC_NAME.type() + " - " + ColumnsDAO.PROC_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), ColumnsDAO.CALL_LEVEL.type() + " - " + ColumnsDAO.CALL_LEVEL.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.EVENT_SUB_TYPE.name(), ColumnsDAO.EVENT_SUB_TYPE.type() + " - " + ColumnsDAO.EVENT_SUB_TYPE.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_HLL_STMT_NBR.name(), ColumnsDAO.CALLER_HLL_STMT_NBR.type() + " - " + ColumnsDAO.CALLER_HLL_STMT_NBR.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_PROC_NAME.name(), ColumnsDAO.CALLER_PROC_NAME.type() + " - " + ColumnsDAO.CALLER_PROC_NAME.description()));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_CALL_LEVEL.name(), ColumnsDAO.CALLER_CALL_LEVEL.type() + " - " + ColumnsDAO.CALLER_CALL_LEVEL.description()));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.ID.systemColumnName(), getLabel(ColumnsDAO.ID)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.NANOS_SINE_STARTED.name(), getLabel(ColumnsDAO.NANOS_SINE_STARTED)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.TIMESTAMP.name(), getLabel(ColumnsDAO.TIMESTAMP)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_NAME.name(), getLabel(ColumnsDAO.PGM_NAME)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PGM_LIB.name(), getLabel(ColumnsDAO.PGM_LIB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_NAME.name(), getLabel(ColumnsDAO.MOD_NAME)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.MOD_LIB.name(), getLabel(ColumnsDAO.MOD_LIB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.HLL_STMT_NBR.name(), getLabel(ColumnsDAO.HLL_STMT_NBR)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.PROC_NAME.name(), getLabel(ColumnsDAO.PROC_NAME)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALL_LEVEL.name(), getLabel(ColumnsDAO.CALL_LEVEL)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.EVENT_SUB_TYPE.name(), getLabel(ColumnsDAO.EVENT_SUB_TYPE)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_HLL_STMT_NBR.name(), getLabel(ColumnsDAO.CALLER_HLL_STMT_NBR)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_PROC_NAME.name(), getLabel(ColumnsDAO.CALLER_PROC_NAME)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.CALLER_CALL_LEVEL.name(), getLabel( ColumnsDAO.CALLER_CALL_LEVEL)));
         // @formatter:on
+    }
+
+    private static String getLabel(ColumnsDAO columnsDAO) {
+        return columnsDAO.name() + " - " + columnsDAO.type() + " - " + columnsDAO.description();
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -491,16 +495,16 @@ public class JobTraceEntry {
         } else if (!timestamp.equals(other.timestamp)) return false;
         return true;
     }
-    
+
     @Override
     public String toString() {
-        
+
         StringBuilder buffer = new StringBuilder();
-        
+
         buffer.append(getNanosSinceStarted().toString());
         buffer.append(":");
         buffer.append(getProcedureName());
-        
+
         return buffer.toString();
     }
 }

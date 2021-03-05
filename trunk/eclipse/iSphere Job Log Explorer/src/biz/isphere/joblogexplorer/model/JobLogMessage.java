@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,31 +131,28 @@ public class JobLogMessage {
     private static List<ContentAssistProposal> proposals;
     static {
         proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new ContentAssistProposal(Fields.ID.fieldName(), Fields.ID.sqltype() + " - " + Messages.LongFieldName_ID));
-        proposals.add(new ContentAssistProposal(Fields.TYPE.fieldName(), Fields.TYPE.sqltype() + " - " + Messages.LongFieldName_TYPE));
-        proposals.add(new ContentAssistProposal(Fields.SEVERITY.fieldName(), Fields.SEVERITY.sqltype() + " - " + Messages.LongFieldName_SEVERITY));
-        proposals.add(new ContentAssistProposal(Fields.FROM_LIBRARY.fieldName(), Fields.FROM_LIBRARY.sqltype() + " - "
-            + Messages.LongFieldName_FROM_LIBRARY));
-        proposals.add(new ContentAssistProposal(Fields.FROM_PROGRAM.fieldName(), Fields.FROM_PROGRAM.sqltype() + " - "
-            + Messages.LongFieldName_FROM_PROGRAM));
-        proposals.add(new ContentAssistProposal(Fields.FROM_MODULE.fieldName(), Fields.FROM_MODULE.sqltype() + " - "
-            + Messages.LongFieldName_FROM_MODULE));
-        proposals.add(new ContentAssistProposal(Fields.FROM_PROCEDURE.fieldName(), Fields.FROM_PROCEDURE.sqltype() + " - "
-            + Messages.LongFieldName_FROM_PROCEDURE));
-        proposals.add(new ContentAssistProposal(Fields.FROM_STATEMENT.fieldName(), Fields.FROM_STATEMENT.sqltype() + " - "
-            + Messages.LongFieldName_FROM_STATEMENT));
-        proposals.add(new ContentAssistProposal(Fields.TO_LIBRARY.fieldName(), Fields.TO_LIBRARY.sqltype() + " - "
-            + Messages.LongFieldName_TO_LIBRARY));
-        proposals.add(new ContentAssistProposal(Fields.TO_PROGRAM.fieldName(), Fields.TO_PROGRAM.sqltype() + " - "
-            + Messages.LongFieldName_TO_PROGRAM));
-        proposals.add(new ContentAssistProposal(Fields.TO_MODULE.fieldName(), Fields.TO_MODULE.sqltype() + " - " + Messages.LongFieldName_TO_MODULE));
-        proposals.add(new ContentAssistProposal(Fields.TO_PROCEDURE.fieldName(), Fields.TO_PROCEDURE.sqltype() + " - "
-            + Messages.LongFieldName_TO_PROCEDURE));
-        proposals.add(new ContentAssistProposal(Fields.TO_STATEMENT.fieldName(), Fields.TO_STATEMENT.sqltype() + " - "
-            + Messages.LongFieldName_TO_STATEMENT));
-        proposals.add(new ContentAssistProposal(Fields.TEXT.fieldName(), Fields.TEXT.sqltype() + " - " + Messages.LongFieldName_TEXT));
-        proposals.add(new ContentAssistProposal(Fields.HELP.fieldName(), Fields.HELP.sqltype() + " - " + Messages.LongFieldName_HELP));
-        proposals.add(new ContentAssistProposal(Fields.TIMESTAMP.fieldName(), Fields.TIMESTAMP.sqltype() + " - " + Messages.LongFieldName_TIMESTAMP));
+        proposals.add(new ContentAssistProposal(Fields.ID.fieldName(), getLabel(Fields.ID, Messages.LongFieldName_ID)));
+        proposals.add(new ContentAssistProposal(Fields.TYPE.fieldName(), getLabel(Fields.TYPE, Messages.LongFieldName_TYPE)));
+        proposals.add(new ContentAssistProposal(Fields.SEVERITY.fieldName(), getLabel(Fields.SEVERITY, Messages.LongFieldName_SEVERITY)));
+        proposals.add(new ContentAssistProposal(Fields.FROM_LIBRARY.fieldName(), getLabel(Fields.FROM_LIBRARY, Messages.LongFieldName_FROM_LIBRARY)));
+        proposals.add(new ContentAssistProposal(Fields.FROM_PROGRAM.fieldName(), getLabel(Fields.FROM_PROGRAM, Messages.LongFieldName_FROM_PROGRAM)));
+        proposals.add(new ContentAssistProposal(Fields.FROM_MODULE.fieldName(), getLabel(Fields.FROM_MODULE, Messages.LongFieldName_FROM_MODULE)));
+        proposals.add(new ContentAssistProposal(Fields.FROM_PROCEDURE.fieldName(), getLabel(Fields.FROM_PROCEDURE,
+            Messages.LongFieldName_FROM_PROCEDURE)));
+        proposals.add(new ContentAssistProposal(Fields.FROM_STATEMENT.fieldName(), getLabel(Fields.FROM_STATEMENT,
+            Messages.LongFieldName_FROM_STATEMENT)));
+        proposals.add(new ContentAssistProposal(Fields.TO_LIBRARY.fieldName(), getLabel(Fields.TO_LIBRARY, Messages.LongFieldName_TO_LIBRARY)));
+        proposals.add(new ContentAssistProposal(Fields.TO_PROGRAM.fieldName(), getLabel(Fields.TO_PROGRAM, Messages.LongFieldName_TO_PROGRAM)));
+        proposals.add(new ContentAssistProposal(Fields.TO_MODULE.fieldName(), getLabel(Fields.TO_MODULE, Messages.LongFieldName_TO_MODULE)));
+        proposals.add(new ContentAssistProposal(Fields.TO_PROCEDURE.fieldName(), getLabel(Fields.TO_PROCEDURE, Messages.LongFieldName_TO_PROCEDURE)));
+        proposals.add(new ContentAssistProposal(Fields.TO_STATEMENT.fieldName(), getLabel(Fields.TO_STATEMENT, Messages.LongFieldName_TO_STATEMENT)));
+        proposals.add(new ContentAssistProposal(Fields.TEXT.fieldName(), getLabel(Fields.TEXT, Messages.LongFieldName_TEXT)));
+        proposals.add(new ContentAssistProposal(Fields.HELP.fieldName(), getLabel(Fields.HELP, Messages.LongFieldName_HELP)));
+        proposals.add(new ContentAssistProposal(Fields.TIMESTAMP.fieldName(), getLabel(Fields.TIMESTAMP, Messages.LongFieldName_TIMESTAMP)));
+    }
+
+    private static String getLabel(Fields fields, String description) {
+        return fields.name() + " - " + fields.sqltype() + " - " + description;
     }
 
     public JobLogMessage(int pageNumber) {
