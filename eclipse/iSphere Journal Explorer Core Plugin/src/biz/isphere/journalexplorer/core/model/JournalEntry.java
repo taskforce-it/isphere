@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,28 +91,32 @@ public class JournalEntry {
     private static List<ContentAssistProposal> proposals;
     static {
         proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCODE, "CHAR(1)" + " - " + Messages.LongFieldName_JOCODE));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOENTT, "CHAR(2)" + " - " + Messages.LongFieldName_JOENTT));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOJOB, "CHAR(10)" + " - " + Messages.LongFieldName_JOJOB));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSER, "CHAR(10)" + " - " + Messages.LongFieldName_JOUSER));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JONBR, "INTEGER" + " - " + Messages.LongFieldName_JONBR));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOLIB, "CHAR(10)" + " - " + Messages.LongFieldName_JOLIB));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJ, "CHAR(10)" + " - " + Messages.LongFieldName_JOOBJ));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOMBR, "CHAR(10)" + " - " + Messages.LongFieldName_JOMBR));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JODATE, "DATE" + " - " + Messages.LongFieldName_JODATE));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTIME, "TIME" + " - " + Messages.LongFieldName_JOTIME));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTSTP, "TIMESTAMP" + " - " + Messages.LongFieldName_JOTSTP));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGM, "CHAR(10)" + " - " + Messages.LongFieldName_JOPGM));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGMLIB, "CHAR(10)" + " - " + Messages.LongFieldName_JOPGMLIB));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJTYP, "CHAR(7)" + " - " + Messages.LongFieldName_JOOBJTYP));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOFILTYP, "CHAR(2)" + " - " + Messages.LongFieldName_JOFILTYP));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSYNM, "CHAR(8)" + " - " + Messages.LongFieldName_JOSYNM));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCV, "CHAR(10)" + " - " + Messages.LongFieldName_JORCV));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCVLIB, "CHAR(10)" + " - " + Messages.LongFieldName_JORCVLIB));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSPF, "CHAR(10)" + " - " + Messages.LongFieldName_JOUSPF));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSEQN, "BIGINT" + " - " + Messages.LongFieldName_JOSEQN));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCCID, "BIGINT" + " - " + Messages.LongFieldName_JOCCID));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCTRR, "BIGINT" + " - " + Messages.LongFieldName_JOCTRR));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCODE, getLabel(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOENTT, getLabel(ColumnsDAO.JOENTT, "CHAR(2)", Messages.LongFieldName_JOENTT)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOJOB, getLabel(ColumnsDAO.JOJOB, "CHAR(10)", Messages.LongFieldName_JOJOB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSER, getLabel(ColumnsDAO.JOUSER, "CHAR(10)", Messages.LongFieldName_JOUSER)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JONBR, getLabel(ColumnsDAO.JONBR, "INTEGER", Messages.LongFieldName_JONBR)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOLIB, getLabel(ColumnsDAO.JOLIB, "CHAR(10)", Messages.LongFieldName_JOLIB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJ, getLabel(ColumnsDAO.JOOBJ, "CHAR(10)", Messages.LongFieldName_JOOBJ)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOMBR, getLabel(ColumnsDAO.JOMBR, "CHAR(10)", Messages.LongFieldName_JOMBR)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JODATE, getLabel(ColumnsDAO.JODATE, "DATE", Messages.LongFieldName_JODATE)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTIME, getLabel(ColumnsDAO.JOTIME, "TIME", Messages.LongFieldName_JOTIME)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTSTP, getLabel(ColumnsDAO.JOTSTP, "TIMESTAMP", Messages.LongFieldName_JOTSTP)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGM, getLabel(ColumnsDAO.JOPGM, "CHAR(10)", Messages.LongFieldName_JOPGM)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGMLIB, getLabel(ColumnsDAO.JOPGMLIB, "CHAR(10)", Messages.LongFieldName_JOPGMLIB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJTYP, getLabel(ColumnsDAO.JOOBJTYP, "CHAR(7)", Messages.LongFieldName_JOOBJTYP)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOFILTYP, getLabel(ColumnsDAO.JOFILTYP, "CHAR(2)", Messages.LongFieldName_JOFILTYP)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSYNM, getLabel(ColumnsDAO.JOSYNM, "CHAR(8)", Messages.LongFieldName_JOSYNM)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCV, getLabel(ColumnsDAO.JORCV, "CHAR(10)", Messages.LongFieldName_JORCV)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCVLIB, getLabel(ColumnsDAO.JORCVLIB, "CHAR(10)", Messages.LongFieldName_JORCVLIB)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSPF, getLabel(ColumnsDAO.JOUSPF, "CHAR(10)", Messages.LongFieldName_JOUSPF)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSEQN, getLabel(ColumnsDAO.JOSEQN, "BIGINT", Messages.LongFieldName_JOSEQN)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCCID, getLabel(ColumnsDAO.JOCCID, "BIGINT", Messages.LongFieldName_JOCCID)));
+        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCTRR, getLabel(ColumnsDAO.JOCTRR, "BIGINT", Messages.LongFieldName_JOCTRR)));
+    }
+
+    private static String getLabel(String fieldName, String sqlType, String description) {
+        return fieldName + " - " + sqlType + " - " + description;
     }
 
     @Expose(serialize = true, deserialize = true)

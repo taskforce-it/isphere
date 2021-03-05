@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
             this.labels = new String[completionProposals.length];
             for (int i = 0; i < this.labels.length; i++) {
                 if (labels != null && i < labels.length && labels[i] != null && labels[i].length() > 0) {
-                    this.labels[i] = completionProposals[i] + " - " + labels[i];
+                    this.labels[i] = labels[i];
                 } else {
                     this.labels[i] = completionProposals[i];
                 }
