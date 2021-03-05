@@ -212,7 +212,7 @@ public abstract class BaseJEP implements ParserVisitor {
      * <p/>
      * Expression can be parsed once and executed many times. So it is necessary
      * to change values of variables. This method is used to get variables which
-     * cab be changed after parse.
+     * can be changed after parse.
      * 
      * @param name Name of the variable to return
      * @return Map.Entry variable with name and value. Null value means variable
