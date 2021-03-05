@@ -51,12 +51,12 @@ import org.medfoster.sqljep.function.Year;
  * Base class for different SQLJEP classes. This class doesn't know how to get
  * source data.
  * <p/>
- * There are two types of variables in an expression. Columns of a abstarct
+ * There are two types of variables in an expression. Columns of a abstract
  * table data and external variables. Example of external variables are
  * <CODE>TIMESTAMP,DATE,TIME,SYSDATE</CODE> variables.
  * <p/>
  * User should override methods {@link #findColumn(String name)} and
- * {@link #getColumnObject(int column)} for defining access to abstarct table
+ * {@link #getColumnObject(int column)} for defining access to abstract table
  * data and the method {@link #getVariable(String name)} to access to external
  * variables.
  * <p/>
