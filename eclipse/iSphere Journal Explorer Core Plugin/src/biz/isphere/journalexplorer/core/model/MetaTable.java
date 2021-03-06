@@ -11,10 +11,8 @@
 
 package biz.isphere.journalexplorer.core.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import biz.isphere.core.ISpherePlugin;
@@ -25,12 +23,12 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 import com.ibm.as400.access.Record;
 
 /**
- * This class represents the metatada of a table. It contains the name and
+ * This class represents the meta data of a table. It contains the name and
  * library of the table and a list of its fields. Also it contains the name and
  * library of the table used to retrieve its structure. Most of the time the
  * attributes name and library will be equal to definitionName and
  * definitionLibrary, but this allows to override the table and library from
- * used as reference to retrieve the metadata. This can be useful if the
+ * used as reference to retrieve the meta data. This can be useful if the
  * programmer wants to parse a table row with a different structure Specifying a
  * different definitionName and definitionLibrary than name and library, can
  * generate unexpected results, use with caution
@@ -44,8 +42,7 @@ public class MetaTable {
     private String definitionName;
     private String definitionLibrary;
 
-    private LinkedList<MetaColumn> columns;
-    private Map<String, MetaColumn> columnNames;
+    private LinkedHashMap<String, MetaColumn> columns;
 
     private boolean loaded;
     private int parsingOffset;
@@ -58,8 +55,7 @@ public class MetaTable {
 
     public MetaTable(String name, String library) {
 
-        this.columns = new LinkedList<MetaColumn>();
-        this.columnNames = new HashMap<String, MetaColumn>();
+        this.columns = new LinkedHashMap<String, MetaColumn>();
         this.name = this.definitionName = name.trim();
         this.library = this.definitionLibrary = library.trim();
         this.loaded = false;
@@ -173,8 +169,7 @@ public class MetaTable {
     }
 
     public void addColumn(MetaColumn column) {
-        columns.add(column);
-        columnNames.put(column.getName(), column);
+        columns.put(column.getName(), column);
 
         if (column.isNullable()) {
             countNullableFields++;
@@ -192,8 +187,12 @@ public class MetaTable {
         return false;
     }
 
+    public MetaColumn getColumn(String name) {
+        return columns.get(name);
+    }
+
     public MetaColumn[] getColumns() {
-        return columns.toArray(new MetaColumn[columns.size()]);
+        return columns.values().toArray(new MetaColumn[columns.size()]);
     }
 
     public void clearColumns() {
@@ -201,7 +200,7 @@ public class MetaTable {
     }
 
     public boolean hasColumn(String columnName) {
-        return columnNames.containsKey(columnName);
+        return columns.containsKey(columnName);
     }
 
     public String getQualifiedName() {
