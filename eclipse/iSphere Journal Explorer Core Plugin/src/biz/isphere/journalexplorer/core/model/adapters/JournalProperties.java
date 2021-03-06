@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
@@ -26,11 +25,13 @@ public class JournalProperties {
     private final JournalEntry journal;
     private final ArrayList<JournalProperty> properties;
     private JournalEntryAppearanceAttributes[] sortedAttributes;
+    private JOESDProperty joesdProperty;
 
     public JournalProperties(JournalEntry journal) {
         this.journal = journal;
         this.properties = new ArrayList<JournalProperty>();
         this.sortedAttributes = Preferences.getInstance().getSortedJournalEntryAppearancesAttributes();
+        this.joesdProperty = null;
 
         initialize();
     }
@@ -45,7 +46,9 @@ public class JournalProperties {
         addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOCODE, journal.getJournalCode(), journal));
         addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOENTT, journal.getEntryType(), journal));
         addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOCTRR, journal.getCountRrn(), journal));
-        addProperty(journalProperties, new JOESDProperty(JournalEntryColumnUI.JOESD, journal, journal));
+
+        this.joesdProperty = new JOESDProperty(JournalEntryColumnUI.JOESD, journal, journal);
+        addProperty(journalProperties, this.joesdProperty);
 
         for (JournalEntryAppearanceAttributes attribute : sortedAttributes) {
             if (journalProperties.containsKey(attribute.getColumnName())) {
@@ -60,13 +63,7 @@ public class JournalProperties {
     }
 
     public JOESDProperty getJOESDProperty() {
-
-        for (JournalProperty property : properties) {
-            if (property instanceof JOESDProperty && ColumnsDAO.JOESD.equals(property.name)) {
-                return (JOESDProperty)property;
-            }
-        }
-        return null;
+        return joesdProperty;
     }
 
     public Object[] toArray() {
