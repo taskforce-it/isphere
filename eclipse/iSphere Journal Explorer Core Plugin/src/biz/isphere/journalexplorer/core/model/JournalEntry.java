@@ -26,6 +26,7 @@ import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
 
 import com.google.gson.annotations.Expose;
 import com.ibm.as400.access.AS400Text;
@@ -91,32 +92,30 @@ public class JournalEntry {
     private static List<ContentAssistProposal> proposals;
     static {
         proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCODE, getLabel(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOENTT, getLabel(ColumnsDAO.JOENTT, "CHAR(2)", Messages.LongFieldName_JOENTT)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOJOB, getLabel(ColumnsDAO.JOJOB, "CHAR(10)", Messages.LongFieldName_JOJOB)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSER, getLabel(ColumnsDAO.JOUSER, "CHAR(10)", Messages.LongFieldName_JOUSER)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JONBR, getLabel(ColumnsDAO.JONBR, "INTEGER", Messages.LongFieldName_JONBR)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOLIB, getLabel(ColumnsDAO.JOLIB, "CHAR(10)", Messages.LongFieldName_JOLIB)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJ, getLabel(ColumnsDAO.JOOBJ, "CHAR(10)", Messages.LongFieldName_JOOBJ)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOMBR, getLabel(ColumnsDAO.JOMBR, "CHAR(10)", Messages.LongFieldName_JOMBR)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JODATE, getLabel(ColumnsDAO.JODATE, "DATE", Messages.LongFieldName_JODATE)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTIME, getLabel(ColumnsDAO.JOTIME, "TIME", Messages.LongFieldName_JOTIME)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOTSTP, getLabel(ColumnsDAO.JOTSTP, "TIMESTAMP", Messages.LongFieldName_JOTSTP)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGM, getLabel(ColumnsDAO.JOPGM, "CHAR(10)", Messages.LongFieldName_JOPGM)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOPGMLIB, getLabel(ColumnsDAO.JOPGMLIB, "CHAR(10)", Messages.LongFieldName_JOPGMLIB)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOOBJTYP, getLabel(ColumnsDAO.JOOBJTYP, "CHAR(7)", Messages.LongFieldName_JOOBJTYP)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOFILTYP, getLabel(ColumnsDAO.JOFILTYP, "CHAR(2)", Messages.LongFieldName_JOFILTYP)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSYNM, getLabel(ColumnsDAO.JOSYNM, "CHAR(8)", Messages.LongFieldName_JOSYNM)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCV, getLabel(ColumnsDAO.JORCV, "CHAR(10)", Messages.LongFieldName_JORCV)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JORCVLIB, getLabel(ColumnsDAO.JORCVLIB, "CHAR(10)", Messages.LongFieldName_JORCVLIB)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOUSPF, getLabel(ColumnsDAO.JOUSPF, "CHAR(10)", Messages.LongFieldName_JOUSPF)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOSEQN, getLabel(ColumnsDAO.JOSEQN, "BIGINT", Messages.LongFieldName_JOSEQN)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCCID, getLabel(ColumnsDAO.JOCCID, "BIGINT", Messages.LongFieldName_JOCCID)));
-        proposals.add(new ContentAssistProposal(ColumnsDAO.JOCTRR, getLabel(ColumnsDAO.JOCTRR, "BIGINT", Messages.LongFieldName_JOCTRR)));
-    }
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE));
 
-    private static String getLabel(String fieldName, String sqlType, String description) {
-        return fieldName + " - " + sqlType + " - " + description;
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT, "CHAR(2)", Messages.LongFieldName_JOENTT));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB, "CHAR(10)", Messages.LongFieldName_JOJOB));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER, "CHAR(10)", Messages.LongFieldName_JOUSER));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR, "INTEGER", Messages.LongFieldName_JONBR));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB, "CHAR(10)", Messages.LongFieldName_JOLIB));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ, "CHAR(10)", Messages.LongFieldName_JOOBJ));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR, "CHAR(10)", Messages.LongFieldName_JOMBR));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE, "DATE", Messages.LongFieldName_JODATE));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME, "TIME", Messages.LongFieldName_JOTIME));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP, "TIMESTAMP", Messages.LongFieldName_JOTSTP));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM, "CHAR(10)", Messages.LongFieldName_JOPGM));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB, "CHAR(10)", Messages.LongFieldName_JOPGMLIB));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP, "CHAR(7)", Messages.LongFieldName_JOOBJTYP));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP, "CHAR(2)", Messages.LongFieldName_JOFILTYP));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM, "CHAR(8)", Messages.LongFieldName_JOSYNM));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV, "CHAR(10)", Messages.LongFieldName_JORCV));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB, "CHAR(10)", Messages.LongFieldName_JORCVLIB));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF, "CHAR(10)", Messages.LongFieldName_JOUSPF));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN, "BIGINT", Messages.LongFieldName_JOSEQN));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID, "BIGINT", Messages.LongFieldName_JOCCID));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR, "BIGINT", Messages.LongFieldName_JOCTRR));
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -380,11 +379,11 @@ public class JournalEntry {
         return columnMappings;
     }
 
-    public static List<ContentAssistProposal> getContentAssistProposals() {
-        return proposals;
+    public static ContentAssistProposal[] getContentAssistProposals() {
+        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
     }
 
-    public static Comparable[] getSampleRow() {
+    public static Comparable<?>[] getSampleRow() {
 
         long now = new java.util.Date().getTime();
 
@@ -413,9 +412,9 @@ public class JournalEntry {
         return journalEntry.getRow();
     }
 
-    public Comparable[] getRow() {
+    public Comparable<?>[] getRow() {
 
-        Comparable[] row = new Comparable[columnMappings.size()];
+        Comparable<?>[] row = new Comparable[columnMappings.size()];
 
         row[JOCODE] = getJournalCode();
         row[JOENTT] = getEntryType();
