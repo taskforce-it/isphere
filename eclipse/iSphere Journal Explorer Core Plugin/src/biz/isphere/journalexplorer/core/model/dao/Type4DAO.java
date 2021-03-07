@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class Type4DAO extends Type3DAO {
         "           result.JOCCID,  " +
         "           result.JOUSPF,  " +
         "           result.JOSYNM,  " +
-        "           hex(result.JOJID) AS " + JOJID + ", " +   //  added with TYPE4
+        "           hex(result.JOJID) AS " + ColumnsDAO.JOJID.name() + ", " +   //  added with TYPE4
         "           result.JORCST,  " +   //  added with TYPE4
         "           result.JOTGR,   " +   //  added with TYPE4
         "           result.JOINCDAT," +
@@ -61,10 +61,10 @@ public class Type4DAO extends Type3DAO {
 
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
 
-        journalEntry.setJournalID(resultSet.getString(JOJID));
-        journalEntry.setReferentialConstraint(resultSet.getString(JORCST));
-        journalEntry.setTrigger(resultSet.getString(JOTGR));
-        journalEntry.setIgnoredByApyRmvJrnChg(resultSet.getString(JOIGNAPY));
+        journalEntry.setJournalID(resultSet.getString(ColumnsDAO.JOJID.name()));
+        journalEntry.setReferentialConstraint(resultSet.getString(ColumnsDAO.JORCST.name()));
+        journalEntry.setTrigger(resultSet.getString(ColumnsDAO.JOTGR.name()));
+        journalEntry.setIgnoredByApyRmvJrnChg(resultSet.getString(ColumnsDAO.JOIGNAPY.name()));
 
         return journalEntry;
     }

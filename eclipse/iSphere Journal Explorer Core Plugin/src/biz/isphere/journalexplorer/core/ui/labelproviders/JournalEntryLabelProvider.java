@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,99 +113,99 @@ public class JournalEntryLabelProvider extends LabelProvider implements ITableLa
 
         switch (fieldIdMapping[index]) {
         case ID:
-            return journalEntry.getValueForUi(ColumnsDAO.RRN_OUTPUT_FILE);
+            return journalEntry.getValueForUi(ColumnsDAO.ID.name());
         case JOENTL:
-            return journalEntry.getValueForUi(ColumnsDAO.JOENTL);
+            return journalEntry.getValueForUi(ColumnsDAO.JOENTL.name());
         case JOSEQN:
-            return journalEntry.getValueForUi(ColumnsDAO.JOSEQN);
+            return journalEntry.getValueForUi(ColumnsDAO.JOSEQN.name());
         case JOCODE:
-            return journalEntry.getValueForUi(ColumnsDAO.JOCODE);
+            return journalEntry.getValueForUi(ColumnsDAO.JOCODE.name());
         case JOENTT:
-            return journalEntry.getValueForUi(ColumnsDAO.JOENTT);
+            return journalEntry.getValueForUi(ColumnsDAO.JOENTT.name());
         case JODATE:
-            return journalEntry.getValueForUi(ColumnsDAO.JODATE);
+            return journalEntry.getValueForUi(ColumnsDAO.JODATE.name());
         case JOTIME:
-            return journalEntry.getValueForUi(ColumnsDAO.JOTIME);
+            return journalEntry.getValueForUi(ColumnsDAO.JOTIME.name());
         case JOTSTP:
-            return journalEntry.getValueForUi(ColumnsDAO.JOTSTP);
+            return journalEntry.getValueForUi(ColumnsDAO.JOTSTP.name());
         case JOJOB:
-            return journalEntry.getValueForUi(ColumnsDAO.JOJOB);
+            return journalEntry.getValueForUi(ColumnsDAO.JOJOB.name());
         case JOUSER:
-            return journalEntry.getValueForUi(ColumnsDAO.JOUSER);
+            return journalEntry.getValueForUi(ColumnsDAO.JOUSER.name());
         case JONBR:
-            return journalEntry.getValueForUi(ColumnsDAO.JONBR);
+            return journalEntry.getValueForUi(ColumnsDAO.JONBR.name());
         case JOPGM:
-            return journalEntry.getValueForUi(ColumnsDAO.JOPGM);
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGM.name());
         case JOPGMLIB:
-            return journalEntry.getValueForUi(ColumnsDAO.JOPGMLIB);
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMLIB.name());
         case JOPGMDEV:
-            return journalEntry.getValueForUi(ColumnsDAO.JOPGMDEV);
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMDEV.name());
         case JOPGMASP:
-            return journalEntry.getValueForUi(ColumnsDAO.JOPGMASP);
+            return journalEntry.getValueForUi(ColumnsDAO.JOPGMASP.name());
         case JOOBJ:
-            return journalEntry.getValueForUi(ColumnsDAO.JOOBJ);
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJ.name());
         case JOLIB:
-            return journalEntry.getValueForUi(ColumnsDAO.JOLIB);
+            return journalEntry.getValueForUi(ColumnsDAO.JOLIB.name());
         case JOMBR:
-            return journalEntry.getValueForUi(ColumnsDAO.JOMBR);
+            return journalEntry.getValueForUi(ColumnsDAO.JOMBR.name());
         case JOCTRR:
-            return journalEntry.getValueForUi(ColumnsDAO.JOCTRR);
+            return journalEntry.getValueForUi(ColumnsDAO.JOCTRR.name());
         case JOFLAG:
-            return journalEntry.getValueForUi(ColumnsDAO.JOFLAG);
+            return journalEntry.getValueForUi(ColumnsDAO.JOFLAG.name());
         case JOCCID:
-            return journalEntry.getValueForUi(ColumnsDAO.JOCCID);
+            return journalEntry.getValueForUi(ColumnsDAO.JOCCID.name());
         case JOUSPF:
-            return journalEntry.getValueForUi(ColumnsDAO.JOUSPF);
+            return journalEntry.getValueForUi(ColumnsDAO.JOUSPF.name());
         case JOSYNM:
-            return journalEntry.getValueForUi(ColumnsDAO.JOSYNM);
+            return journalEntry.getValueForUi(ColumnsDAO.JOSYNM.name());
         case JOJID:
-            return journalEntry.getValueForUi(ColumnsDAO.JOJID);
+            return journalEntry.getValueForUi(ColumnsDAO.JOJID.name());
         case JORCST:
-            return journalEntry.getValueForUi(ColumnsDAO.JORCST);
+            return journalEntry.getValueForUi(ColumnsDAO.JORCST.name());
         case JOTGR:
-            return journalEntry.getValueForUi(ColumnsDAO.JOTGR);
+            return journalEntry.getValueForUi(ColumnsDAO.JOTGR.name());
         case JOINCDAT:
-            return journalEntry.getValueForUi(ColumnsDAO.JOINCDAT);
+            return journalEntry.getValueForUi(ColumnsDAO.JOINCDAT.name());
         case JOIGNAPY:
-            return journalEntry.getValueForUi(ColumnsDAO.JOIGNAPY);
+            return journalEntry.getValueForUi(ColumnsDAO.JOIGNAPY.name());
         case JOMINESD:
-            return journalEntry.getValueForUi(ColumnsDAO.JOMINESD);
+            return journalEntry.getValueForUi(ColumnsDAO.JOMINESD.name());
         case JOOBJIND:
-            return journalEntry.getValueForUi(ColumnsDAO.JOOBJIND);
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJIND.name());
         case JOSYSSEQ:
-            return journalEntry.getValueForUi(ColumnsDAO.JOSYSSEQ);
+            return journalEntry.getValueForUi(ColumnsDAO.JOSYSSEQ.name());
         case JORCV:
-            return journalEntry.getValueForUi(ColumnsDAO.JORCV);
+            return journalEntry.getValueForUi(ColumnsDAO.JORCV.name());
         case JORCVLIB:
-            return journalEntry.getValueForUi(ColumnsDAO.JORCVLIB);
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVLIB.name());
         case JORCVDEV:
-            return journalEntry.getValueForUi(ColumnsDAO.JORCVDEV);
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVDEV.name());
         case JORCVASP:
-            return journalEntry.getValueForUi(ColumnsDAO.JORCVASP);
+            return journalEntry.getValueForUi(ColumnsDAO.JORCVASP.name());
         case JOARM:
-            return journalEntry.getValueForUi(ColumnsDAO.JOARM);
+            return journalEntry.getValueForUi(ColumnsDAO.JOARM.name());
         case JOTHDX:
-            return journalEntry.getValueForUi(ColumnsDAO.JOTHDX);
+            return journalEntry.getValueForUi(ColumnsDAO.JOTHDX.name());
         case JOADF:
-            return journalEntry.getValueForUi(ColumnsDAO.JOADF);
+            return journalEntry.getValueForUi(ColumnsDAO.JOADF.name());
         case JORPORT:
-            return journalEntry.getValueForUi(ColumnsDAO.JORPORT);
+            return journalEntry.getValueForUi(ColumnsDAO.JORPORT.name());
         case JORADR:
-            return journalEntry.getValueForUi(ColumnsDAO.JORADR);
+            return journalEntry.getValueForUi(ColumnsDAO.JORADR.name());
         case JOLUW:
-            return journalEntry.getValueForUi(ColumnsDAO.JOLUW);
+            return journalEntry.getValueForUi(ColumnsDAO.JOLUW.name());
         case JOXID:
-            return journalEntry.getValueForUi(ColumnsDAO.JOXID);
+            return journalEntry.getValueForUi(ColumnsDAO.JOXID.name());
         case JOOBJTYP:
-            return journalEntry.getValueForUi(ColumnsDAO.JOOBJTYP);
+            return journalEntry.getValueForUi(ColumnsDAO.JOOBJTYP.name());
         case JOFILTYP:
-            return journalEntry.getValueForUi(ColumnsDAO.JOFILTYP);
+            return journalEntry.getValueForUi(ColumnsDAO.JOFILTYP.name());
         case JOCMTLVL:
-            return journalEntry.getValueForUi(ColumnsDAO.JOCMTLVL);
+            return journalEntry.getValueForUi(ColumnsDAO.JOCMTLVL.name());
         case JONVI:
-            return journalEntry.getValueForUi(ColumnsDAO.JONVI);
+            return journalEntry.getValueForUi(ColumnsDAO.JONVI.name());
         case JOESD:
-            return journalEntry.getValueForUi(ColumnsDAO.JOESD);
+            return journalEntry.getValueForUi(ColumnsDAO.JOESD.name());
         default:
             break;
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
-public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
+public abstract class AbstractTypeDAO extends DAOBase {
 
     /*
      * Restrict the number of bytes returned. JOENTL is more than the record
@@ -240,25 +240,25 @@ public abstract class AbstractTypeDAO extends DAOBase implements ColumnsDAO {
     protected JournalEntry populateJournalEntry(ResultSet resultSet, JournalEntry journalEntry) throws Exception {
 
         // journalEntry.setConnectionName(getConnectionName());
-        journalEntry.setId(resultSet.getInt(RRN_OUTPUT_FILE));
-        journalEntry.setCommitmentCycle(resultSet.getBigDecimal(JOCCID).toBigIntegerExact());
-        journalEntry.setEntryLength(resultSet.getInt(JOENTL));
-        journalEntry.setEntryType(resultSet.getString(JOENTT));
-        journalEntry.setIncompleteData(resultSet.getString(JOINCDAT));
-        journalEntry.setJobName(resultSet.getString(JOJOB));
-        journalEntry.setJobNumber(resultSet.getInt(JONBR));
-        journalEntry.setJobUserName(resultSet.getString(JOUSER));
-        journalEntry.setCountRrn(resultSet.getBigDecimal(JOCTRR).toBigIntegerExact());
-        journalEntry.setFlag(resultSet.getString(JOFLAG));
-        journalEntry.setJournalCode(resultSet.getString(JOCODE));
-        journalEntry.setMemberName(resultSet.getString(JOMBR));
-        journalEntry.setMinimizedSpecificData(resultSet.getString(JOMINESD));
-        journalEntry.setObjectLibrary(resultSet.getString(JOLIB));
-        journalEntry.setObjectName(resultSet.getString(JOOBJ));
-        journalEntry.setProgramName(resultSet.getString(JOPGM));
-        journalEntry.setSequenceNumber(resultSet.getBigDecimal(JOSEQN).toBigIntegerExact());
-        journalEntry.setSpecificData(resultSet.getBytes(JOESD));
-        journalEntry.setStringSpecificData(resultSet.getString(JOESD));
+        journalEntry.setId(resultSet.getInt("ID")); //$NON-NLS-1$
+        journalEntry.setCommitmentCycle(resultSet.getBigDecimal(ColumnsDAO.JOCCID.name()).toBigIntegerExact());
+        journalEntry.setEntryLength(resultSet.getInt(ColumnsDAO.JOENTL.name()));
+        journalEntry.setEntryType(resultSet.getString(ColumnsDAO.JOENTT.name()));
+        journalEntry.setIncompleteData(resultSet.getString(ColumnsDAO.JOINCDAT.name()));
+        journalEntry.setJobName(resultSet.getString(ColumnsDAO.JOJOB.name()));
+        journalEntry.setJobNumber(resultSet.getInt(ColumnsDAO.JONBR.name()));
+        journalEntry.setJobUserName(resultSet.getString(ColumnsDAO.JOUSER.name()));
+        journalEntry.setCountRrn(resultSet.getBigDecimal(ColumnsDAO.JOCTRR.name()).toBigIntegerExact());
+        journalEntry.setFlag(resultSet.getString(ColumnsDAO.JOFLAG.name()));
+        journalEntry.setJournalCode(resultSet.getString(ColumnsDAO.JOCODE.name()));
+        journalEntry.setMemberName(resultSet.getString(ColumnsDAO.JOMBR.name()));
+        journalEntry.setMinimizedSpecificData(resultSet.getString(ColumnsDAO.JOMINESD.name()));
+        journalEntry.setObjectLibrary(resultSet.getString(ColumnsDAO.JOLIB.name()));
+        journalEntry.setObjectName(resultSet.getString(ColumnsDAO.JOOBJ.name()));
+        journalEntry.setProgramName(resultSet.getString(ColumnsDAO.JOPGM.name()));
+        journalEntry.setSequenceNumber(resultSet.getBigDecimal(ColumnsDAO.JOSEQN.name()).toBigIntegerExact());
+        journalEntry.setSpecificData(resultSet.getBytes(ColumnsDAO.JOESD.name()));
+        journalEntry.setStringSpecificData(resultSet.getString(ColumnsDAO.JOESD.name()));
 
         return journalEntry;
     }

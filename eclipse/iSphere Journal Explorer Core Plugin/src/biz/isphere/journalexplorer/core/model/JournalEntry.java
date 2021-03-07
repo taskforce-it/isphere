@@ -65,57 +65,59 @@ public class JournalEntry {
     private static HashMap<String, Integer> columnMappings;
     static {
         columnMappings = new HashMap<String, Integer>();
-        columnMappings.put(ColumnsDAO.JOCODE, JOCODE);
-        columnMappings.put(ColumnsDAO.JOENTT, JOENTT);
-        columnMappings.put(ColumnsDAO.JOJOB, JOJOB);
-        columnMappings.put(ColumnsDAO.JOUSER, JOUSER);
-        columnMappings.put(ColumnsDAO.JONBR, JONBR);
-        columnMappings.put(ColumnsDAO.JOLIB, JOLIB);
-        columnMappings.put(ColumnsDAO.JOOBJ, JOOBJ);
-        columnMappings.put(ColumnsDAO.JOMBR, JOMBR);
-        columnMappings.put(ColumnsDAO.JODATE, JODATE);
-        columnMappings.put(ColumnsDAO.JOTIME, JOTIME);
-        columnMappings.put(ColumnsDAO.JOTSTP, JOTSTP);
-        columnMappings.put(ColumnsDAO.JOPGM, JOPGM);
-        columnMappings.put(ColumnsDAO.JOPGMLIB, JOPGMLIB);
-        columnMappings.put(ColumnsDAO.JOOBJTYP, JOOBJTYP);
-        columnMappings.put(ColumnsDAO.JOFILTYP, JOFILTYP);
-        columnMappings.put(ColumnsDAO.JOSYNM, JOSYNM);
-        columnMappings.put(ColumnsDAO.JORCV, JORCV);
-        columnMappings.put(ColumnsDAO.JORCVLIB, JORCVLIB);
-        columnMappings.put(ColumnsDAO.JOUSPF, JOUSPF);
-        columnMappings.put(ColumnsDAO.JOSEQN, JOSEQN);
-        columnMappings.put(ColumnsDAO.JOCCID, JOCCID);
-        columnMappings.put(ColumnsDAO.JOCTRR, JOCTRR);
+        columnMappings.put(ColumnsDAO.JOCODE.name(), JOCODE);
+        columnMappings.put(ColumnsDAO.JOENTT.name(), JOENTT);
+        columnMappings.put(ColumnsDAO.JOJOB.name(), JOJOB);
+        columnMappings.put(ColumnsDAO.JOUSER.name(), JOUSER);
+        columnMappings.put(ColumnsDAO.JONBR.name(), JONBR);
+        columnMappings.put(ColumnsDAO.JOLIB.name(), JOLIB);
+        columnMappings.put(ColumnsDAO.JOOBJ.name(), JOOBJ);
+        columnMappings.put(ColumnsDAO.JOMBR.name(), JOMBR);
+        columnMappings.put(ColumnsDAO.JODATE.name(), JODATE);
+        columnMappings.put(ColumnsDAO.JOTIME.name(), JOTIME);
+        columnMappings.put(ColumnsDAO.JOTSTP.name(), JOTSTP);
+        columnMappings.put(ColumnsDAO.JOPGM.name(), JOPGM);
+        columnMappings.put(ColumnsDAO.JOPGMLIB.name(), JOPGMLIB);
+        columnMappings.put(ColumnsDAO.JOOBJTYP.name(), JOOBJTYP);
+        columnMappings.put(ColumnsDAO.JOFILTYP.name(), JOFILTYP);
+        columnMappings.put(ColumnsDAO.JOSYNM.name(), JOSYNM);
+        columnMappings.put(ColumnsDAO.JORCV.name(), JORCV);
+        columnMappings.put(ColumnsDAO.JORCVLIB.name(), JORCVLIB);
+        columnMappings.put(ColumnsDAO.JOUSPF.name(), JOUSPF);
+        columnMappings.put(ColumnsDAO.JOSEQN.name(), JOSEQN);
+        columnMappings.put(ColumnsDAO.JOCCID.name(), JOCCID);
+        columnMappings.put(ColumnsDAO.JOCTRR.name(), JOCTRR);
     }
 
     private static List<ContentAssistProposal> proposals;
     static {
         proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE));
-
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE, "CHAR(1)", Messages.LongFieldName_JOCODE));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT, "CHAR(2)", Messages.LongFieldName_JOENTT));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB, "CHAR(10)", Messages.LongFieldName_JOJOB));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER, "CHAR(10)", Messages.LongFieldName_JOUSER));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR, "INTEGER", Messages.LongFieldName_JONBR));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB, "CHAR(10)", Messages.LongFieldName_JOLIB));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ, "CHAR(10)", Messages.LongFieldName_JOOBJ));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR, "CHAR(10)", Messages.LongFieldName_JOMBR));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE, "DATE", Messages.LongFieldName_JODATE));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME, "TIME", Messages.LongFieldName_JOTIME));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP, "TIMESTAMP", Messages.LongFieldName_JOTSTP));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM, "CHAR(10)", Messages.LongFieldName_JOPGM));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB, "CHAR(10)", Messages.LongFieldName_JOPGMLIB));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP, "CHAR(7)", Messages.LongFieldName_JOOBJTYP));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP, "CHAR(2)", Messages.LongFieldName_JOFILTYP));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM, "CHAR(8)", Messages.LongFieldName_JOSYNM));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV, "CHAR(10)", Messages.LongFieldName_JORCV));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB, "CHAR(10)", Messages.LongFieldName_JORCVLIB));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF, "CHAR(10)", Messages.LongFieldName_JOUSPF));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN, "BIGINT", Messages.LongFieldName_JOSEQN));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID, "BIGINT", Messages.LongFieldName_JOCCID));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR, "BIGINT", Messages.LongFieldName_JOCTRR));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE.name(), ColumnsDAO.JOCODE.sqlType(), ColumnsDAO.JOCODE.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT.name(), ColumnsDAO.JOENTT.sqlType(), ColumnsDAO.JOENTT.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB.name(), ColumnsDAO.JOJOB.sqlType(), ColumnsDAO.JOJOB.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER.name(), ColumnsDAO.JOUSER.sqlType(), ColumnsDAO.JOUSER.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR.name(), ColumnsDAO.JONBR.sqlType(), ColumnsDAO.JONBR.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB.name(), ColumnsDAO.JOLIB.sqlType(), ColumnsDAO.JOLIB.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ.name(), ColumnsDAO.JOOBJ.sqlType(), ColumnsDAO.JOOBJ.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR.name(), ColumnsDAO.JOMBR.sqlType(), ColumnsDAO.JOMBR.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE.name(), ColumnsDAO.JODATE.sqlType(), ColumnsDAO.JODATE.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME.name(), ColumnsDAO.JOTIME.sqlType(), ColumnsDAO.JOTIME.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP.name(), ColumnsDAO.JOTSTP.sqlType(), ColumnsDAO.JOTSTP.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM.name(), ColumnsDAO.JOPGM.sqlType(), ColumnsDAO.JOPGM.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB.name(), ColumnsDAO.JOPGMLIB.sqlType(), ColumnsDAO.JOPGMLIB
+            .description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP.name(), ColumnsDAO.JOOBJTYP.sqlType(), ColumnsDAO.JOOBJTYP
+            .description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP.name(), ColumnsDAO.JOFILTYP.sqlType(), ColumnsDAO.JOFILTYP
+            .description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM.name(), ColumnsDAO.JOSYNM.sqlType(), ColumnsDAO.JOSYNM.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV.name(), ColumnsDAO.JORCV.sqlType(), ColumnsDAO.JORCV.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB.name(), ColumnsDAO.JORCVLIB.sqlType(), ColumnsDAO.JORCVLIB
+            .description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF.name(), ColumnsDAO.JOUSPF.sqlType(), ColumnsDAO.JOUSPF.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN.name(), ColumnsDAO.JOSEQN.sqlType(), ColumnsDAO.JOSEQN.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID.name(), ColumnsDAO.JOCCID.sqlType(), ColumnsDAO.JOCCID.description()));
+        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR.name(), ColumnsDAO.JOCTRR.sqlType(), ColumnsDAO.JOCTRR.description()));
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -362,7 +364,7 @@ public class JournalEntry {
     }
 
     public boolean hasNullIndicatorTable() throws Exception {
-        return MetaDataCache.getInstance().retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI);
+        return MetaDataCache.getInstance().retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI.name());
     }
 
     public boolean isRecordEntryType() {
@@ -1464,111 +1466,111 @@ public class JournalEntry {
 
         String data = "?"; //$NON-NLS-1$
 
-        if (ColumnsDAO.RRN_OUTPUT_FILE.equals(name)) {
+        if (ColumnsDAO.ID.name().equals(name)) {
             return Integer.toString(getId()).trim();
-        } else if (ColumnsDAO.JOENTL.equals(name)) {
+        } else if (ColumnsDAO.JOENTL.name().equals(name)) {
             return Integer.toString(getEntryLength());
-        } else if (ColumnsDAO.JOSEQN.equals(name)) {
+        } else if (ColumnsDAO.JOSEQN.name().equals(name)) {
             return toString(getSequenceNumber());
-        } else if (ColumnsDAO.JOCODE.equals(name)) {
+        } else if (ColumnsDAO.JOCODE.name().equals(name)) {
             return getJournalCode();
-        } else if (ColumnsDAO.JOENTT.equals(name)) {
+        } else if (ColumnsDAO.JOENTT.name().equals(name)) {
             return getEntryType();
-        } else if (ColumnsDAO.JOTSTP.equals(name)) {
+        } else if (ColumnsDAO.JOTSTP.name().equals(name)) {
             java.sql.Timestamp timestamp = getTimestamp();
             if (timestamp == null) {
                 return ""; //$NON-NLS-1$
             }
             return timestampFormatter.format(timestamp);
-        } else if (ColumnsDAO.JODATE.equals(name)) {
+        } else if (ColumnsDAO.JODATE.name().equals(name)) {
             java.sql.Date date = getDate();
             if (date == null) {
                 return ""; //$NON-NLS-1$
             }
             return dateFormatter.format(date);
-        } else if (ColumnsDAO.JOTIME.equals(name)) {
+        } else if (ColumnsDAO.JOTIME.name().equals(name)) {
             java.sql.Time time = getTime();
             if (time == null) {
                 return ""; //$NON-NLS-1$
             }
             return timeFormatter.format(time);
-        } else if (ColumnsDAO.JOJOB.equals(name)) {
+        } else if (ColumnsDAO.JOJOB.name().equals(name)) {
             return getJobName();
-        } else if (ColumnsDAO.JOUSER.equals(name)) {
+        } else if (ColumnsDAO.JOUSER.name().equals(name)) {
             return getJobUserName();
-        } else if (ColumnsDAO.JONBR.equals(name)) {
+        } else if (ColumnsDAO.JONBR.name().equals(name)) {
             return Integer.toString(getJobNumber());
-        } else if (ColumnsDAO.JOPGM.equals(name)) {
+        } else if (ColumnsDAO.JOPGM.name().equals(name)) {
             return getProgramName();
-        } else if (ColumnsDAO.JOPGMLIB.equals(name)) {
+        } else if (ColumnsDAO.JOPGMLIB.name().equals(name)) {
             return getProgramLibrary();
-        } else if (ColumnsDAO.JOPGMDEV.equals(name)) {
+        } else if (ColumnsDAO.JOPGMDEV.name().equals(name)) {
             return getProgramAspDevice();
-        } else if (ColumnsDAO.JOPGMASP.equals(name)) {
+        } else if (ColumnsDAO.JOPGMASP.name().equals(name)) {
             return Long.toString(getProgramAsp());
-        } else if (ColumnsDAO.JOOBJ.equals(name)) {
+        } else if (ColumnsDAO.JOOBJ.name().equals(name)) {
             return getObjectName();
-        } else if (ColumnsDAO.JOLIB.equals(name)) {
+        } else if (ColumnsDAO.JOLIB.name().equals(name)) {
             return getObjectLibrary();
-        } else if (ColumnsDAO.JOMBR.equals(name)) {
+        } else if (ColumnsDAO.JOMBR.name().equals(name)) {
             return getMemberName();
-        } else if (ColumnsDAO.JOCTRR.equals(name)) {
+        } else if (ColumnsDAO.JOCTRR.name().equals(name)) {
             return toString(getCountRrn());
-        } else if (ColumnsDAO.JOFLAG.equals(name)) {
+        } else if (ColumnsDAO.JOFLAG.name().equals(name)) {
             return getFlag();
-        } else if (ColumnsDAO.JOCCID.equals(name)) {
+        } else if (ColumnsDAO.JOCCID.name().equals(name)) {
             return toString(getCommitmentCycle());
-        } else if (ColumnsDAO.JOUSPF.equals(name)) {
+        } else if (ColumnsDAO.JOUSPF.name().equals(name)) {
             return getUserProfile();
-        } else if (ColumnsDAO.JOSYNM.equals(name)) {
+        } else if (ColumnsDAO.JOSYNM.name().equals(name)) {
             return getSystemName();
-        } else if (ColumnsDAO.JOJID.equals(name)) {
+        } else if (ColumnsDAO.JOJID.name().equals(name)) {
             return getJournalID();
-        } else if (ColumnsDAO.JORCST.equals(name)) {
+        } else if (ColumnsDAO.JORCST.name().equals(name)) {
             return getReferentialConstraintText();
-        } else if (ColumnsDAO.JOTGR.equals(name)) {
+        } else if (ColumnsDAO.JOTGR.name().equals(name)) {
             return getTriggerText();
-        } else if (ColumnsDAO.JOINCDAT.equals(name)) {
+        } else if (ColumnsDAO.JOINCDAT.name().equals(name)) {
             return getIncompleteDataText();
-        } else if (ColumnsDAO.JOIGNAPY.equals(name)) {
+        } else if (ColumnsDAO.JOIGNAPY.name().equals(name)) {
             return getIgnoredByApyRmvJrnChgText();
-        } else if (ColumnsDAO.JOMINESD.equals(name)) {
+        } else if (ColumnsDAO.JOMINESD.name().equals(name)) {
             return getMinimizedSpecificDataText();
-        } else if (ColumnsDAO.JOOBJIND.equals(name)) {
+        } else if (ColumnsDAO.JOOBJIND.name().equals(name)) {
             return getObjectIndicatorText();
-        } else if (ColumnsDAO.JOSYSSEQ.equals(name)) {
+        } else if (ColumnsDAO.JOSYSSEQ.name().equals(name)) {
             return getSystemSequenceNumber();
-        } else if (ColumnsDAO.JORCV.equals(name)) {
+        } else if (ColumnsDAO.JORCV.name().equals(name)) {
             return getReceiver();
-        } else if (ColumnsDAO.JORCVLIB.equals(name)) {
+        } else if (ColumnsDAO.JORCVLIB.name().equals(name)) {
             return getReceiverLibrary();
-        } else if (ColumnsDAO.JORCVDEV.equals(name)) {
+        } else if (ColumnsDAO.JORCVDEV.name().equals(name)) {
             return getReceiverAspDevice();
-        } else if (ColumnsDAO.JORCVASP.equals(name)) {
+        } else if (ColumnsDAO.JORCVASP.name().equals(name)) {
             return Integer.toString(getReceiverAsp());
-        } else if (ColumnsDAO.JOARM.equals(name)) {
+        } else if (ColumnsDAO.JOARM.name().equals(name)) {
             return Integer.toString(getArmNumber());
-        } else if (ColumnsDAO.JOTHDX.equals(name)) {
+        } else if (ColumnsDAO.JOTHDX.name().equals(name)) {
             return getThreadId();
-        } else if (ColumnsDAO.JOADF.equals(name)) {
+        } else if (ColumnsDAO.JOADF.name().equals(name)) {
             return getAddressFamilyText();
-        } else if (ColumnsDAO.JORPORT.equals(name)) {
+        } else if (ColumnsDAO.JORPORT.name().equals(name)) {
             return getRemotePortText();
-        } else if (ColumnsDAO.JORADR.equals(name)) {
+        } else if (ColumnsDAO.JORADR.name().equals(name)) {
             return getRemoteAddress();
-        } else if (ColumnsDAO.JOLUW.equals(name)) {
+        } else if (ColumnsDAO.JOLUW.name().equals(name)) {
             return getLogicalUnitOfWork();
-        } else if (ColumnsDAO.JOXID.equals(name)) {
+        } else if (ColumnsDAO.JOXID.name().equals(name)) {
             return getTransactionIdentifier();
-        } else if (ColumnsDAO.JOOBJTYP.equals(name)) {
+        } else if (ColumnsDAO.JOOBJTYP.name().equals(name)) {
             return getObjectType();
-        } else if (ColumnsDAO.JOFILTYP.equals(name)) {
+        } else if (ColumnsDAO.JOFILTYP.name().equals(name)) {
             return getFileTypeIndicatorText();
-        } else if (ColumnsDAO.JOCMTLVL.equals(name)) {
+        } else if (ColumnsDAO.JOCMTLVL.name().equals(name)) {
             return toStringNestedCommitLevel(getNestedCommitLevel());
-        } else if (ColumnsDAO.JONVI.equals(name)) {
+        } else if (ColumnsDAO.JONVI.name().equals(name)) {
             return getNullIndicators();
-        } else if (ColumnsDAO.JOESD.equals(name)) {
+        } else if (ColumnsDAO.JOESD.name().equals(name)) {
             if (stringSpecificDataForUI == null) {
                 stringSpecificDataForUI = getStringSpecificData();
                 if (stringSpecificDataForUI == null) {
