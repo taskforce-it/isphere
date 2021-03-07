@@ -1410,7 +1410,10 @@ public class JournalEntry {
     }
 
     public String getNullIndicators() {
-        return new String(nullIndicators);
+        if (nullIndicators != null) {
+            return new String(nullIndicators);
+        }
+        return "";
     }
 
     public void setNullIndicators(byte[] nullIndicators) {
