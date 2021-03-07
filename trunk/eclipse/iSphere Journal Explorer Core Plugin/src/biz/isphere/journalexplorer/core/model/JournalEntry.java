@@ -364,7 +364,7 @@ public class JournalEntry {
     }
 
     public boolean hasNullIndicatorTable() throws Exception {
-        return MetaDataCache.getInstance().retrieveMetaData(outputFile).hasColumn(ColumnsDAO.JONVI.name());
+        return MetaDataCache.getInstance().retrieveMetaData(getOutputFile()).hasColumn(ColumnsDAO.JONVI.name());
     }
 
     public boolean isRecordEntryType() {
