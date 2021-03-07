@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,14 +57,14 @@ public class Type3DAO extends AbstractTypeDAO {
 
         super.populateJournalEntry(resultSet, journalEntry);
 
-        journalEntry.setUserProfile(resultSet.getString(JOUSPF));
-        journalEntry.setSystemName(resultSet.getString(JOSYNM));
+        journalEntry.setUserProfile(resultSet.getString(ColumnsDAO.JOUSPF.name()));
+        journalEntry.setSystemName(resultSet.getString(ColumnsDAO.JOSYNM.name()));
 
         // Depending of the journal out type, the timestamp can be a
         // single field or splitted in JODATE and JOTYPE.
         // For TYPE3+ output files it is returned as a timestamp value.
-        journalEntry.setTimestamp(resultSet.getTimestamp(JOTSTP));
-        journalEntry.setNullIndicators(new String(resultSet.getBytes(JONVI), getJournalEntryCcsid()).getBytes());
+        journalEntry.setTimestamp(resultSet.getTimestamp(ColumnsDAO.JOTSTP.name()));
+        journalEntry.setNullIndicators(new String(resultSet.getBytes(ColumnsDAO.JONVI.name()), getJournalEntryCcsid()).getBytes());
 
         return journalEntry;
     }

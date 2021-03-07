@@ -108,12 +108,12 @@ public class CopyJournalPropertyToClipboardAction extends Action {
     }
 
     private void addJournalEntryProperties(StringBuilder buffer, JournalEntry journalEntry) {
-        addProperty(buffer, ColumnsDAO.RRN_OUTPUT_FILE, journalEntry.getId());
-        addProperty(buffer, ColumnsDAO.JOENTL, journalEntry.getEntryLength());
-        addProperty(buffer, ColumnsDAO.JOSEQN, journalEntry.getSequenceNumber());
-        addProperty(buffer, ColumnsDAO.JOCODE, journalEntry.getJournalCode());
-        addProperty(buffer, ColumnsDAO.JOENTT, journalEntry.getEntryType());
-        addProperty(buffer, ColumnsDAO.JOCTRR, journalEntry.getEntryLength());
+        addProperty(buffer, ColumnsDAO.ID.name(), journalEntry.getId());
+        addProperty(buffer, ColumnsDAO.JOENTL.name(), journalEntry.getEntryLength());
+        addProperty(buffer, ColumnsDAO.JOSEQN.name(), journalEntry.getSequenceNumber());
+        addProperty(buffer, ColumnsDAO.JOCODE.name(), journalEntry.getJournalCode());
+        addProperty(buffer, ColumnsDAO.JOENTT.name(), journalEntry.getEntryType());
+        addProperty(buffer, ColumnsDAO.JOCTRR.name(), journalEntry.getEntryLength());
     }
 
     private void addJournalProperties(StringBuilder buffer, JournalProperties properties) {

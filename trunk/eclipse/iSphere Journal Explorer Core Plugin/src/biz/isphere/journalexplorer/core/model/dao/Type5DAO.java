@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class Type5DAO extends Type4DAO {
         "           result.JOCCID,  " +
         "           result.JOUSPF,  " +
         "           result.JOSYNM,  " +
-        "           hex(result.JOJID) AS " + JOJID + ", " +
+        "           hex(result.JOJID) AS " + ColumnsDAO.JOJID.name() + ", " +
         "           result.JORCST,  " +
         "           result.JOTGR,   " +
         "           result.JOINCDAT," +
@@ -81,25 +81,25 @@ public class Type5DAO extends Type4DAO {
         super.populateJournalEntry(resultSet, journalEntry);
 
         journalEntry = super.populateJournalEntry(resultSet, journalEntry);
-        journalEntry.setProgramLibrary(resultSet.getString(JOPGMLIB));
-        journalEntry.setProgramLibraryAspDeviceName(resultSet.getString(JOPGMDEV));
-        journalEntry.setProgramLibraryAspNumber(resultSet.getInt(JOPGMASP));
-        journalEntry.setObjectNameIndicator(resultSet.getString(JOOBJIND));
-        journalEntry.setSystemSequenceNumber(resultSet.getString(JOSYSSEQ));
-        journalEntry.setReceiverName(resultSet.getString(JORCV));
-        journalEntry.setReceiverLibraryName(resultSet.getString(JORCVLIB));
-        journalEntry.setReceiverLibraryASPDeviceName(resultSet.getString(JORCVDEV));
-        journalEntry.setReceiverLibraryASPNumber(resultSet.getInt(JORCVASP));
-        journalEntry.setArmNumber(resultSet.getInt(JOARM));
-        journalEntry.setThreadId(resultSet.getString(JOTHDX));
-        journalEntry.setAddressFamily(resultSet.getString(JOADF));
-        journalEntry.setRemotePort(resultSet.getInt(JORPORT));
-        journalEntry.setRemoteAddress(new String(resultSet.getBytes(JORADR), getJournalEntryCcsid()));
-        journalEntry.setLogicalUnitOfWork(resultSet.getString(JOLUW));
-        journalEntry.setTransactionIdentifier(resultSet.getString(JOXID));
-        journalEntry.setObjectType(resultSet.getString(JOOBJTYP));
-        journalEntry.setFileTypeIndicator(resultSet.getString(JOFILTYP));
-        journalEntry.setNestedCommitLevel(Long.parseLong(resultSet.getString(JOCMTLVL)));
+        journalEntry.setProgramLibrary(resultSet.getString(ColumnsDAO.JOPGMLIB.name()));
+        journalEntry.setProgramLibraryAspDeviceName(resultSet.getString(ColumnsDAO.JOPGMDEV.name()));
+        journalEntry.setProgramLibraryAspNumber(resultSet.getInt(ColumnsDAO.JOPGMASP.name()));
+        journalEntry.setObjectNameIndicator(resultSet.getString(ColumnsDAO.JOOBJIND.name()));
+        journalEntry.setSystemSequenceNumber(resultSet.getString(ColumnsDAO.JOSYSSEQ.name()));
+        journalEntry.setReceiverName(resultSet.getString(ColumnsDAO.JORCV.name()));
+        journalEntry.setReceiverLibraryName(resultSet.getString(ColumnsDAO.JORCVLIB.name()));
+        journalEntry.setReceiverLibraryASPDeviceName(resultSet.getString(ColumnsDAO.JORCVDEV.name()));
+        journalEntry.setReceiverLibraryASPNumber(resultSet.getInt(ColumnsDAO.JORCVASP.name()));
+        journalEntry.setArmNumber(resultSet.getInt(ColumnsDAO.JOARM.name()));
+        journalEntry.setThreadId(resultSet.getString(ColumnsDAO.JOTHDX.name()));
+        journalEntry.setAddressFamily(resultSet.getString(ColumnsDAO.JOADF.name()));
+        journalEntry.setRemotePort(resultSet.getInt(ColumnsDAO.JORPORT.name()));
+        journalEntry.setRemoteAddress(new String(resultSet.getBytes(ColumnsDAO.JORADR.name()), getJournalEntryCcsid()));
+        journalEntry.setLogicalUnitOfWork(resultSet.getString(ColumnsDAO.JOLUW.name()));
+        journalEntry.setTransactionIdentifier(resultSet.getString(ColumnsDAO.JOXID.name()));
+        journalEntry.setObjectType(resultSet.getString(ColumnsDAO.JOOBJTYP.name()));
+        journalEntry.setFileTypeIndicator(resultSet.getString(ColumnsDAO.JOFILTYP.name()));
+        journalEntry.setNestedCommitLevel(Long.parseLong(resultSet.getString(ColumnsDAO.JOCMTLVL.name())));
 
         return journalEntry;
     }

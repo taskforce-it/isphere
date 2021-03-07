@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,58 +8,70 @@
 
 package biz.isphere.journalexplorer.core.model.dao;
 
-public interface ColumnsDAO {
+import biz.isphere.journalexplorer.core.Messages;
 
-    public static final String RRN_OUTPUT_FILE = "ID";
-    public static final String JOENTL = "JOENTL";
-    public static final String JOSEQN = "JOSEQN";
-    public static final String JOCODE = "JOCODE";
-    public static final String JOENTT = "JOENTT";
-    public static final String JODATE = "JODATE";
-    public static final String JOTIME = "JOTIME";
-    public static final String JOTSTP = "JOTSTP";
-    public static final String JOJOB = "JOJOB";
-    public static final String JOUSER = "JOUSER";
-    public static final String JONBR = "JONBR";
-    public static final String JOPGM = "JOPGM";
-    public static final String JOPGMLIB = "JOPGMLIB";
-    public static final String JOPGMDEV = "JOPGMDEV";
-    public static final String JOPGMASP = "JOPGMASP";
-    public static final String JOOBJ = "JOOBJ";
-    public static final String JOLIB = "JOLIB";
-    public static final String JOMBR = "JOMBR";
-    public static final String JOCTRR = "JOCTRR";
-    public static final String JOFLAG = "JOFLAG";
-    public static final String JOCCID = "JOCCID";
-    public static final String JOUSPF = "JOUSPF";
-    public static final String JOSYNM = "JOSYNM";
-    public static final String JOJID = "JOJID";
-    public static final String JORCST = "JORCST";
-    public static final String JOTGR = "JOTGR";
-    public static final String JOINCDAT = "JOINCDAT";
-    public static final String JOIGNAPY = "JOIGNAPY";
-    public static final String JOMINESD = "JOMINESD";
-    public static final String JOOBJIND = "JOOBJIND";
-    public static final String JOSYSSEQ = "JOSYSSEQ";
-    public static final String JORCV = "JORCV";
-    public static final String JORCVLIB = "JORCVLIB";
-    public static final String JORCVDEV = "JORCVDEV";
-    public static final String JORCVASP = "JORCVASP";
-    public static final String JOARM = "JOARM";
-    public static final String JOTHDX = "JOTHDX";
-    public static final String JOADF = "JOADF";
-    public static final String JORPORT = "JORPORT";
-    public static final String JORADR = "JORADR";
-    public static final String JOLUW = "JOLUW";
-    public static final String JOXID = "JOXID";
-    public static final String JOOBJTYP = "JOOBJTYP";
-    public static final String JOFILTYP = "JOFILTYP";
-    public static final String JOCMTLVL = "JOCMTLVL";
-    public static final String JOESD = "JOESD";
-    public static final String JONVI = "JONVI";
+public enum ColumnsDAO {
+    ID ("DECIMAL(15, 0)", Messages.LongFieldName_OutputFile_Rrn),
+    JOENTL ("NUMERIC(5, 0)", Messages.LongFieldName_JOENTL),
+    JOSEQN ("NUMERIC(10, 0)", Messages.LongFieldName_JOSEQN),
+    JOCODE ("CHAR(1)", Messages.LongFieldName_JOCODE),
+    JOENTT ("CHAR(2)", Messages.LongFieldName_JOENTT),
+    JODATE ("CHAR(6)", Messages.LongFieldName_JODATE),
+    JOTIME ("NUMERIC(6)", Messages.LongFieldName_JOTIME),
+    JOTSTP ("TIMESTAMP", Messages.LongFieldName_JOTSTP),
+    JOJOB ("CHAR(10)", Messages.LongFieldName_JOJOB),
+    JOUSER ("CHAR(10)", Messages.LongFieldName_JOUSER),
+    JONBR ("NUMERIC(6, 0)", Messages.LongFieldName_JONBR),
+    JOPGM ("CHAR(10)", Messages.LongFieldName_JOPGM),
+    JOPGMLIB ("CHAR(10)", Messages.LongFieldName_JOPGMLIB),
+    JOPGMDEV ("CHAR(10)", Messages.LongFieldName_JOPGMDEV),
+    JOPGMASP ("NUMERIC(5, 0)", Messages.LongFieldName_JOPGMASP),
+    JOOBJ ("CHAR(10)", Messages.LongFieldName_JOOBJ),
+    JOLIB ("CHAR(10)", Messages.LongFieldName_JOLIB),
+    JOMBR ("CHAR(10)", Messages.LongFieldName_JOMBR),
+    JOCTRR ("NUMERIC(10, 0)", Messages.LongFieldName_JOCTRR),
+    JOFLAG ("CHAR(1)", Messages.LongFieldName_JOFLAG),
+    JOCCID ("NUMERIC(10, 0)", Messages.LongFieldName_JOCCID),
+    JOUSPF ("CHAR(10)", Messages.LongFieldName_JOUSPF),
+    JOSYNM ("CHAR(8)", Messages.LongFieldName_JOSYNM),
+    JOJID ("CHAR(10)", Messages.LongFieldName_JOJID),
+    JORCST ("CHAR(1)", Messages.LongFieldName_JORCST),
+    JOTGR ("CHAR(1)", Messages.LongFieldName_JOTGR),
+    JOINCDAT ("CHAR(1)", Messages.LongFieldName_JOINCDAT),
+    JOIGNAPY ("CHAR(1)", Messages.LongFieldName_JOIGNAPY),
+    JOMINESD ("CHAR(1)", Messages.LongFieldName_JOMINESD),
+    JOOBJIND ("CHAR(1)", Messages.LongFieldName_JOOBJIND),
+    JOSYSSEQ ("CHAR(20)", Messages.LongFieldName_JOSYSSEQ),
+    JORCV ("CHAR(10)", Messages.LongFieldName_JORCV),
+    JORCVLIB ("CHAR(10)", Messages.LongFieldName_JORCVLIB),
+    JORCVDEV ("CHAR(10)", Messages.LongFieldName_JORCVDEV),
+    JORCVASP ("NUMERIC(5, 0)", Messages.LongFieldName_JORCVASP),
+    JOARM ("NUMERIC(5, 0)", Messages.LongFieldName_JOARM),
+    JOTHDX ("CHAR(8)", Messages.LongFieldName_JOTHDX),
+    JOADF ("CHAR(1)", Messages.LongFieldName_JOADF),
+    JORPORT ("NUMERIC(5, 0)", Messages.LongFieldName_JORPORT),
+    JORADR ("CHAR(46)", Messages.LongFieldName_JORADR),
+    JOLUW ("CHAR(39)", Messages.LongFieldName_JOLUW),
+    JOXID ("CHAR(140)", Messages.LongFieldName_JOXID),
+    JOOBJTYP ("CHAR(7)", Messages.LongFieldName_JOOBJTYP),
+    JOFILTYP ("CHAR(1)", Messages.LongFieldName_JOFILTYP),
+    JOCMTLVL ("CHAR(7)", Messages.LongFieldName_JOCMTLVL),
+    JOESD ("CHAR(N)", Messages.LongFieldName_JOESD),
+    JONVI ("CHAR(50)", Messages.LongFieldName_JONVI);
 
-    public static final String[] ALL = new String[] { RRN_OUTPUT_FILE, JOENTL, JOSEQN, JOCODE, JOENTT, JODATE, JOTIME, JOTSTP, JOJOB, JOUSER, JONBR,
-        JOPGM, JOPGMLIB, JOPGMDEV, JOPGMASP, JOOBJ, JOLIB, JOMBR, JOCTRR, JOFLAG, JOCCID, JOUSPF, JOSYNM, JOJID, JORCST, JOTGR, JOINCDAT, JOIGNAPY,
-        JOMINESD, JOOBJIND, JOSYSSEQ, JORCV, JORCVLIB, JORCVDEV, JORCVASP, JOARM, JOTHDX, JOADF, JORPORT, JORADR, JOLUW, JOXID, JOOBJTYP, JOFILTYP,
-        JOCMTLVL, JOESD };
+    private String sqlType;
+    private String description;
+
+    private ColumnsDAO(String sqlType, String description) {
+        this.sqlType = sqlType;
+        this.description = description;
+    }
+
+    public String sqlType() {
+        return sqlType;
+    }
+
+    public String description() {
+        return description;
+    }
 }

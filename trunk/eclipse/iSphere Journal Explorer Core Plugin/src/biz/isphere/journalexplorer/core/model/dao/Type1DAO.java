@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,8 +57,8 @@ public class Type1DAO extends AbstractTypeDAO {
         // Depending of the journal out type, the timestamp can be a
         // single field or splitted in JODATE and JOTYPE.
         // For TYPE1 output files it is splitted into Date and Time.
-        String date = resultSet.getString(JODATE);
-        int time = resultSet.getInt(JOTIME);
+        String date = resultSet.getString(ColumnsDAO.JODATE.name());
+        int time = resultSet.getInt(ColumnsDAO.JOTIME.name());
         journalEntry.setDateAndTime(date, time, getDateFormat(), null, null);
 
         return journalEntry;

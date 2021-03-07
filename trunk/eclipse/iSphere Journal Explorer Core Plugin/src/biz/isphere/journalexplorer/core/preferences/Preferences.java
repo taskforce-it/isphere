@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
  * 
  * @author Thomas Raddatz
  */
-public final class Preferences implements ColumnsDAO {
+public final class Preferences {
 
     /**
      * The instance of this Singleton class.
@@ -575,27 +575,27 @@ public final class Preferences implements ColumnsDAO {
 
     private Color getInitialColumnColor(String columnName) {
 
-        if (RRN_OUTPUT_FILE.equals(columnName)) {
+        if (ColumnsDAO.ID.name().equals(columnName)) {
             return COLOR_ID;
         }
 
-        if (JOJOB.equals(columnName)) {
+        if (ColumnsDAO.JOJOB.name().equals(columnName)) {
             return COLOR_JOB;
-        } else if (JOUSER.equals(columnName)) {
+        } else if (ColumnsDAO.JOUSER.name().equals(columnName)) {
             return COLOR_JOB;
-        } else if (JONBR.equals(columnName)) {
+        } else if (ColumnsDAO.JONBR.name().equals(columnName)) {
             return COLOR_JOB;
-        } else if (JOUSPF.equals(columnName)) {
+        } else if (ColumnsDAO.JOUSPF.name().equals(columnName)) {
             return COLOR_JOB;
-        } else if (JOTHDX.equals(columnName)) {
+        } else if (ColumnsDAO.JOTHDX.name().equals(columnName)) {
             return COLOR_JOB;
         }
 
-        if (JOLIB.equals(columnName)) {
+        if (ColumnsDAO.JOLIB.name().equals(columnName)) {
             return COLOR_OBJECT;
-        } else if (JOOBJ.equals(columnName)) {
+        } else if (ColumnsDAO.JOOBJ.name().equals(columnName)) {
             return COLOR_OBJECT;
-        } else if (JOMBR.equals(columnName)) {
+        } else if (ColumnsDAO.JOMBR.name().equals(columnName)) {
             return COLOR_OBJECT;
         }
 
