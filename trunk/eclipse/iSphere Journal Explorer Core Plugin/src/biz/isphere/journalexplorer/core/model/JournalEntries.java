@@ -66,7 +66,7 @@ public class JournalEntries implements JsonSerializable {
         for (JournalEntry journalEntry : journalEntries) {
             RowJEP sqljep = null;
             Comparable<?>[] row = null;
-            if (whereClause.hasTable()) {
+            if (whereClause.hasTable() && whereClause.hasClause()) {
                 if (whereClause.getFile().equals(journalEntry.getObjectName()) && whereClause.getLibrary().equals(journalEntry.getObjectLibrary())) {
                     if (whereClause.hasClause()) {
                         // Compare JO* and record specific fields
