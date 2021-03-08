@@ -52,6 +52,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
@@ -183,7 +184,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             public void postRunAction() {
                 OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
                 if (outputFile != null) {
-                    String whereClause = openJournalOutputFileAction.getWhereClause();
+                    SQLWhereClause whereClause = openJournalOutputFileAction.getWhereClause();
                     createJournalTab(outputFile, whereClause);
                 }
             }
@@ -281,7 +282,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    private void createJournalTab(OutputFile outputFile, String whereClause) {
+    private void createJournalTab(OutputFile outputFile, SQLWhereClause whereClause) {
 
         JournalEntriesViewerForOutputFilesTab journalEntriesViewer = null;
 
@@ -309,7 +310,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     public void handleDataLoadException(AbstractJournalEntriesViewerTab tabItem, Throwable e) {
 
         if (e instanceof ParseException) {
-            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage()
+                + "\nDid you forget to specify the table name, when using entry specific fields?");
             return;
         } else if (e instanceof BufferTooSmallException) {
             MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
@@ -369,8 +371,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
     private void performLoadJournalEntries(AbstractJournalEntriesViewerTab tabItem) throws Exception {
 
-        String initialWhereClause = tabItem.getSelectClause();
-        String filterWhereClause = tabItem.getFilterClause();
+        SQLWhereClause initialWhereClause = tabItem.getSelectClause();
+        SQLWhereClause filterWhereClause = tabItem.getFilterClause();
 
         tabItem.validateWhereClause(getViewSite().getShell(), initialWhereClause);
         tabItem.validateWhereClause(getViewSite().getShell(), filterWhereClause);
@@ -387,7 +389,12 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         tabItem.storeSqlEditorHistory();
         refreshSqlEditorHistory();
 
-        tabItem.filterJournal(this, tabItem.getFilterClause());
+        // SQLWhereClause sqlWhereClause = new SQLWhereClause("ALPJ",
+        // "GH382DTL", tabItem.getFilterClause().getClause());
+        // SQLWhereClause sqlWhereClause = new SQLWhereClause("ALPJ",
+        // "GH382DTL");
+        SQLWhereClause sqlWhereClause = tabItem.getFilterClause();
+        tabItem.filterJournal(this, sqlWhereClause);
     }
 
     private void refreshSqlEditorHistory() {

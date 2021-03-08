@@ -14,16 +14,21 @@ package biz.isphere.journalexplorer.core.model;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
@@ -62,62 +67,73 @@ public class JournalEntry {
     private static final int JOCCID = 19;
     private static final int JOCTRR = 20;
 
-    private static HashMap<String, Integer> columnMappings;
+    private static HashMap<String, Integer> basicColumnMappings;
     static {
-        columnMappings = new HashMap<String, Integer>();
-        columnMappings.put(ColumnsDAO.JOCODE.name(), JOCODE);
-        columnMappings.put(ColumnsDAO.JOENTT.name(), JOENTT);
-        columnMappings.put(ColumnsDAO.JOJOB.name(), JOJOB);
-        columnMappings.put(ColumnsDAO.JOUSER.name(), JOUSER);
-        columnMappings.put(ColumnsDAO.JONBR.name(), JONBR);
-        columnMappings.put(ColumnsDAO.JOLIB.name(), JOLIB);
-        columnMappings.put(ColumnsDAO.JOOBJ.name(), JOOBJ);
-        columnMappings.put(ColumnsDAO.JOMBR.name(), JOMBR);
-        columnMappings.put(ColumnsDAO.JODATE.name(), JODATE);
-        columnMappings.put(ColumnsDAO.JOTIME.name(), JOTIME);
-        columnMappings.put(ColumnsDAO.JOTSTP.name(), JOTSTP);
-        columnMappings.put(ColumnsDAO.JOPGM.name(), JOPGM);
-        columnMappings.put(ColumnsDAO.JOPGMLIB.name(), JOPGMLIB);
-        columnMappings.put(ColumnsDAO.JOOBJTYP.name(), JOOBJTYP);
-        columnMappings.put(ColumnsDAO.JOFILTYP.name(), JOFILTYP);
-        columnMappings.put(ColumnsDAO.JOSYNM.name(), JOSYNM);
-        columnMappings.put(ColumnsDAO.JORCV.name(), JORCV);
-        columnMappings.put(ColumnsDAO.JORCVLIB.name(), JORCVLIB);
-        columnMappings.put(ColumnsDAO.JOUSPF.name(), JOUSPF);
-        columnMappings.put(ColumnsDAO.JOSEQN.name(), JOSEQN);
-        columnMappings.put(ColumnsDAO.JOCCID.name(), JOCCID);
-        columnMappings.put(ColumnsDAO.JOCTRR.name(), JOCTRR);
+        basicColumnMappings = new HashMap<String, Integer>();
+        basicColumnMappings.put(ColumnsDAO.JOCODE.name(), JOCODE);
+        basicColumnMappings.put(ColumnsDAO.JOENTT.name(), JOENTT);
+        basicColumnMappings.put(ColumnsDAO.JOJOB.name(), JOJOB);
+        basicColumnMappings.put(ColumnsDAO.JOUSER.name(), JOUSER);
+        basicColumnMappings.put(ColumnsDAO.JONBR.name(), JONBR);
+        basicColumnMappings.put(ColumnsDAO.JOLIB.name(), JOLIB);
+        basicColumnMappings.put(ColumnsDAO.JOOBJ.name(), JOOBJ);
+        basicColumnMappings.put(ColumnsDAO.JOMBR.name(), JOMBR);
+        basicColumnMappings.put(ColumnsDAO.JODATE.name(), JODATE);
+        basicColumnMappings.put(ColumnsDAO.JOTIME.name(), JOTIME);
+        basicColumnMappings.put(ColumnsDAO.JOTSTP.name(), JOTSTP);
+        basicColumnMappings.put(ColumnsDAO.JOPGM.name(), JOPGM);
+        basicColumnMappings.put(ColumnsDAO.JOPGMLIB.name(), JOPGMLIB);
+        basicColumnMappings.put(ColumnsDAO.JOOBJTYP.name(), JOOBJTYP);
+        basicColumnMappings.put(ColumnsDAO.JOFILTYP.name(), JOFILTYP);
+        basicColumnMappings.put(ColumnsDAO.JOSYNM.name(), JOSYNM);
+        basicColumnMappings.put(ColumnsDAO.JORCV.name(), JORCV);
+        basicColumnMappings.put(ColumnsDAO.JORCVLIB.name(), JORCVLIB);
+        basicColumnMappings.put(ColumnsDAO.JOUSPF.name(), JOUSPF);
+        basicColumnMappings.put(ColumnsDAO.JOSEQN.name(), JOSEQN);
+        basicColumnMappings.put(ColumnsDAO.JOCCID.name(), JOCCID);
+        basicColumnMappings.put(ColumnsDAO.JOCTRR.name(), JOCTRR);
     }
 
-    private static List<ContentAssistProposal> proposals;
+    private static List<ContentAssistProposal> basicProposals;
     static {
-        proposals = new LinkedList<ContentAssistProposal>();
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE.name(), ColumnsDAO.JOCODE.sqlType(), ColumnsDAO.JOCODE.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT.name(), ColumnsDAO.JOENTT.sqlType(), ColumnsDAO.JOENTT.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB.name(), ColumnsDAO.JOJOB.sqlType(), ColumnsDAO.JOJOB.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER.name(), ColumnsDAO.JOUSER.sqlType(), ColumnsDAO.JOUSER.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR.name(), ColumnsDAO.JONBR.sqlType(), ColumnsDAO.JONBR.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB.name(), ColumnsDAO.JOLIB.sqlType(), ColumnsDAO.JOLIB.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ.name(), ColumnsDAO.JOOBJ.sqlType(), ColumnsDAO.JOOBJ.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR.name(), ColumnsDAO.JOMBR.sqlType(), ColumnsDAO.JOMBR.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE.name(), ColumnsDAO.JODATE.sqlType(), ColumnsDAO.JODATE.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME.name(), ColumnsDAO.JOTIME.sqlType(), ColumnsDAO.JOTIME.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP.name(), ColumnsDAO.JOTSTP.sqlType(), ColumnsDAO.JOTSTP.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM.name(), ColumnsDAO.JOPGM.sqlType(), ColumnsDAO.JOPGM.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB.name(), ColumnsDAO.JOPGMLIB.sqlType(), ColumnsDAO.JOPGMLIB
+        basicProposals = new LinkedList<ContentAssistProposal>();
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE.name(), ColumnsDAO.JOCODE.sqlType(), ColumnsDAO.JOCODE
             .description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP.name(), ColumnsDAO.JOOBJTYP.sqlType(), ColumnsDAO.JOOBJTYP
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT.name(), ColumnsDAO.JOENTT.sqlType(), ColumnsDAO.JOENTT
             .description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP.name(), ColumnsDAO.JOFILTYP.sqlType(), ColumnsDAO.JOFILTYP
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB.name(), ColumnsDAO.JOJOB.sqlType(), ColumnsDAO.JOJOB.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER.name(), ColumnsDAO.JOUSER.sqlType(), ColumnsDAO.JOUSER
             .description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM.name(), ColumnsDAO.JOSYNM.sqlType(), ColumnsDAO.JOSYNM.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV.name(), ColumnsDAO.JORCV.sqlType(), ColumnsDAO.JORCV.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB.name(), ColumnsDAO.JORCVLIB.sqlType(), ColumnsDAO.JORCVLIB
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR.name(), ColumnsDAO.JONBR.sqlType(), ColumnsDAO.JONBR.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB.name(), ColumnsDAO.JOLIB.sqlType(), ColumnsDAO.JOLIB.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ.name(), ColumnsDAO.JOOBJ.sqlType(), ColumnsDAO.JOOBJ.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR.name(), ColumnsDAO.JOMBR.sqlType(), ColumnsDAO.JOMBR.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE.name(), ColumnsDAO.JODATE.sqlType(), ColumnsDAO.JODATE
             .description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF.name(), ColumnsDAO.JOUSPF.sqlType(), ColumnsDAO.JOUSPF.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN.name(), ColumnsDAO.JOSEQN.sqlType(), ColumnsDAO.JOSEQN.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID.name(), ColumnsDAO.JOCCID.sqlType(), ColumnsDAO.JOCCID.description()));
-        proposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR.name(), ColumnsDAO.JOCTRR.sqlType(), ColumnsDAO.JOCTRR.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME.name(), ColumnsDAO.JOTIME.sqlType(), ColumnsDAO.JOTIME
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP.name(), ColumnsDAO.JOTSTP.sqlType(), ColumnsDAO.JOTSTP
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM.name(), ColumnsDAO.JOPGM.sqlType(), ColumnsDAO.JOPGM.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB.name(), ColumnsDAO.JOPGMLIB.sqlType(), ColumnsDAO.JOPGMLIB
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP.name(), ColumnsDAO.JOOBJTYP.sqlType(), ColumnsDAO.JOOBJTYP
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP.name(), ColumnsDAO.JOFILTYP.sqlType(), ColumnsDAO.JOFILTYP
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM.name(), ColumnsDAO.JOSYNM.sqlType(), ColumnsDAO.JOSYNM
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV.name(), ColumnsDAO.JORCV.sqlType(), ColumnsDAO.JORCV.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB.name(), ColumnsDAO.JORCVLIB.sqlType(), ColumnsDAO.JORCVLIB
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF.name(), ColumnsDAO.JOUSPF.sqlType(), ColumnsDAO.JOUSPF
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN.name(), ColumnsDAO.JOSEQN.sqlType(), ColumnsDAO.JOSEQN
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID.name(), ColumnsDAO.JOCCID.sqlType(), ColumnsDAO.JOCCID
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR.name(), ColumnsDAO.JOCTRR.sqlType(), ColumnsDAO.JOCTRR
+            .description()));
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -315,6 +331,10 @@ public class JournalEntry {
     private transient SimpleDateFormat timestampFormatter;
     private transient Calendar calendar;
 
+    private JOESDProperty joesdProperty;
+    private HashMap<String, Integer> fullColumnMapping;
+    private JournalProperties journalProperties;
+
     /**
      * Produces a new JournalEntry object. This constructor is used by the Json
      * importer, when loading journal entries from a Json file.
@@ -348,12 +368,13 @@ public class JournalEntry {
         this.nestedCommitLevelFormatter = new DecimalFormat("0000000");
 
         this.dateFormatter = biz.isphere.core.preferences.Preferences.getInstance().getDateFormatter();
-        // this.dateFormatter = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
         this.timeFormatter = biz.isphere.core.preferences.Preferences.getInstance().getTimeFormatter();
-        // this.timeFormatter = // new SimpleDateFormat("HH:mm:ss"); //$NON-NLS-1$
         this.timestampFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS"); //$NON-NLS-1$
         this.calendar = Calendar.getInstance();
 
+        this.joesdProperty = null;
+        this.fullColumnMapping = null;
+        this.journalProperties = null;
     }
 
     public OutputFile getOutputFile() {
@@ -377,12 +398,27 @@ public class JournalEntry {
         return false;
     }
 
-    public static HashMap<String, Integer> getColumnMapping() {
-        return columnMappings;
+    public static HashMap<String, Integer> getBasicColumnMapping() {
+        return basicColumnMappings;
     }
 
-    public static ContentAssistProposal[] getContentAssistProposals() {
-        return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+    public static ContentAssistProposal[] getBasicContentAssistProposals() {
+        return basicProposals.toArray(new ContentAssistProposal[basicProposals.size()]);
+    }
+
+    public ContentAssistProposal[] getContentAssistProposals() {
+
+        List<ContentAssistProposal> fullProposals = new LinkedList<ContentAssistProposal>();
+
+        for (ContentAssistProposal contentAssistProposal : basicProposals) {
+            fullProposals.add(contentAssistProposal);
+        }
+
+        for (ContentAssistProposal contentAssistProposal : getJOESDProperty().getContentAssistProposals()) {
+            fullProposals.add(contentAssistProposal);
+        }
+
+        return fullProposals.toArray(new ContentAssistProposal[fullProposals.size()]);
     }
 
     public static Comparable<?>[] getSampleRow() {
@@ -411,12 +447,53 @@ public class JournalEntry {
         journalEntry.setCommitmentCycle(new BigInteger("472568965")); // JOCCID
         journalEntry.setCountRrn(new BigInteger("324705620")); // JOCTRR
 
-        return journalEntry.getRow();
+        return journalEntry.getBasicRow();
+    }
+
+    public HashMap<String, Integer> getColumnMapping() {
+
+        if (fullColumnMapping == null) {
+            try {
+
+                fullColumnMapping = new HashMap<String, Integer>();
+
+                for (Map.Entry<String, Integer> columnMapping : getBasicColumnMapping().entrySet()) {
+                    fullColumnMapping.put(columnMapping.getKey(), columnMapping.getValue());
+                }
+
+                JournalProperty[] rowProperties = getJOESDProperty().toPropertyArray();
+                for (JournalProperty rowProperty : rowProperties) {
+                    fullColumnMapping.put(rowProperty.name, fullColumnMapping.size() - 1);
+                }
+
+                return fullColumnMapping;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return fullColumnMapping;
     }
 
     public Comparable<?>[] getRow() {
 
-        Comparable<?>[] row = new Comparable[columnMappings.size()];
+        Comparable<?>[] row = getBasicRow();
+
+        JournalProperty[] rowProperties = joesdProperty.toPropertyArray();
+        row = Arrays.copyOf(row, row.length + rowProperties.length);
+
+        int i = JOCTRR + 1;
+        for (int p = 0; p < rowProperties.length; p++) {
+            row[i] = (Comparable<?>)rowProperties[p].value;
+            i++;
+        }
+        return row;
+    }
+
+    public Comparable<?>[] getBasicRow() {
+
+        Comparable<?>[] row = new Comparable[basicColumnMappings.size()];
 
         row[JOCODE] = getJournalCode();
         row[JOENTT] = getEntryType();
@@ -1609,10 +1686,12 @@ public class JournalEntry {
 
         if (qualifiedObjectName == null) {
 
-            if (!StringHelper.isNullOrEmpty(memberName)) {
-                qualifiedObjectName = String.format("%s/%s(%s)", objectLibrary, objectName, memberName);
-            } else {
-                qualifiedObjectName = String.format("%s/%s", objectLibrary, objectName);
+            if (!StringHelper.isNullOrEmpty(objectLibrary) && !StringHelper.isNullOrEmpty(objectName)) {
+                if (!StringHelper.isNullOrEmpty(memberName)) {
+                    qualifiedObjectName = String.format("%s/%s(%s)", objectLibrary, objectName, memberName);
+                } else {
+                    qualifiedObjectName = String.format("%s/%s", objectLibrary, objectName);
+                }
             }
 
         }
@@ -1638,5 +1717,31 @@ public class JournalEntry {
         } else {
             return "0";
         }
+    }
+
+    public void setJoesdProperty(JOESDProperty joesdProperty) {
+        this.joesdProperty = joesdProperty;
+    }
+
+    @Override
+    public String toString() {
+        return getQualifiedObjectName() + " (" + getEntryType() + ")";
+    }
+
+    public JournalProperties getJournalProperties() {
+
+        if (journalProperties == null) {
+            this.journalProperties = new JournalProperties(this);
+        }
+
+        return journalProperties;
+    }
+
+    public void setJournalProperties(JournalProperties journalProperties) {
+        this.journalProperties = journalProperties;
+    }
+
+    public JOESDProperty getJOESDProperty() {
+        return getJournalProperties().getJOESDProperty();
     }
 }

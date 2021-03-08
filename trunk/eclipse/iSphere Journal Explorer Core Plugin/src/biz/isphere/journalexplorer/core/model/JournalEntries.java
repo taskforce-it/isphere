@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,11 @@ package biz.isphere.journalexplorer.core.model;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
@@ -53,24 +51,44 @@ public class JournalEntries implements JsonSerializable {
         this.numAvailableRows = -1;
     }
 
-    public void applyFilter(String whereClause) throws ParseException {
+    public void applyFilter(SQLWhereClause whereClause) throws ParseException {
 
         Date startTime = new Date();
 
-        if (StringHelper.isNullOrEmpty(whereClause)) {
+        if (whereClause == null || whereClause.isEmpty()) {
             removeFilter();
             return;
         }
 
-        HashMap<String, Integer> columnMapping = JournalEntry.getColumnMapping();
-        RowJEP sqljep = new RowJEP(whereClause);
-        sqljep.parseExpression(columnMapping);
-
         filteredJournalEntries = new ArrayList<JournalEntry>(journalEntries.size());
 
+        boolean isFound;
         for (JournalEntry journalEntry : journalEntries) {
-            Comparable<?>[] row = journalEntry.getRow();
-            if ((Boolean)sqljep.getValue(row)) {
+            RowJEP sqljep = null;
+            Comparable<?>[] row = null;
+            if (whereClause.hasTable()) {
+                if (whereClause.getFile().equals(journalEntry.getObjectName()) && whereClause.getLibrary().equals(journalEntry.getObjectLibrary())) {
+                    if (whereClause.hasClause()) {
+                        // Compare JO* and record specific fields
+                        sqljep = new RowJEP(whereClause.getClause());
+                        sqljep.parseExpression(journalEntry.getColumnMapping());
+                        row = journalEntry.getRow();
+                        isFound = (Boolean)sqljep.getValue(row);
+                    } else {
+                        isFound = true;
+                    }
+                } else {
+                    isFound = false;
+                }
+            } else {
+                // Compare only JO* fields.
+                sqljep = new RowJEP(whereClause.getClause());
+                sqljep.parseExpression(JournalEntry.getBasicColumnMapping());
+                row = journalEntry.getBasicRow();
+                isFound = (Boolean)sqljep.getValue(row);
+            }
+
+            if (isFound) {
                 filteredJournalEntries.add(journalEntry);
             }
         }

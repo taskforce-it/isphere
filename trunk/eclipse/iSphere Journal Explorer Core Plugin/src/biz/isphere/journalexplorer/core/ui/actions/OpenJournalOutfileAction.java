@@ -18,6 +18,7 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 
 public abstract class OpenJournalOutfileAction extends Action {
@@ -26,7 +27,7 @@ public abstract class OpenJournalOutfileAction extends Action {
 
     private Shell shell;
     private OutputFile outputFile;
-    private String whereClause;
+    private SQLWhereClause whereClause;
 
     public OpenJournalOutfileAction(Shell shell) {
         super(Messages.JournalExplorerView_OpenJournal);
@@ -50,7 +51,7 @@ public abstract class OpenJournalOutfileAction extends Action {
         return outputFile;
     }
 
-    public String getWhereClause() {
+    public SQLWhereClause getWhereClause() {
         return whereClause;
     }
 

@@ -59,6 +59,7 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
@@ -531,8 +532,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         return resolvedMemberName.toUpperCase();
     }
 
-    public String getSqlWhere() {
-        return whereClause;
+    public SQLWhereClause getSqlWhere() {
+        return new SQLWhereClause(whereClause);
     }
 
     /**

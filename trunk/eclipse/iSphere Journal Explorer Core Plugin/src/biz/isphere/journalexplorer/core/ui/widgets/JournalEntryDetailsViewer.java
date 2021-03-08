@@ -245,7 +245,7 @@ public class JournalEntryDetailsViewer extends TreeViewer implements IPropertyCh
                 JournalProperty property = (JournalProperty)element;
                 if (property.parent instanceof JournalProperty) {
                     JournalProperty parentProperty = (JournalProperty)property.parent;
-                    if (ColumnsDAO.JOESD.equals(parentProperty.name)) {
+                    if (ColumnsDAO.JOESD.name().equals(parentProperty.name)) {
                         if (!property.highlighted) {
                             return false;
                         }

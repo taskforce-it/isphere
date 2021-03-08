@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 
 /**
  * This class loads the exported journal *TYPE1 to *TYPE5 data that has been
@@ -30,7 +31,7 @@ import biz.isphere.journalexplorer.core.model.OutputFile;
 public class OutputFileDAO extends DAOBase {
 
     private AbstractTypeDAO typeDAO;
-    private String whereClause;
+    private SQLWhereClause whereClause;
 
     public OutputFileDAO(OutputFile outputFile) throws Exception {
         super(outputFile.getConnectionName());
@@ -58,15 +59,15 @@ public class OutputFileDAO extends DAOBase {
         return typeDAO.getSqlStatement();
     }
 
-    public String getWhereClause() {
+    public SQLWhereClause getWhereClause() {
         return whereClause;
     }
 
-    public void setWhereClause(String whereClause) {
+    public void setWhereClause(SQLWhereClause whereClause) {
         this.whereClause = whereClause;
     }
 
-    public JournalEntries getJournalData(String whereClause, IProgressMonitor monitor) throws Exception {
+    public JournalEntries getJournalData(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
         setWhereClause(whereClause);
         return typeDAO.load(getWhereClause(), monitor);
     }

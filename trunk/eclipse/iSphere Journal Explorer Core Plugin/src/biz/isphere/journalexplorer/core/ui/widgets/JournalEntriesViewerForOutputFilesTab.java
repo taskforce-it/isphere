@@ -27,6 +27,7 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -51,7 +52,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForOutputFilesTab(CTabFolder parent, OutputFile outputFile, String whereClause,
+    public JournalEntriesViewerForOutputFilesTab(CTabFolder parent, OutputFile outputFile, SQLWhereClause whereClause,
         SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, outputFile, loadJournalEntriesSelectionListener);
 
@@ -134,7 +135,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
         setInputData(null);
     }
 
-    public void openJournal(final JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception {
+    public void openJournal(final JournalExplorerView view, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) throws Exception {
 
         tableViewer.getTable().setEnabled(false);
 
@@ -145,7 +146,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
         loadJournalDataJob.schedule();
     }
 
-    public void filterJournal(final JournalExplorerView view, String whereClause) throws Exception {
+    public void filterJournal(final JournalExplorerView view, SQLWhereClause whereClause) throws Exception {
 
         setSqlEditorEnabled(false);
 
@@ -160,10 +161,10 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
     private class OpenJournalJob extends Job {
 
         private JournalExplorerView view;
-        private String whereClause;
-        private String filterWhereClause;
+        private SQLWhereClause whereClause;
+        private SQLWhereClause filterWhereClause;
 
-        public OpenJournalJob(JournalExplorerView view, String whereClause, String filterWhereClause) {
+        public OpenJournalJob(JournalExplorerView view, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
@@ -215,9 +216,9 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
     private class FilterJournalJob extends Job {
 
         private JournalExplorerView view;
-        private String whereClause;
+        private SQLWhereClause whereClause;
 
-        public FilterJournalJob(JournalExplorerView view, String whereClause) {
+        public FilterJournalJob(JournalExplorerView view, SQLWhereClause whereClause) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;

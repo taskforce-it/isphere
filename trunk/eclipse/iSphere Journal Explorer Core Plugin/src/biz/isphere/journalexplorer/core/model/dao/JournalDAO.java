@@ -23,6 +23,7 @@ import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.api.QjoRetrieveJournalEntries;
@@ -56,7 +57,7 @@ public class JournalDAO {
         return new OutputFile(connectionName, "QSYS", "QADSPJR5");
     }
 
-    public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
+    public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
