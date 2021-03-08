@@ -13,6 +13,7 @@ X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
  Changed iSphere Source File Search to resolve remote system filters and objects in batch.\n
  Changed layout of iSphere Source File Search view.\n
  Changed layout of iSphere Message File Search view.\n
+ Enhanced the iSphere Journal Explorer and added option to search for entry specific data.\n
  Added option 'Work With Spooled Files' to job entries of a RSE job filter.\n
  Added option 'Copy Qualified Name' to job entries of a RSE job filter.\n
  Added option 'Display changed fields only' to iSphere Journal Explorer.\n
