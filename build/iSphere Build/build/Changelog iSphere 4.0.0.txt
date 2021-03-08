@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.b006
+-----------------------------
+
+ • Enhanced the iSphere Journal Explorer and added option to search
+   for entry specific data.
+
 Changelog: iSphere 4.0.0.b005
 -----------------------------
 

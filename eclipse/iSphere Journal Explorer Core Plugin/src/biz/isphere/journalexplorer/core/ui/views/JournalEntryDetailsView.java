@@ -177,7 +177,7 @@ public class JournalEntryDetailsView extends ViewPart implements ISelectionListe
         public void run() {
             try {
 
-                input.add(new JournalProperties(journalEntry));
+                input.add(journalEntry.getJournalProperties());
 
                 List<String> messages = new LinkedList<String>();
 

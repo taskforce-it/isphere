@@ -49,6 +49,9 @@ public class Messages extends NLS {
     public static String JournalEntryView_CompareSideBySide;
     public static String JournalEntryView_DisplayChangedFieldsOnly;
     public static String JournalEntryView_UncomparableEntries;
+    public static String JournalEntryView_Label_TableName;
+    public static String JournalEntryView_Tooltip_TableName;
+    public static String JournalEntryView_Tooltip_ClearTableName;
     public static String JournalEntryViewer_Property;
     public static String JournalEntryViewer_Value;
     public static String JournalExplorerView_OpenJournal;
@@ -167,6 +170,7 @@ public class Messages extends NLS {
     public static String Error_No_journal_entry_types_selected;
     public static String Error_No_connections_available;
     public static String Error_Connection_A_not_found;
+    public static String Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields;
 
     public static String Calling_API;
     public static String Loading_entries;

@@ -28,6 +28,7 @@ import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.dao.JournalDAO;
@@ -129,7 +130,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         setInputData(null);
     }
 
-    public void openJournal(final JournalExplorerView view, String whereClause, String filterWhereClause) throws Exception {
+    public void openJournal(final JournalExplorerView view, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) throws Exception {
 
         tableViewer.getTable().setEnabled(false);
 
@@ -139,7 +140,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         loadJournalDataJob.schedule();
     }
 
-    public void filterJournal(final JournalExplorerView view, String whereClause) throws Exception {
+    public void filterJournal(final JournalExplorerView view, SQLWhereClause whereClause) throws Exception {
 
         setSqlEditorEnabled(false);
 
@@ -154,10 +155,10 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
     private class OpenJournalJob extends Job {
 
         private JournalExplorerView view;
-        private String whereClause;
-        private String filterWhereClause;
+        private SQLWhereClause whereClause;
+        private SQLWhereClause filterWhereClause;
 
-        public OpenJournalJob(JournalExplorerView view, String whereClause, String filterWhereClause) {
+        public OpenJournalJob(JournalExplorerView view, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
@@ -248,9 +249,9 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
     private class FilterJournalJob extends Job {
 
         private JournalExplorerView view;
-        private String whereClause;
+        private SQLWhereClause whereClause;
 
-        public FilterJournalJob(JournalExplorerView view, String whereClause) {
+        public FilterJournalJob(JournalExplorerView view, SQLWhereClause whereClause) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;

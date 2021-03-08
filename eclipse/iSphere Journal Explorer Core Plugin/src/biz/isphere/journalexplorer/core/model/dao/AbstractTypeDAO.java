@@ -16,13 +16,13 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.OutputFile;
+import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public abstract class AbstractTypeDAO extends DAOBase {
@@ -42,7 +42,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
         this.outputFile = outputFile;
     }
 
-    public JournalEntries load(String whereClause, IProgressMonitor monitor) throws Exception {
+    public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
@@ -62,8 +62,8 @@ public abstract class AbstractTypeDAO extends DAOBase {
                 outputFile.getMemberName());
 
             String sqlStatement = String.format(getSqlStatement(), outputFile.getLibraryName(), outputFile.getFileName());
-            if (!StringHelper.isNullOrEmpty(whereClause)) {
-                sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
+            if (whereClause.hasClause()) {
+                sqlStatement = sqlStatement + " WHERE " + whereClause.getClause(); //$NON-NLS-1$
             }
 
             int numRowsAvailable = getNumRowsAvailable(whereClause);
@@ -188,7 +188,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
         return true;
     }
 
-    private int getNumRowsAvailable(String whereClause) {
+    private int getNumRowsAvailable(SQLWhereClause whereClause) {
 
         int numRowsAvailable = Integer.MAX_VALUE;
 
@@ -225,11 +225,11 @@ public abstract class AbstractTypeDAO extends DAOBase {
         journalEntries.setOverflow(true, numRowsAvailable);
     }
 
-    private String getSqlCountStatement(OutputFile outputFile, String whereClause) {
+    private String getSqlCountStatement(OutputFile outputFile, SQLWhereClause whereClause) {
 
         String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getLibraryName(), outputFile.getFileName());
-        if (!StringHelper.isNullOrEmpty(whereClause)) {
-            sqlStatement = sqlStatement + " WHERE " + whereClause; //$NON-NLS-1$
+        if (whereClause.hasClause()) {
+            sqlStatement = sqlStatement + " WHERE " + whereClause.getClause(); //$NON-NLS-1$
         }
 
         return sqlStatement;

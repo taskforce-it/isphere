@@ -14,6 +14,7 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.Collection;
 import java.util.HashMap;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.MetaTableDAO;
 
@@ -60,7 +61,7 @@ public final class MetaDataCache {
         return loadMetadata(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName());
     }
 
-    private MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName) throws Exception {
+    private synchronized MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName) throws Exception {
 
         String key = produceKey(objectLibrary, objectName);
         MetaTable metatable = this.cache.get(key);
@@ -102,6 +103,7 @@ public final class MetaDataCache {
             metaTableDAO.retrieveColumnsMetaData(metaTable);
             if (metaTable.hasColumns()) {
                 metaTable.setLoaded(true);
+
             } else {
                 metaTable.setLoaded(false);
             }
@@ -122,5 +124,34 @@ public final class MetaDataCache {
 
     public Collection<MetaTable> getCachedParsers() {
         return this.cache.values();
+    }
+
+    public void preloadTables(JournalEntries data) {
+
+        new PreloadTablesJob(data).start();
+
+    }
+
+    private class PreloadTablesJob extends Thread {
+
+        private JournalEntries journalEntries;
+
+        public PreloadTablesJob(JournalEntries journalEntries) {
+            this.journalEntries = journalEntries;
+        }
+
+        public void run() {
+
+            try {
+
+                for (JournalEntry journalEntry : journalEntries.getItems()) {
+                    retrieveMetaData(journalEntry);
+                }
+
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Failed to load meta tables ***", e);
+            }
+
+        }
     }
 }

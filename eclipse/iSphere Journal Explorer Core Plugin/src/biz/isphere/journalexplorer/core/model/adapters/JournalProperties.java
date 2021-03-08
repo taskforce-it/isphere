@@ -55,10 +55,11 @@ public class JournalProperties {
                 properties.add(journalProperties.get(attribute.getColumnName()));
             }
         }
+
+        journalEntry.setJournalProperties(this);
     }
 
     private void addProperty(Map<String, JournalProperty> availableProperties, JournalProperty journalProperty) {
-
         availableProperties.put(journalProperty.name, journalProperty);
     }
 

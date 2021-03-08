@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package biz.isphere.journalexplorer.core.model.adapters;
 import java.util.ArrayList;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -21,6 +22,7 @@ import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
+import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
 
 import com.ibm.as400.access.Record;
 
@@ -49,6 +51,7 @@ public class JOESDProperty extends JournalProperty {
     private void initialize(JournalEntry journalEntry) {
 
         this.journalEntry = journalEntry;
+        this.journalEntry.setJoesdProperty(this);
 
         setErrorParsing(false);
         this.executeParsing();
@@ -67,7 +70,6 @@ public class JOESDProperty extends JournalProperty {
     private void initialize() throws Exception {
 
         setErrorParsing(false);
-        value = ""; //$NON-NLS-1$
 
         metatable = null;
 
@@ -77,6 +79,15 @@ public class JOESDProperty extends JournalProperty {
             specificProperties.clear();
         } else {
             specificProperties = new ArrayList<JournalProperty>();
+        }
+    }
+
+    @Override
+    public void setErrorParsing(boolean error) {
+        super.setErrorParsing(error);
+
+        if (!isErrorParsing()) {
+            this.value = "";
         }
     }
 
@@ -138,9 +149,18 @@ public class JOESDProperty extends JournalProperty {
         }
     }
 
-    public Object[] toPropertyArray() {
+    public JournalProperty[] toPropertyArray() {
+
+        if (isErrorParsing()) {
+            try {
+                executeParsing();
+            } catch (Exception e) {
+                // Ignore errors
+            }
+        }
+
         if (specificProperties != null) {
-            return specificProperties.toArray();
+            return specificProperties.toArray(new JournalProperty[specificProperties.size()]);
         } else {
             return null;
         }
@@ -173,6 +193,28 @@ public class JOESDProperty extends JournalProperty {
             }
         } else {
             return -1;
+        }
+    }
+
+    public ContentAssistProposal[] getContentAssistProposals() {
+
+        try {
+
+            MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
+
+            ContentAssistProposal[] proposals = new ContentAssistProposal[specificProperties.size()];
+            for (int i = 0; i < proposals.length; i++) {
+                MetaColumn metaColumn = metaTable.getColumn(specificProperties.get(i).name);
+                if (metaColumn != null) {
+                    proposals[i] = new TableColumnContentAssistProposal(metaColumn.getName(), metaColumn.getType().toString(), metaColumn.getText());
+                }
+            }
+
+            return proposals;
+
+        } catch (Exception e) {
+            // Ignore errors
+            return new ContentAssistProposal[0];
         }
     }
 }
