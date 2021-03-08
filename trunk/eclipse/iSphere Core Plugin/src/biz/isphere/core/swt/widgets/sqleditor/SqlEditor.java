@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.Messages;
@@ -82,7 +83,8 @@ public class SqlEditor extends Composite {
 
         this.btnExecuteSelectionListeners = new LinkedList<SelectionListener>();
 
-        createContentArea();
+        setLayout(createLayout());
+        createContentArea(this);
     }
 
     public void addModifyListener(ModifyListener listener) {
@@ -159,13 +161,17 @@ public class SqlEditor extends Composite {
         return false;
     }
 
-    private void createContentArea() {
+    protected Layout createLayout() {
+        Layout layout = new GridLayout(3, false);
+        return layout;
+    }
 
-        GridLayout layout = new GridLayout(3, false);
-        setLayout(layout);
+    protected void createContentArea(Composite parent) {
 
-        Composite wherePanel = new Composite(this, SWT.NONE);
-        GridLayout wherePanelLayout = new GridLayout(2, false);
+        int horizontalSpan = ((GridLayout)getLayout()).numColumns - 1;
+
+        Composite wherePanel = new Composite(parent, SWT.NONE);
+        GridLayout wherePanelLayout = new GridLayout(horizontalSpan, false);
         wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
         wherePanelLayout.marginHeight = 0;
         wherePanelLayout.marginWidth = 0;
@@ -173,7 +179,7 @@ public class SqlEditor extends Composite {
         wherePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
         labelHistory = new Label(wherePanel, SWT.NONE);
-        labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
+        labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, horizontalSpan, 1));
         labelHistory.setText(Messages.SqlEditor_History);
         labelHistory.setToolTipText(Messages.SqlEditor_History_Tooltip);
 
@@ -184,11 +190,11 @@ public class SqlEditor extends Composite {
 
         helpItem = DisplaySQLHelpListener.createLabel(wherePanel);
 
-        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, horizontalSpan, 1));
 
         btnAddField = WidgetFactory.createPushButton(wherePanel, Messages.ButtonLabel_AddField);
         btnAddField.setToolTipText(Messages.ButtonTooltip_AddField);
-        btnAddField.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, 2, 1));
+        btnAddField.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, horizontalSpan, 1));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -197,7 +203,7 @@ public class SqlEditor extends Composite {
             }
         });
 
-        Composite editorPanel = new Composite(this, SWT.NONE);
+        Composite editorPanel = new Composite(parent, SWT.NONE);
         GridLayout editorPanelLayout = new GridLayout();
         editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
         editorPanelLayout.marginHeight = 0;
@@ -255,7 +261,7 @@ public class SqlEditor extends Composite {
             }
         });
 
-        Composite executePanel = new Composite(this, SWT.NONE);
+        Composite executePanel = new Composite(parent, SWT.NONE);
         GridLayout executePanelLayout = new GridLayout(1, false);
         executePanelLayout.marginLeft = executePanelLayout.marginWidth;
         executePanelLayout.marginHeight = 0;
