@@ -310,8 +310,9 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     public void handleDataLoadException(AbstractJournalEntriesViewerTab tabItem, Throwable e) {
 
         if (e instanceof ParseException) {
-            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage()
-                + "\nDid you forget to specify the table name, when using entry specific fields?");
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title,
+                Messages.bind(Messages.Error_in_SQL_WHERE_CLAUSE_A, e.getLocalizedMessage()) + "\n"
+                    + Messages.Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields);
             return;
         } else if (e instanceof BufferTooSmallException) {
             MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
@@ -618,7 +619,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             try {
                 performFilterJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage() + "\n"
+                    + Messages.Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields);
                 getSelectedViewer().setFocusOnSqlEditor();
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
