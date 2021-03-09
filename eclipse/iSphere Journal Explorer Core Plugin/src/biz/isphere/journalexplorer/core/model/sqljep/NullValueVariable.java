@@ -12,6 +12,12 @@ import java.util.Map.Entry;
 
 public class NullValueVariable implements Entry<String, Comparable<?>> {
 
+    private String key;
+
+    public NullValueVariable(String name) {
+        this.key = name;
+    }
+
     public java.lang.Comparable<?> getValue() {
         return null;
     }
@@ -23,4 +29,15 @@ public class NullValueVariable implements Entry<String, Comparable<?>> {
     public Comparable<?> setValue(Comparable<?> value) {
         throw new IllegalAccessError();
     };
+
+    @Override
+    public String toString() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(key);
+        buffer.append("=[null]"); //$NON-NLS-1$
+
+        return buffer.toString();
+    }
 }

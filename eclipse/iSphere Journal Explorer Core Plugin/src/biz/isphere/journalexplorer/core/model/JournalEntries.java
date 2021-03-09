@@ -55,7 +55,7 @@ public class JournalEntries implements JsonSerializable {
 
         Date startTime = new Date();
 
-        if (whereClause == null || whereClause.isEmpty()) {
+        if (whereClause == null || !whereClause.hasClause()) {
             removeFilter();
             return;
         }
@@ -66,19 +66,17 @@ public class JournalEntries implements JsonSerializable {
         for (JournalEntry journalEntry : journalEntries) {
             RowJEP sqljep = null;
             Comparable<?>[] row = null;
-            if (whereClause.hasTable() && whereClause.hasClause()) {
-                if (whereClause.getFile().equals(journalEntry.getObjectName()) && whereClause.getLibrary().equals(journalEntry.getObjectLibrary())) {
-                    if (whereClause.hasClause()) {
-                        // Compare JO* and record specific fields
-                        sqljep = new RowJEP(whereClause.getClause());
-                        sqljep.parseExpression(journalEntry.getColumnMapping());
-                        row = journalEntry.getRow();
-                        isFound = (Boolean)sqljep.getValue(row);
-                    } else {
-                        isFound = true;
-                    }
-                } else {
+            if (whereClause.hasClause()) {
+                if (whereClause.hasSpecificFields() && tableDoesNotMatch(whereClause, journalEntry)) {
+                    // Always not found, when the where clause includes record
+                    // specific fields and the table does not match.
                     isFound = false;
+                } else {
+                    // Compare JO* and record specific fields
+                    sqljep = new RowJEP(whereClause.getClause());
+                    sqljep.parseExpression(journalEntry.getColumnMapping());
+                    row = journalEntry.getRow();
+                    isFound = (Boolean)sqljep.getValue(row);
                 }
             } else {
                 // Compare only JO* fields.
@@ -95,6 +93,15 @@ public class JournalEntries implements JsonSerializable {
 
         // System.out.println("mSecs total: " + timeElapsed(startTime) +
         // ", FILTER-CLAUSE: " + whereClause);
+    }
+
+    private boolean tableDoesNotMatch(SQLWhereClause whereClause, JournalEntry journalEntry) {
+
+        if (!whereClause.getFile().equals(journalEntry.getObjectName()) || !whereClause.getLibrary().equals(journalEntry.getObjectLibrary())) {
+            return true;
+        }
+
+        return false;
     }
 
     private long timeElapsed(Date startTime) {
