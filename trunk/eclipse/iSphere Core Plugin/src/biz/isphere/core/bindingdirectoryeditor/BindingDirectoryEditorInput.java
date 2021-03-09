@@ -21,14 +21,12 @@ import com.ibm.as400.access.AS400;
 
 public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
-    private Connection jdbcConnection;
-    private String level;
+    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String aMode) {
+        super(as400, jdbcConnection, remoteObject, aMode, ISpherePlugin.IMAGE_BINDING_DIRECTORY);
+    }
 
-    public BindingDirectoryEditorInput(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String mode) {
-        super(as400, remoteObject, mode, ISpherePlugin.IMAGE_BINDING_DIRECTORY);
-
-        this.jdbcConnection = jdbcConnection;
-        this.level = ISpherePlugin.getDefault().getIBMiRelease(as400);
+    public BindingDirectoryEditorInput(String connectionName, RemoteObject remoteObject, String aMode) {
+        super(connectionName, remoteObject, aMode, ISpherePlugin.IMAGE_BINDING_DIRECTORY);
     }
 
     public boolean exists() {
@@ -50,14 +48,6 @@ public class BindingDirectoryEditorInput extends AbstractObjectEditorInput {
 
     public String getBindingDirectory() {
         return super.getObjectName();
-    }
-
-    public Connection getJdbcConnection() {
-        return jdbcConnection;
-    }
-
-    public String getLevel() {
-        return level;
     }
 
 }
