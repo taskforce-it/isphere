@@ -20,6 +20,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
+import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
@@ -79,14 +81,28 @@ public class BindingDirectoryEditor extends EditorPart {
         return false;
     }
 
+    @CMOne(info = "This method is used by CMOne")
     public static void openEditor(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String mode) {
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
+            try {
+    
+                BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, remoteObject, mode);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
+    
+            } catch (PartInitException e) {
+            }
+        }
+    }
+ 
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) {
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
+            try {
 
-        try {
+                BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(connectionName, remoteObject, mode);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
 
-            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, remoteObject, mode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
-
-        } catch (PartInitException e) {
+            } catch (PartInitException e) {
+            }
         }
     }
     

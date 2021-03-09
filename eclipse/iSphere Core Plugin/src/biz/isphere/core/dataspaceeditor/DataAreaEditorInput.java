@@ -20,7 +20,7 @@ import com.ibm.as400.access.AS400;
 public class DataAreaEditorInput extends AbstractObjectEditorInput {
 
     public DataAreaEditorInput(AS400 anAS400, RemoteObject remoteObject, String aMode) {
-        super(anAS400, remoteObject, aMode, ISpherePlugin.IMAGE_DATA_AREA);
+        super(anAS400, null, remoteObject, aMode, ISpherePlugin.IMAGE_DATA_AREA);
     }
 
     public boolean exists() {
