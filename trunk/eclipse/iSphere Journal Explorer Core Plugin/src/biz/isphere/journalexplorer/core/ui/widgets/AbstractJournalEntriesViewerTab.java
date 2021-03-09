@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,14 +130,12 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     private ContentAssistProposal[] getContentAssistProposals() {
 
-        StructuredSelection selection = (StructuredSelection)tableViewer.getSelection();
-        if (selection.size() == 1) {
-            JournalEntry journalEntry = (JournalEntry)selection.getFirstElement();
-            ContentAssistProposal[] contentAssistProposals = journalEntry.getContentAssistProposals();
-            return contentAssistProposals;
+        if (hasTableName()) {
+            // TODO: get content assist proposals
+            return JournalEntry.getBasicContentAssistProposals();
+        } else {
+            return JournalEntry.getBasicContentAssistProposals();
         }
-
-        return JournalEntry.getBasicContentAssistProposals();
     }
 
     private void createSqlEditor() {
@@ -149,42 +147,19 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditorPanel.setLayout(ly_sqlEditorPanel);
             sqlEditorPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-            Label labelTableName = new Label(sqlEditorPanel, SWT.NONE);
-            labelTableName.setText(Messages.JournalEntryView_Label_TableName);
-            labelTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
+            sqlEditor = new SqlEditor(sqlEditorPanel, getClass().getSimpleName(), getDialogSettingsManager(), SWT.NONE) {
+                protected void createContentArea(Composite parent) {
+                    setLayout(new GridLayout(3, false));
+                    createTableEditorPanel(parent);
+                    super.createContentArea(parent);
+                };
+            };
 
-            cboTableName = WidgetFactory.createUpperCaseCombo(sqlEditorPanel);
-            GridData gd_tableName = new GridData();
-            gd_tableName.widthHint = 200;
-            cboTableName.setLayoutData(gd_tableName);
-            cboTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
-            cboTableName.setItems(getTables());
-            cboTableName.select(0);
-            cboTableName.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                    // TODO: load content assist proposals from meta data cache
-                    sqlEditor.setContentAssistProposals(JournalEntry.getBasicContentAssistProposals());
-                }
-            });
-
-            Button btnClear = WidgetFactory.createPushButton(sqlEditorPanel);
-            btnClear.setText("X");
-            btnClear.setToolTipText(Messages.JournalEntryView_Tooltip_ClearTableName);
-            btnClear.setLayoutData(new GridData());
-            btnClear.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                    cboTableName.select(0);
-                }
-            });
-
-            WidgetFactory.createSeparator(sqlEditorPanel, 3);
-
-            sqlEditor = WidgetFactory.createSqlEditor(sqlEditorPanel, getClass().getSimpleName(), getDialogSettingsManager());
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
             sqlEditor.setWhereClause(getFilterClause().getClause());
             GridData gd_sqlEditor = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-            gd_sqlEditor.heightHint = 120;
+            gd_sqlEditor.heightHint = 160;
             gd_sqlEditor.horizontalSpan = ly_sqlEditorPanel.numColumns;
             sqlEditor.setLayoutData(gd_sqlEditor);
             getContainer().layout();
@@ -193,8 +168,68 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditor.setBtnExecuteToolTipText(Messages.ButtonTooltip_Filter);
             sqlEditor.addModifyListener(new SQLWhereClauseChangedListener());
 
+            if (hasTableName()) {
+                cboTableName.select(0);
+            } else {
+                cboTableName.setText(getFilterClause().getLibrary() + "/" + filterClause.getFile());
+            }
+
             cboTableName.addModifyListener(new SQLWhereClauseChangedListener());
         }
+    }
+
+    private boolean hasTableName() {
+        return StringHelper.isNullOrEmpty(getFilterClause().getFile()) || StringHelper.isNullOrEmpty(getFilterClause().getLibrary());
+    }
+
+    private void createTableEditorPanel(Composite parent) {
+
+        Composite wherePanel = new Composite(parent, SWT.NONE);
+        GridLayout wherePanelLayout = new GridLayout(1, false);
+        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
+        wherePanelLayout.marginHeight = 0;
+        wherePanelLayout.marginWidth = 0;
+        wherePanel.setLayout(wherePanelLayout);
+        wherePanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label labelTableName = new Label(wherePanel, SWT.NONE);
+        labelTableName.setText(Messages.JournalEntryView_Label_TableName);
+        labelTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
+
+        Composite editorPanel = new Composite(parent, SWT.NONE);
+        GridLayout editorPanelLayout = new GridLayout(2, false);
+        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
+        editorPanelLayout.marginHeight = 0;
+        editorPanelLayout.marginWidth = 0;
+        editorPanelLayout.verticalSpacing = -1;
+        editorPanel.setLayout(editorPanelLayout);
+        GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
+        gd_editorPanel.horizontalSpan = 2;
+        editorPanel.setLayoutData(gd_editorPanel);
+
+        cboTableName = WidgetFactory.createUpperCaseCombo(editorPanel);
+        GridData gd_tableName = new GridData();
+        gd_tableName.widthHint = 200;
+        cboTableName.setLayoutData(gd_tableName);
+        cboTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
+        cboTableName.setItems(getTables());
+        cboTableName.select(0);
+        cboTableName.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                // TODO: load content assist proposals from meta data cache
+                sqlEditor.setContentAssistProposals(JournalEntry.getBasicContentAssistProposals());
+            }
+        });
+
+        Button btnClear = WidgetFactory.createPushButton(editorPanel);
+        btnClear.setText("X"); // //$NON-NLS-1$
+        btnClear.setToolTipText(Messages.JournalEntryView_Tooltip_ClearTableName);
+        btnClear.setLayoutData(new GridData());
+        btnClear.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                cboTableName.select(0);
+            }
+        });
     }
 
     private void destroySqlEditor() {
