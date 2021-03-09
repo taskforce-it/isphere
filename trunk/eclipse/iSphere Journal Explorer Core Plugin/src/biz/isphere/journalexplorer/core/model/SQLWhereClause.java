@@ -15,6 +15,7 @@ public class SQLWhereClause {
     private String fileName;
     private String libraryName;
     private String whereClause;
+    private boolean hasSpecificFields;
 
     public SQLWhereClause() {
         this("");
@@ -29,26 +30,12 @@ public class SQLWhereClause {
     }
 
     public SQLWhereClause(String fileName, String libraryName, String whereClause) {
+
         this.fileName = fileName.trim();
         this.libraryName = libraryName.trim();
         this.whereClause = whereClause.trim();
-    }
 
-    public boolean isEmpty() {
-        return !hasTable() && StringHelper.isNullOrEmpty(whereClause);
-    }
-
-    public boolean hasTable() {
-
-        if (!StringHelper.isNullOrEmpty(fileName) && !StringHelper.isNullOrEmpty(libraryName)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean hasClause() {
-        return !StringHelper.isNullOrEmpty(whereClause);
+        this.hasSpecificFields = false;
     }
 
     public String getFile() {
@@ -61,5 +48,17 @@ public class SQLWhereClause {
 
     public String getClause() {
         return whereClause;
+    }
+
+    public boolean hasClause() {
+        return !StringHelper.isNullOrEmpty(whereClause);
+    }
+
+    public boolean hasSpecificFields() {
+        return hasSpecificFields;
+    }
+
+    public void setSpecificFields(boolean hasSpecificFields) {
+        this.hasSpecificFields = hasSpecificFields;
     }
 }

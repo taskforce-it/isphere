@@ -52,6 +52,7 @@ import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -255,32 +256,19 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     public void validateWhereClause(Shell shell, SQLWhereClause whereClause) throws SQLSyntaxErrorException {
 
-        if (whereClause == null || whereClause.isEmpty()) {
+        if (whereClause == null || !whereClause.hasClause()) {
             return;
         }
 
         try {
 
-            if (filterClause.isEmpty()) {
-                return;
-            }
+            HashMap<String, Integer> columnMapping = JournalEntry.getBasicColumnMapping();
+            RowJEP sqljep = new ValidationRowJEP(whereClause);
 
-            if (filterClause.hasClause()) {
-                HashMap<String, Integer> columnMapping = JournalEntry.getBasicColumnMapping();
-                RowJEP sqljep = new RowJEP(whereClause.getClause()) {
-                    // RowJEP, which ignores undefined fields
-                    @Override
-                    public Entry<String, Comparable<?>> getVariable(final String name) throws ParseException {
-                        Entry<String, Comparable<?>> variable = new NullValueVariable();
-                        return variable;
-                    }
-                };
+            sqljep.parseExpression(columnMapping);
+            sqljep.getValue(JournalEntry.getSampleRow());
 
-                sqljep.parseExpression(columnMapping);
-                sqljep.getValue(JournalEntry.getSampleRow());
-            }
-
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new SQLSyntaxErrorException(e);
         }
 
@@ -292,11 +280,11 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     private boolean hasWhereClause() {
 
-        if (filterClause != null && !filterClause.isEmpty()) {
+        if (filterClause != null && filterClause.hasClause()) {
             return true;
         }
 
-        if (selectClause != null && !selectClause.isEmpty()) {
+        if (selectClause != null && selectClause.hasClause()) {
             return true;
         }
 
@@ -635,5 +623,47 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
             setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
         }
+    }
+
+    // RowJEP, which ignores undefined fields
+    private class ValidationRowJEP extends RowJEP {
+
+        private SQLWhereClause whereClause;
+
+        public ValidationRowJEP(SQLWhereClause whereClause) {
+            super(whereClause.getClause());
+            this.whereClause = whereClause;
+        }
+
+        @Override
+        public Entry<String, Comparable<?>> getVariable(String name) throws ParseException {
+            Entry<String, Comparable<?>> variable = null;
+            if (name.startsWith("JO")) {
+                variable = super.getVariable(name); // JO*
+            } else if (!noTableSpecified()) {
+                variable = new NullValueVariable(name); // XY*/with table
+                whereClause.setSpecificFields(true);
+            }
+            return variable; // JO*
+        }
+
+        public int findColumn(String name) {
+            int result = super.findColumn(name);
+            if (result < 0) {
+                result = -1; // XY*/no table
+            }
+            return result;
+        }
+
+        @Override
+        public Comparable<?> getColumnObject(int index) throws ParseException {
+            return super.getColumnObject(index); // JO*
+        }
+
+        private boolean noTableSpecified() {
+            String library = whereClause.getLibrary();
+            String file = whereClause.getFile();
+            return StringHelper.isNullOrEmpty(library) || StringHelper.isNullOrEmpty(file);
+        };
     }
 }
