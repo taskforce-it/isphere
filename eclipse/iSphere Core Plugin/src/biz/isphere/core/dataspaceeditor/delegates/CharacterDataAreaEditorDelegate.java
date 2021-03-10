@@ -220,7 +220,7 @@ public class CharacterDataAreaEditorDelegate extends AbstractDataSpaceEditorDele
      */
     @Override
     public void setEnabled(boolean isEnabled) {
-        dataAreaText.setEditable(isEnabled);
+        dataAreaText.setEnabled(isEnabled);
     }
 
     /**
