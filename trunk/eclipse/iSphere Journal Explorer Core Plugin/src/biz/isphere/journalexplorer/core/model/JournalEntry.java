@@ -36,6 +36,11 @@ import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnCont
 import com.google.gson.annotations.Expose;
 import com.ibm.as400.access.AS400Text;
 
+/**
+ * Class to store the properties of a journal entry as received from a journal
+ * or a journal output file. Journal entries the children of a
+ * {@link JournalEntries} and can be serialized in Json format.
+ */
 public class JournalEntry {
 
     private static final String ADDRESS_FAMILY_UNKNOWN = "0";
@@ -351,6 +356,7 @@ public class JournalEntry {
      */
     public JournalEntry(OutputFile outputFile) {
 
+        // Serialised values
         if (outputFile != null) {
             this.connectionName = outputFile.getConnectionName();
             this.outputFileName = outputFile.getFileName();

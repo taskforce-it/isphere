@@ -15,11 +15,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryAppearanceAttributes;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
+/**
+ * Properties (= fields) of a journal entry, which can be displayed in a journal
+ * entry details (tree) viewer. Field are stored in a {@link JournalProperty}.
+ * Entry specific fields are grouped in a {@link JOESDProperty}.
+ * 
+ * <pre>
+ * JournalProperties
+ *    |
+ *    +-- JournalPropery[]
+ *    |
+ *    +-- JOESDProperty 
+ *           |
+ *           +-- JournalPropery[]
+ * </pre>
+ * 
+ * <i>Journal properties is</i> is a transient attribute of {@link JournalEntry}
+ * .<br>
+ * Classes {@link JournalProperties}, {@link JournalProperty} and
+ * {@link JOESDProperty} are the GUI representation of {@link JournalEntries}
+ * and {@link JournalEntry}, which build the data model.
+ */
 public class JournalProperties {
 
     private final JournalEntry journalEntry;
@@ -47,6 +69,7 @@ public class JournalProperties {
         addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOENTT, journalEntry.getEntryType(), journalEntry));
         addProperty(journalProperties, new JournalProperty(JournalEntryColumnUI.JOCTRR, journalEntry.getCountRrn(), journalEntry));
 
+        // Properties of the entry specific data.
         this.joesdProperty = new JOESDProperty(JournalEntryColumnUI.JOESD, journalEntry, journalEntry);
         addProperty(journalProperties, joesdProperty);
 

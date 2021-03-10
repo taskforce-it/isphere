@@ -16,10 +16,27 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.core.json.JsonSerializable;
+import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
+import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 
 import com.google.gson.annotations.Expose;
 
+/**
+ * Class to hold the {@link JournalEntry} as received from a journal or a
+ * journal output file. A journal entry can be serialized in Json format.
+ * 
+ * <pre>
+ * JournalEntries
+ *    |
+ *    +-- JournalEntry[]
+ * </pre>
+ * 
+ * Classes {@link JournalEntries} and {@link JournalEntry} are the data model,
+ * whereas {@link JournalProperties}, {@link JournalProperty} and
+ * {@link JOESDProperty} build the GUI model.
+ */
 public class JournalEntries implements JsonSerializable {
 
     @Expose(serialize = true, deserialize = true)
