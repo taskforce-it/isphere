@@ -48,6 +48,12 @@
             class="biz.isphere.core.moduleviewer.ModuleViewEditor"
             id="biz.isphere.core.moduleviewer.ModuleViewEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"/>
+      <editor
+            name=""
+            icon="icons/data_area.gif"
+            class="biz.isphere.core.dataareaeditor.DataAreaEditor"
+            contributorClass="biz.isphere.core.dataareaeditor.DataAreaEditorActionBarContributor"
+            id="biz.isphere.core.dataareaeditor.DataAreaEditor"/>
    </extension>
       	
       	<!--

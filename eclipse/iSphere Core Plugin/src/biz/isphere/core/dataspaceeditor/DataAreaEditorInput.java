@@ -23,6 +23,10 @@ public class DataAreaEditorInput extends AbstractObjectEditorInput {
         super(anAS400, null, remoteObject, aMode, ISpherePlugin.IMAGE_DATA_AREA);
     }
 
+    public DataAreaEditorInput(String connectionName, RemoteObject remoteObject, String aMode) {
+        super(connectionName, remoteObject, aMode, ISpherePlugin.IMAGE_DATA_AREA);
+    }
+
     public boolean exists() {
         return false;
     }

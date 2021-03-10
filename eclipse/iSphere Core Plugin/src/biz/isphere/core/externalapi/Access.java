@@ -1,6 +1,7 @@
 package biz.isphere.core.externalapi;
 
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.dataareaeditor.DataAreaEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
@@ -59,6 +60,35 @@ public class Access {
         }
         
         BindingDirectoryEditor.openEditor(
+            connection, 
+            remoteObject,
+            mode);
+        
+    }
+
+    public static void openDataAreaEditor(
+        String connection, 
+        String library, 
+        String dataArea,
+        boolean readOnly) {
+        
+        RemoteObject remoteObject = 
+            new RemoteObject(
+                connection, 
+                dataArea, 
+                library, 
+                ISeries.DTAARA, 
+                "");
+
+        String mode;
+        if (readOnly) {
+            mode = "*DISPLAY";
+        }
+        else {
+            mode = "*EDIT";
+        }
+        
+        DataAreaEditor.openEditor(
             connection, 
             remoteObject,
             mode);
