@@ -323,7 +323,7 @@ public class JournalEntry {
     private byte[] nullIndicators; // JONVI
 
     // Transient values, set on demand
-    private OutputFile outputFile;
+    private transient OutputFile outputFile;
     private transient String qualifiedObjectName;
     private transient String stringSpecificDataForUI;
 
@@ -336,9 +336,9 @@ public class JournalEntry {
     private transient SimpleDateFormat timestampFormatter;
     private transient Calendar calendar;
 
-    private JOESDProperty joesdProperty;
-    private HashMap<String, Integer> fullColumnMapping;
-    private JournalProperties journalProperties;
+    private transient JOESDProperty joesdProperty;
+    private transient HashMap<String, Integer> fullColumnMapping;
+    private transient JournalProperties journalProperties;
 
     /**
      * Produces a new JournalEntry object. This constructor is used by the Json
