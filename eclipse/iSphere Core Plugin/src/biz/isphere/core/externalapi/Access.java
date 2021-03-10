@@ -1,7 +1,17 @@
 package biz.isphere.core.externalapi;
 
+import java.io.IOException;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.ErrorCompletingRequestException;
+import com.ibm.as400.access.ObjectDescription;
+import com.ibm.as400.access.ObjectDoesNotExistException;
+
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
@@ -9,19 +19,10 @@ import biz.isphere.core.messagefileeditor.MessageFileEditor;
 
 public class Access {
 
-    public static void openMessageFileEditor(
-        String connection, 
-        String library, 
-        String messageFile,
-        boolean readOnly) {
+    public static void openMessageFileEditor(String connection, String library, String messageFile, boolean readOnly) {
         
-        RemoteObject remoteObject = 
-            new RemoteObject(
-                connection, 
-                messageFile, 
-                library, 
-                ISeries.MSGF, 
-                "");
+        RemoteObject remoteObject = new RemoteObject(connection, messageFile, library, ISeries.MSGF, 
+            getObjectDescription(connection, library, messageFile, ISeries.MSGF));
 
         String mode;
         if (readOnly) {
@@ -31,26 +32,14 @@ public class Access {
             mode = "*EDIT";
         }
         
-        MessageFileEditor.openEditor(
-            connection, 
-            remoteObject,
-            mode);
+        MessageFileEditor.openEditor(connection, remoteObject, mode);
         
     }
 
-    public static void openBindingDirectoryEditor(
-        String connection, 
-        String library, 
-        String bindingDirectory,
-        boolean readOnly) {
+    public static void openBindingDirectoryEditor(String connection, String library, String bindingDirectory, boolean readOnly) {
         
-        RemoteObject remoteObject = 
-            new RemoteObject(
-                connection, 
-                bindingDirectory, 
-                library, 
-                ISeries.BNDDIR, 
-                "");
+        RemoteObject remoteObject = new RemoteObject(connection, bindingDirectory, library, ISeries.BNDDIR, 
+            getObjectDescription(connection, library, bindingDirectory, ISeries.BNDDIR));
 
         String mode;
         if (readOnly) {
@@ -60,26 +49,14 @@ public class Access {
             mode = "*EDIT";
         }
         
-        BindingDirectoryEditor.openEditor(
-            connection, 
-            remoteObject,
-            mode);
+        BindingDirectoryEditor.openEditor(connection, remoteObject, mode);
         
     }
 
-    public static void openDataAreaEditor(
-        String connection, 
-        String library, 
-        String dataArea,
-        boolean readOnly) {
+    public static void openDataAreaEditor(String connection, String library, String dataArea, boolean readOnly) {
         
-        RemoteObject remoteObject = 
-            new RemoteObject(
-                connection, 
-                dataArea, 
-                library, 
-                ISeries.DTAARA, 
-                "");
+        RemoteObject remoteObject = new RemoteObject(connection, dataArea, library, ISeries.DTAARA, 
+            getObjectDescription(connection, library, dataArea, ISeries.DTAARA));
 
         String mode;
         if (readOnly) {
@@ -89,11 +66,34 @@ public class Access {
             mode = IEditor.EDIT;
         }
         
-        DataAreaEditor.openEditor(
-            connection, 
-            remoteObject,
-            mode);
+        DataAreaEditor.openEditor(connection, remoteObject, mode);
         
+    }
+
+    private static String getObjectDescription(String connection, String library, String object, String objectType) {
+
+        String description = "";
+        
+        String _objectType = objectType.substring(1);
+        
+        AS400 system = IBMiHostContributionsHandler.getSystem(connection);
+        if (system != null) {
+            ObjectDescription objectDescription = new ObjectDescription(system, library, object, _objectType);
+            if (objectDescription != null) {
+                try {
+                    description = objectDescription.getValueAsString(ObjectDescription.TEXT_DESCRIPTION);
+                } catch (AS400Exception e) {
+                    e.printStackTrace();
+                } catch (AS400SecurityException e) {
+                } catch (ErrorCompletingRequestException e) {
+                } catch (InterruptedException e) {
+                } catch (IOException e) {
+                } catch (ObjectDoesNotExistException e) {
+                }
+            }
+        }
+        
+        return description;
     }
     
 }
