@@ -43,6 +43,7 @@ import biz.isphere.core.dataspaceeditor.delegates.LogicalDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditor.delegates.UnsupportedDataAreaEditorDelegate;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ObjectLock;
 import biz.isphere.core.internal.ObjectLockManager;
@@ -60,6 +61,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
     private DataSpaceEditorRepository repository;
     private ObjectLockManager objectLockManager;
     private ObjectLock objectLock;
+    private String mode;
     private StatusLine statusLine;
 
     public AbstractDataSpaceEditor() {
@@ -95,7 +97,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         String type = "";
         String length = "0"; //$NON-NLS-1$
         String text = "";
-        if (objectLock != null) {
+        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
             type = getWrappedDataArea().getDataType();
             length = getWrappedDataArea().getLengthAsText();
             text = getWrappedDataArea().getText();
@@ -106,16 +108,22 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         createHeadline(header, Messages.Text_colon, text);
 
         editorDelegate = createEditorDelegate();
-        if (objectLock != null) {
+        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
             editorDelegate.createPartControl(editorParent);
         }
 
         registerDelegateActions();
 
-        if (objectLock == null) {
-            editorDelegate.setEnabled(false);
-            editorDelegate.setStatusMessage(getObjectLockMessage(null));
+        if (mode.equals(IEditor.EDIT)) {
+            if (objectLock == null) {
+                editorDelegate.setEnabled(false);
+                editorDelegate.setStatusMessage(getObjectLockMessage(null));
+            }
         }
+        else if (mode.equals(IEditor.BROWSE)) {
+            editorDelegate.setEnabled(false);
+        }
+
     }
 
     private void createHeadline(Composite aHeader, String aLabel, String aValue) {
@@ -160,17 +168,19 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         setTitleImage(((AbstractObjectEditorInput)anInput).getTitleImage());
 
         AbstractObjectEditorInput input = (AbstractObjectEditorInput)anInput;
+
+        mode = input.getMode();
+        
         try {
 
-            objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
-            if (objectLock == null) {
-                // mode = IEditor.BROWSE;
-                MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
-            } else {
-                // mode = input.getMode();
+            if (mode.equals(IEditor.EDIT)) {
+                objectLock = objectLockManager.setExclusiveAllowReadLock(input.getRemoteObject());
+                if (objectLock == null) {
+                    MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
+                }
             }
-
-            if (objectLock != null) {
+            
+            if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
                 wrappedDataArea = createDataSpaceWrapper(input.getRemoteObject());
             } else {
                 wrappedDataArea = null;

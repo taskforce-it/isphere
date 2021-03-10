@@ -2,6 +2,7 @@ package biz.isphere.core.externalapi;
 
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
@@ -82,10 +83,10 @@ public class Access {
 
         String mode;
         if (readOnly) {
-            mode = "*DISPLAY";
+            mode = IEditor.BROWSE;
         }
         else {
-            mode = "*EDIT";
+            mode = IEditor.EDIT;
         }
         
         DataAreaEditor.openEditor(

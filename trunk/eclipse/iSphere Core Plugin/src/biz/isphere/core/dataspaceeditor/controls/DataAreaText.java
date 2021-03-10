@@ -88,8 +88,8 @@ public class DataAreaText {
         statusChangedListeners.removeElement(listener);
     }
 
-    public void setEditable(boolean isEditable) {
-        textControl.setEditable(isEditable);
+    public void setEnabled(boolean isEnabled) {
+        textControl.setEnabled(isEnabled);
     }
 
     public void setFont(Font aFont) {
