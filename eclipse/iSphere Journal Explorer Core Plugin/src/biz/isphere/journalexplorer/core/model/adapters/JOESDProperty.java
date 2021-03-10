@@ -26,6 +26,10 @@ import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnCont
 
 import com.ibm.as400.access.Record;
 
+/**
+ * The JOESDProperty groups the entry specific fields of a {@link JournalEntry}.
+ * It is a child of {@link JournalProperties}.
+ */
 public class JOESDProperty extends JournalProperty {
 
     private JournalEntry journalEntry;

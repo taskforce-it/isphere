@@ -11,8 +11,14 @@
 
 package biz.isphere.journalexplorer.core.model.adapters;
 
+import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
 
+/**
+ * Journal entry property, which contains the name and the value of a field of a
+ * {@link JournalEntry}. That field could be a JO* field or an entry specific
+ * field. Entry specific fields are grouped by a {@link JOESDProperty}.
+ */
 public class JournalProperty implements Comparable<JournalProperty> {
 
     public String name;
