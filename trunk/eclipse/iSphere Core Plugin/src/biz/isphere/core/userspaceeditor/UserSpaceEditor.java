@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.userspaceeditor;
+package biz.isphere.core.userspaceeditor;
 
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -17,13 +17,13 @@ import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.UserSpaceEditorInput;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
+import biz.isphere.core.dataspace.WrappedDataSpace;
 
 import com.ibm.as400.access.AS400;
 
 public class UserSpaceEditor extends AbstractDataSpaceEditor {
 
-    public static final String ID = "biz.isphere.rse.userspaceeditor.UserSpaceEditor"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.core.userspaceeditor.UserSpaceEditor"; //$NON-NLS-1$
 
     @Override
     protected AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception {

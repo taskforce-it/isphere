@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.rse.userspaceeditor.UserSpaceEditor;
+import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
