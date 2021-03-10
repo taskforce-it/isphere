@@ -41,19 +41,16 @@ public class JournalEntries implements JsonSerializable {
 
     @Expose(serialize = true, deserialize = true)
     private List<JournalEntry> journalEntries;
-
     @Expose(serialize = true, deserialize = true)
     private boolean isOverflow;
-
     @Expose(serialize = true, deserialize = true)
     private int numAvailableRows;
-
     @Expose(serialize = true, deserialize = true)
     private List<IBMiMessage> messages;
-
     @Expose(serialize = true, deserialize = true)
     private boolean isCanceled;
 
+    // Transient values
     private transient List<JournalEntry> filteredJournalEntries;
 
     public JournalEntries() {
@@ -63,9 +60,11 @@ public class JournalEntries implements JsonSerializable {
     public JournalEntries(int initialCapacity) {
 
         this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
-        this.filteredJournalEntries = null;
         this.isOverflow = false;
         this.numAvailableRows = -1;
+
+        // Transient values
+        this.filteredJournalEntries = null;
     }
 
     public void applyFilter(SQLWhereClause whereClause) throws ParseException {
