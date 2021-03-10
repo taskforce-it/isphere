@@ -23,6 +23,10 @@ public class UserSpaceEditorInput extends AbstractObjectEditorInput {
         super(anAS400, null, remoteObject, aMode, ISpherePlugin.IMAGE_USER_SPACE);
     }
 
+    public UserSpaceEditorInput(String connectionName, RemoteObject remoteObject, String aMode) {
+        super(connectionName, remoteObject, aMode, ISpherePlugin.IMAGE_USER_SPACE);
+    }
+
     public boolean exists() {
         return false;
     }

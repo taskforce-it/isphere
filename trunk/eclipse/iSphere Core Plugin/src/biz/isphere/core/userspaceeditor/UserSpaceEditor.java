@@ -12,10 +12,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.UserSpaceEditorInput;
-import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.dataspace.WrappedDataSpace;
 
@@ -30,25 +31,30 @@ public class UserSpaceEditor extends AbstractDataSpaceEditor {
         return new WrappedDataSpace(remoteObject);
     }
 
-    /**
-     * Opens the data area editor for a given data area.
-     * 
-     * @param anAS400 - system that hosts the data area.
-     * @param aConnection - connection used to access the system.
-     * @param aLibrary - library that contains the data area
-     * @param aDataArea - the data area
-     * @param aMode - mode, the editor is opened for. The only allowed value is
-     *        {@link IEditor#EDIT}
-     */
+    @CMOne(info = "This method is used by CMOne")
     public static void openEditor(AS400 anAS400, RemoteObject remoteObject, String aMode) {
-
-        try {
-
-            UserSpaceEditorInput editorInput = new UserSpaceEditorInput(anAS400, remoteObject, aMode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, UserSpaceEditor.ID);
-
-        } catch (PartInitException e) {
-            ISpherePlugin.logError("Failed to open user space editor", e); //$NON-NLS-1$
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), anAS400)) {
+            try {
+    
+                UserSpaceEditorInput editorInput = new UserSpaceEditorInput(anAS400, remoteObject, aMode);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, UserSpaceEditor.ID);
+    
+            } catch (PartInitException e) {
+                ISpherePlugin.logError("Failed to open user space editor", e); //$NON-NLS-1$
+            }
         }
     }
+    
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String aMode) {
+        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
+            try {
+
+                UserSpaceEditorInput editorInput = new UserSpaceEditorInput(connectionName, remoteObject, aMode);
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, UserSpaceEditor.ID);
+
+            } catch (PartInitException e) {
+            }
+        }
+    }
+    
 }

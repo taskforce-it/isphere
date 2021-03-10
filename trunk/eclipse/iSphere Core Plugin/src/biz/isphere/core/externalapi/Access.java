@@ -16,6 +16,7 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
 public class Access {
 
@@ -67,6 +68,23 @@ public class Access {
         }
         
         DataAreaEditor.openEditor(connection, remoteObject, mode);
+        
+    }
+
+    public static void openUserSpaceEditor(String connection, String library, String userSpace, boolean readOnly) {
+        
+        RemoteObject remoteObject = new RemoteObject(connection, userSpace, library, ISeries.USRSPC, 
+            getObjectDescription(connection, library, userSpace, ISeries.USRSPC));
+
+        String mode;
+        if (readOnly) {
+            mode = IEditor.BROWSE;
+        }
+        else {
+            mode = IEditor.EDIT;
+        }
+        
+        UserSpaceEditor.openEditor(connection, remoteObject, mode);
         
     }
 
