@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.userspaceeditor;
+package biz.isphere.core.userspaceeditor;
 
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditorActionBarContributor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
