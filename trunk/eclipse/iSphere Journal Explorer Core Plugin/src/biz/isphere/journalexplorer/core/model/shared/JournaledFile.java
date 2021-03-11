@@ -28,7 +28,7 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
         return memberName;
     }
 
-    public String getQualifiedName() {
+    public synchronized String getQualifiedName() {
 
         if (qualifiedName == null) {
 

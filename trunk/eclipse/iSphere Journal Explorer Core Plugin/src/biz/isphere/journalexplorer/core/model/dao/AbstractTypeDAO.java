@@ -79,16 +79,24 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
                 JournalEntry journalEntry = null;
 
-                while (resultSet.next() && !isCanceled(monitor, journalEntries)) {
+                int id = 0;
 
-                    monitor.worked(1);
+                while (resultSet.next() && !isCanceled(monitor, journalEntries)) {
 
                     if (journalEntries.getNumberOfRowsDownloaded() >= maxNumRows) {
                         handleOverflowError(journalEntries, numRowsAvailable);
                         break;
                     } else {
+
+                        id++;
+
                         journalEntry = new JournalEntry(outputFile);
                         journalEntries.add(populateJournalEntry(resultSet, journalEntry));
+
+                        if (id % 50 == 0) {
+                            monitor.worked(50);
+                            monitor.setTaskName(Messages.Loading_entries + "(" + id + ")");
+                        }
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.getInstance().prepareMetaData(journalEntry);
@@ -260,6 +268,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
         journalEntry.setSequenceNumber(resultSet.getBigDecimal(ColumnsDAO.JOSEQN.name()).toBigIntegerExact());
         journalEntry.setSpecificData(resultSet.getBytes(ColumnsDAO.JOESD.name()));
         journalEntry.setStringSpecificData(resultSet.getString(ColumnsDAO.JOESD.name()));
+        journalEntry.preload();
 
         return journalEntry;
     }

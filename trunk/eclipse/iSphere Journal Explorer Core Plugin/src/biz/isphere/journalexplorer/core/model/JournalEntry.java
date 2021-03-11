@@ -326,6 +326,7 @@ public class JournalEntry {
     // Transient values, set on demand
     private transient OutputFile outputFile;
     private transient String qualifiedObjectName;
+    private transient JournaledFile journaledFile;
     private transient String stringSpecificDataForUI;
 
     // Transient values
@@ -367,6 +368,7 @@ public class JournalEntry {
 
         // Transient values, set on demand
         this.qualifiedObjectName = null;
+        this.journaledFile = null;
         this.stringSpecificDataForUI = null;
 
         // Transient values
@@ -1689,7 +1691,7 @@ public class JournalEntry {
         return nestedCommitLevelFormatter.format(longValue);
     }
 
-    public String getQualifiedObjectName() {
+    public synchronized String getQualifiedObjectName() {
 
         if (qualifiedObjectName == null) {
 
@@ -1762,6 +1764,26 @@ public class JournalEntry {
     }
 
     public JournaledFile getJournaledFile() {
-        return new JournaledFile(connectionName, objectLibrary, objectName, memberName);
+
+        if (journaledFile == null) {
+            journaledFile = new JournaledFile(connectionName, objectLibrary, objectName, memberName);
+        }
+
+        return journaledFile;
+    }
+
+    public void preload() {
+
+        new Thread("") {
+
+            MetaDataCache cache = MetaDataCache.getInstance();
+
+            public void run() {
+                // Preload qualified names
+                getQualifiedObjectName();
+                getJournaledFile().getQualifiedName();
+                getJournaledFile().getQualifiedJournalName();
+            };
+        }.start();
     }
 }

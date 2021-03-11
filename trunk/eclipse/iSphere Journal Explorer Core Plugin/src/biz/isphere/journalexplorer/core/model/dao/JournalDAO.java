@@ -87,7 +87,7 @@ public class JournalDAO {
             } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize) && !isCanceled(monitor, journalEntries));
 
             if (rjne0200 != null) {
-                monitor.setTaskName(Messages.Loading_entries);
+                monitor.setTaskName(Messages.Status_Loading_journal_entries);
                 if (rjne0200.moreEntriesAvailable() && rjne0200.getNbrOfEntriesRetrieved() == 0) {
                     messages = new LinkedList<IBMiMessage>();
                     messages.add(new IBMiMessage(BufferTooSmallException.ID,
@@ -101,6 +101,10 @@ public class JournalDAO {
 
                         JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
                         journalEntries.add(populatedJournalEntry);
+
+                        if (id % 50 == 0) {
+                            monitor.setTaskName(Messages.Loading_entries + "(" + id + ")");
+                        }
 
                         if (journalEntry.isRecordEntryType()) {
                             MetaDataCache.getInstance().prepareMetaData(journalEntry);
@@ -227,6 +231,8 @@ public class JournalDAO {
         journalEntry.setObjectType(journalEntryData.getObjectType());
         journalEntry.setFileTypeIndicator(journalEntryData.getFileTypeIndicator());
         journalEntry.setNestedCommitLevel(journalEntryData.getNestedCommitLevel());
+
+        journalEntry.preload();
 
         return journalEntry;
     }

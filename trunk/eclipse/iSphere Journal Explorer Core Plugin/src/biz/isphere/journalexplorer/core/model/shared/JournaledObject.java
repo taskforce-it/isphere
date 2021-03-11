@@ -22,6 +22,9 @@ public class JournaledObject {
     private boolean isJournaled;
     private Journal journal;
 
+    private String qualifiedJournalName;
+    private String qualifiedObjectName;
+
     public JournaledObject(String connectionName, String libraryName, String objectName, String objectType) {
         this(connectionName, new QSYSObjectPathName(libraryName, objectName, getObjectType(objectType)));
     }
@@ -87,12 +90,22 @@ public class JournaledObject {
         return journal;
     }
 
-    public String getQualifiedJournalName() {
-        return QualifiedName.getName(connectionName, getJournal().getLibrary(), getJournal().getName());
+    public synchronized String getQualifiedJournalName() {
+
+        if (qualifiedJournalName == null) {
+            qualifiedJournalName = QualifiedName.getName(connectionName, getJournal().getLibrary(), getJournal().getName());
+        }
+
+        return qualifiedJournalName;
     }
 
-    public String getQualifiedName() {
-        return QualifiedName.getName(connectionName, objectDescription.getLibrary(), objectDescription.getName());
+    public synchronized String getQualifiedName() {
+
+        if (qualifiedObjectName == null) {
+            qualifiedObjectName = QualifiedName.getName(connectionName, objectDescription.getLibrary(), objectDescription.getName());
+        }
+
+        return qualifiedObjectName;
     }
 
     @Override
