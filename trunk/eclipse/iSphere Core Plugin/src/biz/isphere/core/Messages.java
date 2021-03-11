@@ -1632,6 +1632,12 @@ public class Messages extends NLS {
 
     public static String Tooltip_SqlEditor_Text;
 
+    public static String SqlEditor_TableName;
+
+    public static String SqlEditor_TableName_Tooltip;
+
+    public static String SqlEditor_ClearTableName_Tooltip;
+
     public static String Opens_the_IBM_regular_expressions_help_page;
 
     public static String Operation_has_been_canceled_by_the_user;

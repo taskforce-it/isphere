@@ -853,7 +853,22 @@ public final class WidgetFactory {
      * @return editor for editing SQL where clauses
      */
     public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager) {
-        return createSqlEditor(parent, historyKey, dialogSettingsManager, SWT.NONE);
+        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, false, SWT.NONE);
+    }
+
+    /**
+     * Produces a SqlEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param historyKey the history key used for storing the history values
+     * @param dialogSettingsManager the dialog settings manager used for storing
+     *        history values
+     * @param showTableControl show table name control
+     * @return editor for editing SQL where clauses
+     */
+    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, boolean showTableControl) {
+        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, showTableControl, SWT.NONE);
     }
 
     /**
@@ -868,7 +883,24 @@ public final class WidgetFactory {
      * @return editor for editing SQL where clauses
      */
     public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
-        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, style);
+        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, false, style);
+    }
+
+    /**
+     * Produces a SqlEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param historyKey the history key used for storing the history values
+     * @param dialogSettingsManager the dialog settings manager used for storing
+     *        history values
+     * @param showTableControl show table name control
+     * @param style the style of control to construct
+     * @return editor for editing SQL where clauses
+     */
+    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager,
+        boolean showTableControl, int style) {
+        return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, showTableControl, style);
     }
 
     /*
@@ -1030,8 +1062,9 @@ public final class WidgetFactory {
         return new StringListEditor(parent, style);
     }
 
-    private SqlEditor produceSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
-        return new SqlEditor(parent, historyKey, dialogSettingsManager, style);
+    private SqlEditor produceSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, boolean showTableControl,
+        int style) {
+        return new SqlEditor(parent, historyKey, dialogSettingsManager, showTableControl, style);
     }
 
     private Control produceLineFiller(Composite parent, int height) {

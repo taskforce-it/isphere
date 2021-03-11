@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.Messages;
@@ -53,6 +52,7 @@ public class SqlEditor extends Composite {
     private Label helpItem;
     private HistoryCombo cboHistory;
     private SelectionListener selectionListener;
+    private Combo cboTableName;
 
     private boolean isButtonAddVisible;
     private boolean isButtonClearVisible;
@@ -60,10 +60,15 @@ public class SqlEditor extends Composite {
 
     private String historyKey;
     private DialogSettingsManager dialogSettings;
+    private boolean showTableControl;
 
     private List<SelectionListener> btnExecuteSelectionListeners;
 
     public SqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, int style) {
+        this(parent, historyKey, dialogSettingsManager, false, style);
+    }
+
+    public SqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, boolean showTableControl, int style) {
         super(parent, style);
 
         if (!isStyle(style, BUTTON_NONE)) {
@@ -80,14 +85,19 @@ public class SqlEditor extends Composite {
 
         this.historyKey = historyKey;
         this.dialogSettings = dialogSettingsManager;
+        this.showTableControl = showTableControl;
 
         this.btnExecuteSelectionListeners = new LinkedList<SelectionListener>();
 
-        setLayout(createLayout());
+        this.setLayout(createLayout());
+
         createContentArea(this);
     }
 
     public void addModifyListener(ModifyListener listener) {
+        if (showTableControl) {
+            cboTableName.addModifyListener(listener);
+        }
         textSqlEditor.addModifyListener(listener);
     }
 
@@ -108,6 +118,33 @@ public class SqlEditor extends Composite {
     public boolean setFocus() {
 
         return textSqlEditor.setFocus();
+    }
+
+    public String getTableName() {
+
+        if (showTableControl) {
+            return cboTableName.getText();
+        } else {
+            return null;
+        }
+    }
+
+    public void setTableName(String name) {
+        if (showTableControl) {
+            cboTableName.setText(name);
+        }
+    }
+
+    public void setTableNameItems(String[] items) {
+        if (showTableControl) {
+            cboTableName.setItems(items);
+        }
+    }
+
+    public void selectTableName(int index) {
+        if (showTableControl) {
+            cboTableName.select(index);
+        }
     }
 
     public void setWhereClause(String whereClause) {
@@ -161,25 +198,25 @@ public class SqlEditor extends Composite {
         return false;
     }
 
-    protected Layout createLayout() {
-        Layout layout = new GridLayout(3, false);
+    protected GridLayout createLayout() {
+        GridLayout layout = new GridLayout(3, false);
         return layout;
     }
 
     protected void createContentArea(Composite parent) {
 
-        int horizontalSpan = ((GridLayout)getLayout()).numColumns - 1;
+        if (showTableControl) {
+            createTableEditorControl(parent);
+        }
+
+        int numColumns = ((GridLayout)getLayout()).numColumns;
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
-        GridLayout wherePanelLayout = new GridLayout(horizontalSpan, false);
-        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
-        wherePanelLayout.marginHeight = 0;
-        wherePanelLayout.marginWidth = 0;
-        wherePanel.setLayout(wherePanelLayout);
-        wherePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+        wherePanel.setLayout(createLayout(2, SWT.DEFAULT, 0, SWT.DEFAULT));
+        wherePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         labelHistory = new Label(wherePanel, SWT.NONE);
-        labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, horizontalSpan, 1));
+        labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
         labelHistory.setText(Messages.SqlEditor_History);
         labelHistory.setToolTipText(Messages.SqlEditor_History_Tooltip);
 
@@ -190,11 +227,11 @@ public class SqlEditor extends Composite {
 
         helpItem = DisplaySQLHelpListener.createLabel(wherePanel);
 
-        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, horizontalSpan, 1));
+        new Label(wherePanel, SWT.NONE).setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
         btnAddField = WidgetFactory.createPushButton(wherePanel, Messages.ButtonLabel_AddField);
         btnAddField.setToolTipText(Messages.ButtonTooltip_AddField);
-        btnAddField.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, horizontalSpan, 1));
+        btnAddField.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, false, 2, 1));
         btnAddField.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -204,13 +241,8 @@ public class SqlEditor extends Composite {
         });
 
         Composite editorPanel = new Composite(parent, SWT.NONE);
-        GridLayout editorPanelLayout = new GridLayout();
-        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
-        editorPanelLayout.marginHeight = 0;
-        editorPanelLayout.marginWidth = 0;
-        editorPanelLayout.verticalSpacing = -1;
-        editorPanel.setLayout(editorPanelLayout);
-        editorPanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        editorPanel.setLayout(createLayout(1, SWT.DEFAULT, 0, 0));
+        editorPanel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, numColumns - 2, 1));
 
         selectionListener = new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -262,14 +294,8 @@ public class SqlEditor extends Composite {
         });
 
         Composite executePanel = new Composite(parent, SWT.NONE);
-        GridLayout executePanelLayout = new GridLayout(1, false);
-        executePanelLayout.marginLeft = executePanelLayout.marginWidth;
-        executePanelLayout.marginHeight = 0;
-        executePanelLayout.marginWidth = 0;
-        executePanel.setLayout(executePanelLayout);
-        executePanel.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-
-        // new Label(executePanel, SWT.NONE).setVisible(false);
+        executePanel.setLayout(createLayout(1, 0, SWT.DEFAULT, SWT.DEFAULT));
+        executePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
         btnClear.setToolTipText(Messages.ButtonTooltip_Clear);
@@ -307,6 +333,66 @@ public class SqlEditor extends Composite {
                 widgetSelected(event);
             }
         });
+    }
+
+    private void createTableEditorControl(Composite parent) {
+
+        Composite wherePanel = new Composite(parent, SWT.NONE);
+        GridLayout wherePanelLayout = new GridLayout(1, false);
+        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
+        wherePanelLayout.marginHeight = 0;
+        wherePanelLayout.marginWidth = 0;
+        wherePanel.setLayout(wherePanelLayout);
+        wherePanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label labelTableName = new Label(wherePanel, SWT.NONE);
+        labelTableName.setText(Messages.SqlEditor_TableName);
+        labelTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
+
+        Composite editorPanel = new Composite(parent, SWT.NONE);
+        GridLayout editorPanelLayout = new GridLayout(2, false);
+        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
+        editorPanelLayout.marginHeight = 0;
+        editorPanelLayout.marginWidth = 0;
+        editorPanelLayout.verticalSpacing = -1;
+        editorPanel.setLayout(editorPanelLayout);
+        GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
+        gd_editorPanel.horizontalSpan = 2;
+        editorPanel.setLayoutData(gd_editorPanel);
+
+        cboTableName = WidgetFactory.createUpperCaseCombo(editorPanel);
+        GridData gd_tableName = new GridData();
+        gd_tableName.widthHint = 200;
+        cboTableName.setLayoutData(gd_tableName);
+        cboTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
+        // cboTableName.setItems(getTables(data.getJournaledFiles()));
+        cboTableName.select(0);
+
+        Button btnClear = WidgetFactory.createPushButton(editorPanel);
+        btnClear.setText("X"); // //$NON-NLS-1$
+        btnClear.setToolTipText(Messages.SqlEditor_ClearTableName_Tooltip);
+        btnClear.setLayoutData(new GridData());
+        btnClear.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                cboTableName.select(0);
+            }
+        });
+
+    }
+
+    private GridLayout createLayout(int numColumns, int marginLeft, int margingRight, int verticalSpacing) {
+
+        GridLayout layout = new GridLayout(numColumns, false);
+
+        layout.numColumns = numColumns;
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+
+        if (marginLeft != SWT.DEFAULT) layout.marginLeft = marginLeft;
+        if (margingRight != SWT.DEFAULT) layout.marginRight = margingRight;
+        if (verticalSpacing != SWT.DEFAULT) layout.verticalSpacing = verticalSpacing;
+
+        return layout;
     }
 
     public void setBtnExecuteLabel(String label) {

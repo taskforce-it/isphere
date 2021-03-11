@@ -12,8 +12,7 @@
 package biz.isphere.journalexplorer.core.ui.widgets;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,6 +21,10 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -35,18 +38,14 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.UIJob;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
@@ -54,6 +53,7 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.QualifiedObjectName;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
@@ -67,6 +67,7 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
+import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.sqljep.NullValueVariable;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalViewerContentProvider;
@@ -99,7 +100,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     private TableViewer tableViewer;
     private JournalEntries data;
     private Composite sqlEditorPanel;
-    private Combo cboTableName;
     private SqlEditor sqlEditor;
     private SQLWhereClause filterClause;
     private SQLWhereClause selectClause;
@@ -147,14 +147,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditorPanel.setLayout(ly_sqlEditorPanel);
             sqlEditorPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-            sqlEditor = new SqlEditor(sqlEditorPanel, getClass().getSimpleName(), getDialogSettingsManager(), SWT.NONE) {
-                protected void createContentArea(Composite parent) {
-                    setLayout(new GridLayout(3, false));
-                    createTableEditorPanel(parent);
-                    super.createContentArea(parent);
-                };
-            };
-
+            sqlEditor = WidgetFactory.createSqlEditor(sqlEditorPanel, getClass().getSimpleName(), getDialogSettingsManager(), true);
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
             sqlEditor.setWhereClause(getFilterClause().getClause());
@@ -166,70 +159,20 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditor.setFocus();
             sqlEditor.setBtnExecuteLabel(Messages.ButtonLabel_Filter);
             sqlEditor.setBtnExecuteToolTipText(Messages.ButtonTooltip_Filter);
-            sqlEditor.addModifyListener(new SQLWhereClauseChangedListener());
+            sqlEditor.setTableNameItems(getTableNames(data.getJournaledFiles()));
 
             if (hasTableName()) {
-                cboTableName.select(0);
+                sqlEditor.selectTableName(0);
             } else {
-                cboTableName.setText(getFilterClause().getLibrary() + "/" + filterClause.getFile());
+                sqlEditor.setTableName(getFilterClause().getLibrary() + "/" + filterClause.getFile()); //$NON-NLS-1$
             }
 
-            cboTableName.addModifyListener(new SQLWhereClauseChangedListener());
+            sqlEditor.addModifyListener(new SQLWhereClauseChangedListener());
         }
     }
 
     private boolean hasTableName() {
         return StringHelper.isNullOrEmpty(getFilterClause().getFile()) || StringHelper.isNullOrEmpty(getFilterClause().getLibrary());
-    }
-
-    private void createTableEditorPanel(Composite parent) {
-
-        Composite wherePanel = new Composite(parent, SWT.NONE);
-        GridLayout wherePanelLayout = new GridLayout(1, false);
-        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
-        wherePanelLayout.marginHeight = 0;
-        wherePanelLayout.marginWidth = 0;
-        wherePanel.setLayout(wherePanelLayout);
-        wherePanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-        Label labelTableName = new Label(wherePanel, SWT.NONE);
-        labelTableName.setText(Messages.JournalEntryView_Label_TableName);
-        labelTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
-
-        Composite editorPanel = new Composite(parent, SWT.NONE);
-        GridLayout editorPanelLayout = new GridLayout(2, false);
-        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
-        editorPanelLayout.marginHeight = 0;
-        editorPanelLayout.marginWidth = 0;
-        editorPanelLayout.verticalSpacing = -1;
-        editorPanel.setLayout(editorPanelLayout);
-        GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
-        gd_editorPanel.horizontalSpan = 2;
-        editorPanel.setLayoutData(gd_editorPanel);
-
-        cboTableName = WidgetFactory.createUpperCaseCombo(editorPanel);
-        GridData gd_tableName = new GridData();
-        gd_tableName.widthHint = 200;
-        cboTableName.setLayoutData(gd_tableName);
-        cboTableName.setToolTipText(Messages.JournalEntryView_Tooltip_TableName);
-        cboTableName.setItems(getTables());
-        cboTableName.select(0);
-        cboTableName.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                // TODO: load content assist proposals from meta data cache
-                sqlEditor.setContentAssistProposals(JournalEntry.getBasicContentAssistProposals());
-            }
-        });
-
-        Button btnClear = WidgetFactory.createPushButton(editorPanel);
-        btnClear.setText("X"); // //$NON-NLS-1$
-        btnClear.setToolTipText(Messages.JournalEntryView_Tooltip_ClearTableName);
-        btnClear.setLayoutData(new GridData());
-        btnClear.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                cboTableName.select(0);
-            }
-        });
     }
 
     private void destroySqlEditor() {
@@ -398,56 +341,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         return getLabelProvider().getColumns();
     }
 
-    private String[] getTables() {
-
-        List<String> tables = new ArrayList<String>();
-
-        tables.add("*");
-
-        List<MetaTable> metaTables = new ArrayList<MetaTable>(MetaDataCache.getInstance().getCachedParsers());
-        Collections.sort(metaTables, new Comparator<MetaTable>() {
-            public int compare(MetaTable o1, MetaTable o2) {
-                int result = compareTo(o1, o2);
-                if (result != 0) {
-                    return result;
-                } else {
-                    result = compareTo(o1.getLibrary(), o2.getLibrary());
-                    if (result != 0) {
-                        return result;
-                    } else {
-                        result = compareTo(o1.getName(), o2.getName());
-                        if (result != 0) {
-                            return result;
-                        } else {
-                            return o1.getName().compareTo(o2.getName());
-                        }
-
-                    }
-                }
-            }
-
-            private int compareTo(Object o1, Object o2) {
-                if (o1 == null && o2 == null) {
-                    return 0;
-                } else {
-                    if (o1 == null && o2 != null) {
-                        return -1;
-                    } else if (o1 != null && o2 == null) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-        });
-
-        for (MetaTable metaTable : metaTables) {
-            tables.add(metaTable.getQualifiedName());
-        }
-
-        return tables.toArray(new String[tables.size()]);
-    }
-
     protected abstract TableViewer createTableViewer(Composite container);
 
     public abstract void openJournal(JournalExplorerView view, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) throws Exception;
@@ -460,11 +353,14 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     protected void setInputData(JournalEntries data) {
 
-        if (data != null) {
-            MetaDataCache.getInstance().preloadTables(data);
-        }
-
         this.data = data;
+
+        if (data != null) {
+            if (isSqlEditorVisible()) {
+                sqlEditor.setEnabled(false);
+            }
+            new PreloadMetaDataJob(data).schedule();
+        }
 
         container.layout(true);
         tableViewer.setInput(null);
@@ -631,32 +527,32 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         }
     }
 
-    private String[] splitTableName(String qualifiedTableName) {
-        return qualifiedTableName.split("[./]");
+    private String[] getTableNames(JournaledFile[] files) {
+
+        List<String> tables = new ArrayList<String>();
+        tables.add("*"); //$NON-NLS-1$
+
+        Arrays.sort(files);
+        for (JournaledFile file : files) {
+            tables.add(QualifiedObjectName.toString(file.getObjectName(), file.getLibraryName()));
+        }
+
+        return tables.toArray(new String[tables.size()]);
     }
 
     private class SQLWhereClauseChangedListener implements ModifyListener {
 
         public void modifyText(ModifyEvent event) {
 
-            String fileName = "";
-            String libraryName = "";
-            String qualifiedTableName = cboTableName.getText();
+            String sysObjectName = sqlEditor.getTableName().replaceAll("[.]", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+            QualifiedObjectName objectName = QualifiedObjectName.parse(sysObjectName);
 
-            if (!qualifiedTableName.startsWith("*")) {
-                String[] parts = splitTableName(qualifiedTableName);
-                if (parts.length == 2) {
-                    libraryName = parts[0];
-                    fileName = parts[1];
-                } else if (parts.length == 1) {
-                    libraryName = "";
-                    fileName = parts[0];
-                }
+            if (objectName != null) {
+                String fileName = objectName.getObject();
+                String libraryName = objectName.getLibrary();
+                String whereClause = sqlEditor.getWhereClause().trim();
+                setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
             }
-
-            String whereClause = sqlEditor.getWhereClause().trim();
-
-            setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
         }
     }
 
@@ -673,7 +569,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         @Override
         public Entry<String, Comparable<?>> getVariable(String name) throws ParseException {
             Entry<String, Comparable<?>> variable = null;
-            if (name.startsWith("JO")) {
+            if (name.startsWith("JO")) { //$NON-NLS-1$
                 variable = super.getVariable(name); // JO*
             } else if (!noTableSpecified()) {
                 variable = new NullValueVariable(name); // XY*/with table
@@ -700,5 +596,48 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             String file = whereClause.getFile();
             return StringHelper.isNullOrEmpty(library) || StringHelper.isNullOrEmpty(file);
         };
+    }
+
+    private class PreloadMetaDataJob extends Job {
+
+        private JournalEntries data;
+
+        public PreloadMetaDataJob(JournalEntries journalEntries) {
+            super(Messages.Loading_table_names);
+            this.data = journalEntries;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor monitor) {
+            if (data != null) {
+
+                if (isSqlEditorVisible()) {
+                    setComboEnabled(false, new JournaledFile[0]);
+                }
+
+                final JournaledFile[] journaledFiles = data.getJournaledFiles();
+                MetaDataCache.getInstance().preloadTables(journaledFiles);
+                if (isSqlEditorVisible()) {
+                    setComboEnabled(true, journaledFiles);
+                }
+            }
+
+            return Status.OK_STATUS;
+        }
+
+        private void setComboEnabled(final boolean enabled, final JournaledFile[] journaledFiles) {
+            new UIJob("") { //$NON-NLS-1$
+                @Override
+                public IStatus runInUIThread(IProgressMonitor monitor) {
+                    if (isSqlEditorVisible()) {
+                        sqlEditor.setEnabled(enabled);
+                        String tableName = sqlEditor.getTableName();
+                        sqlEditor.setTableNameItems(getTableNames(journaledFiles));
+                        sqlEditor.setTableName(tableName);
+                    }
+                    return Status.OK_STATUS;
+                }
+            }.schedule();
+        }
     }
 }

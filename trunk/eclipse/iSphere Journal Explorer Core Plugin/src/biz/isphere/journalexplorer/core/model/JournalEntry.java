@@ -30,6 +30,7 @@ import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
 
@@ -1749,5 +1750,18 @@ public class JournalEntry {
 
     public JOESDProperty getJOESDProperty() {
         return getJournalProperties().getJOESDProperty();
+    }
+
+    public boolean isFile() {
+
+        if (StringHelper.isNullOrEmpty(memberName)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public JournaledFile getJournaledFile() {
+        return new JournaledFile(connectionName, objectLibrary, objectName, memberName);
     }
 }
