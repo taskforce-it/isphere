@@ -49,9 +49,6 @@ public class Messages extends NLS {
     public static String JournalEntryView_CompareSideBySide;
     public static String JournalEntryView_DisplayChangedFieldsOnly;
     public static String JournalEntryView_UncomparableEntries;
-    public static String JournalEntryView_Label_TableName;
-    public static String JournalEntryView_Tooltip_TableName;
-    public static String JournalEntryView_Tooltip_ClearTableName;
     public static String JournalEntryViewer_Property;
     public static String JournalEntryViewer_Value;
     public static String JournalExplorerView_OpenJournal;
@@ -174,6 +171,7 @@ public class Messages extends NLS {
 
     public static String Calling_API;
     public static String Loading_entries;
+    public static String Loading_table_names;
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
     public static String Exception_No_entries_converted_or_received_from_Json_file_A;

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.MetaTableDAO;
+import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 
 public final class MetaDataCache {
 
@@ -126,32 +127,20 @@ public final class MetaDataCache {
         return this.cache.values();
     }
 
-    public void preloadTables(JournalEntries data) {
+    public void preloadTables(JournaledFile[] files) {
 
-        new PreloadTablesJob(data).start();
+        try {
 
-    }
-
-    private class PreloadTablesJob extends Thread {
-
-        private JournalEntries journalEntries;
-
-        public PreloadTablesJob(JournalEntries journalEntries) {
-            this.journalEntries = journalEntries;
-        }
-
-        public void run() {
-
-            try {
-
-                for (JournalEntry journalEntry : journalEntries.getItems()) {
-                    retrieveMetaData(journalEntry);
-                }
-
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Failed to load meta tables ***", e);
+            for (JournaledFile file : files) {
+                String connectionName = file.getConnectionName();
+                String fileName = file.getObjectName();
+                String libraryName = file.getLibraryName();
+                retrieveMetaData(connectionName, libraryName, fileName);
             }
 
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Failed to load meta tables ***", e);
         }
+
     }
 }

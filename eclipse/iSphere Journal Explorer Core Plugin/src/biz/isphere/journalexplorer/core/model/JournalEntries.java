@@ -10,7 +10,9 @@ package biz.isphere.journalexplorer.core.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
@@ -20,6 +22,7 @@ import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
+import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 
 import com.google.gson.annotations.Expose;
 
@@ -52,6 +55,7 @@ public class JournalEntries implements JsonSerializable {
 
     // Transient values
     private transient List<JournalEntry> filteredJournalEntries;
+    private Map<String, JournaledFile> journaledFiles;
 
     public JournalEntries() {
         this(0);
@@ -65,6 +69,26 @@ public class JournalEntries implements JsonSerializable {
 
         // Transient values
         this.filteredJournalEntries = null;
+        this.journaledFiles = null;
+    }
+
+    public JournaledFile[] getJournaledFiles() {
+
+        if (journaledFiles == null) {
+            loadJournaledFiles();
+        }
+
+        return journaledFiles.values().toArray(new JournaledFile[journaledFiles.values().size()]);
+    }
+
+    private synchronized void loadJournaledFiles() {
+        journaledFiles = new HashMap<String, JournaledFile>();
+        for (JournalEntry journalEntry : getItems()) {
+            if (journalEntry.isFile()) {
+                JournaledFile journaledFile = journalEntry.getJournaledFile();
+                journaledFiles.put(journaledFile.getQualifiedName(), journaledFile);
+            }
+        }
     }
 
     public void applyFilter(SQLWhereClause whereClause) throws ParseException {
