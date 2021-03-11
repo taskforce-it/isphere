@@ -22,7 +22,6 @@ import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
-import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
 
 import com.ibm.as400.access.Record;
 
@@ -205,16 +204,7 @@ public class JOESDProperty extends JournalProperty {
         try {
 
             MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(journalEntry);
-
-            ContentAssistProposal[] proposals = new ContentAssistProposal[specificProperties.size()];
-            for (int i = 0; i < proposals.length; i++) {
-                MetaColumn metaColumn = metaTable.getColumn(specificProperties.get(i).name);
-                if (metaColumn != null) {
-                    proposals[i] = new TableColumnContentAssistProposal(metaColumn.getName(), metaColumn.getType().toString(), metaColumn.getText());
-                }
-            }
-
-            return proposals;
+            return metaTable.getContentAssistProposals();
 
         } catch (Exception e) {
             // Ignore errors
