@@ -44,9 +44,10 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
     public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
+        String connectionName = outputFile.getConnectionName();
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-        JournalEntries journalEntries = new JournalEntries(maxNumRows);
+        JournalEntries journalEntries = new JournalEntries(connectionName, maxNumRows);
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

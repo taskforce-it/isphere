@@ -45,6 +45,8 @@ public class JournalEntries implements JsonSerializable {
     @Expose(serialize = true, deserialize = true)
     private List<JournalEntry> journalEntries;
     @Expose(serialize = true, deserialize = true)
+    private String connectionName;
+    @Expose(serialize = true, deserialize = true)
     private boolean isOverflow;
     @Expose(serialize = true, deserialize = true)
     private int numAvailableRows;
@@ -58,11 +60,12 @@ public class JournalEntries implements JsonSerializable {
     private Map<String, JournaledFile> journaledFiles;
 
     public JournalEntries() {
-        this(0);
+        this(null, 0);
     }
 
-    public JournalEntries(int initialCapacity) {
+    public JournalEntries(String connectionName, int initialCapacity) {
 
+        this.connectionName = connectionName;
         this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
         this.isOverflow = false;
         this.numAvailableRows = -1;
@@ -70,6 +73,17 @@ public class JournalEntries implements JsonSerializable {
         // Transient values
         this.filteredJournalEntries = null;
         this.journaledFiles = null;
+    }
+
+    public String getConnectionName() {
+        return connectionName;
+    }
+
+    /*
+     * Hack for old export files, exported prior to iSphere v4.0
+     */
+    public void setConnectionName(String connectionName) {
+        this.connectionName = connectionName;
     }
 
     public JournaledFile[] getJournaledFiles() {
@@ -179,6 +193,10 @@ public class JournalEntries implements JsonSerializable {
     }
 
     public JournalEntry getItem(int index) {
+
+        if (getItems().size() < 0) {
+            return null;
+        }
 
         return getItems().get(index);
     }
