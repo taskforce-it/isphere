@@ -148,6 +148,13 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
                 JsonImporter<JournalEntries> importer = new JsonImporter<JournalEntries>(JournalEntries.class);
 
                 final JournalEntries data = importer.execute(view.getViewSite().getShell(), fileName);
+                JournalEntry journalEntry = data.getItem(0);
+                /*
+                 * Hack for old export files, exported prior to iSphere v4.0
+                 */
+                if (data.getConnectionName() == null && journalEntry != null) {
+                    data.setConnectionName(journalEntry.getConnectionName());
+                }
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

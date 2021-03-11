@@ -142,7 +142,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                 String library = getFilterClause().getLibrary();
                 String file = getFilterClause().getFile();
 
-                String connectionName = data.getItem(0).getConnectionName();
+                String connectionName = data.getConnectionName();
                 MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(connectionName, library, file);
 
                 if (metaTable != null) {
