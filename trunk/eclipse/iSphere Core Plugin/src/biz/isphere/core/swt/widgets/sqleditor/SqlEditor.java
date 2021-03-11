@@ -206,14 +206,16 @@ public class SqlEditor extends Composite {
     protected void createContentArea(Composite parent) {
 
         if (showTableControl) {
-            createTableEditorControl(parent);
+            createTableEditorControl(parent, 100);
         }
 
         int numColumns = ((GridLayout)getLayout()).numColumns;
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
         wherePanel.setLayout(createLayout(2, SWT.DEFAULT, 0, SWT.DEFAULT));
-        wherePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gridData = new GridData(GridData.FILL_VERTICAL);
+        gridData.widthHint = 100;
+        wherePanel.setLayoutData(gridData);
 
         labelHistory = new Label(wherePanel, SWT.NONE);
         labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
@@ -295,7 +297,9 @@ public class SqlEditor extends Composite {
 
         Composite executePanel = new Composite(parent, SWT.NONE);
         executePanel.setLayout(createLayout(1, 0, SWT.DEFAULT, SWT.DEFAULT));
-        executePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData gridData2 = new GridData(GridData.FILL_VERTICAL);
+        gridData2.widthHint = gridData.widthHint;
+        executePanel.setLayoutData(gridData2);
 
         btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
         btnClear.setToolTipText(Messages.ButtonTooltip_Clear);
@@ -335,7 +339,7 @@ public class SqlEditor extends Composite {
         });
     }
 
-    private void createTableEditorControl(Composite parent) {
+    private void createTableEditorControl(Composite parent, int widthHint) {
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
         GridLayout wherePanelLayout = new GridLayout(1, false);
@@ -343,7 +347,9 @@ public class SqlEditor extends Composite {
         wherePanelLayout.marginHeight = 0;
         wherePanelLayout.marginWidth = 0;
         wherePanel.setLayout(wherePanelLayout);
-        wherePanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        GridData gd_wherePanel = new GridData(GridData.FILL_VERTICAL);
+        gd_wherePanel.widthHint = widthHint;
+        wherePanel.setLayoutData(gd_wherePanel);
 
         Label labelTableName = new Label(wherePanel, SWT.NONE);
         labelTableName.setText(Messages.SqlEditor_TableName);
