@@ -16,9 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.journalexplorer.core.internals.JoesdParser;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
+import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
 
 import com.ibm.as400.access.Record;
 
@@ -141,6 +143,19 @@ public class MetaTable {
             recordLength = 0;
             warningMessages.clear();
         }
+    }
+
+    public ContentAssistProposal[] getContentAssistProposals() {
+
+        MetaColumn[] metaColumns = getColumns();
+
+        ContentAssistProposal[] proposals = new ContentAssistProposal[metaColumns.length];
+        for (int i = 0; i < proposals.length; i++) {
+            MetaColumn metaColumn = metaColumns[i];
+            proposals[i] = new TableColumnContentAssistProposal(metaColumn.getName(), metaColumn.getType().toString(), metaColumn.getText());
+        }
+
+        return proposals;
     }
 
     public int getRecordLength() {

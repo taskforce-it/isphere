@@ -131,10 +131,39 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     private ContentAssistProposal[] getContentAssistProposals() {
 
         if (hasTableName()) {
-            // TODO: get content assist proposals
-            return JournalEntry.getBasicContentAssistProposals();
+
+            try {
+
+                List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();
+
+                ContentAssistProposal[] proposalsArray = JournalEntry.getBasicContentAssistProposals();
+                addProposalsToList(proposals, proposalsArray);
+
+                String library = getFilterClause().getLibrary();
+                String file = getFilterClause().getFile();
+
+                String connectionName = data.getItem(0).getConnectionName();
+                MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(connectionName, library, file);
+
+                if (metaTable != null) {
+                    proposalsArray = metaTable.getContentAssistProposals();
+                    addProposalsToList(proposals, proposalsArray);
+                }
+
+                return proposals.toArray(new ContentAssistProposal[proposals.size()]);
+
+            } catch (Exception e) {
+                return JournalEntry.getBasicContentAssistProposals();
+            }
+
         } else {
             return JournalEntry.getBasicContentAssistProposals();
+        }
+    }
+
+    private void addProposalsToList(List<ContentAssistProposal> proposals, ContentAssistProposal[] proposalsArray) {
+        for (ContentAssistProposal proposal : proposalsArray) {
+            proposals.add(proposal);
         }
     }
 
@@ -148,7 +177,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditorPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
             sqlEditor = WidgetFactory.createSqlEditor(sqlEditorPanel, getClass().getSimpleName(), getDialogSettingsManager(), true);
-            sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJournalEntriesSelectionListener);
             sqlEditor.setWhereClause(getFilterClause().getClause());
             GridData gd_sqlEditor = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
@@ -160,19 +188,24 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             sqlEditor.setBtnExecuteLabel(Messages.ButtonLabel_Filter);
             sqlEditor.setBtnExecuteToolTipText(Messages.ButtonTooltip_Filter);
             sqlEditor.setTableNameItems(getTableNames(data.getJournaledFiles()));
+            sqlEditor.addModifyListener(new SQLWhereClauseChangedListener());
 
             if (hasTableName()) {
-                sqlEditor.selectTableName(0);
-            } else {
                 sqlEditor.setTableName(getFilterClause().getLibrary() + "/" + filterClause.getFile()); //$NON-NLS-1$
+            } else {
+                sqlEditor.selectTableName(0);
             }
 
-            sqlEditor.addModifyListener(new SQLWhereClauseChangedListener());
         }
     }
 
     private boolean hasTableName() {
-        return StringHelper.isNullOrEmpty(getFilterClause().getFile()) || StringHelper.isNullOrEmpty(getFilterClause().getLibrary());
+
+        if (!StringHelper.isNullOrEmpty(getFilterClause().getFile()) && !StringHelper.isNullOrEmpty(getFilterClause().getLibrary())) {
+            return true;
+        }
+
+        return false;
     }
 
     private void destroySqlEditor() {
@@ -547,12 +580,20 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             String sysObjectName = sqlEditor.getTableName().replaceAll("[.]", "/"); //$NON-NLS-1$ //$NON-NLS-2$
             QualifiedObjectName objectName = QualifiedObjectName.parse(sysObjectName);
 
+            String fileName;
+            String libraryName;
             if (objectName != null) {
-                String fileName = objectName.getObject();
-                String libraryName = objectName.getLibrary();
-                String whereClause = sqlEditor.getWhereClause().trim();
-                setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
+                fileName = objectName.getObject();
+                libraryName = objectName.getLibrary();
+            } else {
+                fileName = ""; //$NON-NLS-1$
+                libraryName = ""; //$NON-NLS-1$
             }
+
+            String whereClause = sqlEditor.getWhereClause().trim();
+            setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
+
+            sqlEditor.setContentAssistProposals(getContentAssistProposals());
         }
     }
 
