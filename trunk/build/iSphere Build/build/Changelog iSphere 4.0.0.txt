@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.b007
+-----------------------------
+
+ • Refactored SQL editor.
+ • Improved performance when loading journal entries.
+
 Changelog: iSphere 4.0.0.b006
 -----------------------------
 
