@@ -97,6 +97,10 @@ public final class Preferences {
 
     public static final String EXPORT_COLUMN_HEADINGS = DOMAIN + "EXPORT_COLUMN_HEADINGS"; //$NON-NLS-1$
 
+    public static final String PROPERTIES = DOMAIN + "PROPERTIES."; //$NON-NLS-1$
+
+    public static final String IS_TRIM_VALUES_ENABLED = PROPERTIES + "IS_TRIM_VALUES_ENABLED"; //$NON-NLS-1$
+
     public enum DefaultDate {
         LAST_USED (Messages.DisplayJournalEntriesDialog_Time_Last_used_values),
         TODAY (Messages.DisplayJournalEntriesDialog_Time_Today),
@@ -252,6 +256,11 @@ public final class Preferences {
         return preferenceStore.getBoolean(EXPORT_COLUMN_HEADINGS);
     }
 
+    public boolean isTrimValues() {
+
+        return preferenceStore.getBoolean(IS_TRIM_VALUES_ENABLED);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -311,6 +320,11 @@ public final class Preferences {
     public void setExportColumnHeadings(boolean export) {
 
         preferenceStore.setValue(EXPORT_COLUMN_HEADINGS, export);
+    }
+
+    public void setTrimValues(boolean enabled) {
+
+        preferenceStore.setValue(IS_TRIM_VALUES_ENABLED, enabled);
     }
 
     /*
@@ -413,6 +427,8 @@ public final class Preferences {
         preferenceStore.setDefault(EXPORT_FILE_EXCEL, getInitialExportFileExcel());
         preferenceStore.setDefault(EXPORT_FILE_JSON, getInitialExportFileJson());
         preferenceStore.setDefault(EXPORT_COLUMN_HEADINGS, getInitialExportColumnHeadings());
+
+        preferenceStore.setDefault(IS_TRIM_VALUES_ENABLED, getInitialIsTrimValues());
     }
 
     /*
@@ -538,6 +554,10 @@ public final class Preferences {
     }
 
     public boolean getInitialExportColumnHeadings() {
+        return true;
+    }
+
+    public boolean getInitialIsTrimValues() {
         return true;
     }
 
