@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 import biz.isphere.base.internal.ClipboardHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
@@ -94,7 +95,7 @@ public class CopyJournalPropertyToClipboardAction extends Action {
             } else if (object instanceof JournalProperty) {
                 JournalProperty property = (JournalProperty)object;
                 if (!isCopied(property)) {
-                    addProperty(buffer, property.name, property.value.toString());
+                    addProperty(buffer, property);
                     copied.add(property);
                 }
             }
@@ -111,14 +112,14 @@ public class CopyJournalPropertyToClipboardAction extends Action {
         addProperty(buffer, ColumnsDAO.ID.name(), journalEntry.getId());
         addProperty(buffer, ColumnsDAO.JOENTL.name(), journalEntry.getEntryLength());
         addProperty(buffer, ColumnsDAO.JOSEQN.name(), journalEntry.getSequenceNumber());
-        addProperty(buffer, ColumnsDAO.JOCODE.name(), journalEntry.getJournalCode());
-        addProperty(buffer, ColumnsDAO.JOENTT.name(), journalEntry.getEntryType());
+        addProperty(buffer, ColumnsDAO.JOCODE.name(), journalEntry.getJournalCode(), true);
+        addProperty(buffer, ColumnsDAO.JOENTT.name(), journalEntry.getEntryType(), true);
         addProperty(buffer, ColumnsDAO.JOCTRR.name(), journalEntry.getEntryLength());
     }
 
     private void addJournalProperties(StringBuilder buffer, JournalProperties properties) {
         String value = properties.toString();
-        addProperty(buffer, Messages.CopyAction_fileProperty, value);
+        addProperty(buffer, Messages.CopyAction_fileProperty, value, false);
         addJournalEntryProperties(buffer, properties.getJournalEntry());
         Object[] children = properties.getJOESDProperty().toPropertyArray();
         addRecordProperties(buffer, children);
@@ -129,7 +130,7 @@ public class CopyJournalPropertyToClipboardAction extends Action {
             if (child instanceof JournalProperty) {
                 JournalProperty property = (JournalProperty)child;
                 if (!isCopied(property)) {
-                    addProperty(buffer, property.name, property.value.toString());
+                    addProperty(buffer, property);
                     copied.add(property);
                 }
             }
@@ -148,14 +149,18 @@ public class CopyJournalPropertyToClipboardAction extends Action {
     }
 
     private void addProperty(StringBuilder buffer, String name, int value) {
-        addProperty(buffer, name, Integer.toString(value));
+        addProperty(buffer, name, Integer.toString(value), false);
     }
 
     private void addProperty(StringBuilder buffer, String name, BigInteger value) {
-        addProperty(buffer, name, value.toString());
+        addProperty(buffer, name, value.toString(), false);
     }
 
-    private void addProperty(StringBuilder buffer, String name, String value) {
+    private void addProperty(StringBuilder buffer, JournalProperty property) {
+        addProperty(buffer, property.name, property.value.toString(), !property.isNumeric());
+    }
+
+    private void addProperty(StringBuilder buffer, String name, String value, boolean isQuoted) {
 
         if (buffer.length() > 0) {
             buffer.append(NEW_LINE);
@@ -166,6 +171,10 @@ public class CopyJournalPropertyToClipboardAction extends Action {
             buffer.append(QUAL_SIGN);
         }
 
-        buffer.append(value);
+        if (isQuoted) {
+            buffer.append(StringHelper.addQuotes(value));
+        } else {
+            buffer.append(value);
+        }
     }
 }
