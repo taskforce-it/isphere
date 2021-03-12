@@ -281,6 +281,7 @@ public class Messages extends NLS {
     public static String CopyAction_fileProperty;
     public static String CopyValueAction_text;
     public static String CopyAllAction_text;
+    public static String Copy_quoted_value_text;
 
     public static String ExcelExport_Headline;
     public static String Finished_exporting_data_to_file_A;

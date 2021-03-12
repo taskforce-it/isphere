@@ -12,6 +12,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public class ToggleTrimPropertyValuesAction extends Action {
@@ -19,7 +20,7 @@ public class ToggleTrimPropertyValuesAction extends Action {
     private Preferences preferences;
 
     public ToggleTrimPropertyValuesAction() {
-        super("Trim values", Action.AS_CHECK_BOX);
+        super(Messages.Copy_quoted_value_text, Action.AS_CHECK_BOX);
 
         this.preferences = Preferences.getInstance();
         setChecked(preferences.isTrimValues());
