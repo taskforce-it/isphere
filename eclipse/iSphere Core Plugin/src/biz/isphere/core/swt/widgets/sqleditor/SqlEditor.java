@@ -342,12 +342,8 @@ public class SqlEditor extends Composite {
     private void createTableEditorControl(Composite parent, int widthHint) {
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
-        GridLayout wherePanelLayout = new GridLayout(1, false);
-        wherePanelLayout.marginRight = wherePanelLayout.marginWidth;
-        wherePanelLayout.marginHeight = 0;
-        wherePanelLayout.marginWidth = 0;
-        wherePanel.setLayout(wherePanelLayout);
-        GridData gd_wherePanel = new GridData(GridData.FILL_VERTICAL);
+        wherePanel.setLayout(createLayout(1, SWT.DEFAULT, 0, 0));
+        GridData gd_wherePanel = new GridData(GridData.FILL_HORIZONTAL);
         gd_wherePanel.widthHint = widthHint;
         wherePanel.setLayoutData(gd_wherePanel);
 
@@ -356,12 +352,7 @@ public class SqlEditor extends Composite {
         labelTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
 
         Composite editorPanel = new Composite(parent, SWT.NONE);
-        GridLayout editorPanelLayout = new GridLayout(2, false);
-        editorPanelLayout.marginRight = wherePanelLayout.marginWidth;
-        editorPanelLayout.marginHeight = 0;
-        editorPanelLayout.marginWidth = 0;
-        editorPanelLayout.verticalSpacing = -1;
-        editorPanel.setLayout(editorPanelLayout);
+        editorPanel.setLayout(createLayout(2, SWT.DEFAULT, 0, 0));
         GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
         gd_editorPanel.horizontalSpan = 2;
         editorPanel.setLayoutData(gd_editorPanel);
@@ -371,7 +362,6 @@ public class SqlEditor extends Composite {
         gd_tableName.widthHint = 200;
         cboTableName.setLayoutData(gd_tableName);
         cboTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
-        // cboTableName.setItems(getTables(data.getJournaledFiles()));
         cboTableName.select(0);
 
         Button btnClear = WidgetFactory.createPushButton(editorPanel);
