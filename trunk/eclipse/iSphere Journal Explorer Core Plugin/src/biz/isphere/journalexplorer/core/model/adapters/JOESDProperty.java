@@ -126,6 +126,8 @@ public class JOESDProperty extends JournalProperty {
                     columnLabel = ""; //$NON-NLS-1$
                 }
 
+                // parsedJOESD.getRecordFormat().getFieldDescription(column.getName()).getDataType().TYPE_ARRAY;
+
                 if (column.getOutputBufferOffset() + column.getBufferLength() > journalEntry.getSpecificDataLength()) {
                     JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, Messages.JournalPropertyValue_not_available, this);
                     journalProperty.setErrorParsing(true);
@@ -140,16 +142,20 @@ public class JOESDProperty extends JournalProperty {
                     specificProperties.add(journalProperty);
                 } else if (MetaColumn.DataType.LOB.equals(column.getType())) {
                     JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, parsedJOESD.getField(column.getName()).toString()
-                        .trim(), this);
+                        .trim(), getDataType(column.getName()), this);
                     specificProperties.add(journalProperty);
                 } else {
                     JournalProperty journalProperty = new JournalProperty(columnName, columnLabel, parsedJOESD.getField(column.getName()).toString(),
-                        this);
+                        getDataType(column.getName()), this);
                     specificProperties.add(journalProperty);
                 }
             }
 
         }
+    }
+
+    private int getDataType(String name) {
+        return parsedJOESD.getRecordFormat().getFieldDescription(name).getDataType().getInstanceType();
     }
 
     public JournalProperty[] toPropertyArray() {
