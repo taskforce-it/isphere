@@ -19,12 +19,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public class CopyJournalPropertyToClipboardAction extends Action {
 
@@ -35,6 +37,7 @@ public class CopyJournalPropertyToClipboardAction extends Action {
     private boolean copyAll;
 
     private Set<Object> copied;
+    private Preferences preferences;
 
     public CopyJournalPropertyToClipboardAction(boolean copyAll) {
         this(null, copyAll);
@@ -42,15 +45,30 @@ public class CopyJournalPropertyToClipboardAction extends Action {
 
     public CopyJournalPropertyToClipboardAction(IStructuredSelection selection, boolean copyAll) {
 
-        if (copyAll) {
-            setText(Messages.CopyAllAction_text);
-        } else {
-            setText(Messages.CopyValueAction_text);
-        }
-
         this.selection = selection;
         this.copyAll = copyAll;
         this.copied = new HashSet<Object>();
+        this.preferences = Preferences.getInstance();
+
+        if (this.copyAll) {
+            setText(Messages.CopyAllAction_text);
+            if (this.preferences.isTrimValues()) {
+                setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(
+                    ISphereJournalExplorerCorePlugin.IMAGE_COPY_NAME_VALUE_TRIMMED));
+            } else {
+                setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(
+                    ISphereJournalExplorerCorePlugin.IMAGE_COPY_NAME_VALUE));
+            }
+        } else {
+            setText(Messages.CopyValueAction_text);
+            if (this.preferences.isTrimValues()) {
+                setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(
+                    ISphereJournalExplorerCorePlugin.IMAGE_COPY_VALUE_TRIMMED));
+            } else {
+                setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault()
+                    .getImageDescriptor(ISphereJournalExplorerCorePlugin.IMAGE_COPY_VALUE));
+            }
+        }
     }
 
     public void setSelectedItems(StructuredSelection selection) {
@@ -169,6 +187,10 @@ public class CopyJournalPropertyToClipboardAction extends Action {
         if (copyAll) {
             buffer.append(name);
             buffer.append(QUAL_SIGN);
+        }
+
+        if (preferences.isTrimValues()) {
+            value = StringHelper.trimR(value);
         }
 
         if (isQuoted) {

@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import biz.isphere.journalexplorer.core.ui.widgets.actions.CopyJournalPropertyToClipboardAction;
+import biz.isphere.journalexplorer.core.ui.widgets.actions.ToggleTrimPropertyValuesAction;
 
 public class JournalEntryMenuAdapter implements IMenuListener {
 
@@ -41,6 +42,7 @@ public class JournalEntryMenuAdapter implements IMenuListener {
             IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
             manager.add(new CopyJournalPropertyToClipboardAction(selection, true));
             manager.add(new CopyJournalPropertyToClipboardAction(selection, false));
+            manager.add(new ToggleTrimPropertyValuesAction());
         }
     }
 }
