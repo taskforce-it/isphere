@@ -567,7 +567,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
         Arrays.sort(files);
         for (JournaledFile file : files) {
-            tables.add(QualifiedObjectName.toString(file.getObjectName(), file.getLibraryName()));
+            tables.add(QualifiedObjectName.toString(file.getFileName(), file.getLibraryName()));
         }
 
         return tables.toArray(new String[tables.size()]);
@@ -650,18 +650,18 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-            if (data != null) {
+                if (data != null) {
 
-                if (isSqlEditorVisible()) {
-                    setComboEnabled(false, new JournaledFile[0]);
-                }
+                    if (isSqlEditorVisible()) {
+                        setComboEnabled(false, new JournaledFile[0]);
+                    }
 
-                final JournaledFile[] journaledFiles = data.getJournaledFiles();
-                MetaDataCache.getInstance().preloadTables(journaledFiles);
-                if (isSqlEditorVisible()) {
-                    setComboEnabled(true, journaledFiles);
+                    final JournaledFile[] journaledFiles = data.getJournaledFiles();
+                    MetaDataCache.getInstance().preloadTables(journaledFiles);
+                    if (isSqlEditorVisible()) {
+                        setComboEnabled(true, journaledFiles);
+                    }
                 }
-            }
 
             return Status.OK_STATUS;
         }

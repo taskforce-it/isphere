@@ -199,7 +199,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         tJrneToRtv.setNbrEnt(selectionCriterias.getMaxItemsToRetrieve());
 
         for (JournaledFile journaledFile : journaledFiles) {
-            tJrneToRtv.addFile(journaledFile.getLibraryName(), journaledFile.getObjectName(), journaledFile.getMemberName());
+            tJrneToRtv.addFile(journaledFile.getLibraryName(), journaledFile.getFileName(), journaledFile.getMemberName());
         }
 
         JournalExplorerView view = (JournalExplorerView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
