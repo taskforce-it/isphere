@@ -9,40 +9,40 @@
 package biz.isphere.journalexplorer.core.model.shared;
 
 import biz.isphere.core.internal.ISeries;
-
-import com.ibm.as400.access.QSYSObjectPathName;
+import biz.isphere.journalexplorer.core.internals.QualifiedMemberName;
 
 public class JournaledFile extends JournaledObject implements Comparable<JournaledFile> {
 
-    private String memberName;
-    private String qualifiedName;
+    private QualifiedMemberName member;
 
     public JournaledFile(String connectionName, String libraryName, String fileName, String memberName) {
-        super(connectionName, new QSYSObjectPathName(libraryName, fileName, getObjectType(ISeries.FILE)));
+        super(connectionName, libraryName, fileName, ISeries.FILE);
 
-        this.memberName = memberName;
-        this.qualifiedName = null;
+        this.member = new QualifiedMemberName(connectionName, libraryName, fileName);
+    }
+
+    public String getConnectionName() {
+        return member.getConnectionName();
+    }
+
+    public String getFileName() {
+        return member.getFileName();
+    }
+
+    public String getLibraryName() {
+        return member.getLibraryName();
     }
 
     public String getMemberName() {
-        return memberName;
+        return member.getMemberName();
     }
 
-    public synchronized String getQualifiedName() {
+    public Journal getJournal() {
+        return super.getJournal();
+    }
 
-        if (qualifiedName == null) {
-
-            StringBuilder buffer = new StringBuilder();
-
-            buffer.append(super.getQualifiedName());
-            buffer.append(" (");
-            buffer.append(memberName);
-            buffer.append(")");
-
-            qualifiedName = buffer.toString();
-        }
-
-        return qualifiedName;
+    public String getQualifiedName() {
+        return getQualifiedName();
     }
 
     public int compareTo(JournaledFile other) {
@@ -59,7 +59,12 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
             if (result != 0) {
                 return result;
             } else {
-                return getObjectName().compareTo(other.getObjectName());
+                result = getFileName().compareTo(other.getFileName());
+                if (result != 0) {
+                    return result;
+                } else {
+                    return getMemberName().compareTo(other.getMemberName());
+                }
             }
         }
     }

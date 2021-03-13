@@ -16,70 +16,35 @@ import com.ibm.as400.access.QSYSObjectPathName;
 
 public class JournaledObject {
 
-    private String connectionName;
-    private ObjectDescription objectDescription;
+    private QualifiedName objectName;
+    private String objectType;
 
     private boolean isJournaled;
     private Journal journal;
 
-    private String qualifiedJournalName;
-    private String qualifiedObjectName;
+    private transient ObjectDescription journalObjectDescription;
+    private transient String journalName;
 
     public JournaledObject(String connectionName, String libraryName, String objectName, String objectType) {
-        this(connectionName, new QSYSObjectPathName(libraryName, objectName, getObjectType(objectType)));
-    }
-
-    protected JournaledObject(String connectionName, QSYSObjectPathName objectPathName) {
-
-        this.connectionName = connectionName;
-        this.objectDescription = new ObjectDescription(IBMiHostContributionsHandler.getSystem(connectionName), objectPathName.getPath());
-
-        setJournalAttributes(connectionName, objectDescription);
-    }
-
-    protected static String getObjectType(String objectType) {
-
-        if (objectType.startsWith("*")) {
-            return objectType.substring(1);
-        }
-
-        return objectType;
-    }
-
-    private void setJournalAttributes(String connectionName, ObjectDescription objectDescription) {
-
-        try {
-
-            this.journal = null;
-
-            QSYSObjectPathName journalPathName = new QSYSObjectPathName(objectDescription.getValueAsString(ObjectDescription.JOURNAL));
-            this.isJournaled = (Boolean)objectDescription.getValue(ObjectDescription.JOURNAL_STATUS);
-            if (isJournaled) {
-                String journalName = journalPathName.getObjectName();
-                String libraryName = journalPathName.getLibraryName();
-                journal = new Journal(connectionName, libraryName, journalName);
-            }
-
-        } catch (Throwable e) {
-            this.isJournaled = false;
-        }
+        this.objectName = new QualifiedName(connectionName, libraryName, objectName);
+        this.objectType = objectType;
     }
 
     public String getConnectionName() {
-        return connectionName;
+        return objectName.getConnectionName();
     }
 
     public String getObjectName() {
-        return objectDescription.getName();
+        return objectName.getObjectName();
     }
 
     public String getLibraryName() {
-        return objectDescription.getLibrary();
+        return objectName.getLibraryName();
     }
 
     public boolean isJournaled() {
 
-        if (isJournaled) {
+        if (getJournal() != null) {
             return isJournaled;
         } else {
             return false;
@@ -87,25 +52,48 @@ public class JournaledObject {
     }
 
     public Journal getJournal() {
+        return resolveJournal();
+    }
+
+    public String getQualifiedJournalName() {
+
+        if (journalName == null && getJournal() != null) {
+            journalName = new QualifiedName(getConnectionName(), getJournal().getLibrary(), getJournal().getName()).getQualifiedName();
+        }
+
+        return journalName;
+    }
+
+    public String getQualifiedName() {
+        return objectName.getQualifiedName();
+    }
+
+    private Journal resolveJournal() {
+
+        if (journalObjectDescription == null) {
+
+            journal = null;
+            isJournaled = false;
+
+            try {
+
+                String qsysObjectPath = new QSYSObjectPathName(objectName.getLibraryName(), objectName.getObjectName(), objectType).getPath();
+                this.journalObjectDescription = new ObjectDescription(IBMiHostContributionsHandler.getSystem(getConnectionName()), qsysObjectPath);
+
+                QSYSObjectPathName journalPathName = new QSYSObjectPathName(journalObjectDescription.getValueAsString(ObjectDescription.JOURNAL));
+                this.isJournaled = (Boolean)journalObjectDescription.getValue(ObjectDescription.JOURNAL_STATUS);
+                if (isJournaled) {
+                    String journalName = journalPathName.getObjectName();
+                    String libraryName = journalPathName.getLibraryName();
+                    journal = new Journal(getConnectionName(), libraryName, journalName);
+                }
+
+            } catch (Throwable e) {
+                // e.printStackTrace();
+            }
+        }
+
         return journal;
-    }
-
-    public synchronized String getQualifiedJournalName() {
-
-        if (qualifiedJournalName == null) {
-            qualifiedJournalName = QualifiedName.getName(connectionName, getJournal().getLibrary(), getJournal().getName());
-        }
-
-        return qualifiedJournalName;
-    }
-
-    public synchronized String getQualifiedName() {
-
-        if (qualifiedObjectName == null) {
-            qualifiedObjectName = QualifiedName.getName(connectionName, objectDescription.getLibrary(), objectDescription.getName());
-        }
-
-        return qualifiedObjectName;
     }
 
     @Override

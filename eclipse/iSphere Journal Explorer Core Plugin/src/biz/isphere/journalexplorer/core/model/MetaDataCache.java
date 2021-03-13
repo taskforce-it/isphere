@@ -133,7 +133,7 @@ public final class MetaDataCache {
 
             for (JournaledFile file : files) {
                 String connectionName = file.getConnectionName();
-                String fileName = file.getObjectName();
+                String fileName = file.getFileName();
                 String libraryName = file.getLibraryName();
                 retrieveMetaData(connectionName, libraryName, fileName);
             }
