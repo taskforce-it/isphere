@@ -28,7 +28,7 @@ public class TestQualifiedMemberName {
     }
 
     @Test
-    public void testInvalidQsysObjectName() {
+    public void testInvalidQsysFileName() {
 
         String qualifiedName;
 
@@ -55,7 +55,7 @@ public class TestQualifiedMemberName {
     }
 
     @Test
-    public void testQsysObjectName() {
+    public void testQsysFileName() {
 
         QualifiedMemberName qName;
 
@@ -73,6 +73,22 @@ public class TestQualifiedMemberName {
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
+
+    }
+
+    @Test
+    public void testParsingQsysFileName() {
+
+        QualifiedMemberName qName;
+
+        qName = QualifiedMemberName.parse("before connection:library/object (member) after");
+        assertEquals(true, null == qName);
+
+        qName = QualifiedMemberName.parse("connection:library/object (member)");
+        assertEquals(CONNECTION, qName.getConnectionName());
+        assertEquals(LIBRARY, qName.getLibraryName());
+        assertEquals(OBJECT, qName.getFileName());
+        assertEquals(MEMBER, qName.getMemberName());
 
     }
 

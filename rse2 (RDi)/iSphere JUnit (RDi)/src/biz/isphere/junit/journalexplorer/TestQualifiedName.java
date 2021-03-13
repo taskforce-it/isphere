@@ -30,7 +30,28 @@ public class TestQualifiedName {
 
         String qualifiedName;
 
+        // invalid delimiter between connection and object name
         qualifiedName = "connection.library/object";
+        try {
+            new QualifiedName(qualifiedName);
+            fail("Should have faild: " + qualifiedName);
+        } catch (Exception e) {
+            assertEquals(java.lang.IllegalArgumentException.class, e.getClass());
+            assertEquals(getErrorMessage(qualifiedName), e.getLocalizedMessage());
+        }
+
+        // invalid delimiter between library and object name
+        qualifiedName = "library,object";
+        try {
+            new QualifiedName(qualifiedName);
+            fail("Should have faild: " + qualifiedName);
+        } catch (Exception e) {
+            assertEquals(java.lang.IllegalArgumentException.class, e.getClass());
+            assertEquals(getErrorMessage(qualifiedName), e.getLocalizedMessage());
+        }
+
+        // object name embedded into text
+        qualifiedName = "before connection:library/object after";
         try {
             new QualifiedName(qualifiedName);
             fail("Should have faild: " + qualifiedName);
@@ -52,6 +73,21 @@ public class TestQualifiedName {
         assertEquals(OBJECT, qName.getObjectName());
 
         qName = new QualifiedName("connection:library/object");
+        assertEquals(CONNECTION, qName.getConnectionName());
+        assertEquals(LIBRARY, qName.getLibraryName());
+        assertEquals(OBJECT, qName.getObjectName());
+
+    }
+
+    @Test
+    public void testParsingQsysObjectName() {
+
+        QualifiedName qName;
+
+        qName = QualifiedName.parse("before connection:library/object after");
+        assert (qName == null);
+
+        qName = QualifiedName.parse("connection:library/object");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
