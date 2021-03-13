@@ -23,7 +23,6 @@ public class QualifiedMemberName {
     protected static final String START_MEMBER = " (";
     protected static final String END_MEMBER = ")";
 
-    private static final Pattern retrieve_pattern = Pattern.compile(RETRIEVE_PATTERN);
     private static final Pattern validate_pattern = Pattern.compile(VALIDATE_PATTERN);
 
     protected static final int CONNECTION = QualifiedName.CONNECTION;
@@ -48,7 +47,7 @@ public class QualifiedMemberName {
 
         // Retrieve library, file and member from a qualified file name of
         // format 'LIBRARY/FILE (MEMBER)'.
-        qualifiedFileName = qualifiedFileName.trim().replaceFirst("\\.", "/").toUpperCase();
+        qualifiedFileName = qualifiedFileName.trim().replaceFirst("\\.", QualifiedName.NAME_DELIMITER_SYS).toUpperCase();
         Matcher matcher = validate_pattern.matcher(qualifiedFileName.trim().toUpperCase());
         if (matcher.find()) {
             init(matcher.group(CONNECTION), matcher.group(LIBRARY), matcher.group(FILE), matcher.group(MEMBER));
@@ -92,7 +91,7 @@ public class QualifiedMemberName {
             return null;
         }
 
-        Matcher matcher = retrieve_pattern.matcher(string);
+        Matcher matcher = validate_pattern.matcher(string);
         if (matcher.find()) {
             return new QualifiedMemberName(matcher.group(1).trim());
         }

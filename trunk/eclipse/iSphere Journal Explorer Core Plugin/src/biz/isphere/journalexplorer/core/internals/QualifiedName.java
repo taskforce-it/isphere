@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.internal.QualifiedObjectName;
 
 public class QualifiedName {
 
@@ -24,7 +23,6 @@ public class QualifiedName {
     protected static final String NAME_DELIMITER_SYS = "/";
     protected static final String NAME_DELIMITER_SQL = ".";
 
-    private static final Pattern retrieve_pattern = Pattern.compile(RETRIEVE_PATTERN);
     private static final Pattern validate_pattern = Pattern.compile(VALIDATE_PATTERN);
 
     protected static final int CONNECTION = 2;
@@ -47,7 +45,7 @@ public class QualifiedName {
 
         // Retrieve library and object from a qualified object name of
         // format 'LIBRARY/OBJECT'.
-        qualifiedObjectName = qualifiedObjectName.trim().replaceFirst("\\.", "/").toUpperCase();
+        qualifiedObjectName = qualifiedObjectName.trim().replaceFirst("\\.", NAME_DELIMITER_SYS).toUpperCase();
         Matcher matcher = validate_pattern.matcher(qualifiedObjectName);
         if (matcher.find()) {
             init(matcher.group(CONNECTION), matcher.group(LIBRARY), matcher.group(OBJECT));
@@ -118,15 +116,15 @@ public class QualifiedName {
         return true;
     }
 
-    public static QualifiedObjectName parse(String string) {
+    public static QualifiedName parse(String string) {
 
         if (StringHelper.isNullOrEmpty(string)) {
             return null;
         }
 
-        Matcher matcher = retrieve_pattern.matcher(string);
+        Matcher matcher = validate_pattern.matcher(string);
         if (matcher.find()) {
-            return new QualifiedObjectName(matcher.group(1).trim());
+            return new QualifiedName(matcher.group(1).trim());
         }
 
         return null;
