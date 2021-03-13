@@ -42,7 +42,7 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
     }
 
     public String getQualifiedName() {
-        return getQualifiedName();
+        return member.getQualifiedName();
     }
 
     public int compareTo(JournaledFile other) {
