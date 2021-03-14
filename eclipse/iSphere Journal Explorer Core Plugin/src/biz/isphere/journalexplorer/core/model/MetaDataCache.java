@@ -14,6 +14,12 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.Collection;
 import java.util.HashMap;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Shell;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -157,23 +163,44 @@ public final class MetaDataCache {
         return this.cache.values();
     }
 
-    public void preloadTables(JournaledFile[] files) {
+    public void preloadTables(Shell shell, JournaledFile[] files) {
 
-        try {
+        PreloadTableJob job = new PreloadTableJob(shell, files);
+        job.schedule();
+    }
 
-            TimeTaken timeTaken = TimeTaken.start("Pre-loading meta data"); // //$NON-NLS-1$
+    private class PreloadTableJob extends Job {
 
-            for (JournaledFile file : files) {
-                String connectionName = file.getConnectionName();
-                String fileName = file.getFileName();
-                String libraryName = file.getLibraryName();
-                retrieveMetaData(connectionName, libraryName, fileName, ISeries.FILE);
+        private Shell shell;
+        private JournaledFile[] files;
+
+        public PreloadTableJob(Shell shell, JournaledFile[] files) {
+            super(Messages.Status_Loading_meta_data);
+            this.shell = shell;
+            this.files = files;
+        }
+
+        @Override
+        protected IStatus run(IProgressMonitor paramIProgressMonitor) {
+
+            try {
+
+                TimeTaken timeTaken = TimeTaken.start("Pre-loading meta data"); // //$NON-NLS-1$
+
+                for (JournaledFile file : files) {
+                    String connectionName = file.getConnectionName();
+                    String fileName = file.getFileName();
+                    String libraryName = file.getLibraryName();
+                    retrieveMetaData(connectionName, libraryName, fileName, ISeries.FILE);
+                }
+
+                timeTaken.stop();
+
+            } catch (Exception e) {
+                MessageDialogAsync.displayError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
             }
 
-            timeTaken.stop();
-
-        } catch (Exception e) {
-            MessageDialogAsync.displayError(Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
+            return Status.OK_STATUS;
         }
 
     }

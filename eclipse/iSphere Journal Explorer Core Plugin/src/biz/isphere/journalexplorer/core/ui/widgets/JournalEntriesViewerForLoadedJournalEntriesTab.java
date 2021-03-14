@@ -55,8 +55,9 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
     private TableViewer tableViewer;
     private String fileName;
 
-    public JournalEntriesViewerForLoadedJournalEntriesTab(CTabFolder parent, String fileName, SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, null, loadJournalEntriesSelectionListener);
+    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, CTabFolder parent, String fileName,
+        SelectionListener loadJournalEntriesSelectionListener) {
+        super(shell, parent, null, loadJournalEntriesSelectionListener);
 
         this.fileName = fileName;
 
@@ -159,7 +160,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
                 timeTaken.stop(data.size());
 
-                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
+                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

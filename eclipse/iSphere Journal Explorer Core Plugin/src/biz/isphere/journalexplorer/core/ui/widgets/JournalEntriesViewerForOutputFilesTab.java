@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -54,9 +55,9 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForOutputFilesTab(CTabFolder parent, OutputFile outputFile, SQLWhereClause whereClause,
+    public JournalEntriesViewerForOutputFilesTab(Shell shell, CTabFolder parent, OutputFile outputFile, SQLWhereClause whereClause,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, outputFile, loadJournalEntriesSelectionListener);
+        super(shell, parent, outputFile, loadJournalEntriesSelectionListener);
 
         setSelectClause(whereClause);
         setSqlEditorVisibility(false);
@@ -188,7 +189,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
                 data.applyFilter(filterWhereClause);
 
-                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
+                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
