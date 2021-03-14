@@ -84,7 +84,7 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
     }
 
     public String getLevel() throws Exception {
-        return ISpherePlugin.getDefault().getIBMiRelease(as400);
+        return ISpherePlugin.getDefault().getIBMiReleaseUnchecked(as400);
     }
 
     @Override

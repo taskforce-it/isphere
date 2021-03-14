@@ -486,15 +486,27 @@ public class ISpherePlugin extends AbstractUIPlugin {
         return false;
     }
 
-    public String getIBMiRelease(String connectionName) throws Exception {
+    public String getIBMiRelease(String connectionName) {
+
+        try {
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            return getIBMiReleaseUnchecked(system);
+        } catch (Throwable e) {
+            logError(e.getLocalizedMessage(), e);
+        }
+
+        return "V0R0M0";
+    }
+
+    public String getIBMiReleaseUnchecked(String connectionName) throws Exception {
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
         if (system == null) {
             throw new Exception(Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName));
         }
-        return getIBMiRelease(system);
+        return getIBMiReleaseUnchecked(system);
     }
 
-    public String getIBMiRelease(AS400 system) throws Exception {
+    public String getIBMiReleaseUnchecked(AS400 system) throws Exception {
 
         PRDI0100 prdi0100 = new PRDI0100(system);
         PRDR0100 prdr0100 = new PRDR0100(system);
