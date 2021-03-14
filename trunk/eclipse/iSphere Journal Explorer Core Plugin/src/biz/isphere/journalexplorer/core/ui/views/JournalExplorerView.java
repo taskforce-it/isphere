@@ -248,7 +248,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntriesTab(tabFolder, jrneToRtv, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntriesTab(getShell(), tabFolder, jrneToRtv,
+                new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -268,7 +269,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(tabFolder, fileName, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, fileName,
+                new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);
@@ -288,7 +290,8 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForOutputFilesTab(tabFolder, outputFile, whereClause, new SqlEditorSelectionListener());
+            journalEntriesViewer = new JournalEntriesViewerForOutputFilesTab(getShell(), tabFolder, outputFile, whereClause,
+                new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
             journalEntriesViewer.addSelectionChangedListener(this);

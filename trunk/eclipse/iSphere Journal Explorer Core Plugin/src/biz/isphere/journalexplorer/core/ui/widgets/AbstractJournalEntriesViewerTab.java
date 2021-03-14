@@ -93,6 +93,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     private DialogSettingsManager dialogSettingsManager = null;
 
+    private Shell shell;
     private OutputFile outputFile;
     private Composite container;
     private Set<ISelectionChangedListener> selectionChangedListeners;
@@ -106,11 +107,13 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     private SQLWhereClause filterClause;
     private SQLWhereClause selectClause;
 
-    public AbstractJournalEntriesViewerTab(CTabFolder parent, OutputFile outputFile, SelectionListener loadJournalEntriesSelectionListener) {
+    public AbstractJournalEntriesViewerTab(Shell shell, CTabFolder parent, OutputFile outputFile,
+        SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
 
+        this.shell = shell;
         this.outputFile = outputFile;
         this.container = new Composite(parent, SWT.NONE);
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
@@ -120,6 +123,10 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         this.selectClause = null;
 
         Preferences.getInstance().addPropertyChangeListener(this);
+    }
+
+    protected Shell getShell() {
+        return shell;
     }
 
     protected abstract String getLabel();

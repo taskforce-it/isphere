@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -53,9 +54,9 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
     private JrneToRtv jrneToRtv;
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForRetrievedJournalEntriesTab(CTabFolder parent, JrneToRtv jrneToRtv,
+    public JournalEntriesViewerForRetrievedJournalEntriesTab(Shell shell, CTabFolder parent, JrneToRtv jrneToRtv,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(parent, JournalDAO.getOutputFile(jrneToRtv.getConnectionName()), loadJournalEntriesSelectionListener);
+        super(shell, parent, JournalDAO.getOutputFile(jrneToRtv.getConnectionName()), loadJournalEntriesSelectionListener);
 
         this.jrneToRtv = jrneToRtv;
 
@@ -187,7 +188,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
                 data.applyFilter(filterWhereClause);
 
-                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
+                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
