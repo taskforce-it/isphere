@@ -44,9 +44,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -98,7 +98,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         super(parentShell);
 
         this.isInitializing = true;
-        this.refreshJob = new RefreshJob();
+        this.refreshJob = new RefreshJob(parentShell);
     }
 
     @Override
@@ -583,14 +583,15 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private class RefreshJob extends WorkbenchJob {
 
-        public RefreshJob() {
-            super("Refresh Job");
+        private Shell shell;
+
+        public RefreshJob(Shell shell) {
+            super(Messages.Status_Loading_meta_data);
             setSystem(true); // set to false to show progress to user
+            this.shell = shell;
         }
 
         public IStatus runInUIThread(IProgressMonitor monitor) {
-
-            monitor.beginTask("Refreshing", IProgressMonitor.UNKNOWN);
 
             if (connection != null) {
 
@@ -602,7 +603,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
                         MetaDataCache.getInstance().removeMetaData(metaData);
                     }
                 } catch (Exception e) {
-                    ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+                    MessageDialogAsync.displayError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
                 }
 
                 List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();

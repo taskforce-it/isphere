@@ -78,7 +78,6 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             }
 
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Error in method DisplayJournalEntriesHandler.handleDisplayFileJournalEntries() ***", e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
