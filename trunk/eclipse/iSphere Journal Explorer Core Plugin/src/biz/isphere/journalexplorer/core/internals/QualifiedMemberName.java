@@ -33,12 +33,6 @@ public class QualifiedMemberName {
     private QualifiedName qualifiedName;
     private String memberName;
 
-    public QualifiedMemberName(String libraryName, String fileName, String memberName) {
-        init(null, libraryName, fileName, memberName);
-
-        this.memberName = memberName;
-    }
-
     public QualifiedMemberName(String connectionName, String libraryName, String fileName, String memberName) {
         init(connectionName, libraryName, fileName, memberName);
     }
