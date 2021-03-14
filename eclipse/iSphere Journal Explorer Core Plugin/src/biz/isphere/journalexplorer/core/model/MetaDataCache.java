@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,11 @@ package biz.isphere.journalexplorer.core.model;
 import java.util.Collection;
 import java.util.HashMap;
 
-import biz.isphere.core.ISpherePlugin;
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.dao.MetaTableDAO;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
@@ -51,55 +55,79 @@ public final class MetaDataCache {
     }
 
     public MetaTable retrieveMetaData(OutputFile outputFile) throws Exception {
-        return loadMetadata(outputFile.getConnectionName(), outputFile.getLibraryName(), outputFile.getFileName());
+        return loadMetadata(outputFile.getConnectionName(), outputFile.getLibraryName(), outputFile.getFileName(), ISeries.FILE);
     }
 
-    public MetaTable retrieveMetaData(String connectionName, String library, String file) throws Exception {
-        return loadMetadata(connectionName, library, file);
+    public MetaTable retrieveMetaData(String connectionName, String library, String file, String objectType) throws Exception {
+        return loadMetadata(connectionName, library, file, objectType);
     }
 
     public MetaTable retrieveMetaData(JournalEntry journalEntry) throws Exception {
-        return loadMetadata(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName());
+        return loadMetadata(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName(),
+            journalEntry.getObjectType());
     }
 
-    private synchronized MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName) throws Exception {
+    private synchronized MetaTable loadMetadata(String connectionName, String objectLibrary, String objectName, String objectType) throws Exception {
 
-        String key = produceKey(objectLibrary, objectName);
+        String key = produceKey(connectionName, objectLibrary, objectName, objectType);
         MetaTable metatable = this.cache.get(key);
 
         if (metatable == null) {
-            metatable = produceMetaTable(objectLibrary, objectName);
+            metatable = produceMetaTable(connectionName, objectLibrary, objectName, objectType);
             this.saveMetaData(metatable);
-            this.loadMetadata(metatable, connectionName);
+            this.loadMetadata(metatable, getMetaTableDAO(connectionName));
         } else if (!metatable.isLoaded()) {
             metatable.clearColumns();
-            this.loadMetadata(metatable, connectionName);
+            this.loadMetadata(metatable, getMetaTableDAO(connectionName));
         }
 
         return metatable;
     }
 
-    private MetaTable produceMetaTable(JournalEntry journalEntry) {
-        return produceMetaTable(journalEntry.getObjectLibrary(), journalEntry.getObjectName());
+    private MetaTableDAO getMetaTableDAO(String connectionName) throws Exception {
+        return new MetaTableDAO(connectionName);
     }
 
-    private MetaTable produceMetaTable(String objectLibrary, String objectName) {
-        return new MetaTable(objectName, objectLibrary);
+    private MetaTable produceMetaTable(JournalEntry journalEntry) {
+        return produceMetaTable(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName(),
+            journalEntry.getObjectType());
+    }
+
+    private MetaTable produceMetaTable(String connectionName, String objectLibrary, String objectName, String objectType) {
+        return new MetaTable(connectionName, objectName, objectLibrary, objectType);
+    }
+
+    private String produceKey(MetaTable metaTable) {
+        return produceKey(metaTable.getConnectionName(), metaTable.getLibrary(), metaTable.getName(), metaTable.getObjectType());
     }
 
     private String produceKey(JournalEntry journalEntry) {
-        return QualifiedName.getName(journalEntry.getObjectLibrary(), journalEntry.getObjectName());
+        return produceKey(journalEntry.getConnectionName(), journalEntry.getObjectLibrary(), journalEntry.getObjectName(),
+            journalEntry.getObjectType());
     }
 
-    private String produceKey(String objectLibrary, String objectName) {
-        return QualifiedName.getName(objectLibrary, objectName);
+    private String produceKey(String connectionName, String objectLibrary, String objectName, String objectType) {
+        objectType = convertToWellKnownType(objectType);
+        return new QualifiedName(connectionName, objectLibrary, objectName).getQualifiedName() + " [" + objectType + "]"; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void loadMetadata(MetaTable metaTable, String connectionName) throws Exception {
+    private String convertToWellKnownType(String objectType) {
 
-        MetaTableDAO metaTableDAO = new MetaTableDAO(connectionName);
+        String wellKnownType;
+        if ("*QDDS".equals(objectType)) { //$NON-NLS-1$
+            wellKnownType = ISeries.FILE;
+        } else {
+            wellKnownType = objectType;
+        }
+
+        return wellKnownType;
+    }
+
+    private void loadMetadata(MetaTable metaTable, MetaTableDAO metaTableDAO) throws Exception {
 
         try {
+
+            TimeTaken timeTaken = TimeTaken.start("Loading meta table " + metaTable.getName()); // //$NON-NLS-1$
 
             metaTableDAO.retrieveColumnsMetaData(metaTable);
             if (metaTable.hasColumns()) {
@@ -109,6 +137,8 @@ public final class MetaDataCache {
                 metaTable.setLoaded(false);
             }
 
+            timeTaken.stop();
+
         } catch (Exception exception) {
             metaTable.setLoaded(false);
             throw exception;
@@ -116,11 +146,11 @@ public final class MetaDataCache {
     }
 
     private void saveMetaData(MetaTable metaTable) {
-        this.cache.put(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()), metaTable);
+        this.cache.put(produceKey(metaTable), metaTable);
     }
 
     public void removeMetaData(MetaTable metaTable) {
-        this.cache.remove(QualifiedName.getName(metaTable.getLibrary(), metaTable.getName()));
+        this.cache.remove(produceKey(metaTable));
     }
 
     public Collection<MetaTable> getCachedParsers() {
@@ -131,15 +161,19 @@ public final class MetaDataCache {
 
         try {
 
+            TimeTaken timeTaken = TimeTaken.start("Pre-loading meta data"); // //$NON-NLS-1$
+
             for (JournaledFile file : files) {
                 String connectionName = file.getConnectionName();
                 String fileName = file.getFileName();
                 String libraryName = file.getLibraryName();
-                retrieveMetaData(connectionName, libraryName, fileName);
+                retrieveMetaData(connectionName, libraryName, fileName, ISeries.FILE);
             }
 
+            timeTaken.stop();
+
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Failed to load meta tables ***", e);
+            MessageDialogAsync.displayError(Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
         }
 
     }

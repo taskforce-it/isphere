@@ -130,7 +130,7 @@ public class CompareSideBySideDialog extends XDialog {
 
     private ColumnResizeListener addColumnResizeListener(JournalEntryDetailsViewer viewer, JournalEntryDetailsViewer connectedViewer) {
 
-        ColumnResizeListener columnResizeListener = new ColumnResizeListener(viewer, connectedViewer);
+        ColumnResizeListener columnResizeListener = new ColumnResizeListener(connectedViewer);
         viewer.setColumnResizeListener(columnResizeListener);
 
         return columnResizeListener;

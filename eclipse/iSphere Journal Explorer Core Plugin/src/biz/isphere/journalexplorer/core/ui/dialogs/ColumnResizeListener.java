@@ -16,13 +16,11 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 public class ColumnResizeListener extends ControlAdapter {
 
-    private JournalEntryDetailsViewer viewer;
     private JournalEntryDetailsViewer connectedViewer;
 
     private boolean isActive;
 
-    public ColumnResizeListener(JournalEntryDetailsViewer viewer, JournalEntryDetailsViewer connectedViewer) {
-        this.viewer = viewer;
+    public ColumnResizeListener(JournalEntryDetailsViewer connectedViewer) {
         this.connectedViewer = connectedViewer;
         this.isActive = false;
     }

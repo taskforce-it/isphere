@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
@@ -596,7 +597,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
                 MetaTable metaData = null;
 
                 try {
-                    metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName);
+                    metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName, ISeries.FILE);
                     if (!metaData.hasColumns()) {
                         MetaDataCache.getInstance().removeMetaData(metaData);
                     }

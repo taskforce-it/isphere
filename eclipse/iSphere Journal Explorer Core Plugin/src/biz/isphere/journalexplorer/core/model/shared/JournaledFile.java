@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
     public JournaledFile(String connectionName, String libraryName, String fileName, String memberName) {
         super(connectionName, libraryName, fileName, ISeries.FILE);
 
-        this.member = new QualifiedMemberName(connectionName, libraryName, fileName);
+        this.member = new QualifiedMemberName(connectionName, libraryName, fileName, ISeries.FILE);
     }
 
     public String getConnectionName() {
@@ -82,4 +82,25 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
             }
         }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((member == null) ? 0 : member.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!super.equals(obj)) return false;
+        if (getClass() != obj.getClass()) return false;
+        JournaledFile other = (JournaledFile)obj;
+        if (member == null) {
+            if (other.member != null) return false;
+        } else if (!member.equals(other.member)) return false;
+        return true;
+    }
+
 }

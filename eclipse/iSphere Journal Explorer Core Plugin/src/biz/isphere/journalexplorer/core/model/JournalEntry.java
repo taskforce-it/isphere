@@ -384,6 +384,9 @@ public class JournalEntry {
         this.joesdProperty = null;
         this.fullColumnMapping = null;
         this.journalProperties = null;
+
+        // Default values
+        setObjectType("*N"); // ==> undefined
     }
 
     public OutputFile getOutputFile() {
@@ -1770,20 +1773,5 @@ public class JournalEntry {
         }
 
         return journaledFile;
-    }
-
-    public void preload() {
-
-        new Thread("") {
-
-            MetaDataCache cache = MetaDataCache.getInstance();
-
-            public void run() {
-                // Preload qualified names
-                getQualifiedObjectName();
-                getJournaledFile().getQualifiedName();
-                getJournaledFile().getQualifiedJournalName();
-            };
-        }.start();
     }
 }

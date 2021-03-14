@@ -9,20 +9,21 @@
 package biz.isphere.journalexplorer.core.model;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.core.json.JsonSerializable;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
+import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 
 import com.google.gson.annotations.Expose;
 
@@ -57,7 +58,7 @@ public class JournalEntries implements JsonSerializable {
 
     // Transient values
     private transient List<JournalEntry> filteredJournalEntries;
-    private Map<String, JournaledFile> journaledFiles;
+    private transient HashSet<JournaledObject> journaledObjects;
 
     public JournalEntries() {
         this(null, 0);
@@ -72,7 +73,7 @@ public class JournalEntries implements JsonSerializable {
 
         // Transient values
         this.filteredJournalEntries = null;
-        this.journaledFiles = null;
+        this.journaledObjects = new HashSet<JournaledObject>();
     }
 
     public String getConnectionName() {
@@ -88,31 +89,26 @@ public class JournalEntries implements JsonSerializable {
 
     public JournaledFile[] getJournaledFiles() {
 
-        if (journaledFiles == null) {
-            loadJournaledFiles();
+        Set<JournaledFile> journaledFiles = new HashSet<JournaledFile>();
+
+        for (JournaledObject journaledObject : journaledObjects) {
+            String connectionName = journaledObject.getConnectionName();
+            String libraryName = journaledObject.getLibraryName();
+            String fileName = journaledObject.getObjectName();
+            journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, "*FIRST")); //$NON-NLS-1$
         }
 
-        return journaledFiles.values().toArray(new JournaledFile[journaledFiles.values().size()]);
-    }
-
-    private synchronized void loadJournaledFiles() {
-        journaledFiles = new HashMap<String, JournaledFile>();
-        for (JournalEntry journalEntry : getItems()) {
-            if (journalEntry.isFile()) {
-                JournaledFile journaledFile = journalEntry.getJournaledFile();
-                journaledFiles.put(journaledFile.getQualifiedName(), journaledFile);
-            }
-        }
+        return journaledFiles.toArray(new JournaledFile[journaledFiles.size()]);
     }
 
     public void applyFilter(SQLWhereClause whereClause) throws ParseException {
-
-        Date startTime = new Date();
 
         if (whereClause == null || !whereClause.hasClause()) {
             removeFilter();
             return;
         }
+
+        TimeTaken timeTaken = TimeTaken.start("Filtering journal entries"); // //$NON-NLS-1$
 
         filteredJournalEntries = new ArrayList<JournalEntry>(journalEntries.size());
 
@@ -145,8 +141,7 @@ public class JournalEntries implements JsonSerializable {
             }
         }
 
-        // System.out.println("mSecs total: " + timeElapsed(startTime) +
-        // ", FILTER-CLAUSE: " + whereClause);
+        timeTaken.stop();
     }
 
     private boolean tableDoesNotMatch(SQLWhereClause whereClause, JournalEntry journalEntry) {
@@ -156,10 +151,6 @@ public class JournalEntries implements JsonSerializable {
         }
 
         return false;
-    }
-
-    private long timeElapsed(Date startTime) {
-        return (new Date().getTime() - startTime.getTime());
     }
 
     public void removeFilter() {
@@ -177,10 +168,11 @@ public class JournalEntries implements JsonSerializable {
     public void add(JournalEntry journalEntry) {
 
         if (filteredJournalEntries != null) {
-            throw new IllegalAccessError("Cannot add entry when filter is active.");
+            throw new IllegalAccessError("Cannot add entry when filter is active."); //$NON-NLS-1$
         }
 
         getItems().add(journalEntry);
+        addJournaledObject(journalEntry);
     }
 
     public List<JournalEntry> getItems() {
@@ -246,5 +238,31 @@ public class JournalEntries implements JsonSerializable {
         }
 
         return messages.toArray(new IBMiMessage[messages.size()]);
+    }
+
+    public void finalizeJsonLoading() {
+
+        /*
+         * Hack for old export files, exported prior to iSphere v4.0
+         */
+        if (getConnectionName() == null && getItems().size() > 0) {
+            setConnectionName(getItem(0).getConnectionName());
+        }
+
+        /* Build a distinct list of journaled objects */
+        journaledObjects = new HashSet<JournaledObject>();
+
+        for (JournalEntry journalEntry : journalEntries) {
+            addJournaledObject(journalEntry);
+        }
+    }
+
+    private void addJournaledObject(JournalEntry journalEntry) {
+
+        String connectionName = journalEntry.getConnectionName();
+        String objectName = journalEntry.getObjectName();
+        String libraryName = journalEntry.getObjectLibrary();
+        String objectType = journalEntry.getObjectType();
+        journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
     }
 }

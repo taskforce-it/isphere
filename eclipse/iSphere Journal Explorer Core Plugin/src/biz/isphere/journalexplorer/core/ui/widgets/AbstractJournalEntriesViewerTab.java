@@ -53,13 +53,15 @@ import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.QualifiedObjectName;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
@@ -143,7 +145,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                 String file = getFilterClause().getFile();
 
                 String connectionName = data.getConnectionName();
-                MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(connectionName, library, file);
+                MetaTable metaTable = MetaDataCache.getInstance().retrieveMetaData(connectionName, library, file, ISeries.FILE);
 
                 if (metaTable != null) {
                     proposalsArray = metaTable.getContentAssistProposals();
@@ -567,7 +569,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
         Arrays.sort(files);
         for (JournaledFile file : files) {
-            tables.add(QualifiedObjectName.toString(file.getFileName(), file.getLibraryName()));
+            tables.add(file.getQualifiedName());
         }
 
         return tables.toArray(new String[tables.size()]);
@@ -578,13 +580,13 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
         public void modifyText(ModifyEvent event) {
 
             String sysObjectName = sqlEditor.getTableName().replaceAll("[.]", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-            QualifiedObjectName objectName = QualifiedObjectName.parse(sysObjectName);
+            QualifiedName objectName = QualifiedName.parse(sysObjectName);
 
             String fileName;
             String libraryName;
             if (objectName != null) {
-                fileName = objectName.getObject();
-                libraryName = objectName.getLibrary();
+                fileName = objectName.getObjectName();
+                libraryName = objectName.getLibraryName();
             } else {
                 fileName = ""; //$NON-NLS-1$
                 libraryName = ""; //$NON-NLS-1$
@@ -593,7 +595,12 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             String whereClause = sqlEditor.getWhereClause().trim();
             setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
 
-            sqlEditor.setContentAssistProposals(getContentAssistProposals());
+            ContentAssistProposal[] proposals = getContentAssistProposals();
+            if (proposals == null) {
+                return;
+            }
+
+            sqlEditor.setContentAssistProposals(proposals);
         }
     }
 
@@ -641,27 +648,34 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     private class PreloadMetaDataJob extends Job {
 
-        private JournalEntries data;
+        private JournalEntries journalEntries;
 
         public PreloadMetaDataJob(JournalEntries journalEntries) {
-            super(Messages.Loading_table_names);
-            this.data = journalEntries;
+            super(Messages.Status_Loading_meta_data);
+            this.journalEntries = journalEntries;
         }
 
         @Override
         protected IStatus run(IProgressMonitor monitor) {
-                if (data != null) {
+
+            try {
+
+                if (journalEntries != null) {
 
                     if (isSqlEditorVisible()) {
                         setComboEnabled(false, new JournaledFile[0]);
                     }
 
-                    final JournaledFile[] journaledFiles = data.getJournaledFiles();
-                    MetaDataCache.getInstance().preloadTables(journaledFiles);
+                    final JournaledFile[] journaledFiles = journalEntries.getJournaledFiles();
+                    // MetaDataCache.getInstance().preloadTables(journaledFiles);
                     if (isSqlEditorVisible()) {
                         setComboEnabled(true, journaledFiles);
                     }
                 }
+
+            } catch (Exception e) {
+                MessageDialogAsync.displayError(Messages.Status_Loading_meta_data, e.getLocalizedMessage());
+            }
 
             return Status.OK_STATUS;
         }

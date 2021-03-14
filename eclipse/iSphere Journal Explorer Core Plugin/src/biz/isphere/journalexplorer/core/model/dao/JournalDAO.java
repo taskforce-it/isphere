@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
 package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -41,7 +41,7 @@ public class JournalDAO {
      * valid. ==> Reducing length to 15.5 MB.
      */
     private static final int BUFFER_MAXIMUM_SIZE = IntHelper.align16Bytes((int)(1024 * 1024 * 15.5)); // 15.5MB;
-    private static final int BUFFER_INCREMENT_SIZE = IntHelper.align16Bytes(Buffer.size("64k"));
+    private static final int BUFFER_INCREMENT_SIZE = IntHelper.align16Bytes(Buffer.size("64k")); //$NON-NLS-1$
 
     private JrneToRtv jrneToRtv;
     private OutputFile outputFile;
@@ -54,7 +54,7 @@ public class JournalDAO {
     }
 
     public static OutputFile getOutputFile(String connectionName) {
-        return new OutputFile(connectionName, "QSYS", "QADSPJR5");
+        return new OutputFile(connectionName, "QSYS", "QADSPJR5"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
@@ -69,8 +69,6 @@ public class JournalDAO {
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
-
-        Date startTime = new Date();
 
         do {
 
@@ -103,7 +101,7 @@ public class JournalDAO {
                         journalEntries.add(populatedJournalEntry);
 
                         if (id % 50 == 0) {
-                            monitor.setTaskName(Messages.Loading_entries + "(" + id + ")");
+                            monitor.setTaskName(Messages.Status_Loading_journal_entries + "(" + id + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
 
                         if (journalEntry.isRecordEntryType()) {
@@ -119,9 +117,6 @@ public class JournalDAO {
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.getNumberOfRowsDownloaded() < maxNumRows
             && !isCanceled(monitor, journalEntries));
 
-        // System.out.println("mSecs total: " + timeElapsed(startTime) +
-        // ", WHERE-CLAUSE: " + whereClause);
-
         if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);
         }
@@ -129,10 +124,6 @@ public class JournalDAO {
         journalEntries.setMessages(messages);
 
         return journalEntries;
-    }
-
-    private long timeElapsed(Date startTime) {
-        return (new Date().getTime() - startTime.getTime());
     }
 
     private boolean isCanceled(IProgressMonitor monitor, JournalEntries journalEntries) {
@@ -162,6 +153,8 @@ public class JournalDAO {
     }
 
     private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) throws Exception {
+
+        // TimeTaken timeTaken = TimeTaken.start("Populating journal entry"); // //$NON-NLS-1$
 
         // AbstractTypeDAO
         // journalEntry.setConnectionName(connectionName);
@@ -232,7 +225,7 @@ public class JournalDAO {
         journalEntry.setFileTypeIndicator(journalEntryData.getFileTypeIndicator());
         journalEntry.setNestedCommitLevel(journalEntryData.getNestedCommitLevel());
 
-        journalEntry.preload();
+        // timeTaken.stop();
 
         return journalEntry;
     }

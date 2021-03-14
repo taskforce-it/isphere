@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,10 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
@@ -170,6 +172,8 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
             try {
 
+                TimeTaken timeTaken = TimeTaken.start("Loading journal entries"); // //$NON-NLS-1$
+
                 monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
 
                 // Clone the selection arguments to start with the original
@@ -178,7 +182,12 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
                 JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
                 final JournalEntries data = journalDAO.load(whereClause, monitor);
+
+                timeTaken.stop(data.size());
+
                 data.applyFilter(filterWhereClause);
+
+                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,13 +37,17 @@ public class MetaTableLabelProvider extends LabelProvider implements ITableLabel
         MetaTable metaTable = (MetaTable)object;
 
         switch (index) {
-        case 0: // Journaled Object
+        case 0: // Connection Name
+            return metaTable.getConnectionName();
+        case 1: // Journaled Object
             return metaTable.getQualifiedName();
-        case 1: // Parser Library
+        case 2: // Parser Library
             return metaTable.getDefinitionLibrary();
-        case 2: // Parser Object
+        case 3: // Parser Object
             return metaTable.getDefinitionName();
-        case 3: // Parsing offset
+        case 4: // Parser Type
+            return metaTable.getDefinitionObjectType();
+        case 5: // Parsing offset
             return Integer.toString(metaTable.getParsingOffset());
         default:
             break;
