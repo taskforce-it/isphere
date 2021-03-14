@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,9 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
                 String name = selectedJournal.getName();
                 Journal journal = new Journal(connectionName, library, name);
 
-                handleDisplayFileJournalEntries(journal, new ArrayList<JournaledFile>(), selectionCriterias);
+                if (!handleDisplayFileJournalEntries(journal, new ArrayList<JournaledFile>(), selectionCriterias)) {
+                    return;
+                }
             }
 
         } catch (Exception e) {
@@ -102,12 +104,18 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
             for (String connectionName : filesByConnection.keySet()) {
 
                 AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+                if (system == null) {
+                    return;
+                }
+
                 if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), system)) {
                     return;
                 }
 
                 List<ISelectedFile> files = filesByConnection.get(connectionName);
-                handleDisplayFileJournalEntries(connectionName, files);
+                if (!handleDisplayFileJournalEntries(connectionName, files)) {
+                    return;
+                }
             }
 
         } catch (Exception e) {
@@ -124,7 +132,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
      * @param selectedFiles - list of selected files
      * @throws Exception
      */
-    private void handleDisplayFileJournalEntries(String connectionName, List<ISelectedFile> selectedFiles) throws Exception {
+    private boolean handleDisplayFileJournalEntries(String connectionName, List<ISelectedFile> selectedFiles) throws Exception {
 
         Map<Journal, List<JournaledFile>> objectsByJournal = groupObjectsByJournal(connectionName, selectedFiles);
 
@@ -141,7 +149,7 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
             if (!ConfirmErrorsDialog.openConfirm(getShell(), Messages.bind(Messages.Title_Connection_A, connectionName),
                 Messages.Error_The_following_objects_are_not_journaled_Continue_anyway, files.toArray(new String[files.size()]))) {
-                return;
+                return true;
             }
 
             objectsByJournal.remove(null);
@@ -149,20 +157,24 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
 
         if (objectsByJournal.isEmpty()) {
             MessageDialog.openInformation(getShell(), Messages.bind(Messages.Title_Connection_A, connectionName), Messages.Error_No_object_selected);
-            return;
+            return true;
         }
 
         LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedFiles.toArray(new ISelectedObject[selectedFiles.size()]));
         if (dialog.open() == LoadJournalEntriesDialog.OK) {
             selectionCriterias = dialog.getSelectionCriterias();
         } else {
-            return;
+            return true;
         }
 
         for (Journal journal : objectsByJournal.keySet()) {
             List<JournaledFile> journaledObjects = objectsByJournal.get(journal);
-            handleDisplayFileJournalEntries(journal, journaledObjects, selectionCriterias);
+            if (!handleDisplayFileJournalEntries(journal, journaledObjects, selectionCriterias)) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
@@ -174,8 +186,12 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
      * @param selectionCriterias - selection criterias
      * @throws Exception
      */
-    private void handleDisplayFileJournalEntries(Journal journal, List<JournaledFile> journaledFiles,
+    private boolean handleDisplayFileJournalEntries(Journal journal, List<JournaledFile> journaledFiles,
         LoadJournalEntriesDialog.SelectionCriterias selectionCriterias) throws Exception {
+
+        if (IBMiHostContributionsHandler.getSystem(journal.getConnectionName()) == null) {
+            return false;
+        }
 
         String osRelease = ISpherePlugin.getDefault().getIBMiRelease(journal.getConnectionName());
         if (MIN_OS_RELEASE.compareTo(osRelease) > 0) {
@@ -204,6 +220,8 @@ public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContr
         JournalExplorerView view = (JournalExplorerView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
             .showView(JournalExplorerView.ID);
         view.createJournalTab(tJrneToRtv);
+
+        return true;
     }
 
     /**
