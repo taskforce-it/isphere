@@ -83,10 +83,10 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
         return mode;
     }
 
-    public String getLevel() {
+    public String getLevel() throws Exception {
         return ISpherePlugin.getDefault().getIBMiRelease(as400);
     }
-    
+
     @Override
     public int hashCode() {
         /*

@@ -43,6 +43,13 @@ public class MessageDialogAsync {
         displayError(Messages.E_R_R_O_R, message);
     }
 
+    public static void displayError(Shell shell, String title, String message) {
+        int kind = MessageDialog.ERROR;
+        MessageDialog dialog = new MessageDialog(shell, title, null, message, kind, getButtonLabels(kind), 0);
+        MessageDialogUIJob job = new MessageDialogUIJob(shell.getDisplay(), dialog);
+        job.schedule();
+    }
+
     /**
      * @param kind
      * @return

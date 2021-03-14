@@ -96,6 +96,8 @@ public class Messages extends NLS {
 
     public static String Downloading_source_members;
 
+    public static String Retrieving_host_release_level;
+
     public static String E_R_R_O_R;
 
     public static String Field;
