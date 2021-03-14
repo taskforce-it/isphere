@@ -487,36 +487,28 @@ public class ISpherePlugin extends AbstractUIPlugin {
     }
 
     public String getIBMiRelease(String connectionName) {
+        return getIBMiRelease(IBMiHostContributionsHandler.getSystem(connectionName));
+    }
+
+    public String getIBMiRelease(AS400 system) {
 
         try {
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            return getIBMiReleaseUnchecked(system);
+
+            PRDI0100 prdi0100 = new PRDI0100(system);
+            PRDR0100 prdr0100 = new PRDR0100(system);
+            QSZRTVPR main = new QSZRTVPR(system);
+            if (!main.execute(prdr0100, prdi0100)) {
+                logError(main.getMessageList()[0].getText(), null);
+                return "V0R0M0";
+            }
+
+            return prdr0100.getReleaseLevel();
+
         } catch (Throwable e) {
             logError(e.getLocalizedMessage(), e);
         }
 
         return "V0R0M0";
-    }
-
-    public String getIBMiReleaseUnchecked(String connectionName) throws Exception {
-        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-        if (system == null) {
-            throw new Exception(Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName));
-        }
-        return getIBMiReleaseUnchecked(system);
-    }
-
-    public String getIBMiReleaseUnchecked(AS400 system) throws Exception {
-
-        PRDI0100 prdi0100 = new PRDI0100(system);
-        PRDR0100 prdr0100 = new PRDR0100(system);
-        QSZRTVPR main = new QSZRTVPR(system);
-        if (!main.execute(prdr0100, prdi0100)) {
-            logError(main.getMessageList()[0].getText(), null);
-            return "V0R0M0";
-        }
-
-        return prdr0100.getReleaseLevel();
     }
 
     public static boolean isSaveNeededHandling() {
