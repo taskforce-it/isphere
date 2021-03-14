@@ -17,14 +17,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
-
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
@@ -52,6 +52,9 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
                     String description = qsysRemoteObject.getDescription();
 
                     AS400 as400 = IBMiHostContributionsHandler.getSystem(profile, connectionName);
+                    if (as400 == null) {
+                        return;
+                    }
                     Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(profile, connectionName);
                     if (as400 != null && jdbcConnection != null) {
 
