@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import org.eclipse.swt.widgets.Composite;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
@@ -172,19 +174,21 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
             this.filterWhereClause = filterWhereClause;
         }
 
-        /*
-         * The Monitor is set in AbstractTypeDAO.
-         * @see
-         * biz.isphere.journalexplorer.core.model.dao.AbstractTypeDAO#load(...)
-         */
         public IStatus run(IProgressMonitor monitor) {
 
             try {
 
+                TimeTaken timeTaken = TimeTaken.start("Loading journal entries"); // //$NON-NLS-1$
+
                 OutputFileDAO journalDAO = new OutputFileDAO(getOutputFile());
 
                 final JournalEntries data = journalDAO.getJournalData(whereClause, monitor);
+
+                timeTaken.stop(data.size());
+
                 data.applyFilter(filterWhereClause);
+
+                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

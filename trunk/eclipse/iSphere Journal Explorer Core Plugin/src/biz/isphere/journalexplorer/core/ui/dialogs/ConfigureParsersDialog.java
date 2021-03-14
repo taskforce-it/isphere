@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,12 +47,14 @@ public class ConfigureParsersDialog extends XDialog {
 
     private static final int RELOAD_BUTTON = -1;
 
+    private static final String COLUMN_CONNECTION = "CONNECTION";
     private static final String COLUMN_JOURNALED_OBJECT = "JOURNALED_OBJECT";
     private static final String COLUMN_PARSER_LIBRARY = "PARSER_LIBRARY";
     private static final String COLUMN_PARSER_NAME = "PARSER_NAME";
+    private static final String COLUMN_PARSER_TYPE = "COLUMN_PARSER_TYPE";
     private static final String COLUMN_PARSING_OFFSET = "PARSING_OFFSET";
-    private static final String[] COLUMN_NAMES = new String[] { COLUMN_JOURNALED_OBJECT, COLUMN_PARSER_LIBRARY, COLUMN_PARSER_NAME,
-        COLUMN_PARSING_OFFSET };
+    private static final String[] COLUMN_NAMES = new String[] { COLUMN_CONNECTION, COLUMN_JOURNALED_OBJECT, COLUMN_PARSER_LIBRARY,
+        COLUMN_PARSER_NAME, COLUMN_PARSER_TYPE, COLUMN_PARSING_OFFSET };
 
     TableViewer tableViewer;
 
@@ -128,6 +130,13 @@ public class ConfigureParsersDialog extends XDialog {
         table.setHeaderVisible(true);
 
         // /
+        // / connectionName column
+        // /
+        TableColumn connectionName = new TableColumn(table, SWT.NONE);
+        connectionName.setWidth(100);
+        connectionName.setText(Messages.ConfigureParsersDialog_ConnectionName);
+
+        // /
         // / journaledObject column
         // /
         TableColumn journaledObject = new TableColumn(table, SWT.NONE);
@@ -138,21 +147,28 @@ public class ConfigureParsersDialog extends XDialog {
         // / parserLibrary column
         // /
         TableColumn parserLibrary = new TableColumn(table, SWT.NONE);
-        parserLibrary.setWidth(150);
+        parserLibrary.setWidth(100);
         parserLibrary.setText(Messages.ConfigureParsersDialog_DefinitionLibrary);
 
         // /
         // / parserObject column
         // /
         TableColumn parserObject = new TableColumn(table, SWT.NONE);
-        parserObject.setWidth(150);
+        parserObject.setWidth(100);
         parserObject.setText(Messages.ConfigureParsersDialog_DefinitionObject);
+
+        // /
+        // / parserType column
+        // /
+        TableColumn parserType = new TableColumn(table, SWT.NONE);
+        parserType.setWidth(100);
+        parserType.setText(Messages.ConfigureParsersDialog_DefinitionType);
 
         // /
         // / parsingOffset column
         // /
         TableColumn parsingOffset = new TableColumn(table, SWT.NONE);
-        parsingOffset.setWidth(170);
+        parsingOffset.setWidth(100);
         parsingOffset.setText(Messages.ConfigureParsersDialog_ParsingOffset);
 
         tableViewer.setColumnProperties(COLUMN_NAMES);
@@ -169,20 +185,28 @@ public class ConfigureParsersDialog extends XDialog {
         // Create the cell editors
         final CellEditor[] editors = new CellEditor[columnNames.length];
 
-        // Column 1 : Journal object
+        // Column 0 : Connection Name
         editors[0] = null;
+
+        // Column 1 : Journal object
+        editors[1] = null;
 
         // Column 2 : Parser library
         textEditor = new TextCellEditor(table);
         ((Text)textEditor.getControl()).setTextLimit(10);
-        editors[1] = textEditor;
+        editors[2] = textEditor;
 
         // Column 3 : Parser name
         textEditor = new TextCellEditor(table);
         ((Text)textEditor.getControl()).setTextLimit(10);
-        editors[2] = textEditor;
+        editors[3] = textEditor;
 
-        // Column 4 : Parsing offset
+        // Column 4 : Parser type
+        textEditor = new TextCellEditor(table);
+        ((Text)textEditor.getControl()).setTextLimit(10);
+        editors[4] = textEditor;
+
+        // Column 5 : Parsing offset
         textEditor = new TextCellEditor(table);
         ((Text)textEditor.getControl()).addVerifyListener(
 
@@ -191,7 +215,7 @@ public class ConfigureParsersDialog extends XDialog {
                 e.doit = "0123456789".indexOf(e.text) >= 0;
             }
         });
-        editors[3] = textEditor;
+        editors[5] = textEditor;
 
         // Assign the cell editors to the viewer
         tableViewer.setCellEditors(editors);
@@ -206,17 +230,22 @@ public class ConfigureParsersDialog extends XDialog {
 
                 int index = getColumnIndex(property);
                 switch (index) {
-                case 1: // Parser library
+                case 2: // Parser library
                     metaTable.setDefinitionLibrary((String)value);
                     metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
                     break;
-                case 2: // Parser name
+                case 3: // Parser name
                     metaTable.setDefinitionName((String)value);
                     metaTable.setLoaded(false);
                     tableViewer.update(metaTable, null);
                     break;
-                case 3: // Parsing offset
+                case 4: // Parser type
+                    metaTable.setDefinitionObjectType((String)value);
+                    metaTable.setLoaded(false);
+                    tableViewer.update(metaTable, null);
+                    break;
+                case 5: // Parsing offset
                     try {
                         metaTable.setParsingOffset(Integer.parseInt((String)value));
                         metaTable.setLoaded(false);
@@ -235,13 +264,17 @@ public class ConfigureParsersDialog extends XDialog {
 
                 int index = getColumnIndex(property);
                 switch (index) {
-                case 0: // Journaled object
+                case 0: // Connection Name
+                    return metaTable.getConnectionName();
+                case 1: // Journaled object
                     return metaTable.getQualifiedName();
-                case 1: // Parser library
+                case 2: // Parser library
                     return metaTable.getDefinitionLibrary();
-                case 2: // Parser name
+                case 3: // Parser name
                     return metaTable.getDefinitionName();
-                case 3: // Parsing offset
+                case 4: // Parser type
+                    return metaTable.getDefinitionObjectType();
+                case 5: // Parsing offset
                     return Integer.toString(metaTable.getParsingOffset());
                 default:
                     return "";
@@ -332,7 +365,7 @@ public class ConfigureParsersDialog extends XDialog {
      */
     @Override
     protected Point getDefaultSize() {
-        return new Point(680, 310);
+        return new Point(700, 310);
     }
 
     /**

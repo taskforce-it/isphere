@@ -39,10 +39,15 @@ import com.ibm.as400.access.Record;
  */
 public class MetaTable {
 
-    private String name;
+    private String connectionName;
     private String library;
+    private String name;
+    private String objectType;
+
+    private String definitionConnection;
     private String definitionName;
     private String definitionLibrary;
+    private String definitionObjectType;
 
     private LinkedHashMap<String, MetaColumn> columns;
 
@@ -55,11 +60,19 @@ public class MetaTable {
 
     private Set<String> warningMessages;
 
-    public MetaTable(String name, String library) {
+    public MetaTable(String connectionName, String name, String library, String objectType) {
+
+        this.connectionName = connectionName;
+        this.library = library.trim();
+        this.name = name.trim();
+        this.objectType = objectType.trim();
+
+        setDefinitionConnectionName(this.connectionName);
+        setDefinitionLibrary(this.library);
+        setDefinitionName(this.name);
+        setDefinitionObjectType(this.objectType);
 
         this.columns = new LinkedHashMap<String, MetaColumn>();
-        this.name = this.definitionName = name.trim();
-        this.library = this.definitionLibrary = library.trim();
         this.loaded = false;
         this.parsingOffset = 0;
         this.countNullableFields = 0;
@@ -85,20 +98,24 @@ public class MetaTable {
         return warningMessages.contains(message);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name.trim();
+    public String getConnectionName() {
+        return connectionName;
     }
 
     public String getLibrary() {
         return library;
     }
 
-    public void setLibrary(String library) {
-        this.library = library.trim();
+    public String getName() {
+        return name;
+    }
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setDefinitionConnectionName(String definitionConection) {
+        this.definitionConnection = definitionConection.trim();
     }
 
     public void setDefinitionLibrary(String definitionLibrary) {
@@ -109,12 +126,24 @@ public class MetaTable {
         this.definitionName = definitionName.trim();
     }
 
+    public void setDefinitionObjectType(String objectType) {
+        this.definitionObjectType = objectType.trim();
+    }
+
+    public String getDefinitionConnectionName() {
+        return definitionConnection;
+    }
+
     public String getDefinitionLibrary() {
         return definitionLibrary;
     }
 
     public String getDefinitionName() {
         return definitionName;
+    }
+
+    public String getDefinitionObjectType() {
+        return definitionObjectType;
     }
 
     public boolean isLoaded() {
@@ -226,19 +255,19 @@ public class MetaTable {
 
         if (outfileType == null) {
 
-            if (hasColumn("JOPGMLIB")) {
+            if (hasColumn("JOPGMLIB")) { //$NON-NLS-1$
                 // Added with *TYPE5
                 outfileType = JournalOutputType.TYPE5;
-            } else if (hasColumn("JOJID")) {
+            } else if (hasColumn("JOJID")) { //$NON-NLS-1$
                 // Added with *TYPE4
                 outfileType = JournalOutputType.TYPE4;
-            } else if (hasColumn("JOTSTP")) {
+            } else if (hasColumn("JOTSTP")) { //$NON-NLS-1$
                 // Added with *TYPE3
                 outfileType = JournalOutputType.TYPE3;
-            } else if (hasColumn("JOUSPF")) {
+            } else if (hasColumn("JOUSPF")) { //$NON-NLS-1$
                 // Added with *TYPE2
                 outfileType = JournalOutputType.TYPE2;
-            } else if (hasColumn("JOUSPF")) {
+            } else if (hasColumn("JOUSPF")) { //$NON-NLS-1$
                 outfileType = JournalOutputType.TYPE1;
             } else {
                 outfileType = JournalOutputType.NONE;
@@ -257,7 +286,7 @@ public class MetaTable {
 
         StringBuilder buffer = new StringBuilder(qualifiedName);
         if (!qualifiedName.equals(qualifiedDefinitionName)) {
-            buffer.append(" ==> ");
+            buffer.append(" ==> "); //$NON-NLS-1$
             buffer.append(qualifiedDefinitionName);
         }
 

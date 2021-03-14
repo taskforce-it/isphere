@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -56,8 +55,6 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
         try {
 
-            Date startTime = new Date();
-
             statement = createStatement();
             overwriteDatabaseFile(statement, outputFile.getFileName(), outputFile.getLibraryName(), outputFile.getFileName(),
                 outputFile.getMemberName());
@@ -95,7 +92,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
                         if (id % 50 == 0) {
                             monitor.worked(50);
-                            monitor.setTaskName(Messages.Loading_entries + "(" + id + ")");
+                            monitor.setTaskName(Messages.Status_Loading_journal_entries + "(" + id + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
 
                         if (journalEntry.isRecordEntryType()) {
@@ -104,9 +101,6 @@ public abstract class AbstractTypeDAO extends DAOBase {
                     }
                 }
             }
-
-            // System.out.println("mSecs total: " + timeElapsed(startTime) +
-            // ", WHERE-CLAUSE: " + whereClause);
 
         } finally {
 
@@ -159,7 +153,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
             statement.execute(command);
 
         } catch (Exception e) {
-            String message = String.format("*** Could not overwrite database file %s ***", command);
+            String message = String.format("*** Could not overwrite database file %s ***", command); //$NON-NLS-1$
             ISpherePlugin.logErrorOnce(message, e);
             throw new Exception(message, e);
         }
@@ -189,7 +183,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
             statement.execute(command);
 
         } catch (Exception e) {
-            String message = String.format("*** Could not delete database overwrite %s ***", command);
+            String message = String.format("*** Could not delete database overwrite %s ***", command); //$NON-NLS-1$
             ISpherePlugin.logErrorOnce(message, e);
             throw new Exception(message, e);
         }
@@ -217,7 +211,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
             }
 
         } catch (SQLException e) {
-            ISpherePlugin.logError("*** Could not execute SQL statement: '" + sqlCountStatement + "' ***", e);
+            ISpherePlugin.logError("*** Could not execute SQL statement: '" + sqlCountStatement + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
         } finally {
             try {
                 super.destroy(preparedStatement);
@@ -236,7 +230,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
     private String getSqlCountStatement(OutputFile outputFile, SQLWhereClause whereClause) {
 
-        String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getLibraryName(), outputFile.getFileName());
+        String sqlStatement = String.format("SELECT COUNT(JOENTT) FROM %s.%s", outputFile.getLibraryName(), outputFile.getFileName()); //$NON-NLS-1$
         if (whereClause.hasClause()) {
             sqlStatement = sqlStatement + " WHERE " + whereClause.getClause(); //$NON-NLS-1$
         }
@@ -268,17 +262,12 @@ public abstract class AbstractTypeDAO extends DAOBase {
         journalEntry.setSequenceNumber(resultSet.getBigDecimal(ColumnsDAO.JOSEQN.name()).toBigIntegerExact());
         journalEntry.setSpecificData(resultSet.getBytes(ColumnsDAO.JOESD.name()));
         journalEntry.setStringSpecificData(resultSet.getString(ColumnsDAO.JOESD.name()));
-        journalEntry.preload();
 
         return journalEntry;
     }
 
     protected String getJournalEntryCcsid() {
         return Preferences.getInstance().getJournalEntryCcsid();
-    }
-
-    private long timeElapsed(Date startTime) {
-        return (new Date().getTime() - startTime.getTime());
     }
 
 }

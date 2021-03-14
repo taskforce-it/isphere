@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
@@ -28,8 +30,10 @@ import biz.isphere.core.json.JsonImporter;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
+import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -110,7 +114,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new OpenJournalJob(view, fileName);
+        Job loadJournalDataJob = new OpenJournalJob(view, fileName, PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
         loadJournalDataJob.schedule();
     }
 
@@ -130,34 +134,32 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         private JournalExplorerView view;
         private String fileName;
+        private Shell shell;
 
-        public OpenJournalJob(JournalExplorerView view, String fileName) {
+        public OpenJournalJob(JournalExplorerView view, String fileName, Shell shell) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
             this.fileName = fileName;
-            ;
+            this.shell = shell;
         }
 
         public IStatus run(IProgressMonitor monitor) {
 
             try {
 
+                TimeTaken timeTaken = TimeTaken.start("Loading journal entries"); // //$NON-NLS-1$
+
                 monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
 
                 JsonImporter<JournalEntries> importer = new JsonImporter<JournalEntries>(JournalEntries.class);
 
                 final JournalEntries data = importer.execute(view.getViewSite().getShell(), fileName);
-                /*
-                 * Hack for old export files, exported prior to iSphere v4.0
-                 */
-                if (data.getConnectionName() == null && data.getItems().size() > 0) {
-                    data.setConnectionName(data.getItem(0).getConnectionName());
-                }
+                data.finalizeJsonLoading();
 
-                for (JournalEntry journalEntry : data.getItems()) {
-                    journalEntry.preload();
-                }
+                timeTaken.stop(data.size());
+
+                MetaDataCache.getInstance().preloadTables(data.getJournaledFiles());
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

@@ -34,6 +34,8 @@ public class Messages extends NLS {
 
     public static String ConfigureParsersDialog_DefinitionLibrary;
     public static String ConfigureParsersDialog_DefinitionObject;
+    public static String ConfigureParsersDialog_DefinitionType;
+    public static String ConfigureParsersDialog_ConnectionName;
     public static String ConfigureParsersDialog_JournalObject;
     public static String ConfigureParsersDialog_ParsingOffset;
     public static String ConfigureParsersDialog_SetDefinitions;
@@ -170,8 +172,6 @@ public class Messages extends NLS {
     public static String Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields;
 
     public static String Calling_API;
-    public static String Loading_entries;
-    public static String Loading_table_names;
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
     public static String Exception_No_entries_converted_or_received_from_Json_file_A;
@@ -292,6 +292,7 @@ public class Messages extends NLS {
     public static String Display_Import_Result;
 
     public static String Status_Loading_journal_entries;
+    public static String Status_Loading_meta_data;
 
     static {
         // initialize resource bundle

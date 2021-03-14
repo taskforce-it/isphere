@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,9 @@ public class JournaledObject {
     private QualifiedName objectName;
     private String objectType;
 
-    private boolean isJournaled;
-    private Journal journal;
-
+    private transient boolean isJournaled;
+    private transient Journal journal;
     private transient ObjectDescription journalObjectDescription;
-    private transient String journalName;
 
     public JournaledObject(String connectionName, String libraryName, String objectName, String objectType) {
         this.objectName = new QualifiedName(connectionName, libraryName, objectName);
@@ -57,11 +55,11 @@ public class JournaledObject {
 
     public String getQualifiedJournalName() {
 
-        if (journalName == null && getJournal() != null) {
-            journalName = new QualifiedName(getConnectionName(), getJournal().getLibrary(), getJournal().getName()).getQualifiedName();
+        if (getJournal() != null) {
+            return new QualifiedName(getConnectionName(), getJournal().getLibrary(), getJournal().getName()).getQualifiedName();
         }
 
-        return journalName;
+        return null;
     }
 
     public String getQualifiedName() {
@@ -94,6 +92,30 @@ public class JournaledObject {
         }
 
         return journal;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((objectName == null) ? 0 : objectName.hashCode());
+        result = prime * result + ((objectType == null) ? 0 : objectType.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        JournaledObject other = (JournaledObject)obj;
+        if (objectName == null) {
+            if (other.objectName != null) return false;
+        } else if (!objectName.equals(other.objectName)) return false;
+        if (objectType == null) {
+            if (other.objectType != null) return false;
+        } else if (!objectType.equals(other.objectType)) return false;
+        return true;
     }
 
     @Override
