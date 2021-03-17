@@ -23,6 +23,7 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.base.as400.access.AS400UnsignedBin8;
+import biz.isphere.journalexplorer.base.as400.system.DTSDate;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
@@ -131,6 +132,7 @@ public class RJNE0200 {
 
         bufferSize = aBufferSize;
         dateTimeConverter = new DateTimeConverter(aSystem);
+
         store = new DynamicRecordFormatsStore(aSystem);
 
         TimeZone timeZone = IBMiHelper.timeZoneForSystem(aSystem);
@@ -430,7 +432,8 @@ public class RJNE0200 {
     public java.sql.Timestamp getTimestamp() throws Exception {
 
         Object[] tResult = getEntryHeaderData();
-        Date tTimestamp = dateTimeConverter.convert((byte[])tResult[7], "*DTS");
+
+        Date tTimestamp = new DTSDate().getDate((byte[])tResult[7]);
 
         tTimestamp = convertToLocalTimeZone(tTimestamp);
 
@@ -1356,25 +1359,27 @@ public class RJNE0200 {
      * 
      * @return array of objects
      */
-    public Object[] getEntrySpecificData() {
-
-        DynamicRecordFormat recFormat = store.get(getObjectName(), getObjectLibrary());
-        Object[] tmpEntrySpecificData = (Object[])getEntrySpecificDataStructure(recFormat).toObject(getOutputData(),
-            entryHeaderStartPos + getDspToThsJrnEntData());
-
-        Object[] entrySpecificData; // without header fields
-        if (tmpEntrySpecificData != null && tmpEntrySpecificData.length > 2) {
-            ArrayList<Object> list = new ArrayList<Object>();
-            for (int i = 2; i < tmpEntrySpecificData.length; i++) {
-                list.add(tmpEntrySpecificData[i]);
-            }
-            entrySpecificData = list.toArray();
-        } else {
-            entrySpecificData = new Object[0];
-        }
-
-        return entrySpecificData;
-    }
+    // public Object[] getEntrySpecificData() {
+    //
+    // DynamicRecordFormat recFormat = store.get(getObjectName(),
+    // getObjectLibrary());
+    // Object[] tmpEntrySpecificData =
+    // (Object[])getEntrySpecificDataStructure(recFormat).toObject(getOutputData(),
+    // entryHeaderStartPos + getDspToThsJrnEntData());
+    //
+    // Object[] entrySpecificData; // without header fields
+    // if (tmpEntrySpecificData != null && tmpEntrySpecificData.length > 2) {
+    // ArrayList<Object> list = new ArrayList<Object>();
+    // for (int i = 2; i < tmpEntrySpecificData.length; i++) {
+    // list.add(tmpEntrySpecificData[i]);
+    // }
+    // entrySpecificData = list.toArray();
+    // } else {
+    // entrySpecificData = new Object[0];
+    // }
+    //
+    // return entrySpecificData;
+    // }
 
     /**
      * Returns the the raw entry specific data.
