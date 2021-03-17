@@ -497,7 +497,12 @@ public class JournalEntry {
 
         int i = JOCTRR + 1;
         for (int p = 0; p < rowProperties.length; p++) {
-            row[i] = (Comparable<?>)rowProperties[p].value;
+            System.out.println(rowProperties[p].value.getClass().getSimpleName());
+            if (rowProperties[p].value instanceof String) {
+                row[i] = StringHelper.trimR((String)rowProperties[p].value);
+            } else {
+                row[i] = (Comparable<?>)rowProperties[p].value;
+            }
             i++;
         }
         return row;
