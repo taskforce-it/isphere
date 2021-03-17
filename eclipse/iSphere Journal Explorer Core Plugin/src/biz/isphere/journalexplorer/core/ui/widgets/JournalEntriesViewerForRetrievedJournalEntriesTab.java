@@ -186,7 +186,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
                 timeTaken.stop(data.size());
 
-                data.applyFilter(filterWhereClause);
+                data.applyFilter(filterWhereClause, monitor);
 
                 MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
@@ -262,7 +262,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         private SQLWhereClause whereClause;
 
         public FilterJournalJob(JournalExplorerView view, SQLWhereClause whereClause) {
-            super(Messages.Status_Loading_journal_entries);
+            super(Messages.Status_Filtering_journal_entries);
 
             this.view = view;
             this.whereClause = whereClause;
@@ -274,7 +274,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
             try {
 
-                data.applyFilter(whereClause);
+                data.applyFilter(whereClause, monitor);
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

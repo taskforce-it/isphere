@@ -292,6 +292,7 @@ public class Messages extends NLS {
     public static String Display_Import_Result;
 
     public static String Status_Loading_journal_entries;
+    public static String Status_Filtering_journal_entries;
     public static String Status_Loading_meta_data;
 
     static {
