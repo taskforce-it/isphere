@@ -343,7 +343,7 @@ public class SqlEditor extends Composite {
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
         wherePanel.setLayout(createLayout(1, SWT.DEFAULT, 0, 0));
-        GridData gd_wherePanel = new GridData(GridData.FILL_HORIZONTAL);
+        GridData gd_wherePanel = new GridData(GridData.FILL_VERTICAL);
         gd_wherePanel.widthHint = widthHint;
         wherePanel.setLayoutData(gd_wherePanel);
 
