@@ -92,10 +92,14 @@ public class JournalEntries implements JsonSerializable {
         Set<JournaledFile> journaledFiles = new HashSet<JournaledFile>();
 
         for (JournaledObject journaledObject : journaledObjects) {
-            String connectionName = journaledObject.getConnectionName();
-            String libraryName = journaledObject.getLibraryName();
-            String fileName = journaledObject.getObjectName();
-            journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, "*FIRST")); //$NON-NLS-1$
+            if (journaledObject instanceof JournaledFile) {
+                JournaledFile journaledFile = (JournaledFile)journaledObject;
+                String connectionName = journaledFile.getConnectionName();
+                String libraryName = journaledFile.getLibraryName();
+                String fileName = journaledFile.getObjectName();
+                String memberName = journaledFile.getMemberName();
+                journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, memberName)); //$NON-NLS-1$
+            }
         }
 
         return journaledFiles.toArray(new JournaledFile[journaledFiles.size()]);
@@ -263,6 +267,11 @@ public class JournalEntries implements JsonSerializable {
         String objectName = journalEntry.getObjectName();
         String libraryName = journalEntry.getObjectLibrary();
         String objectType = journalEntry.getObjectType();
-        journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
+        if (journalEntry.isFile()) {
+            String memberName = journalEntry.getMemberName();
+            journaledObjects.add(new JournaledFile(connectionName, libraryName, objectName, memberName));
+        } else {
+            journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
+        }
     }
 }

@@ -18,7 +18,7 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
     public JournaledFile(String connectionName, String libraryName, String fileName, String memberName) {
         super(connectionName, libraryName, fileName, ISeries.FILE);
 
-        this.member = new QualifiedMemberName(connectionName, libraryName, fileName, ISeries.FILE);
+        this.member = new QualifiedMemberName(connectionName, libraryName, fileName, memberName);
     }
 
     public String getConnectionName() {

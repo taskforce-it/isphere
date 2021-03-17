@@ -576,7 +576,8 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
         Arrays.sort(files);
         for (JournaledFile file : files) {
-            tables.add(file.getQualifiedName());
+            String qualifiedName = file.getLibraryName() + "/" + file.getFileName();
+            tables.add(qualifiedName);
         }
 
         return tables.toArray(new String[tables.size()]);
