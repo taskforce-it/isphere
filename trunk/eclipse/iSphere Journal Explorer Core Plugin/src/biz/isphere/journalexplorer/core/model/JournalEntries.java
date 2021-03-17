@@ -13,10 +13,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.core.json.JsonSerializable;
+import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
@@ -105,7 +107,7 @@ public class JournalEntries implements JsonSerializable {
         return journaledFiles.toArray(new JournaledFile[journaledFiles.size()]);
     }
 
-    public void applyFilter(SQLWhereClause whereClause) throws ParseException {
+    public void applyFilter(SQLWhereClause whereClause, IProgressMonitor monitor) throws ParseException {
 
         if (whereClause == null || !whereClause.hasClause()) {
             removeFilter();
@@ -117,7 +119,16 @@ public class JournalEntries implements JsonSerializable {
         filteredJournalEntries = new ArrayList<JournalEntry>(journalEntries.size());
 
         boolean isFound;
+
+        int count = 0;
         for (JournalEntry journalEntry : journalEntries) {
+
+            count++;
+
+            if (monitor != null && count % 50 == 0) {
+                monitor.setTaskName(Messages.Status_Filtering_journal_entries + "(" + count + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+
             RowJEP sqljep = null;
             Comparable<?>[] row = null;
             if (whereClause.hasClause()) {

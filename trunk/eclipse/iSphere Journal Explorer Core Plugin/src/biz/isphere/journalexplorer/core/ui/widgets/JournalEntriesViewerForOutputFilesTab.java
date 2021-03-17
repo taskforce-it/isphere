@@ -187,7 +187,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
                 timeTaken.stop(data.size());
 
-                data.applyFilter(filterWhereClause);
+                data.applyFilter(filterWhereClause, monitor);
 
                 MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
@@ -224,7 +224,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
         private SQLWhereClause whereClause;
 
         public FilterJournalJob(JournalExplorerView view, SQLWhereClause whereClause) {
-            super(Messages.Status_Loading_journal_entries);
+            super(Messages.Status_Filtering_journal_entries);
 
             this.view = view;
             this.whereClause = whereClause;
@@ -236,7 +236,7 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
             try {
 
-                data.applyFilter(whereClause);
+                data.applyFilter(whereClause, monitor);
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

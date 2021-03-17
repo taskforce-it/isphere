@@ -234,7 +234,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
         private SQLWhereClause whereClause;
 
         public FilterJournalJob(JournalExplorerView view, SQLWhereClause whereClause) {
-            super(Messages.Status_Loading_journal_entries);
+            super(Messages.Status_Filtering_journal_entries);
 
             this.view = view;
             this.whereClause = whereClause;
@@ -246,7 +246,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
             try {
 
-                data.applyFilter(whereClause);
+                data.applyFilter(whereClause, monitor);
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
