@@ -18,7 +18,6 @@ import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
-import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -70,11 +69,15 @@ public class JournalDAO {
         RJNE0200 rjne0200 = null;
         int id = 0;
 
+        // MessageBroker broker = new MessageBroker(2);
+
+        boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
+        int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), BUFFER_MAXIMUM_SIZE);
+        bufferSize = IntHelper.align16Bytes(bufferSize);
+
         do {
 
-            boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
-            int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), BUFFER_MAXIMUM_SIZE);
-            bufferSize = IntHelper.align16Bytes(bufferSize);
+            // TimeTaken timeTaken1 = new TimeTaken("Calling API");
 
             do {
                 monitor.setTaskName(Messages.Calling_API);
@@ -83,6 +86,8 @@ public class JournalDAO {
                     bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
                 }
             } while (isDynamicBufferSize && isBufferTooSmall(rjne0200) && !isBufferTooBig(bufferSize) && !isCanceled(monitor, journalEntries));
+
+            // timeTaken1.stop();
 
             if (rjne0200 != null) {
                 monitor.setTaskName(Messages.Status_Loading_journal_entries);
@@ -99,12 +104,15 @@ public class JournalDAO {
 
                         JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
                         journalEntries.add(populatedJournalEntry);
+                        // TODO: schedule round-robin to background process
+                        // broker.addJournalEntry(populatedJournalEntry);
 
                         if (id % 50 == 0) {
                             monitor.setTaskName(Messages.Status_Loading_journal_entries + "(" + id + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
 
                         if (journalEntry.isRecordEntryType()) {
+
                             MetaDataCache.getInstance().prepareMetaData(journalEntry);
                         }
 
@@ -116,6 +124,8 @@ public class JournalDAO {
 
         } while (rjne0200 != null && rjne0200.moreEntriesAvailable() && messages == null && journalEntries.getNumberOfRowsDownloaded() < maxNumRows
             && !isCanceled(monitor, journalEntries));
+
+        // broker.join();
 
         if (rjne0200 != null && (rjne0200.hasNext() || rjne0200.moreEntriesAvailable())) {
             journalEntries.setOverflow(true, -1);
@@ -154,8 +164,6 @@ public class JournalDAO {
 
     private JournalEntry populateJournalEntry(String connectionName, int id, RJNE0200 journalEntryData, JournalEntry journalEntry) throws Exception {
 
-        // TimeTaken timeTaken = TimeTaken.start("Populating journal entry"); // //$NON-NLS-1$
-
         // AbstractTypeDAO
         // journalEntry.setConnectionName(connectionName);
         journalEntry.setId(id);
@@ -167,6 +175,7 @@ public class JournalDAO {
         journalEntry.setJobNumber(journalEntryData.getJobNumber());
         journalEntry.setJobUserName(journalEntryData.getUserName());
         journalEntry.setCountRrn(journalEntryData.getRelativeRecordNumber());
+
         journalEntry.setFlag(journalEntryData.getIndicatorFlag());
         journalEntry.setJournalCode(journalEntryData.getJournalCode());
         journalEntry.setMemberName(journalEntryData.getFileMember());
@@ -175,13 +184,16 @@ public class JournalDAO {
         journalEntry.setObjectName(journalEntryData.getObjectName());
         journalEntry.setProgramName(journalEntryData.getProgramName());
         journalEntry.setSequenceNumber(journalEntryData.getSequenceNumber());
+
         journalEntry.setSpecificData(journalEntryData.getEntrySpecificDataRaw());
+
         journalEntry.setStringSpecificData(journalEntryData.getEntrySpecificDataRaw());
 
         try {
             Timestamp timestamp = journalEntryData.getTimestamp();
             journalEntry.setTimestamp(timestamp);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // Type1DAO (extends the AbstractTypeDAO)
@@ -224,8 +236,6 @@ public class JournalDAO {
         journalEntry.setObjectType(journalEntryData.getObjectType());
         journalEntry.setFileTypeIndicator(journalEntryData.getFileTypeIndicator());
         journalEntry.setNestedCommitLevel(journalEntryData.getNestedCommitLevel());
-
-        // timeTaken.stop();
 
         return journalEntry;
     }

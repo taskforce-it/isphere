@@ -5,6 +5,8 @@ Changelog: iSphere 4.0.0.b007
  • Refactored SQL editor.
  • Refactored loading journal entries.
  • Improved performance when loading journal entries.
+ • Improved performance when retrieving journal entries from
+   a journal. (Replace DateTimeConverter with new class DTSDate.)
 
 Changelog: iSphere 4.0.0.b006
 -----------------------------
