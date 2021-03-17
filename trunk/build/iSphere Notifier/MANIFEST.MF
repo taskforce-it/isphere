@@ -6,7 +6,7 @@ X-Bundle-Info: Last version for RDP 8.0 and WDSCi 7.0.\n
  Added new feature "Job Trace Explorer".\n
  Added menu options to stack entry context menu. (debugger view)\n
  Added options for saving the items of a spooled file filter as (Text|HTML|PDF).
-X-Beta-Version: 4.0.0.b007
+X-Beta-Version: 4.0.0.b008
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
@@ -20,4 +20,5 @@ X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
  Added preferences option to merge spooled file filters and sort items by creation time.\n
  Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
  Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
- Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.
+ Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.\n
+ Improved performance when retrieving journal entries.
