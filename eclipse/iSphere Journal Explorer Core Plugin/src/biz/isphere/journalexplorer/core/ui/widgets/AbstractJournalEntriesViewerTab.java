@@ -586,30 +586,42 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     private class SQLWhereClauseChangedListener implements ModifyListener {
 
+        private String fileName = ""; //$NON-NLS-1$
+        private String libraryName = ""; //$NON-NLS-1$
+
         public void modifyText(ModifyEvent event) {
+
+            String oldFileName = fileName;
+            String oldLibraString = libraryName;
 
             String sysObjectName = sqlEditor.getTableName().replaceAll("[.]", "/"); //$NON-NLS-1$ //$NON-NLS-2$
             QualifiedName objectName = QualifiedName.parse(sysObjectName);
 
-            String fileName;
-            String libraryName;
             if (objectName != null) {
-                fileName = objectName.getObjectName();
-                libraryName = objectName.getLibraryName();
+                fileName = notNull(objectName.getObjectName());
+                libraryName = notNull(objectName.getLibraryName());
             } else {
-                fileName = ""; //$NON-NLS-1$
+                fileName = sysObjectName;
                 libraryName = ""; //$NON-NLS-1$
             }
 
             String whereClause = sqlEditor.getWhereClause().trim();
             setFilterClause(new SQLWhereClause(fileName, libraryName, whereClause));
 
-            ContentAssistProposal[] proposals = getContentAssistProposals();
-            if (proposals == null) {
-                return;
+            if (!fileName.equals(oldFileName) || !libraryName.equals(oldLibraString)) {
+                ContentAssistProposal[] proposals = getContentAssistProposals();
+                if (proposals == null) {
+                    return;
+                }
+                sqlEditor.setContentAssistProposals(proposals);
             }
+        }
 
-            sqlEditor.setContentAssistProposals(proposals);
+        private String notNull(String value) {
+            if (value != null) {
+                return value;
+            }
+            return ""; //$NON-NLS-1$;
         }
     }
 
