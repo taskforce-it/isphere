@@ -12,18 +12,32 @@ public class TimeTaken {
 
     private String message;
     private long startNanons;
-    private long elapsed;
+    private long totalElapsed;
+    private long factor;
+    private String unit;
 
     public TimeTaken(String message) {
+        this(message, false);
+    }
+
+    public TimeTaken(String message, boolean isNanos) {
+
+        this.startNanons = System.nanoTime();
+        this.totalElapsed = -1;
+
+        if (isNanos) {
+            this.factor = 1;
+            this.unit = "nanos";
+        } else {
+            this.factor = 1000000;
+            this.unit = "mSecs";
+        }
 
         if (message.indexOf("%d") < 0) {
-            this.message = message + " took: %d mSecs";
+            this.message = message + " took: %d " + unit;
         } else {
             this.message = message;
         }
-
-        this.startNanons = System.nanoTime();
-        this.elapsed = -1;
     }
 
     public static TimeTaken start(String message) {
@@ -31,18 +45,23 @@ public class TimeTaken {
     }
 
     public void stop() {
-        System.out.println(String.format(message, timeElapsed()));
+        print(String.format(message, timeElapsed()));
     }
 
     public void stop(int count) {
         stop();
-        System.out.println(String.format("Time per entry; %d mSecs", timeElapsed() / count));
+        print(String.format("Time per entry; %d %s", totalElapsed / count, unit));
+    }
+
+    private void print(String message) {
+        // System.out.println(message);
     }
 
     private long timeElapsed() {
-        if (elapsed < 0) {
-            elapsed = (System.nanoTime() - startNanons) / 1000000;
-        }
+
+        long elapsed = (System.nanoTime() - startNanons) / factor;
+        this.totalElapsed += elapsed;
+
         return elapsed;
     }
 }
