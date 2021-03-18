@@ -35,7 +35,6 @@ import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400UnsignedBin2;
 import com.ibm.as400.access.AS400UnsignedBin4;
-import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
 
@@ -76,8 +75,6 @@ public class RJNE0200 {
     private static final int ERROR_CODE = 0;
 
     private int bufferSize;
-    private DateTimeConverter dateTimeConverter;
-    private DynamicRecordFormatsStore store;
     private Calendar remoteCalendar;
     private int offsetMinutes;
     private boolean isWDSCi;
@@ -131,9 +128,6 @@ public class RJNE0200 {
         }
 
         bufferSize = aBufferSize;
-        dateTimeConverter = new DateTimeConverter(aSystem);
-
-        store = new DynamicRecordFormatsStore(aSystem);
 
         TimeZone timeZone = IBMiHelper.timeZoneForSystem(aSystem);
         remoteCalendar = GregorianCalendar.getInstance(timeZone);
