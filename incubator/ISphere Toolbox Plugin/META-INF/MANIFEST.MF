@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ISphere Toolbox Plugin
+Bundle-Name: iSphere Toolbox Plugin
 Bundle-SymbolicName: com.ibm.etools.iseries.toolbox
 Bundle-Version: 4.0.0.b008
 Bundle-Vendor: iSphere Project Team

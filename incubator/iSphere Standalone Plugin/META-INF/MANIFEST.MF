@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ISphere Standalone Plugin
+Bundle-Name: iSphere Standalone Plugin
 Bundle-SymbolicName: biz.isphere.standalone;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Activator: biz.isphere.standalone.ISphereStandalonePlugin
