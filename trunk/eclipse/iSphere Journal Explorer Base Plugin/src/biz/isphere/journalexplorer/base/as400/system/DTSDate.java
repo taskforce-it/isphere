@@ -9,13 +9,30 @@
 package biz.isphere.journalexplorer.base.as400.system;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Timestamp format *DTS ("Standard Time Format").
+ * <ul>
+ * <li>Example: The timestamp value 0x8000000000000000 represents 2000-01-01
+ * 00:00:00.000000, in the time zone context of the IBM i system.
+ * <li>Range of years: 1928-2071 <br>
+ * (Date range: 1928-07-25 00:00:00.000000 to 2071-05-09 00:00:00.000000)
+ * <li>Default separator: not applicable (no separator)
+ * <li>Length: 8 bytes
+ * <li>Note: The time zone context is the time zone of the IBM i system, rather
+ * than GMT. <br>
+ * The base date and time for the TOD clock, or the date and time represented by
+ * hex value 0x0000000000000000, is August 23, 1928 12:03:06.314752 (in the time
+ * zone of the IBM i system).
+ * </ul>
+ */
 public class DTSDate {
 
-    private static final BigInteger MILLISECONDS = new BigInteger("1000");
+    private static final int INT_MILLISECONDS = 1000;
+    private static final int ROUND_UP_VALUE = INT_MILLISECONDS / 2;
+    private static final BigInteger MILLISECONDS = new BigInteger(Integer.toString(INT_MILLISECONDS));
 
     private Calendar startingDate;
 
@@ -31,8 +48,6 @@ public class DTSDate {
      */
     public Date getDate(byte[] bytes) {
 
-        // TimeTaken timeTaken = new TimeTaken("getDTSDate()");
-
         if (bytes.length != 8) {
             throw new IllegalArgumentException("DTS date must be an 8-byte array."); //$NON-NLS-1$
         }
@@ -41,25 +56,27 @@ public class DTSDate {
          * The time field is a binary number which can be interpreted as a time
          * value in units of 1 microsecond. A binary 1 in bit 51 is equal to 1
          * microsecond. Shift 12 bits to the right, to remove the
-         * "uniqueness bits" 52-63. See: com.ibm.as400.access.AS400Timestamp
+         * "uniqueness bits" 52-63.
          */
         BigInteger shifted = new BigInteger(shiftRight(bytes, 12));
 
         /*
          * Divide by 1000 to get milliseconds.
          */
-        long millisSince1928 = shifted.divide(MILLISECONDS).longValue();
+        BigInteger[] millisAndRemainderSince1928 = shifted.divideAndRemainder(MILLISECONDS);
+        long millisSince1928 = millisAndRemainderSince1928[0].longValue();
 
         /*
          * Round up, if necessary.
          */
-        long microSeconds = shifted.mod(MILLISECONDS).longValue();
-        if (microSeconds > 500) {
+        long microSeconds = millisAndRemainderSince1928[1].longValue();
+        if (microSeconds >= ROUND_UP_VALUE) {
+            System.out.println("Round up due to: " + microSeconds + " microSecs");
             millisSince1928++;
         }
 
         /*
-         * Get DTS starting date and add milliseconds since then.
+         * Get DTS starting date and add milliseconds since 1928.
          */
         long startingDate1928 = startingDate.getTimeInMillis();
 
@@ -67,8 +84,6 @@ public class DTSDate {
         calendar.setTimeInMillis(startingDate1928 + millisSince1928);
 
         Date dtsDate = calendar.getTime();
-
-        // timeTaken.stop();
 
         return dtsDate;
     }
@@ -112,34 +127,9 @@ public class DTSDate {
             throw new IllegalArgumentException("Number of bits must be a multiple of 4."); //$NON-NLS-1$
         }
 
-        byte[] dtsBytesRtn = Arrays.copyOf(bytes, bytes.length);
+        byte[] result = new BigInteger(bytes).shiftRight(count).toByteArray();
+        result[0] = (byte)(result[0] & 0x0F);
 
-        int shift = count;
-        while (shift > 0) {
-            int shifted;
-            if (shift > 4) {
-                shifted = 4;
-            } else {
-                shifted = shift;
-            }
-
-            int nextByte;
-            int currentByte;
-            for (int i = dtsBytesRtn.length - 1; i >= 0; i--) {
-                currentByte = dtsBytesRtn[i];
-                if (i > 0) {
-                    nextByte = (int)dtsBytesRtn[i - 1];
-                } else {
-                    nextByte = 0;
-                }
-
-                dtsBytesRtn[i] = (byte)((currentByte >> 4 & 0x0F) | ((nextByte & 0x0F) << 4));
-            }
-
-            shift -= shifted;
-        }
-
-        return dtsBytesRtn;
+        return result;
     }
-
 }
