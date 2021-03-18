@@ -21,7 +21,6 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
@@ -115,7 +114,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new OpenJournalJob(view, fileName, PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+        Job loadJournalDataJob = new OpenJournalJob(view, fileName);
         loadJournalDataJob.schedule();
     }
 
@@ -135,14 +134,12 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         private JournalExplorerView view;
         private String fileName;
-        private Shell shell;
 
-        public OpenJournalJob(JournalExplorerView view, String fileName, Shell shell) {
+        public OpenJournalJob(JournalExplorerView view, String fileName) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
             this.fileName = fileName;
-            this.shell = shell;
         }
 
         public IStatus run(IProgressMonitor monitor) {
