@@ -53,8 +53,8 @@ public class DTSDate {
         /*
          * Round up, if necessary.
          */
-        long nanoSeconds = shifted.mod(MILLISECONDS).longValue();
-        if (nanoSeconds > 500) {
+        long microSeconds = shifted.mod(MILLISECONDS).longValue();
+        if (microSeconds > 500) {
             millisSince1928++;
         }
 
