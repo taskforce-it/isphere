@@ -71,7 +71,6 @@ public class DTSDate {
          */
         long microSeconds = millisAndRemainderSince1928[1].longValue();
         if (microSeconds >= ROUND_UP_VALUE) {
-            System.out.println("Round up due to: " + microSeconds + " microSecs");
             millisSince1928++;
         }
 
