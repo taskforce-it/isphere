@@ -25,12 +25,15 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
+import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
+import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.dao.OutputFileDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.AbstractTypeViewerFactory;
@@ -142,10 +145,9 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
         tableViewer.getTable().setEnabled(false);
 
-        setFocusOnSqlEditor();
+        setSqlEditorEnabled(false);
 
         Job loadJournalDataJob = new OpenJournalJob(view, whereClause, filterWhereClause);
-
         loadJournalDataJob.schedule();
     }
 
@@ -195,9 +197,22 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setInputData(data);
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
                             view.finishDataLoading(JournalEntriesViewerForOutputFilesTab.this, false);
                         }
                     });
+                }
+
+                IBMiMessage[] messages = data.getMessages();
+                if (messages.length != 0) {
+                    if (isBufferTooSmallException(messages)) {
+                        throw new BufferTooSmallException();
+                    } else if (isNoDataLoadedException(messages)) {
+                        throw new NoJournalEntriesLoadedException(getOutputFile().getQualifiedName());
+                    } else {
+                        throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
+                    }
                 }
 
             } catch (Throwable e) {
@@ -206,6 +221,8 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
                     final Throwable e1 = e;
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
+                            setSqlEditorEnabled(true);
+                            setFocusOnSqlEditor();
                             view.handleDataLoadException(JournalEntriesViewerForOutputFilesTab.this, e1);
                         }
                     });
@@ -214,6 +231,28 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
             }
 
             return Status.OK_STATUS;
+        }
+
+        private boolean isBufferTooSmallException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (BufferTooSmallException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean isNoDataLoadedException(IBMiMessage[] messages) {
+
+            for (IBMiMessage ibmiMessage : messages) {
+                if (NoJournalEntriesLoadedException.ID.equals(ibmiMessage.getID())) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
     }
