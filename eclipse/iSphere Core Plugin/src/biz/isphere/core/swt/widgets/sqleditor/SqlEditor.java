@@ -209,13 +209,61 @@ public class SqlEditor extends Composite {
             createTableEditorControl(parent, 100);
         }
 
+        createSQLEditorControl(parent, 100);
+    }
+
+    private void createTableEditorControl(Composite parent, int widthHint) {
+
+        Composite wherePanel = new Composite(parent, SWT.NONE);
+        wherePanel.setLayout(createLayout(1, SWT.DEFAULT, 0, SWT.DEFAULT));
+        GridData gd_wherePanel = new GridData();
+        gd_wherePanel.widthHint = widthHint;
+        wherePanel.setLayoutData(gd_wherePanel);
+
+        Label labelTableName = new Label(wherePanel, SWT.NONE);
+        GridData gd_labelTableName = new GridData();
+        labelTableName.setLayoutData(gd_labelTableName);
+        gd_labelTableName.verticalAlignment = 0;
+        labelTableName.setText(Messages.SqlEditor_TableName);
+        labelTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
+
+        Composite editorPanel = new Composite(parent, SWT.NONE);
+        editorPanel.setLayout(createLayout(2, SWT.DEFAULT, 0, 0));
+        GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
+        gd_editorPanel.horizontalSpan = 2;
+        editorPanel.setLayoutData(gd_editorPanel);
+
+        cboTableName = WidgetFactory.createUpperCaseCombo(editorPanel);
+        GridData gd_tableName = new GridData();
+        gd_tableName.widthHint = 200;
+        gd_tableName.verticalAlignment = 0;
+        cboTableName.setLayoutData(gd_tableName);
+        cboTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
+        cboTableName.select(0);
+
+        Button btnClear = WidgetFactory.createPushButton(editorPanel);
+        btnClear.setText("X"); // //$NON-NLS-1$
+        btnClear.setToolTipText(Messages.SqlEditor_ClearTableName_Tooltip);
+        GridData gd_btnClear = new GridData();
+        gd_btnClear.verticalAlignment = 2;
+        btnClear.setLayoutData(gd_btnClear);
+        btnClear.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                cboTableName.select(0);
+            }
+        });
+
+    }
+
+    private void createSQLEditorControl(Composite parent, int widthHint) {
+
         int numColumns = ((GridLayout)getLayout()).numColumns;
 
         Composite wherePanel = new Composite(parent, SWT.NONE);
         wherePanel.setLayout(createLayout(2, SWT.DEFAULT, 0, SWT.DEFAULT));
-        GridData gridData = new GridData(GridData.FILL_VERTICAL);
-        gridData.widthHint = 100;
-        wherePanel.setLayoutData(gridData);
+        GridData gd_wherePanel = new GridData(GridData.FILL_VERTICAL);
+        gd_wherePanel.widthHint = widthHint;
+        wherePanel.setLayoutData(gd_wherePanel);
 
         labelHistory = new Label(wherePanel, SWT.NONE);
         labelHistory.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
@@ -244,7 +292,8 @@ public class SqlEditor extends Composite {
 
         Composite editorPanel = new Composite(parent, SWT.NONE);
         editorPanel.setLayout(createLayout(1, SWT.DEFAULT, 0, 0));
-        editorPanel.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, numColumns - 2, 1));
+        GridData gd_editorPanel = new GridData(GridData.FILL, GridData.FILL, true, true, numColumns - 2, 1);
+        editorPanel.setLayoutData(gd_editorPanel);
 
         selectionListener = new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -298,7 +347,7 @@ public class SqlEditor extends Composite {
         Composite executePanel = new Composite(parent, SWT.NONE);
         executePanel.setLayout(createLayout(1, 0, SWT.DEFAULT, SWT.DEFAULT));
         GridData gridData2 = new GridData(GridData.FILL_VERTICAL);
-        gridData2.widthHint = gridData.widthHint;
+        gridData2.widthHint = gd_wherePanel.widthHint;
         executePanel.setLayoutData(gridData2);
 
         btnClear = WidgetFactory.createPushButton(executePanel, Messages.ButtonLabel_Clear);
@@ -337,43 +386,6 @@ public class SqlEditor extends Composite {
                 widgetSelected(event);
             }
         });
-    }
-
-    private void createTableEditorControl(Composite parent, int widthHint) {
-
-        Composite wherePanel = new Composite(parent, SWT.NONE);
-        wherePanel.setLayout(createLayout(1, SWT.DEFAULT, 0, 0));
-        GridData gd_wherePanel = new GridData(GridData.FILL_VERTICAL);
-        gd_wherePanel.widthHint = widthHint;
-        wherePanel.setLayoutData(gd_wherePanel);
-
-        Label labelTableName = new Label(wherePanel, SWT.NONE);
-        labelTableName.setText(Messages.SqlEditor_TableName);
-        labelTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
-
-        Composite editorPanel = new Composite(parent, SWT.NONE);
-        editorPanel.setLayout(createLayout(2, SWT.DEFAULT, 0, 0));
-        GridData gd_editorPanel = new GridData(GridData.FILL_HORIZONTAL);
-        gd_editorPanel.horizontalSpan = 2;
-        editorPanel.setLayoutData(gd_editorPanel);
-
-        cboTableName = WidgetFactory.createUpperCaseCombo(editorPanel);
-        GridData gd_tableName = new GridData();
-        gd_tableName.widthHint = 200;
-        cboTableName.setLayoutData(gd_tableName);
-        cboTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
-        cboTableName.select(0);
-
-        Button btnClear = WidgetFactory.createPushButton(editorPanel);
-        btnClear.setText("X"); // //$NON-NLS-1$
-        btnClear.setToolTipText(Messages.SqlEditor_ClearTableName_Tooltip);
-        btnClear.setLayoutData(new GridData());
-        btnClear.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                cboTableName.select(0);
-            }
-        });
-
     }
 
     private GridLayout createLayout(int numColumns, int marginLeft, int margingRight, int verticalSpacing) {
