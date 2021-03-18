@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ISphere Toolbox Plugin
+Bundle-SymbolicName: com.ibm.etools.iseries.toolbox
+Bundle-Version: 4.0.0.b008
+Bundle-Vendor: iSphere Project Team
+Automatic-Module-Name: com.ibm.etools.iseries.toolbox
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ClassPath: lib/jt400.jar,
+ .
+Export-Package: com.ibm.as400.access,
+ com.ibm.as400.access.list,
+ com.ibm.as400.data,
+ com.ibm.as400.micro,
+ com.ibm.as400.resource,
+ com.ibm.as400.security,
+ com.ibm.as400.security.auth,
+ com.ibm.as400.util,
+ com.ibm.as400.util.commtrace,
+ com.ibm.as400.vaccess,
+ utilities
