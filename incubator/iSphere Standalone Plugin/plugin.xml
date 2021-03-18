@@ -11,7 +11,7 @@
 	<extension
 		point="biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions">
 		<client
-            class="com.ibm.etools.iseries.toolbox.ibmi.contributions.extension.point.XIBMiContributions">
+            class="biz.isphere.standalone.ibmi.contributions.extension.point.XIBMiContributions">
 		</client>
 	</extension>
 

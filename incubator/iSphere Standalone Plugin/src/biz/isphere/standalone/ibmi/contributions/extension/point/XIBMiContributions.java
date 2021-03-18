@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package com.ibm.etools.iseries.toolbox.ibmi.contributions.extension.point;
+package biz.isphere.standalone.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

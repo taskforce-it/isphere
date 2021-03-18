@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package com.ibm.etools.iseries.toolbox;
+package biz.isphere.standalone;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -17,7 +17,7 @@ import org.osgi.framework.BundleContext;
 public class ISphereStandalonePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
-    public static final String PLUGIN_ID = "com.ibm.etools.iseries.toolbox"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "biz.isphere.standalone"; //$NON-NLS-1$
 
     // The shared instance
     private static ISphereStandalonePlugin plugin;

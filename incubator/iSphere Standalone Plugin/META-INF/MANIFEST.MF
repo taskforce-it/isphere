@@ -1,14 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISphere Standalone Plugin
-Bundle-SymbolicName: com.ibm.etools.iseries.toolbox;singleton:=true
+Bundle-SymbolicName: biz.isphere.standalone;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: com.ibm.etools.iseries.toolbox.ISphereStandalonePlugin
+Bundle-Activator: biz.isphere.standalone.ISphereStandalonePlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
  biz.isphere.core,
- biz.isphere.common.libraries
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+ com.ibm.etools.iseries.toolbox
 Bundle-ActivationPolicy: lazy
