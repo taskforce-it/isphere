@@ -104,8 +104,6 @@ public class JournalDAO {
 
                         JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
                         journalEntries.add(populatedJournalEntry);
-                        // TODO: schedule round-robin to background process
-                        // broker.addJournalEntry(populatedJournalEntry);
 
                         if (id % 50 == 0) {
                             monitor.setTaskName(Messages.Status_Loading_journal_entries + "(" + id + ")"); //$NON-NLS-1$ //$NON-NLS-2$
