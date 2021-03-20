@@ -30,6 +30,16 @@ public class TestDTSDate {
      * -DUSER=user name
      * -DPASSWORD=password
      * 
+     * Performance data:
+     * 
+     * Loading journal 1283 journal entries with DateTimeConverter (QWCCVTDT API):
+     * - Loading journal entries took: 65535 mSecs
+     * - Time per entry; 47 mSecs
+     * 
+     * Loading journal 1283 journal entries with DTSDate:
+     * - Loading journal entries took: 4361 mSecs
+     * - Time per entry; 3 mSecs
+     * 
      * <pre>
      */
 
