@@ -18,7 +18,8 @@ import biz.isphere.journalexplorer.rse.Messages;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Date;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.as400.access.Job;
+import com.ibm.as400.access.ProgramCall;
 
 public abstract class AbstractDAOBase {
     // protected static final String properties = "thread used=false;
@@ -27,35 +28,41 @@ public abstract class AbstractDAOBase {
     // protected static final String properties = "translate hex=binary;
     // prompt=false; extended dynamic=true; package cache=true"; //$NON-NLS-1$
 
-    protected IBMiConnection ibmiConnection;
+    private String connectionName;
     private Connection connection;
     private String dateFormat;
     private String dateSeparator;
     private String timeSeparator;
 
     public AbstractDAOBase(String connectionName) throws Exception {
-        if (connectionName != null) {
-            ibmiConnection = IBMiConnection.getConnection(connectionName);
-            if (ibmiConnection == null) {
-                throw new Exception(Messages.bind(Messages.DAOBase_Connection_A_not_found, connectionName));
+
+        this.connectionName = connectionName;
+
+        if (getConnectionName() != null) {
+            if (!IBMiHostContributionsHandler.isAvailable(getConnectionName())) {
+                throw new Exception(Messages.bind(Messages.DAOBase_Connection_A_not_found, getConnectionName()));
             }
-            if (!ibmiConnection.isConnected()) {
-                if (!ibmiConnection.connect()) {
-                    throw new Exception(Messages.bind(Messages.DAOBase_Failed_to_connect_to_A, connectionName));
+            if (!IBMiHostContributionsHandler.isConnected(getConnectionName())) {
+                if (!IBMiHostContributionsHandler.connect(getConnectionName())) {
+                    throw new Exception(Messages.bind(Messages.DAOBase_Failed_to_connect_to_A, getConnectionName()));
                 }
             }
 
-            dateFormat = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateFormat();
+            ProgramCall call = new ProgramCall(IBMiHostContributionsHandler.getSystem(getConnectionName()));
+            Job job = call.getServerJob();
+
+            dateFormat = job.getDateFormat();
+
             if (dateFormat.startsWith("*")) { //$NON-NLS-1$
                 dateFormat = dateFormat.substring(1);
             }
 
-            dateSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getDateSeparator();
-            timeSeparator = ibmiConnection.getQSYSJobSubSystem().getServerJob(null).getInternationalProperties().getTimeSeparator();
+            dateSeparator = job.getDateSeparator();
+            timeSeparator = job.getTimeSeparator();
 
-            connection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            connection = IBMiHostContributionsHandler.getJdbcConnection(getConnectionName());
         } else
-            throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, connectionName));
+            throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, getConnectionName()));
     }
 
     public void destroy() {
@@ -78,10 +85,10 @@ public abstract class AbstractDAOBase {
     }
 
     protected String getConnectionName() {
-        return ibmiConnection.getConnectionName();
+        return connectionName;
     }
 
     protected AS400 getSystem() throws Exception {
-        return ibmiConnection.getAS400ToolboxObject();
+        return IBMiHostContributionsHandler.getSystem(getConnectionName());
     }
 }

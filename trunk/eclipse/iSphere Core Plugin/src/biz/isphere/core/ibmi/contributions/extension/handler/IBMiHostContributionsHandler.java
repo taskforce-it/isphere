@@ -111,7 +111,7 @@ public class IBMiHostContributionsHandler {
         return factory.isConnected(connectionName);
     }
 
-    public static boolean connected(String connectionName) throws Exception {
+    public static boolean connect(String connectionName) throws Exception {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
