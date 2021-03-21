@@ -400,7 +400,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         }
 
         if (IBMiHostContributionsHandler.isOffline(connectionName)) {
-            String message = "Connection is offline"; // TODO: set message text
+            String message = Messages.bind(Messages.Error_Connection_A_is_offline, connectionName);
             if (message != null) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
                 cmbConnections.getCombo().setFocus();
