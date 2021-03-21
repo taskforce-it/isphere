@@ -20,5 +20,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.journalexplorer.rse.handlers.contributions.extension.point,
- biz.isphere.journalexplorer.rse.shared.model.dao,
  biz.isphere.journalexplorer.rse.shared.ui.perspectives
