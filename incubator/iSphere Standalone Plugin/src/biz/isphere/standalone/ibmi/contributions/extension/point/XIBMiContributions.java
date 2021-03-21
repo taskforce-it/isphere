@@ -17,6 +17,7 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorPart;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
@@ -225,6 +226,11 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400
      */
     public AS400 getSystem(String connectionName) {
+    	
+    	if (StringHelper.isNullOrEmpty(connectionName)) {
+    		return null;
+    	}
+    	
         return getSystem();
     }
 
@@ -236,7 +242,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400
      */
     public AS400 getSystem(String profile, String connectionName) {
-        return getSystem();
+        return getSystem(connectionName);
     }
 
     /**

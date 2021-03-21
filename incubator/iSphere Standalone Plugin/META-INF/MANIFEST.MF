@@ -8,6 +8,7 @@ Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- biz.isphere.core,
- com.ibm.etools.iseries.toolbox
+ com.ibm.etools.iseries.toolbox,
+ biz.isphere.base;bundle-version="4.0.0",
+ biz.isphere.core
 Bundle-ActivationPolicy: lazy
