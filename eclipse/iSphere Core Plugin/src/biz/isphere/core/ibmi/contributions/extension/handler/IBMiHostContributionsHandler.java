@@ -72,6 +72,23 @@ public class IBMiHostContributionsHandler {
         return factory.isKerberosAuthentication();
     }
 
+    /**
+     * Returns <i>true</i> when the specified connection is known to the
+     * application.
+     * 
+     * @return <i>true</i>, when known, else <i>false</i>
+     */
+    public static boolean isAvailable(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isAvailable(connectionName);
+    }
+
     public static boolean isOffline(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();

@@ -119,6 +119,21 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
+     * Returns <i>true</i> when the specified connection is known to the
+     * application.
+     * 
+     * @return <i>true</i>, when known, else <i>false</i>
+     */
+    public boolean isAvailable(String connectionName) {
+
+        if (IBMiConnection.getConnection(connectionName) != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns <i>true</i> when the specified connection is in offline mode.
      * 
      * @return <i>true</i>, when offline, else <i>false</i>
