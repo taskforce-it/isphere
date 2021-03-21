@@ -40,6 +40,14 @@ public interface IIBMiHostContributions {
     public boolean isKerberosAuthentication();
 
     /**
+     * Returns <i>true</i> when the specified connection is known to the
+     * application.
+     * 
+     * @return <i>true</i>, when known, else <i>false</i>
+     */
+    public boolean isAvailable(String connectionName);
+
+    /**
      * Returns <i>true</i> when the specified connection is in offline mode.
      * 
      * @return <i>true</i>, when offline, else <i>false</i>
