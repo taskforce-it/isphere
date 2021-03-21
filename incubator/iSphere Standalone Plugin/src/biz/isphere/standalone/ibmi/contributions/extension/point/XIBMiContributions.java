@@ -17,18 +17,19 @@ import java.util.Properties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorPart;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400JDBCDriver;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.ObjectList;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.ObjectList;
+import biz.isphere.standalone.connections.Connections;
 
 /**
  * This class connects to the
@@ -57,7 +58,8 @@ public class XIBMiContributions implements IIBMiHostContributions {
 
     /**
      * Returns <i>true</i> when Kerberos authentication is enabled on the
-     * "Remote Systems - IBM i - Authentication" preference page for RDi 9.5+.
+     * "Remote Connections - IBM i - Authentication" preference page for RDi
+     * 9.5+.
      * 
      * @return <i>true</i>, if Kerberos authentication is selected, else
      *         <i>false</i>
@@ -216,7 +218,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400
      */
     public AS400 findSystem(String hostName) {
-        return getSystem();
+        return null;
     }
 
     /**
@@ -226,12 +228,12 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400
      */
     public AS400 getSystem(String connectionName) {
-    	
-    	if (StringHelper.isNullOrEmpty(connectionName)) {
-    		return null;
-    	}
-    	
-        return getSystem();
+
+        if (StringHelper.isNullOrEmpty(connectionName)) {
+            return null;
+        }
+
+        return Connections.getInstance().getSystem(connectionName);
     }
 
     /**
@@ -252,19 +254,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400 object that is associated to editor
      */
     public AS400 getSystem(IEditorPart editor) {
-        return getSystem();
-    }
-
-    private AS400 getSystem() {
-
-        if (system == null) {
-            String host = "my.ibm.server.com";
-            String user = "Joe";
-            String password = "myS3cret";
-            system = new AS400(host, user, password);
-        }
-
-        return system;
+        return null;
     }
 
     /**
@@ -274,7 +264,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return name of the connection the file has been loaded from
      */
     public String getConnectionName(IEditorPart editor) {
-        return getConnectionName();
+        return null;
     }
 
     /**
@@ -295,7 +285,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return name of the connection
      */
     public String getConnectionNameByIPAddr(String tcpIpAddr, boolean isConnected) {
-        return getConnectionName();
+        return null;
     }
 
     /**
@@ -314,11 +304,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return names of configured connections
      */
     public String[] getConnectionNames() {
-        return new String[] { getConnectionName() };
-    }
-
-    private String getConnectionName() {
-        return "Default Connection";
+        return Connections.getInstance().getConnectionNames();
     }
 
     /**
