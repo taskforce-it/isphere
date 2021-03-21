@@ -72,7 +72,7 @@ public class IBMiHostContributionsHandler {
         return factory.isKerberosAuthentication();
     }
 
-    public static boolean isSubSystemOffline(String connectionName) {
+    public static boolean isOffline(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -83,7 +83,7 @@ public class IBMiHostContributionsHandler {
         return factory.isOffline(connectionName);
     }
 
-    public static boolean isSubSystemConnected(String connectionName) {
+    public static boolean isConnected(String connectionName) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
