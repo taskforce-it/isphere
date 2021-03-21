@@ -7,6 +7,7 @@ Changelog: iSphere 4.0.0.b007
  • Improved performance when loading journal entries.
  • Improved performance when retrieving journal entries from
    a journal. (Replace DateTimeConverter with new class DTSDate.)
+ • Moved "TransferLibraryAction" from the rse to the core plug-in.
 
 Changelog: iSphere 4.0.0.b006
 -----------------------------

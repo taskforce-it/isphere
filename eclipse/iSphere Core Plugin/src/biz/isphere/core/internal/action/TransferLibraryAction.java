@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.actions;
+package biz.isphere.core.internal.action;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -24,6 +24,10 @@ import biz.isphere.core.preferences.Preferences;
 public class TransferLibraryAction implements IWorkbenchWindowActionDelegate {
 
     public static final String ID = "biz.isphere.rse.actions.TransferLibraryAction";
+
+    public TransferLibraryAction() {
+        return;
+    }
 
     public void run(IAction action) {
         try {

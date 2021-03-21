@@ -1067,18 +1067,9 @@
          point="org.eclipse.ui.actionSets">
          
       <actionSet
-            id="biz.isphere.core.actionSet"
-            label="%menu_iSphere_Menu"
+            id="biz.isphere.core.actionSet.rse"
+            label="%menu_iSphere_Menu_RSE"
             visible="true">
-            
-         <menu
-               id="biz.isphere.core.menu.isphere"
-               label="%menu_iSphere">
-	         <separator name="group0" visible="true" />
-	         <separator name="additions" visible="true" />
-	         <separator name="transferlibrary" visible="true" />
-	         <separator name="help" visible="true" />
-         </menu>
          
          <action
                class="biz.isphere.rse.actions.CompareEditorMenuAction"
@@ -1128,16 +1119,6 @@
                icon="icons/iSphere_RSE_Filter_Management.gif"
                menubarPath="biz.isphere.core.menu.isphere/group0"
                tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
-         </action>
-         
-         <action
-               class="biz.isphere.rse.actions.TransferLibraryAction"
-               id="biz.isphere.rse.actions.TransferLibraryAction"
-               definitionId="biz.isphere.core.command.iSphereLibrary.transfer"
-               label="%menu_Transfer_iSphere_library"
-               icon="icons/transfer_library_16.gif"
-               menubarPath="biz.isphere.core.menu.isphere/transferlibrary"
-               tooltip="%menu_Tooltip_Transfer_iSphere_library">
          </action>
          
          <action
@@ -1270,13 +1251,6 @@
             id="biz.isphere.core.command.RSEUserActionManagement.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_RSE_UserAction_Management">
-      </command>
-      
-      <command
-            defaultHandler="biz.isphere.core.internal.handler.TransferLibraryHandler"
-            id="biz.isphere.core.command.iSphereLibrary.transfer"
-            categoryId="biz.isphere.category.Commands"
-            name="%command_Transfer_iSphere_library">
       </command>
       
       <command
