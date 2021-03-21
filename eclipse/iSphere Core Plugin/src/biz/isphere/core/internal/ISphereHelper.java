@@ -66,7 +66,7 @@ public class ISphereHelper {
     }
 
     public static String checkISphereLibrary(String connectionName) {
-        if (IBMiHostContributionsHandler.isSubSystemOffline(connectionName)) {
+        if (IBMiHostContributionsHandler.isOffline(connectionName)) {
             return Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName);
         }
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
@@ -77,7 +77,7 @@ public class ISphereHelper {
     }
 
     public static boolean checkISphereLibrary(Shell shell, String connectionName) {
-        if (IBMiHostContributionsHandler.isSubSystemOffline(connectionName)) {
+        if (IBMiHostContributionsHandler.isOffline(connectionName)) {
             if (shell != null) {
                 new DisplayMessage(shell, Messages.Error, Messages.bind(
                     Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName)).start();
