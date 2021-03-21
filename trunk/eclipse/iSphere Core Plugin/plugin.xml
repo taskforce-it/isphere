@@ -243,4 +243,62 @@
    		 schema="schema/biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributions.xsd">
    </extension-point>
 
+      	<!--
+      	  ==========================================
+      	    iSphere Menu Contribution
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.ui.actionSets">
+         
+      <actionSet
+            id="biz.isphere.core.actionSet"
+            label="%menu_iSphere_Menu"
+            visible="true">
+            
+         <menu
+               id="biz.isphere.core.menu.isphere"
+               label="%menu_iSphere">
+	         <separator name="group0" visible="true" />
+	         <separator name="additions" visible="true" />
+	         <separator name="transferlibrary" visible="true" />
+	         <separator name="help" visible="true" />
+         </menu>
+         
+         <action
+               class="biz.isphere.core.internal.action.TransferLibraryAction"
+               id="biz.isphere.core.internal.action.TransferLibraryAction"
+               definitionId="biz.isphere.core.command.iSphereLibrary.transfer"
+               label="%menu_Transfer_iSphere_library"
+               icon="icons/transfer_library_16.gif"
+               menubarPath="biz.isphere.core.menu.isphere/transferlibrary"
+               tooltip="%menu_Tooltip_Transfer_iSphere_library">
+         </action>
+         
+      </actionSet>
+   </extension>
+   
+      	<!--
+      	  ==========================================
+      	    iSphere Commands
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.commands">
+         
+      <category
+            name="iSphere"
+            id="biz.isphere.category.Commands">
+      </category>
+      
+      <command
+            defaultHandler="biz.isphere.core.internal.handler.TransferLibraryHandler"
+            id="biz.isphere.core.command.iSphereLibrary.transfer"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Transfer_iSphere_library">
+      </command>
+   </extension>
+
 </plugin>
