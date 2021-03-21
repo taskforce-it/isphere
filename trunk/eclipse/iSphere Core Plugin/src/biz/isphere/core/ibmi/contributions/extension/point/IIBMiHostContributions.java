@@ -45,7 +45,28 @@ public interface IIBMiHostContributions {
      * 
      * @return <i>true</i>, subsystem is offline, else <i>false</i>
      */
-    public boolean isSubSystemOffline(String connectionName);
+    public boolean isOffline(String connectionName);
+
+    /**
+     * Returns <i>true</i> when the subsystem of a given connection is in
+     * connected.
+     * 
+     * @return <i>true</i>, subsystem is connected, else <i>false</i>
+     */
+    public boolean isConnected(String connectionName);
+
+    /**
+     * Connects the subsystem identified by a given name.
+     * 
+     * @return <i>true</i>, if the connection could be established, else
+     *         <i>false</i>
+     */
+    public boolean connect(String connectionName) throws Exception;
+
+    /**
+     * Changes the 'offline' status of the subsystem identified by a given name.
+     */
+    public void setOffline(String connectionName, boolean offline);
 
     /**
      * Executes a given command for a given connection.
