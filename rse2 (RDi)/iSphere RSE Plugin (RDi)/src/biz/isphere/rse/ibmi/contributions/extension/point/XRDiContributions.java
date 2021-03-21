@@ -124,7 +124,7 @@ public class XRDiContributions implements IIBMiHostContributions {
      * 
      * @return <i>true</i>, subsystem is offline, else <i>false</i>
      */
-    public boolean isSubSystemOffline(String connectionName) {
+    public boolean isOffline(String connectionName) {
 
         IBMiConnection connection = IBMiConnection.getConnection(connectionName);
         if (connection == null || connection.isOffline()) {
@@ -132,6 +132,53 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
 
         return false;
+    }
+
+    /**
+     * Returns <i>true</i> when the subsystem of a given connection is in
+     * connected.
+     * 
+     * @return <i>true</i>, subsystem is connected, else <i>false</i>
+     */
+    public boolean isConnected(String connectionName) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        if (connection != null && connection.isConnected()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Connects the subsystem identified by a given name.
+     * 
+     * @return <i>true</i>, if the connection could be established, else
+     *         <i>false</i>
+     */
+    public boolean connect(String connectionName) throws Exception {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        if (connection != null) {
+            if (!connection.isOffline() && !connection.isConnected()) {
+                return connection.connect();
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Changes the 'offline' status of the subsystem identified by a given name.
+     */
+    public void setOffline(String connectionName, boolean offline) {
+
+        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        if (connection != null) {
+            if (!connection.isOffline()) {
+                connection.getHost().setOffline(offline);
+            }
+        }
     }
 
     /**

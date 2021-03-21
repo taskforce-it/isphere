@@ -80,7 +80,40 @@ public class IBMiHostContributionsHandler {
             return false;
         }
 
-        return factory.isSubSystemOffline(connectionName);
+        return factory.isOffline(connectionName);
+    }
+
+    public static boolean isSubSystemConnected(String connectionName) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isConnected(connectionName);
+    }
+
+    public static boolean connectedSubSystem(String connectionName) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.connect(connectionName);
+    }
+
+    public void setSubSystemOffline(String connectionName, boolean offline) {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return;
+        }
+
+        factory.setOffline(connectionName, offline);
     }
 
     public static String executeCommand(String connectionName, String command) {
@@ -312,7 +345,7 @@ public class IBMiHostContributionsHandler {
         return getJdbcConnection(profileName, connectionName, null);
     }
 
-    public static Connection getJdbcConnection(String profileName, String connectionName, Properties properties) {
+    private static Connection getJdbcConnection(String profileName, String connectionName, Properties properties) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
