@@ -94,7 +94,7 @@ public class IBMiHostContributionsHandler {
         return factory.isConnected(connectionName);
     }
 
-    public static boolean connectedSubSystem(String connectionName) throws Exception {
+    public static boolean connected(String connectionName) throws Exception {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -105,7 +105,7 @@ public class IBMiHostContributionsHandler {
         return factory.connect(connectionName);
     }
 
-    public void setSubSystemOffline(String connectionName, boolean offline) {
+    public void setOffline(String connectionName, boolean offline) {
 
         IIBMiHostContributions factory = getContributionsFactory();
 

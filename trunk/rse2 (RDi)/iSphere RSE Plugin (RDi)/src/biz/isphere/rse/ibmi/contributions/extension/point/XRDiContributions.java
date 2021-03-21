@@ -119,10 +119,9 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns <i>true</i> when the subsystem of a given connection is in
-     * offline mode.
+     * Returns <i>true</i> when the specified connection is in offline mode.
      * 
-     * @return <i>true</i>, subsystem is offline, else <i>false</i>
+     * @return <i>true</i>, when offline, else <i>false</i>
      */
     public boolean isOffline(String connectionName) {
 
@@ -135,10 +134,9 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns <i>true</i> when the subsystem of a given connection is in
-     * connected.
+     * Returns <i>true</i> when specified connection is connected.
      * 
-     * @return <i>true</i>, subsystem is connected, else <i>false</i>
+     * @return <i>true</i>, when connected, else <i>false</i>
      */
     public boolean isConnected(String connectionName) {
 
@@ -151,10 +149,9 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Connects the subsystem identified by a given name.
+     * Connects the specified connection.
      * 
-     * @return <i>true</i>, if the connection could be established, else
-     *         <i>false</i>
+     * @return <i>true</i>, when successfully connected, else <i>false</i>
      */
     public boolean connect(String connectionName) throws Exception {
 
@@ -169,7 +166,7 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Changes the 'offline' status of the subsystem identified by a given name.
+     * Changes the 'offline' status of the specified connection.
      */
     public void setOffline(String connectionName, boolean offline) {
 
