@@ -6,9 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler;
-
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
+package biz.isphere.journalexplorer.core.handlers.contributions.extension;
 
 public class SelectedJournal implements ISelectedJournal {
 

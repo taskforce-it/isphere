@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.handlers.contributions.extension.point;
+package biz.isphere.journalexplorer.core.handlers.contributions.extension;
 
 public interface ISelectedObject {
 

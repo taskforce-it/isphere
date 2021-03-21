@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.base.help,
  biz.isphere.core,
  biz.isphere.common.libraries,
- biz.isphere.journalexplorer.rse,
  biz.isphere.journalexplorer.base
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
+Export-Package: biz.isphere.journalexplorer.core.handlers.contributions.extension,
+ biz.isphere.journalexplorer.core.ui.views
