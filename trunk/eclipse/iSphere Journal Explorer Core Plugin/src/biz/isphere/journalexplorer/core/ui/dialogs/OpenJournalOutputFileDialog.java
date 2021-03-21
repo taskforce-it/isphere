@@ -62,7 +62,6 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
-import biz.isphere.journalexplorer.rse.shared.model.ConnectionDelegate;
 
 public class OpenJournalOutputFileDialog extends XDialog {
 
@@ -86,7 +85,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private boolean isInitializing;
 
-    private ConnectionDelegate connection;
+    private String connectionName;
     private RefreshJob refreshJob;
 
     /**
@@ -189,12 +188,6 @@ public class OpenJournalOutputFileDialog extends XDialog {
     @Override
     public void setFocus() {
 
-        String connectionName = null;
-
-        if (connection != null) {
-            connectionName = connection.getConnectionName();
-        }
-
         if (StringHelper.isNullOrEmpty(connectionName)) {
             cmbConnections.getControl().setFocus();
             return;
@@ -218,22 +211,18 @@ public class OpenJournalOutputFileDialog extends XDialog {
         cmbConnections.setSelection(null);
         if (haveConnections()) {
 
-            Object connection = null;
-
             String connectionName = loadValue(CONNECTION, null);
             if (connectionName != null) {
-                connection = ConnectionDelegate.getConnection(connectionName);
-                if (connection == null) {
-                    MessageDialogAsync.displayError(getShell(), Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
+                if (!IBMiHostContributionsHandler.isAvailable(connectionName)) {
+                    MessageDialogAsync.displayError(getShell(), Messages.E_R_R_O_R,
+                        Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
                 }
             } else {
-                connection = cmbConnections.getElementAt(0);
+                connectionName = (String)cmbConnections.getElementAt(0);
             }
 
-            if (connection != null) {
-                if (ConnectionDelegate.instanceOf(connection)) {
-                    cmbConnections.setSelection(new StructuredSelection(connection));
-                }
+            if (connectionName != null) {
+                cmbConnections.setSelection(new StructuredSelection(connectionName));
             }
         }
 
@@ -249,7 +238,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void storeValues() {
 
-        storeValue(CONNECTION, connection.getConnectionName());
+        storeValue(CONNECTION, connectionName);
         storeValue(LIBRARY, libraryName);
         storeValue(FILE, fileName);
         storeValue(MEMBER, memberName);
@@ -271,12 +260,12 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         cmbConnections.setContentProvider(new ArrayContentProvider());
         cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
-        cmbConnections.setInput(ConnectionDelegate.getConnections());
+        cmbConnections.setInput(IBMiHostContributionsHandler.getConnectionNames());
         cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 if (selection.size() > 0) {
-                    connection = new ConnectionDelegate(selection.getFirstElement());
+                    connectionName = (String)selection.getFirstElement();
                     updateContentAssistProposals();
                 }
             }
@@ -354,7 +343,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         refreshJob.cancel();
 
-        if (connection != null && !StringHelper.isNullOrEmpty(fileName) && !StringHelper.isNullOrEmpty(libraryName)) {
+        if (connectionName != null && !StringHelper.isNullOrEmpty(fileName) && !StringHelper.isNullOrEmpty(libraryName)) {
             refreshJob.schedule(autoRefreshDelay);
         }
     }
@@ -404,14 +393,14 @@ public class OpenJournalOutputFileDialog extends XDialog {
             return false;
         }
 
-        if (connection == null) {
+        if (connectionName == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
             cmbConnections.getCombo().setFocus();
             return false;
         }
 
-        if (!connection.isConnected()) {
-            String message = connection.connect();
+        if (IBMiHostContributionsHandler.isOffline(connectionName)) {
+            String message = "Connection is offline"; // TODO: set message text
             if (message != null) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
                 cmbConnections.getCombo().setFocus();
@@ -440,8 +429,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         if (memberName.startsWith("*")) {
             if ("*FIRST".equals(memberName)) {
                 try {
-                    resolvedMemberName = IBMiHostContributionsHandler.resolveMemberName(connection.getConnectionName(), libraryName, fileName,
-                        memberName);
+                    resolvedMemberName = IBMiHostContributionsHandler.resolveMemberName(connectionName, libraryName, fileName, memberName);
                 } catch (Exception e) {
                     resolvedMemberName = null;
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
@@ -457,20 +445,20 @@ public class OpenJournalOutputFileDialog extends XDialog {
             resolvedMemberName = memberName;
         }
 
-        if (!IBMiHostContributionsHandler.checkLibrary(connection.getConnectionName(), libraryName)) {
+        if (!IBMiHostContributionsHandler.checkLibrary(connectionName, libraryName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_does_not_exist, new String[] { libraryName }));
             txtLibraryName.setFocus();
             return false;
         }
 
-        if (!IBMiHostContributionsHandler.checkFile(connection.getConnectionName(), libraryName, fileName)) {
+        if (!IBMiHostContributionsHandler.checkFile(connectionName, libraryName, fileName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.File_A_B_does_not_exist, new String[] { libraryName, fileName }));
             txtFileName.setFocus();
             return false;
         }
 
-        if (!IBMiHostContributionsHandler.checkMember(connection.getConnectionName(), libraryName, fileName, resolvedMemberName)) {
+        if (!IBMiHostContributionsHandler.checkMember(connectionName, libraryName, fileName, resolvedMemberName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, resolvedMemberName }));
             txtMemberName.setFocus();
@@ -482,7 +470,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         try {
 
             if (!StringHelper.isNullOrEmpty(whereClause)) {
-                Connection c = IBMiHostContributionsHandler.getJdbcConnection(connection.getConnectionName());
+                Connection c = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
                 s = c.prepareStatement(String.format("SELECT * FROM %s.%s WHERE %s", libraryName, fileName, whereClause));
                 s.close();
             }
@@ -515,7 +503,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     public String getConnectionName() {
 
-        return connection.getConnectionName();
+        return connectionName;
     }
 
     public String getLibrary() {
@@ -593,12 +581,12 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
-            if (connection != null) {
+            if (connectionName != null) {
 
                 MetaTable metaData = null;
 
                 try {
-                    metaData = MetaDataCache.getInstance().retrieveMetaData(connection.getConnectionName(), libraryName, fileName, ISeries.FILE);
+                    metaData = MetaDataCache.getInstance().retrieveMetaData(connectionName, libraryName, fileName, ISeries.FILE);
                     if (!metaData.hasColumns()) {
                         MetaDataCache.getInstance().removeMetaData(metaData);
                     }
