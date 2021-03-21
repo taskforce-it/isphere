@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.ui.perspectives;
+package biz.isphere.journalexplorer.rse.shared.ui.perspectives;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -15,11 +15,13 @@ import org.eclipse.ui.IPerspectiveFactory;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView;
 import biz.isphere.journalexplorer.core.ui.views.JournalEntryViewerView;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
-import biz.isphere.journalexplorer.rse.shared.ui.perspectives.IJournalExplorerPerspectiveLayout;
 
-public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory, IJournalExplorerPerspectiveLayout {
+public class JournalExplorerPerspectiveLayout implements IPerspectiveFactory {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout";//$NON-NLS-1$
+
+    public static final String REMOTE_SYSTEMS_VIEW_ID = "org.eclipse.rse.ui.view.systemView"; //$NON-NLS-1$
+    public static final String COMMAND_LOG_VIEW_ID = "com.ibm.etools.iseries.rse.ui.view.cmdlog"; //$NON-NLS-1$
 
     private static final String NAV_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.NavFolder";//$NON-NLS-1$
     private static final String PROPS_FOLDER_ID = "biz.isphere.journalexplorer.core.ui.perspective.JournalExplorerPerspectiveLayout.PropsFolder";//$NON-NLS-1$

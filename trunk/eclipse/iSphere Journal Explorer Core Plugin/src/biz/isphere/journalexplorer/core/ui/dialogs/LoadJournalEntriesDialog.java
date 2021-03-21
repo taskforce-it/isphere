@@ -54,11 +54,11 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedObject;
 
 public class LoadJournalEntriesDialog extends XDialog {
 

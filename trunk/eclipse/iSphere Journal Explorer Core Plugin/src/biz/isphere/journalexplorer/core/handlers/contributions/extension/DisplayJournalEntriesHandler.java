@@ -32,14 +32,10 @@ import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedObject;
 
 import com.ibm.as400.access.AS400;
 
-public class DisplayJournalEntriesHandler implements IDisplayJournalEntriesContributions {
+public class DisplayJournalEntriesHandler {
 
     private static final String MIN_OS_RELEASE = "V5R4M0"; //$NON-NLS-1$
 

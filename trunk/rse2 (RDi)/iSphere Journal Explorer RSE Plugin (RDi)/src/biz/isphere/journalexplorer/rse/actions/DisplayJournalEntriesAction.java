@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.DisplayJournalEntriesHandler;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedFile;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.handler.SelectedJournal;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedFile;
-import biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.ISelectedJournal;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.DisplayJournalEntriesHandler;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedJournal;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.SelectedFile;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.SelectedJournal;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
@@ -101,11 +101,13 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
             }
 
             if (!selectedFiles.isEmpty()) {
-                DisplayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
+                DisplayJournalEntriesHandler displayJournalEntriesHandler = new DisplayJournalEntriesHandler();
+                displayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
             }
 
             if (!selectedJournals.isEmpty()) {
-                DisplayJournalEntriesHandler.handleDisplayJournalEntries(selectedJournals.toArray(new ISelectedJournal[selectedJournals.size()]));
+                DisplayJournalEntriesHandler displayJournalEntriesHandler = new DisplayJournalEntriesHandler();
+                displayJournalEntriesHandler.handleDisplayJournalEntries(selectedJournals.toArray(new ISelectedJournal[selectedJournals.size()]));
             }
         }
     }

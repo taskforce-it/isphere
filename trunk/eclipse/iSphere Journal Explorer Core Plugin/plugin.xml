@@ -36,23 +36,6 @@
             id="biz.isphere.journalexplorer.core.ui.views.JournalEntryDetailsView">
       </view>
    </extension>
-      	
-      	<!--
-      	  ==========================================
-      	    Journal Explorer Perspective
-      	  ==========================================
-      	-->
-
-   <extension point="org.eclipse.ui.perspectives">
-   
-      <perspective 
-	       id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
-	       name="%Perspective_Journal_Explorer"
-	       class="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout"
-	       icon="icons/journal_explorer.png">
-      </perspective>
-       
-   </extension>   
    
       	<!--
       	  ==========================================
@@ -80,19 +63,6 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Journal_Explorer_PreferencePage"
             id="biz.isphere.journalexplorer.core.ui.preferencepages.JournalExplorerPreferencePage"/>
-   </extension>
-
-      	<!--
-      	  ==========================================
-      	    iSphere Display Journal Entries Contributions
-      	  ==========================================
-      	-->
-
-   <extension
-         point="biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions">
-      <client
-            class="biz.isphere.journalexplorer.core.handlers.contributions.extension.DisplayJournalEntriesHandler">
-      </client>
    </extension>
    
 </plugin>

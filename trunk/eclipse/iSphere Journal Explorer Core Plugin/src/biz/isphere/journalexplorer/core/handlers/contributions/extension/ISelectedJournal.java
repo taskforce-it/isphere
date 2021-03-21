@@ -1,16 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2020 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.shared.ui.perspectives;
+package biz.isphere.journalexplorer.core.handlers.contributions.extension;
 
-public interface IJournalExplorerPerspectiveLayout {
-
-    public static final String REMOTE_SYSTEMS_VIEW_ID = "org.eclipse.rse.ui.view.systemView"; //$NON-NLS-1$
-    public static final String COMMAND_LOG_VIEW_ID = "com.ibm.etools.iseries.rse.ui.view.cmdlog"; //$NON-NLS-1$
-
+public interface ISelectedJournal extends ISelectedObject {
 }
