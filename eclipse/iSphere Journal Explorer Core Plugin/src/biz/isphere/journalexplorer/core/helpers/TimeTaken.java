@@ -50,7 +50,9 @@ public class TimeTaken {
 
     public void stop(int count) {
         stop();
-        print(String.format("Time per entry; %d %s", totalElapsed / count, unit));
+        if (count > 0) {
+            print(String.format("Time per entry; %d %s", totalElapsed / count, unit));
+        }
     }
 
     private void print(String message) {
