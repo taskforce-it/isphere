@@ -171,6 +171,8 @@ public class Messages extends NLS {
     public static String Error_Connection_A_not_found;
     public static String Error_Connection_A_is_offline;
     public static String Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields;
+    public static String Error_Failed_to_connect_to_A;
+    public static String Error_Invalid_or_missing_connection_name_A;
 
     public static String Calling_API;
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;

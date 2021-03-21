@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,12 @@
  * Continued and adopted to iSphere: iSphere Project Team
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.rse.shared.model.dao;
+package biz.isphere.journalexplorer.core.model.dao;
 
 import java.sql.Connection;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.journalexplorer.rse.Messages;
+import biz.isphere.journalexplorer.core.Messages;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Date;
@@ -40,11 +40,11 @@ public abstract class AbstractDAOBase {
 
         if (getConnectionName() != null) {
             if (!IBMiHostContributionsHandler.isAvailable(getConnectionName())) {
-                throw new Exception(Messages.bind(Messages.DAOBase_Connection_A_not_found, getConnectionName()));
+                throw new Exception(Messages.bind(Messages.Error_Connection_A_not_found, getConnectionName()));
             }
             if (!IBMiHostContributionsHandler.isConnected(getConnectionName())) {
                 if (!IBMiHostContributionsHandler.connect(getConnectionName())) {
-                    throw new Exception(Messages.bind(Messages.DAOBase_Failed_to_connect_to_A, getConnectionName()));
+                    throw new Exception(Messages.bind(Messages.Error_Failed_to_connect_to_A, getConnectionName()));
                 }
             }
 
@@ -62,7 +62,7 @@ public abstract class AbstractDAOBase {
 
             connection = IBMiHostContributionsHandler.getJdbcConnection(getConnectionName());
         } else
-            throw new Exception(Messages.bind(Messages.DAOBase_Invalid_or_missing_connection_name_A, getConnectionName()));
+            throw new Exception(Messages.bind(Messages.Error_Invalid_or_missing_connection_name_A, getConnectionName()));
     }
 
     public void destroy() {
