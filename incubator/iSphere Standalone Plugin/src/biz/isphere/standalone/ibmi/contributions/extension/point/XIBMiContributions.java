@@ -69,19 +69,86 @@ public class XIBMiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns <i>true</i> when the subsystem of a given connection is in
-     * offline mode.
+     * Returns <i>true</i> when the specified connection is known to the
+     * application.
      * 
-     * @return <i>true</i>, subsystem is offline, else <i>false</i>
+     * @return <i>true</i>, when known, else <i>false</i>
      */
-    public boolean isSubSystemOffline(String connectionName) {
+    public boolean isAvailable(String connectionName) {
+        return Connections.getInstance().hasConnection(connectionName);
+    }
 
-        AS400 system = getSystem(connectionName);
+    /**
+     * Returns <i>true</i> when the specified connection is in offline mode.
+     * 
+     * @return <i>true</i>, when offline, else <i>false</i>
+     */
+    public boolean isOffline(String connectionName) {
+
+        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        if (connection == null) {
+            return true;
+        }
+
+        return connection.isOffline();
+    }
+
+    /**
+     * Returns <i>true</i> when specified connection is connected.
+     * 
+     * @return <i>true</i>, when connected, else <i>false</i>
+     */
+    public boolean isConnected(String connectionName) {
+
+        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        if (connection == null) {
+            return true;
+        }
+
+        AS400 system = connection.getSystem();
         if (system != null && system.isConnected()) {
             return true;
         }
 
-        return system.isConnected();
+        return false;
+    }
+
+    /**
+     * Connects the specified connection.
+     * 
+     * @return <i>true</i>, when successfully connected, else <i>false</i>
+     */
+    public boolean connect(String connectionName) throws Exception {
+
+        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        if (connection == null) {
+            return true;
+        }
+
+        if (connection.isOffline()) {
+            return false;
+        }
+
+        AS400 system = connection.getSystem();
+        if (system != null) {
+            system.connectService(AS400.COMMAND);
+            return system.isConnected(AS400.COMMAND);
+        }
+
+        return false;
+    }
+
+    /**
+     * Changes the 'offline' status of the specified connection.
+     */
+    public void setOffline(String connectionName, boolean offline) {
+
+        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        if (connection == null) {
+            return;
+        }
+
+        connection.setOffline(offline);
     }
 
     /**
@@ -95,6 +162,15 @@ public class XIBMiContributions implements IIBMiHostContributions {
     public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
 
         try {
+
+            biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+            if (connection == null) {
+                return "Connection not found";
+            }
+
+            if (connection.isOffline()) {
+                return null;
+            }
 
             String escapeMessage = null;
             CommandCall commandCall = new CommandCall(getSystem(connectionName));
@@ -341,6 +417,8 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     private Connection getJdbcConnectionWithProperties(String profile, String connectionName, Properties properties) {
 
+        // TODO: implement connection management
+
         Connection jdbcConnection = null;
         AS400JDBCDriver as400JDBCDriver = null;
 
@@ -355,6 +433,10 @@ public class XIBMiContributions implements IIBMiHostContributions {
                 as400JDBCDriver = new AS400JDBCDriver();
                 DriverManager.registerDriver(as400JDBCDriver);
 
+            }
+
+            if (properties == null) {
+                properties = new Properties();
             }
 
             jdbcConnection = as400JDBCDriver.connect(getSystem(connectionName), properties, null);

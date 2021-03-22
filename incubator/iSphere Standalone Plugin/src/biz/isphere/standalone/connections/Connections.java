@@ -40,6 +40,10 @@ public final class Connections {
         return instance;
     }
 
+    public boolean hasConnection(String connectionName) {
+        return connections.containsKey(connectionName);
+    }
+
     public Connection getConnection(String connectionName) {
         return connections.get(connectionName);
     }

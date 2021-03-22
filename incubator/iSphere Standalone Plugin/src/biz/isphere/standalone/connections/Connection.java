@@ -8,11 +8,21 @@ public class Connection {
     private String hostName;
     private String userName;
     private String password;
+    private boolean isOffline;
 
     private transient AS400 system;
 
     public Connection(String connectionName) {
         this.connectionName = connectionName;
+        this.isOffline = false;
+    }
+
+    public boolean isOffline() {
+        return isOffline;
+    }
+
+    public void setOffline(boolean offline) {
+        this.isOffline = offline;
     }
 
     public String getConnectionName() {
