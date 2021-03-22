@@ -8,14 +8,13 @@
 
 package biz.isphere.journalexplorer.core.model;
 
-import javax.xml.bind.DatatypeConverter;
-
+import biz.isphere.base.internal.ByteHelper;
 import biz.isphere.journalexplorer.base.interfaces.IDatatypeConverterDelegate;
 
 public class DatatypeConverterDelegate implements IDatatypeConverterDelegate {
 
     public byte[] parseHexBinary(String paramString) {
-        return DatatypeConverter.parseHexBinary(paramString);
+        return ByteHelper.parseHexString(paramString);
     }
 
 }
