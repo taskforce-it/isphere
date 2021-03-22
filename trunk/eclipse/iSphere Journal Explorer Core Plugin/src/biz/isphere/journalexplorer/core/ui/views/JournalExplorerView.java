@@ -34,12 +34,15 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
@@ -633,6 +636,25 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         public void widgetDefaultSelected(SelectionEvent event) {
             widgetDefaultSelected(event);
+        }
+    }
+
+    public static void openJournalOutputFile(Shell shell, OutputFile outputFile, SQLWhereClause sqlWhereClause) throws Exception {
+
+        if (!ISphereHelper.checkISphereLibrary(shell, outputFile.getConnectionName())) {
+            return;
+        }
+
+        IViewPart viewPart = null;
+
+        viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JournalExplorerView.ID);
+        if (viewPart == null) {
+            viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
+        }
+
+        if (viewPart instanceof JournalExplorerView) {
+            JournalExplorerView view = (JournalExplorerView)viewPart;
+            view.createJournalTab(outputFile, sqlWhereClause);
         }
     }
 }

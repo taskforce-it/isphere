@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  com.ibm.etools.iseries.toolbox
 Export-Package: biz.isphere.base.comparators,
+ biz.isphere.base.externalapi,
  biz.isphere.base.internal,
  biz.isphere.base.internal.actions,
  biz.isphere.base.jface.dialogs,

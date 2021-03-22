@@ -12,11 +12,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
+import biz.isphere.journalexplorer.core.externalapi.Access;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
@@ -65,11 +65,14 @@ public abstract class OpenJournalOutfileAction extends Action {
         whereClause = null;
 
         if (result == Window.OK) {
-            if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                openJournalOutputFileDialog.getConnectionName())) {
-                outputFile = new OutputFile(openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibrary(),
-                    openJournalOutputFileDialog.getFileName(), openJournalOutputFileDialog.getMemberName());
-                whereClause = openJournalOutputFileDialog.getSqlWhere();
+
+            try {
+                Access
+                    .openJournalExplorerView(shell, openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibrary(),
+                        openJournalOutputFileDialog.getFileName(), openJournalOutputFileDialog.getMemberName(),
+                        openJournalOutputFileDialog.getSqlWhere());
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
             }
         }
     }
