@@ -10,8 +10,11 @@ Require-Bundle: javax.inject,
  org.eclipse.jface,
  org.eclipse.e4.ui.services,
  org.eclipse.e4.core.di.annotations,
+ org.eclipse.ui,
  org.eclipse.core.runtime,
- biz.isphere.core
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.journalexplorer.core
 Automatic-Module-Name: biz.isphere.rcp
 Import-Package: javax.annotation;version="1.2.0"
 Bundle-ActivationPolicy: lazy

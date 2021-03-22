@@ -12,29 +12,19 @@
          point="org.eclipse.ui.actionSets">
          
       <actionSet
-            id="biz.isphere.core.actionSet"
-            label="%menu_iSphere_Menu"
+            id="biz.isphere.rcp.actionSet"
+            label="iSphere RCP Actions"
             visible="true">
-            
-         <menu
-               id="biz.isphere.core.menu.isphere"
-               label="%menu_iSphere">
-	         <separator name="group0" visible="true" />
-	         <separator name="additions" visible="true" />
-	         <separator name="transferlibrary" visible="true" />
-	         <separator name="help" visible="true" />
-         </menu>
          
          <action
-               class="biz.isphere.rse.actions.TransferLibraryAction"
-               id="biz.isphere.rse.actions.TransferLibraryAction"
-               definitionId="biz.isphere.core.command.iSphereLibrary.transfer"
-               label="%menu_Transfer_iSphere_library"
-               icon="icons/transfer_library_16.gif"
-               menubarPath="biz.isphere.core.menu.isphere/transferlibrary"
-               tooltip="%menu_Tooltip_Transfer_iSphere_library">
+               class="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
+               id="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
+               definitionId="biz.isphere.rcp.command.JournalOutputFile.open"
+               label="Open Journal Output File"
+               menubarPath="biz.isphere.core.menu.isphere/additions">
          </action>
          
+         <!--
          <action
                class="biz.isphere.rse.actions.DisplayHelpAction"
                id="biz.isphere.rse.actions.DisplayHelpAction"
@@ -44,8 +34,31 @@
                menubarPath="biz.isphere.core.menu.isphere/help"
                tooltip="%menu_Tooltip_Display_iSphere_help">
          </action>
+         -->
          
       </actionSet>
+   </extension>
+   
+      	<!--
+      	  ==========================================
+      	    iSphere Commands
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.commands">
+         
+      <category
+            name="iSphere RCD"
+            id="biz.isphere.rcd.Commands">
+      </category>
+      
+      <command
+            defaultHandler="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
+            id="biz.isphere.core.command.iSphereHelp.display"
+            categoryId="biz.isphere.rcd.Commands"
+            name="Open Journal Output File">
+      </command>
    </extension>
 
 

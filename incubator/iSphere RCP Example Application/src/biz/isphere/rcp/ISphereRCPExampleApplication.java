@@ -1,22 +1,39 @@
 package biz.isphere.rcp;
 
-import org.osgi.framework.BundleActivator;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-public class ISphereRCPExampleApplication implements BundleActivator {
+public class ISphereRCPExampleApplication extends AbstractUIPlugin {
 
-	private static BundleContext context;
+    // The plug-in ID
+    public static final String PLUGIN_ID = "biz.isphere.rcp"; //$NON-NLS-1$
 
-	static BundleContext getContext() {
-		return context;
-	}
+    // The shared instance
+    private static ISphereRCPExampleApplication plugin;
 
-	public void start(BundleContext bundleContext) throws Exception {
-		ISphereRCPExampleApplication.context = bundleContext;
-	}
+    private static BundleContext context;
 
-	public void stop(BundleContext bundleContext) throws Exception {
-		ISphereRCPExampleApplication.context = null;
-	}
+    static BundleContext getContext() {
+        return context;
+    }
+
+    public void start(BundleContext bundleContext) throws Exception {
+        ISphereRCPExampleApplication.context = bundleContext;
+        plugin = this;
+    }
+
+    public void stop(BundleContext bundleContext) throws Exception {
+        ISphereRCPExampleApplication.context = null;
+        plugin = null;
+    }
+
+    /**
+     * Returns the shared instance
+     * 
+     * @return the shared instance
+     */
+    public static ISphereRCPExampleApplication getDefault() {
+        return plugin;
+    }
 
 }
