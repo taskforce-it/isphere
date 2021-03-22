@@ -49,6 +49,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
@@ -60,7 +61,6 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 
 public class OpenJournalOutputFileDialog extends XDialog {
@@ -87,6 +87,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private String connectionName;
     private RefreshJob refreshJob;
+    private boolean isContentAssistEnabled;
 
     /**
      * Create the dialog.
@@ -98,6 +99,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         this.isInitializing = true;
         this.refreshJob = new RefreshJob(parentShell);
+        this.isContentAssistEnabled = false;
     }
 
     @Override
@@ -160,8 +162,6 @@ public class OpenJournalOutputFileDialog extends XDialog {
         loadValues();
 
         isInitializing = false;
-
-        updateContentAssistProposals();
 
         if (!haveConnections()) {
             MessageDialogAsync.displayError(getShell(), Messages.Error_No_connections_available);
@@ -266,6 +266,11 @@ public class OpenJournalOutputFileDialog extends XDialog {
                 IStructuredSelection selection = (IStructuredSelection)event.getSelection();
                 if (selection.size() > 0) {
                     connectionName = (String)selection.getFirstElement();
+                    if (ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
+                        isContentAssistEnabled = true;
+                    } else {
+                        isContentAssistEnabled = false;
+                    }
                     updateContentAssistProposals();
                 }
             }
@@ -335,7 +340,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void updateContentAssistProposals() {
 
-        if (isInitializing) {
+        if (isInitializing || !isContentAssistEnabled) {
             return;
         }
 
@@ -521,8 +526,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         return resolvedMemberName.toUpperCase();
     }
 
-    public SQLWhereClause getSqlWhere() {
-        return new SQLWhereClause(whereClause);
+    public String getSqlWhere() {
+        return whereClause;
     }
 
     /**
