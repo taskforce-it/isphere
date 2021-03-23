@@ -11,6 +11,8 @@ package biz.isphere.standalone;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.standalone.connections.RemoteConnections;
+
 /**
  * The activator class controls the plug-in life cycle
  */
@@ -30,9 +32,8 @@ public class ISphereStandalonePlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.
+     * BundleContext )
      */
     public void start(BundleContext context) throws Exception {
         super.start(context);
@@ -41,11 +42,11 @@ public class ISphereStandalonePlugin extends AbstractUIPlugin {
 
     /*
      * (non-Javadoc)
-     * @see
-     * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
-     * )
+     * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.
+     * BundleContext )
      */
     public void stop(BundleContext context) throws Exception {
+        RemoteConnections.getInstance().closeAllConnections();
         plugin = null;
         super.stop(context);
     }

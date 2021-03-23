@@ -9,8 +9,6 @@
 package biz.isphere.standalone.ibmi.contributions.extension.point;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,18 +16,20 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorPart;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400JDBCDriver;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.MemberDescription;
+import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.ObjectList;
+import com.ibm.as400.access.QSYSObjectPathName;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.standalone.connections.Connections;
+import biz.isphere.standalone.connections.RemoteConnection;
+import biz.isphere.standalone.connections.RemoteConnections;
 
 /**
  * This class connects to the
@@ -41,9 +41,10 @@ import biz.isphere.standalone.connections.Connections;
  */
 public class XIBMiContributions implements IIBMiHostContributions {
 
-    AS400 system;
+    private RemoteConnections remoteConnections;
 
     public XIBMiContributions() {
+        this.remoteConnections = RemoteConnections.getInstance();
     }
 
     /**
@@ -58,8 +59,8 @@ public class XIBMiContributions implements IIBMiHostContributions {
 
     /**
      * Returns <i>true</i> when Kerberos authentication is enabled on the
-     * "Remote Connections - IBM i - Authentication" preference page for RDi
-     * 9.5+.
+     * "Remote RemoteConnections - IBM i - Authentication" preference page for
+     * RDi 9.5+.
      * 
      * @return <i>true</i>, if Kerberos authentication is selected, else
      *         <i>false</i>
@@ -75,7 +76,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return <i>true</i>, when known, else <i>false</i>
      */
     public boolean isAvailable(String connectionName) {
-        return Connections.getInstance().hasConnection(connectionName);
+        return remoteConnections.hasConnection(connectionName);
     }
 
     /**
@@ -85,7 +86,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     public boolean isOffline(String connectionName) {
 
-        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
         if (connection == null) {
             return true;
         }
@@ -100,17 +101,12 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     public boolean isConnected(String connectionName) {
 
-        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
         if (connection == null) {
-            return true;
+            return false;
         }
 
-        AS400 system = connection.getSystem();
-        if (system != null && system.isConnected()) {
-            return true;
-        }
-
-        return false;
+        return connection.isConnected();
     }
 
     /**
@@ -120,22 +116,16 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     public boolean connect(String connectionName) throws Exception {
 
-        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
         if (connection == null) {
-            return true;
+            return false;
         }
 
         if (connection.isOffline()) {
             return false;
         }
 
-        AS400 system = connection.getSystem();
-        if (system != null) {
-            system.connectService(AS400.COMMAND);
-            return system.isConnected(AS400.COMMAND);
-        }
-
-        return false;
+        return connection.connect();
     }
 
     /**
@@ -143,7 +133,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     public void setOffline(String connectionName, boolean offline) {
 
-        biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
         if (connection == null) {
             return;
         }
@@ -163,17 +153,17 @@ public class XIBMiContributions implements IIBMiHostContributions {
 
         try {
 
-            biz.isphere.standalone.connections.Connection connection = Connections.getInstance().getConnection(connectionName);
+            RemoteConnection connection = remoteConnections.getConnection(connectionName);
             if (connection == null) {
-                return "Connection not found";
+                return "ERROR: Connection not found";
             }
 
             if (connection.isOffline()) {
-                return null;
+                return "ERROR: Connection is offline.";
             }
 
             String escapeMessage = null;
-            CommandCall commandCall = new CommandCall(getSystem(connectionName));
+            CommandCall commandCall = new CommandCall(connection.getAS400ToolboxObject());
             if (!commandCall.run(command)) {
                 AS400Message[] messageList = commandCall.getMessageList();
                 if (messageList.length > 0) {
@@ -240,35 +230,54 @@ public class XIBMiContributions implements IIBMiHostContributions {
 
     private boolean checkObject(String connectionName, String libraryName, String objectName, String objectType, String memberName) {
 
-        if (getSystem(connectionName) == null) {
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
+        if (connection == null) {
             return false;
         }
 
-        ObjectList list;
-        if (memberName == null) {
-            list = new ObjectList(getSystem(connectionName), libraryName, objectName, objectType);
-        } else {
-            list = new ObjectList(getSystem(connectionName), libraryName, objectName, objectType, memberName);
+        AS400 system = connection.getAS400ToolboxObject();
+        if (system == null) {
+            return false;
         }
+
+        ObjectList list = null;
 
         try {
 
-            list.load();
+            if ("*FILE".equals(objectType) && memberName != null) {
 
-            Object library = list.getObjects(0, 1);
-            if (library == null) {
-                return false;
+                MemberDescription memberDescription = new MemberDescription(system,
+                    new QSYSObjectPathName(libraryName, objectName, memberName, "MBR"));
+                Object library = memberDescription.getValue(MemberDescription.LIBRARY_NAME);
+                if (library == null) {
+                    return false;
+                }
+
+            } else {
+
+                list = new ObjectList(system, libraryName, objectName, objectType);
+                list.load();
+
+                ObjectDescription[] library = list.getObjects(0, 1);
+                if (library == null || library.length == 0) {
+                    return false;
+                }
+
             }
 
             return true;
 
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Failed to check object ***", e); //$NON-NLS-1$
+            if (e.getMessage() == null || !e.getMessage().startsWith("CPF9815")) {
+                ISpherePlugin.logError("*** Failed to check object ***", e); //$NON-NLS-1$
+            }
         } finally {
-            try {
-                list.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (list != null) {
+                try {
+                    list.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -305,11 +314,12 @@ public class XIBMiContributions implements IIBMiHostContributions {
      */
     public AS400 getSystem(String connectionName) {
 
-        if (StringHelper.isNullOrEmpty(connectionName)) {
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
+        if (connection == null) {
             return null;
         }
 
-        return Connections.getInstance().getSystem(connectionName);
+        return connection.getAS400ToolboxObject();
     }
 
     /**
@@ -330,7 +340,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return AS400 object that is associated to editor
      */
     public AS400 getSystem(IEditorPart editor) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -340,7 +350,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return name of the connection the file has been loaded from
      */
     public String getConnectionName(IEditorPart editor) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -361,7 +371,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return name of the connection
      */
     public String getConnectionNameByIPAddr(String tcpIpAddr, boolean isConnected) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -380,7 +390,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @return names of configured connections
      */
     public String[] getConnectionNames() {
-        return Connections.getInstance().getConnectionNames();
+        return remoteConnections.getConnectionNames();
     }
 
     /**
@@ -388,7 +398,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * 
      * @param connectionName - Name of the connection, the JDBC connection is
      *        returned for
-     * @return Connection
+     * @return RemoteConnection
      */
     public Connection getJdbcConnection(String connectionName) {
         return getJdbcConnectionWithProperties(null, connectionName, null);
@@ -400,7 +410,7 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @param profile - Profile that is searched for the JDBC connection
      * @param connectionName - Name of the connection, the JDBC connection is
      *        returned for
-     * @return Connection
+     * @return RemoteConnection
      */
     public Connection getJdbcConnection(String profile, String connectionName) {
         return getJdbcConnectionWithProperties(profile, connectionName, null);
@@ -413,37 +423,16 @@ public class XIBMiContributions implements IIBMiHostContributions {
      * @param connectionName - Name of the connection, the JDBC connection is
      *        returned for
      * @param properties - JDBC connection properties
-     * @return Connection
+     * @return RemoteConnection
      */
     private Connection getJdbcConnectionWithProperties(String profile, String connectionName, Properties properties) {
 
-        // TODO: implement connection management
-
-        Connection jdbcConnection = null;
-        AS400JDBCDriver as400JDBCDriver = null;
-
-        try {
-
-            try {
-
-                as400JDBCDriver = (AS400JDBCDriver)DriverManager.getDriver("jdbc:as400");
-
-            } catch (SQLException e) {
-
-                as400JDBCDriver = new AS400JDBCDriver();
-                DriverManager.registerDriver(as400JDBCDriver);
-
-            }
-
-            if (properties == null) {
-                properties = new Properties();
-            }
-
-            jdbcConnection = as400JDBCDriver.connect(getSystem(connectionName), properties, null);
-
-        } catch (Throwable e) {
-            ISpherePlugin.logError("*** Could not produce JDBC connection ***", e);
+        RemoteConnection connection = remoteConnections.getConnection(connectionName);
+        if (connection == null) {
+            return null;
         }
+
+        Connection jdbcConnection = connection.getJdbcConnection(properties);
 
         return jdbcConnection;
     }
