@@ -21,6 +21,7 @@
                id="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
                definitionId="biz.isphere.rcp.command.JournalOutputFile.open"
                label="Open Journal Output File"
+               icon="icons/open_journal_outfile.png"
                menubarPath="biz.isphere.core.menu.isphere/additions">
          </action>
          

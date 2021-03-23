@@ -11,7 +11,6 @@ package biz.isphere.rcp.journalexplorer;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.rcp.AbstractMenuAction;
 
@@ -21,7 +20,6 @@ import biz.isphere.rcp.AbstractMenuAction;
 public class OpenJournalOutputFileAction extends AbstractMenuAction {
 
     public static final String ID = "biz.isphere.rcp.menu.openjournaloutputfile";
-    private Shell shell;
 
     public void run(IAction action) {
         try {
@@ -29,6 +27,7 @@ public class OpenJournalOutputFileAction extends AbstractMenuAction {
             OpenJournalOutputFileHandler handler = new OpenJournalOutputFileHandler(getShell());
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
