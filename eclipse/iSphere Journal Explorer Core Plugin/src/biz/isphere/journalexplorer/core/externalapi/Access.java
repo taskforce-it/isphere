@@ -1,10 +1,12 @@
 package biz.isphere.journalexplorer.core.externalapi;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
+import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 public class Access extends AbstractAccess {
@@ -18,7 +20,17 @@ public class Access extends AbstractAccess {
      */
     public static void openJournalExplorerView(Shell shell) throws Exception {
 
-        JournalExplorerView.openJournalOutputFile(ensureShell(shell));
+        OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
+        openJournalOutputFileDialog.create();
+
+        if (openJournalOutputFileDialog.open() == Window.OK) {
+            String connectionName = openJournalOutputFileDialog.getConnectionName();
+            String libraryName = openJournalOutputFileDialog.getLibrary();
+            String fileName = openJournalOutputFileDialog.getFileName();
+            String memberName = openJournalOutputFileDialog.getMemberName();
+            String sqlWhereClause = openJournalOutputFileDialog.getSqlWhere();
+            openJournalExplorerView(shell, connectionName, libraryName, fileName, memberName, sqlWhereClause);
+        }
     }
 
     /**
