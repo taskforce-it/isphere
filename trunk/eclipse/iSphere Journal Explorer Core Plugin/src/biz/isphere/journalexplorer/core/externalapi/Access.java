@@ -10,6 +10,18 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class Access extends AbstractAccess {
 
     /**
+     * Open the iSphere Journal Explorer and lets the user select the output
+     * file. The file may contain journal entries of *TYPE1, *TYPE2, *TYPE3,
+     * *TYPE4 or *TYPE5.
+     * 
+     * @param shell - the parent shell
+     */
+    public static void openJournalExplorerView(Shell shell) throws Exception {
+
+        JournalExplorerView.openJournalOutputFile(ensureShell(shell));
+    }
+
+    /**
      * Open the iSphere Journal Explorer for a given output file of journal
      * entries. The file may contain journal entries of *TYPE1, *TYPE2, *TYPE3,
      * *TYPE4 or *TYPE5.
@@ -23,7 +35,6 @@ public class Access extends AbstractAccess {
      *        of journal entries
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server
-     * @return Comparable version String.
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause) throws Exception {

@@ -9,73 +9,38 @@
 package biz.isphere.journalexplorer.core.ui.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.externalapi.Access;
-import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.SQLWhereClause;
-import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 
-public abstract class OpenJournalOutfileAction extends Action {
+public class OpenJournalOutfileAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_OPEN_JOURNAL_OUTFILE;
 
     private Shell shell;
-    private OutputFile outputFile;
-    private SQLWhereClause whereClause;
 
     public OpenJournalOutfileAction(Shell shell) {
-        super(Messages.JournalExplorerView_OpenJournal);
 
         this.shell = shell;
 
+        setText(Messages.JournalExplorerView_OpenJournal);
         setImageDescriptor(ISphereJournalExplorerCorePlugin.getDefault().getImageDescriptor(IMAGE));
-    }
-
-    public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     @Override
     public void run() {
         performOpenJournalOutputFile();
-        postRunAction();
-    }
-
-    public OutputFile getOutputFile() {
-        return outputFile;
-    }
-
-    public SQLWhereClause getWhereClause() {
-        return whereClause;
     }
 
     private void performOpenJournalOutputFile() {
 
-        OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
-        openJournalOutputFileDialog.create();
-        int result = openJournalOutputFileDialog.open();
-
-        outputFile = null;
-        whereClause = null;
-
-        if (result == Window.OK) {
-
-            try {
-                Access
-                    .openJournalExplorerView(shell, openJournalOutputFileDialog.getConnectionName(), openJournalOutputFileDialog.getLibrary(),
-                        openJournalOutputFileDialog.getFileName(), openJournalOutputFileDialog.getMemberName(),
-                        openJournalOutputFileDialog.getSqlWhere());
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
-            }
+        try {
+            Access.openJournalExplorerView(shell);
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
         }
     }
-
-    protected abstract void postRunAction();
 }
