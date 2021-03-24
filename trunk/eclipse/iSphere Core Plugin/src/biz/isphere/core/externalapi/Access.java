@@ -2,6 +2,8 @@ package biz.isphere.core.externalapi;
 
 import java.io.IOException;
 
+import org.eclipse.swt.widgets.Shell;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.AS400SecurityException;
@@ -20,7 +22,7 @@ import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
 public class Access {
 
-    public static void openMessageFileEditor(String connection, String library, String messageFile, boolean readOnly) {
+    public static void openMessageFileEditor(Shell shell, String connection, String library, String messageFile, boolean readOnly) {
         
         RemoteObject remoteObject = new RemoteObject(connection, messageFile, library, ISeries.MSGF, 
             getObjectDescription(connection, library, messageFile, ISeries.MSGF));
@@ -37,7 +39,7 @@ public class Access {
         
     }
 
-    public static void openBindingDirectoryEditor(String connection, String library, String bindingDirectory, boolean readOnly) {
+    public static void openBindingDirectoryEditor(Shell shell, String connection, String library, String bindingDirectory, boolean readOnly) {
         
         RemoteObject remoteObject = new RemoteObject(connection, bindingDirectory, library, ISeries.BNDDIR, 
             getObjectDescription(connection, library, bindingDirectory, ISeries.BNDDIR));
@@ -54,7 +56,7 @@ public class Access {
         
     }
 
-    public static void openDataAreaEditor(String connection, String library, String dataArea, boolean readOnly) {
+    public static void openDataAreaEditor(Shell shell, String connection, String library, String dataArea, boolean readOnly) {
         
         RemoteObject remoteObject = new RemoteObject(connection, dataArea, library, ISeries.DTAARA, 
             getObjectDescription(connection, library, dataArea, ISeries.DTAARA));
@@ -71,7 +73,7 @@ public class Access {
         
     }
 
-    public static void openUserSpaceEditor(String connection, String library, String userSpace, boolean readOnly) {
+    public static void openUserSpaceEditor(Shell shell, String connection, String library, String userSpace, boolean readOnly) {
         
         RemoteObject remoteObject = new RemoteObject(connection, userSpace, library, ISeries.USRSPC, 
             getObjectDescription(connection, library, userSpace, ISeries.USRSPC));
