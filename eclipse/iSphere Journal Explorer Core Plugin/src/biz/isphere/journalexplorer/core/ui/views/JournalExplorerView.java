@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
@@ -66,6 +67,7 @@ import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
+import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForLoadedJournalEntriesTab;
@@ -182,16 +184,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         exportToExcelAction = new ExportToExcelAction(getShell());
 
-        openJournalOutputFileAction = new OpenJournalOutfileAction(getShell()) {
-            @Override
-            public void postRunAction() {
-                OutputFile outputFile = openJournalOutputFileAction.getOutputFile();
-                if (outputFile != null) {
-                    SQLWhereClause whereClause = openJournalOutputFileAction.getWhereClause();
-                    createJournalTab(outputFile, whereClause);
-                }
-            }
-        };
+        openJournalOutputFileAction = new OpenJournalOutfileAction(getShell());
 
         editSqlAction = new EditSqlAction(getShell()) {
             @Override
@@ -636,6 +629,21 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         public void widgetDefaultSelected(SelectionEvent event) {
             widgetDefaultSelected(event);
+        }
+    }
+
+    public static void openJournalOutputFile(Shell shell) throws Exception {
+
+        OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
+        openJournalOutputFileDialog.create();
+
+        if (openJournalOutputFileDialog.open() == Window.OK) {
+            String connectionName = openJournalOutputFileDialog.getConnectionName();
+            String outFileLibrary = openJournalOutputFileDialog.getLibrary();
+            String outFileName = openJournalOutputFileDialog.getFileName();
+            OutputFile outputFile = new OutputFile(connectionName, outFileLibrary, outFileName);
+            SQLWhereClause sqlWhereClause = new SQLWhereClause(openJournalOutputFileDialog.getSqlWhere());
+            openJournalOutputFile(shell, outputFile, sqlWhereClause);
         }
     }
 
