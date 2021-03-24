@@ -10,7 +10,6 @@ package biz.isphere.rcp.journalexplorer;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.journalexplorer.core.externalapi.Access;
@@ -36,13 +35,10 @@ public class OpenJournalOutputFileHandler extends AbstractShellHandler {
      */
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
-        OpenOutputFileDialog dialog = new OpenOutputFileDialog(getShell());
-        if (dialog.open() == Dialog.OK) {
-            try {
-                Access.openJournalExplorerView(getShell(), dialog.getConnectionName(), dialog.getLibraryName(), dialog.getFileName(), "*FIRST", "");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            Access.openJournalExplorerView(getShell());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;
