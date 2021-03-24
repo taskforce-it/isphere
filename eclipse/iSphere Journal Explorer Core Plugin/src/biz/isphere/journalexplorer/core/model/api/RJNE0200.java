@@ -446,7 +446,7 @@ public class RJNE0200 {
             return timestamp;
         }
 
-        if (offsetMinutes >= 0) {
+        if (offsetMinutes > 0) {
             remoteCalendar.clear();
             remoteCalendar.setTime(timestamp);
             remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
