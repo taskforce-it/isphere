@@ -38,7 +38,7 @@ public class OpenJournalOutfileAction extends Action {
     private void performOpenJournalOutputFile() {
 
         try {
-            Access.openJournalExplorerView(shell);
+            Access.openJournalOutputFile(shell);
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
         }

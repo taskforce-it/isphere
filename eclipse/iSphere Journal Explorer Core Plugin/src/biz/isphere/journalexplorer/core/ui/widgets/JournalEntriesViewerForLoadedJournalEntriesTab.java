@@ -11,6 +11,8 @@
 
 package biz.isphere.journalexplorer.core.ui.widgets;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.json.JsonImporter;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
@@ -51,14 +54,17 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  */
 public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJournalEntriesViewerTab {
 
-    private TableViewer tableViewer;
-    private String fileName;
+    private String connectionName;
+    private File jsonFile;
 
-    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, CTabFolder parent, String fileName,
+    private TableViewer tableViewer;
+
+    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, String connectionName, CTabFolder parent, File jsonFile,
         SelectionListener loadJournalEntriesSelectionListener) {
         super(shell, parent, null, loadJournalEntriesSelectionListener);
 
-        this.fileName = fileName;
+        this.connectionName = connectionName;
+        this.jsonFile = jsonFile;
 
         setSelectClause(null);
         setSqlEditorVisibility(false);
@@ -69,11 +75,11 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
     }
 
     protected String getLabel() {
-        return FileHelper.getFileName(fileName);
+        return FileHelper.getFileName(jsonFile);
     }
 
     protected String getTooltip() {
-        return fileName;
+        return jsonFile.getPath();
     }
 
     protected TableViewer createTableViewer(Composite container) {
@@ -114,7 +120,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new OpenJournalJob(view, fileName);
+        Job loadJournalDataJob = new OpenJournalJob(view, connectionName, jsonFile);
         loadJournalDataJob.schedule();
     }
 
@@ -133,13 +139,15 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
     private class OpenJournalJob extends Job {
 
         private JournalExplorerView view;
-        private String fileName;
+        private String connectionName;
+        private File jsonFile;
 
-        public OpenJournalJob(JournalExplorerView view, String fileName) {
+        public OpenJournalJob(JournalExplorerView view, String connectionName, File jsonFile) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
-            this.fileName = fileName;
+            this.connectionName = connectionName;
+            this.jsonFile = jsonFile;
         }
 
         public IStatus run(IProgressMonitor monitor) {
@@ -152,10 +160,16 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
                 JsonImporter<JournalEntries> importer = new JsonImporter<JournalEntries>(JournalEntries.class);
 
-                final JournalEntries data = importer.execute(view.getViewSite().getShell(), fileName);
-                data.finalizeJsonLoading();
+                final JournalEntries data = importer.execute(view.getViewSite().getShell(), jsonFile);
+
+                // Overwrite connection name, if passed in
+                data.finalizeJsonLoading(this.connectionName);
 
                 timeTaken.stop(data.size());
+
+                if (!ISphereHelper.checkISphereLibrary(getShell(), data.getConnectionName())) {
+                    return Status.OK_STATUS;
+                }
 
                 MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
 
@@ -175,7 +189,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
                     if (isBufferTooSmallException(messages)) {
                         throw new BufferTooSmallException();
                     } else if (isNoDataLoadedException(messages)) {
-                        throw new NoJournalEntriesLoadedException(fileName);
+                        throw new NoJournalEntriesLoadedException(jsonFile.getPath());
                     } else {
                         throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                     }

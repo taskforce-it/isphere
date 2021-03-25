@@ -33,7 +33,12 @@ public class SQLWhereClause {
 
         this.fileName = fileName.trim();
         this.libraryName = libraryName.trim();
-        this.whereClause = whereClause.trim();
+
+        if (whereClause == null) {
+            this.whereClause = "";
+        } else {
+            this.whereClause = whereClause.trim();
+        }
 
         this.hasSpecificFields = false;
     }

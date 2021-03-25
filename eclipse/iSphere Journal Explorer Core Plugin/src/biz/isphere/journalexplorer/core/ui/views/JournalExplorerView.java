@@ -11,6 +11,7 @@
 
 package biz.isphere.journalexplorer.core.ui.views;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -197,15 +198,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         toggleHighlightUserEntriesAction = new ToggleHighlightUserEntriesAction();
 
-        configureParsersAction = new ConfigureParsersAction(getShell()) {
-            @Override
-            public void run() {
-                super.run();
-                // if (getButtonPressed() == Dialog.OK) {
-                // performReloadJournalEntries();
-                // }
-            };
-        };
+        configureParsersAction = new ConfigureParsersAction(getShell());
 
         reloadEntriesAction = new GenericRefreshAction() {
             @Override
@@ -214,7 +207,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        loadJournalEntriesAction = new LoadJournalEntriesAction(getShell(), this);
+        loadJournalEntriesAction = new LoadJournalEntriesAction(getShell());
         loadJournalEntriesAction.setEnabled(false);
 
         saveJournalEntriesAction = new SaveJournalEntriesAction(getShell());
@@ -257,13 +250,13 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         }
     }
 
-    public void createJournalTab(String fileName) {
+    private void createJournalTab(String connectionName, File jsonFile, SQLWhereClause whereClause) {
 
         JournalEntriesViewerForLoadedJournalEntriesTab journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, fileName,
+            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), connectionName, tabFolder, jsonFile,
                 new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
@@ -627,6 +620,21 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         public void widgetDefaultSelected(SelectionEvent event) {
             widgetDefaultSelected(event);
+        }
+    }
+
+    public static void openJournalJsonFile(Shell shell, String connectionName, File jsonFile, SQLWhereClause sqlWhereClause) throws Exception {
+
+        IViewPart viewPart = null;
+
+        viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JournalExplorerView.ID);
+        if (viewPart == null) {
+            viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
+        }
+
+        if (viewPart instanceof JournalExplorerView) {
+            JournalExplorerView view = (JournalExplorerView)viewPart;
+            view.createJournalTab(connectionName, jsonFile, sqlWhereClause);
         }
     }
 
