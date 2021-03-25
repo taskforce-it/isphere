@@ -17,13 +17,13 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
-public class LoadJournalEntriesAction extends Action {
+public class OpenJournalJsonFileAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_JSON;
 
     private Shell shell;
 
-    public LoadJournalEntriesAction(Shell shell) {
+    public OpenJournalJsonFileAction(Shell shell) {
         super(Messages.JournalExplorerView_Import_from_Json);
 
         this.shell = shell;
