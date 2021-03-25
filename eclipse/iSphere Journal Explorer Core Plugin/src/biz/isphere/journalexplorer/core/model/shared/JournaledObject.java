@@ -8,6 +8,7 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
@@ -75,7 +76,8 @@ public class JournaledObject {
 
             try {
 
-                String qsysObjectPath = new QSYSObjectPathName(objectName.getLibraryName(), objectName.getObjectName(), objectType).getPath();
+                String qsysObjectPath = new QSYSObjectPathName(objectName.getLibraryName(), objectName.getObjectName(), getObjectType(objectType))
+                    .getPath();
                 this.journalObjectDescription = new ObjectDescription(IBMiHostContributionsHandler.getSystem(getConnectionName()), qsysObjectPath);
 
                 QSYSObjectPathName journalPathName = new QSYSObjectPathName(journalObjectDescription.getValueAsString(ObjectDescription.JOURNAL));
@@ -92,6 +94,17 @@ public class JournaledObject {
         }
 
         return journal;
+    }
+
+    private String getObjectType(String objectType) {
+
+        if (!StringHelper.isNullOrEmpty(objectType)) {
+            if (objectType.startsWith("*")) {
+                return objectType.substring(1);
+            }
+        }
+
+        return objectType;
     }
 
     @Override
