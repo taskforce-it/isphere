@@ -12,9 +12,9 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class Access extends AbstractAccess {
 
     /**
-     * Open the iSphere Journal Explorer and lets the user select the output
-     * file. The file may contain journal entries of *TYPE1, *TYPE2, *TYPE3,
-     * *TYPE4 or *TYPE5.
+     * Open the iSphere Journal Explorer and presents a dialog for selecting the
+     * output file that contains the journal entries. The file may contain
+     * journal entries of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or *TYPE5.
      * 
      * @param shell - the parent shell
      */
