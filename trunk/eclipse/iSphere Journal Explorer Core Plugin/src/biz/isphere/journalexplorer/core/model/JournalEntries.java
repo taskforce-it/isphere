@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
+import com.google.gson.annotations.Expose;
+
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
@@ -26,8 +29,6 @@ import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
-
-import com.google.gson.annotations.Expose;
 
 /**
  * Class to hold the {@link JournalEntry} as received from a journal or a
@@ -100,7 +101,7 @@ public class JournalEntries implements JsonSerializable {
                 String libraryName = journaledFile.getLibraryName();
                 String fileName = journaledFile.getObjectName();
                 String memberName = journaledFile.getMemberName();
-                journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, memberName)); //$NON-NLS-1$
+                journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, memberName)); // $NON-NLS-1$
             }
         }
 
@@ -255,20 +256,25 @@ public class JournalEntries implements JsonSerializable {
         return messages.toArray(new IBMiMessage[messages.size()]);
     }
 
-    public void finalizeJsonLoading() {
+    public void finalizeJsonLoading(String connectionName) {
+
+        /* Build a distinct list of journaled objects */
+        journaledObjects = new HashSet<JournaledObject>();
+
+        for (JournalEntry journalEntry : journalEntries) {
+            journalEntry.overwriteConnectionName(connectionName);
+            addJournaledObject(journalEntry);
+        }
+
+        if (!StringHelper.isNullOrEmpty(connectionName)) {
+            setConnectionName(connectionName);
+        }
 
         /*
          * Hack for old export files, exported prior to iSphere v4.0
          */
         if (getConnectionName() == null && getItems().size() > 0) {
             setConnectionName(getItem(0).getConnectionName());
-        }
-
-        /* Build a distinct list of journaled objects */
-        journaledObjects = new HashSet<JournaledObject>();
-
-        for (JournalEntry journalEntry : journalEntries) {
-            addJournaledObject(journalEntry);
         }
     }
 
