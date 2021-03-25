@@ -47,6 +47,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_COPY_NAME_VALUE_TRIMMED = "copy_name_value_trimmed.gif";
     public static final String IMAGE_COPY_VALUE = "copy_value.gif";
     public static final String IMAGE_COPY_VALUE_TRIMMED = "copy_value_trimmed.gif";
+    public static final String IMAGE_OPEN_FILE = "open.png";
 
     public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
     public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
@@ -118,6 +119,7 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_EDIT_SQL));
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
         reg.put(IMAGE_JSON, getImageDescriptor(IMAGE_JSON));
+        reg.put(IMAGE_OPEN_FILE, getImageDescriptor(IMAGE_OPEN_FILE));
 
         reg.put(IMAGE_COPY_NAME_VALUE, getImageDescriptor(IMAGE_COPY_NAME_VALUE));
         reg.put(IMAGE_COPY_NAME_VALUE_TRIMMED, getImageDescriptor(IMAGE_COPY_NAME_VALUE_TRIMMED));

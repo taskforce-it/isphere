@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
-import com.google.gson.annotations.Expose;
-
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.Messages;
@@ -29,6 +27,8 @@ import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * Class to hold the {@link JournalEntry} as received from a journal or a
@@ -262,7 +262,9 @@ public class JournalEntries implements JsonSerializable {
         journaledObjects = new HashSet<JournaledObject>();
 
         for (JournalEntry journalEntry : journalEntries) {
-            journalEntry.overwriteConnectionName(connectionName);
+            if (!StringHelper.isNullOrEmpty(connectionName)) {
+                journalEntry.overwriteConnectionName(connectionName);
+            }
             addJournaledObject(journalEntry);
         }
 

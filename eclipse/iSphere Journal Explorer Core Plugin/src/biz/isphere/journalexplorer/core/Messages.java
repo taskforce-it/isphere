@@ -26,11 +26,15 @@ public class Messages extends NLS {
     public static String AddJournalDialog_Conection_Tooltip;
     public static String AddJournalDialog_FileName;
     public static String AddJournalDialog_FileName_Tooltip;
+    public static String AddJournalDialog_ImportFileName;
+    public static String AddJournalDialog_ImportFileName_Tooltip;
     public static String AddJournalDialog_MemberName;
     public static String AddJournalDialog_MemberName_Tooltip;
     public static String AddJournalDialog_Library;
     public static String AddJournalDialog_Library_Tooltip;
+    public static String AddJournalDialog_Default_Conection_Tooltip;
     public static String AddJournalDialog_OpenJournal;
+    public static String AddJournalDialog_Import_file_does_not_exist;
 
     public static String ConfigureParsersDialog_DefinitionLibrary;
     public static String ConfigureParsersDialog_DefinitionObject;
