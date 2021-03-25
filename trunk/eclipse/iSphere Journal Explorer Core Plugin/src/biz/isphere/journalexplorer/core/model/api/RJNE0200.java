@@ -11,14 +11,10 @@ package biz.isphere.journalexplorer.core.model.api;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import biz.isphere.base.internal.ByteHelper;
-import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -26,7 +22,6 @@ import biz.isphere.journalexplorer.base.as400.access.AS400UnsignedBin8;
 import biz.isphere.journalexplorer.base.as400.system.DTSDate;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
-import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
 import com.ibm.as400.access.AS400Bin4;
 import com.ibm.as400.access.AS400ByteArray;
@@ -75,9 +70,6 @@ public class RJNE0200 {
     private static final int ERROR_CODE = 0;
 
     private int bufferSize;
-    private Calendar remoteCalendar;
-    private int offsetMinutes;
-    private boolean isWDSCi;
     private ProgramParameter[] parameterList;
 
     // Cached data structures
@@ -117,26 +109,17 @@ public class RJNE0200 {
     private String currentReceiverLibraryASPDeviceName;
     private int currentReceiverLibraryASPNumber;
 
-    public RJNE0200(AS400 aSystem) throws Exception {
-        this(aSystem, RECEIVER_LEN);
+    public RJNE0200() throws Exception {
+        this(RECEIVER_LEN);
     }
 
-    public RJNE0200(AS400 aSystem, int aBufferSize) throws Exception {
+    public RJNE0200(int aBufferSize) throws Exception {
 
         if ((aBufferSize % 16) != 0) {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
 
         bufferSize = aBufferSize;
-
-        TimeZone timeZone = IBMiHelper.timeZoneForSystem(aSystem);
-        remoteCalendar = GregorianCalendar.getInstance(timeZone);
-        Calendar localCalendar = GregorianCalendar.getInstance();
-        int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
-        int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
-        offsetMinutes = localOffset2GMT - remoteOffset2GMT;
-
-        isWDSCi = ISpherePlugin.getDefault().isWDSCiDevelomentEnvironment();
 
         resetReader();
     }
@@ -429,32 +412,32 @@ public class RJNE0200 {
 
         Date tTimestamp = new DTSDate().getDate((byte[])tResult[7]);
 
-        tTimestamp = convertToLocalTimeZone(tTimestamp);
+        // tTimestamp = convertToLocalTimeZone(tTimestamp);
 
         return new java.sql.Timestamp(tTimestamp.getTime());
     }
 
-    private Date convertToLocalTimeZone(Date timestamp) {
+    // private Date convertToLocalTimeZone(Date timestamp) {
 
-        /*
-         * Do not convert when the IDE is WDSCi 7.0. In this case the IBM
-         * DateTimeConverter did not return the timestamp with the timezone of
-         * the IBM i, but with the local timezone of the PC client.
-         */
+    /*
+     * Do not convert when the IDE is WDSCi 7.0. In this case the IBM
+     * DateTimeConverter did not return the timestamp with the timezone of the
+     * IBM i, but with the local timezone of the PC client.
+     */
 
-        if (isWDSCi) {
-            return timestamp;
-        }
-
-        if (offsetMinutes > 0) {
-            remoteCalendar.clear();
-            remoteCalendar.setTime(timestamp);
-            remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
-            timestamp = remoteCalendar.getTime();
-        }
-
-        return timestamp;
-    }
+    // if (isWDSCi) {
+    // return timestamp;
+    // }
+    //
+    // if (offsetMinutes > 0) {
+    // remoteCalendar.clear();
+    // remoteCalendar.setTime(timestamp);
+    // remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
+    // timestamp = remoteCalendar.getTime();
+    // }
+    //
+    // return timestamp;
+    // }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>

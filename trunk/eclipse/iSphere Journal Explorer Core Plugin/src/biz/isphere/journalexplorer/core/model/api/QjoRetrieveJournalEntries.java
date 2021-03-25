@@ -71,7 +71,7 @@ public class QjoRetrieveJournalEntries {
 
     public RJNE0200 execute(int bufferSize) throws Exception {
 
-        RJNE0200 rjne0200 = new RJNE0200(system, bufferSize);
+        RJNE0200 rjne0200 = new RJNE0200(bufferSize);
 
         if (retrieveJournalEntries(rjne0200.getProgramParameters(jrneToRtv))) {
 

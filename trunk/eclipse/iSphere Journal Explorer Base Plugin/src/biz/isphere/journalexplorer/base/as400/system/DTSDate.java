@@ -9,10 +9,22 @@
 package biz.isphere.journalexplorer.base.as400.system;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
+
+import com.ibm.as400.access.AS400Timestamp;
+import com.ibm.as400.access.DateTimeConverter;
 
 /**
+ * THis class emulates the IBM {@link DateTimeConverter}. The drawback of the
+ * DateTimeConverter is its bad performance, because it calls the QWCCVTDT API
+ * under the cover. This class is a pure Java implementation and a lot faster.
+ * It uses slightly modified source of the JTOPEN {@link AS400Timestamp} API.
+ * Instead of returning a {@link java.sql.Timestamp} value, this class returns a
+ * {@link java.util.Date} value.
+ * <p>
  * Timestamp format *DTS ("Standard Time Format").
  * <ul>
  * <li>Example: The timestamp value 0x8000000000000000 represents 2000-01-01
@@ -30,105 +42,78 @@ import java.util.Date;
  */
 public class DTSDate {
 
-    private static final int INT_MILLISECONDS = 1000;
-    private static final int ROUND_UP_VALUE = INT_MILLISECONDS / 2;
-    private static final BigInteger MILLISECONDS = new BigInteger(Integer.toString(INT_MILLISECONDS));
-
-    private Calendar startingDate;
+    private static final BigInteger DTS_CONVERSION_FACTOR = new BigInteger("946684800000000");
+    private static final BigInteger ONE_THOUSAND = new BigInteger("1000");
 
     public DTSDate() {
-        this.startingDate = getStartingDate();
     }
 
     /**
-     * Converts a standard time format ( *DTS) date to a Java date.
+     * Converts a standard time format ( *DTS) date to a Java date. This method
+     * emulates the IBM {@link DateTimeConverter}
      * 
      * @param bytes - *DTS byte array
      * @return date
      */
-    public Date getDate(byte[] bytes) {
+    public Date getDate(byte[] as400Value) {
 
-        if (bytes.length != 8) {
+        if (as400Value.length != 8) {
             throw new IllegalArgumentException("DTS date must be an 8-byte array."); //$NON-NLS-1$
         }
 
-        /*
-         * The time field is a binary number which can be interpreted as a time
-         * value in units of 1 microsecond. A binary 1 in bit 51 is equal to 1
-         * microsecond. Shift 12 bits to the right, to remove the
-         * "uniqueness bits" 52-63.
-         */
-        BigInteger shifted = new BigInteger(shiftRight(bytes, 12));
+        // Determine the "elapsed microseconds" value represented by the *DTS
+        // value.
+        // Note that *DTS values, in theory, specify microseconds elapsed since
+        // August 23, 1928 12:03:06.314752.
+        // However, the real reference point is January 1, 2000,
+        // 00:00:00.000000,
+        // which is represented by *DTS value 0x8000000000000000.
 
-        /*
-         * Divide by 1000 to get milliseconds.
-         */
-        BigInteger[] millisAndRemainderSince1928 = shifted.divideAndRemainder(MILLISECONDS);
-        long millisSince1928 = millisAndRemainderSince1928[0].longValue();
+        // In the returned *DTS value, only the first 8 bytes are meaningful.
+        // Of those 8 bytes, only bits 0-51 are used to represent
+        // "elapsed microseconds".
 
-        /*
-         * Round up, if necessary.
-         */
-        long microSeconds = millisAndRemainderSince1928[1].longValue();
-        if (microSeconds >= ROUND_UP_VALUE) {
-            millisSince1928++;
+        // To prevent sign-extension when we right-shift the bits:
+        // Copy the first 8 bytes into a 9-byte array, preceded by 0x00.
+        byte[] bytes9 = new byte[9];
+        System.arraycopy(as400Value, 0, bytes9, 1, 8); // right-justify
+        BigInteger bits0to63 = new BigInteger(bytes9); // bits 0-63
+
+        // Convert base of date from August 23, 1928 12:03:06.314752 to January
+        // 1, 2000, 00:00:00.000000.
+        byte[] dts2000 = { 0, (byte)0x80, 0, 0, 0, 0, 0, 0, 0 }; // 0x8000000000000000
+        BigInteger basedOn2000 = bits0to63.subtract(new BigInteger(dts2000));
+
+        // Eliminate the "uniqueness bits" (bits 52-63).
+        // Right-shift 12 bits, without sign-extension, leaving bits 0-51.
+        BigInteger microsElapsedSince2000 = basedOn2000.shiftRight(12);
+
+        // Convert the above value to
+        // "microseconds elapsed since January 1, 1970, 00:00:00". That gets us
+        // closer to a value we can use to create a Java timestamp object.
+        BigInteger microsElapsedSince1970 = microsElapsedSince2000.add(DTS_CONVERSION_FACTOR);
+
+        // Milliseconds elapsed since January 1, 1970, 00:00:00
+        BigInteger[] result = microsElapsedSince1970.divideAndRemainder(ONE_THOUSAND);
+        BigInteger millisElapsedSince1970 = result[0];
+        BigInteger remainder = result[1];
+
+        // Round up 1 millisecond if necessary
+        long millisSince1970 = millisElapsedSince1970.longValue();
+        if (remainder.intValue() >= 500) {
+            millisSince1970++;
         }
 
-        /*
-         * Get DTS starting date and add milliseconds since 1928.
-         */
-        long startingDate1928 = startingDate.getTimeInMillis();
+        // Convert milliseconds to java.util.Date
+        Calendar localCalendar = Calendar.getInstance();
+        localCalendar.setTimeInMillis(millisSince1970);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(startingDate1928 + millisSince1928);
+        // Convert to local time
+        int offsetMillisGMT = TimeZone.getDefault().getRawOffset();
+        localCalendar.add(Calendar.MILLISECOND, offsetMillisGMT * -1);
 
-        Date dtsDate = calendar.getTime();
+        Timestamp timestamp = new Timestamp(localCalendar.getTimeInMillis());
 
-        return dtsDate;
-    }
-
-    /**
-     * Returns the starting date for converting a DTS date to date. This
-     * procedure is a Java implementation of the QWCCVTDT API. The starting date
-     * is: <i>August 23, 1928 12:03:06.314752August 23, 1928 12:03:06.314752</i>
-     * as described in {@link com.ibm.as400.access.AS400Timestamp}
-     * <p>
-     * 
-     * @see com.ibm.as400.access.AS400Timestamp
-     */
-    private Calendar getStartingDate() {
-
-        Calendar c = Calendar.getInstance();
-
-        c.clear();
-        c.set(Calendar.YEAR, 1928);
-        c.set(Calendar.MONTH, Calendar.AUGUST);
-        c.set(Calendar.DAY_OF_MONTH, 23);
-        c.set(Calendar.HOUR_OF_DAY, 12);
-        c.set(Calendar.MINUTE, 3);
-        c.set(Calendar.SECOND, 6);
-        c.set(Calendar.MILLISECOND, 315);
-
-        return c;
-    }
-
-    /**
-     * Shifts a given byte array a specified number of bits to the right. The
-     * number of bits to shift must be a multiple of 4, since we shift nibbles.
-     * 
-     * @param bytes - byte array that is shifted
-     * @param count - number of bits to shift
-     * @return array, shifted to the right
-     */
-    private byte[] shiftRight(byte[] bytes, int count) {
-
-        if (count % 4 != 0) {
-            throw new IllegalArgumentException("Number of bits must be a multiple of 4."); //$NON-NLS-1$
-        }
-
-        byte[] result = new BigInteger(bytes).shiftRight(count).toByteArray();
-        result[0] = (byte)(result[0] & 0x0F);
-
-        return result;
+        return timestamp;
     }
 }
