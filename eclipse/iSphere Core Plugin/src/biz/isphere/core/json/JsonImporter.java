@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
 
 package biz.isphere.core.json;
 
+import java.io.File;
 import java.io.FileReader;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
@@ -29,26 +31,33 @@ public class JsonImporter<M extends JsonSerializable> {
         this.type = type;
     }
 
-    public M execute(Shell shell, String file) {
+    public M execute(Shell shell, String jsonFile) {
+        return execute(shell, new File(jsonFile));
+    }
 
-        if (file == null && shell != null) {
+    public M execute(Shell shell, File jsonFile) {
+
+        if (jsonFile == null && shell != null) {
             IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.SAVE);
             dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$
             dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$
             dialog.setFilterPath(FileHelper.getDefaultRootDirectory());
             dialog.setFileName("export.json"); //$NON-NLS-1$
             dialog.setOverwrite(true);
-            file = dialog.open();
+            String fileName = dialog.open();
+            if (!StringHelper.isNullOrEmpty(fileName)) {
+                jsonFile = new File(fileName);
+            }
         }
 
-        if (file == null) {
+        if (jsonFile == null) {
             return null;
         }
 
-        return performImportFromJson(file);
+        return performImportFromJson(jsonFile);
     }
 
-    private M performImportFromJson(String file) {
+    private M performImportFromJson(File jsonFile) {
 
         JsonSerializer<java.sql.Date> sqlDateSerializer = new SQLDateSerializer();
 
@@ -63,7 +72,7 @@ public class JsonImporter<M extends JsonSerializable> {
 
         try {
             Gson gson = gsonBuilder.create();
-            FileReader reader = new FileReader(file);
+            FileReader reader = new FileReader(jsonFile);
             M journalEntries = gson.fromJson(reader, getClazz());
             reader.close();
             return journalEntries;
