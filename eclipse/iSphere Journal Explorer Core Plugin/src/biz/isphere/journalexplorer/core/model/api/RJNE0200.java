@@ -9,9 +9,9 @@
 package biz.isphere.journalexplorer.core.model.api;
 
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import biz.isphere.base.internal.ByteHelper;
@@ -19,7 +19,7 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.journalexplorer.base.as400.access.AS400UnsignedBin8;
-import biz.isphere.journalexplorer.base.as400.system.DTSDate;
+import biz.isphere.journalexplorer.base.as400.system.DTSDateConverter;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400Bin2;
@@ -410,11 +410,9 @@ public class RJNE0200 {
 
         Object[] tResult = getEntryHeaderData();
 
-        Date tTimestamp = new DTSDate().getDate((byte[])tResult[7]);
+        Timestamp tTimestamp = new DTSDateConverter().convert((byte[])tResult[7]);
 
-        // tTimestamp = convertToLocalTimeZone(tTimestamp);
-
-        return new java.sql.Timestamp(tTimestamp.getTime());
+        return tTimestamp;
     }
 
     // private Date convertToLocalTimeZone(Date timestamp) {
