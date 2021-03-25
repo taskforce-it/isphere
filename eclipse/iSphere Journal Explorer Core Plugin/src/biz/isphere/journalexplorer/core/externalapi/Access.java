@@ -25,7 +25,7 @@ public class Access extends AbstractAccess {
      * 
      * @param shell - the parent shell
      */
-    public static void openJournalJsonFile(Shell shell) throws Exception {
+    public static void loadJournalEntriesFromJsonFile(Shell shell) throws Exception {
 
         IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.OPEN);
         dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class Access extends AbstractAccess {
      * 
      * @param shell - the parent shell
      */
-    public static void openJournalOutputFile(Shell shell) throws Exception {
+    public static void loadJournalEntriesFromOutputFile(Shell shell) throws Exception {
 
         OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
         openJournalOutputFileDialog.create();
@@ -98,7 +98,7 @@ public class Access extends AbstractAccess {
 
     /**
      * Opens the iSphere Journal Explorer for a given output file of journal
-     * entries. The file must have been created with the <code>DSPJRN</code>
+     * entries. The file must have been created with the <code>DSPJRN</code>Ta
      * command and and output format one of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or
      * *TYPE5.
      * 

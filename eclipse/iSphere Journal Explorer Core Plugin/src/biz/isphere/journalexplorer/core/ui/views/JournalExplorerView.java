@@ -63,8 +63,8 @@ import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
-import biz.isphere.journalexplorer.core.ui.actions.OpenJournalJsonFileAction;
-import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
+import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesFromJsonFileAction;
+import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesFromOutputFileAction;
 import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
@@ -78,7 +78,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
     private EditSqlAction editSqlAction;
-    private OpenJournalOutfileAction openJournalOutputFileAction;
+    private LoadJournalEntriesFromOutputFileAction openJournalOutputFileAction;
     private ResetColumnSizeAction resetColumnSizeAction;
     private ExportToExcelAction exportToExcelAction;
     private CompareSideBySideAction compareSideBySideAction;
@@ -86,7 +86,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private ConfigureParsersAction configureParsersAction;
     private GenericRefreshAction reloadEntriesAction;
 
-    private OpenJournalJsonFileAction loadJournalEntriesAction;
+    private LoadJournalEntriesFromJsonFileAction loadJournalEntriesAction;
     private SaveJournalEntriesAction saveJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
@@ -183,7 +183,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
 
         exportToExcelAction = new ExportToExcelAction(getShell());
 
-        openJournalOutputFileAction = new OpenJournalOutfileAction(getShell());
+        openJournalOutputFileAction = new LoadJournalEntriesFromOutputFileAction(getShell());
 
         editSqlAction = new EditSqlAction(getShell()) {
             @Override
@@ -207,7 +207,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        loadJournalEntriesAction = new OpenJournalJsonFileAction(getShell());
+        loadJournalEntriesAction = new LoadJournalEntriesFromJsonFileAction(getShell());
         loadJournalEntriesAction.setEnabled(false);
 
         saveJournalEntriesAction = new SaveJournalEntriesAction(getShell());
