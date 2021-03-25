@@ -11,19 +11,17 @@ package biz.isphere.journalexplorer.base.as400.system;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 
 import com.ibm.as400.access.AS400Timestamp;
 import com.ibm.as400.access.DateTimeConverter;
 
 /**
- * THis class emulates the IBM {@link DateTimeConverter}. The drawback of the
+ * This class emulates the IBM {@link DateTimeConverter}. The drawback of the
  * DateTimeConverter is its bad performance, because it calls the QWCCVTDT API
  * under the cover. This class is a pure Java implementation and a lot faster.
- * It uses slightly modified source of the JTOPEN {@link AS400Timestamp} API.
- * Instead of returning a {@link java.sql.Timestamp} value, this class returns a
- * {@link java.util.Date} value.
+ * It uses a slightly modified source code of the JTOPEN {@link AS400Timestamp}
+ * API.
  * <p>
  * Timestamp format *DTS ("Standard Time Format").
  * <ul>
@@ -40,12 +38,12 @@ import com.ibm.as400.access.DateTimeConverter;
  * zone of the IBM i system).
  * </ul>
  */
-public class DTSDate {
+public class DTSDateConverter {
 
     private static final BigInteger DTS_CONVERSION_FACTOR = new BigInteger("946684800000000");
     private static final BigInteger ONE_THOUSAND = new BigInteger("1000");
 
-    public DTSDate() {
+    public DTSDateConverter() {
     }
 
     /**
@@ -55,7 +53,7 @@ public class DTSDate {
      * @param bytes - *DTS byte array
      * @return date
      */
-    public Date getDate(byte[] as400Value) {
+    public Timestamp convert(byte[] as400Value) {
 
         if (as400Value.length != 8) {
             throw new IllegalArgumentException("DTS date must be an 8-byte array."); //$NON-NLS-1$
@@ -108,7 +106,7 @@ public class DTSDate {
         Calendar localCalendar = Calendar.getInstance();
         localCalendar.setTimeInMillis(millisSince1970);
 
-        // Convert to local time
+        // Fix timezone offset
         int offsetMillisGMT = TimeZone.getDefault().getRawOffset();
         localCalendar.add(Calendar.MILLISECOND, offsetMillisGMT * -1);
 
