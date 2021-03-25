@@ -2,17 +2,14 @@ package biz.isphere.journalexplorer.core.externalapi;
 
 import java.io.File;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.base.internal.FileHelper;
-import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
-import biz.isphere.journalexplorer.core.preferences.Preferences;
+import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalJsonFileDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
@@ -27,20 +24,13 @@ public class Access extends AbstractAccess {
      */
     public static void loadJournalEntriesFromJsonFile(Shell shell) throws Exception {
 
-        IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.OPEN);
-        dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$
-        dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$
-        dialog.setFilterPath(Preferences.getInstance().getExportPath());
-        dialog.setFileName(Preferences.getInstance().getExportFileJson());
-        dialog.setOverwrite(false);
-        final String importPath = dialog.open();
-
-        if (importPath != null) {
-            Preferences.getInstance().setExportPath(dialog.getFilterPath());
-            Preferences.getInstance().setExportFileJson(FileHelper.getFileName(importPath));
-            openJournalExplorerView(ensureShell(shell), importPath, null);
+        OpenJournalJsonFileDialog dialog = new OpenJournalJsonFileDialog(shell);
+        if (dialog.open() == Dialog.OK) {
+            String connectionName = dialog.getConnectionName();
+            String jsonFile = dialog.getJsonFileName();
+            String whereClause = dialog.getSqlWhere();
+            openJournalExplorerView(ensureShell(shell), connectionName, jsonFile, whereClause);
         }
-
     }
 
     /**
@@ -48,13 +38,13 @@ public class Access extends AbstractAccess {
      * saved from the iSphere Journal Explorer view.
      * 
      * @param shell - the parent shell
-     * @param filePath - path of the Json file
+     * @param jsonFile - path of the Json file
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries
      */
-    public static void openJournalExplorerView(Shell shell, String filePath, String whereClause) throws Exception {
+    public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause) throws Exception {
 
-        openJournalExplorerView(ensureShell(shell), null, filePath, whereClause);
+        openJournalExplorerView(ensureShell(shell), null, jsonFile, whereClause);
     }
 
     /**
@@ -64,13 +54,13 @@ public class Access extends AbstractAccess {
      * @param shell - the parent shell
      * @param connectionName - connection name that overwrites the connection
      *        name stored in the import file
-     * @param filePath - path of the Json file
+     * @param jsonFile - path of the Json file
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String filePath, String whereClause) throws Exception {
+    public static void openJournalExplorerView(Shell shell, String connectionName, String jsonFile, String whereClause) throws Exception {
 
-        JournalExplorerView.openJournalJsonFile(ensureShell(shell), connectionName, new File(filePath), new SQLWhereClause(whereClause));
+        JournalExplorerView.openJournalJsonFile(ensureShell(shell), connectionName, new File(jsonFile), new SQLWhereClause(whereClause));
     }
 
     /**
