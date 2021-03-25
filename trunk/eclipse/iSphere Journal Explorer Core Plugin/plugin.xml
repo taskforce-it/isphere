@@ -64,5 +64,22 @@
             name="%Journal_Explorer_PreferencePage"
             id="biz.isphere.journalexplorer.core.ui.preferencepages.JournalExplorerPreferencePage"/>
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Journal Explorer Perspective
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.perspectives">
+   
+      <perspective 
+	       id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
+	       name="%Perspective_Journal_Explorer"
+	       class="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout"
+	       icon="icons/journal_explorer.png">
+      </perspective>
+       
+   </extension>   
    
 </plugin>
