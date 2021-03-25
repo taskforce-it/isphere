@@ -63,7 +63,7 @@ import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
-import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesAction;
+import biz.isphere.journalexplorer.core.ui.actions.OpenJournalJsonFileAction;
 import biz.isphere.journalexplorer.core.ui.actions.OpenJournalOutfileAction;
 import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
@@ -86,7 +86,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
     private ConfigureParsersAction configureParsersAction;
     private GenericRefreshAction reloadEntriesAction;
 
-    private LoadJournalEntriesAction loadJournalEntriesAction;
+    private OpenJournalJsonFileAction loadJournalEntriesAction;
     private SaveJournalEntriesAction saveJournalEntriesAction;
 
     private SelectionProviderIntermediate selectionProviderIntermediate;
@@ -207,7 +207,7 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
             }
         };
 
-        loadJournalEntriesAction = new LoadJournalEntriesAction(getShell());
+        loadJournalEntriesAction = new OpenJournalJsonFileAction(getShell());
         loadJournalEntriesAction.setEnabled(false);
 
         saveJournalEntriesAction = new SaveJournalEntriesAction(getShell());
