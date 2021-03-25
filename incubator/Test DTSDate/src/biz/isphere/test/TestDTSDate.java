@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
@@ -44,12 +47,28 @@ public class TestDTSDate {
      */
 
     private AS400 system;
+    private TimeZone timeZone;
+    private Calendar remoteCalendar;
+    private int offsetMinutes;
 
     public TestDTSDate() {
         String host = System.getProperty("HOST");
         String user = System.getProperty("USER");
         String password = System.getProperty("PASSWORD");
         this.system = new AS400(host, user, password);
+
+        try {
+            timeZone = IBMiHelper.timeZoneForSystem(system);
+            remoteCalendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+            Calendar localCalendar = GregorianCalendar.getInstance();
+            int remoteOffset2GMT = (remoteCalendar.get(Calendar.ZONE_OFFSET) + remoteCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+            int localOffset2GMT = (localCalendar.get(Calendar.ZONE_OFFSET) + localCalendar.get(Calendar.DST_OFFSET)) / (60 * 1000);
+            offsetMinutes = localOffset2GMT - remoteOffset2GMT;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -88,15 +107,27 @@ public class TestDTSDate {
     private int showResult(List<byte[]> falseTestCases) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException,
         IOException, ObjectDoesNotExistException {
 
+        // IBMiHelper.timeZoneForSystem(system);
+
         DTSDate dtsDateCnv = new DTSDate();
         DateTimeConverter dateTimeConverter = new DateTimeConverter(system);
 
         int count = 0;
 
         for (byte[] testCase : falseTestCases) {
-            long dtsDateMSecs = dtsDateCnv.getDate(testCase).getTime();
-            long dateTimeConverterMSecs = dateTimeConverter.convert(testCase, "*DTS").getTime();
-            System.out.println("Timestamp: " + getTimestamp(dateTimeConverterMSecs));
+
+            Date dtsDateCnvDate = convertToLocalTimeZone(dtsDateCnv.getDate(testCase));
+            long dtsDateMSecs = dtsDateCnvDate.getTime();
+
+            System.out.println("Timezone offset (dts): " + dtsDateCnvDate.getTimezoneOffset());
+            System.out.println("Timestamp (dts): " + getTimestamp(dtsDateMSecs));
+
+            Date dateTimeConverterDate = dateTimeConverter.convert(testCase, "*DTS");
+            long dateTimeConverterMSecs = dateTimeConverterDate.getTime();
+
+            System.out.println("Timezone offset (jto): " + dateTimeConverterDate.getTimezoneOffset());
+            System.out.println("Timestamp (jto): " + getTimestamp(dateTimeConverterMSecs));
+
             if (dtsDateMSecs != dateTimeConverterMSecs) {
                 count++;
                 System.out.println("Error: Unexpected difference #" + (dtsDateMSecs - dateTimeConverterMSecs));
@@ -115,5 +146,27 @@ public class TestDTSDate {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss.SSS");
 
         return formatter.format(c.getTime());
+    }
+
+    private Date convertToLocalTimeZone(Date timestamp) {
+
+        /*
+         * Do not convert when the IDE is WDSCi 7.0. In this case the IBM
+         * DateTimeConverter did not return the timestamp with the timezone of
+         * the IBM i, but with the local timezone of the PC client.
+         */
+
+        // if (isWDSCi) {
+        // return timestamp;
+        // }
+
+        if (offsetMinutes >= 0) {
+            remoteCalendar.clear();
+            remoteCalendar.setTime(timestamp);
+            remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
+            timestamp = remoteCalendar.getTime();
+        }
+
+        return timestamp;
     }
 }
