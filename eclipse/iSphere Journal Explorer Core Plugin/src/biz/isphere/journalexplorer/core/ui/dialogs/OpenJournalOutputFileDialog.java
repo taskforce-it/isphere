@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -233,6 +232,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         txtLibraryName.setText(loadValue(LIBRARY, ""));
         txtFileName.setText(loadValue(FILE, ""));
         txtMemberName.setText(loadValue(MEMBER, ""));
+
         sqlEditor.setWhereClause(loadValue(WHERE_CLAUSE, ""));
     }
 
@@ -333,7 +333,6 @@ public class OpenJournalOutputFileDialog extends XDialog {
         sqlEditor.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {
                 whereClause = sqlEditor.getWhereClause().trim();
-                ((StyledText)event.getSource()).getText();
             }
         });
     }
