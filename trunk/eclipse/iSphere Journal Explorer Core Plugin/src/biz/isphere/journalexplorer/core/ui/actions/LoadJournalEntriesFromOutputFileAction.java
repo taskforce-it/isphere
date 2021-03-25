@@ -16,13 +16,13 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
-public class OpenJournalOutfileAction extends Action {
+public class LoadJournalEntriesFromOutputFileAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_OPEN_JOURNAL_OUTFILE;
 
     private Shell shell;
 
-    public OpenJournalOutfileAction(Shell shell) {
+    public LoadJournalEntriesFromOutputFileAction(Shell shell) {
 
         this.shell = shell;
 
@@ -38,7 +38,7 @@ public class OpenJournalOutfileAction extends Action {
     private void performOpenJournalOutputFile() {
 
         try {
-            Access.openJournalOutputFile(shell);
+            Access.loadJournalEntriesFromOutputFile(shell);
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
         }

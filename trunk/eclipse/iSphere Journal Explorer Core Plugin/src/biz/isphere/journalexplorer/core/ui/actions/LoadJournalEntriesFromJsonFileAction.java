@@ -17,13 +17,13 @@ import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
-public class OpenJournalJsonFileAction extends Action {
+public class LoadJournalEntriesFromJsonFileAction extends Action {
 
     private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_JSON;
 
     private Shell shell;
 
-    public OpenJournalJsonFileAction(Shell shell) {
+    public LoadJournalEntriesFromJsonFileAction(Shell shell) {
         super(Messages.JournalExplorerView_Import_from_Json);
 
         this.shell = shell;
@@ -43,7 +43,7 @@ public class OpenJournalJsonFileAction extends Action {
     private void performImportFromJson() {
 
         try {
-            Access.openJournalJsonFile(shell);
+            Access.loadJournalEntriesFromJsonFile(shell);
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
         }
