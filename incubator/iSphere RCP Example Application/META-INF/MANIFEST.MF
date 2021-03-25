@@ -5,6 +5,7 @@ Bundle-SymbolicName: biz.isphere.rcp;singleton:=true
 Bundle-Version: 4.0.0.b008
 Bundle-Activator: biz.isphere.rcp.ISphereRCPExampleApplication
 Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
 Require-Bundle: javax.inject,
  org.eclipse.osgi,
  org.eclipse.jface,

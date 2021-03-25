@@ -61,6 +61,22 @@
             name="Open Journal Output File">
       </command>
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Journal Explorer Perspective
+      	  ==========================================
+      	-->
 
+   <extension point="org.eclipse.ui.perspectives">
+   
+      <perspective 
+	       id="biz.isphere.rcp.perspectives.JournalExplorerPerspectiveLayout" 
+	       name="%Perspective_Journal_Explorer"
+	       class="biz.isphere.rcp.perspectives.JournalExplorerPerspectiveLayout"
+	       icon="icons/journal_explorer.png">
+      </perspective>
+       
+   </extension>   
 
 </plugin>
