@@ -127,8 +127,8 @@ public class OpenJournalJsonFileDialog extends XDialog {
         btnSelectFile.setImage(ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_OPEN_FILE));
         btnSelectFile.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 
-        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
-            | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(),
+            SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);
@@ -258,7 +258,7 @@ public class OpenJournalJsonFileDialog extends XDialog {
                 final String importPath = dialog.open();
 
                 if (importPath != null) {
-                    txtJsonFileName.setText(FileHelper.getFileName(importPath));
+                    txtJsonFileName.setText(importPath);
                     Preferences.getInstance().setExportPath(FileHelper.getPathName(importPath));
                     Preferences.getInstance().setExportFileJson(FileHelper.getFileName(importPath));
                 }
@@ -322,12 +322,6 @@ public class OpenJournalJsonFileDialog extends XDialog {
             return false;
         }
 
-        if (!isDefaultConnection(connectionName)) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
-            cmbConnections.getCombo().setFocus();
-            return false;
-        }
-
         if (!isDefaultConnection(connectionName) && IBMiHostContributionsHandler.isOffline(connectionName)) {
             String message = Messages.bind(Messages.Error_Connection_A_is_offline, connectionName);
             if (message != null) {
@@ -387,7 +381,7 @@ public class OpenJournalJsonFileDialog extends XDialog {
 
     public String getJsonFileName() {
 
-        return jsonFileName.toUpperCase();
+        return jsonFileName;
     }
 
     public String getSqlWhere() {
