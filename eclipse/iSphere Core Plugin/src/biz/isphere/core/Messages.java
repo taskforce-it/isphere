@@ -994,10 +994,6 @@ public class Messages extends NLS {
 
     public static String Question_close_all_tabs;
 
-    public static String Label_Decorations_RSE_host_objects;
-
-    public static String Label_Decorations_RSE_host_objects_Description;
-
     public static String No_filter_pool_selected;
 
     public static String Copy_selected;
@@ -1353,12 +1349,6 @@ public class Messages extends NLS {
     public static String Downloading_stream_files;
 
     public static String Comparing_stream_files;
-
-    public static String Add_library_and_file_name_to_source_members;
-
-    public static String Add_library_and_file_name_to_data_members;
-
-    public static String Add_library_name_to_objects;
 
     public static String Creation_Timestamp;
 

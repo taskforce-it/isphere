@@ -152,6 +152,16 @@ public class Messages extends NLS {
 
     public static String Connection_is_offline;
 
+    public static String Label_Decorations_RSE_host_objects;
+
+    public static String Label_Decorations_RSE_host_objects_Description;
+
+    public static String Add_library_and_file_name_to_source_members;
+
+    public static String Add_library_and_file_name_to_data_members;
+
+    public static String Add_library_name_to_objects;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

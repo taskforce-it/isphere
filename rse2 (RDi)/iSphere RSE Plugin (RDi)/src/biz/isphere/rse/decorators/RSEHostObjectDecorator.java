@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.preferences.Preferences;
 
 import com.ibm.etools.iseries.comm.interfaces.IISeriesHostObjectBrief;
 
