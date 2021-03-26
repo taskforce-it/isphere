@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.IEditorPart;
 
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.internal.Member;
@@ -28,7 +27,7 @@ public interface IIBMiHostContributions {
      * @return <i>true</i>, if RSE sub-system has been initialized, else
      *         <i>false</i>
      */
-    public boolean isRseSubsystemInitialized(String connectionName);
+    public boolean isRseSubsystemInitialized();
 
     /**
      * Returns <i>true</i> when Kerberos authentication is enabled on the
@@ -43,128 +42,120 @@ public interface IIBMiHostContributions {
      * Returns <i>true</i> when the specified connection is known to the
      * application.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when known, else <i>false</i>
      */
-    public boolean isAvailable(String connectionName);
+    public boolean isAvailable(String qualifiedConnectionName);
 
     /**
      * Returns <i>true</i> when the specified connection is in offline mode.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when offline, else <i>false</i>
      */
-    public boolean isOffline(String connectionName);
+    public boolean isOffline(String qualifiedConnectionName);
 
     /**
      * Returns <i>true</i> when specified connection is connected.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when connected, else <i>false</i>
      */
-    public boolean isConnected(String connectionName);
+    public boolean isConnected(String qualifiedConnectionName);
 
     /**
-     * Connects the specified connection.
+     * Connects the connection identified by a given connection name.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when successfully connected, else <i>false</i>
+     * @throws Exception
      */
-    public boolean connect(String connectionName) throws Exception;
+    public boolean connect(String qualifiedConnectionName) throws Exception;
 
     /**
-     * Changes the 'offline' status of the specified connection.
+     * Changes the <i>offline</i> status of the specified connection.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      */
-    public void setOffline(String connectionName, boolean offline);
+    public void setOffline(String qualifiedConnectionName, boolean offline);
 
     /**
      * Executes a given command for a given connection.
      * 
-     * @param connectionName - connection used for executing the command
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param command - command that is executed
      * @param rtnMessages - list of error messages or <code>null</code>
      * @return error message text on error or <code>null</code> on success
      */
-    public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages);
+    public String executeCommand(String qualifiedConnectionName, String command, List<AS400Message> rtnMessages);
 
     /**
-     * Checks whether a given library exists or not.
+     * Returns whether a given library exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that is tested
      * @return <code>true</code>, when the library exists, else
      *         <code>false</code>.
      */
-    public boolean checkLibrary(String connectionName, String libraryName);
+    public boolean checkLibrary(String qualifiedConnectionName, String libraryName);
 
     /**
      * Checks whether a given file exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that should contain the file
      * @param fileName - file that is tested
      * @return <code>true</code>, when the file exists, else <code>false</code>.
      */
-    public boolean checkFile(String connectionName, String libraryName, String fileName);
+    public boolean checkFile(String qualifiedConnectionName, String libraryName, String fileName);
 
     /**
      * Checks whether a given member exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that should contain the file
      * @param fileName - file that should contain the member
      * @param memberName - name of the member that is tested
      * @return <code>true</code>, when the library exists, else
      *         <code>false</code>.
      */
-    public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName);
+    public boolean checkMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName);
 
     /**
      * Returns the name of the iSphere library that is associated to a given
      * connection.
      * 
-     * @param connectionName - name of the connection the name of the iSphere
-     *        library is returned for
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection library is returned for
      * @return name of the iSphere library
      */
-    public String getISphereLibrary(String connectionName);
+    public String getISphereLibrary(String qualifiedConnectionName);
 
     /**
-     * Returns an AS400 object for a given host name.
+     * Returns the system (AS400) identified by a given connection name.
      * 
-     * @param hostName - host name to identify the connection
-     * @return AS400 object that is associated to the host
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @return AS400
      */
-    public AS400 findSystem(String hostName);
-
-    /**
-     * Returns an AS400 object for a given connection name.
-     * 
-     * @param connectionName - connection name to identify the connection
-     * @return AS400 object that is associated to the connection
-     */
-    public AS400 getSystem(String connectionName);
-
-    /**
-     * Returns an AS400 object for a given profile and connection name.
-     * 
-     * @param profile - name of the profile, that hosts the connection
-     * @param connectionName - connection name to identify the connection
-     * @return AS400 object that is associated to the connection
-     */
-    public AS400 getSystem(String profile, String connectionName);
-
-    /**
-     * Returns an AS400 object for a given editor.
-     * 
-     * @param editor - that shows a remote file
-     * @return AS400 object that is associated to editor
-     */
-    public AS400 getSystem(IEditorPart editor);
+    public AS400 getSystem(String qualifiedConnectionName);
 
     /**
      * Returns the connection name of a given editor.
      * 
-     * @param editor - that shows a remote file
+     * @param file - remote file downloaded to the workspace
      * @return name of the connection the file has been loaded from
      */
-    public String getConnectionName(IEditorPart editor);
+    public String getConnectionName(IFile file);
 
     /**
      * Returns the connection name of a given i Project.
@@ -175,7 +166,15 @@ public interface IIBMiHostContributions {
     public String getConnectionNameOfIProject(String projectName);
 
     /**
-     * Returns the connection name of a given TCP/IP Address.
+     * Returns the name of the associated library of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the associated library
+     */
+    public String getLibraryNameOfIProject(String projectName);
+
+    /**
+     * Returns the qualified connection name of a given TCP/IP Address.
      * 
      * @param projectName - TCP/IP address
      * @param isConnected - specifies whether the connection must be connected
@@ -184,15 +183,7 @@ public interface IIBMiHostContributions {
     public String getConnectionNameByIPAddr(String tcpIpAddr, boolean isConnected);
 
     /**
-     * Returns the name of the associated library of a given i Project.
-     * 
-     * @param projectName - name of an i Project
-     * @return name of the associated library
-     */
-    public String getLibraryName(String projectName);
-
-    /**
-     * returns a list of configured connections.
+     * Returns a list of configured connections.
      * 
      * @return names of configured connections
      */
@@ -201,58 +192,76 @@ public interface IIBMiHostContributions {
     /**
      * Returns a JDBC connection for a given connection name.
      * 
-     * @param connectionName - connection name to identify the connection
-     * @return JDBC connection that is associated to the connection
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @return Connection
      */
-    public Connection getJdbcConnection(String connectionName);
-
-    /**
-     * Returns a JDBC connection for a given profile and connection name.
-     * 
-     * @param profile - name of the profile, that hosts the connection
-     * @param connectionName - connection name to identify the connection
-     * @return JDBC connection that is associated to the connection
-     */
-    public Connection getJdbcConnection(String profile, String connectionName);
+    public Connection getJdbcConnection(String qualifiedConnectionName);
 
     /**
      * Returns an ICLPrompter for a given connection name.
      * 
-     * @param connectionName - connection name to identify the connection
+     * @param qualifiedConnectionName - connection name to identify the
+     *        connection
      * @return ICLPrompter
      */
-    public ICLPrompter getCLPrompter(String connectionName);
+    public ICLPrompter getCLPrompter(String qualifiedConnectionName);
 
     /**
-     * Returns a source member from an IBM i.
+     * Returns the file member identified by library, file and member name.
      * 
-     * @param connectionName - Connection used to locate the member.
-     * @param libraryName - Name of the library that contains the source file.
-     * @param fileName - Name of the source file that contains the member.
-     * @param memberName - Name of the member.
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param libraryName - name of the library where the file is stored
+     * @param fileName - name of the file that contains the member
+     * @param memberName - name that identifies the member
      * @return Member
      * @throws Exception
      */
-    public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception;
+    public Member getMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName) throws Exception;
 
     /**
-     * Opens the iSphere Compare&Merge editor for the selected members.
+     * Opens the iSphere compare editor for the given members.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty member list</b> <br>
+     * Opens the compare dialog to let the user specify the members that are
+     * compares.
+     * <p>
+     * <b>One member</b> <br>
+     * Opens the compare dialog with that member set as the left (editable)
+     * member. The right member is initialized with the properties of the left
+     * member.
+     * <p>
+     * <b>Two members</b> <br>
+     * Opens the compare dialog with the first member set as the left (editable)
+     * and the second member set as the right member.
+     * <p>
+     * <b>More than 2 members</b> <br>
+     * Opens the compare dialog to let the user specify the source file that
+     * contains the members, which are compared one by one with the selected
+     * members.
      * 
-     * @param connectionName - Connection used to locate the member.
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param members - members that are compared
+     * @param enableEditMode - specifies whether edit mode is enabled
      * @throws Exception
      */
-    public void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception;
+    public void compareSourceMembers(String qualifiedConnectionName, List<Member> members, boolean enableEditMode) throws Exception;
 
     /**
-     * Returns the local resource of given member.
+     * Returns the local resource of a given remote member.
      * 
-     * @param connectionName - Connection used to locate the member.
-     * @param libraryName - Name of the library that contains the source file.
-     * @param fileName - Name of the source file that contains the member.
-     * @param memberName - Name of the member.
-     * @param srcType - Source type of the member.
-     * @return IFile local resource of the member
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param libraryName - name of the library where the file is stored
+     * @param fileName - name of the file that contains the member
+     * @param memberName - name that identifies the member
+     * @param srcType - type of the member
+     * @return local member resource
      */
-    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception;
+    public IFile getLocalResource(String qualifiedConnectionName, String libraryName, String fileName, String memberName, String srcType)
+        throws Exception;
 }

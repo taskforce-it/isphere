@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +23,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.rse.core.RSECorePlugin;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -65,6 +64,8 @@ import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
  * <i>biz.isphere.core.ibmi.contributions.extension.point
  * .IIBMiHostContributions</i> extension point of the <i>iSphere Core
  * Plugin</i>.
+ * <p>
+ * The format of the connection names is: <code>connection[:profile]</code>.
  * 
  * @author Thomas Raddatz
  */
@@ -82,7 +83,7 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @return <i>true</i>, if RSE sub-system has been initialized, else
      *         <i>false</i>
      */
-    public boolean isRseSubsystemInitialized(String connectionName) {
+    public boolean isRseSubsystemInitialized() {
 
         try {
             RSECorePlugin.waitForInitCompletion();
@@ -122,11 +123,13 @@ public class XRDiContributions implements IIBMiHostContributions {
      * Returns <i>true</i> when the specified connection is known to the
      * application.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when known, else <i>false</i>
      */
-    public boolean isAvailable(String connectionName) {
+    public boolean isAvailable(String qualifiedConnectionName) {
 
-        if (IBMiConnection.getConnection(connectionName) != null) {
+        if (getConnection(qualifiedConnectionName) != null) {
             return true;
         }
 
@@ -136,11 +139,13 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns <i>true</i> when the specified connection is in offline mode.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when offline, else <i>false</i>
      */
-    public boolean isOffline(String connectionName) {
+    public boolean isOffline(String qualifiedConnectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection == null || connection.isOffline()) {
             return true;
         }
@@ -151,11 +156,13 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns <i>true</i> when specified connection is connected.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when connected, else <i>false</i>
      */
-    public boolean isConnected(String connectionName) {
+    public boolean isConnected(String qualifiedConnectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection != null && connection.isConnected()) {
             return true;
         }
@@ -164,13 +171,16 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Connects the specified connection.
+     * Connects the connection identified by a given connection name.
      * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return <i>true</i>, when successfully connected, else <i>false</i>
+     * @throws Exception
      */
-    public boolean connect(String connectionName) throws Exception {
+    public boolean connect(String qualifiedConnectionName) throws Exception {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection != null) {
             if (!connection.isOffline() && !connection.isConnected()) {
                 return connection.connect();
@@ -181,11 +191,14 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Changes the 'offline' status of the specified connection.
+     * Changes the <i>offline</i> status of the specified connection.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      */
-    public void setOffline(String connectionName, boolean offline) {
+    public void setOffline(String qualifiedConnectionName, boolean offline) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection != null) {
             if (!connection.isOffline()) {
                 connection.getHost().setOffline(offline);
@@ -196,18 +209,19 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Executes a given command for a given connection.
      * 
-     * @param connectionName - connection used for executing the command
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param command - command that is executed
      * @param rtnMessages - list of error messages or <code>null</code>
      * @return error message text on error or <code>null</code> on success
      */
-    public String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
+    public String executeCommand(String qualifiedConnectionName, String command, List<AS400Message> rtnMessages) {
 
         try {
 
-            IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+            IBMiConnection connection = getConnection(qualifiedConnectionName);
             if (connection == null) {
-                return Messages.bind(Messages.Connection_A_not_found, connectionName);
+                return Messages.bind(Messages.Connection_A_not_found, qualifiedConnectionName);
             }
 
             AS400 system = connection.getAS400ToolboxObject();
@@ -235,7 +249,7 @@ public class XRDiContributions implements IIBMiHostContributions {
             return escapeMessage;
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + connectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+            ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + qualifiedConnectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
             return ExceptionHelper.getLocalizedMessage(e);
         }
     }
@@ -243,14 +257,15 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns whether a given library exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that is tested
      * @return <code>true</code>, when the library exists, else
      *         <code>false</code>.
      */
-    public boolean checkLibrary(String connectionName, String libraryName) {
+    public boolean checkLibrary(String qualifiedConnectionName, String libraryName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
 
         IQSYSLibrary library = null;
         try {
@@ -269,14 +284,15 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Checks whether a given file exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that should contain the file
      * @param fileName - file that is tested
      * @return <code>true</code>, when the file exists, else <code>false</code>.
      */
-    public boolean checkFile(String connectionName, String libraryName, String fileName) {
+    public boolean checkFile(String qualifiedConnectionName, String libraryName, String fileName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
 
         IQSYSFile file = null;
         try {
@@ -295,16 +311,17 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Checks whether a given member exists or not.
      * 
-     * @param connectionName - connection that is checked for a given library
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @param libraryName - library that should contain the file
      * @param fileName - file that should contain the member
      * @param memberName - name of the member that is tested
      * @return <code>true</code>, when the library exists, else
      *         <code>false</code>.
      */
-    public boolean checkMember(String connectionName, String libraryName, String fileName, String memberName) {
+    public boolean checkMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
 
         IQSYSMember member = null;
         try {
@@ -324,13 +341,13 @@ public class XRDiContributions implements IIBMiHostContributions {
      * Returns the name of the iSphere library that is associated to a given
      * connection.
      * 
-     * @param connectionName - name of the connection the name of the iSphere
-     *        library is returned for
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection library is returned for
      * @return name of the iSphere library
      */
-    public String getISphereLibrary(String connectionName) {
+    public String getISphereLibrary(String qualifiedConnectionName) {
 
-        ConnectionProperties connectionProperties = ConnectionManager.getInstance().getConnectionProperties(connectionName);
+        ConnectionProperties connectionProperties = ConnectionManager.getInstance().getConnectionProperties(qualifiedConnectionName);
         if (connectionProperties != null && connectionProperties.useISphereLibraryName()) {
             return connectionProperties.getISphereLibraryName();
         }
@@ -339,43 +356,28 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Finds a matching system for a given host name.
+     * Returns the system (AS400) identified by a given connection name.
      * 
-     * @param hostName - Name of the a system is searched for
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return AS400
      */
-    public AS400 findSystem(String hostName) {
+    public AS400 getSystem(String qualifiedConnectionName) {
 
-        try {
-            IBMiConnection[] connections = IBMiConnection.getConnections();
-            for (IBMiConnection ibMiConnection : connections) {
-                if (ibMiConnection.getHostName().equalsIgnoreCase(hostName)) {
-                    return ibMiConnection.getAS400ToolboxObject();
-                }
-            }
-        } catch (SystemMessageException e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        if (qualifiedConnectionName == null || qualifiedConnectionName.trim().length() == 0) {
+            return null;
         }
 
-        return null;
-    }
+        QualifiedConnectionName tQualifiedConnectionName = new QualifiedConnectionName(qualifiedConnectionName);
 
-    /**
-     * Returns a system for a given connection name.
-     * 
-     * @parm connectionName - Name of the connection a system is returned for
-     * @return AS400
-     */
-    public AS400 getSystem(String connectionName) {
-
-        return getSystem(null, connectionName);
+        return getSystem(tQualifiedConnectionName.getProfileName(), tQualifiedConnectionName.getConnectionName());
     }
 
     /**
      * Returns a system for a given profile and connection name.
      * 
      * @parm profile - Profile that is searched for the connection
-     * @parm connectionName - Name of the connection a system is returned for
+     * @parm connectionName - Name that identifies the connection
      * @return AS400
      */
     public AS400 getSystem(String profile, String connectionName) {
@@ -393,36 +395,22 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     /**
-     * Returns an AS400 object for a given editor.
-     * 
-     * @param editor - that shows a remote file
-     * @return AS400 object that is associated to editor
-     */
-    public AS400 getSystem(IEditorPart editor) {
-        return getSystem(getConnectionName(editor));
-    }
-
-    /**
      * Returns the connection name of a given editor.
      * 
-     * @param editor - that shows a remote file
+     * @param file - remote file downloaded to the workspace
      * @return name of the connection the file has been loaded from
      */
-    public String getConnectionName(IEditorPart editor) {
+    public String getConnectionName(IFile file) {
 
-        IEditorInput editorInput = editor.getEditorInput();
-        if (editorInput instanceof IFileEditorInput) {
-            IFile file = ((IFileEditorInput)editorInput).getFile();
-            IRemoteResourceProperties properties = RemoteResourcePropertiesFactoryManager.getInstance().getRemoteResourceProperties(file);
-            String subsystemStr = properties.getRemoteFileSubSystem();
-            if (subsystemStr != null) {
-                ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
-                if (registry != null) {
-                    ISubSystem subsystem = registry.getSubSystem(subsystemStr);
-                    if (subsystem != null) {
-                        String connectionName = subsystem.getHost().getAliasName();
-                        return connectionName;
-                    }
+        IRemoteResourceProperties properties = RemoteResourcePropertiesFactoryManager.getInstance().getRemoteResourceProperties(file);
+        String subsystemStr = properties.getRemoteFileSubSystem();
+        if (subsystemStr != null) {
+            ISystemRegistry registry = RSECorePlugin.getTheSystemRegistry();
+            if (registry != null) {
+                ISubSystem subsystem = registry.getSubSystem(subsystemStr);
+                if (subsystem != null) {
+                    IHost host = subsystem.getHost();
+                    return produceQualifiedConnectionName(host);
                 }
             }
         }
@@ -443,11 +431,27 @@ public class XRDiContributions implements IIBMiHostContributions {
             return null;
         }
 
-        return iSeriesProject.getConnectionName();
+        return produceQualifiedConnectionName(iSeriesProject);
     }
 
     /**
-     * Returns the connection name of a given TCP/IP Address.
+     * Returns the name of the associated library of a given i Project.
+     * 
+     * @param projectName - name of an i Project
+     * @return name of the associated library
+     */
+    public String getLibraryNameOfIProject(String projectName) {
+
+        AbstractISeriesProject iSeriesProject = findISeriesProject(projectName);
+        if (iSeriesProject == null) {
+            return null;
+        }
+
+        return iSeriesProject.getAssociatedLibraryName();
+    }
+
+    /**
+     * Returns the qualified connection name of a given TCP/IP Address.
      * 
      * @param projectName - TCP/IP address
      * @param isConnected - specifies whether the connection must be connected
@@ -467,7 +471,7 @@ public class XRDiContributions implements IIBMiHostContributions {
                     InetAddress inetAddress = InetAddress.getByName(tcpIpAddr);
                     InetAddress connTcpIpAddr = InetAddress.getByName(ibMiConnection.getHostName());
                     if (Arrays.equals(inetAddress.getAddress(), connTcpIpAddr.getAddress())) {
-                        return ibMiConnection.getConnectionName();
+                        return produceQualifiedConnectionName(ibMiConnection);
                     }
                 }
             }
@@ -480,22 +484,6 @@ public class XRDiContributions implements IIBMiHostContributions {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Returns the name of the associated library of a given i Project.
-     * 
-     * @param projectName - name of an i Project
-     * @return name of the associated library
-     */
-    public String getLibraryName(String projectName) {
-
-        AbstractISeriesProject iSeriesProject = findISeriesProject(projectName);
-        if (iSeriesProject == null) {
-            return null;
-        }
-
-        return iSeriesProject.getAssociatedLibraryName();
     }
 
     private AbstractISeriesProject findISeriesProject(String projectName) {
@@ -518,15 +506,19 @@ public class XRDiContributions implements IIBMiHostContributions {
      */
     public String[] getConnectionNames() {
 
-        List<String> connectionNamesList = new ArrayList<String>();
+        List<QualifiedConnectionName> connectionNamesList = new ArrayList<QualifiedConnectionName>();
 
         IBMiConnection[] connections = IBMiConnection.getConnections();
         for (IBMiConnection connection : connections) {
-            connectionNamesList.add(connection.getConnectionName());
+            connectionNamesList.add(new QualifiedConnectionName(connection));
         }
 
-        String[] connectionNames = connectionNamesList.toArray(new String[connectionNamesList.size()]);
-        Arrays.sort(connectionNames);
+        Collections.sort(connectionNamesList);
+
+        String[] connectionNames = new String[connectionNamesList.size()];
+        for (int i = 0; i < connectionNames.length; i++) {
+            connectionNames[i] = connectionNamesList.get(i).getQualifiedName();
+        }
 
         return connectionNames;
     }
@@ -534,20 +526,26 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns a JDBC connection for a given connection name.
      * 
-     * @param connectionName - Name of the connection, the JDBC connection is
-     *        returned for
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
      * @return Connection
      */
-    public Connection getJdbcConnection(String connectionName) {
-        return getJdbcConnectionWithProperties(null, connectionName, null);
+    public Connection getJdbcConnection(String qualifiedConnectionName) {
+
+        if (qualifiedConnectionName == null || qualifiedConnectionName.trim().length() == 0) {
+            return null;
+        }
+
+        QualifiedConnectionName tQualifiedConnectionName = new QualifiedConnectionName(qualifiedConnectionName);
+
+        return getJdbcConnectionWithProperties(tQualifiedConnectionName.getProfileName(), tQualifiedConnectionName.getConnectionName(), null);
     }
 
     /**
      * Returns a JDBC connection for a given profile and connection name.
      * 
-     * @param profile - Profile that is searched for the JDBC connection
-     * @param connectionName - Name of the connection, the JDBC connection is
-     *        returned for
+     * @parm profile - Profile that is searched for the connection
+     * @parm connectionName - Name that identifies the connection
      * @return Connection
      */
     public Connection getJdbcConnection(String profile, String connectionName) {
@@ -557,9 +555,8 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns a JDBC connection for a given profile and connection name.
      * 
-     * @param profile - Profile that is searched for the JDBC connection
-     * @param connectionName - Name of the connection, the JDBC connection is
-     *        returned for
+     * @parm profile - Profile that is searched for the connection
+     * @parm connectionName - Name that identifies the connection
      * @param properties - JDBC connection properties
      * @return Connection
      */
@@ -593,15 +590,32 @@ public class XRDiContributions implements IIBMiHostContributions {
     }
 
     private JdbcConnectionManager getJdbcConnectionManager(IBMiConnection connection) {
-        return jdbcConnectionManagers.get(connection.getConnectionName());
+        return jdbcConnectionManagers.get(produceQualifiedConnectionName(connection));
     }
 
     private JdbcConnectionManager registerJdbcConnectionManager(IBMiConnection connection) {
 
         JdbcConnectionManager jdbcConnectionManager = new JdbcConnectionManager(connection);
-        jdbcConnectionManagers.put(connection.getConnectionName(), jdbcConnectionManager);
+        jdbcConnectionManagers.put(produceQualifiedConnectionName(connection), jdbcConnectionManager);
 
         return jdbcConnectionManager;
+    }
+
+    /**
+     * Internal method that returns a connection for a given connection name.
+     * 
+     * @parm connectionName - Name of the connection a system is returned for
+     * @return IBMiConnection
+     */
+    private IBMiConnection getConnection(String qualifiedConnectionName) {
+
+        if (qualifiedConnectionName == null || qualifiedConnectionName.trim().length() == 0) {
+            return null;
+        }
+
+        QualifiedConnectionName tQualifiedConnectionName = new QualifiedConnectionName(qualifiedConnectionName);
+
+        return getConnection(tQualifiedConnectionName.getProfileName(), tQualifiedConnectionName.getConnectionName());
     }
 
     /**
@@ -615,7 +629,7 @@ public class XRDiContributions implements IIBMiHostContributions {
     private IBMiConnection getConnection(String profile, String connectionName) {
 
         if (profile == null) {
-            return IBMiConnection.getConnection(connectionName);
+            throw new IllegalArgumentException("Parameter 'profile' must not be null");
         }
 
         return IBMiConnection.getConnection(profile, connectionName);
@@ -624,12 +638,13 @@ public class XRDiContributions implements IIBMiHostContributions {
     /**
      * Returns an ICLPrompter for a given connection name.
      * 
-     * @param connectionName - connection name to identify the connection
+     * @param qualifiedConnectionName - connection name to identify the
+     *        connection
      * @return ICLPrompter
      */
-    public ICLPrompter getCLPrompter(String connectionName) {
+    public ICLPrompter getCLPrompter(String qualifiedConnectionName) {
 
-        IBMiConnection connection = getConnection(null, connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection == null) {
             return null;
         }
@@ -640,15 +655,25 @@ public class XRDiContributions implements IIBMiHostContributions {
             prompter.setConnection(connection);
             return new ICLPrompterImpl(prompter);
         } catch (SystemMessageException e) {
-            ISpherePlugin.logError("*** Could not create CLPrompter for connection '" + connectionName + "'", e);
+            ISpherePlugin.logError("*** Could not create CLPrompter for connection '" + qualifiedConnectionName + "'", e);
         }
 
         return null;
     }
 
-    public Member getMember(String connectionName, String libraryName, String fileName, String memberName) throws Exception {
+    /**
+     * Returns the file member identified by library, file and member name.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param libraryName - name of the library where the file is stored
+     * @param fileName - name of the file that contains the member
+     * @param memberName - name that identifies the member
+     * @throws Exception
+     */
+    public Member getMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName) throws Exception {
 
-        IBMiConnection connection = getConnection(null, connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection == null) {
             return null;
         }
@@ -661,7 +686,36 @@ public class XRDiContributions implements IIBMiHostContributions {
         return new RSEMember(member);
     }
 
-    public void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception {
+    /**
+     * Opens the iSphere compare editor for the given members.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty member list</b> <br>
+     * Opens the compare dialog to let the user specify the members that are
+     * compares.
+     * <p>
+     * <b>One member</b> <br>
+     * Opens the compare dialog with that member set as the left (editable)
+     * member. The right member is initialized with the properties of the left
+     * member.
+     * <p>
+     * <b>Two members</b> <br>
+     * Opens the compare dialog with the first member set as the left (editable)
+     * and the second member set as the right member.
+     * <p>
+     * <b>More than 2 members</b> <br>
+     * Opens the compare dialog to let the user specify the source file that
+     * contains the members, which are compared one by one with the selected
+     * members.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param members - members that are compared
+     * @param enableEditMode - specifies whether edit mode is enabled
+     * @throws Exception
+     */
+    public void compareSourceMembers(String qualifiedConnectionName, List<Member> members, boolean enableEditMode) throws Exception {
 
         CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
 
@@ -672,9 +726,21 @@ public class XRDiContributions implements IIBMiHostContributions {
         }
     }
 
-    public IFile getLocalResource(String connectionName, String libraryName, String fileName, String memberName, String srcType) throws Exception {
+    /**
+     * Returns the local resource of a given remote member.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param libraryName - name of the library where the file is stored
+     * @param fileName - name of the file that contains the member
+     * @param memberName - name that identifies the member
+     * @param srcType - type of the member
+     * @return local member resource
+     */
+    public IFile getLocalResource(String qualifiedConnectionName, String libraryName, String fileName, String memberName, String srcType)
+        throws Exception {
 
-        IBMiConnection connection = getConnection(null, connectionName);
+        IBMiConnection connection = getConnection(qualifiedConnectionName);
         if (connection == null) {
             return null;
         }
@@ -689,5 +755,21 @@ public class XRDiContributions implements IIBMiHostContributions {
         QSYSEditableRemoteSourceFileMember editableMember = new QSYSEditableRemoteSourceFileMember(qsysMember);
 
         return editableMember.getLocalResource();
+    }
+
+    private String produceQualifiedConnectionName(AbstractISeriesProject iSeriesProject) {
+        return produceQualifiedConnectionName(iSeriesProject.getConnectionProfileName(), iSeriesProject.getConnectionName());
+    }
+
+    private String produceQualifiedConnectionName(IBMiConnection connection) {
+        return produceQualifiedConnectionName(connection.getProfileName(), connection.getConnectionName());
+    }
+
+    private String produceQualifiedConnectionName(IHost host) {
+        return produceQualifiedConnectionName(host.getSystemProfile().getName(), host.getAliasName());
+    }
+
+    private String produceQualifiedConnectionName(String profileName, String connectionName) {
+        return new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
     }
 }

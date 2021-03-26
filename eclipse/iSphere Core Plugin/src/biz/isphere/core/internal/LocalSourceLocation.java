@@ -90,7 +90,7 @@ public class LocalSourceLocation {
     }
 
     private String getLibraryName(String projectName) {
-        return IBMiHostContributionsHandler.getLibraryName(projectName);
+        return IBMiHostContributionsHandler.getLibraryNameOfIProject(projectName);
     }
 
     public String getProjectName() {
