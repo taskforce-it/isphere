@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,7 @@ public class WaitForRseConnectionJob extends Job {
     @Override
     protected IStatus run(IProgressMonitor arg0) {
 
-        if (IBMiHostContributionsHandler.isRseSubsystemInitialized(connectionName)) {
+        if (IBMiHostContributionsHandler.isRseSubsystemInitialized()) {
             postRun.setWaitForRseConnectionPostRunData(shell, connectionName, true);
         } else {
             postRun.setWaitForRseConnectionPostRunData(shell, connectionName, false);
