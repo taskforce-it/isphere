@@ -276,6 +276,16 @@
                tooltip="%menu_Tooltip_Transfer_iSphere_library">
          </action>
          
+         <action
+               class="biz.isphere.core.internal.action.DisplayHelpAction"
+               id="biz.isphere.core.internal.action.DisplayHelpAction"
+               definitionId="biz.isphere.core.command.iSphereHelp.display"
+               label="%menu_Display_iSphere_help"
+               icon="icons/systemhelp.gif"
+               menubarPath="biz.isphere.core.menu.isphere/help"
+               tooltip="%menu_Tooltip_Display_iSphere_help">
+         </action>
+         
       </actionSet>
    </extension>
    
@@ -299,6 +309,14 @@
             categoryId="biz.isphere.category.Commands"
             name="%command_Transfer_iSphere_library">
       </command>
+      
+      <command
+            defaultHandler="biz.isphere.core.internal.handler.DisplayHelpHandler"
+            id="biz.isphere.core.command.iSphereHelp.display"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Open_iSphere_Help">
+      </command>
+
    </extension>
 
 </plugin>
