@@ -232,6 +232,7 @@ public final class Preferences {
 
     private static final String APPEARANCE_SHOW_ERROR_LOG = APPEARANCE_AUTO_REFRESH + "APPEARANCE_SHOW_ERROR_LOG"; //$NON-NLS-1$
 
+    // TODO: the DECORATION properties has been moved to the rse plugin
     private static final String DECORATION = DOMAIN + "DECORATION."; //$NON-NLS-1$
 
     private static final String DECORATION_OBJECT_EXTENSION = APPEARANCE + "OBJECT_EXTENSION"; //$NON-NLS-1$
@@ -239,8 +240,6 @@ public final class Preferences {
     private static final String DECORATION_SOURCE_MEMBER_EXTENSION = APPEARANCE + "SOURCE_MEMBER_EXTENSION"; //$NON-NLS-1$
 
     private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
-
-    private static final String JDBC = DOMAIN + "JDBC."; //$NON-NLS-1$
 
     private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
 

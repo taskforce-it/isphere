@@ -1,4 +1,33 @@
 
+Changelog: iSphere 4.0.0.b010
+-----------------------------
+
+ • Refactored IIBMIHostContributions.
+ • Extended journal explorer API for loading journal entries from a Json file.
+ • Moved label decorations preferences page from core to rse plug-in.
+ • Added OpenJournalJsonFileDialog. 
+ • Moved "Display iSphere Help" action from rse to core plug-in.
+
+Changelog: iSphere 4.0.0.b009
+-----------------------------
+
+ • Refactored IIBMIHostContributions.
+ • Added DTSDate to replace IBM DateTimeConverter to improve
+   performance when loading journal entries from a journal. 
+ • Moved TransferLibraryAction from the rse to the core plug-in.
+ • Added API for iSphere Journal Explorer.
+ • Renamed DTSDate to DTSDateConverter.
+
+Changelog: iSphere 4.0.0.b008
+-----------------------------
+
+ • Added quotes when copying journal properties to the clipboard.
+ • Added option for trimming the values when copying properties.
+ • Refactored "QualifiedName".
+ • Changed MetaDataCache to load meta data in a background job.
+ • Fixed error handling when a system is not connected.
+ • Changed SQL queries to ignore trailing spaces.
+
 Changelog: iSphere 4.0.0.b007
 -----------------------------
 

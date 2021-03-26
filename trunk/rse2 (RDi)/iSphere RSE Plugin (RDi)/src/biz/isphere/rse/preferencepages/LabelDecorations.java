@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.preferencepages;
+package biz.isphere.rse.preferencepages;
 
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -25,10 +25,10 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
-import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.preferences.Preferences;
 
 public class LabelDecorations extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -38,7 +38,7 @@ public class LabelDecorations extends PreferencePage implements IWorkbenchPrefer
 
     public LabelDecorations() {
         super();
-        setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(ISphereRSEPlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
     }
 

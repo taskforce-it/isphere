@@ -175,11 +175,6 @@
             name="%Search"
             id="biz.isphere.core.preferencepages.ISphereSearch"/>
       <page
-            class="biz.isphere.core.preferencepages.LabelDecorations"
-            category="biz.isphere.base.preferencepages.General"
-            name="%LabelDecorations"
-            id="biz.isphere.core.preferencepages.LabelDecorations"/>
-      <page
             class="biz.isphere.core.preferencepages.ISphereCompare"
             category="biz.isphere.base.preferencepages.General"
             name="%Compare"

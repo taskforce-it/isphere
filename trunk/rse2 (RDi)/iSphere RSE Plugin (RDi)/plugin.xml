@@ -1370,5 +1370,29 @@
       </viewerContribution>
 
    </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Preferences
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+
+      <page
+            class="biz.isphere.rse.preferencepages.LabelDecorations"
+            category="biz.isphere.base.preferencepages.General"
+            name="%LabelDecorations"
+            id="biz.isphere.rse.preferencepages.LabelDecorations"/>
+    	
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.rse.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
 
 </plugin>
