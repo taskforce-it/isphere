@@ -19,7 +19,7 @@ import biz.isphere.core.internal.handler.DisplayHelpHandler;
 
 public class DisplayHelpAction implements IWorkbenchWindowActionDelegate {
 
-    public static final String ID = "biz.isphere.rse.actions.TransferLibraryAction";
+    public static final String ID = "biz.isphere.core.internal.action.DisplayHelpAction";
 
     public void run(IAction action) {
 
