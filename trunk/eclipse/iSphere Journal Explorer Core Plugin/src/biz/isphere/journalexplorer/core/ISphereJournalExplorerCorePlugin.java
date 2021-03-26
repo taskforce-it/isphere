@@ -38,16 +38,18 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
     public static final String IMAGE_CONFIGURE_PARSERS = "configure_parsers.gif";
     public static final String IMAGE_REFRESH = "refresh.gif";
     public static final String IMAGE_SEGMENT_EDIT = "segment_edit.png";
-    public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_outfile.png";
+    public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_output_file.png";
     public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
     public static final String IMAGE_EDIT_SQL = "edit_sql.png";
     public static final String IMAGE_EXCEL = "excel.png";
-    public static final String IMAGE_JSON = "json.png";
+    public static final String IMAGE_JSON_FILE = "open_journal_json_file.png";
+    public static final String IMAGE_OUTPUT_FILE = "open_journal_output_file.png";
     public static final String IMAGE_COPY_NAME_VALUE = "copy_name_value.gif";
     public static final String IMAGE_COPY_NAME_VALUE_TRIMMED = "copy_name_value_trimmed.gif";
     public static final String IMAGE_COPY_VALUE = "copy_value.gif";
     public static final String IMAGE_COPY_VALUE_TRIMMED = "copy_value_trimmed.gif";
     public static final String IMAGE_OPEN_FILE = "open.png";
+    public static final String IMAGE_SAVE = "save.gif";
 
     public static final String IMAGE_CHECKED = "checked.gif"; //$NON-NLS-1$
     public static final String IMAGE_UNCHECKED = "unchecked.gif"; //$NON-NLS-1$
@@ -118,8 +120,10 @@ public class ISphereJournalExplorerCorePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_COLLAPSE_ALL));
         reg.put(IMAGE_EDIT_SQL, getImageDescriptor(IMAGE_EDIT_SQL));
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
-        reg.put(IMAGE_JSON, getImageDescriptor(IMAGE_JSON));
+        reg.put(IMAGE_JSON_FILE, getImageDescriptor(IMAGE_JSON_FILE));
+        reg.put(IMAGE_OUTPUT_FILE, getImageDescriptor(IMAGE_OUTPUT_FILE));
         reg.put(IMAGE_OPEN_FILE, getImageDescriptor(IMAGE_OPEN_FILE));
+        reg.put(IMAGE_SAVE, getImageDescriptor(IMAGE_SAVE));
 
         reg.put(IMAGE_COPY_NAME_VALUE, getImageDescriptor(IMAGE_COPY_NAME_VALUE));
         reg.put(IMAGE_COPY_NAME_VALUE_TRIMMED, getImageDescriptor(IMAGE_COPY_NAME_VALUE_TRIMMED));

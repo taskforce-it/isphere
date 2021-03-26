@@ -105,6 +105,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.AddJournalDialog_OpenJournal);
+        newShell.setImage(ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_OUTPUT_FILE));
     }
 
     /**
@@ -150,8 +151,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         txtMemberName.setLayoutData(createLayoutData());
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
-            | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(),
+            SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);

@@ -31,7 +31,7 @@ import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 public class SaveJournalEntriesAction extends Action {
 
-    private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_JSON;
+    private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_SAVE;
 
     private Shell shell;
     private JournalEntries selectedItems;
@@ -61,8 +61,8 @@ public class SaveJournalEntriesAction extends Action {
     private void performExportToJson() {
 
         IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.SAVE);
-        dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$ 
-        dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$ 
+        dialog.setFilterNames(new String[] { "Json Files", FileHelper.getAllFilesText() }); //$NON-NLS-1$
+        dialog.setFilterExtensions(new String[] { "*.json", FileHelper.getAllFilesFilter() }); //$NON-NLS-1$
         dialog.setFilterPath(Preferences.getInstance().getExportPath());
         dialog.setFileName(Preferences.getInstance().getExportFileJson());
         dialog.setOverwrite(true);
