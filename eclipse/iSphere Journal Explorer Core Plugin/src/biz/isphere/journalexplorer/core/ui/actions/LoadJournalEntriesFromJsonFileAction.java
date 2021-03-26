@@ -9,17 +9,13 @@
 package biz.isphere.journalexplorer.core.ui.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
 public class LoadJournalEntriesFromJsonFileAction extends Action {
-
-    private static final String IMAGE = ISphereJournalExplorerCorePlugin.IMAGE_JSON;
 
     private Shell shell;
 
@@ -29,10 +25,6 @@ public class LoadJournalEntriesFromJsonFileAction extends Action {
         this.shell = shell;
 
         setToolTipText(Messages.JournalExplorerView_Import_from_Json_Tooltip);
-    }
-
-    public Image getImage() {
-        return ISphereJournalExplorerCorePlugin.getDefault().getImage(IMAGE);
     }
 
     @Override

@@ -87,6 +87,7 @@ public class OpenJournalJsonFileDialog extends XDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         newShell.setText(Messages.AddJournalDialog_OpenJournal);
+        newShell.setImage(ISphereJournalExplorerCorePlugin.getDefault().getImage(ISphereJournalExplorerCorePlugin.IMAGE_JSON_FILE));
     }
 
     /**

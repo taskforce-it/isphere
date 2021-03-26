@@ -211,7 +211,6 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         loadJournalEntriesAction.setEnabled(false);
 
         saveJournalEntriesAction = new SaveJournalEntriesAction(getShell());
-        saveJournalEntriesAction.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_SAVE));
         saveJournalEntriesAction.setEnabled(false);
 
     }
