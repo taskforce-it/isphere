@@ -15,16 +15,16 @@ import org.eclipse.jface.action.IAction;
 import biz.isphere.rcp.AbstractMenuAction;
 
 /**
- * This action is assigned to menu option "Open Journal Output File".
+ * This action is assigned to menu option "Open Journal Json File".
  */
-public class OpenJournalOutputFileAction extends AbstractMenuAction {
+public class OpenJournalJsonFileAction extends AbstractMenuAction {
 
-    public static final String ID = "biz.isphere.rcp.menu.openjournaloutputfile";
+    public static final String ID = "biz.isphere.rcp.menu.openjournaljsonfile";
 
     public void run(IAction action) {
         try {
 
-            OpenJournalOutputFileHandler handler = new OpenJournalOutputFileHandler(getShell());
+            OpenJournalJsonFileHandler handler = new OpenJournalJsonFileHandler(getShell());
             ExecutionEvent event = new ExecutionEvent();
             handler.execute(event);
 

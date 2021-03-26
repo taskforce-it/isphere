@@ -16,14 +16,14 @@ import biz.isphere.journalexplorer.core.externalapi.Access;
 import biz.isphere.rcp.handlers.AbstractShellHandler;
 
 /**
- * This class is the action handler of the "Open Journal Output File" action.
+ * This class is the action handler of the "Open Journal Json File" action.
  */
-public class OpenJournalOutputFileHandler extends AbstractShellHandler {
+public class OpenJournalJsonFileHandler extends AbstractShellHandler {
 
     /**
      * Default constructor, used by the Eclipse framework.
      */
-    public OpenJournalOutputFileHandler(Shell shell) {
+    public OpenJournalJsonFileHandler(Shell shell) {
         super(shell);
     }
 
@@ -36,7 +36,7 @@ public class OpenJournalOutputFileHandler extends AbstractShellHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.loadJournalEntriesFromOutputFile(getShell());
+            Access.loadJournalEntriesFromJsonFile(getShell());
         } catch (Exception e) {
             e.printStackTrace();
         }

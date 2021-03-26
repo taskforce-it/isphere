@@ -18,10 +18,19 @@
          
          <action
                class="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
-               id="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
+               id="biz.isphere.rcp.menu.openjournaloutputfile"
                definitionId="biz.isphere.rcp.command.JournalOutputFile.open"
                label="Open Journal Output File"
-               icon="icons/open_journal_outfile.png"
+               icon="icons/open_journal_output_file.png"
+               menubarPath="biz.isphere.core.menu.isphere/additions">
+         </action>
+         
+         <action
+               class="biz.isphere.rcp.journalexplorer.OpenJournalJsonFileAction"
+               id="biz.isphere.rcp.menu.openjournaljsonfile"
+               definitionId="biz.isphere.rcp.command.JournalJsonFile.open"
+               label="Open Journal Json File"
+               icon="icons/open_journal_json_file.png"
                menubarPath="biz.isphere.core.menu.isphere/additions">
          </action>
          
@@ -56,9 +65,16 @@
       
       <command
             defaultHandler="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
-            id="biz.isphere.core.command.iSphereHelp.display"
+            id="biz.isphere.rcp.command.JournalOutputFile.open"
             categoryId="biz.isphere.rcd.Commands"
             name="Open Journal Output File">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rcp.journalexplorer.OpenJournalJsonFileAction"
+            id="biz.isphere.rcp.command.JournalJsonFile.open"
+            categoryId="biz.isphere.rcd.Commands"
+            name="Open Journal Json File">
       </command>
    </extension>
       	
