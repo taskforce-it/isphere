@@ -1121,16 +1121,6 @@
                tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
          </action>
          
-         <action
-               class="biz.isphere.rse.actions.DisplayHelpAction"
-               id="biz.isphere.rse.actions.DisplayHelpAction"
-               definitionId="biz.isphere.core.command.iSphereHelp.display"
-               label="%menu_Display_iSphere_help"
-               icon="icons/systemhelp.gif"
-               menubarPath="biz.isphere.core.menu.isphere/help"
-               tooltip="%menu_Tooltip_Display_iSphere_help">
-         </action>
-         
       </actionSet>
    </extension>
 
@@ -1265,13 +1255,6 @@
             id="biz.isphere.core.command.SourceFileSearchPage.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Open_iSphere_Source_File_Search_Page">
-      </command>
-      
-      <command
-            defaultHandler="biz.isphere.core.internal.handler.DisplayHelpHandler"
-            id="biz.isphere.core.command.iSphereHelp.display"
-            categoryId="biz.isphere.category.Commands"
-            name="%command_Open_iSphere_Help">
       </command>
       
       <command
