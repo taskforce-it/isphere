@@ -37,11 +37,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 import org.medfoster.sqljep.ParseException;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
+import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
@@ -73,7 +73,7 @@ import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForLoaded
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntriesTab;
 
-public class JournalExplorerView extends ViewPart implements ISelectionChangedListener, SelectionListener {
+public class JournalExplorerView extends XViewPart implements ISelectionChangedListener, SelectionListener {
 
     public static final String ID = "biz.isphere.journalexplorer.core.ui.views.JournalExplorerView"; //$NON-NLS-1$
 
@@ -602,14 +602,24 @@ public class JournalExplorerView extends ViewPart implements ISelectionChangedLi
         widgetSelected(event);
     }
 
+    @Override
+    protected boolean isCmdRefreshEnabled() {
+        return true;
+    }
+
+    @Override
+    public void refresh() {
+        performReloadJournalEntries();
+    }
+
     private class SqlEditorSelectionListener implements SelectionListener {
 
         public void widgetSelected(SelectionEvent event) {
             try {
                 performFilterJournalEntries(getSelectedViewer());
             } catch (SQLSyntaxErrorException e) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                    e.getLocalizedMessage() + "\n" + Messages.Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields);
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage() + "\n"
+                    + Messages.Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields);
                 getSelectedViewer().setFocusOnSqlEditor();
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Error in method JournalExplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
