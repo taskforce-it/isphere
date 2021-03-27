@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import biz.isphere.base.versioncheck.IObsoleteBundles;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.Preferences;
 
 public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePreferences {
@@ -26,6 +27,13 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
 
     private void performSettingsUpdate() {
         performUpdate_v142();
+        performUpdate_v400();
+    }
+
+    private void performUpdate_v400() {
+        if (!hasBundle(ISpherePlugin.PLUGIN_ID)) {
+            return;
+        }
     }
 
     private void performUpdate_v142() {
