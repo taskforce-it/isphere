@@ -46,7 +46,7 @@ import biz.isphere.base.internal.DialogSettingsManager;
  * Marian Schedenig at {@link http
  * ://marian.schedenig.name/2012/07/01/default-window-sizes-in-jface/}.
  */
-public class XDialog extends Dialog {
+public abstract class XDialog extends Dialog {
 
     /** These are copied from Dialog class, where they are private. */
     public static final String DIALOG_FONT_DATA = "DIALOG_FONT_NAME"; //$NON-NLS-1$
