@@ -119,6 +119,7 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
+    // Removes with rev. 7363
     //    private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
 
     //    private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
