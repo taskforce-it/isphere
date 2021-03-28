@@ -219,9 +219,7 @@ public class DisplayJournalEntriesHandler {
             }
         }
 
-        JournalExplorerView view = (JournalExplorerView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-            .showView(JournalExplorerView.ID);
-        view.createJournalTab(tJrneToRtv);
+        JournalExplorerView.openJournal(getShell(), tJrneToRtv, false);
 
         return true;
     }
