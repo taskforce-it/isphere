@@ -13,14 +13,14 @@ import biz.isphere.journalexplorer.core.model.dao.JournalOutputType;
 
 public class OutputFile {
 
-    private QualifiedMemberName fileName;
+    private QualifiedMemberName qualifiedFileName;
 
-    public OutputFile(String connectionName, String outFileLibrary, String outFileName) {
-        this(connectionName, outFileLibrary, outFileName, "*FIRST");
+    public OutputFile(String connectionName, String libraryName, String fileName) {
+        this(connectionName, libraryName, fileName, "*FIRST");
     }
 
-    public OutputFile(String connectionName, String outFileLibrary, String outFileName, String outMemberName) {
-        this.fileName = new QualifiedMemberName(connectionName, outFileLibrary, outFileName, outMemberName);
+    public OutputFile(String connectionName, String libraryName, String fileName, String memberName) {
+        this.qualifiedFileName = new QualifiedMemberName(connectionName, libraryName, fileName, memberName);
     }
 
     /**
@@ -36,23 +36,23 @@ public class OutputFile {
     }
 
     public String getConnectionName() {
-        return fileName.getConnectionName();
+        return qualifiedFileName.getConnectionName();
     }
 
     public String getLibraryName() {
-        return fileName.getLibraryName();
+        return qualifiedFileName.getLibraryName();
     }
 
     public String getFileName() {
-        return fileName.getFileName();
+        return qualifiedFileName.getFileName();
     }
 
     public String getMemberName() {
-        return fileName.getMemberName();
+        return qualifiedFileName.getMemberName();
     }
 
     public String getQualifiedName() {
-        return fileName.getQualifiedName();
+        return qualifiedFileName.getQualifiedName();
     }
 
     @Override
