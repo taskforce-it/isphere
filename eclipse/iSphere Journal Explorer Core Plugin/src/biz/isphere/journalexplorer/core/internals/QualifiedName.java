@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.StringHelper;
 
-public class QualifiedName extends AbstractComparable<QualifiedName> {
+public class QualifiedName extends AbstractComparable<QualifiedName> implements IQualifiedName {
 
-    protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?::))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
+    protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?:" + CONNECTION_DELIMITER + "))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
     protected static final String VALIDATE_PATTERN = "^" + RETRIEVE_PATTERN + "$";
     protected static final String NAME_DELIMITER_SYS = "/";
     protected static final String NAME_DELIMITER_SQL = ".";
@@ -84,7 +84,7 @@ public class QualifiedName extends AbstractComparable<QualifiedName> {
         if (StringHelper.isNullOrEmpty(connectionName)) {
             return libraryName.trim() + nameDelimiter + objectName;
         } else {
-            return connectionName + ":" + libraryName + NAME_DELIMITER_SYS + objectName;
+            return connectionName + CONNECTION_DELIMITER + libraryName + NAME_DELIMITER_SYS + objectName;
         }
     }
 
@@ -139,7 +139,7 @@ public class QualifiedName extends AbstractComparable<QualifiedName> {
     }
 
     public static String getMemberName(String connectionName, String libraryName, String objectName, String memberName) {
-        return connectionName.trim() + ":" + getMemberName(libraryName, objectName, memberName);
+        return connectionName.trim() + CONNECTION_DELIMITER + getMemberName(libraryName, objectName, memberName);
     }
 
     public static String getMemberName(String libraryName, String objectName, String memberName) {
