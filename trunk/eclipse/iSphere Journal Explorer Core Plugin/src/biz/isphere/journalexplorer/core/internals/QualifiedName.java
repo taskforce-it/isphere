@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.StringHelper;
 
-public class QualifiedName {
+public class QualifiedName extends AbstractComparable<QualifiedName> {
 
     protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?::))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b)";
     protected static final String VALIDATE_PATTERN = "^" + RETRIEVE_PATTERN + "$";
@@ -30,8 +30,8 @@ public class QualifiedName {
     protected static final int OBJECT = 4;
 
     private String connectionName;
-    private String objectName;
     private String libraryName;
+    private String objectName;
 
     public QualifiedName(String libraryName, String objectName) {
         init(null, libraryName, objectName);
@@ -64,12 +64,12 @@ public class QualifiedName {
         return connectionName;
     }
 
-    public String getObjectName() {
-        return objectName;
-    }
-
     public String getLibraryName() {
         return libraryName;
+    }
+
+    public String getObjectName() {
+        return objectName;
     }
 
     public String getQualifiedName() {
@@ -144,6 +144,26 @@ public class QualifiedName {
 
     public static String getMemberName(String libraryName, String objectName, String memberName) {
         return getName(libraryName, objectName) + " (" + memberName.trim() + ")";
+    }
+
+    public int compareTo(QualifiedName other) {
+
+        if (other == null) {
+            return 1;
+        } else {
+            int result;
+            result = compareToChecked(connectionName, other.connectionName);
+            if (result != 0) {
+                return result;
+            } else {
+                result = compareToChecked(libraryName, other.libraryName);
+                if (result != 0) {
+                    return result;
+                } else {
+                    return compareToChecked(objectName, other.objectName);
+                }
+            }
+        }
     }
 
     @Override
