@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.StringHelper;
 
-public class QualifiedMemberName {
+public class QualifiedMemberName extends AbstractComparable<QualifiedMemberName> {
 
     protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?::))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b[ ]?\\((\\S{1,10})\\))";
     protected static final String VALIDATE_PATTERN = "^" + RETRIEVE_PATTERN + "$";
@@ -115,6 +115,21 @@ public class QualifiedMemberName {
             if (other.qualifiedName != null) return false;
         } else if (!qualifiedName.equals(other.qualifiedName)) return false;
         return true;
+    }
+
+    public int compareTo(QualifiedMemberName other) {
+
+        if (other == null) {
+            return 1;
+        } else {
+            int result;
+            result = qualifiedName.compareTo(other.qualifiedName);
+            if (result != 0) {
+                return result;
+            } else {
+                return compareToChecked(memberName, other.memberName);
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) project_year-2021 project_team
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
 package biz.isphere.junit.journalexplorer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
@@ -110,4 +112,49 @@ public class TestQualifiedMemberName {
 
     }
 
+    @Test
+    public void testCompareTo() {
+
+        assertEquals(0, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+
+        assertEquals(1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(null));
+
+        assertEquals(1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr2").compareTo(new QualifiedMemberName(null, "lib1", "obj1", "mbr1")));
+        assertEquals(1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr2").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertEquals(1, new QualifiedMemberName("con1", "lib1", "obj2", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertEquals(1, new QualifiedMemberName("con1", "lib2", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertEquals(1, new QualifiedMemberName("con2", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+
+        assertEquals(-1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj1", "mbr2")));
+        assertEquals(-1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib1", "obj2", "mbr1")));
+        assertEquals(-1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con1", "lib2", "obj1", "mbr1")));
+        assertEquals(-1, new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").compareTo(new QualifiedMemberName("con2", "lib1", "obj1", "mbr1")));
+    }
+
+    @Test
+    public void testEquals() {
+
+        assertTrue(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").equals(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+
+        assertFalse(new QualifiedMemberName("con1", "lib1", "obj1", "mbr2").equals(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertFalse(new QualifiedMemberName("con1", "lib1", "obj2", "mbr1").equals(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertFalse(new QualifiedMemberName("con1", "lib2", "obj1", "mbr1").equals(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+        assertFalse(new QualifiedMemberName("con2", "lib1", "obj1", "mbr1").equals(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")));
+    }
+
+    @Test
+    public void testHashCode() {
+
+        assertTrue(new QualifiedMemberName("con1", "lib1", "obj1", "mbr1").hashCode() == new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")
+            .hashCode());
+
+        assertFalse(new QualifiedMemberName("con1", "lib1", "obj1", "mbr2").hashCode() == new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")
+            .hashCode());
+        assertFalse(new QualifiedMemberName("con1", "lib1", "obj2", "mbr1").hashCode() == new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")
+            .hashCode());
+        assertFalse(new QualifiedMemberName("con1", "lib2", "obj1", "mbr1").hashCode() == new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")
+            .hashCode());
+        assertFalse(new QualifiedMemberName("con2", "lib1", "obj1", "mbr1").hashCode() == new QualifiedMemberName("con1", "lib1", "obj1", "mbr1")
+            .hashCode());
+    }
 }
