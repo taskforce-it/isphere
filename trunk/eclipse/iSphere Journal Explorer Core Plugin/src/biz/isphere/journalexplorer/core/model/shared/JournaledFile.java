@@ -9,9 +9,10 @@
 package biz.isphere.journalexplorer.core.model.shared;
 
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
 import biz.isphere.journalexplorer.core.internals.QualifiedMemberName;
 
-public class JournaledFile extends JournaledObject implements Comparable<JournaledFile> {
+public class JournaledFile extends JournaledObject implements ISelectedFile {
 
     private QualifiedMemberName member;
 
@@ -33,7 +34,7 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
         return member.getLibraryName();
     }
 
-    public String getMemberName() {
+    public String getMember() {
         return member.getMemberName();
     }
 
@@ -43,44 +44,6 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
 
     public String getQualifiedName() {
         return member.getQualifiedName();
-    }
-
-    public int compareTo(JournaledFile other) {
-
-        if (other == null) {
-            return -1;
-        }
-
-        int result = compareToChecked(getConnectionName(), other.getConnectionName());
-        if (result != 0) {
-            return result;
-        } else {
-            result = compareToChecked(getLibraryName(), other.getLibraryName());
-            if (result != 0) {
-                return result;
-            } else {
-                result = getFileName().compareTo(other.getFileName());
-                if (result != 0) {
-                    return result;
-                } else {
-                    return getMemberName().compareTo(other.getMemberName());
-                }
-            }
-        }
-    }
-
-    private int compareToChecked(Object o1, Object o2) {
-        if (o1 == null && o2 == null) {
-            return 0;
-        } else {
-            if (o1 == null && o2 != null) {
-                return -1;
-            } else if (o1 != null && o2 == null) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
     }
 
     @Override
@@ -103,4 +66,8 @@ public class JournaledFile extends JournaledObject implements Comparable<Journal
         return true;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", getQualifiedName(), getObjectType());
+    }
 }

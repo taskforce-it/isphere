@@ -75,12 +75,14 @@ public class JrneToRtv implements Serializable, Cloneable {
     SimpleDateFormat dateFormatter = null;
 
     private LinkedList<FileCriterion> fileCriterions;
+    private LinkedList<ObjectCriterion> objectCriterions;
 
     public JrneToRtv(Journal aJournal) {
         journal = aJournal;
         selectionCriteria = new HashMap<RetrieveKey, RetrieveCriterion>();
         dateFormatter = new SimpleDateFormat("yyyy-MM-dd-HH.mm.ss");
         fileCriterions = new LinkedList<FileCriterion>();
+        objectCriterions = new LinkedList<ObjectCriterion>();
 
         setRcvRng(RCVRNG_CURCHAIN);
         setFormatMinimzedData(FMTMINDTA_YES);
@@ -480,13 +482,13 @@ public class JrneToRtv implements Serializable, Cloneable {
     /**
      * Set retrieval criterion 16: FileCriterion.
      * 
-     * @param file - Specifies the name of the file that contains the member.
      * @param library - Specifies the library where the file is stored.
+     * @param file - Specifies the name of the file that contains the member.
      * @param member - Specifies the name of the member, whose journal entries
      *        are retrieved.
      */
     public void setFile(String library, String file, String member) {
-        FileCriterion fileCriterion = new FileCriterion(file, library, member);
+        FileCriterion fileCriterion = FileCriterion.newFile(file, library, member);
 
         fileCriterions.clear();
         fileCriterions.add(fileCriterion);
@@ -495,13 +497,13 @@ public class JrneToRtv implements Serializable, Cloneable {
     /**
      * Add retrieval criterion 16: FileCriterion.
      * 
-     * @param file - Specifies the name of the file that contains the member.
      * @param library - Specifies the library where the file is stored.
+     * @param file - Specifies the name of the file that contains the member.
      * @param member - Specifies the name of the member, whose journal entries
      *        are retrieved.
      */
     public void addFile(String library, String file, String member) {
-        FileCriterion fileCriterion = new FileCriterion(file, library, member);
+        FileCriterion fileCriterion = FileCriterion.newFile(file, library, member);
 
         fileCriterions.add(fileCriterion);
     }
@@ -515,6 +517,64 @@ public class JrneToRtv implements Serializable, Cloneable {
         }
 
         return files.toArray(new String[files.size()]);
+    }
+
+    /**
+     * Set retrieval criterion 17: ObjectCriterion.
+     * 
+     * @param library - Specifies the library where the object is stored.
+     * @param object - Specifies the name of the object.
+     * @param objectType - Specifies the type of the object. Must be one of
+     *        *FILE, *DTAARA, *DTAQ and *LIB.
+     * @param member - Specifies the name of the member, when the object is a
+     *        file, else <code>null</code>.
+     */
+    public void setObject(String library, String object, String objectType, String member) {
+        ObjectCriterion objectCriterion = ObjectCriterion.newObject(object, library, objectType, member);
+
+        objectCriterions.clear();
+        objectCriterions.add(objectCriterion);
+    }
+
+    /**
+     * Add retrieval criterion 17: ObjectCriterion.
+     * 
+     * @param library - Specifies the library where the object is stored.
+     * @param object - Specifies the name of the object.
+     * @param objectType - Specifies the type of the object. Must be one of
+     *        *FILE, *DTAARA, *DTAQ and *LIB.
+     */
+    public void addObject(String library, String object, String objectType) {
+        ObjectCriterion objectCriterion = ObjectCriterion.newObject(object, library, objectType, null);
+
+        objectCriterions.add(objectCriterion);
+    }
+
+    /**
+     * Add retrieval criterion 17: ObjectCriterion.
+     * 
+     * @param library - Specifies the library where the object is stored.
+     * @param object - Specifies the name of the object.
+     * @param objectType - Specifies the type of the object. Must be one of
+     *        *FILE, *DTAARA, *DTAQ and *LIB.
+     * @param member - Specifies the name of the member, when the object is a
+     *        file.
+     */
+    public void addObject(String library, String object, String objectType, String member) {
+        ObjectCriterion objectCriterion = ObjectCriterion.newObject(object, library, objectType, member);
+
+        objectCriterions.add(objectCriterion);
+    }
+
+    public String[] getObjects() {
+
+        List<String> objects = new LinkedList<String>();
+
+        for (ObjectCriterion objectCriterion : objectCriterions) {
+            objects.add(objectCriterion.getQualifiedName());
+        }
+
+        return objects.toArray(new String[objects.size()]);
     }
 
     /**
@@ -651,32 +711,19 @@ public class JrneToRtv implements Serializable, Cloneable {
 
         RetrieveKey rtvKey = RetrieveKey.FILE;
 
-        int arraySize = fileCriterions.size() * 3 + 1;
-        Object[] temp2 = new Object[arraySize];
-        AS400DataType type[] = new AS400DataType[fileCriterions.size() * 3 + 1];
+        List<AS400DataType> type = new LinkedList<AS400DataType>();
+        List<Object> value = new LinkedList<Object>();
 
-        int x = 0;
-        temp2[x] = new Integer(fileCriterions.size());
-        type[x] = new AS400Bin4();
+        type.add(new AS400Bin4());
+        value.add(new Integer(fileCriterions.size()));
 
-        x++;
-        for (int i = 0; i < fileCriterions.size(); i++) {
-
-            FileCriterion fileCriterion = fileCriterions.get(i);
-
-            temp2[x] = fileCriterion.getFile();
-            temp2[x + 1] = fileCriterion.getLibrary();
-            temp2[x + 2] = fileCriterion.getMember();
-
-            type[x] = new AS400Text(10);
-            type[x + 1] = new AS400Text(10);
-            type[x + 2] = new AS400Text(10);
-
-            x = x + 3;
+        for (FileCriterion file : fileCriterions) {
+            type.addAll(file.getType());
+            value.addAll(file.getValue());
         }
 
-        AS400Structure temp2Structure = new AS400Structure(type);
-        addSelectionCriterion(rtvKey, temp2Structure, temp2);
+        AS400Structure tempDataType = new AS400Structure(type.toArray(new AS400DataType[type.size()]));
+        addSelectionCriterion(rtvKey, tempDataType, value.toArray());
     }
 
     /**
@@ -754,7 +801,7 @@ public class JrneToRtv implements Serializable, Cloneable {
         clone.dateFormatter = (SimpleDateFormat)this.dateFormatter.clone();
         clone.fileCriterions = (LinkedList<FileCriterion>)this.fileCriterions.clone();
         clone.isDirty = this.isDirty;
-        clone.journal = this.journal.clone();
+        clone.journal = new Journal(journal.getConnectionName(), journal.getLibrary(), journal.getName());
         clone.selectionCriteria = (HashMap<RetrieveKey, RetrieveCriterion>)this.selectionCriteria.clone();
 
         return clone;

@@ -8,16 +8,18 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
-public class Journal implements Cloneable {
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedJournal;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
+
+public class Journal implements ISelectedJournal {
 
     private String connectionName;
-    private String name;
-    private String library;
+    private QualifiedName qualifiedName;
 
     public Journal(String connectionName, String libraryName, String journalName) {
         this.connectionName = connectionName;
-        this.library = libraryName;
-        this.name = journalName;
+        this.qualifiedName = new QualifiedName(libraryName, journalName);
     }
 
     public String getConnectionName() {
@@ -25,89 +27,43 @@ public class Journal implements Cloneable {
     }
 
     public String getName() {
-        return name;
+        return qualifiedName.getObjectName();
     }
 
     public String getLibrary() {
-        return library;
+        return qualifiedName.getObjectName();
+    }
+
+    public String getObjectType() {
+        return ISeries.JRN;
     }
 
     @Override
     public int hashCode() {
-
         final int prime = 31;
         int result = 1;
-
         result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
-        result = prime * result + ((library == null) ? 0 : library.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-
+        result = prime * result + ((qualifiedName == null) ? 0 : qualifiedName.hashCode());
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj == null) {
-            return false;
-        }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         Journal other = (Journal)obj;
-        if (!equals(connectionName, other.connectionName)) {
-            return false;
-        }
-
-        if (!equals(library, other.library)) {
-            return false;
-        }
-
-        if (!equals(name, other.name)) {
-            return false;
-        }
-
+        if (connectionName == null) {
+            if (other.connectionName != null) return false;
+        } else if (!connectionName.equals(other.connectionName)) return false;
+        if (qualifiedName == null) {
+            if (other.qualifiedName != null) return false;
+        } else if (!qualifiedName.equals(other.qualifiedName)) return false;
         return true;
-    }
-
-    private boolean equals(String thisValue, String otherValue) {
-
-        if (thisValue == null) {
-            if (otherValue != null) {
-                return false;
-            }
-        } else if (!thisValue.equals(otherValue)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public Journal clone() throws CloneNotSupportedException {
-
-        Journal clone = (Journal)super.clone();
-
-        return clone;
     }
 
     @Override
     public String toString() {
-
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(connectionName);
-        buffer.append(": ");
-        buffer.append(library);
-        buffer.append("/");
-        buffer.append(name);
-
-        return buffer.toString();
+        return String.format("%s (%s)", qualifiedName.getQualifiedName(), getObjectType());
     }
 }

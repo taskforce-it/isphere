@@ -30,6 +30,7 @@ import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
+import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
@@ -70,7 +71,7 @@ public class DisplayJournalEntriesHandler {
                 String name = selectedJournal.getName();
                 Journal journal = new Journal(connectionName, library, name);
 
-                if (!handleDisplayFileJournalEntries(journal, new ArrayList<JournaledFile>(), selectionCriterias)) {
+                if (!handleDisplayJournalEntries(journal, new ArrayList<JournaledObject>(), selectionCriterias)) {
                     return;
                 }
             }
@@ -81,23 +82,23 @@ public class DisplayJournalEntriesHandler {
     }
 
     /**
-     * Displays the journal entries of a given list of physical files.
+     * Displays the journal entries of a given list of objects.
      * 
-     * @param selectedFiles - list of file objects
+     * @param selectedObjects - list of objects
      */
-    public void handleDisplayFileJournalEntries(ISelectedFile... selectedFiles) {
+    public void handleDisplayJournalEntries(ISelectedObject... selectedObjects) {
 
         selectionCriterias = null;
 
-        if (selectedFiles.length == 0) {
+        if (selectedObjects.length == 0) {
             return;
         }
 
         try {
 
-            Map<String, List<ISelectedFile>> filesByConnection = groupObjectsByConnection(selectedFiles);
+            Map<String, List<ISelectedObject>> objectsByConnection = groupObjectsByConnection(selectedObjects);
 
-            for (String connectionName : filesByConnection.keySet()) {
+            for (String connectionName : objectsByConnection.keySet()) {
 
                 AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
                 if (system == null) {
@@ -108,43 +109,43 @@ public class DisplayJournalEntriesHandler {
                     return;
                 }
 
-                List<ISelectedFile> files = filesByConnection.get(connectionName);
-                if (!handleDisplayFileJournalEntries(connectionName, files)) {
+                List<ISelectedObject> objects = objectsByConnection.get(connectionName);
+                if (!handleDisplayJournalEntries(connectionName, objects)) {
                     return;
                 }
             }
 
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Error in method DisplayJournalEntriesHandler.handleDisplayFileJournalEntries() ***", e);
+            ISpherePlugin.logError("*** Error in method DisplayJournalEntriesHandler.handleDisplayJournalEntries() ***", e);
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
     /**
-     * Groups the selected files by the journals they are attached to. Displays
-     * an error message for the files that are not journaled.
+     * Groups the selected objects by the journals they are attached to.
+     * Displays an error message for objects that are not journaled.
      * 
      * @param connectionName - name of the RSE connection
-     * @param selectedFiles - list of selected files
+     * @param selectedObjects - list of selected objects
      * @throws Exception
      */
-    private boolean handleDisplayFileJournalEntries(String connectionName, List<ISelectedFile> selectedFiles) throws Exception {
+    private boolean handleDisplayJournalEntries(String connectionName, List<ISelectedObject> selectedObjects) throws Exception {
 
-        Map<Journal, List<JournaledFile>> objectsByJournal = groupObjectsByJournal(connectionName, selectedFiles);
+        Map<Journal, List<JournaledObject>> objectsByJournal = groupObjectsByJournal(connectionName, selectedObjects);
 
-        List<JournaledFile> objectNotJournaled = objectsByJournal.get(null);
+        List<JournaledObject> objectNotJournaled = objectsByJournal.get(null);
         if (objectNotJournaled != null) {
 
-            List<String> files = new LinkedList<String>();
+            List<String> objects = new LinkedList<String>();
 
-            Iterator<JournaledFile> it = objectNotJournaled.iterator();
+            Iterator<JournaledObject> it = objectNotJournaled.iterator();
             while (it.hasNext()) {
-                JournaledFile file = it.next();
-                files.add(file.getQualifiedName());
+                JournaledObject object = it.next();
+                objects.add(object.getQualifiedName());
             }
 
             if (!ConfirmErrorsDialog.openConfirm(getShell(), Messages.bind(Messages.Title_Connection_A, connectionName),
-                Messages.Error_The_following_objects_are_not_journaled_Continue_anyway, files.toArray(new String[files.size()]))) {
+                Messages.Error_The_following_objects_are_not_journaled_Continue_anyway, objects.toArray(new String[objects.size()]))) {
                 return true;
             }
 
@@ -156,7 +157,8 @@ public class DisplayJournalEntriesHandler {
             return true;
         }
 
-        LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(), selectedFiles.toArray(new ISelectedObject[selectedFiles.size()]));
+        LoadJournalEntriesDialog dialog = new LoadJournalEntriesDialog(getShell(),
+            selectedObjects.toArray(new ISelectedObject[selectedObjects.size()]));
         if (dialog.open() == LoadJournalEntriesDialog.OK) {
             selectionCriterias = dialog.getSelectionCriterias();
         } else {
@@ -164,8 +166,8 @@ public class DisplayJournalEntriesHandler {
         }
 
         for (Journal journal : objectsByJournal.keySet()) {
-            List<JournaledFile> journaledObjects = objectsByJournal.get(journal);
-            if (!handleDisplayFileJournalEntries(journal, journaledObjects, selectionCriterias)) {
+            List<JournaledObject> journaledObjects = objectsByJournal.get(journal);
+            if (!handleDisplayJournalEntries(journal, journaledObjects, selectionCriterias)) {
                 return false;
             }
         }
@@ -174,15 +176,14 @@ public class DisplayJournalEntriesHandler {
     }
 
     /**
-     * Creates a tab for the journal the files are attached to and loads all
-     * journal entries in that tab. entries.
+     * Creates a tab per journal to and loads all journal entries in that tab.
      * 
-     * @param journal - journal the files are attached to
-     * @param journaledFiles - list of files
+     * @param journal - journal , the objects are attached to
+     * @param journaledObjects - list of journaled objects
      * @param selectionCriterias - selection criterias
      * @throws Exception
      */
-    private boolean handleDisplayFileJournalEntries(Journal journal, List<JournaledFile> journaledFiles,
+    private boolean handleDisplayJournalEntries(Journal journal, List<JournaledObject> journaledObjects,
         LoadJournalEntriesDialog.SelectionCriterias selectionCriterias) throws Exception {
 
         if (IBMiHostContributionsHandler.getSystem(journal.getConnectionName()) == null) {
@@ -209,8 +210,13 @@ public class DisplayJournalEntriesHandler {
         tJrneToRtv.setNullIndLen(JrneToRtv.NULLINDLEN_VARLEN);
         tJrneToRtv.setNbrEnt(selectionCriterias.getMaxItemsToRetrieve());
 
-        for (JournaledFile journaledFile : journaledFiles) {
-            tJrneToRtv.addFile(journaledFile.getLibraryName(), journaledFile.getFileName(), journaledFile.getMemberName());
+        for (JournaledObject journaledObject : journaledObjects) {
+            if (journaledObject instanceof JournaledFile) {
+                JournaledFile journaledFile = (JournaledFile)journaledObject;
+                tJrneToRtv.addFile(journaledFile.getLibraryName(), journaledFile.getFileName(), journaledFile.getMember());
+            } else {
+                tJrneToRtv.addObject(journaledObject.getLibrary(), journaledObject.getName(), journaledObject.getObjectType());
+            }
         }
 
         JournalExplorerView view = (JournalExplorerView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
@@ -221,62 +227,69 @@ public class DisplayJournalEntriesHandler {
     }
 
     /**
-     * Groups a list of objects by the RSE connection they came from. The object
-     * could be a file or a journal.
+     * Groups a list of objects by the RSE connection they came from.
      * 
      * @param selectedObjects - list of selected objects of various RSE
      *        connections
-     * @return map with an entry per connection and the associated files
+     * @return map with an entry per connection and the associated objects
      */
-    private Map<String, List<ISelectedFile>> groupObjectsByConnection(ISelectedFile[] selectedObjects) {
+    private Map<String, List<ISelectedObject>> groupObjectsByConnection(ISelectedObject[] selectedObjects) {
 
-        Map<String, List<ISelectedFile>> filesByConnection = new HashMap<String, List<ISelectedFile>>();
+        Map<String, List<ISelectedObject>> objectsByConnection = new HashMap<String, List<ISelectedObject>>();
 
-        for (ISelectedFile file : selectedObjects) {
-            String connectionName = file.getConnectionName();
-            List<ISelectedFile> filesOfConnection = filesByConnection.get(connectionName);
-            if (filesOfConnection == null) {
-                filesOfConnection = new ArrayList<ISelectedFile>();
-                filesByConnection.put(connectionName, filesOfConnection);
+        for (ISelectedObject object : selectedObjects) {
+            String connectionName = object.getConnectionName();
+            List<ISelectedObject> objectsOfConnection = objectsByConnection.get(connectionName);
+            if (objectsOfConnection == null) {
+                objectsOfConnection = new ArrayList<ISelectedObject>();
+                objectsByConnection.put(connectionName, objectsOfConnection);
             }
-            filesOfConnection.add(file);
+            objectsOfConnection.add(object);
         }
 
-        return filesByConnection;
+        return objectsByConnection;
     }
 
     /**
-     * Creates a map per journal with the files attached to it.
+     * Creates a map per journal with the objects attached to it.
      * 
      * @param connectionName - connection name
-     * @param selectedFiles - selected files attached to various journals
-     * @return map with an entry per journal and the files attached to it
+     * @param selectedObjects - selected objects attached to various journals
+     * @return map with an entry per journal and the objects attached to it
      */
-    private Map<Journal, List<JournaledFile>> groupObjectsByJournal(String connectionName, List<ISelectedFile> selectedFiles) {
+    private Map<Journal, List<JournaledObject>> groupObjectsByJournal(String connectionName, List<ISelectedObject> selectedObjects) {
 
-        Map<Journal, List<JournaledFile>> objectsByJournal = new HashMap<Journal, List<JournaledFile>>();
+        Map<Journal, List<JournaledObject>> objectsByJournal = new HashMap<Journal, List<JournaledObject>>();
 
-        for (ISelectedObject object : selectedFiles) {
+        for (ISelectedObject object : selectedObjects) {
 
-            // TODO: probably remove that
-            if (object instanceof ISelectedFile) {
-                ISelectedFile file = (ISelectedFile)object;
+            JournaledObject journaledObject;
+            if (object instanceof JournaledObject) {
+                journaledObject = (JournaledObject)object;
+            } else {
 
-                String libraryName = file.getLibrary();
-                String fileName = file.getName();
-                String memberName = file.getMember();
+                String libraryName = object.getLibrary();
+                String objectName = object.getName();
 
-                JournaledFile journaledObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
-
-                Journal journal = journaledObject.getJournal();
-                List<JournaledFile> filesOfJournal = objectsByJournal.get(journal);
-                if (filesOfJournal == null) {
-                    filesOfJournal = new ArrayList<JournaledFile>();
-                    objectsByJournal.put(journal, filesOfJournal);
+                if (object instanceof ISelectedFile) {
+                    ISelectedFile file = (ISelectedFile)object;
+                    String memberName = file.getMember();
+                    journaledObject = new JournaledFile(connectionName, libraryName, objectName, memberName);
+                } else {
+                    String objType = object.getObjectType();
+                    journaledObject = new JournaledObject(connectionName, libraryName, objectName, objType);
                 }
-                filesOfJournal.add(journaledObject);
 
             }
+
+            Journal journal = journaledObject.getJournal();
+            List<JournaledObject> objectsOfJournal = objectsByJournal.get(journal);
+            if (objectsOfJournal == null) {
+                objectsOfJournal = new ArrayList<JournaledObject>();
+                objectsByJournal.put(journal, objectsOfJournal);
+            }
+
+            objectsOfJournal.add(journaledObject);
         }
 
         return objectsByJournal;

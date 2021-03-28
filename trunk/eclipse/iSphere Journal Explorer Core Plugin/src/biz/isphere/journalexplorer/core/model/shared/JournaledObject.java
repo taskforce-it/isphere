@@ -8,14 +8,23 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
 
-public class JournaledObject {
+public class JournaledObject implements ISelectedObject {
+
+    private static final Set<String> validObjectTypes = new HashSet<String>(
+        Arrays.asList(new String[] { ISeries.FILE, ISeries.DTAARA, ISeries.DTAQ }));
 
     private QualifiedName objectName;
     private String objectType;
@@ -25,20 +34,40 @@ public class JournaledObject {
     private transient ObjectDescription journalObjectDescription;
 
     public JournaledObject(String connectionName, String libraryName, String objectName, String objectType) {
+
+        checksObjectType(objectType);
+
         this.objectName = new QualifiedName(connectionName, libraryName, objectName);
         this.objectType = objectType;
+    }
+
+    private void checksObjectType(String objectType) {
+
+        if (validObjectTypes.contains(objectType)) {
+            return;
+        }
+
+        throw new IllegalArgumentException("Invalid object type: " + objectType);
     }
 
     public String getConnectionName() {
         return objectName.getConnectionName();
     }
 
-    public String getObjectName() {
+    public String getName() {
         return objectName.getObjectName();
     }
 
-    public String getLibraryName() {
+    public String getLibrary() {
         return objectName.getLibraryName();
+    }
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public boolean isFile() {
+        return ISeries.FILE.equals(objectType);
     }
 
     public boolean isJournaled() {
@@ -133,6 +162,6 @@ public class JournaledObject {
 
     @Override
     public String toString() {
-        return getQualifiedName();
+        return String.format("%s (%s)", getQualifiedName(), getObjectType());
     }
 }

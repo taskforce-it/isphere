@@ -177,11 +177,9 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
                 monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
 
-                // Clone the selection arguments to start with the original
-                // values when the view is refreshed.
-                JrneToRtv tJrneToRtv = jrneToRtv.clone();
+                jrneToRtv.setNbrEnt(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
 
-                JournalDAO journalDAO = new JournalDAO(tJrneToRtv);
+                JournalDAO journalDAO = new JournalDAO(jrneToRtv);
                 final JournalEntries data = journalDAO.load(whereClause, monitor);
 
                 timeTaken.stop(data.size());
@@ -206,7 +204,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
                     if (isBufferTooSmallException(messages)) {
                         throw new BufferTooSmallException();
                     } else if (isNoDataLoadedException(messages)) {
-                        throw new NoJournalEntriesLoadedException(tJrneToRtv.getJournalLibraryName(), tJrneToRtv.getJournalName());
+                        throw new NoJournalEntriesLoadedException(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName());
                     } else {
                         throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                     }
