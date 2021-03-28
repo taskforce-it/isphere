@@ -11,7 +11,6 @@
 
 package biz.isphere.journalexplorer.core.ui.views;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -53,6 +52,7 @@ import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedExcepti
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
@@ -249,13 +249,13 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         }
     }
 
-    private void createJournalTab(String connectionName, File jsonFile, SQLWhereClause whereClause) {
+    private void createJournalTab(JsonFile jsonFile, SQLWhereClause whereClause) {
 
         JournalEntriesViewerForLoadedJournalEntriesTab journalEntriesViewer = null;
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), connectionName, tabFolder, jsonFile,
+            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, jsonFile,
                 new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
@@ -642,14 +642,13 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         }
     }
 
-    public static void openJournalJsonFile(Shell shell, String connectionName, File jsonFile, SQLWhereClause sqlWhereClause, boolean newTab)
-        throws Exception {
+    public static void openJournalJsonFile(Shell shell, JsonFile jsonFile, SQLWhereClause sqlWhereClause, boolean newTab) throws Exception {
 
         IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
 
         if (viewPart instanceof JournalExplorerView) {
             JournalExplorerView view = (JournalExplorerView)viewPart;
-            view.createJournalTab(connectionName, jsonFile, sqlWhereClause);
+            view.createJournalTab(jsonFile, sqlWhereClause);
         }
     }
 

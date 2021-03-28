@@ -8,13 +8,12 @@
 
 package biz.isphere.journalexplorer.core.externalapi;
 
-import java.io.File;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
+import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalJsonFileDialog;
@@ -72,10 +71,9 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String jsonFile, String whereClause, boolean newTab)
-        throws Exception {
+    public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
-        JournalExplorerView.openJournalJsonFile(ensureShell(shell), connectionName, new File(jsonFile), new SQLWhereClause(whereClause), newTab);
+        JournalExplorerView.openJournalJsonFile(ensureShell(shell), new JsonFile(connectionName, path), new SQLWhereClause(whereClause), newTab);
     }
 
     /**
