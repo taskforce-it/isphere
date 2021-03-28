@@ -35,6 +35,7 @@ import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedExcepti
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
@@ -54,16 +55,14 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  */
 public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJournalEntriesViewerTab {
 
-    private String connectionName;
-    private File jsonFile;
+    private JsonFile jsonFile;
 
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, String connectionName, CTabFolder parent, File jsonFile,
+    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, CTabFolder parent, JsonFile jsonFile,
         SelectionListener loadJournalEntriesSelectionListener) {
         super(shell, parent, null, loadJournalEntriesSelectionListener);
 
-        this.connectionName = connectionName;
         this.jsonFile = jsonFile;
 
         setSelectClause(null);
@@ -75,7 +74,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
     }
 
     protected String getLabel() {
-        return FileHelper.getFileName(jsonFile);
+        return FileHelper.getFileName(jsonFile.getPath());
     }
 
     protected String getTooltip() {
@@ -120,7 +119,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new OpenJournalJob(view, connectionName, jsonFile);
+        Job loadJournalDataJob = new OpenJournalJob(view, jsonFile.getConnectionName(), new File(jsonFile.getPath()));
         loadJournalDataJob.schedule();
     }
 
