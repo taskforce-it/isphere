@@ -16,9 +16,10 @@ import java.util.regex.Pattern;
 
 import biz.isphere.base.internal.StringHelper;
 
-public class QualifiedMemberName extends AbstractComparable<QualifiedMemberName> {
+public class QualifiedMemberName extends AbstractComparable<QualifiedMemberName> implements IQualifiedName {
 
-    protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?::))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b[ ]?\\((\\S{1,10})\\))";
+    protected static final String RETRIEVE_PATTERN = "((?:(\\S{1,})(?:" + CONNECTION_DELIMITER
+        + "))?(\\S{1,10})\\b/\\b((?!/)\\S{1,10})\\b[ ]?\\((\\S{1,10})\\))";
     protected static final String VALIDATE_PATTERN = "^" + RETRIEVE_PATTERN + "$";
     protected static final String START_MEMBER = " (";
     protected static final String END_MEMBER = ")";

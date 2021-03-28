@@ -74,7 +74,7 @@ public class TestQualifiedName {
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
 
-        qName = new QualifiedName("connection:library/object");
+        qName = new QualifiedName("connection::library/object");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
@@ -89,7 +89,7 @@ public class TestQualifiedName {
         qName = QualifiedName.parse("before connection:library/object after");
         assert (qName == null);
 
-        qName = QualifiedName.parse("connection:library/object");
+        qName = QualifiedName.parse("connection::library/object");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
@@ -106,7 +106,7 @@ public class TestQualifiedName {
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
 
-        qName = new QualifiedName("connection:library.object");
+        qName = new QualifiedName("connection::library.object");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getObjectName());
@@ -138,8 +138,8 @@ public class TestQualifiedName {
         assertTrue(new QualifiedName("con1", "lib1", "obj1").equals(new QualifiedName("con1", "lib1", "obj1")));
         assertTrue(new QualifiedName(null, "lib1", "obj1").equals(new QualifiedName(null, "lib1", "obj1")));
 
-        assertFalse(new QualifiedName("con1", "lib1", "obj2").equals(new QualifiedName(null, "lib1", "obj1")));
-        assertFalse(new QualifiedName(null, "lib1", "obj2").equals(new QualifiedName("con1", "lib1", "obj1")));
+        assertFalse(new QualifiedName("con1", "lib1", "obj1").equals(new QualifiedName(null, "lib1", "obj1")));
+        assertFalse(new QualifiedName(null, "lib1", "obj2").equals(new QualifiedName(null, "lib1", "obj1")));
 
         assertFalse(new QualifiedName("con1", "lib1", "obj2").equals(new QualifiedName("con1", "lib1", "obj1")));
         assertFalse(new QualifiedName("con1", "lib2", "obj1").equals(new QualifiedName("con1", "lib1", "obj1")));
@@ -151,8 +151,8 @@ public class TestQualifiedName {
 
         assertTrue(new QualifiedName("con1", "lib1", "obj1").hashCode() == new QualifiedName("con1", "lib1", "obj1").hashCode());
 
-        assertFalse(new QualifiedName("con1", "lib1", "obj2").hashCode() == new QualifiedName(null, "lib1", "obj1").hashCode());
-        assertFalse(new QualifiedName(null, "lib1", "obj2").hashCode() == new QualifiedName("con1", "lib1", "obj1").hashCode());
+        assertFalse(new QualifiedName("con1", "lib1", "obj1").hashCode() == new QualifiedName(null, "lib1", "obj1").hashCode());
+        assertFalse(new QualifiedName(null, "lib1", "obj2").hashCode() == new QualifiedName(null, "lib1", "obj1").hashCode());
 
         assertFalse(new QualifiedName("con1", "lib1", "obj2").hashCode() == new QualifiedName("con1", "lib1", "obj1").hashCode());
         assertFalse(new QualifiedName("con1", "lib2", "obj1").hashCode() == new QualifiedName("con1", "lib1", "obj1").hashCode());

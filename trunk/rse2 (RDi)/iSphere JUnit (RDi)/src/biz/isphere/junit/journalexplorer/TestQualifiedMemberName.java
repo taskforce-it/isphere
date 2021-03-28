@@ -66,12 +66,12 @@ public class TestQualifiedMemberName {
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
 
-        qName = new QualifiedMemberName("connection:library/object(member)");
+        qName = new QualifiedMemberName("connection::library/object(member)");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
 
-        qName = new QualifiedMemberName("connection:library/object (member)");
+        qName = new QualifiedMemberName("connection::library/object (member)");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
@@ -86,7 +86,7 @@ public class TestQualifiedMemberName {
         qName = QualifiedMemberName.parse("before connection:library/object (member) after");
         assertEquals(true, null == qName);
 
-        qName = QualifiedMemberName.parse("connection:library/object (member)");
+        qName = QualifiedMemberName.parse("connection::library/object (member)");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
@@ -104,7 +104,7 @@ public class TestQualifiedMemberName {
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
 
-        qName = new QualifiedMemberName("connection:library.object(member)");
+        qName = new QualifiedMemberName("connection::library.object(member)");
         assertEquals(CONNECTION, qName.getConnectionName());
         assertEquals(LIBRARY, qName.getLibraryName());
         assertEquals(OBJECT, qName.getFileName());
