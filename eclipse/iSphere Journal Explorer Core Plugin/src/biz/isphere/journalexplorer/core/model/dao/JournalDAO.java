@@ -47,7 +47,10 @@ public class JournalDAO {
 
     public JournalDAO(JrneToRtv jrneToRtv) throws Exception {
 
-        this.jrneToRtv = jrneToRtv;
+        // Clone the selection arguments , because some properties are updated
+        // while retrieving the journal entries.
+
+        this.jrneToRtv = jrneToRtv.clone();
         this.jrneToRtv.setNbrEnt(this.jrneToRtv.getNbrEnt() + 1);
         this.outputFile = getOutputFile(jrneToRtv.getConnectionName());
     }

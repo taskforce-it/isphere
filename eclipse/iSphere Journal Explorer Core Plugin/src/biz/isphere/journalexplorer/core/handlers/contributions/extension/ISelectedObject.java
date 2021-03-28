@@ -16,4 +16,6 @@ public interface ISelectedObject {
 
     public String getName();
 
+    public String getObjectType();
+
 }

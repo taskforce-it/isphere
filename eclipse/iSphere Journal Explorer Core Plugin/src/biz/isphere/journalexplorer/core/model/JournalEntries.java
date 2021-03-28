@@ -99,8 +99,8 @@ public class JournalEntries implements JsonSerializable {
                 JournaledFile journaledFile = (JournaledFile)journaledObject;
                 String connectionName = journaledFile.getConnectionName();
                 String libraryName = journaledFile.getLibraryName();
-                String fileName = journaledFile.getObjectName();
-                String memberName = journaledFile.getMemberName();
+                String fileName = journaledFile.getName();
+                String memberName = journaledFile.getMember();
                 journaledFiles.add(new JournaledFile(connectionName, libraryName, fileName, memberName)); // $NON-NLS-1$
             }
         }

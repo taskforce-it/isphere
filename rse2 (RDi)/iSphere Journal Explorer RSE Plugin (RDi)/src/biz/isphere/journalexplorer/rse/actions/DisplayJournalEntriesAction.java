@@ -22,8 +22,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import biz.isphere.journalexplorer.core.handlers.contributions.extension.DisplayJournalEntriesHandler;
 import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
 import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedJournal;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.SelectedFile;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.SelectedJournal;
+import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
+import biz.isphere.journalexplorer.core.model.shared.Journal;
+import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
@@ -47,7 +48,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
-            List<ISelectedFile> selectedFiles = new ArrayList<ISelectedFile>();
+            List<ISelectedObject> selectedObjects = new ArrayList<ISelectedObject>();
             List<ISelectedJournal> selectedJournals = new ArrayList<ISelectedJournal>();
 
             Iterator<?> iterator = structuredSelection.iterator();
@@ -56,7 +57,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
                 Object _object = iterator.next();
 
-                ISelectedFile selectedFile = null;
+                ISelectedObject selectedObject = null;
                 ISelectedJournal selectedJournal = null;
 
                 if (_object instanceof QSYSRemoteMember) {
@@ -67,7 +68,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String fileName = member.getFile();
                     String memberName = member.getName();
 
-                    selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
+                    selectedObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
 
                 } else if (_object instanceof QSYSRemotePhysicalFile) {
 
@@ -77,7 +78,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String fileName = file.getName();
                     String memberName = "*ALL"; //$NON-NLS-1$
 
-                    selectedFile = new SelectedFile(connectionName, libraryName, fileName, memberName);
+                    selectedObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
                 } else if (_object instanceof QSYSRemoteObject) {
 
                     QSYSRemoteObject remoteObject = (QSYSRemoteObject)_object;
@@ -87,12 +88,12 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                         String libraryName = remoteObject.getLibrary();
                         String journalName = remoteObject.getName();
 
-                        selectedJournal = new SelectedJournal(connectionName, libraryName, journalName);
+                        selectedJournal = new Journal(connectionName, libraryName, journalName);
                     }
                 }
 
-                if (selectedFile != null) {
-                    selectedFiles.add(selectedFile);
+                if (selectedObject != null) {
+                    selectedObjects.add(selectedObject);
                 }
 
                 if (selectedJournal != null) {
@@ -100,9 +101,9 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 }
             }
 
-            if (!selectedFiles.isEmpty()) {
+            if (!selectedObjects.isEmpty()) {
                 DisplayJournalEntriesHandler displayJournalEntriesHandler = new DisplayJournalEntriesHandler();
-                displayJournalEntriesHandler.handleDisplayFileJournalEntries(selectedFiles.toArray(new ISelectedFile[selectedFiles.size()]));
+                displayJournalEntriesHandler.handleDisplayJournalEntries(selectedObjects.toArray(new ISelectedFile[selectedObjects.size()]));
             }
 
             if (!selectedJournals.isEmpty()) {

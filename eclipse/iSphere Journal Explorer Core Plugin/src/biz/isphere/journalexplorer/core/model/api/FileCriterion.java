@@ -8,8 +8,14 @@
 
 package biz.isphere.journalexplorer.core.model.api;
 
+import java.util.Arrays;
+import java.util.List;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
+
+import com.ibm.as400.access.AS400DataType;
+import com.ibm.as400.access.AS400Text;
 
 public class FileCriterion {
 
@@ -26,23 +32,37 @@ public class FileCriterion {
     private String library;
     private String member;
 
-    public FileCriterion(String file, String library, String member) {
+    private AS400DataType[] type;
+    private Object[] value;
+
+    private FileCriterion(String file, String library, String member) {
 
         this.file = file;
         this.library = library;
         this.member = member;
+
+        this.type = new AS400DataType[] { new AS400Text(10), new AS400Text(10), new AS400Text(10) };
+        this.value = new Object[] { this.file, this.library, this.member };
     }
 
-    public String getFile() {
-        return file;
+    // public String getFile() {
+    // return file;
+    // }
+    //
+    // public String getLibrary() {
+    // return library;
+    // }
+    //
+    // public String getMember() {
+    // return member;
+    // }
+
+    public List<AS400DataType> getType() {
+        return Arrays.asList(type);
     }
 
-    public String getLibrary() {
-        return library;
-    }
-
-    public String getMember() {
-        return member;
+    public List<Object> getValue() {
+        return Arrays.asList(value);
     }
 
     public String getData() {
@@ -62,5 +82,13 @@ public class FileCriterion {
 
     private String padRight(String value) {
         return StringHelper.getFixLength(value, 10);
+    }
+
+    public static FileCriterion newFile(String object, String library, String member) {
+        if (StringHelper.isNullOrEmpty(member)) {
+            return new FileCriterion(object, library, MEMBER_ALL);
+        } else {
+            return new FileCriterion(object, library, member);
+        }
     }
 }
