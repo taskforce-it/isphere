@@ -35,7 +35,7 @@ public class LoadJournalEntriesFromJsonFileAction extends Action {
     private void performImportFromJson() {
 
         try {
-            Access.loadJournalEntriesFromJsonFile(shell);
+            Access.loadJournalEntriesFromJsonFile(shell, true);
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
         }

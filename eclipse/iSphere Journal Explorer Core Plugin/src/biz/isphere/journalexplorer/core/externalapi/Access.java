@@ -29,15 +29,17 @@ public class Access extends AbstractAccess {
      * saved from the iSphere Journal Explorer view.
      * 
      * @param shell - the parent shell
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab
      */
-    public static void loadJournalEntriesFromJsonFile(Shell shell) throws Exception {
+    public static void loadJournalEntriesFromJsonFile(Shell shell, boolean newTab) throws Exception {
 
         OpenJournalJsonFileDialog dialog = new OpenJournalJsonFileDialog(shell);
         if (dialog.open() == Dialog.OK) {
             String connectionName = dialog.getConnectionName();
             String jsonFile = dialog.getJsonFileName();
             String whereClause = dialog.getSqlWhere();
-            openJournalExplorerView(ensureShell(shell), connectionName, jsonFile, whereClause);
+            openJournalExplorerView(ensureShell(shell), connectionName, jsonFile, whereClause, newTab);
         }
     }
 
@@ -49,10 +51,12 @@ public class Access extends AbstractAccess {
      * @param jsonFile - path of the Json file
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab
      */
-    public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause) throws Exception {
+    public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause, boolean newTab) throws Exception {
 
-        openJournalExplorerView(ensureShell(shell), null, jsonFile, whereClause);
+        openJournalExplorerView(ensureShell(shell), null, jsonFile, whereClause, newTab);
     }
 
     /**
@@ -65,10 +69,13 @@ public class Access extends AbstractAccess {
      * @param jsonFile - path of the Json file
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String jsonFile, String whereClause) throws Exception {
+    public static void openJournalExplorerView(Shell shell, String connectionName, String jsonFile, String whereClause, boolean newTab)
+        throws Exception {
 
-        JournalExplorerView.openJournalJsonFile(ensureShell(shell), connectionName, new File(jsonFile), new SQLWhereClause(whereClause));
+        JournalExplorerView.openJournalJsonFile(ensureShell(shell), connectionName, new File(jsonFile), new SQLWhereClause(whereClause), newTab);
     }
 
     /**
@@ -78,8 +85,10 @@ public class Access extends AbstractAccess {
      * one of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or *TYPE5.
      * 
      * @param shell - the parent shell
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab
      */
-    public static void loadJournalEntriesFromOutputFile(Shell shell) throws Exception {
+    public static void loadJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
         OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
         openJournalOutputFileDialog.create();
@@ -90,7 +99,7 @@ public class Access extends AbstractAccess {
             String fileName = openJournalOutputFileDialog.getFileName();
             String memberName = openJournalOutputFileDialog.getMemberName();
             String sqlWhereClause = openJournalOutputFileDialog.getSqlWhere();
-            openJournalExplorerView(ensureShell(shell), connectionName, libraryName, fileName, memberName, sqlWhereClause);
+            openJournalExplorerView(ensureShell(shell), connectionName, libraryName, fileName, memberName, sqlWhereClause, newTab);
         }
     }
 
@@ -109,13 +118,15 @@ public class Access extends AbstractAccess {
      *        of journal entries
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
-        String whereClause) throws Exception {
+        String whereClause, boolean newTab) throws Exception {
 
         OutputFile outputFile = new OutputFile(connectionName, libraryName, fileName, memberName);
         SQLWhereClause sqlWhereClause = new SQLWhereClause(whereClause);
 
-        JournalExplorerView.openJournalOutputFile(ensureShell(shell), outputFile, sqlWhereClause);
+        JournalExplorerView.openJournalOutputFile(ensureShell(shell), outputFile, sqlWhereClause, newTab);
     }
 }

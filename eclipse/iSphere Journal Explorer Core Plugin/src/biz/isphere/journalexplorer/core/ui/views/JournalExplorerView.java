@@ -228,7 +228,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         viewMenu.add(saveJournalEntriesAction);
     }
 
-    public void createJournalTab(JrneToRtv jrneToRtv) {
+    private void createJournalTab(JrneToRtv jrneToRtv, boolean newTab) {
 
         JournalEntriesViewerForRetrievedJournalEntriesTab journalEntriesViewer = null;
 
@@ -632,14 +632,20 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         }
     }
 
-    public static void openJournalJsonFile(Shell shell, String connectionName, File jsonFile, SQLWhereClause sqlWhereClause) throws Exception {
+    public static void openJournal(Shell shell, JrneToRtv jrneToRtv, boolean newTab) throws Exception {
 
-        IViewPart viewPart = null;
+        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
 
-        viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JournalExplorerView.ID);
-        if (viewPart == null) {
-            viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
+        if (viewPart instanceof JournalExplorerView) {
+            JournalExplorerView view = (JournalExplorerView)viewPart;
+            view.createJournalTab(jrneToRtv, newTab);
         }
+    }
+
+    public static void openJournalJsonFile(Shell shell, String connectionName, File jsonFile, SQLWhereClause sqlWhereClause, boolean newTab)
+        throws Exception {
+
+        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
 
         if (viewPart instanceof JournalExplorerView) {
             JournalExplorerView view = (JournalExplorerView)viewPart;
@@ -647,18 +653,13 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         }
     }
 
-    public static void openJournalOutputFile(Shell shell, OutputFile outputFile, SQLWhereClause sqlWhereClause) throws Exception {
+    public static void openJournalOutputFile(Shell shell, OutputFile outputFile, SQLWhereClause sqlWhereClause, boolean newTab) throws Exception {
 
         if (!ISphereHelper.checkISphereLibrary(shell, outputFile.getConnectionName())) {
             return;
         }
 
-        IViewPart viewPart = null;
-
-        viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JournalExplorerView.ID);
-        if (viewPart == null) {
-            viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
-        }
+        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
 
         if (viewPart instanceof JournalExplorerView) {
             JournalExplorerView view = (JournalExplorerView)viewPart;
