@@ -6,16 +6,31 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.journalexplorer.core.handlers.contributions.extension;
+package biz.isphere.journalexplorer.core.handlers;
 
-public interface ISelectedObject {
+import biz.isphere.journalexplorer.core.externalapi.IJournaledObject;
 
+public interface ISelectedObject extends IJournaledObject {
+
+    /**
+     * Returns the name of the host connection.
+     * 
+     * @return connection name
+     */
     public String getConnectionName();
 
+    /**
+     * Returns the library where the object is stored.
+     * 
+     * @return library name
+     */
     public String getLibrary();
 
+    /**
+     * Returns the name of the object.
+     * 
+     * @return object name
+     */
     public String getName();
-
-    public String getObjectType();
 
 }

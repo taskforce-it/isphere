@@ -15,7 +15,7 @@ import java.util.Set;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
+import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 import com.ibm.as400.access.ObjectDescription;
@@ -60,6 +60,10 @@ public class JournaledObject implements ISelectedObject {
 
     public String getLibrary() {
         return objectName.getLibraryName();
+    }
+
+    public String getMember() {
+        throw new IllegalAccessError();
     }
 
     public String getObjectType() {

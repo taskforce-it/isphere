@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,10 +21,9 @@ import java.util.List;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalCode;
-import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
+import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
@@ -116,7 +115,7 @@ public class JrneToRtv implements Serializable, Cloneable {
     }
 
     public String getQualifiedJournalName() {
-        return QualifiedName.getName(journal.getLibrary(), journal.getName());
+        return journal.getQualifiedName();
     }
 
     public AS400 getSystem() {
@@ -293,9 +292,6 @@ public class JrneToRtv implements Serializable, Cloneable {
      *        considered for retrieval
      */
     public void setToTime(java.sql.Timestamp anEndingTimestamp) {
-        // TimeZone temp = anEndingTimestamp.getTimeZone();
-        // Timestamp temp2 = new
-        // Timestamp(anEndingTimestamp.getTime().getTime());
         addSelectionCriterion(RetrieveKey.TOTIME, new AS400Text(26), dateFormatter.format(anEndingTimestamp) + ".000000");
         rmvSelectionCriterion(RetrieveKey.TOENT);
     }
@@ -322,7 +318,7 @@ public class JrneToRtv implements Serializable, Cloneable {
      * @param aNumberOfJournalEntries - The maximum number of journal entries
      *        that are requested to be retrieved
      */
-    public void setNbrEnt(Integer aNumberOfJournalEntries) {
+    public void setNbrEntToRtv(Integer aNumberOfJournalEntries) {
         addSelectionCriterion(RetrieveKey.NBRENT, new AS400Bin4(), aNumberOfJournalEntries);
     }
 
@@ -428,12 +424,18 @@ public class JrneToRtv implements Serializable, Cloneable {
      * 
      * @param aJournalEntryTypes
      */
-    public void setEntTyp(JournalEntryType... aJournalEntryTypes) {
+    public void setEntTyp(String... aJournalEntryTypes) {
         RetrieveKey rtvKey = RetrieveKey.ENTTYP;
 
         StringBuilder entry = new StringBuilder();
         for (int i = 0; i < aJournalEntryTypes.length; i++) {
-            entry.append(padRight(aJournalEntryTypes[i].label(), 10));
+            String journalEntryType = aJournalEntryTypes[i];
+
+            if (ENTTYP_ALL.equals(journalEntryType) || ENTTYP_RCD.equals(journalEntryType)) {
+                throw new IllegalArgumentException("Illegal entry type: " + journalEntryType);
+            }
+
+            entry.append(padRight(journalEntryType, 10));
         }
 
         String temp = entry.toString();
@@ -508,6 +510,11 @@ public class JrneToRtv implements Serializable, Cloneable {
         fileCriterions.add(fileCriterion);
     }
 
+    /**
+     * Returns the list of qualified file names.
+     * 
+     * @return list of qualified file names
+     */
     public String[] getFiles() {
 
         List<String> files = new LinkedList<String>();
@@ -566,6 +573,11 @@ public class JrneToRtv implements Serializable, Cloneable {
         objectCriterions.add(objectCriterion);
     }
 
+    /**
+     * Returns the list of qualified object names.
+     * 
+     * @return list of qualified object names
+     */
     public String[] getObjects() {
 
         List<String> objects = new LinkedList<String>();
@@ -637,12 +649,16 @@ public class JrneToRtv implements Serializable, Cloneable {
      * 
      * @return maximum number of entries to be retrieved or -1
      */
-    public int getNbrEnt() {
-        Object nbrEnt = getSelectionValue(RetrieveKey.NBRENT);
-        if (nbrEnt == null) {
-            return -1;
+    public int getNbrEntToRtv() {
+        Integer nbrEnt = (Integer)getSelectionValue(RetrieveKey.NBRENT);
+        return ensureNbrEnt(nbrEnt);
+    }
+
+    private int ensureNbrEnt(Integer nbrEnt) {
+        if (nbrEnt == null || nbrEnt.intValue() < 0) {
+            return Preferences.getInstance().getMaximumNumberOfRowsToFetch();
         }
-        return ((Integer)nbrEnt).intValue();
+        return nbrEnt;
     }
 
     /**
@@ -689,6 +705,7 @@ public class JrneToRtv implements Serializable, Cloneable {
         }
 
         addFileCriterions();
+        addObjectCriterions();
 
         structure = new ArrayList<AS400DataType>();
         structure.add(new AS400Bin4());
@@ -697,7 +714,13 @@ public class JrneToRtv implements Serializable, Cloneable {
         data.add(new Integer(0));
 
         for (RetrieveCriterion item : selectionCriteria.values()) {
-            addStructureData(item);
+            if (item.key == RetrieveKey.NBRENT) {
+                Integer nbrEntToRtv = ensureNbrEnt((Integer)item.getValue());
+                item = new RetrieveCriterion(RetrieveKey.NBRENT, new AS400Bin4(), new Integer(nbrEntToRtv));
+                addStructureData(item);
+            } else {
+                addStructureData(item);
+            }
         }
 
         isDirty = false;
@@ -718,6 +741,29 @@ public class JrneToRtv implements Serializable, Cloneable {
         value.add(new Integer(fileCriterions.size()));
 
         for (FileCriterion file : fileCriterions) {
+            type.addAll(file.getType());
+            value.addAll(file.getValue());
+        }
+
+        AS400Structure tempDataType = new AS400Structure(type.toArray(new AS400DataType[type.size()]));
+        addSelectionCriterion(rtvKey, tempDataType, value.toArray());
+    }
+
+    private void addObjectCriterions() {
+
+        if (objectCriterions.size() == 0) {
+            return;
+        }
+
+        RetrieveKey rtvKey = RetrieveKey.OBJ;
+
+        List<AS400DataType> type = new LinkedList<AS400DataType>();
+        List<Object> value = new LinkedList<Object>();
+
+        type.add(new AS400Bin4());
+        value.add(new Integer(objectCriterions.size()));
+
+        for (ObjectCriterion file : objectCriterions) {
             type.addAll(file.getType());
             value.addAll(file.getValue());
         }

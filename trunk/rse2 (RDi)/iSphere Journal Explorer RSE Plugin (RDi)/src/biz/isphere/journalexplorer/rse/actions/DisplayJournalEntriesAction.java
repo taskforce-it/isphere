@@ -13,16 +13,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.DisplayJournalEntriesHandler;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedJournal;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.handlers.DisplayJournalEntriesHandler;
+import biz.isphere.journalexplorer.core.handlers.ISelectedJournal;
+import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 
@@ -52,7 +56,6 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
             List<ISelectedJournal> selectedJournals = new ArrayList<ISelectedJournal>();
 
             Iterator<?> iterator = structuredSelection.iterator();
-
             while (iterator.hasNext()) {
 
                 Object _object = iterator.next();
@@ -79,16 +82,16 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String memberName = "*ALL"; //$NON-NLS-1$
 
                     selectedObject = new JournaledFile(connectionName, libraryName, fileName, memberName);
+
                 } else if (_object instanceof QSYSRemoteObject) {
 
                     QSYSRemoteObject remoteObject = (QSYSRemoteObject)_object;
-                    if ("*JRN".equals(remoteObject.getType())) {
+                    String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                    String libraryName = remoteObject.getLibrary();
+                    String objectName = remoteObject.getName();
 
-                        String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-                        String libraryName = remoteObject.getLibrary();
-                        String journalName = remoteObject.getName();
-
-                        selectedJournal = new Journal(connectionName, libraryName, journalName);
+                    if (ISeries.JRN.equals(remoteObject.getType())) {
+                        selectedJournal = new Journal(connectionName, libraryName, objectName);
                     }
                 }
 
@@ -102,13 +105,27 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
             }
 
             if (!selectedObjects.isEmpty()) {
-                DisplayJournalEntriesHandler displayJournalEntriesHandler = new DisplayJournalEntriesHandler();
-                displayJournalEntriesHandler.handleDisplayJournalEntries(selectedObjects.toArray(new ISelectedFile[selectedObjects.size()]));
+                try {
+
+                    DisplayJournalEntriesHandler handler = new DisplayJournalEntriesHandler();
+                    handler.handleDisplayJournalEntries(selectedObjects.toArray(new ISelectedObject[selectedObjects.size()]));
+
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
+                    MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                }
             }
 
             if (!selectedJournals.isEmpty()) {
-                DisplayJournalEntriesHandler displayJournalEntriesHandler = new DisplayJournalEntriesHandler();
-                displayJournalEntriesHandler.handleDisplayJournalEntries(selectedJournals.toArray(new ISelectedJournal[selectedJournals.size()]));
+                try {
+
+                    DisplayJournalEntriesHandler handler = new DisplayJournalEntriesHandler();
+                    handler.handleDisplayJournalEntries(selectedJournals.toArray(new ISelectedJournal[selectedObjects.size()]));
+
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not open journal exploer view ***", e);
+                    MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                }
             }
         }
     }

@@ -9,7 +9,7 @@
 package biz.isphere.journalexplorer.core.model.shared;
 
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
+import biz.isphere.journalexplorer.core.handlers.ISelectedFile;
 import biz.isphere.journalexplorer.core.internals.QualifiedMemberName;
 
 public class JournaledFile extends JournaledObject implements ISelectedFile {

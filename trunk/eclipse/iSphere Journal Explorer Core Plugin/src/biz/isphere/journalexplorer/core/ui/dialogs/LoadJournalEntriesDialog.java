@@ -54,8 +54,9 @@ import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
 import biz.isphere.core.swt.widgets.extension.point.ITimeEdit;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedFile;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedObject;
+import biz.isphere.journalexplorer.core.handlers.ISelectedFile;
+import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
+import biz.isphere.journalexplorer.core.handlers.SelectionCriteria;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -93,7 +94,11 @@ public class LoadJournalEntriesDialog extends XDialog {
     private Label lblCmdUpdate;
     private Label lblCmdDelete;
 
-    private SelectionCriterias selectionCriterias;
+    private SelectionCriteria selectionCriteria;
+
+    public LoadJournalEntriesDialog(Shell parentShell) {
+        this(parentShell, null);
+    }
 
     public LoadJournalEntriesDialog(Shell parentShell, ISelectedObject[] objects) {
         super(parentShell);
@@ -115,12 +120,12 @@ public class LoadJournalEntriesDialog extends XDialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Messages.DisplayJournalEntriesDialog_Title + addJournaledObjects(objects));
+        newShell.setText(Messages.DisplayJournalEntriesDialog_Title + addJournaledObjects());
     }
 
-    private String addJournaledObjects(ISelectedObject[] objects) {
+    private String addJournaledObjects() {
 
-        if (objects.length != 1) {
+        if (objects == null || objects.length != 1) {
             return ""; //$NON-NLS-1$
         }
 
@@ -304,26 +309,26 @@ public class LoadJournalEntriesDialog extends XDialog {
     @Override
     protected void okPressed() {
 
-        selectionCriterias = new SelectionCriterias();
+        selectionCriteria = new SelectionCriteria();
 
         Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
-        selectionCriterias.setStartDate(new java.sql.Timestamp(startingDate.getTimeInMillis()));
+        selectionCriteria.setStartDate(new java.sql.Timestamp(startingDate.getTimeInMillis()));
 
         Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
-        selectionCriterias.setEndDate(new java.sql.Timestamp(endingDate.getTimeInMillis()));
+        selectionCriteria.setEndDate(new java.sql.Timestamp(endingDate.getTimeInMillis()));
 
         boolean recordsOnly = chkboxRecordsOnly.getSelection();
-        selectionCriterias.setRecordsOnly(recordsOnly);
+        selectionCriteria.setRecordsOnly(recordsOnly);
 
         if (recordsOnly) {
             for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
                 if (journalEntryType.isSelected()) {
-                    selectionCriterias.addJournalEntryType(JournalEntryType.find(journalEntryType.getLabel()));
+                    selectionCriteria.addJournalEntryType(JournalEntryType.find(journalEntryType.getLabel()));
                 }
             }
         }
 
-        if (recordsOnly && selectionCriterias.getJournalEntryTypes().length == 0) {
+        if (recordsOnly && selectionCriteria.getJournalEntryTypes().length == 0) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_journal_entry_types_selected);
             tableViewer.getTable().setFocus();
             return;
@@ -334,8 +339,8 @@ public class LoadJournalEntriesDialog extends XDialog {
         super.okPressed();
     }
 
-    public SelectionCriterias getSelectionCriterias() {
-        return selectionCriterias;
+    public SelectionCriteria getSelectionCriteria() {
+        return selectionCriteria;
     }
 
     private Calendar getTimestamp(IDateEdit startingDateDate, ITimeEdit startingDateTime) {
@@ -574,67 +579,6 @@ public class LoadJournalEntriesDialog extends XDialog {
             }
         }
 
-    }
-
-    public class SelectionCriterias {
-
-        private java.sql.Timestamp startDate;
-        private java.sql.Timestamp endDate;
-        private boolean isRecordsOnly;
-        private Set<JournalEntryType> journalEntryTypes;
-        int maxItemsToRetrieve;
-
-        public SelectionCriterias() {
-            this(null, null, false, Preferences.getInstance().getMaximumNumberOfRowsToFetch());
-        }
-
-        public SelectionCriterias(java.sql.Timestamp startDate, java.sql.Timestamp endDate, boolean recordsOnly, int maxItemsToRetrieve) {
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.isRecordsOnly = recordsOnly;
-            this.maxItemsToRetrieve = maxItemsToRetrieve;
-            this.journalEntryTypes = new HashSet<JournalEntryType>();
-        }
-
-        public java.sql.Timestamp getStartDate() {
-            return startDate;
-        }
-
-        public void setStartDate(java.sql.Timestamp startDate) {
-            this.startDate = startDate;
-        }
-
-        public java.sql.Timestamp getEndDate() {
-            return endDate;
-        }
-
-        public void setEndDate(java.sql.Timestamp endDate) {
-            this.endDate = endDate;
-        }
-
-        public boolean isRecordsOnly() {
-            return isRecordsOnly;
-        }
-
-        public void setRecordsOnly(boolean recordsOnly) {
-            this.isRecordsOnly = recordsOnly;
-        }
-
-        public JournalEntryType[] getJournalEntryTypes() {
-            return journalEntryTypes.toArray(new JournalEntryType[journalEntryTypes.size()]);
-        }
-
-        public void addJournalEntryType(JournalEntryType journalEntryType) {
-            journalEntryTypes.add(journalEntryType);
-        }
-
-        public int getMaxItemsToRetrieve() {
-            return maxItemsToRetrieve;
-        }
-
-        public void setMaxItemsToRetrieve(int maxItemsToRetrieve) {
-            this.maxItemsToRetrieve = maxItemsToRetrieve;
-        }
     }
 
     private class JournalTypesContentProvider implements IStructuredContentProvider {
