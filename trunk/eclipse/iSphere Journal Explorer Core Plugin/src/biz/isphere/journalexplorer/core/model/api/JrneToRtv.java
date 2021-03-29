@@ -266,9 +266,6 @@ public class JrneToRtv implements Serializable, Cloneable {
      *        considered for retrieval
      */
     public void setFromTime(java.sql.Timestamp aStartingTimestamp) {
-        // TimeZone temp = aStartingTimestamp.getTimeZone();
-        // Timestamp temp2 = new
-        // Timestamp(aStartingTimestamp.getTime().getTime());
         addSelectionCriterion(RetrieveKey.FROMTIME, new AS400Text(26), dateFormatter.format(aStartingTimestamp) + ".000000");
         rmvSelectionCriterion(RetrieveKey.FROMENT);
     }
