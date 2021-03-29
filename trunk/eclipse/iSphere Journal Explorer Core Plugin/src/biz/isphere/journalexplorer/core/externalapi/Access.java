@@ -73,9 +73,11 @@ public class Access extends AbstractAccess {
 
         JrneToRtv jrneToRtv = new JrneToRtv(new Journal(connectionName, libraryName, journalName));
 
-        if (selectionCriteria != null) {
-            jrneToRtv.setSelectionCriteria(selectionCriteria);
+        if (selectionCriteria == null) {
+            throw new IllegalArgumentException("Parameter 'selectionCriteria' must not be [null]"); //$NON-NLS-1$
         }
+
+        jrneToRtv.setSelectionCriteria(selectionCriteria);
 
         if (selectedObjects != null) {
             for (IJournaledObject selectedObject : selectedObjects) {
@@ -85,7 +87,7 @@ public class Access extends AbstractAccess {
                 } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
                     jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
                 } else {
-                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType());
+                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
                 }
             }
         }
