@@ -19,7 +19,7 @@ import com.ibm.as400.access.QSYSObjectPathName;
 
 public class JournaledObject implements ISelectedObject {
 
-    private QualifiedName objectName;
+    private QualifiedName qualifiedObjectName;
     private String objectType;
 
     private transient boolean isJournaled;
@@ -30,7 +30,7 @@ public class JournaledObject implements ISelectedObject {
 
         checksObjectType(objectType);
 
-        this.objectName = new QualifiedName(connectionName, libraryName, objectName);
+        this.qualifiedObjectName = new QualifiedName(connectionName, libraryName, objectName);
         this.objectType = objectType;
     }
 
@@ -44,15 +44,15 @@ public class JournaledObject implements ISelectedObject {
     }
 
     public String getConnectionName() {
-        return objectName.getConnectionName();
+        return qualifiedObjectName.getConnectionName();
     }
 
     public String getName() {
-        return objectName.getObjectName();
+        return qualifiedObjectName.getObjectName();
     }
 
     public String getLibrary() {
-        return objectName.getLibraryName();
+        return qualifiedObjectName.getLibraryName();
     }
 
     public String getMember() {
@@ -81,7 +81,7 @@ public class JournaledObject implements ISelectedObject {
     }
 
     public String getQualifiedName() {
-        return objectName.getQualifiedName();
+        return qualifiedObjectName.getQualifiedName();
     }
 
     private Journal resolveJournal() {
@@ -93,8 +93,8 @@ public class JournaledObject implements ISelectedObject {
 
             try {
 
-                String qsysObjectPath = new QSYSObjectPathName(objectName.getLibraryName(), objectName.getObjectName(), getObjectType(objectType))
-                    .getPath();
+                String qsysObjectPath = new QSYSObjectPathName(qualifiedObjectName.getLibraryName(), qualifiedObjectName.getObjectName(),
+                    getObjectType(objectType)).getPath();
                 this.journalObjectDescription = new ObjectDescription(IBMiHostContributionsHandler.getSystem(getConnectionName()), qsysObjectPath);
 
                 QSYSObjectPathName journalPathName = new QSYSObjectPathName(journalObjectDescription.getValueAsString(ObjectDescription.JOURNAL));
@@ -128,7 +128,7 @@ public class JournaledObject implements ISelectedObject {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((objectName == null) ? 0 : objectName.hashCode());
+        result = prime * result + ((qualifiedObjectName == null) ? 0 : qualifiedObjectName.hashCode());
         result = prime * result + ((objectType == null) ? 0 : objectType.hashCode());
         return result;
     }
@@ -139,9 +139,9 @@ public class JournaledObject implements ISelectedObject {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         JournaledObject other = (JournaledObject)obj;
-        if (objectName == null) {
-            if (other.objectName != null) return false;
-        } else if (!objectName.equals(other.objectName)) return false;
+        if (qualifiedObjectName == null) {
+            if (other.qualifiedObjectName != null) return false;
+        } else if (!qualifiedObjectName.equals(other.qualifiedObjectName)) return false;
         if (objectType == null) {
             if (other.objectType != null) return false;
         } else if (!objectType.equals(other.objectType)) return false;

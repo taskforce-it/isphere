@@ -14,28 +14,28 @@ import biz.isphere.journalexplorer.core.internals.QualifiedMemberName;
 
 public class JournaledFile extends JournaledObject implements ISelectedFile {
 
-    private QualifiedMemberName member;
+    private QualifiedMemberName qualifiedMemberName;
 
     public JournaledFile(String connectionName, String libraryName, String fileName, String memberName) {
         super(connectionName, libraryName, fileName, ISeries.FILE);
 
-        this.member = new QualifiedMemberName(connectionName, libraryName, fileName, memberName);
+        this.qualifiedMemberName = new QualifiedMemberName(connectionName, libraryName, fileName, memberName);
     }
 
     public String getConnectionName() {
-        return member.getConnectionName();
+        return qualifiedMemberName.getConnectionName();
     }
 
     public String getFileName() {
-        return member.getFileName();
+        return qualifiedMemberName.getFileName();
     }
 
     public String getLibraryName() {
-        return member.getLibraryName();
+        return qualifiedMemberName.getLibraryName();
     }
 
     public String getMember() {
-        return member.getMemberName();
+        return qualifiedMemberName.getMemberName();
     }
 
     public Journal getJournal() {
@@ -43,14 +43,14 @@ public class JournaledFile extends JournaledObject implements ISelectedFile {
     }
 
     public String getQualifiedName() {
-        return member.getQualifiedName();
+        return qualifiedMemberName.getQualifiedName();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((member == null) ? 0 : member.hashCode());
+        result = prime * result + ((qualifiedMemberName == null) ? 0 : qualifiedMemberName.hashCode());
         return result;
     }
 
@@ -60,9 +60,9 @@ public class JournaledFile extends JournaledObject implements ISelectedFile {
         if (!super.equals(obj)) return false;
         if (getClass() != obj.getClass()) return false;
         JournaledFile other = (JournaledFile)obj;
-        if (member == null) {
-            if (other.member != null) return false;
-        } else if (!member.equals(other.member)) return false;
+        if (qualifiedMemberName == null) {
+            if (other.qualifiedMemberName != null) return false;
+        } else if (!qualifiedMemberName.equals(other.qualifiedMemberName)) return false;
         return true;
     }
 
