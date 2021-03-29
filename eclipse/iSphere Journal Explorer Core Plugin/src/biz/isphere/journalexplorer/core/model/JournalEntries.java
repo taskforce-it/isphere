@@ -21,6 +21,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
+import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
@@ -282,15 +283,18 @@ public class JournalEntries implements JsonSerializable {
 
     private void addJournaledObject(JournalEntry journalEntry) {
 
-        String connectionName = journalEntry.getConnectionName();
-        String objectName = journalEntry.getObjectName();
-        String libraryName = journalEntry.getObjectLibrary();
         String objectType = journalEntry.getObjectType();
-        if (journalEntry.isFile()) {
-            String memberName = journalEntry.getMemberName();
-            journaledObjects.add(new JournaledFile(connectionName, libraryName, objectName, memberName));
-        } else {
-            journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
+        if (JournalExplorerHelper.isValidObjectType(objectType)) {
+            String connectionName = journalEntry.getConnectionName();
+            String objectName = journalEntry.getObjectName();
+            String libraryName = journalEntry.getObjectLibrary();
+            if (journalEntry.isFile()) {
+                String memberName = journalEntry.getMemberName();
+                journaledObjects.add(new JournaledFile(connectionName, libraryName, objectName, memberName));
+            } else {
+                journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
+            }
         }
+
     }
 }

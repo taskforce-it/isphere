@@ -14,16 +14,14 @@ import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 public class Journal implements ISelectedJournal {
 
-    private String connectionName;
     private QualifiedName qualifiedName;
 
     public Journal(String connectionName, String libraryName, String journalName) {
-        this.connectionName = connectionName;
-        this.qualifiedName = new QualifiedName(libraryName, journalName);
+        this.qualifiedName = new QualifiedName(connectionName, libraryName, journalName);
     }
 
     public String getConnectionName() {
-        return connectionName;
+        return qualifiedName.getConnectionName();
     }
 
     public String getName() {
@@ -46,7 +44,6 @@ public class Journal implements ISelectedJournal {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
         result = prime * result + ((qualifiedName == null) ? 0 : qualifiedName.hashCode());
         return result;
     }
@@ -57,9 +54,6 @@ public class Journal implements ISelectedJournal {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Journal other = (Journal)obj;
-        if (connectionName == null) {
-            if (other.connectionName != null) return false;
-        } else if (!connectionName.equals(other.connectionName)) return false;
         if (qualifiedName == null) {
             if (other.qualifiedName != null) return false;
         } else if (!qualifiedName.equals(other.qualifiedName)) return false;

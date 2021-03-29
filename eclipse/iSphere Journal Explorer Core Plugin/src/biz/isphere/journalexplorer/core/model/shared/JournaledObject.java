@@ -8,23 +8,16 @@
 
 package biz.isphere.journalexplorer.core.model.shared;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
+import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.QSYSObjectPathName;
 
 public class JournaledObject implements ISelectedObject {
-
-    private static final Set<String> validObjectTypes = new HashSet<String>(
-        Arrays.asList(new String[] { ISeries.FILE, ISeries.DTAARA, ISeries.DTAQ }));
 
     private QualifiedName objectName;
     private String objectType;
@@ -43,7 +36,7 @@ public class JournaledObject implements ISelectedObject {
 
     private void checksObjectType(String objectType) {
 
-        if (validObjectTypes.contains(objectType)) {
+        if (JournalExplorerHelper.isValidObjectType(objectType)) {
             return;
         }
 
@@ -71,7 +64,7 @@ public class JournaledObject implements ISelectedObject {
     }
 
     public boolean isFile() {
-        return ISeries.FILE.equals(objectType);
+        return JournalExplorerHelper.isFile(objectType);
     }
 
     public boolean isJournaled() {
@@ -85,15 +78,6 @@ public class JournaledObject implements ISelectedObject {
 
     public Journal getJournal() {
         return resolveJournal();
-    }
-
-    public String getQualifiedJournalName() {
-
-        if (getJournal() != null) {
-            return new QualifiedName(getConnectionName(), getJournal().getLibrary(), getJournal().getName()).getQualifiedName();
-        }
-
-        return null;
     }
 
     public String getQualifiedName() {

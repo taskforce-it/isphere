@@ -28,6 +28,7 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
+import biz.isphere.journalexplorer.core.internals.QualifiedName;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
@@ -72,10 +73,10 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
         String[] journaledObjects = jrneToRtv.getObjects();
         if (journaledObjects.length == 1) {
-            return jrneToRtv.getConnectionName() + ": " + journaledObjects[0];
+            return journaledObjects[0];
         }
 
-        return jrneToRtv.getQualifiedJournalName();
+        return QualifiedName.getName(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName());
     }
 
     protected String getTooltip() {
@@ -87,7 +88,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         buffer.append(Messages.bind(Messages.Title_Connection_A, jrneToRtv.getConnectionName()));
         buffer.append("\n");
 
-        buffer.append(Messages.bind(Messages.Title_Journal_A, jrneToRtv.getQualifiedJournalName()));
+        buffer.append(Messages.bind(Messages.Title_Journal_A, QualifiedName.getName(jrneToRtv.getJournalLibraryName(), jrneToRtv.getJournalName())));
         buffer.append("\n");
 
         if (journaledObjects.length == 0) {
