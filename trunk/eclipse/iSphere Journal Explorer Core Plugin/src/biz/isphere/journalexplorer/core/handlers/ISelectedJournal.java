@@ -23,13 +23,4 @@ public interface ISelectedJournal {
      */
     public String getName();
 
-    /**
-     * Returns the qualified name of the journal, e.g. library/journal
-     * <p>
-     * The qualified journal name is used for labels and tooltips.
-     * 
-     * @return qualified journal name
-     */
-    public String getQualifiedName();
-
 }

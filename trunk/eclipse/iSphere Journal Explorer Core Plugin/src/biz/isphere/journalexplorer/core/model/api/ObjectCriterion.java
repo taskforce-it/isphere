@@ -13,6 +13,7 @@ import java.util.List;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 import com.ibm.as400.access.AS400DataType;
@@ -91,7 +92,7 @@ public class ObjectCriterion {
     }
 
     public String getQualifiedName() {
-        if (ISeries.FILE.equals(objectType)) {
+        if (JournalExplorerHelper.isFile(objectType)) {
             return QualifiedName.getMemberName(library, object, member);
         } else {
             return QualifiedName.getName(library, object);

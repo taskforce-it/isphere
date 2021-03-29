@@ -13,7 +13,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.core.internal.ISeries;
+import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
@@ -79,10 +79,10 @@ public class Access extends AbstractAccess {
 
         if (selectedObjects != null) {
             for (IJournaledObject selectedObject : selectedObjects) {
-                if (ISeries.FILE.equals(selectedObject.getObjectType())) {
+                if (JournalExplorerHelper.isFile(selectedObject.getObjectType())) {
                     jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(),
                         selectedObject.getMember());
-                } else if (ISeries.DTAARA.equals(selectedObject.getObjectType()) || ISeries.DTAQ.equals(selectedObject.getObjectType())) {
+                } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
                     jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
                 } else {
                     throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType());
