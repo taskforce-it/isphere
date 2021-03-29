@@ -3,10 +3,13 @@ Changelog: iSphere 4.0.0.b010
 -----------------------------
 
  • Refactored IIBMIHostContributions.
- • Extended journal explorer API for loading journal entries from a Json file.
+ • Extended journal explorer API for loading journal entries from a
+   Json file.
  • Moved label decorations preferences page from core to rse plug-in.
  • Added OpenJournalJsonFileDialog. 
  • Moved "Display iSphere Help" action from rse to core plug-in.
+ • Enabled the iSphere Journal Explorer for objects of type *DTAARA
+   and *DTAQ. 
 
 Changelog: iSphere 4.0.0.b009
 -----------------------------
