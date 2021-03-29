@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
 package biz.isphere.journalexplorer.core.model.shared;
 
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.journalexplorer.core.handlers.contributions.extension.ISelectedJournal;
+import biz.isphere.journalexplorer.core.handlers.ISelectedJournal;
 import biz.isphere.journalexplorer.core.internals.QualifiedName;
 
 public class Journal implements ISelectedJournal {
@@ -36,6 +36,10 @@ public class Journal implements ISelectedJournal {
 
     public String getObjectType() {
         return ISeries.JRN;
+    }
+
+    public String getQualifiedName() {
+        return qualifiedName.getQualifiedName();
     }
 
     @Override

@@ -13,9 +13,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
+import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
+import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalJsonFileDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
@@ -23,13 +26,87 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class Access extends AbstractAccess {
 
     /**
+     * Opens the iSphere Journal Explorer for a given list of journals.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name that overwrites the connection
+     *        name stored in the import file.
+     * @param libraryName - name of the library that contains the journal.
+     * @param journalName - name of the journal that contains the journal
+     *        entries that are displayed.
+     * @param selectionCriteria - selection criteria used for selecting journal
+     *        entries.
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab.
+     */
+    public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
+        ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
+        openJournalExplorerView(shell, connectionName, libraryName, journalName, null, selectionCriteria, newTab);
+    }
+
+    /**
+     * Opens the iSphere Journal Explorer for a given list of journals.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name that overwrites the connection
+     *        name stored in the import file.
+     * @param libraryName - name of the library that contains the journal.
+     * @param journalName - name of the journal that contains the journal
+     *        entries that are displayed.
+     * @param selectedObjects - list of objects for which journal entries are
+     *        retrieved. Must be one of *FILE, *DTAARA or *DTAQ.
+     * @param selectionCriteria - selection criteria used for selecting journal
+     *        entries.
+     * @param newTab - specifies whether the journal explorer is opened in a new
+     *        tab.
+     */
+    public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
+        IJournaledObject[] selectedObjects, ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
+
+        JrneToRtv jrneToRtv = new JrneToRtv(new Journal(connectionName, libraryName, journalName));
+
+        if (selectionCriteria != null) {
+            jrneToRtv.setFromTime(selectionCriteria.getFromTime());
+            jrneToRtv.setToTime(selectionCriteria.getToTime());
+
+            if (selectionCriteria.getEntryTypes().length == 1) {
+                String journalEntryType = selectionCriteria.getEntryTypes()[0];
+                if ("*ALL".equals(journalEntryType) || "*RCD".equals(journalEntryType)) {
+                    jrneToRtv.setEntTyp(journalEntryType);
+                } else {
+                    jrneToRtv.setEntTyp(journalEntryType);
+                }
+            } else {
+                jrneToRtv.setEntTyp(selectionCriteria.getEntryTypes());
+            }
+
+            jrneToRtv.setNbrEntToRtv(selectionCriteria.getMaxEntries());
+        }
+
+        if (selectedObjects != null) {
+            for (IJournaledObject selectedObject : selectedObjects) {
+                if (ISeries.FILE.equals(selectedObject.getObjectType())) {
+                    jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(),
+                        selectedObject.getMember());
+                } else if (ISeries.DTAARA.equals(selectedObject.getObjectType()) || ISeries.DTAQ.equals(selectedObject.getObjectType())) {
+                    jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
+                } else {
+                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType());
+                }
+            }
+        }
+
+        JournalExplorerView.openJournal(ensureShell(shell), jrneToRtv, newTab);
+    }
+
+    /**
      * Open the iSphere Journal Explorer and presents a dialog for selecting a
      * Json file that contains the journal entries. The Json file must have been
      * saved from the iSphere Journal Explorer view.
      * 
-     * @param shell - the parent shell
+     * @param shell - the parent shell.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab
+     *        tab.
      */
     public static void loadJournalEntriesFromJsonFile(Shell shell, boolean newTab) throws Exception {
 
@@ -46,12 +123,12 @@ public class Access extends AbstractAccess {
      * Opens the iSphere Journal Explorer for a given Json file, which has been
      * saved from the iSphere Journal Explorer view.
      * 
-     * @param shell - the parent shell
-     * @param jsonFile - path of the Json file
+     * @param shell - the parent shell.
+     * @param jsonFile - path of the Json file.
      * @param whereClause - SQL where clause of JO* fields for filtering the
-     *        journal entries
+     *        journal entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab
+     *        tab.
      */
     public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause, boolean newTab) throws Exception {
 
@@ -62,14 +139,14 @@ public class Access extends AbstractAccess {
      * Opens the iSphere Journal Explorer for a given Json file, which has been
      * saved from the iSphere Journal Explorer view.
      * 
-     * @param shell - the parent shell
+     * @param shell - the parent shell.
      * @param connectionName - connection name that overwrites the connection
-     *        name stored in the import file
-     * @param jsonFile - path of the Json file
+     *        name stored in the import file.
+     * @param jsonFile - path of the Json file.
      * @param whereClause - SQL where clause of JO* fields for filtering the
-     *        journal entries using native SQL on the server
+     *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab
+     *        tab.
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
@@ -82,9 +159,9 @@ public class Access extends AbstractAccess {
      * been created with the <code>DSPJRN</code> command and and output format
      * one of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or *TYPE5.
      * 
-     * @param shell - the parent shell
+     * @param shell - the parent shell.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab
+     *        tab.
      */
     public static void loadJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
@@ -107,17 +184,17 @@ public class Access extends AbstractAccess {
      * command and and output format one of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or
      * *TYPE5.
      * 
-     * @param shell - the parent shell
-     * @param connectioName - name of the host connection
-     * @param libraryName - name of the library that contains the file
+     * @param shell - the parent shell.
+     * @param connectioName - name of the host connection.
+     * @param libraryName - name of the library that contains the file.
      * @param fileName - name of the file that stores the member that contains
-     *        the exported journal entries
+     *        the exported journal entries.
      * @param memberName - name of the member that contains the exported records
-     *        of journal entries
+     *        of journal entries.
      * @param whereClause - SQL where clause of JO* fields for filtering the
-     *        journal entries using native SQL on the server
+     *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab
+     *        tab.
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause, boolean newTab) throws Exception {

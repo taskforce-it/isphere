@@ -42,16 +42,18 @@ public class JournalDAO {
     private static final int BUFFER_MAXIMUM_SIZE = IntHelper.align16Bytes((int)(1024 * 1024 * 15.5)); // 15.5MB;
     private static final int BUFFER_INCREMENT_SIZE = IntHelper.align16Bytes(Buffer.size("64k")); //$NON-NLS-1$
 
+    private int maxNumRows;
     private JrneToRtv jrneToRtv;
     private OutputFile outputFile;
 
     public JournalDAO(JrneToRtv jrneToRtv) throws Exception {
 
+        this.maxNumRows = jrneToRtv.getNbrEntToRtv();
+
         // Clone the selection arguments , because some properties are updated
         // while retrieving the journal entries.
 
         this.jrneToRtv = jrneToRtv.clone();
-        this.jrneToRtv.setNbrEnt(this.jrneToRtv.getNbrEnt() + 1);
         this.outputFile = getOutputFile(jrneToRtv.getConnectionName());
     }
 
@@ -62,7 +64,6 @@ public class JournalDAO {
     public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
         String connectionName = outputFile.getConnectionName();
-        int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
         JournalEntries journalEntries = new JournalEntries(connectionName, maxNumRows);
 
@@ -71,8 +72,6 @@ public class JournalDAO {
         List<IBMiMessage> messages = null;
         RJNE0200 rjne0200 = null;
         int id = 0;
-
-        // MessageBroker broker = new MessageBroker(2);
 
         boolean isDynamicBufferSize = Preferences.getInstance().isRetrieveJournalEntriesDynamicBufferSize();
         int bufferSize = Math.min(Preferences.getInstance().getRetrieveJournalEntriesBufferSize(), BUFFER_MAXIMUM_SIZE);
@@ -84,7 +83,7 @@ public class JournalDAO {
 
             do {
                 monitor.setTaskName(Messages.Calling_API);
-                rjne0200 = tRetriever.execute(bufferSize);
+                rjne0200 = tRetriever.execute(bufferSize, maxNumRows + 1);
                 if (isBufferTooSmall(rjne0200) && isDynamicBufferSize) {
                     bufferSize = bufferSize + BUFFER_INCREMENT_SIZE;
                 }

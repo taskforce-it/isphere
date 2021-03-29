@@ -20,6 +20,6 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.journalexplorer.core.externalapi,
- biz.isphere.journalexplorer.core.handlers.contributions.extension,
+ biz.isphere.journalexplorer.core.handlers,
  biz.isphere.journalexplorer.core.model.shared,
  biz.isphere.journalexplorer.core.ui.views

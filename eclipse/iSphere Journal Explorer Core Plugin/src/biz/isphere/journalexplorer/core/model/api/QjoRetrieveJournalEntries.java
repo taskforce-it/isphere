@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.journalexplorer.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin4;
@@ -42,14 +39,12 @@ public class QjoRetrieveJournalEntries {
 
     private AS400 system;
     private JrneToRtv jrneToRtv;
-    private int maxNumEntries;
 
     private List<AS400Message> messages;
 
     public QjoRetrieveJournalEntries(JrneToRtv aJrneToRtv) {
         system = aJrneToRtv.getSystem();
         jrneToRtv = aJrneToRtv;
-        maxNumEntries = aJrneToRtv.getNbrEnt();
 
         messages = new ArrayList<AS400Message>();
     }
@@ -60,16 +55,11 @@ public class QjoRetrieveJournalEntries {
      * journal entries available, but there is no room available in the return
      * structure.
      * 
+     * @param bufferSize - size of the buffer for retrieving journal entries.
+     * @param maxNumEntries - maximum number of journal entries to retrieve.
      * @return retrieved journal entries
      */
-    public RJNE0200 execute() throws Exception {
-
-        int bufferSize = IntHelper.align16Bytes(Preferences.getInstance().getRetrieveJournalEntriesBufferSize());
-
-        return execute(bufferSize);
-    }
-
-    public RJNE0200 execute(int bufferSize) throws Exception {
+    public RJNE0200 execute(int bufferSize, int maxNumEntries) throws Exception {
 
         RJNE0200 rjne0200 = new RJNE0200(bufferSize);
 
@@ -81,7 +71,7 @@ public class QjoRetrieveJournalEntries {
                 jrneToRtv.setFromEnt(tFromSequenceNumber);
 
                 if (maxNumEntries != -1) {
-                    jrneToRtv.setNbrEnt(maxNumEntries - rjne0200.getNbrOfEntriesRetrieved());
+                    jrneToRtv.setNbrEntToRtv(maxNumEntries - rjne0200.getNbrOfEntriesRetrieved());
                 }
             }
 

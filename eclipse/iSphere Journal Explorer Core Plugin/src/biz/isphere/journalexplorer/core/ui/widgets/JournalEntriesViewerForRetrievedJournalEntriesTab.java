@@ -70,17 +70,17 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
     protected String getLabel() {
 
-        String[] files = jrneToRtv.getFiles();
-        if (files.length == 1) {
-            return jrneToRtv.getConnectionName() + ": " + files[0];
+        String[] journaledObjects = jrneToRtv.getObjects();
+        if (journaledObjects.length == 1) {
+            return jrneToRtv.getConnectionName() + ": " + journaledObjects[0];
         }
 
-        return jrneToRtv.getConnectionName() + ": " + jrneToRtv.getQualifiedJournalName();
+        return jrneToRtv.getQualifiedJournalName();
     }
 
     protected String getTooltip() {
 
-        String[] files = jrneToRtv.getFiles();
+        String[] journaledObjects = jrneToRtv.getObjects();
 
         StringBuilder buffer = new StringBuilder();
 
@@ -90,10 +90,10 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
         buffer.append(Messages.bind(Messages.Title_Journal_A, jrneToRtv.getQualifiedJournalName()));
         buffer.append("\n");
 
-        if (files.length == 0) {
+        if (journaledObjects.length == 0) {
             // do not append anything
-        } else if (files.length == 1) {
-            buffer.append(Messages.bind(Messages.Title_File_A, files[0]));
+        } else if (journaledObjects.length == 1) {
+            buffer.append(Messages.bind(Messages.Title_File_A, journaledObjects[0]));
         } else {
             buffer.append(Messages.bind(Messages.Title_Files_A, "*SELECTION"));
         }
@@ -176,8 +176,6 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
                 TimeTaken timeTaken = TimeTaken.start("Loading journal entries"); // //$NON-NLS-1$
 
                 monitor.beginTask(Messages.Status_Loading_journal_entries, IProgressMonitor.UNKNOWN);
-
-                jrneToRtv.setNbrEnt(Preferences.getInstance().getMaximumNumberOfRowsToFetch());
 
                 JournalDAO journalDAO = new JournalDAO(jrneToRtv);
                 final JournalEntries data = journalDAO.load(whereClause, monitor);
