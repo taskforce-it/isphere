@@ -36,7 +36,7 @@ public class OpenJournalOutputFileHandler extends AbstractShellHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.loadJournalEntriesFromOutputFile(getShell());
+            Access.loadJournalEntriesFromOutputFile(getShell(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
