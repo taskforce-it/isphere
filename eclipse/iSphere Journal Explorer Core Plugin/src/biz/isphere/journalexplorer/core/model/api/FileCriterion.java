@@ -45,18 +45,6 @@ public class FileCriterion {
         this.value = new Object[] { this.file, this.library, this.member };
     }
 
-    // public String getFile() {
-    // return file;
-    // }
-    //
-    // public String getLibrary() {
-    // return library;
-    // }
-    //
-    // public String getMember() {
-    // return member;
-    // }
-
     public List<AS400DataType> getType() {
         return Arrays.asList(type);
     }

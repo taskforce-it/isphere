@@ -29,6 +29,7 @@ import biz.isphere.journalexplorer.core.handlers.ISelectedJournal;
 import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
+import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
@@ -89,9 +90,14 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                     String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
                     String libraryName = remoteObject.getLibrary();
                     String objectName = remoteObject.getName();
+                    String objectType = remoteObject.getType();
 
                     if (ISeries.JRN.equals(remoteObject.getType())) {
                         selectedJournal = new Journal(connectionName, libraryName, objectName);
+                    } else if (ISeries.DTAARA.equals(remoteObject.getType())) {
+                        selectedObject = new JournaledObject(connectionName, libraryName, objectName, objectType);
+                    } else if (ISeries.DTAQ.equals(remoteObject.getType())) {
+                        selectedObject = new JournaledObject(connectionName, libraryName, objectName, objectType);
                     }
                 }
 

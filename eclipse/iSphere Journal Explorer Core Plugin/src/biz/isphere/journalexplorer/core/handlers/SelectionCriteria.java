@@ -8,11 +8,13 @@
 
 package biz.isphere.journalexplorer.core.handlers;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.journalexplorer.core.externalapi.ISelectionCriteria;
 import biz.isphere.journalexplorer.core.model.JournalEntryType;
 
@@ -26,6 +28,9 @@ public class SelectionCriteria implements ISelectionCriteria {
 
     public SelectionCriteria() {
         this(null, null, false, -1);
+
+        setStartDate(new Timestamp(DateTimeHelper.getStartOfDay().getTimeInMillis()));
+        setEndDate(new Timestamp(DateTimeHelper.getEndOfDay().getTimeInMillis()));
     }
 
     public SelectionCriteria(java.sql.Timestamp startDate, java.sql.Timestamp endDate, boolean recordsOnly, int maxItemsToRetrieve) {
