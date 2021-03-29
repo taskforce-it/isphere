@@ -21,6 +21,7 @@ import java.util.List;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.journalexplorer.core.externalapi.ISelectionCriteria;
 import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -85,6 +86,27 @@ public class JrneToRtv implements Serializable, Cloneable {
 
         setRcvRng(RCVRNG_CURCHAIN);
         setFormatMinimzedData(FMTMINDTA_YES);
+    }
+
+    public void setSelectionCriteria(ISelectionCriteria selectionCriteria) {
+
+        setFromTime(selectionCriteria.getFromTime());
+        setToTime(selectionCriteria.getToTime());
+
+        if (selectionCriteria.getEntryTypes().length == 0) {
+            setEntTyp(ENTTYP_ALL);
+        } else if (selectionCriteria.getEntryTypes().length == 1) {
+            String journalEntryType = selectionCriteria.getEntryTypes()[0];
+            if ("*ALL".equals(journalEntryType) || "*RCD".equals(journalEntryType)) {
+                setEntTyp(journalEntryType);
+            } else {
+                setEntTyp(journalEntryType);
+            }
+        } else {
+            setEntTyp(selectionCriteria.getEntryTypes());
+        }
+
+        setNbrEntToRtv(selectionCriteria.getMaxEntries());
     }
 
     public int getNullValueIndicatorsLength() {

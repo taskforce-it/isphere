@@ -47,32 +47,23 @@ public class ObjectCriterion {
         this.object = object;
         this.library = library;
         this.objectType = objectType;
-        this.member = member;
 
         if (OBJECT_TYPE_FILE.equals(objectType)) {
-            this.type = new AS400DataType[] { new AS400Text(10), new AS400Text(10), new AS400Text(10), new AS400Text(10) };
-            this.value = new Object[] { this.object, this.library, this.objectType, this.member };
+            this.member = member;
         } else {
-            this.type = new AS400DataType[] { new AS400Text(10), new AS400Text(10), new AS400Text(10) };
-            this.value = new Object[] { this.object, this.library, this.objectType };
+            this.member = "";
         }
-    }
 
-    // public String getFile() {
-    // return object;
-    // }
-    //
-    // public String getLibrary() {
-    // return library;
-    // }
-    //
-    // public String getObjectType() {
-    // return objectType;
-    // }
-    //
-    // public String getMember() {
-    // return member;
-    // }
+        // if (OBJECT_TYPE_FILE.equals(objectType)) {
+        this.type = new AS400DataType[] { new AS400Text(10), new AS400Text(10), new AS400Text(10), new AS400Text(10) };
+        this.value = new Object[] { this.object, this.library, this.objectType, this.member };
+        // } else {
+        // this.type = new AS400DataType[] { new AS400Text(10), new
+        // AS400Text(10), new AS400Text(10) };
+        // this.value = new Object[] { this.object, this.library,
+        // this.objectType };
+        // }
+    }
 
     public List<AS400DataType> getType() {
         return Arrays.asList(type);
@@ -92,13 +83,19 @@ public class ObjectCriterion {
 
         if (OBJECT_TYPE_FILE.equals(objectType)) {
             buffer.append(padRight(member));
+        } else {
+
         }
 
         return buffer.toString();
     }
 
     public String getQualifiedName() {
-        return QualifiedName.getMemberName(library, object, member);
+        if (ISeries.FILE.equals(objectType)) {
+            return QualifiedName.getMemberName(library, object, member);
+        } else {
+            return QualifiedName.getName(library, object);
+        }
     }
 
     private String padRight(String value) {

@@ -50,7 +50,11 @@
             id="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject">
 
 			 <visibility>
-			    <objectState name="type" value="*JRN" />
+			 	<or>
+				    <objectState name="type" value="*JRN" />
+				    <objectState name="type" value="*DTAARA" />
+				    <objectState name="type" value="*DTAQ" />
+			    </or>
 			 </visibility>
 	         
 	         <action

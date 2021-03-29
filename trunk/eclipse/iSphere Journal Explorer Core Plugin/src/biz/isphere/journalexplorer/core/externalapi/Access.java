@@ -23,6 +23,14 @@ import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalJsonFileDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
+/**
+ * This class is the public API of the iSphere Journal Explorer. <br>
+ * The following interfaces are part of it:
+ * <ul>
+ * <li>{@link IJournaledObject}</li>
+ * <li>{@link ISelectionCriteria}</li>
+ * </ul>
+ */
 public class Access extends AbstractAccess {
 
     /**
@@ -66,21 +74,7 @@ public class Access extends AbstractAccess {
         JrneToRtv jrneToRtv = new JrneToRtv(new Journal(connectionName, libraryName, journalName));
 
         if (selectionCriteria != null) {
-            jrneToRtv.setFromTime(selectionCriteria.getFromTime());
-            jrneToRtv.setToTime(selectionCriteria.getToTime());
-
-            if (selectionCriteria.getEntryTypes().length == 1) {
-                String journalEntryType = selectionCriteria.getEntryTypes()[0];
-                if ("*ALL".equals(journalEntryType) || "*RCD".equals(journalEntryType)) {
-                    jrneToRtv.setEntTyp(journalEntryType);
-                } else {
-                    jrneToRtv.setEntTyp(journalEntryType);
-                }
-            } else {
-                jrneToRtv.setEntTyp(selectionCriteria.getEntryTypes());
-            }
-
-            jrneToRtv.setNbrEntToRtv(selectionCriteria.getMaxEntries());
+            jrneToRtv.setSelectionCriteria(selectionCriteria);
         }
 
         if (selectedObjects != null) {
