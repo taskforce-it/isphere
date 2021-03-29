@@ -53,6 +53,8 @@ public interface IJournaledObject {
 
     /**
      * Returns the qualified name of the object, e.g.: LIBRARY/OBJECT (TYPE)
+     * <p>
+     * The qualified object name is used for labels and tooltips.
      * 
      * @return qualified object name
      */
