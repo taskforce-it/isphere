@@ -45,7 +45,7 @@ public class Access extends AbstractAccess {
      * @param selectionCriteria - selection criteria used for selecting journal
      *        entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -66,7 +66,7 @@ public class Access extends AbstractAccess {
      * @param selectionCriteria - selection criteria used for selecting journal
      *        entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         IJournaledObject[] selectedObjects, ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -77,20 +77,14 @@ public class Access extends AbstractAccess {
             throw new IllegalArgumentException("Parameter 'selectionCriteria' must not be [null]"); //$NON-NLS-1$
         }
 
-        jrneToRtv.setSelectionCriteria(selectionCriteria);
-
-        if (selectedObjects != null) {
-            for (IJournaledObject selectedObject : selectedObjects) {
-                if (JournalExplorerHelper.isFile(selectedObject.getObjectType())) {
-                    jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(),
-                        selectedObject.getMember());
-                } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
-                    jrneToRtv.addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
-                } else {
-                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
-                }
+        for (IJournaledObject selectedObject : selectedObjects) {
+            if (!JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
+                throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
             }
         }
+
+        jrneToRtv.setSelectionCriteria(selectionCriteria);
+        jrneToRtv.setSelectedObjects(selectedObjects);
 
         JournalExplorerView.openJournal(ensureShell(shell), jrneToRtv, newTab);
     }
@@ -102,7 +96,7 @@ public class Access extends AbstractAccess {
      * 
      * @param shell - the parent shell.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void loadJournalEntriesFromJsonFile(Shell shell, boolean newTab) throws Exception {
 
@@ -124,7 +118,7 @@ public class Access extends AbstractAccess {
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause, boolean newTab) throws Exception {
 
@@ -142,7 +136,7 @@ public class Access extends AbstractAccess {
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
@@ -157,7 +151,7 @@ public class Access extends AbstractAccess {
      * 
      * @param shell - the parent shell.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void loadJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
@@ -190,7 +184,7 @@ public class Access extends AbstractAccess {
      * @param whereClause - SQL where clause of JO* fields for filtering the
      *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab.
+     *        tab. (Not yet implemented. Defaults to true.)
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause, boolean newTab) throws Exception {

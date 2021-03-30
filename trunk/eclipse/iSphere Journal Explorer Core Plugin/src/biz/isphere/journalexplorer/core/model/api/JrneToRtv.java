@@ -21,7 +21,9 @@ import java.util.List;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.journalexplorer.core.externalapi.IJournaledObject;
 import biz.isphere.journalexplorer.core.externalapi.ISelectionCriteria;
+import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.model.JournalCode;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
@@ -86,6 +88,21 @@ public class JrneToRtv implements Serializable, Cloneable {
 
         setRcvRng(RCVRNG_CURCHAIN);
         setFormatMinimzedData(FMTMINDTA_YES);
+    }
+
+    public void setSelectedObjects(IJournaledObject[] selectedObjects) {
+
+        if (selectedObjects != null) {
+            for (IJournaledObject selectedObject : selectedObjects) {
+                if (JournalExplorerHelper.isFile(selectedObject.getObjectType())) {
+                    addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(), selectedObject.getMember());
+                } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
+                    addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
+                } else {
+                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
+                }
+            }
+        }
     }
 
     public void setSelectionCriteria(ISelectionCriteria selectionCriteria) {
