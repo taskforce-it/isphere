@@ -1,6 +1,8 @@
 
 Changelog: iSphere 4.0.0.b011
 -----------------------------
+ • Fixed NullPointerException in journal explorer API, when
+   'selectedObjects' was null.
 
 Changelog: iSphere 4.0.0.b010
 -----------------------------
