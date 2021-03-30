@@ -77,9 +77,11 @@ public class Access extends AbstractAccess {
             throw new IllegalArgumentException("Parameter 'selectionCriteria' must not be [null]"); //$NON-NLS-1$
         }
 
-        for (IJournaledObject selectedObject : selectedObjects) {
-            if (!JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
-                throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
+        if (selectedObjects != null) {
+            for (IJournaledObject selectedObject : selectedObjects) {
+                if (!JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
+                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
+                }
             }
         }
 
