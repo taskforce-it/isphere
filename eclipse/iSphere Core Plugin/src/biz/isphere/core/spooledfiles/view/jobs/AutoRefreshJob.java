@@ -57,7 +57,7 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
                 autoRefreshUIJob.setJobFinishedListener(this);
                 autoRefreshUIJob.schedule();
 
-                waitTime = interval;
+                resetInterval();
                 while ((!monitor.isCanceled() && waitTime > 0) || autoRefreshUIJob != null) {
                     Thread.sleep(SLEEP_INTERVAL);
                     if (waitTime > interval) {
@@ -97,6 +97,11 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
     public void setInterval(int seconds) {
 
         interval = seconds * MILLI_SECONDS;
+    }
+
+    public void resetInterval() {
+
+        waitTime = interval;
     }
 
     public void jobFinished(Job job) {
