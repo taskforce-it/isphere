@@ -33,11 +33,11 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
+import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ISphereHelper;
@@ -64,7 +64,7 @@ import biz.isphere.core.spooledfiles.view.events.TableItemChangedEvent.EventType
 import biz.isphere.core.spooledfiles.view.jobs.AutoRefreshJob;
 import biz.isphere.core.spooledfiles.view.listeners.AutoRefreshViewCloseListener;
 
-public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implements IPinableView, IWaitForRseConnectionPostRun,
+public abstract class AbstractWorkWithSpooledFilesView extends XViewPart implements IPinableView, IWaitForRseConnectionPostRun,
     ILoadSpooledFilesPostRun, ITableItemChangeListener, IAutoRefreshView, ISelectionChangedListener {
 
     public static final String ID = "biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView"; //$NON-NLS-1$
@@ -404,7 +404,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
      * @param shell - Shell for displaying messages
      * @param inputData - WorkWithSpooledFilesInputData
      */
-    private void setInputDataInternally(Shell shell, AbstractWorkWithSpooledFilesInputData inputData) {
+    private synchronized void setInputDataInternally(Shell shell, AbstractWorkWithSpooledFilesInputData inputData) {
 
         if (!inputData.isValid()) {
             setPinned(false);
@@ -417,6 +417,14 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
         if (loadSpooledFilesJob != null) {
             updateStatusLine();
             return;
+        }
+
+        /*
+         * Reset the auto-refresh interval so that the table is not updated two
+         * times close after each other by F5 and the auto-refresh job.
+         */
+        if (isAutoRefreshOn()) {
+            autoRefreshJob.resetInterval();
         }
 
         loadSpooledFilesJob = new LoadSpooledFilesJob(inputData.getConnectionName(), inputData.getFilterName(), inputData.getFilterStrings(), this);
@@ -633,7 +641,12 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
     private void refreshActionsEnablement() {
 
-        if (!hasInputData() || isAutoRefreshOn()) {
+        if (workWithSpooledFilesPanel.isDisposed()) {
+            return;
+        }
+
+        // if (!hasInputData() || isAutoRefreshOn()) {
+        if (!hasInputData()) {
             refreshViewAction.setEnabled(false);
         } else {
             refreshViewAction.setEnabled(true);
@@ -706,6 +719,16 @@ public abstract class AbstractWorkWithSpooledFilesView extends ViewPart implemen
 
         IActionBars bars = getViewSite().getActionBars();
         bars.getStatusLineManager().setMessage(message);
+    }
+
+    @Override
+    protected boolean isCmdRefreshEnabled() {
+        return true;
+    }
+
+    @Override
+    public void refresh() {
+        refreshData();
     }
 
     protected abstract IViewManager getViewManager();
