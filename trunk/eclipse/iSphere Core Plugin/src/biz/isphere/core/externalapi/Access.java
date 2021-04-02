@@ -28,28 +28,25 @@ import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 
+/**
+ * This class is the public API of the iSphere Core Plug-in.
+ */
 public class Access {
 
-    public static void openMessageFileEditor(Shell shell, String connection, String library, String messageFile, boolean readOnly) {
+    /**
+     * Opens the message file editor for a given message file.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param library - name of the library where the message file is stored.
+     * @param messageFile - name of the message file whose content is edited.
+     * @param readOnly - specifies whether to open the message file in
+     *        <i>display</i> oder <i>edit</i> mode.
+     */
+    public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connection, messageFile, library, ISeries.MSGF, getObjectDescription(connection, library,
-            messageFile, ISeries.MSGF));
-
-        String mode;
-        if (readOnly) {
-            mode = "*DISPLAY";
-        } else {
-            mode = "*EDIT";
-        }
-
-        MessageFileEditor.openEditor(connection, remoteObject, mode);
-
-    }
-
-    public static void openBindingDirectoryEditor(Shell shell, String connection, String library, String bindingDirectory, boolean readOnly) {
-
-        RemoteObject remoteObject = new RemoteObject(connection, bindingDirectory, library, ISeries.BNDDIR, getObjectDescription(connection, library,
-            bindingDirectory, ISeries.BNDDIR));
+        RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, ISeries.MSGF, getObjectDescription(connectionName,
+            library, messageFile, ISeries.MSGF));
 
         String mode;
         if (readOnly) {
@@ -58,13 +55,51 @@ public class Access {
             mode = "*EDIT";
         }
 
-        BindingDirectoryEditor.openEditor(connection, remoteObject, mode);
+        MessageFileEditor.openEditor(connectionName, remoteObject, mode);
 
     }
 
-    public static void openDataAreaEditor(Shell shell, String connection, String library, String dataArea, boolean readOnly) {
+    /**
+     * Opens the binding directory editor for a given binding directory.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param library - name of the library where the binding directory is
+     *        stored.
+     * @param bindingDirectory - name of the binding directory whose content is
+     *        edited.
+     * @param readOnly - specifies whether to open the binding directory in
+     *        <i>display</i> oder <i>edit</i> mode.
+     */
+    public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connection, dataArea, library, ISeries.DTAARA, getObjectDescription(connection, library,
+        RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, ISeries.BNDDIR, getObjectDescription(connectionName,
+            library, bindingDirectory, ISeries.BNDDIR));
+
+        String mode;
+        if (readOnly) {
+            mode = "*DISPLAY";
+        } else {
+            mode = "*EDIT";
+        }
+
+        BindingDirectoryEditor.openEditor(connectionName, remoteObject, mode);
+
+    }
+
+    /**
+     * Opens the data area editor for a given data area.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param library - name of the library where the data area is stored.
+     * @param dataArea - name of the data area whose content is edited.
+     * @param readOnly - specifies whether to open the data area in
+     *        <i>display</i> oder <i>edit</i> mode.
+     */
+    public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) {
+
+        RemoteObject remoteObject = new RemoteObject(connectionName, dataArea, library, ISeries.DTAARA, getObjectDescription(connectionName, library,
             dataArea, ISeries.DTAARA));
 
         String mode;
@@ -74,14 +109,24 @@ public class Access {
             mode = IEditor.EDIT;
         }
 
-        DataAreaEditor.openEditor(connection, remoteObject, mode);
+        DataAreaEditor.openEditor(connectionName, remoteObject, mode);
 
     }
 
-    public static void openUserSpaceEditor(Shell shell, String connection, String library, String userSpace, boolean readOnly) {
+    /**
+     * Opens the user space editor for a given user space.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param library - name of the library where the user space is stored.
+     * @param userSpace - name of the user space whose content is edited.
+     * @param readOnly - specifies whether to open the user space in
+     *        <i>display</i> oder <i>edit</i> mode.
+     */
+    public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connection, userSpace, library, ISeries.USRSPC, getObjectDescription(connection, library,
-            userSpace, ISeries.USRSPC));
+        RemoteObject remoteObject = new RemoteObject(connectionName, userSpace, library, ISeries.USRSPC, getObjectDescription(connectionName,
+            library, userSpace, ISeries.USRSPC));
 
         String mode;
         if (readOnly) {
@@ -90,17 +135,28 @@ public class Access {
             mode = IEditor.EDIT;
         }
 
-        UserSpaceEditor.openEditor(connection, remoteObject, mode);
+        UserSpaceEditor.openEditor(connectionName, remoteObject, mode);
 
     }
 
-    private static String getObjectDescription(String connection, String library, String object, String objectType) {
+    /**
+     * Private method for retrieving the object description (text) of a given
+     * object.
+     * 
+     * @param connectionName - connection name.
+     * @param library - name of the library where the object is stored.
+     * @param object - name of the object whose object description (text) is
+     *        retrieved.
+     * @param objectType - object type.
+     * @return object description (text)
+     */
+    private static String getObjectDescription(String connectionName, String library, String object, String objectType) {
 
-        String description = "";
+        String description = ""; //$NON-NLS-1$
 
         String _objectType = objectType.substring(1);
 
-        AS400 system = IBMiHostContributionsHandler.getSystem(connection);
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
         if (system != null) {
             ObjectDescription objectDescription = new ObjectDescription(system, library, object, _objectType);
             if (objectDescription != null) {
