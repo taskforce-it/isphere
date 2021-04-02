@@ -24,8 +24,8 @@ import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 
 /**
- * This class is the public API of the iSphere Journal Explorer. <br>
- * The following interfaces are part of it:
+ * This class and the interfaces shown below build the public API of the iSphere
+ * Journal Explorer. <br>
  * <ul>
  * <li>{@link IJournaledObject}</li>
  * <li>{@link ISelectionCriteria}</li>
