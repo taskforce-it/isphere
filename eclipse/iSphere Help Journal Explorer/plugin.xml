@@ -3,9 +3,10 @@
 <plugin>
    <extension
          point="org.eclipse.help.toc">
-      <toc
-            file="toc/toc_reference.xml">
-      </toc>
+
+      <toc file="toc/toc_api.xml"/>
+      <toc file="toc/toc_reference.xml"/>
+
    </extension>
 
 </plugin>
