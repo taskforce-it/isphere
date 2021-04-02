@@ -40,11 +40,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
+import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -62,7 +62,7 @@ import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 
-public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener, ISelectionProvider {
+public class JobLogExplorerView extends XViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener, ISelectionProvider {
 
     public static final String ID = "biz.isphere.joblogexplorer.views.JobLogExplorerView"; //$NON-NLS-1$
 
@@ -470,6 +470,36 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
         return;
     }
 
+    @Override
+    protected boolean isCmdRefreshEnabled() {
+        return true;
+    }
+
+    @Override
+    public void refresh() {
+        getSelectedViewer().refresh();
+    }
+
+    private class SqlEditorSelectionListener implements SelectionListener {
+
+        public void widgetSelected(SelectionEvent event) {
+
+            try {
+                performFilterJobLogEntries(getSelectedViewer());
+            } catch (SQLSyntaxErrorException e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
+                getSelectedViewer().setFocusOnSqlEditor();
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+        }
+
+        public void widgetDefaultSelected(SelectionEvent event) {
+            widgetDefaultSelected(event);
+        }
+    }
+
     public static void openActiveJobJobLog(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
 
         IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
@@ -517,25 +547,4 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
             jobLogExplorerView.createExplorerTab(viewInput);
         }
     }
-
-    private class SqlEditorSelectionListener implements SelectionListener {
-
-        public void widgetSelected(SelectionEvent event) {
-
-            try {
-                performFilterJobLogEntries(getSelectedViewer());
-            } catch (SQLSyntaxErrorException e) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-                getSelectedViewer().setFocusOnSqlEditor();
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Error in method JobLogexplorerView.SqlEditorSelectionListener.widgetSelected() ***", e);
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-            }
-        }
-
-        public void widgetDefaultSelected(SelectionEvent event) {
-            widgetDefaultSelected(event);
-        }
-    }
-
 }
