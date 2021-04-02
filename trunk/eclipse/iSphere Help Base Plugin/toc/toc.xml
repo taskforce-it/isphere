@@ -24,6 +24,10 @@
       <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
       <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
    </topic>
+   <topic label="API" sort="true">
+      <topic label="iSphere API" href="html/api/api.html" />
+      <anchor id="api"/>
+   </topic>
    <topic label="Utilities" >
       <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc/strpreprc.html" >
          <topic label="Usage" href="html/utilities/strpreprc/usage.html" />
