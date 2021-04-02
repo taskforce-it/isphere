@@ -18,8 +18,7 @@ import biz.isphere.core.spooledfiles.SpooledFileFactory;
 import biz.isphere.joblogexplorer.views.JobLogExplorerView;
 
 /**
- * This class is the public API of the iSphere Job Log Explorer. <br>
- * The following interfaces are part of it.
+ * This class is the public API of the iSphere Job Log Explorer.
  */
 public class Access extends AbstractAccess {
 
