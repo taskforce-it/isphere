@@ -375,7 +375,7 @@ public class SpooledFile implements IPropertySource {
         this.data = data;
     }
 
-    public Object getConnectionName() {
+    public String getConnectionName() {
         return connectionName;
     }
 
