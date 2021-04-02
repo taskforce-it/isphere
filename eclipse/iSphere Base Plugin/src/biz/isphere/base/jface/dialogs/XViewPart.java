@@ -33,15 +33,19 @@ public abstract class XViewPart extends ViewPart {
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
 
-        IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
-        cmdRefreshHandlerActivation = handlerService.activateHandler("org.eclipse.ui.file.refresh", new LocalCmdRefreshHandler(this));
+        if (isCmdRefreshEnabled()) {
+            IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
+            cmdRefreshHandlerActivation = handlerService.activateHandler("org.eclipse.ui.file.refresh", new LocalCmdRefreshHandler(this));
+        }
     }
 
     @Override
     public void dispose() {
 
-        IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
-        handlerService.deactivateHandler(cmdRefreshHandlerActivation);
+        if (cmdRefreshHandlerActivation != null) {
+            IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
+            handlerService.deactivateHandler(cmdRefreshHandlerActivation);
+        }
 
         super.dispose();
     }
