@@ -24,8 +24,7 @@
       <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
       <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
    </topic>
-   <topic label="API" sort="true">
-      <topic label="iSphere API" href="html/api/api.html" />
+   <topic label="API" href="html/api/api.html" sort="true">
       <anchor id="api"/>
    </topic>
    <topic label="Utilities" >
