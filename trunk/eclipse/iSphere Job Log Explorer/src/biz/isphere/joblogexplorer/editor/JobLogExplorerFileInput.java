@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,29 +22,23 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
 
     private static final String INPUT_TYPE = "file://"; //$NON-NLS-1$
 
-    private String pathName;
-    private String originalFileName;
-
     private File file;
 
-    public JobLogExplorerFileInput(String pathName, String originalFileName) {
+    public JobLogExplorerFileInput(String path) {
+        this.file = new File(path);
+    }
 
-        this.pathName = pathName;
-        this.originalFileName = originalFileName;
-
-        if (pathName == null) {
-            this.file = null;
-        } else {
-            this.file = new File(pathName);
-        }
+    public JobLogExplorerFileInput(File file) {
+        this.file = file;
     }
 
     public String getPath() {
-        return pathName;
-    }
 
-    public String getOriginalFileName() {
-        return originalFileName;
+        if (file == null) {
+            return ""; //$NON-NLS-1$
+        }
+
+        return file.getPath();
     }
 
     public JobLog load(IProgressMonitor monitor) throws JobLogNotLoadedException, InvalidJobLogFormatException {

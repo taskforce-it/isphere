@@ -18,5 +18,5 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
 Export-Package: biz.isphere.joblogexplorer.action.rse,
- biz.isphere.joblogexplorer.jobs.rse,
+ biz.isphere.joblogexplorer.externalapi,
  biz.isphere.joblogexplorer.perspective.rse

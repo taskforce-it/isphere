@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributionItem;
@@ -20,6 +21,7 @@ public class ContributedMenuItem {
 
     private static final String CONTRIBUTION_ITEM = "CONTRIBUTION_ITEM";
 
+    private Shell shell;
     private ISpooledFilePopupMenuContributionItem contributionItem;
     private MenuItem menuItem;
     private SelectionListener selectionListener;
@@ -28,7 +30,8 @@ public class ContributedMenuItem {
         return (ISpooledFilePopupMenuContributionItem)menuItem.getData(CONTRIBUTION_ITEM);
     }
 
-    public ContributedMenuItem(Menu parent, ISpooledFilePopupMenuContributionItem contributionItem) {
+    public ContributedMenuItem(Shell shell, Menu parent, ISpooledFilePopupMenuContributionItem contributionItem) {
+        this.shell = shell;
         this.contributionItem = contributionItem;
 
         this.menuItem = new MenuItem(parent, SWT.PUSH);
@@ -45,11 +48,11 @@ public class ContributedMenuItem {
     }
 
     public void setSelection(SpooledFile[] spooledFiles) {
-        contributionItem.setSelection(spooledFiles);
+        contributionItem.setSelection(shell, spooledFiles);
         menuItem.setEnabled(contributionItem.isEnabled());
     }
 
-    public void execute() {
+    public void execute() throws Exception {
         contributionItem.execute();
     }
 

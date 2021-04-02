@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.core.spooledfiles.view.menus;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.TableViewer;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
@@ -112,14 +114,18 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
         contributedMenuItems = new ContributedMenuItem[contributionItems.length];
 
         for (int i = 0; i < contributedMenuItems.length; i++) {
-            contributedMenuItems[i] = new ContributedMenuItem(parentMenu, contributionItems[i]);
+            contributedMenuItems[i] = new ContributedMenuItem(getShell(), parentMenu, contributionItems[i]);
             contributedMenuItems[i].setSelection(getSelectedItems());
             contributedMenuItems[i].setSelectionListener(new SelectionAdapter() {
                 @Override
-                public void widgetSelected(SelectionEvent e) {
-                    MenuItem menuItem = (MenuItem)e.getSource();
+                public void widgetSelected(SelectionEvent event) {
+                    MenuItem menuItem = (MenuItem)event.getSource();
                     ISpooledFilePopupMenuContributionItem contributionItem = ContributedMenuItem.getContributionItem(menuItem);
-                    contributionItem.execute();
+                    try {
+                        contributionItem.execute();
+                    } catch (Exception e) {
+                        MessageDialog.openError(getShell(), Messages.Error, ExceptionHelper.getLocalizedMessage(e));
+                    }
                 }
             });
         }

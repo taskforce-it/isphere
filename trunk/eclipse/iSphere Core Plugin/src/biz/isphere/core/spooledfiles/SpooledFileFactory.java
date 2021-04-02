@@ -12,11 +12,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -29,8 +32,49 @@ import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.PrintObject;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 public class SpooledFileFactory {
+
+    public SpooledFile getSpooledFile(Shell shell, String connectionName, String jobName, String userName, String jobNumber, String splfName,
+        int splfNumber) throws Exception {
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+        com.ibm.as400.access.SpooledFile toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName, userName,
+            jobNumber);
+
+        if (toolboxSpooledFile.getCreateDate() == null || toolboxSpooledFile.getCreateDate().length() == 0) {
+            return null;
+        }
+
+        SpooledFile spooledFile = new SpooledFile();
+        spooledFile.setAS400(toolboxSpooledFile.getSystem());
+        spooledFile.setFile(toolboxSpooledFile.getName());
+        spooledFile.setFileNumber(toolboxSpooledFile.getNumber());
+        spooledFile.setJobName(toolboxSpooledFile.getJobName());
+        spooledFile.setJobUser(toolboxSpooledFile.getJobUser());
+        spooledFile.setJobNumber(toolboxSpooledFile.getJobNumber());
+        spooledFile.setJobSystem(toolboxSpooledFile.getJobSysName());
+        spooledFile.setCreationTimestamp(getCreationDate(toolboxSpooledFile), getCreationTime(toolboxSpooledFile));
+        spooledFile.setStatus(toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_SPLFSTATUS));
+        spooledFile.setOutputQueue(toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_OUTPUT_QUEUE));
+
+        QSYSObjectPathName outQPathName = getOutputQueue(toolboxSpooledFile);
+        if (outQPathName != null) {
+            spooledFile.setOutputQueue(outQPathName.getObjectName());
+            spooledFile.setOutputQueueLibrary(outQPathName.getLibraryName());
+        }
+        spooledFile.setOutputPriority(toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_OUTPTY));
+        spooledFile.setUserData(toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_USERDATA));
+        spooledFile.setFormType(toolboxSpooledFile.getStringAttribute(PrintObject.ATTR_FORMTYPE));
+        spooledFile.setCopies(toolboxSpooledFile.getIntegerAttribute(PrintObject.ATTR_COPIES));
+        spooledFile.setPages(toolboxSpooledFile.getIntegerAttribute(PrintObject.ATTR_PAGES));
+        spooledFile.setCurrentPage(0);
+        spooledFile.setConnectionName(connectionName);
+
+        return spooledFile;
+    }
 
     public static SpooledFile[] getSpooledFiles(Shell shell, String connectionName, Connection jdbcConnection, SpooledFileFilter filter) {
 
@@ -245,6 +289,30 @@ public class SpooledFileFactory {
 
         return new SpooledFile[0];
 
+    }
+
+    private Date getCreationDate(com.ibm.as400.access.SpooledFile spooledFile) {
+
+        String splfDate = spooledFile.getCreateDate();
+
+        return IBMiHelper.cyymmddToDate(splfDate);
+    }
+
+    private static Time getCreationTime(com.ibm.as400.access.SpooledFile spooledFile) {
+
+        String splfTime = spooledFile.getCreateTime();
+
+        return new Time(IBMiHelper.hhmmssToTime(splfTime).getTime());
+    }
+
+    private QSYSObjectPathName getOutputQueue(com.ibm.as400.access.SpooledFile spooledFile) {
+
+        try {
+            QSYSObjectPathName outQPathName = new QSYSObjectPathName(spooledFile.getStringAttribute(PrintObject.ATTR_OUTPUT_QUEUE));
+            return outQPathName;
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
 }

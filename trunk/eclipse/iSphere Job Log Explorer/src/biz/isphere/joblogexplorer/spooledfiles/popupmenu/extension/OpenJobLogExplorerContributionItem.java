@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,15 +9,17 @@
 package biz.isphere.joblogexplorer.spooledfiles.popupmenu.extension;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributionItem;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
-import biz.isphere.joblogexplorer.jobs.rse.JobLogSpooledFileLoader;
+import biz.isphere.joblogexplorer.externalapi.Access;
 
 public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenuContributionItem {
 
+    private Shell shell;
     private SpooledFile[] spooledFiles;
 
     public String getText() {
@@ -32,7 +34,8 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
         return ISphereJobLogExplorerPlugin.getDefault().getImage(ISphereJobLogExplorerPlugin.IMAGE_JOB_LOG_EXPLORER);
     }
 
-    public void setSelection(SpooledFile[] spooledFiles) {
+    public void setSelection(Shell shell, SpooledFile[] spooledFiles) {
+        this.shell = shell;
         this.spooledFiles = spooledFiles;
     }
 
@@ -51,14 +54,14 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
         return true;
     }
 
-    public void execute() {
+    public void execute() throws Exception {
 
         if (spooledFiles == null || spooledFiles.length == 0) {
             return;
         }
 
         for (SpooledFile spooledFile : spooledFiles) {
-            new JobLogSpooledFileLoader(spooledFile).run();
+            Access.openJobLogExplorer(shell, spooledFile);
         }
     }
 }

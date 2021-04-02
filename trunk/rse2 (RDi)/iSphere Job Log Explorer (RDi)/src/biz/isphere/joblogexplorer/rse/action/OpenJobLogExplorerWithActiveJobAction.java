@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,12 @@
 
 package biz.isphere.joblogexplorer.rse.action;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
-import biz.isphere.joblogexplorer.jobs.rse.JobLogActiveJobLoader;
+import biz.isphere.joblogexplorer.externalapi.Access;
+import biz.isphere.joblogexplorer.rse.Messages;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
@@ -20,13 +24,20 @@ public class OpenJobLogExplorerWithActiveJobAction extends AbstractOpenJobLogExp
 
     @Override
     protected void execute(Object object) {
+
         if (object instanceof QSYSRemoteJob) {
-            QSYSRemoteJob remoteJob = (QSYSRemoteJob)object;
-            String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getCmdSubSystem().getHostAliasName();
-            ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
-            JobLogActiveJobLoader job = new JobLogActiveJobLoader(connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
-            job.run();
+
+            try {
+
+                QSYSRemoteJob remoteJob = (QSYSRemoteJob)object;
+                String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getCmdSubSystem().getHostAliasName();
+                ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
+
+                Access.openJobLogExplorer(shell, connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
+
+            } catch (Exception e) {
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
         }
     }
-
 }
