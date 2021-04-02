@@ -10,43 +10,26 @@ package biz.isphere.joblogexplorer.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.exceptions.JobNotFoundException;
 import biz.isphere.joblogexplorer.model.JobLog;
 import biz.isphere.joblogexplorer.model.JobLogReader;
-
-import com.ibm.as400.access.AS400;
 
 public class JobLogExplorerJobInput extends AbstractJobLogExplorerInput {
 
     private static final String INPUT_TYPE = "job://"; //$NON-NLS-1$
 
     private String connectionName;
-    private String jobName;
-    private String userName;
-    private String jobNumber;
-
-    private String qualifiedJobName;
+    private QualifiedJobName qualifiedJobName;
 
     public JobLogExplorerJobInput(String connectionName, String jobName, String userName, String jobNumber) {
 
         this.connectionName = connectionName;
-        this.jobName = jobName;
-        this.userName = userName;
-        this.jobNumber = jobNumber;
-
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(connectionName);
-        buffer.append(":"); //$NON-NLS-1$
-        buffer.append(jobNumber);
-        buffer.append("/"); //$NON-NLS-1$
-        buffer.append(userName);
-        buffer.append("/"); //$NON-NLS-1$
-        buffer.append(jobName);
-
-        qualifiedJobName = buffer.toString();
+        this.qualifiedJobName = new QualifiedJobName(jobName, userName, jobNumber);
     }
 
     public String getConnectionName() {
@@ -54,15 +37,15 @@ public class JobLogExplorerJobInput extends AbstractJobLogExplorerInput {
     }
 
     public String getJobName() {
-        return jobName;
+        return qualifiedJobName.getJob();
     }
 
     public String getUserName() {
-        return userName;
+        return qualifiedJobName.getUser();
     }
 
     public String getJobNumber() {
-        return jobNumber;
+        return qualifiedJobName.getNumber();
     }
 
     public JobLog load(IProgressMonitor monitor) throws JobNotFoundException, JobLogNotLoadedException {
@@ -80,20 +63,15 @@ public class JobLogExplorerJobInput extends AbstractJobLogExplorerInput {
      * @see org.eclipse.ui.IEditorInput#getName()
      */
     public String getName() {
-
-        if (qualifiedJobName == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return qualifiedJobName;
+        return qualifiedJobName.getQualifiedJobName();
     }
 
     public String getToolTipText() {
-        return qualifiedJobName;
+        return qualifiedJobName.getQualifiedJobName();
     }
 
     @Override
     public String getContentId() {
-        return INPUT_TYPE + qualifiedJobName; // $NON-NLS-1$
+        return INPUT_TYPE + qualifiedJobName.getQualifiedJobName();
     }
 }
