@@ -159,6 +159,7 @@ public class Messages extends NLS {
     public static String Error_Job_not_found;
     public static String Error_No_connections_available;
     public static String Error_Connection_A_not_found_or_not_available;
+    public static String Error_Spooled_file_B_of_job_F_E_D_of_connection_A_not_found;
 
     static {
         // initialize resource bundle

@@ -2,6 +2,7 @@
 Changelog: iSphere 4.0.0.b012
 -----------------------------
  • Enabled F5 to refresh the iSphere "Spooled Files" view.
+ • Added journal explorer API.
 
 Changelog: iSphere 4.0.0.b011
 -----------------------------

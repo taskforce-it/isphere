@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 
 package biz.isphere.joblogexplorer.views;
+
+import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,6 +38,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 
@@ -44,6 +48,7 @@ import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.action.EditSqlAction;
@@ -52,6 +57,9 @@ import biz.isphere.joblogexplorer.action.OpenJobLogAction;
 import biz.isphere.joblogexplorer.action.RefreshAction;
 import biz.isphere.joblogexplorer.editor.AbstractJobLogExplorerInput;
 import biz.isphere.joblogexplorer.editor.IJobLogExplorerStatusChangedListener;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerStatusChangedEvent;
 
 public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatusChangedListener, SelectionListener, ISelectionProvider {
@@ -460,6 +468,54 @@ public class JobLogExplorerView extends ViewPart implements IJobLogExplorerStatu
 
     public void setSelection(ISelection selection) {
         return;
+    }
+
+    public static void openActiveJobJobLog(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
+
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobLogExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+        }
+
+        if (view instanceof JobLogExplorerView) {
+            JobLogExplorerView jobLogExplorerView = (JobLogExplorerView)view;
+            JobLogExplorerJobInput viewInput = new JobLogExplorerJobInput(connectionName, jobName, userName, jobNumber);
+            jobLogExplorerView.createExplorerTab(viewInput);
+        }
+    }
+
+    public static void openSpooledFileJobLog(Shell shell, SpooledFile spooledFile) throws Exception {
+
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobLogExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+        }
+
+        if (view instanceof JobLogExplorerView) {
+            JobLogExplorerView jobLogExplorerView = (JobLogExplorerView)view;
+            JobLogExplorerSpooledFileInput viewInput = new JobLogExplorerSpooledFileInput(spooledFile);
+            jobLogExplorerView.createExplorerTab(viewInput);
+        }
+    }
+
+    public static void openStreamFileJobLog(Shell shell, File jobLog) throws Exception {
+
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobLogExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+        }
+
+        if (view instanceof JobLogExplorerView) {
+            JobLogExplorerView jobLogExplorerView = (JobLogExplorerView)view;
+            JobLogExplorerFileInput viewInput = new JobLogExplorerFileInput(jobLog);
+            jobLogExplorerView.createExplorerTab(viewInput);
+        }
     }
 
     private class SqlEditorSelectionListener implements SelectionListener {

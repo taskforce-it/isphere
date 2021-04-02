@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,15 @@
 
 package biz.isphere.joblogexplorer.rse.action;
 
+import java.io.File;
+
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
-import biz.isphere.joblogexplorer.jobs.rse.JobLogStreamFileLoader;
+import biz.isphere.joblogexplorer.externalapi.Access;
+import biz.isphere.joblogexplorer.rse.Messages;
 
 public class OpenJobLogExplorerWithStreamFileAction extends AbstractOpenJobLogExplorerAction {
 
@@ -22,8 +27,15 @@ public class OpenJobLogExplorerWithStreamFileAction extends AbstractOpenJobLogEx
 
         if (object instanceof IRemoteFile) {
             IRemoteFile remoteFile = (IRemoteFile)object;
-            JobLogStreamFileLoader job = new JobLogStreamFileLoader(remoteFile.getName(), remoteFile.getAbsolutePath());
-            job.run();
+
+            try {
+
+                Access.openJobLogExplorer(shell, new File(remoteFile.getAbsolutePath()));
+
+            } catch (Exception e) {
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+
         }
     }
 
