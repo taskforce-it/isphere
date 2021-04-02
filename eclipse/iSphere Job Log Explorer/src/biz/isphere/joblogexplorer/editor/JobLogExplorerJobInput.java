@@ -67,11 +67,11 @@ public class JobLogExplorerJobInput extends AbstractJobLogExplorerInput {
     }
 
     public String getToolTipText() {
-        return qualifiedJobName.getQualifiedJobName();
+        return connectionName + ":" + qualifiedJobName.getQualifiedJobName(); //$NON-NLS-1$
     }
 
     @Override
     public String getContentId() {
-        return INPUT_TYPE + qualifiedJobName.getQualifiedJobName();
+        return INPUT_TYPE + connectionName + ":" + qualifiedJobName.getQualifiedJobName(); //$NON-NLS-1$
     }
 }
