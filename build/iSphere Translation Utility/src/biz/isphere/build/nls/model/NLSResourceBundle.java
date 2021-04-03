@@ -105,6 +105,9 @@ public class NLSResourceBundle {
         for (String languageKey : getLanguageKeys(languageIds)) {
             NLSPropertiesFile nlsFile = getNLSFile(languageKey);
             String value = nlsFile.getText(key);
+            if (value == null) {
+                value = "";
+            }
             values.add(new NLSTextEntry(value, nlsFile.getLanguage()));
         }
         return values.toArray(new NLSTextEntry[values.size()]);
