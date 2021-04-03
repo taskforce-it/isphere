@@ -89,6 +89,10 @@ public class NLSPropertiesFile {
         return FileUtil.fixRelativePath(getRelativeFile().getParent()) + getFileNameWithoutExtension().split(LANGUAGE_ID_DELIMITER)[0];
     }
 
+    public boolean isDefaultLanguage() throws JobCanceledException {
+        return getLanguage().isDefaultLanguage();
+    }
+
     public NLSLanguage getLanguage() throws JobCanceledException {
         if (fLanguage == null) {
             String languageID;
@@ -108,10 +112,10 @@ public class NLSPropertiesFile {
             if (getProperties().containsKey(key)) {
                 return getProperties().getString(key);
             }
-            return "";
+            return null;
         } catch (JobCanceledException e) {
             e.printStackTrace();
-            return "";
+            return null;
         }
     }
 
