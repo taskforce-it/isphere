@@ -74,6 +74,10 @@ public class NLSPropertiesFile {
         fLanguage = null;
     }
 
+    public boolean exists() {
+        return fFile.exists();
+    }
+
     public String getKey() throws JobCanceledException {
         if (Configuration.getInstance().isDefaultLanguage(getLanguage().getLanguageID())) {
             return PROTECTED_LANGUAGE_FLAG + getLanguage().getLanguageID();
