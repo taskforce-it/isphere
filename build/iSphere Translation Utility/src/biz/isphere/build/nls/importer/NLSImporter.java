@@ -67,7 +67,7 @@ public class NLSImporter {
             main.run(languageIds);
 
         } catch (JobCanceledException e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
@@ -112,7 +112,16 @@ public class NLSImporter {
         String[] languageKeys = getLanguagesKeys(sheet);
         for (String languageKey : languageKeys) {
             NLSPropertiesFile nlsFile = new NLSPropertiesFile(project.getPath(), relativePath, languageKey);
-            bundle.add(nlsFile);
+            if (nlsFile.exists()) {
+                LogUtil.print(" File added: " + nlsFile.toString());
+                bundle.add(nlsFile);
+            } else {
+                LogUtil.print(" File ignored: not found: " + nlsFile.toString());
+            }
+        }
+
+        if (bundle.isEmpty()) {
+            return;
         }
 
         for (int i = firstDataRow.getRowNum(); i <= lastDataRow.getRowNum(); i++) {
@@ -122,9 +131,16 @@ public class NLSImporter {
             for (int x = 0; x < languageKeys.length; x++) {
                 NLSPropertiesFile nlsFile = bundle.getNLSFile(languageKeys[x]);
                 if (bundle.isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
-                    if (nlsFile.getText(key) != null && !nlsFile.getText(key).equals(values[x])) {
-                        nlsFile.setProperty(key, values[x]);
-                        System.out.println("   " + key + ": " + values[x]);
+                    if (nlsFile.getText(key) == null) {
+                        LogUtil.print("Property ignored: because not found: " + key);
+                    } else {
+                        if (nlsFile.getText(key).equals(values[x])) {
+                            // LogUtil.print("Property ignored: same value: " +
+                            // key);
+                        } else {
+                            LogUtil.print("   Property changed: " + key + " - " + nlsFile.getText(key) + " ==> " + values[x]);
+                            nlsFile.setProperty(key, values[x]);
+                        }
                     }
                 }
             }

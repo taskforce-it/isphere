@@ -36,6 +36,15 @@ public class NLSResourceBundle {
     }
 
     /**
+     * Returns <cod>true</code> if the bundle is empty, else <cod>false</code>.
+     * 
+     * @return <cod>true</code>, when empty
+     */
+    public boolean isEmpty() {
+        return fNLSFiles.isEmpty();
+    }
+
+    /**
      * Returns the relative path of the resource bundle starting at the
      * project's root path.
      * 
