@@ -152,7 +152,7 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         return null;
     }
 
-    public String getId() {
+    public String getContentId() {
         if (isFileSession) {
             return "local_file:/" + fileName;
         } else {

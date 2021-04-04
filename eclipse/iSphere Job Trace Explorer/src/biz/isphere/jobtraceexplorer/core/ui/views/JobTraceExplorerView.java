@@ -296,7 +296,7 @@ public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun,
         for (CTabItem tabItem : tabItems) {
             AbstractJobTraceEntriesViewerTab jobTraceEntriesViewerTab = (AbstractJobTraceEntriesViewerTab)tabItem;
             JobTraceSession otherSession = jobTraceEntriesViewerTab.getJobTraceSession();
-            if (input.getId().equals(otherSession.getId())) {
+            if (input.getContentId().equals(otherSession.getContentId())) {
                 return jobTraceEntriesViewerTab;
             }
         }
