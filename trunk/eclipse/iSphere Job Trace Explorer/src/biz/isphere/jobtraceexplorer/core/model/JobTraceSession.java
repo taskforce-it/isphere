@@ -152,50 +152,16 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         return null;
     }
 
+    public String getId() {
+        if (isFileSession) {
+            return "local_file:/" + fileName;
+        } else {
+            return "remote_session:/" + connectionName + ":" + libraryName + ":" + sessionID;
+        }
+    }
+
     @Override
     public String toString() {
         return getQualifiedName();
-    }
-
-    /**
-     * Produces a hash code with attributes 'whereClause' and
-     * 'isIBMDataExcluded'.
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 67;
-        int result = 1;
-        result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
-        result = prime * result + ((libraryName == null) ? 0 : libraryName.hashCode());
-        result = prime * result + ((sessionID == null) ? 0 : sessionID.hashCode());
-        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
-        return result;
-    }
-
-    /**
-     * Compares the object without attribute 'whereClause' and
-     * 'isIBMDataExcluded'.
-     * 
-     * @param obj - the other object
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        JobTraceSession other = (JobTraceSession)obj;
-        if (connectionName == null) {
-            if (other.connectionName != null) return false;
-        } else if (!connectionName.equals(other.connectionName)) return false;
-        if (libraryName == null) {
-            if (other.libraryName != null) return false;
-        } else if (!libraryName.equals(other.libraryName)) return false;
-        if (sessionID == null) {
-            if (other.sessionID != null) return false;
-        } else if (!sessionID.equals(other.sessionID)) return false;
-        if (fileName == null) {
-            if (other.fileName != null) return false;
-        } else if (!fileName.equals(other.fileName)) return false;
-        return true;
     }
 }

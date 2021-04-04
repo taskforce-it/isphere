@@ -58,7 +58,7 @@ public class Access extends AbstractAccess {
             throw new SpooledFileNotFoundException(connectionName, jobName, userName, jobNumber, splfName, splfNumber);
         }
 
-        openJobLogExplorer(shell, spooledFile);
+        JobLogExplorerView.openSpooledFileJobLog(ensureShell(shell), spooledFile);
     }
 
     /**

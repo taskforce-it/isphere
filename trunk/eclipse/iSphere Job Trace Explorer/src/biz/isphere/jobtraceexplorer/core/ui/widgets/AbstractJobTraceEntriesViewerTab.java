@@ -319,17 +319,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
     public abstract void reloadJobTraceSession(IDataLoadPostRun postRun) throws Exception;
 
-    public boolean isSameSession(JobTraceSession otherJobTraceSession) {
-
-        if (this.jobTraceSession == null && otherJobTraceSession == null) {
-            return true;
-        } else if (this.jobTraceSession != null) {
-            return this.jobTraceSession.equals(otherJobTraceSession);
-        } else {
-            return false;
-        }
-    }
-
     public void setJobTraceSession(JobTraceSession jobTraceSession) {
         this.jobTraceSession = jobTraceSession;
         setInputData(jobTraceSession.getJobTraceEntries());

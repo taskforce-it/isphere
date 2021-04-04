@@ -8,6 +8,7 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.views;
 
+import java.io.File;
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -31,19 +32,22 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
+import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.exceptions.NoJobTraceEntriesLoadedException;
+import biz.isphere.jobtraceexplorer.core.externalapi.Access;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
@@ -56,7 +60,7 @@ import biz.isphere.jobtraceexplorer.core.ui.widgets.AbstractJobTraceEntriesViewe
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesJsonViewerTab;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
 
-public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, ISelectionChangedListener, SelectionListener, ISelectionProvider {
+public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun, ISelectionChangedListener, SelectionListener, ISelectionProvider {
 
     public static final String ID = "biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"; //$NON-NLS-1$
 
@@ -164,7 +168,11 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
             public void postRunAction() {
                 JobTraceSession jobTraceSession = openJobTraceSession.getJobTraceSession();
                 if (jobTraceSession != null) {
-                    createJobTraceTab(jobTraceSession);
+                    try {
+                        Access.openJobTraceExplorer(getShell(), jobTraceSession);
+                    } catch (Exception e) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                    }
                 }
             }
         };
@@ -181,11 +189,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         reloadEntriesAction = new GenericRefreshAction() {
             @Override
             protected void postRunAction() {
-                try {
-                    performReloadJobTraceEntries(getSelectedViewer());
-                } catch (Exception e) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-                }
+                refresh();
             }
         };
 
@@ -211,7 +215,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         viewMenu.add(saveJournalEntriesAction);
     }
 
-    public void createJobTraceTab(JobTraceSession jobTraceSession) {
+    private void createJobTraceTab(JobTraceSession jobTraceSession) {
 
         if (jobTraceSession == null) {
             throw new IllegalArgumentException("Parameter 'jobTraceSession' must not be [null]."); //$NON-NLS-1$
@@ -229,6 +233,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
                 performLoadJobTraceEntries(jobTraceEntriesViewer);
             } else {
                 jobTraceEntriesViewer.getJobTraceSession().setExcludeIBMData(jobTraceSession.isIBMDataExcluded());
+                tabFolder.setSelection(jobTraceEntriesViewer);
                 performReloadJobTraceEntries(jobTraceEntriesViewer);
             }
 
@@ -237,9 +242,9 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         }
     }
 
-    public void createJobTraceTab(String fileName) {
+    private void createJobTraceTab(File jobTraceFile) {
 
-        if (StringHelper.isNullOrEmpty(fileName)) {
+        if (jobTraceFile == null) {
             throw new IllegalArgumentException("Parameter 'fileName' must not be [null]."); //$NON-NLS-1$
         }
 
@@ -247,7 +252,7 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
         try {
 
-            JobTraceSession jobTraceSession = new JobTraceSession(fileName);
+            JobTraceSession jobTraceSession = new JobTraceSession(jobTraceFile.getAbsolutePath());
 
             jobTraceEntriesViewer = findExplorerTab(jobTraceSession);
             if (jobTraceEntriesViewer == null) {
@@ -290,7 +295,8 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         CTabItem[] tabItems = tabFolder.getItems();
         for (CTabItem tabItem : tabItems) {
             AbstractJobTraceEntriesViewerTab jobTraceEntriesViewerTab = (AbstractJobTraceEntriesViewerTab)tabItem;
-            if (jobTraceEntriesViewerTab.isSameSession(input)) {
+            JobTraceSession otherSession = jobTraceEntriesViewerTab.getJobTraceSession();
+            if (input.getId().equals(otherSession.getId())) {
                 return jobTraceEntriesViewerTab;
             }
         }
@@ -575,6 +581,21 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
         return;
     }
 
+    @Override
+    protected boolean isCmdRefreshEnabled() {
+        return true;
+    }
+
+    @Override
+    public void refresh() {
+
+        try {
+            performReloadJobTraceEntries(getSelectedViewer());
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
+
     private class SqlEditorSelectionListener implements SelectionListener {
 
         public void widgetSelected(SelectionEvent event) {
@@ -591,6 +612,36 @@ public class JobTraceExplorerView extends ViewPart implements IDataLoadPostRun, 
 
         public void widgetDefaultSelected(SelectionEvent event) {
             widgetDefaultSelected(event);
+        }
+    }
+
+    public static void openRemoteSessionJobTrace(Shell shell, JobTraceSession jobTraceSession) throws Exception {
+
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobTraceExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobTraceExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+        }
+
+        if (view instanceof JobTraceExplorerView) {
+            JobTraceExplorerView jobTraceExplorerView = (JobTraceExplorerView)view;
+            jobTraceExplorerView.createJobTraceTab(jobTraceSession);
+        }
+    }
+
+    public static void openStreamFileJobTrace(Shell shell, File jobTrace) throws Exception {
+
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobTraceExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobTraceExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+        }
+
+        if (view instanceof JobTraceExplorerView) {
+            JobTraceExplorerView jobTraceExplorerView = (JobTraceExplorerView)view;
+            jobTraceExplorerView.createJobTraceTab(jobTrace);
         }
     }
 }
