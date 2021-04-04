@@ -8,16 +8,21 @@
 
 package biz.isphere.jobtraceexplorer.core.ui.actions;
 
+import java.io.File;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
+import biz.isphere.jobtraceexplorer.core.externalapi.Access;
 import biz.isphere.jobtraceexplorer.core.preferences.Preferences;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
@@ -60,6 +65,12 @@ public class LoadJobTraceEntriesAction extends Action {
         Preferences.getInstance().setExportPath(dialog.getFilterPath());
         Preferences.getInstance().setExportFileJson(FileHelper.getFileName(importPath));
 
-        view.createJobTraceTab(importPath);
+        try {
+
+            Access.openJobTraceExplorer(shell, new File(importPath));
+
+        } catch (Exception e) {
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
     }
 }
