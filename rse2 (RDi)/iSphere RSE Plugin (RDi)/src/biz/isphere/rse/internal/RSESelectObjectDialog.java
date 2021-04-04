@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,7 +113,12 @@ public class RSESelectObjectDialog extends XDialog {
             }
         });
 
-        objectPrompt = new QSYSMsgFilePrompt(dialogArea, SWT.NONE, false, true);
+        if (ISeries.MSGF.equals(objectType)) {
+            objectPrompt = new QSYSMsgFilePrompt(dialogArea, SWT.NONE, false, true);
+        } else {
+            objectPrompt = new QSYSObjectPrompt(dialogArea, SWT.NONE, false, true);
+        }
+
         objectPrompt.setSystemConnection(connectionCombo.getHost());
         objectPrompt.setLibraryName(""); //$NON-NLS-1$
         objectPrompt.setObjectName(""); //$NON-NLS-1$
@@ -204,20 +209,20 @@ public class RSESelectObjectDialog extends XDialog {
         }
 
         if (!StringHelper.isNullOrEmpty(libraryName)) {
-            objectPrompt.getLibraryCombo().setText(libraryName);
+            objectPrompt.setLibraryName(libraryName);
         } else {
             String libraryName = getDialogBoundsSettings().get(LIBRARY_NAME);
             if (libraryName != null) {
-                objectPrompt.getLibraryCombo().setText(libraryName);
+                objectPrompt.setLibraryName(libraryName);
             }
         }
 
         if (!StringHelper.isNullOrEmpty(objectName)) {
-            objectPrompt.getObjectCombo().setText(objectName);
+            objectPrompt.setObjectName(objectName);
         } else {
             String objectName = getDialogBoundsSettings().get(FILE_NAME);
             if (objectName != null) {
-                objectPrompt.getObjectCombo().setText(objectName);
+                objectPrompt.setObjectName(objectName);
             }
         }
     }
