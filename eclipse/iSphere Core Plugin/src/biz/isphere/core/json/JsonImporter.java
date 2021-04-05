@@ -10,6 +10,7 @@ package biz.isphere.core.json;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -31,11 +32,11 @@ public class JsonImporter<M extends JsonSerializable> {
         this.type = type;
     }
 
-    public M execute(Shell shell, String jsonFile) {
+    public M execute(Shell shell, String jsonFile) throws IOException {
         return execute(shell, new File(jsonFile));
     }
 
-    public M execute(Shell shell, File jsonFile) {
+    public M execute(Shell shell, File jsonFile) throws IOException {
 
         if (jsonFile == null && shell != null) {
             IFileDialog dialog = WidgetFactory.getFileDialog(shell, SWT.SAVE);
@@ -57,7 +58,7 @@ public class JsonImporter<M extends JsonSerializable> {
         return performImportFromJson(jsonFile);
     }
 
-    private M performImportFromJson(File jsonFile) {
+    private M performImportFromJson(File jsonFile) throws IOException {
 
         JsonSerializer<java.sql.Date> sqlDateSerializer = new SQLDateSerializer();
 
@@ -70,16 +71,12 @@ public class JsonImporter<M extends JsonSerializable> {
         gsonBuilder.registerTypeAdapter(java.sql.Time.class, sqlTimeSerializer);
         gsonBuilder.registerTypeAdapter(java.sql.Timestamp.class, sqlTimestampSerializer);
 
-        try {
-            Gson gson = gsonBuilder.create();
-            FileReader reader = new FileReader(jsonFile);
-            M journalEntries = gson.fromJson(reader, getClazz());
-            reader.close();
-            return journalEntries;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        Gson gson = gsonBuilder.create();
+        FileReader reader = new FileReader(jsonFile);
+        M journalEntries = gson.fromJson(reader, getClazz());
+        reader.close();
+
+        return journalEntries;
     }
 
     public Class<M> getClazz() {
