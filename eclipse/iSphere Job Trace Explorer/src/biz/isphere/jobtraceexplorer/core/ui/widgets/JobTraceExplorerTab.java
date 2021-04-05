@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
+import biz.isphere.jobtraceexplorer.core.model.AbstractJobTraceExplorerInput;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.ui.contentproviders.JobTraceViewerContentProvider;
@@ -65,22 +65,24 @@ import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.ISearchComparer;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerSQL;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerText;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.jobs.OpenJobTraceSessionJsonJob;
 
 /**
- * This widget is a viewer for the job trace entries of an output file of the
- * DSPJRN command. It is created by a sub-class of the
- * {@link JobTraceViewerFactory}. It is used by the "Job Trace Explorer" view to
- * create the tabs for the opened output files of the DSPJRN command.
+ * This widget is a viewer for the job trace entries loaded from a job trace
+ * session. It is used by the "Job Trace Explorer" view when creating a tab for
+ * retrieved job trace entries.
  * 
  * @see JobTraceEntry
  * @see JobTraceEntryViewerView
  */
-public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener,
-    ISelectionProvider, IPropertyChangeListener, SelectionListener {
+public class JobTraceExplorerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener, ISelectionProvider,
+    IPropertyChangeListener, SelectionListener {
+
+    private static final String EMPTY = ""; //$NON-NLS-1$
 
     private DialogSettingsManager dialogSettingsManager = null;
 
-    private JobTraceSession jobTraceSession;
+    private AbstractJobTraceExplorerInput input;
     private Composite container;
     private JobTraceExplorerSearchPanel filterPanel;
     private Set<ISelectionChangedListener> selectionChangedListeners;
@@ -88,17 +90,16 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     private SelectionListener loadJobTraceEntriesSelectionListener;
 
     private TableViewer tableViewer;
-    private JobTraceEntries data;
+    private JobTraceSession data;
     private SqlEditor sqlEditor;
 
     private UpdateTableViewerJob updateTableViewerJob;
 
-    public AbstractJobTraceEntriesViewerTab(CTabFolder parent, JobTraceSession jobTraceSession, SelectionListener loadJobTraceEntriesSelectionListener) {
+    public JobTraceExplorerTab(CTabFolder parent, SelectionListener loadJobTraceEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
 
-        this.jobTraceSession = jobTraceSession;
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
         this.loadJobTraceEntriesSelectionListener = loadJobTraceEntriesSelectionListener;
@@ -142,16 +143,8 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
      * View
      */
 
-    private String getLabel() {
-        return jobTraceSession.toString();
-    }
-
-    private String getTooltip() {
-        return jobTraceSession.toString();
-    }
-
-    public JobTraceSession getJobTraceSession() {
-        return jobTraceSession;
+    public AbstractJobTraceExplorerInput getInput() {
+        return input;
     }
 
     protected void setEnabled(boolean enabled) {
@@ -236,11 +229,11 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     }
 
     private void setFilterWhereClause(String filterWhereClause) {
-        jobTraceSession.getJobTraceEntries().setFilterWhereClause(filterWhereClause);
+        data.getJobTraceEntries().setFilterWhereClause(filterWhereClause);
     }
 
     public String getFilterWhereClause() {
-        return jobTraceSession.getJobTraceEntries().getFilterWhereClause();
+        return data.getJobTraceEntries().getFilterWhereClause();
     }
 
     public boolean isFiltered() {
@@ -248,13 +241,10 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
     }
 
     private boolean hasWhereClause() {
-        return jobTraceSession.getJobTraceEntries().hasFilterWhereClause();
+        return data.getJobTraceEntries().hasFilterWhereClause();
     }
 
     private void initializeComponents(CTabFolder parent) {
-
-        setText(getLabel());
-        setToolTipText(getTooltip());
 
         this.container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout());
@@ -283,7 +273,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
         if (dialogSettingsManager == null) {
             dialogSettingsManager = new DialogSettingsManager(ISphereJobTraceExplorerCorePlugin.getDefault().getDialogSettings(),
-                AbstractJobTraceEntriesViewerTab.class);
+                JobTraceExplorerTab.class);
         }
         return dialogSettingsManager;
     }
@@ -315,16 +305,54 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
      * Job Trace Session (input data)
      */
 
-    public abstract void openJobTraceSession(IDataLoadPostRun postRun) throws Exception;
+    public void reloadJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
-    public abstract void reloadJobTraceSession(IDataLoadPostRun postRun) throws Exception;
+        JobTraceEntry selectedItem = getSelectedItem();
 
-    public void setJobTraceSession(JobTraceSession jobTraceSession) {
-        this.jobTraceSession = jobTraceSession;
-        setInputData(jobTraceSession.getJobTraceEntries());
+        setJobTraceSession(null);
+
+        setEnabled(false);
+        setSqlEditorEnabled(false);
+
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getInput(), selectedItem);
+        loadJobTraceDataJob.schedule();
     }
 
-    protected void setInputData(JobTraceEntries data) {
+    public void setInput(AbstractJobTraceExplorerInput input, final IDataLoadPostRun postRun) {
+
+        this.input = input;
+
+        JobTraceEntry selectedItem = getSelectedItem();
+
+        prepareLoadingJobTraceData(input);
+
+        setJobTraceSession(null);
+
+        setEnabled(false);
+        setSqlEditorEnabled(false);
+
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, input, selectedItem);
+        loadJobTraceDataJob.schedule();
+    }
+
+    private void prepareLoadingJobTraceData(AbstractJobTraceExplorerInput editorInput) {
+
+        if (editorInput == null) {
+            setText(EMPTY);
+            setToolTipText(EMPTY);
+        } else {
+            setText(editorInput.getName());
+            setToolTipText(editorInput.getToolTipText());
+        }
+    }
+
+    public JobTraceSession getJobTraceSession() {
+
+        JobTraceViewerContentProvider contentProvider = getContentProvider();
+        return contentProvider.getInput();
+    }
+
+    public void setJobTraceSession(JobTraceSession data) {
 
         this.data = data;
 
@@ -332,8 +360,8 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         tableViewer.setInput(null);
         tableViewer.setUseHashlookup(true);
 
-        if (data != null) {
-            tableViewer.setItemCount(data.size());
+        if (data != null && data.getJobTraceEntries() != null) {
+            tableViewer.setItemCount(data.getJobTraceEntries().size());
             tableViewer.setInput(data);
             setEnabled(true);
         } else {
@@ -425,12 +453,6 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
         }
 
         return selectedItems.toArray(new JobTraceEntry[selectedItems.size()]);
-    }
-
-    public JobTraceEntries getInput() {
-
-        JobTraceViewerContentProvider contentProvider = getContentProvider();
-        return contentProvider.getInput();
     }
 
     private JobTraceViewerContentProvider getContentProvider() {
@@ -663,19 +685,19 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
 
         public IStatus run(IProgressMonitor monitor) {
 
-            final JobTraceEntries data = getInput();
+            final JobTraceSession data = getJobTraceSession();
 
             try {
 
-                data.applyFilter();
+                data.getJobTraceEntries().applyFilter();
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
-                            setInputData(data);
+                            setJobTraceSession(data);
                             setEnabled(true);
                             setFocusOnSqlEditor();
-                            postRun.finishDataLoading(AbstractJobTraceEntriesViewerTab.this, true);
+                            postRun.finishDataLoading(JobTraceExplorerTab.this, true);
                         }
                     });
                 }
@@ -688,7 +710,7 @@ public abstract class AbstractJobTraceEntriesViewerTab extends CTabItem implemen
                         public void run() {
                             setEnabled(true);
                             setFocusOnSqlEditor();
-                            postRun.handleDataLoadException(AbstractJobTraceEntriesViewerTab.this, e1);
+                            postRun.handleDataLoadException(JobTraceExplorerTab.this, e1);
                         }
                     });
                 }

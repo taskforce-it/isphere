@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@ import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
-import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 
 public class JobTraceViewerContentProvider implements ILazyContentProvider {
 
-    private JobTraceEntries inputData;
+    private JobTraceSession inputData;
     private TableViewer viewer;
 
     public JobTraceViewerContentProvider(TableViewer viewer) {
@@ -30,7 +30,7 @@ public class JobTraceViewerContentProvider implements ILazyContentProvider {
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         if (newInput != null) {
-            inputData = (JobTraceEntries)newInput;
+            inputData = (JobTraceSession)newInput;
         } else {
             inputData = null;
         }
@@ -38,21 +38,21 @@ public class JobTraceViewerContentProvider implements ILazyContentProvider {
 
     public void updateElement(int index) {
 
-        if (getInput() == null || getInput().size() < index + 1) {
+        if (getInput() == null || getInput().getJobTraceEntries().size() < index + 1) {
             return;
         }
 
-        viewer.replace(inputData.getItem(index), index);
+        viewer.replace(inputData.getJobTraceEntries().getItem(index), index);
     }
 
-    public JobTraceEntries getInput() {
+    public JobTraceSession getInput() {
         return inputData;
     }
 
     public JobTraceEntry getElementAt(int index) {
 
-        if (index >= 0 && index < inputData.size()) {
-            return inputData.getItem(index);
+        if (index >= 0 && index < inputData.getJobTraceEntries().size()) {
+            return inputData.getJobTraceEntries().getItem(index);
         }
 
         return null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,6 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
     @Expose(serialize = true, deserialize = true)
     private String sessionID;
 
-    @Expose(serialize = true, deserialize = true)
-    private String whereClause;
     @Expose(serialize = true, deserialize = true)
     private Boolean isIBMDataExcluded;
 
@@ -79,7 +77,6 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
 
     private void initialize() {
 
-        this.whereClause = null;
         this.isIBMDataExcluded = true;
         this.jobTraceEntries = null;
     }
@@ -102,14 +99,6 @@ public class JobTraceSession implements JsonSerializable, IAdaptable {
         } else {
             return libraryName + ":" + sessionID; //$NON-NLS-1$
         }
-    }
-
-    public String getWhereClause() {
-        return whereClause;
-    }
-
-    public void setWhereClause(String whereClause) {
-        this.whereClause = whereClause;
     }
 
     public boolean isIBMDataExcluded() {

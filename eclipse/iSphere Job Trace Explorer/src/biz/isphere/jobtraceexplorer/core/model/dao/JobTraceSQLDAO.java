@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,17 +112,38 @@ public class JobTraceSQLDAO {
          
     // @formatter:on
 
-    private JobTraceSession jobTraceSession;
+    // private JobTraceSession jobTraceSession;
+    private String connectionName;
+    private String libraryName;
+    private String sessionID;
+    private boolean isIBMDataExcluded;
+
     private String sqlWhereNoIBMData;
 
-    public JobTraceSQLDAO(JobTraceSession jobTraceSession) throws Exception {
+    public JobTraceSQLDAO(JobTraceSession jobTraceSession) {
 
-        this.jobTraceSession = jobTraceSession;
+        this.connectionName = jobTraceSession.getConnectionName();
+        this.libraryName = jobTraceSession.getLibraryName();
+        this.sessionID = jobTraceSession.getSessionID();
+        this.isIBMDataExcluded = jobTraceSession.isIBMDataExcluded();
 
         this.sqlWhereNoIBMData = Preferences.getInstance().getExcludeIBMDataSQLWhereClause();
     }
 
-    public JobTraceSession load(IProgressMonitor monitor) throws Exception {
+    public JobTraceSQLDAO(String connectionName, String libraryName, String sessionId, boolean isExcludeIBMData) {
+
+        this.connectionName = connectionName;
+        this.libraryName = libraryName;
+        this.sessionID = sessionId;
+        this.isIBMDataExcluded = isExcludeIBMData;
+
+        this.sqlWhereNoIBMData = Preferences.getInstance().getExcludeIBMDataSQLWhereClause();
+    }
+
+    public JobTraceSession load(IProgressMonitor monitor) throws SQLException {
+
+        JobTraceSession jobTraceSession = new JobTraceSession(connectionName, libraryName, sessionID);
+        jobTraceSession.setExcludeIBMData(isIBMDataExcluded);
 
         List<IBMiMessage> messages = null;
 
@@ -140,16 +161,16 @@ public class JobTraceSQLDAO {
 
             monitor.setTaskName(Messages.Status_Preparing_to_load_job_trace_entries);
 
-            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(jobTraceSession.getConnectionName());
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
 
             sqlHelper = new SqlHelper(jdbcConnection);
-            isTableOverWrite = overWriteTables(sqlHelper, jobTraceSession);
+            isTableOverWrite = overWriteTables(sqlHelper);
 
             int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-            int numRowsAvailable = getNumRowsAvailable(sqlHelper, jobTraceSession.getWhereClause());
+            int numRowsAvailable = getNumRowsAvailable(sqlHelper);
 
-            preparedStatement = jdbcConnection.prepareStatement(getSQLStatement(jobTraceSession.getWhereClause()));
+            preparedStatement = jdbcConnection.prepareStatement(getSQLStatement());
 
             monitor.setTaskName(Messages.Status_Executing_query);
 
@@ -187,7 +208,7 @@ public class JobTraceSQLDAO {
             sqlHelper.close(preparedStatement);
         }
 
-        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime) + ", WHERE-CLAUSE: " + jobTraceSession.getWhereClause()); //$NON-NLS-1$ //$NON-NLS-2$
+        ISphereJobTraceExplorerCorePlugin.debug("mSecs total: " + timeElapsed(startTime)); //$NON-NLS-1$
 
         if (isDataOverflow) {
             jobTraceSession.getJobTraceEntries().setOverflow(true, -1);
@@ -198,14 +219,14 @@ public class JobTraceSQLDAO {
         return jobTraceSession;
     }
 
-    private boolean overWriteTables(SqlHelper sqlHelper, JobTraceSession jobTraceSession) {
+    private boolean overWriteTables(SqlHelper sqlHelper) {
 
         for (String ovrDbfCmd : OVRDBF_CMD) {
-            ovrDbfCmd = String.format(ovrDbfCmd, jobTraceSession.getLibraryName(), jobTraceSession.getSessionID());
+            ovrDbfCmd = String.format(ovrDbfCmd, libraryName, sessionID);
             try {
                 sqlHelper.executeSystemCommand(ovrDbfCmd);
             } catch (Exception e) {
-                ISphereJobTraceExplorerCorePlugin.logError("*** Could not overwrite job trace tables " + jobTraceSession.toString() + " ***", e);
+                ISphereJobTraceExplorerCorePlugin.logError("*** Could not overwrite job trace tables " + sessionID + " ***", e);
                 return false;
             }
         }
@@ -220,13 +241,13 @@ public class JobTraceSQLDAO {
         }
     }
 
-    private String getSQLStatement(String whereClause) {
+    private String getSQLStatement() {
 
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(SQL_STATEMENT);
 
-        if (jobTraceSession.isIBMDataExcluded()) {
+        if (isIBMDataExcluded) {
             appendWhereClause(buffer);
         }
 
@@ -235,13 +256,13 @@ public class JobTraceSQLDAO {
         return buffer.toString();
     }
 
-    private String getSQLCountStatement(String whereClause) {
+    private String getSQLCountStatement() {
 
         StringBuilder buffer = new StringBuilder();
 
         buffer.append(SQL_COUNT_STATEMENT);
 
-        if (jobTraceSession.isIBMDataExcluded()) {
+        if (isIBMDataExcluded) {
             appendWhereClause(buffer);
         }
 
@@ -265,11 +286,11 @@ public class JobTraceSQLDAO {
         return false;
     }
 
-    private int getNumRowsAvailable(SqlHelper sqlHelper, String whereClause) throws SQLException {
+    private int getNumRowsAvailable(SqlHelper sqlHelper) throws SQLException {
 
         int numRowsAvailable = 0;
 
-        String sqlCountStatement = getSQLCountStatement(whereClause);
+        String sqlCountStatement = getSQLCountStatement();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
@@ -296,7 +317,7 @@ public class JobTraceSQLDAO {
         return numRowsAvailable;
     }
 
-    private JobTraceEntry populateJobTraceEntry(ResultSet resultSet, JobTraceEntry jobTraceEntry) throws Exception {
+    private JobTraceEntry populateJobTraceEntry(ResultSet resultSet, JobTraceEntry jobTraceEntry) throws SQLException {
 
         // AbstractTypeDAO
         // journalEntry.setConnectionName(connectionName);

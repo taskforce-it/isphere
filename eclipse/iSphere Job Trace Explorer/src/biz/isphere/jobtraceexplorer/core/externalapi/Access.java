@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2021 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.jobtraceexplorer.core.externalapi;
 
 import java.io.File;
@@ -5,7 +13,8 @@ import java.io.File;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerFileInput;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerSessionInput;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
 /**
@@ -23,21 +32,9 @@ public class Access extends AbstractAccess {
      */
     public static void openJobTraceExplorer(Shell shell, File jobTrace) throws Exception {
 
-        JobTraceExplorerView.openStreamFileJobTrace(ensureShell(shell), jobTrace);
-    }
+        JobTraceExplorerFileInput input = new JobTraceExplorerFileInput(jobTrace);
 
-    /**
-     * Opens the job trace explorer for a given job trace session.
-     * <p>
-     * This method is intended to be <b>exclusively</b> used <b>by iSphere</b>.
-     * 
-     * @param shell - the parent shell.
-     * @param jobTraceSession - job trace session selection data
-     * @throws Exception
-     */
-    public static void openJobTraceExplorer(Shell shell, JobTraceSession jobTraceSession) throws Exception {
-
-        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), jobTraceSession);
+        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), input);
     }
 
     /**
@@ -47,15 +44,17 @@ public class Access extends AbstractAccess {
      * @param sessionID - id of the job trace session as specified at the
      *        <code>ENDTRC</code> command.
      * @param isIBMDataExcluded - specifies whether IBM specific data is
-     *        excluded when loading the trace data.
+     *        excluded when loading the trace data. The SQL WHERE clause for
+     *        excluding IBM specific data can be managed on the preferences
+     *        page.
      * @throws Exception
      */
     public static void openJobTraceExplorer(Shell shell, String connectionName, String libraryName, String sessionID, boolean isIBMDataExcluded)
         throws Exception {
 
-        JobTraceSession jobTraceSession = new JobTraceSession(connectionName, libraryName, sessionID);
-        jobTraceSession.setExcludeIBMData(isIBMDataExcluded);
+        JobTraceExplorerSessionInput input = new JobTraceExplorerSessionInput(connectionName, libraryName, sessionID);
+        input.setExcludeIBMData(isIBMDataExcluded);
 
-        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), jobTraceSession);
+        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), input);
     }
 }
