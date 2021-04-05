@@ -6,6 +6,7 @@ Changelog: iSphere 4.0.0.b012
  • Added journal explorer API.
  • Added job trace explorer API.
  • Updated Dutch translation (Peter Colpaert).
+ • Refactored job trace explorer to use "view input" classes.
 
 Changelog: iSphere 4.0.0.b011
 -----------------------------

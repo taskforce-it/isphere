@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,13 @@ package biz.isphere.jobtraceexplorer.core.ui.model;
 import org.eclipse.swt.graphics.Color;
 
 import biz.isphere.jobtraceexplorer.core.ui.labelproviders.JobTraceEntryLabelProvider;
-import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceEntriesSQLViewerTab;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.JobTraceExplorerTab;
 
 /**
  * This class represents a column of the "Job Trace Entries Viewer" widget. It
  * defines the properties of the column, such as column heading, color, width.
  * 
- * @see JobTraceEntriesSQLViewerTab
+ * @see JobTraceExplorerTab
  * @see JobTraceEntryLabelProvider
  */
 public class JobTraceEntryColumn {
