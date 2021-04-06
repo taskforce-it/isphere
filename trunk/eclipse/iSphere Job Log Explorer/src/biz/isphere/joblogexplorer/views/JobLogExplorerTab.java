@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,7 +125,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
             job.schedule();
         } else {
             jobLogExplorerInput = null;
-            SetEditorInputJob job = new SetEditorInputJob(new JobLog(), tableViewerPanel, filterPanel, isReload);
+            SetEditorInputJob job = new SetEditorInputJob(jobLogExplorerInput, new JobLog(), tableViewerPanel, filterPanel, isReload);
             job.schedule();
         }
 
@@ -173,15 +173,6 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
     }
 
     private void prepareLoadingJobLog(AbstractJobLogExplorerInput editorInput) {
-
-        if (editorInput == null) {
-            setText(EMPTY);
-            setToolTipText(EMPTY);
-            return;
-        } else {
-            setText(editorInput.getName());
-            setToolTipText(editorInput.getToolTipText());
-        }
 
         JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(
             JobLogExplorerStatusChangedEvent.EventType.STARTED_DATA_LOADING, this);
@@ -567,7 +558,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
             try {
 
                 JobLog jobLog = input.load(monitor);
-                new SetEditorInputJob(jobLog, viewer, filterPanel, isReload).schedule();
+                new SetEditorInputJob(input, jobLog, viewer, filterPanel, isReload).schedule();
 
             } catch (DownloadSpooledFileException e) {
                 handleDataLoadException(e.getLocalizedMessage(), e, false, isReload);
@@ -588,14 +579,17 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     private class SetEditorInputJob extends UIJob {
 
+        private AbstractJobLogExplorerInput input;
         private JobLog jobLog;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
         private boolean isReload;
 
-        public SetEditorInputJob(JobLog jobLog, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel, boolean isReload) {
+        public SetEditorInputJob(AbstractJobLogExplorerInput input, JobLog jobLog, JobLogExplorerTableViewer viewer,
+            JobLogExplorerFilterPanel filterPanel, boolean isReload) {
             super(EMPTY);
 
+            this.input = input;
             this.jobLog = jobLog;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
@@ -610,6 +604,14 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 if (JobLogExplorerTab.this.isDisposed()) {
                     handleDataLoadException(null, null);
                     return Status.OK_STATUS;
+                }
+
+                if (input == null) {
+                    setText(EMPTY);
+                    setToolTipText(EMPTY);
+                } else {
+                    setText(input.getName());
+                    setToolTipText(input.getToolTipText());
                 }
 
                 viewer.setInputData(jobLog);

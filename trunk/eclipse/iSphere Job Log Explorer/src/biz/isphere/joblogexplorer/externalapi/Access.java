@@ -9,12 +9,16 @@
 package biz.isphere.joblogexplorer.externalapi;
 
 import java.io.File;
+import java.util.Date;
 
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
 import biz.isphere.core.spooledfiles.SpooledFile;
-import biz.isphere.core.spooledfiles.SpooledFileFactory;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
+import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput2;
 import biz.isphere.joblogexplorer.views.JobLogExplorerView;
 
 /**
@@ -35,7 +39,9 @@ public class Access extends AbstractAccess {
      */
     public static void openJobLogExplorer(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
 
-        JobLogExplorerView.openActiveJobJobLog(ensureShell(shell), connectionName, jobName, userName, jobNumber);
+        JobLogExplorerJobInput input = new JobLogExplorerJobInput(connectionName, jobName, userName, jobNumber);
+
+        JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 
     /**
@@ -43,36 +49,60 @@ public class Access extends AbstractAccess {
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
-     * @param jobName - name of the job that created the spooled file.
-     * @param userName - name of the user profile under which the job is run.
-     * @param jobNumber - job number assigned by the system.
-     * @param splfName - name of the spooled file
+     * @param splfName - the name of the spooled file.
      * @param splfNumber - number of the spooled file.
+     * @param jobName - the name of the job that created the spooled file.
+     * @param userName - the user who created the spooled file.
+     * @param jobNumber - the number of the job that created the spooled file.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, String connectionName, String jobName, String userName, String jobNumber, String splfName,
-        int splfNumber) throws Exception {
+    public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
+        String jobNumber) throws Exception {
 
-        SpooledFile spooledFile = new SpooledFileFactory().getSpooledFile(shell, connectionName, jobName, userName, jobNumber, splfName, splfNumber);
-        if (spooledFile == null) {
-            throw new SpooledFileNotFoundException(connectionName, jobName, userName, jobNumber, splfName, splfNumber);
-        }
+        JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
+            jobNumber);
 
-        JobLogExplorerView.openSpooledFileJobLog(ensureShell(shell), spooledFile);
+        JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 
     /**
-     * Opens the job log explorer for a given iSphere spooled file.
-     * <p>
-     * This method is intended to be <b>exclusively</b> used <b>by iSphere</b>.
+     * /** Opens the job log explorer for a spooled file identified by its name.
      * 
      * @param shell - the parent shell.
-     * @param spooledFile - spooled file that contains the job log.
+     * @param connectionName - connection name.
+     * @param splfName - the name of the spooled file.
+     * @param splfNumber - number of the spooled file.
+     * @param jobName - the name of the job that created the spooled file.
+     * @param userName - the user who created the spooled file.
+     * @param jobNumber - the number of the job that created the spooled file.
+     * @param jobSystemName - the name of the system where the spooled file was
+     *        created.
+     * @param creationTimestamp - the timestamp the spooled file was created on
+     *        the system.
+     * @throws Exception
+     */
+    public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
+        String jobNumber, String jobSystemName, Date creationTimestamp) throws Exception {
+
+        JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
+            jobNumber, jobSystemName, creationTimestamp);
+
+        JobLogExplorerView.openJobLog(ensureShell(shell), input);
+    }
+
+    /**
+     * /** Opens the job log explorer for a spooled file identified by its name.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param spooledFile - iSphere spooled file.
      * @throws Exception
      */
     public static void openJobLogExplorer(Shell shell, SpooledFile spooledFile) throws Exception {
 
-        JobLogExplorerView.openSpooledFileJobLog(ensureShell(shell), spooledFile);
+        JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(spooledFile);
+
+        JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 
     /**
@@ -85,6 +115,8 @@ public class Access extends AbstractAccess {
      */
     public static void openJobLogExplorer(Shell shell, File jobLog) throws Exception {
 
-        JobLogExplorerView.openStreamFileJobLog(ensureShell(shell), jobLog);
+        JobLogExplorerFileInput input = new JobLogExplorerFileInput(jobLog);
+
+        JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 }
