@@ -59,13 +59,13 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
     private TableViewer tableViewer;
 
-    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, CTabFolder parent, JsonFile jsonFile,
+    public JournalEntriesViewerForLoadedJournalEntriesTab(Shell shell, CTabFolder parent, JsonFile jsonFile, SQLWhereClause whereClause,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(shell, parent, null, loadJournalEntriesSelectionListener);
+        super(shell, parent, loadJournalEntriesSelectionListener);
 
         this.jsonFile = jsonFile;
 
-        setSelectClause(null);
+        setSelectClause(whereClause);
         setSqlEditorVisibility(false);
 
         Preferences.getInstance().addPropertyChangeListener(this);
@@ -119,7 +119,7 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
 
         setSqlEditorEnabled(false);
 
-        Job loadJournalDataJob = new OpenJournalJob(view, jsonFile.getConnectionName(), new File(jsonFile.getPath()));
+        Job loadJournalDataJob = new OpenJournalJob(view, jsonFile, whereClause, filterWhereClause);
         loadJournalDataJob.schedule();
     }
 
@@ -140,13 +140,17 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
         private JournalExplorerView view;
         private String connectionName;
         private File jsonFile;
+        private SQLWhereClause whereClause;
+        private SQLWhereClause filterWhereClause;
 
-        public OpenJournalJob(JournalExplorerView view, String connectionName, File jsonFile) {
+        public OpenJournalJob(JournalExplorerView view, JsonFile jsonFile, SQLWhereClause whereClause, SQLWhereClause filterWhereClause) {
             super(Messages.Status_Loading_journal_entries);
 
             this.view = view;
-            this.connectionName = connectionName;
-            this.jsonFile = jsonFile;
+            this.connectionName = jsonFile.getConnectionName();
+            this.jsonFile = new File(jsonFile.getPath());
+            this.whereClause = whereClause;
+            this.filterWhereClause = filterWhereClause;
         }
 
         public IStatus run(IProgressMonitor monitor) {
@@ -162,15 +166,15 @@ public class JournalEntriesViewerForLoadedJournalEntriesTab extends AbstractJour
                 final JournalEntries data = importer.execute(view.getViewSite().getShell(), jsonFile);
 
                 // Overwrite connection name, if passed in
-                data.finalizeJsonLoading(this.connectionName);
+                data.finalizeJsonLoading(this.connectionName, whereClause);
 
                 timeTaken.stop(data.size());
 
-                if (!ISphereHelper.checkISphereLibrary(getShell(), data.getConnectionName())) {
-                    return Status.OK_STATUS;
-                }
+                data.applyFilter(filterWhereClause, monitor);
 
-                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                if (ISphereHelper.checkISphereLibrary(getShell(), data.getConnectionName())) {
+                    MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                }
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

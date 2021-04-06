@@ -33,6 +33,10 @@ public abstract class AbstractTypeDAO extends DAOBase {
      */
     protected static final String SQL_JOESD_RESULT = "SUBSTR(JOESD, 1, CAST(JOENTL AS INTEGER)) AS JOESD"; //$NON-NLS-1$
 
+    /*
+     * Specifies the output file or record format (*TYPE1 - *TYPE5) of the
+     * journal entry.
+     */
     private OutputFile outputFile;
 
     public AbstractTypeDAO(OutputFile outputFile) throws Exception {
@@ -43,10 +47,9 @@ public abstract class AbstractTypeDAO extends DAOBase {
 
     public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
-        String connectionName = outputFile.getConnectionName();
         int maxNumRows = Preferences.getInstance().getMaximumNumberOfRowsToFetch();
 
-        JournalEntries journalEntries = new JournalEntries(connectionName, maxNumRows);
+        JournalEntries journalEntries = new JournalEntries(outputFile, maxNumRows);
 
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

@@ -21,9 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.annotations.Expose;
-import com.ibm.as400.access.AS400Text;
-
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
@@ -36,6 +33,9 @@ import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.widgets.contentassist.TableColumnContentAssistProposal;
+
+import com.google.gson.annotations.Expose;
+import com.ibm.as400.access.AS400Text;
 
 /**
  * Class to store the properties of a journal entry as received from a journal
@@ -103,43 +103,43 @@ public class JournalEntry {
     private static List<ContentAssistProposal> basicProposals;
     static {
         basicProposals = new LinkedList<ContentAssistProposal>();
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE.name(), ColumnsDAO.JOCODE.sqlType(), ColumnsDAO.JOCODE.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT.name(), ColumnsDAO.JOENTT.sqlType(), ColumnsDAO.JOENTT.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCODE.name(), ColumnsDAO.JOCODE.sqlType(), ColumnsDAO.JOCODE
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOENTT.name(), ColumnsDAO.JOENTT.sqlType(), ColumnsDAO.JOENTT
+            .description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOJOB.name(), ColumnsDAO.JOJOB.sqlType(), ColumnsDAO.JOJOB.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER.name(), ColumnsDAO.JOUSER.sqlType(), ColumnsDAO.JOUSER.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSER.name(), ColumnsDAO.JOUSER.sqlType(), ColumnsDAO.JOUSER
+            .description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JONBR.name(), ColumnsDAO.JONBR.sqlType(), ColumnsDAO.JONBR.description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOLIB.name(), ColumnsDAO.JOLIB.sqlType(), ColumnsDAO.JOLIB.description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJ.name(), ColumnsDAO.JOOBJ.sqlType(), ColumnsDAO.JOOBJ.description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOMBR.name(), ColumnsDAO.JOMBR.sqlType(), ColumnsDAO.JOMBR.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE.name(), ColumnsDAO.JODATE.sqlType(), ColumnsDAO.JODATE.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME.name(), ColumnsDAO.JOTIME.sqlType(), ColumnsDAO.JOTIME.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP.name(), ColumnsDAO.JOTSTP.sqlType(), ColumnsDAO.JOTSTP.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JODATE.name(), ColumnsDAO.JODATE.sqlType(), ColumnsDAO.JODATE
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTIME.name(), ColumnsDAO.JOTIME.sqlType(), ColumnsDAO.JOTIME
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOTSTP.name(), ColumnsDAO.JOTSTP.sqlType(), ColumnsDAO.JOTSTP
+            .description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGM.name(), ColumnsDAO.JOPGM.sqlType(), ColumnsDAO.JOPGM.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB.name(), ColumnsDAO.JOPGMLIB.sqlType(), ColumnsDAO.JOPGMLIB.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP.name(), ColumnsDAO.JOOBJTYP.sqlType(), ColumnsDAO.JOOBJTYP.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP.name(), ColumnsDAO.JOFILTYP.sqlType(), ColumnsDAO.JOFILTYP.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM.name(), ColumnsDAO.JOSYNM.sqlType(), ColumnsDAO.JOSYNM.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOPGMLIB.name(), ColumnsDAO.JOPGMLIB.sqlType(), ColumnsDAO.JOPGMLIB
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOOBJTYP.name(), ColumnsDAO.JOOBJTYP.sqlType(), ColumnsDAO.JOOBJTYP
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOFILTYP.name(), ColumnsDAO.JOFILTYP.sqlType(), ColumnsDAO.JOFILTYP
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSYNM.name(), ColumnsDAO.JOSYNM.sqlType(), ColumnsDAO.JOSYNM
+            .description()));
         basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCV.name(), ColumnsDAO.JORCV.sqlType(), ColumnsDAO.JORCV.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB.name(), ColumnsDAO.JORCVLIB.sqlType(), ColumnsDAO.JORCVLIB.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF.name(), ColumnsDAO.JOUSPF.sqlType(), ColumnsDAO.JOUSPF.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN.name(), ColumnsDAO.JOSEQN.sqlType(), ColumnsDAO.JOSEQN.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID.name(), ColumnsDAO.JOCCID.sqlType(), ColumnsDAO.JOCCID.description()));
-        basicProposals
-            .add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR.name(), ColumnsDAO.JOCTRR.sqlType(), ColumnsDAO.JOCTRR.description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JORCVLIB.name(), ColumnsDAO.JORCVLIB.sqlType(), ColumnsDAO.JORCVLIB
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOUSPF.name(), ColumnsDAO.JOUSPF.sqlType(), ColumnsDAO.JOUSPF
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOSEQN.name(), ColumnsDAO.JOSEQN.sqlType(), ColumnsDAO.JOSEQN
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCCID.name(), ColumnsDAO.JOCCID.sqlType(), ColumnsDAO.JOCCID
+            .description()));
+        basicProposals.add(new TableColumnContentAssistProposal(ColumnsDAO.JOCTRR.name(), ColumnsDAO.JOCTRR.sqlType(), ColumnsDAO.JOCTRR
+            .description()));
     }
 
     @Expose(serialize = true, deserialize = true)
@@ -389,6 +389,10 @@ public class JournalEntry {
         setObjectType("*N"); // ==> undefined
     }
 
+    /*
+     * Returns the output file or record format (*TYPE1 - *TYPE5) of the journal
+     * entry.
+     */
     public OutputFile getOutputFile() {
         if (outputFile == null) {
             outputFile = new OutputFile(this.connectionName, this.outputFileLibraryName, this.outputFileName, this.outputFileMemberName);
@@ -567,6 +571,10 @@ public class JournalEntry {
 
     public String getOutFileLibrary() {
         return getOutputFile().getLibraryName();
+    }
+
+    public String getOutFileMemberName() {
+        return getOutputFile().getMemberName();
     }
 
     // //////////////////////////////////////////////////////////

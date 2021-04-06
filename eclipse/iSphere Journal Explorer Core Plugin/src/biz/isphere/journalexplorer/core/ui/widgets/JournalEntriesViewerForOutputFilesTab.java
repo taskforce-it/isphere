@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
@@ -57,10 +58,13 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntriesViewerTab {
 
     private TableViewer tableViewer;
+    private OutputFile outputFile;
 
     public JournalEntriesViewerForOutputFilesTab(Shell shell, CTabFolder parent, OutputFile outputFile, SQLWhereClause whereClause,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(shell, parent, outputFile, loadJournalEntriesSelectionListener);
+        super(shell, parent, loadJournalEntriesSelectionListener);
+
+        this.outputFile = outputFile;
 
         setSelectClause(whereClause);
         setSqlEditorVisibility(false);
@@ -68,6 +72,10 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
         Preferences.getInstance().addPropertyChangeListener(this);
 
         initializeComponents();
+    }
+
+    private OutputFile getOutputFile() {
+        return outputFile;
     }
 
     protected String getLabel() {
@@ -191,7 +199,9 @@ public class JournalEntriesViewerForOutputFilesTab extends AbstractJournalEntrie
 
                 data.applyFilter(filterWhereClause, monitor);
 
-                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                if (ISphereHelper.checkISphereLibrary(getShell(), data.getConnectionName())) {
+                    MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                }
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

@@ -52,7 +52,6 @@ import org.medfoster.sqljep.RowJEP;
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
@@ -67,7 +66,6 @@ import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.sqljep.NullValueVariable;
@@ -91,10 +89,11 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public abstract class AbstractJournalEntriesViewerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener,
     ISelectionProvider, IPropertyChangeListener {
 
+    private static final String EMPTY = ""; //$NON-NLS-1$
+
     private DialogSettingsManager dialogSettingsManager = null;
 
     private Shell shell;
-    private OutputFile outputFile;
     private Composite container;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
@@ -107,14 +106,12 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     private SQLWhereClause filterClause;
     private SQLWhereClause selectClause;
 
-    public AbstractJournalEntriesViewerTab(Shell shell, CTabFolder parent, OutputFile outputFile,
-        SelectionListener loadJournalEntriesSelectionListener) {
+    public AbstractJournalEntriesViewerTab(Shell shell, CTabFolder parent, SelectionListener loadJournalEntriesSelectionListener) {
         super(parent, SWT.NONE);
 
         setSqlEditorVisibility(false);
 
         this.shell = shell;
-        this.outputFile = outputFile;
         this.container = new Composite(parent, SWT.NONE);
         this.selectionChangedListeners = new HashSet<ISelectionChangedListener>();
         this.isSqlEditorVisible = false;
@@ -132,10 +129,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
     protected abstract String getLabel();
 
     protected abstract String getTooltip();
-
-    protected OutputFile getOutputFile() {
-        return outputFile;
-    }
 
     private ContentAssistProposal[] getContentAssistProposals() {
 
@@ -322,9 +315,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
 
     protected void initializeComponents() {
 
-        setText(getLabel());
-        setToolTipText(getTooltip());
-
         container.setLayout(new GridLayout());
         container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tableViewer = createTableViewer(container);
@@ -402,6 +392,13 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                 sqlEditor.setEnabled(false);
             }
             new PreloadMetaDataJob(data).schedule();
+
+            setText(getLabel());
+            setToolTipText(getTooltip());
+
+        } else {
+            setText(EMPTY);
+            setToolTipText(EMPTY);
         }
 
         container.layout(true);
@@ -550,22 +547,6 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
             }
             refreshTable();
             return;
-        }
-    }
-
-    protected MetaTable getMetaData() {
-
-        try {
-            return MetaDataCache.getInstance().retrieveMetaData(getOutputFile());
-        } catch (Exception e) {
-            String fileName;
-            if (getOutputFile() == null) {
-                fileName = "null"; //$NON-NLS-1$
-            } else {
-                fileName = getOutputFile().toString();
-            }
-            ISpherePlugin.logError("*** Could not load meta data of file '" + fileName + "' ***", e); //$NON-NLS-1$ //$NON-NLS-2$
-            return null;
         }
     }
 

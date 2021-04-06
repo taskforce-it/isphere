@@ -42,30 +42,21 @@ public class JournalDAO {
     private static final int BUFFER_MAXIMUM_SIZE = IntHelper.align16Bytes((int)(1024 * 1024 * 15.5)); // 15.5MB;
     private static final int BUFFER_INCREMENT_SIZE = IntHelper.align16Bytes(Buffer.size("64k")); //$NON-NLS-1$
 
+    private String connectionName;
     private int maxNumRows;
     private JrneToRtv jrneToRtv;
-    private OutputFile outputFile;
 
     public JournalDAO(JrneToRtv jrneToRtv) throws Exception {
 
+        this.connectionName = jrneToRtv.getConnectionName();
         this.maxNumRows = jrneToRtv.getNbrEntToRtv();
 
-        // Clone the selection arguments , because some properties are updated
-        // while retrieving the journal entries.
-
         this.jrneToRtv = jrneToRtv.clone();
-        this.outputFile = getOutputFile(jrneToRtv.getConnectionName());
-    }
-
-    public static OutputFile getOutputFile(String connectionName) {
-        return new OutputFile(connectionName, "QSYS", "QADSPJR5"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public JournalEntries load(SQLWhereClause whereClause, IProgressMonitor monitor) throws Exception {
 
-        String connectionName = outputFile.getConnectionName();
-
-        JournalEntries journalEntries = new JournalEntries(connectionName, maxNumRows);
+        JournalEntries journalEntries = new JournalEntries(new OutputFile(connectionName, "QSYS", "QADSPJR5"), maxNumRows);
 
         QjoRetrieveJournalEntries tRetriever = new QjoRetrieveJournalEntries(jrneToRtv);
 
@@ -102,7 +93,7 @@ public class JournalDAO {
 
                         id++;
 
-                        JournalEntry journalEntry = new JournalEntry(outputFile);
+                        JournalEntry journalEntry = new JournalEntry(journalEntries.getOutputFile());
 
                         JournalEntry populatedJournalEntry = populateJournalEntry(jrneToRtv.getConnectionName(), id, rjne0200, journalEntry);
                         journalEntries.add(populatedJournalEntry);
