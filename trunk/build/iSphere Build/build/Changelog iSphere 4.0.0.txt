@@ -7,6 +7,7 @@ Changelog: iSphere 4.0.0.b012
  • Added job trace explorer API.
  • Updated Dutch translation (Peter Colpaert).
  • Refactored job trace explorer to use "view input" classes.
+ • Changed attribute isOverflow of JournalEntries to transient.
 
 Changelog: iSphere 4.0.0.b011
 -----------------------------

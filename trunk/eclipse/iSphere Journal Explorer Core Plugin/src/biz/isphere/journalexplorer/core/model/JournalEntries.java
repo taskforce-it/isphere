@@ -18,6 +18,7 @@ import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
@@ -52,7 +53,11 @@ public class JournalEntries implements JsonSerializable {
     @Expose(serialize = true, deserialize = true)
     private String connectionName;
     @Expose(serialize = true, deserialize = true)
-    private boolean isOverflow;
+    private String outputFileName;
+    @Expose(serialize = true, deserialize = true)
+    private String outputFileLibraryName;
+    @Expose(serialize = true, deserialize = true)
+    private String outputFileMemberName;
     @Expose(serialize = true, deserialize = true)
     private int numAvailableRows;
     @Expose(serialize = true, deserialize = true)
@@ -63,14 +68,22 @@ public class JournalEntries implements JsonSerializable {
     // Transient values
     private transient List<JournalEntry> filteredJournalEntries;
     private transient HashSet<JournaledObject> journaledObjects;
+    private transient OutputFile outputFile;
+    private transient boolean isOverflow;
 
     public JournalEntries() {
         this(null, 0);
     }
 
-    public JournalEntries(String connectionName, int initialCapacity) {
+    public JournalEntries(OutputFile outputFile, int initialCapacity) {
 
-        this.connectionName = connectionName;
+        if (outputFile != null) {
+            this.connectionName = outputFile.getConnectionName();
+            this.outputFileName = outputFile.getFileName();
+            this.outputFileLibraryName = outputFile.getLibraryName();
+            this.outputFileMemberName = outputFile.getMemberName();
+        }
+
         this.journalEntries = new ArrayList<JournalEntry>(initialCapacity);
         this.isOverflow = false;
         this.numAvailableRows = -1;
@@ -78,6 +91,7 @@ public class JournalEntries implements JsonSerializable {
         // Transient values
         this.filteredJournalEntries = null;
         this.journaledObjects = new HashSet<JournaledObject>();
+        this.outputFile = null;
     }
 
     public String getConnectionName() {
@@ -85,8 +99,18 @@ public class JournalEntries implements JsonSerializable {
     }
 
     /*
-     * Hack for old export files, exported prior to iSphere v4.0
+     * Returns the output file or record format (*TYPE1 - *TYPE5) of the journal
+     * entry.
      */
+    public OutputFile getOutputFile() {
+
+        if (outputFile == null) {
+            outputFile = new OutputFile(connectionName, outputFileLibraryName, outputFileMemberName);
+        }
+
+        return outputFile;
+    }
+
     public void setConnectionName(String connectionName) {
         this.connectionName = connectionName;
     }
@@ -257,11 +281,39 @@ public class JournalEntries implements JsonSerializable {
         return messages.toArray(new IBMiMessage[messages.size()]);
     }
 
-    public void finalizeJsonLoading(String connectionName) {
+    public void finalizeJsonLoading(String connectionName, SQLWhereClause whereClause) {
+
+        try {
+
+            /*
+             * Apply initial SQL where clause, takes some time, because meta
+             * data must be resolved
+             */
+            if (whereClause.hasClause()) {
+
+                List<JournalEntry> filteredJournalEntries = new ArrayList<JournalEntry>();
+
+                RowJEP sqljep = new RowJEP(whereClause.getClause());
+
+                for (JournalEntry journalEntry : journalEntries) {
+
+                    sqljep.parseExpression(journalEntry.getColumnMapping());
+                    Comparable<?>[] row = journalEntry.getRow();
+                    if ((Boolean)sqljep.getValue(row)) {
+                        filteredJournalEntries.add(journalEntry);
+                    }
+
+                }
+
+                journalEntries = filteredJournalEntries;
+            }
+
+        } catch (ParseException e) {
+            ISpherePlugin.logError("*** Could no apply SQL where clause ***", e);
+        }
 
         /* Build a distinct list of journaled objects */
         journaledObjects = new HashSet<JournaledObject>();
-
         for (JournalEntry journalEntry : journalEntries) {
             if (!StringHelper.isNullOrEmpty(connectionName)) {
                 journalEntry.overwriteConnectionName(connectionName);
@@ -269,6 +321,7 @@ public class JournalEntries implements JsonSerializable {
             addJournaledObject(journalEntry);
         }
 
+        // Overwrite connection name if specified
         if (!StringHelper.isNullOrEmpty(connectionName)) {
             setConnectionName(connectionName);
         }
@@ -276,8 +329,13 @@ public class JournalEntries implements JsonSerializable {
         /*
          * Hack for old export files, exported prior to iSphere v4.0
          */
-        if (getConnectionName() == null && getItems().size() > 0) {
-            setConnectionName(getItem(0).getConnectionName());
+        if (this.outputFileName == null && getItems().size() > 0) {
+            if (this.connectionName == null) {
+                this.connectionName = getItem(0).getConnectionName();
+            }
+            this.outputFileName = getItem(0).getOutFileName();
+            this.outputFileLibraryName = getItem(0).getOutFileLibrary();
+            this.outputFileMemberName = getItem(0).getOutFileMemberName();
         }
     }
 

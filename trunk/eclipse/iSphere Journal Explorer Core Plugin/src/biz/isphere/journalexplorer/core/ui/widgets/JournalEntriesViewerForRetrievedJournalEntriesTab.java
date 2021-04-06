@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
@@ -57,7 +58,7 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
     public JournalEntriesViewerForRetrievedJournalEntriesTab(Shell shell, CTabFolder parent, JrneToRtv jrneToRtv,
         SelectionListener loadJournalEntriesSelectionListener) {
-        super(shell, parent, JournalDAO.getOutputFile(jrneToRtv.getConnectionName()), loadJournalEntriesSelectionListener);
+        super(shell, parent, loadJournalEntriesSelectionListener);
 
         this.jrneToRtv = jrneToRtv;
 
@@ -185,7 +186,9 @@ public class JournalEntriesViewerForRetrievedJournalEntriesTab extends AbstractJ
 
                 data.applyFilter(filterWhereClause, monitor);
 
-                MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                if (ISphereHelper.checkISphereLibrary(getShell(), data.getConnectionName())) {
+                    MetaDataCache.getInstance().preloadTables(getShell(), data.getJournaledFiles());
+                }
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {

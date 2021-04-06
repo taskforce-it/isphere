@@ -255,7 +255,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, jsonFile,
+            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, jsonFile, whereClause,
                 new SqlEditorSelectionListener());
 
             journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
