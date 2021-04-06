@@ -8,6 +8,7 @@
 
 package biz.isphere.core.spooledfiles;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,17 +33,36 @@ import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.RequestNotSupportedException;
 
 public class SpooledFileFactory {
 
-    public SpooledFile getSpooledFile(Shell shell, String connectionName, String jobName, String userName, String jobNumber, String splfName,
-        int splfNumber) throws Exception {
+    public SpooledFile getSpooledFile(String connectionName, String splfName, int splfNumber, String jobName, String userName, String jobNumber)
+        throws AS400Exception, AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException,
+        RequestNotSupportedException {
+        return getSpooledFile(connectionName, splfName, splfNumber, jobName, userName, jobNumber, null, null);
+    }
+
+    public SpooledFile getSpooledFile(String connectionName, String splfName, int splfNumber, String jobName, String userName, String jobNumber,
+        String systemName, Date creationTimestamp) throws AS400Exception, AS400SecurityException, ErrorCompletingRequestException, IOException,
+        InterruptedException, RequestNotSupportedException {
 
         AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-        com.ibm.as400.access.SpooledFile toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName, userName,
-            jobNumber);
+
+        com.ibm.as400.access.SpooledFile toolboxSpooledFile;
+        if (creationTimestamp == null) {
+            toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName, userName, jobNumber);
+        } else {
+            String creationDate = IBMiHelper.dateToCyymmdd(creationTimestamp, null);
+            String creationTime = IBMiHelper.timeToHhmmss(creationTimestamp, null);
+            toolboxSpooledFile = new com.ibm.as400.access.SpooledFile(system, splfName, splfNumber, jobName, userName, jobNumber, systemName,
+                creationDate, creationTime);
+        }
 
         if (toolboxSpooledFile.getCreateDate() == null || toolboxSpooledFile.getCreateDate().length() == 0) {
             return null;

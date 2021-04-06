@@ -12,7 +12,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import biz.isphere.base.internal.FileHelper;
 import biz.isphere.joblogexplorer.exceptions.InvalidJobLogFormatException;
 import biz.isphere.joblogexplorer.exceptions.JobLogNotLoadedException;
 import biz.isphere.joblogexplorer.model.JobLog;
@@ -23,6 +22,7 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
     private static final String INPUT_TYPE = "file://"; //$NON-NLS-1$
 
     private File file;
+    private JobLog jobLog;
 
     public JobLogExplorerFileInput(String path) {
         this.file = new File(path);
@@ -44,7 +44,7 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
     public JobLog load(IProgressMonitor monitor) throws JobLogNotLoadedException, InvalidJobLogFormatException {
 
         JobLogParser reader = new JobLogParser(monitor);
-        final JobLog jobLog = reader.loadFromStmf(getPath());
+        jobLog = reader.loadFromStmf(getPath());
 
         return jobLog;
     }
@@ -54,12 +54,7 @@ public class JobLogExplorerFileInput extends AbstractJobLogExplorerInput {
      * @see org.eclipse.ui.IEditorInput#getName()
      */
     public String getName() {
-
-        if (file == null) {
-            return ""; //$NON-NLS-1$
-        }
-
-        return FileHelper.getBaseName(file);
+        return jobLog.getQualifiedJobName();
     }
 
     public String getToolTipText() {

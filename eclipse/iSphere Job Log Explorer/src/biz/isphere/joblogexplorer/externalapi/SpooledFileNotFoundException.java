@@ -20,7 +20,7 @@ public class SpooledFileNotFoundException extends Exception {
     private String splfName;
     private int splfNumber;
 
-    public SpooledFileNotFoundException(String connectionName, String jobName, String userName, String jobNumber, String splfName, int splfNumber) {
+    public SpooledFileNotFoundException(String connectionName, String splfName, int splfNumber, String jobName, String userName, String jobNumber) {
         this.connectionName = connectionName;
         this.jobName = jobName;
         this.userName = userName;

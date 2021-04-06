@@ -11,6 +11,7 @@ package biz.isphere.joblogexplorer.editor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.spooledfiles.SpooledFile;
@@ -26,6 +27,9 @@ public class JobLogExplorerSpooledFileInput extends AbstractJobLogExplorerInput 
 
     private SpooledFile spooledFile;
 
+    private IFile localSpooledFilePath;
+    private JobLog jobLog;
+
     public JobLogExplorerSpooledFileInput(SpooledFile spooledFile) {
 
         this.spooledFile = spooledFile;
@@ -33,21 +37,23 @@ public class JobLogExplorerSpooledFileInput extends AbstractJobLogExplorerInput 
 
     public JobLog load(IProgressMonitor monitor) throws DownloadSpooledFileException, JobLogNotLoadedException, InvalidJobLogFormatException {
 
-        String format = IPreferences.OUTPUT_FORMAT_TEXT;
-        IFile target = ISpherePlugin.getDefault().getSpooledFilesProject().getFile(spooledFile.getTemporaryName(format));
-
-        IFile localSpooledFilePath;
         try {
+
+            String format = IPreferences.OUTPUT_FORMAT_TEXT;
+            IFile target = ISpherePlugin.getDefault().getSpooledFilesProject().getFile(spooledFile.getTemporaryName(format));
+
             localSpooledFilePath = spooledFile.downloadSpooledFile(format, target);
+
         } catch (Exception e) {
-            throw new DownloadSpooledFileException(e.getLocalizedMessage());
+            ISpherePlugin.logError("*** Failed downloading spooled file ***", e);
+            throw new DownloadSpooledFileException(ExceptionHelper.getLocalizedMessage(e));
         }
 
         final String filePath = localSpooledFilePath.getLocation().toOSString();
         JobLogExplorerFileInput editorInput = new JobLogExplorerFileInput(filePath);
 
         JobLogParser reader = new JobLogParser(monitor);
-        final JobLog jobLog = reader.loadFromStmf(editorInput.getPath());
+        jobLog = reader.loadFromStmf(editorInput.getPath());
 
         return jobLog;
     }
@@ -57,11 +63,11 @@ public class JobLogExplorerSpooledFileInput extends AbstractJobLogExplorerInput 
      * @see org.eclipse.ui.IEditorInput#getName()
      */
     public String getName() {
-        return spooledFile.getQualifiedName();
+        return jobLog.getQualifiedJobName();
     }
 
     public String getToolTipText() {
-        return spooledFile.getAbsoluteName();
+        return spooledFile.getToolTip(IPreferences.OUTPUT_FORMAT_TEXT);
     }
 
     @Override
