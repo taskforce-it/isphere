@@ -560,7 +560,7 @@ public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun,
         }
     }
 
-    public static void openRemoteSessionJobTrace(Shell shell, AbstractJobTraceExplorerInput input) throws Exception {
+    public static void openJobTrace(Shell shell, AbstractJobTraceExplorerInput input) throws Exception {
 
         IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobTraceExplorerView.ID);
         if (view == null) {
