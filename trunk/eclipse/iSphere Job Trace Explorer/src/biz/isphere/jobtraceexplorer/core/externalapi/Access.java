@@ -34,7 +34,7 @@ public class Access extends AbstractAccess {
 
         JobTraceExplorerFileInput input = new JobTraceExplorerFileInput(jobTrace);
 
-        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), input);
+        JobTraceExplorerView.openJobTrace(ensureShell(shell), input);
     }
 
     /**
@@ -55,6 +55,6 @@ public class Access extends AbstractAccess {
         JobTraceExplorerSessionInput input = new JobTraceExplorerSessionInput(connectionName, libraryName, sessionID);
         input.setExcludeIBMData(isIBMDataExcluded);
 
-        JobTraceExplorerView.openRemoteSessionJobTrace(ensureShell(shell), input);
+        JobTraceExplorerView.openJobTrace(ensureShell(shell), input);
     }
 }
