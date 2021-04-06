@@ -199,7 +199,7 @@ public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun,
         viewMenu.add(saveJournalEntriesAction);
     }
 
-    private void createJobTraceTab(AbstractJobTraceExplorerInput input) {
+    private void createExplorerTab(AbstractJobTraceExplorerInput input) {
 
         if (input == null) {
             throw new IllegalArgumentException("Parameter 'input' must not be [null]."); //$NON-NLS-1$
@@ -247,10 +247,10 @@ public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun,
 
         CTabItem[] tabItems = tabFolder.getItems();
         for (CTabItem tabItem : tabItems) {
-            JobTraceExplorerTab jobTraceEntriesViewerTab = (JobTraceExplorerTab)tabItem;
-            AbstractJobTraceExplorerInput otherInput = jobTraceEntriesViewerTab.getInput();
-            if (input.getContentId().equals(otherInput.getContentId())) {
-                return jobTraceEntriesViewerTab;
+            JobTraceExplorerTab jobLogTab = (JobTraceExplorerTab)tabItem;
+            AbstractJobTraceExplorerInput tabInput = jobLogTab.getInput();
+            if (tabInput == null || input.isSameInput(tabInput)) {
+                return jobLogTab;
             }
         }
 
@@ -571,7 +571,7 @@ public class JobTraceExplorerView extends XViewPart implements IDataLoadPostRun,
 
         if (view instanceof JobTraceExplorerView) {
             JobTraceExplorerView jobTraceExplorerView = (JobTraceExplorerView)view;
-            jobTraceExplorerView.createJobTraceTab(input);
+            jobTraceExplorerView.createExplorerTab(input);
         }
     }
 }
