@@ -80,6 +80,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
                 JournalEntry journalEntry = null;
 
                 int id = 0;
+                int worked = 0;
 
                 while (resultSet.next() && !isCanceled(monitor, journalEntries)) {
 
@@ -94,6 +95,7 @@ public abstract class AbstractTypeDAO extends DAOBase {
                         journalEntries.add(populateJournalEntry(resultSet, journalEntry));
 
                         if (id % 50 == 0) {
+                            worked = worked + 50;
                             monitor.worked(50);
                             monitor.setTaskName(Messages.Status_Loading_journal_entries + "(" + id + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                         }
@@ -103,6 +105,8 @@ public abstract class AbstractTypeDAO extends DAOBase {
                         }
                     }
                 }
+
+                monitor.worked(numRowsAvailable - worked);
             }
 
         } finally {
