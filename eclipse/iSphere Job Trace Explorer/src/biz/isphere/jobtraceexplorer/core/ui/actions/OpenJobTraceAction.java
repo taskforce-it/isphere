@@ -20,7 +20,6 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.externalapi.Access;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerSessionInput;
 import biz.isphere.jobtraceexplorer.core.ui.dialogs.OpenJobTraceSessionDialog;
 
 public class OpenJobTraceAction extends Action {
@@ -28,7 +27,6 @@ public class OpenJobTraceAction extends Action {
     private static final String IMAGE = ISphereJobTraceExplorerCorePlugin.IMAGE_OPEN_JOB_TRACE_SESSION;
 
     private Shell shell;
-    private JobTraceExplorerSessionInput input;
 
     public OpenJobTraceAction(Shell shell) {
         super(Messages.JobTraceExplorerView_OpenJobTraceSession);
@@ -47,19 +45,12 @@ public class OpenJobTraceAction extends Action {
         performOpenJournalOutputFile();
     }
 
-    public JobTraceExplorerSessionInput getJobTraceSessionInput() {
-        return input;
-    }
-
     private void performOpenJournalOutputFile() {
 
         OpenJobTraceSessionDialog openJournalOutputFileDialog = new OpenJobTraceSessionDialog(shell);
         openJournalOutputFileDialog.create();
-        int result = openJournalOutputFileDialog.open();
 
-        input = null;
-
-        if (result == Window.OK) {
+        if (openJournalOutputFileDialog.open() == Window.OK) {
             if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                 openJournalOutputFileDialog.getConnectionName())) {
 
@@ -69,7 +60,7 @@ public class OpenJobTraceAction extends Action {
                 boolean isIBMDataExcluded = openJournalOutputFileDialog.isIBMDataExcluded();
 
                 try {
-                    Access.openJobTraceExplorer(shell, connectionName, libraryName, sessionID, isIBMDataExcluded);
+                    Access.loadJobTraceExplorer(shell, connectionName, libraryName, sessionID, isIBMDataExcluded);
                 } catch (Exception e) {
                     MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
                 }
