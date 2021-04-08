@@ -138,24 +138,32 @@ public class NLSImporter {
                 if (!nlsFile.isDefaultLanguage()) {
                     if (bundle.isSelectedForImport(nlsFile.getLanguage(), Configuration.getInstance().getImportLanguageIDs())) {
                         if (nlsFile.getText(key) == null) {
-                            LogUtil.print("Property ignored: because not found: " + key);
+                            // LogUtil.print("Property ignored: because not found: "
+                            // + key);
                         } else {
                             if (nlsFile.getText(key).equals(values[x])) {
                                 // ignored: not changed
                             } else {
                                 String dftLangValue = nlsDefaultLanguageFile.getText(key);
                                 if (dftLangValue.equals(nlsFile.getText(key))) {
-                                    LogUtil.print("   Property translated: [" + key + "]  '" + nlsFile.getText(key) + "' ==> '" + values[x] + "'");
+                                    LogUtil.print("   Property translated: [" + key + "]  '" + replaceNewLineChar(nlsFile.getText(key)) + "' ==> '"
+                                        + replaceNewLineChar(values[x]) + "'");
+                                    nlsFile.setProperty(key, values[x]);
                                 } else {
-                                    LogUtil.print("   Property updated ..: [" + key + "]  '" + nlsFile.getText(key) + "' ==> '" + values[x] + "'");
+                                    LogUtil.print("   Property updated ..: [" + key + "]  '" + replaceNewLineChar(nlsFile.getText(key)) + "' ==> '"
+                                        + replaceNewLineChar(values[x]) + "'");
+                                    nlsFile.setProperty(key, values[x]);
                                 }
-                                nlsFile.setProperty(key, values[x]);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private String replaceNewLineChar(String value) {
+        return value.replaceAll("\\n", "\\\\n");
     }
 
     private String getKey(Row row) {
