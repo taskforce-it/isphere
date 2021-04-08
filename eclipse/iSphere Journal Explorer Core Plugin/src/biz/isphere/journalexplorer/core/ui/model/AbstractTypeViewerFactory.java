@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,10 @@ public abstract class AbstractTypeViewerFactory {
             this.columnNames = null;
             this.fieldIdMapping = null;
         }
+    }
+
+    public String[] getColumnNames() {
+        return columnNames.toArray(new String[columnNames.size()]);
     }
 
     public static String getColumnName(TableColumn column) {
@@ -123,6 +127,7 @@ public abstract class AbstractTypeViewerFactory {
 
         tableViewer.setLabelProvider(new JournalEntryLabelProvider(fieldIdMapping, usedColumns.toArray(new JournalEntryColumn[usedColumns.size()])));
         tableViewer.setContentProvider(new JournalViewerContentProvider(tableViewer));
+        tableViewer.setUseHashlookup(true);
 
         return tableViewer;
     }

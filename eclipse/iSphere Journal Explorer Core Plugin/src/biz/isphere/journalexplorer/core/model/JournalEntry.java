@@ -1786,4 +1786,240 @@ public class JournalEntry {
 
         return journaledFile;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((addressFamily == null) ? 0 : addressFamily.hashCode());
+        result = prime * result + ((addressFamilyText == null) ? 0 : addressFamilyText.hashCode());
+        result = prime * result + ((apyRmvJrnChg == null) ? 0 : apyRmvJrnChg.hashCode());
+        result = prime * result + ((apyRmvJrnChgText == null) ? 0 : apyRmvJrnChgText.hashCode());
+        result = prime * result + armNumber;
+        result = prime * result + ((commitmentCycle == null) ? 0 : commitmentCycle.hashCode());
+        result = prime * result + ((connectionName == null) ? 0 : connectionName.hashCode());
+        result = prime * result + ((countRrn == null) ? 0 : countRrn.hashCode());
+        result = prime * result + ((date == null) ? 0 : date.hashCode());
+        result = prime * result + entryLength;
+        result = prime * result + ((entryType == null) ? 0 : entryType.hashCode());
+        result = prime * result + ((fileTypeIndicator == null) ? 0 : fileTypeIndicator.hashCode());
+        result = prime * result + ((fileTypeIndicatorText == null) ? 0 : fileTypeIndicatorText.hashCode());
+        result = prime * result + ((flag == null) ? 0 : flag.hashCode());
+        result = prime * result + id;
+        result = prime * result + ((incompleteData == null) ? 0 : incompleteData.hashCode());
+        result = prime * result + ((incompleteDataText == null) ? 0 : incompleteDataText.hashCode());
+        result = prime * result + ((jobName == null) ? 0 : jobName.hashCode());
+        result = prime * result + jobNumber;
+        result = prime * result + ((jobUserName == null) ? 0 : jobUserName.hashCode());
+        result = prime * result + ((journalCode == null) ? 0 : journalCode.hashCode());
+        result = prime * result + ((journalID == null) ? 0 : journalID.hashCode());
+        result = prime * result + ((logicalUnitOfWork == null) ? 0 : logicalUnitOfWork.hashCode());
+        result = prime * result + ((memberName == null) ? 0 : memberName.hashCode());
+        result = prime * result + ((minimizedSpecificData == null) ? 0 : minimizedSpecificData.hashCode());
+        result = prime * result + ((minimizedSpecificDataText == null) ? 0 : minimizedSpecificDataText.hashCode());
+        result = prime * result + (int)(nestedCommitLevel ^ (nestedCommitLevel >>> 32));
+        result = prime * result + Arrays.hashCode(nullIndicators);
+        result = prime * result + ((objectIndicator == null) ? 0 : objectIndicator.hashCode());
+        result = prime * result + ((objectIndicatorText == null) ? 0 : objectIndicatorText.hashCode());
+        result = prime * result + ((objectLibrary == null) ? 0 : objectLibrary.hashCode());
+        result = prime * result + ((objectName == null) ? 0 : objectName.hashCode());
+        result = prime * result + ((objectType == null) ? 0 : objectType.hashCode());
+        result = prime * result + ((outputFileLibraryName == null) ? 0 : outputFileLibraryName.hashCode());
+        result = prime * result + ((outputFileMemberName == null) ? 0 : outputFileMemberName.hashCode());
+        result = prime * result + ((outputFileName == null) ? 0 : outputFileName.hashCode());
+        result = prime * result + (int)(programAsp ^ (programAsp >>> 32));
+        result = prime * result + ((programAspDevice == null) ? 0 : programAspDevice.hashCode());
+        result = prime * result + ((programLibrary == null) ? 0 : programLibrary.hashCode());
+        result = prime * result + ((programName == null) ? 0 : programName.hashCode());
+        result = prime * result + ((receiver == null) ? 0 : receiver.hashCode());
+        result = prime * result + receiverAsp;
+        result = prime * result + ((receiverAspDevice == null) ? 0 : receiverAspDevice.hashCode());
+        result = prime * result + ((receiverLibrary == null) ? 0 : receiverLibrary.hashCode());
+        result = prime * result + ((referentialConstraint == null) ? 0 : referentialConstraint.hashCode());
+        result = prime * result + ((referentialConstraintText == null) ? 0 : referentialConstraintText.hashCode());
+        result = prime * result + ((remoteAddress == null) ? 0 : remoteAddress.hashCode());
+        result = prime * result + remotePort;
+        result = prime * result + ((sequenceNumber == null) ? 0 : sequenceNumber.hashCode());
+        result = prime * result + Arrays.hashCode(specificData);
+        result = prime * result + ((stringSpecificData == null) ? 0 : stringSpecificData.hashCode());
+        result = prime * result + ((systemName == null) ? 0 : systemName.hashCode());
+        result = prime * result + ((systemSequenceNumber == null) ? 0 : systemSequenceNumber.hashCode());
+        result = prime * result + ((threadId == null) ? 0 : threadId.hashCode());
+        result = prime * result + ((time == null) ? 0 : time.hashCode());
+        result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+        result = prime * result + ((transactionIdentifier == null) ? 0 : transactionIdentifier.hashCode());
+        result = prime * result + ((trigger == null) ? 0 : trigger.hashCode());
+        result = prime * result + ((triggerText == null) ? 0 : triggerText.hashCode());
+        result = prime * result + ((userProfile == null) ? 0 : userProfile.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        JournalEntry other = (JournalEntry)obj;
+        if (addressFamily == null) {
+            if (other.addressFamily != null) return false;
+        } else if (!addressFamily.equals(other.addressFamily)) return false;
+        if (addressFamilyText == null) {
+            if (other.addressFamilyText != null) return false;
+        } else if (!addressFamilyText.equals(other.addressFamilyText)) return false;
+        if (apyRmvJrnChg == null) {
+            if (other.apyRmvJrnChg != null) return false;
+        } else if (!apyRmvJrnChg.equals(other.apyRmvJrnChg)) return false;
+        if (apyRmvJrnChgText == null) {
+            if (other.apyRmvJrnChgText != null) return false;
+        } else if (!apyRmvJrnChgText.equals(other.apyRmvJrnChgText)) return false;
+        if (armNumber != other.armNumber) return false;
+        if (commitmentCycle == null) {
+            if (other.commitmentCycle != null) return false;
+        } else if (!commitmentCycle.equals(other.commitmentCycle)) return false;
+        if (connectionName == null) {
+            if (other.connectionName != null) return false;
+        } else if (!connectionName.equals(other.connectionName)) return false;
+        if (countRrn == null) {
+            if (other.countRrn != null) return false;
+        } else if (!countRrn.equals(other.countRrn)) return false;
+        if (date == null) {
+            if (other.date != null) return false;
+        } else if (!date.equals(other.date)) return false;
+        if (entryLength != other.entryLength) return false;
+        if (entryType == null) {
+            if (other.entryType != null) return false;
+        } else if (!entryType.equals(other.entryType)) return false;
+        if (fileTypeIndicator == null) {
+            if (other.fileTypeIndicator != null) return false;
+        } else if (!fileTypeIndicator.equals(other.fileTypeIndicator)) return false;
+        if (fileTypeIndicatorText == null) {
+            if (other.fileTypeIndicatorText != null) return false;
+        } else if (!fileTypeIndicatorText.equals(other.fileTypeIndicatorText)) return false;
+        if (flag == null) {
+            if (other.flag != null) return false;
+        } else if (!flag.equals(other.flag)) return false;
+        if (id != other.id) return false;
+        if (incompleteData == null) {
+            if (other.incompleteData != null) return false;
+        } else if (!incompleteData.equals(other.incompleteData)) return false;
+        if (incompleteDataText == null) {
+            if (other.incompleteDataText != null) return false;
+        } else if (!incompleteDataText.equals(other.incompleteDataText)) return false;
+        if (jobName == null) {
+            if (other.jobName != null) return false;
+        } else if (!jobName.equals(other.jobName)) return false;
+        if (jobNumber != other.jobNumber) return false;
+        if (jobUserName == null) {
+            if (other.jobUserName != null) return false;
+        } else if (!jobUserName.equals(other.jobUserName)) return false;
+        if (journalCode == null) {
+            if (other.journalCode != null) return false;
+        } else if (!journalCode.equals(other.journalCode)) return false;
+        if (journalID == null) {
+            if (other.journalID != null) return false;
+        } else if (!journalID.equals(other.journalID)) return false;
+        if (logicalUnitOfWork == null) {
+            if (other.logicalUnitOfWork != null) return false;
+        } else if (!logicalUnitOfWork.equals(other.logicalUnitOfWork)) return false;
+        if (memberName == null) {
+            if (other.memberName != null) return false;
+        } else if (!memberName.equals(other.memberName)) return false;
+        if (minimizedSpecificData == null) {
+            if (other.minimizedSpecificData != null) return false;
+        } else if (!minimizedSpecificData.equals(other.minimizedSpecificData)) return false;
+        if (minimizedSpecificDataText == null) {
+            if (other.minimizedSpecificDataText != null) return false;
+        } else if (!minimizedSpecificDataText.equals(other.minimizedSpecificDataText)) return false;
+        if (nestedCommitLevel != other.nestedCommitLevel) return false;
+        if (!Arrays.equals(nullIndicators, other.nullIndicators)) return false;
+        if (objectIndicator == null) {
+            if (other.objectIndicator != null) return false;
+        } else if (!objectIndicator.equals(other.objectIndicator)) return false;
+        if (objectIndicatorText == null) {
+            if (other.objectIndicatorText != null) return false;
+        } else if (!objectIndicatorText.equals(other.objectIndicatorText)) return false;
+        if (objectLibrary == null) {
+            if (other.objectLibrary != null) return false;
+        } else if (!objectLibrary.equals(other.objectLibrary)) return false;
+        if (objectName == null) {
+            if (other.objectName != null) return false;
+        } else if (!objectName.equals(other.objectName)) return false;
+        if (objectType == null) {
+            if (other.objectType != null) return false;
+        } else if (!objectType.equals(other.objectType)) return false;
+        if (outputFileLibraryName == null) {
+            if (other.outputFileLibraryName != null) return false;
+        } else if (!outputFileLibraryName.equals(other.outputFileLibraryName)) return false;
+        if (outputFileMemberName == null) {
+            if (other.outputFileMemberName != null) return false;
+        } else if (!outputFileMemberName.equals(other.outputFileMemberName)) return false;
+        if (outputFileName == null) {
+            if (other.outputFileName != null) return false;
+        } else if (!outputFileName.equals(other.outputFileName)) return false;
+        if (programAsp != other.programAsp) return false;
+        if (programAspDevice == null) {
+            if (other.programAspDevice != null) return false;
+        } else if (!programAspDevice.equals(other.programAspDevice)) return false;
+        if (programLibrary == null) {
+            if (other.programLibrary != null) return false;
+        } else if (!programLibrary.equals(other.programLibrary)) return false;
+        if (programName == null) {
+            if (other.programName != null) return false;
+        } else if (!programName.equals(other.programName)) return false;
+        if (receiver == null) {
+            if (other.receiver != null) return false;
+        } else if (!receiver.equals(other.receiver)) return false;
+        if (receiverAsp != other.receiverAsp) return false;
+        if (receiverAspDevice == null) {
+            if (other.receiverAspDevice != null) return false;
+        } else if (!receiverAspDevice.equals(other.receiverAspDevice)) return false;
+        if (receiverLibrary == null) {
+            if (other.receiverLibrary != null) return false;
+        } else if (!receiverLibrary.equals(other.receiverLibrary)) return false;
+        if (referentialConstraint == null) {
+            if (other.referentialConstraint != null) return false;
+        } else if (!referentialConstraint.equals(other.referentialConstraint)) return false;
+        if (referentialConstraintText == null) {
+            if (other.referentialConstraintText != null) return false;
+        } else if (!referentialConstraintText.equals(other.referentialConstraintText)) return false;
+        if (remoteAddress == null) {
+            if (other.remoteAddress != null) return false;
+        } else if (!remoteAddress.equals(other.remoteAddress)) return false;
+        if (remotePort != other.remotePort) return false;
+        if (sequenceNumber == null) {
+            if (other.sequenceNumber != null) return false;
+        } else if (!sequenceNumber.equals(other.sequenceNumber)) return false;
+        if (!Arrays.equals(specificData, other.specificData)) return false;
+        if (stringSpecificData == null) {
+            if (other.stringSpecificData != null) return false;
+        } else if (!stringSpecificData.equals(other.stringSpecificData)) return false;
+        if (systemName == null) {
+            if (other.systemName != null) return false;
+        } else if (!systemName.equals(other.systemName)) return false;
+        if (systemSequenceNumber == null) {
+            if (other.systemSequenceNumber != null) return false;
+        } else if (!systemSequenceNumber.equals(other.systemSequenceNumber)) return false;
+        if (threadId == null) {
+            if (other.threadId != null) return false;
+        } else if (!threadId.equals(other.threadId)) return false;
+        if (time == null) {
+            if (other.time != null) return false;
+        } else if (!time.equals(other.time)) return false;
+        if (timestamp == null) {
+            if (other.timestamp != null) return false;
+        } else if (!timestamp.equals(other.timestamp)) return false;
+        if (transactionIdentifier == null) {
+            if (other.transactionIdentifier != null) return false;
+        } else if (!transactionIdentifier.equals(other.transactionIdentifier)) return false;
+        if (trigger == null) {
+            if (other.trigger != null) return false;
+        } else if (!trigger.equals(other.trigger)) return false;
+        if (triggerText == null) {
+            if (other.triggerText != null) return false;
+        } else if (!triggerText.equals(other.triggerText)) return false;
+        if (userProfile == null) {
+            if (other.userProfile != null) return false;
+        } else if (!userProfile.equals(other.userProfile)) return false;
+        return true;
+    }
 }

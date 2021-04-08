@@ -13,12 +13,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
-import biz.isphere.journalexplorer.core.model.JsonFile;
+import biz.isphere.journalexplorer.core.model.JournalExplorerJournalInput;
+import biz.isphere.journalexplorer.core.model.JournalExplorerJsonFileInput;
+import biz.isphere.journalexplorer.core.model.JournalExplorerOutputFileInput;
 import biz.isphere.journalexplorer.core.model.OutputFile;
 import biz.isphere.journalexplorer.core.model.SQLWhereClause;
-import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
-import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalJsonFileDialog;
 import biz.isphere.journalexplorer.core.ui.dialogs.OpenJournalOutputFileDialog;
 import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
@@ -34,7 +33,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
 public class Access extends AbstractAccess {
 
     /**
-     * Opens the iSphere Journal Explorer for a given list of journals.
+     * Loads the journal entries of a given journal into the iSphere Journal
+     * Explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name that overwrites the connection
@@ -47,13 +47,14 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
+    public static void loadJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
-        openJournalExplorerView(shell, connectionName, libraryName, journalName, null, selectionCriteria, newTab);
+        loadJournalExplorerView(shell, connectionName, libraryName, journalName, null, selectionCriteria, newTab);
     }
 
     /**
-     * Opens the iSphere Journal Explorer for a given list of journals.
+     * Loads the journal entries of a given list of journaled objects attached
+     * to the same journal into the iSphere Journal Explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name that overwrites the connection
@@ -68,27 +69,14 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
+    public static void loadJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         IJournaledObject[] selectedObjects, ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
 
-        JrneToRtv jrneToRtv = new JrneToRtv(new Journal(connectionName, libraryName, journalName));
+        JournalExplorerJournalInput input = new JournalExplorerJournalInput(connectionName, libraryName, journalName);
+        input.setSelectionCriteria(selectionCriteria);
+        input.addObjects(selectedObjects);
 
-        if (selectionCriteria == null) {
-            throw new IllegalArgumentException("Parameter 'selectionCriteria' must not be [null]"); //$NON-NLS-1$
-        }
-
-        if (selectedObjects != null) {
-            for (IJournaledObject selectedObject : selectedObjects) {
-                if (!JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
-                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
-                }
-            }
-        }
-
-        jrneToRtv.setSelectionCriteria(selectionCriteria);
-        jrneToRtv.setSelectedObjects(selectedObjects);
-
-        JournalExplorerView.openJournal(ensureShell(shell), jrneToRtv, newTab);
+        JournalExplorerView.openJournal(ensureShell(shell), input, newTab);
     }
 
     /**
@@ -100,36 +88,21 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void loadJournalEntriesFromJsonFile(Shell shell, boolean newTab) throws Exception {
+    public static void openJournalEntriesFromJsonFile(Shell shell, boolean newTab) throws Exception {
 
         OpenJournalJsonFileDialog dialog = new OpenJournalJsonFileDialog(shell);
         if (dialog.open() == Dialog.OK) {
             String connectionName = dialog.getConnectionName();
             String jsonFile = dialog.getJsonFileName();
             String whereClause = dialog.getSqlWhere();
-            openJournalExplorerView(ensureShell(shell), connectionName, jsonFile, whereClause, newTab);
+            loadJournalExplorerView(ensureShell(shell), connectionName, jsonFile, whereClause, newTab);
         }
     }
 
     /**
-     * Opens the iSphere Journal Explorer for a given Json file, which has been
-     * saved from the iSphere Journal Explorer view.
-     * 
-     * @param shell - the parent shell.
-     * @param jsonFile - path of the Json file.
-     * @param whereClause - SQL where clause of JO* fields for filtering the
-     *        journal entries.
-     * @param newTab - specifies whether the journal explorer is opened in a new
-     *        tab. (Not yet implemented. Defaults to true.)
-     */
-    public static void openJournalExplorerView(Shell shell, String jsonFile, String whereClause, boolean newTab) throws Exception {
-
-        openJournalExplorerView(ensureShell(shell), null, jsonFile, whereClause, newTab);
-    }
-
-    /**
-     * Opens the iSphere Journal Explorer for a given Json file, which has been
-     * saved from the iSphere Journal Explorer view.
+     * Loads a given given Json file with journal entries into the iSphere
+     * Journal Explorer. The file must have been saved from the iSphere Journal
+     * Explorer view.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name that overwrites the connection
@@ -140,9 +113,13 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
+    public static void loadJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
-        JournalExplorerView.openJournalJsonFile(ensureShell(shell), new JsonFile(connectionName, path), new SQLWhereClause(whereClause), newTab);
+        SQLWhereClause sqlWhereClause = new SQLWhereClause(whereClause);
+
+        JournalExplorerJsonFileInput input = new JournalExplorerJsonFileInput(connectionName, path, sqlWhereClause);
+
+        JournalExplorerView.openJournal(ensureShell(shell), input, newTab);
     }
 
     /**
@@ -155,7 +132,7 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void loadJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
+    public static void openJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
         OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
         openJournalOutputFileDialog.create();
@@ -166,15 +143,15 @@ public class Access extends AbstractAccess {
             String fileName = openJournalOutputFileDialog.getFileName();
             String memberName = openJournalOutputFileDialog.getMemberName();
             String sqlWhereClause = openJournalOutputFileDialog.getSqlWhere();
-            openJournalExplorerView(ensureShell(shell), connectionName, libraryName, fileName, memberName, sqlWhereClause, newTab);
+            loadJournalExplorerView(ensureShell(shell), connectionName, libraryName, fileName, memberName, sqlWhereClause, newTab);
         }
     }
 
     /**
-     * Opens the iSphere Journal Explorer for a given output file of journal
-     * entries. The file must have been created with the <code>DSPJRN</code>Ta
-     * command and and output format one of *TYPE1, *TYPE2, *TYPE3, *TYPE4 or
-     * *TYPE5.
+     * Loads a given given output file with journal entries into the iSphere
+     * Journal Explorer. The file must have been created with the
+     * <code>DSPJRN</code> command and and output format one of *TYPE1, *TYPE2,
+     * *TYPE3, *TYPE4 or *TYPE5.
      * 
      * @param shell - the parent shell.
      * @param connectioName - name of the host connection.
@@ -188,12 +165,14 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      */
-    public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
+    public static void loadJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause, boolean newTab) throws Exception {
 
         OutputFile outputFile = new OutputFile(connectionName, libraryName, fileName, memberName);
         SQLWhereClause sqlWhereClause = new SQLWhereClause(whereClause);
 
-        JournalExplorerView.openJournalOutputFile(ensureShell(shell), outputFile, sqlWhereClause, newTab);
+        JournalExplorerOutputFileInput input = new JournalExplorerOutputFileInput(outputFile, sqlWhereClause);
+
+        JournalExplorerView.openJournal(ensureShell(shell), input, newTab);
     }
 }

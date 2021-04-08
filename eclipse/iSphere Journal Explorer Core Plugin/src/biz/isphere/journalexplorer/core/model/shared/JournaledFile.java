@@ -12,7 +12,7 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.journalexplorer.core.handlers.ISelectedFile;
 import biz.isphere.journalexplorer.core.internals.QualifiedMemberName;
 
-public class JournaledFile extends JournaledObject implements ISelectedFile {
+public class JournaledFile extends JournaledObject implements ISelectedFile, Comparable<JournaledFile> {
 
     private QualifiedMemberName qualifiedMemberName;
 
@@ -69,5 +69,14 @@ public class JournaledFile extends JournaledObject implements ISelectedFile {
     @Override
     public String toString() {
         return String.format("%s (%s)", getQualifiedName(), getObjectType());
+    }
+
+    public int compareTo(JournaledFile other) {
+
+        if (other == null) {
+            return 1;
+        } else {
+            return qualifiedMemberName.compareTo(other.qualifiedMemberName);
+        }
     }
 }

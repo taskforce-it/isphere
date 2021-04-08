@@ -26,7 +26,6 @@ import biz.isphere.journalexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.journalexplorer.core.preferences.Preferences;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumnUI;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 
 /**
  * This class is the label provider for a "Journal Entry" column.

@@ -17,7 +17,11 @@ public class Journal implements ISelectedJournal {
     private QualifiedName qualifiedName;
 
     public Journal(String connectionName, String libraryName, String journalName) {
-        this.qualifiedName = new QualifiedName(connectionName, libraryName, journalName);
+        this(new QualifiedName(connectionName, libraryName, journalName));
+    }
+
+    public Journal(QualifiedName qualifiedName) {
+        this.qualifiedName = qualifiedName;
     }
 
     public String getConnectionName() {
