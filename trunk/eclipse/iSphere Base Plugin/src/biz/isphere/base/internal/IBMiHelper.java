@@ -8,23 +8,11 @@
 
 package biz.isphere.base.internal;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.TimeZone;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400SecurityException;
-import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.InternalErrorException;
-import com.ibm.as400.access.ObjectDoesNotExistException;
-import com.ibm.as400.access.RequestNotSupportedException;
-import com.ibm.as400.access.SystemValue;
-import com.ibm.as400.access.Trace;
 
 public final class IBMiHelper {
 
@@ -329,124 +317,6 @@ public final class IBMiHelper {
 
     private static int get2DigitInt(String value, int offset) {
         return Integer.parseInt(value.substring(offset, offset + 2));
-    }
-
-    private static TimeZone callIBMDateTimeConverter(AS400 system) {
-
-        try {
-
-            String className = com.ibm.as400.access.DateTimeConverter.class.getName();
-            Object object = Class.forName(className).getConstructor(AS400.class).newInstance(system);
-            Method method = object.getClass().getMethod("timeZoneForSystem", AS400.class);
-
-            if (method != null) {
-                Object timeZone = method.invoke(object, system);
-                return (TimeZone)timeZone;
-            }
-
-        } catch (Throwable e) {
-            // Ignore errors
-        }
-
-        return null;
-    }
-
-    // /////////////////////////////////////////////////////////////////////////////
-    //
-    // JTOpen (IBM Toolbox for Java - OSS version)
-    //
-    // Filename: DateTimeConverter.java
-    //
-    // The source code contained herein is licensed under the IBM Public License
-    // Version 1.0, which has been approved by the Open Source Initiative.
-    // Copyright (C) 1997-2004 International Business Machines Corporation and
-    // others. All rights reserved.
-    //
-    // /////////////////////////////////////////////////////////////////////////////
-    // 2008-05-21 @A1 Changes for *CURRENT when returning Date objects. Adjust
-    // the AS400 system time to the local client time.
-    // /////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Returns a TimeZone object to represent the time zone for the specified
-     * system. The TimeZone object will have the correct UTC offset for the
-     * system.
-     * 
-     * @param system The IBM i system.
-     * @return A TimeZone object representing the time zone for the system.
-     * @exception AS400SecurityException If a security or authority error
-     *            occurs.
-     * @exception ErrorCompletingRequestException If an error occurs before the
-     *            request is completed.
-     * @exception InterruptedException If this thread is interrupted.
-     * @exception IOException If an error occurs while communicating with the
-     *            system.
-     * @exception ObjectDoesNotExistException If the API used to retrieve the
-     *            information does not exist on the system.
-     * @see AS400#getTimeZone()
-     **/
-    public static TimeZone timeZoneForSystem(AS400 system) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException,
-        IOException, ObjectDoesNotExistException {
-
-        // iSphere: first try to call the original IBM method.
-        // That should work for RDi 8.0+.
-        TimeZone timeZone = callIBMDateTimeConverter(system);
-        if (timeZone != null) {
-            return timeZone;
-        }
-
-        // iSphere: For WDSCi use the JT400 source code.
-
-        // Using the UTC offset does not properly account for the use of
-        // daylight savings time. We use
-        // the QTIMZON value to adjust for those areas that use daylight savings
-        // time.
-
-        try {
-            SystemValue sv = new SystemValue(system, "QTIMZON");
-            // returns a value such as "-0500"
-            String iTimeZone = (String)sv.getValue();
-            String javaTimeZoneName = iTimeZoneToJavaTimeZone(iTimeZone);
-            if (javaTimeZoneName != null) {
-                return TimeZone.getTimeZone(javaTimeZoneName);
-            }
-        } catch (Exception e) {
-            // Log the exception and continue
-            Trace.log(Trace.ERROR, e);
-        }
-
-        // If the new method does not work, fall back to the old method of
-        // getting the timezone.
-        // To obtain a standard ID for the time zone, simply concatenate "GMT"
-        // and the QUTCOFFSET value.
-
-        String utcOffset = null;
-        try {
-            SystemValue sv = new SystemValue(system, "QUTCOFFSET");
-            // returns a value such as "-0500"
-            utcOffset = (String)sv.getValue();
-            if (utcOffset == null || utcOffset.length() == 0) {
-                if (Trace.isTraceOn()) {
-                    Trace.log(Trace.DIAGNOSTIC, "QUTCOFFSET is not set. Assuming server is in the same time zone as client application.");
-                }
-                return TimeZone.getDefault();
-            } else
-                return TimeZone.getTimeZone("GMT" + utcOffset);
-        } catch (RequestNotSupportedException e) // this won't happen
-        { // ... but if it does happen, trace it and rethrow as a runtime
-          // exception
-            Trace.log(Trace.ERROR, e);
-            throw new InternalErrorException(InternalErrorException.UNEXPECTED_EXCEPTION);
-        } catch (RuntimeException e) {
-            // Note: We've observed the following error during testing:
-            // java.lang.NullPointerException at
-            // java.util.TimeZone.parseCustomTimeZone()
-            if (Trace.isTraceOn()) {
-                Trace.log(Trace.WARNING, "[" + e.toString() + "] Unable to determine time zone of system. " + "QUTCOFFSET value is " + utcOffset
-                    + ". " + "Assuming server is in the same time zone as client application.");
-            }
-            return TimeZone.getDefault();
-        }
     }
 
     static Hashtable<String, String> iTimeZoneToJavaTimeZoneHash = null;
