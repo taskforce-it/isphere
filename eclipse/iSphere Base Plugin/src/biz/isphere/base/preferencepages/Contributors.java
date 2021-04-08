@@ -69,132 +69,133 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
     }
 
     private void createSectionTaskForce(Composite container) {
-        final Label labelTaskForceImage = new Label(container, SWT.NONE);
-        labelTaskForceImage.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelTaskForceImage.setImage(ISphereBasePlugin.getDefault().getImageRegistry().get(ISphereBasePlugin.IMAGE_TASKFORCE));
 
-        final Composite compositeAdress = new Composite(container, SWT.NONE);
-        compositeAdress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        compositeAdress.setLayout(new GridLayout());
+        createImage(container, ISphereBasePlugin.IMAGE_TASKFORCE);
 
-        final Label cA1 = new Label(compositeAdress, SWT.NONE);
-        cA1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA1.setText("Task Force IT-Consulting GmbH");
+        final Composite compositeAdress = createOneColumnComposite(container);
+        createSimpleEntry(compositeAdress, "Task Force IT-Consulting GmbH");
+        createSimpleEntry(compositeAdress, "Fallgatter 3");
+        createSimpleEntry(compositeAdress, "44369 Dortmund");
+        createSimpleEntry(compositeAdress, "Deutschland / Germany");
 
-        final Label cA2 = new Label(compositeAdress, SWT.NONE);
-        cA2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA2.setText("Fallgatter 3");
+        final Composite compositeNumbers = createOneColumnComposite(container);
+        createLabeledEntry(compositeNumbers, Messages.Telefon, "+49 (0) 231/28219967");
+        createLabeledEntry(compositeNumbers, Messages.Telefax, "+49 (0) 231/28861681");
 
-        final Label cA3 = new Label(compositeAdress, SWT.NONE);
-        cA3.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA3.setText("44369 Dortmund");
-
-        final Label cA4 = new Label(compositeAdress, SWT.NONE);
-        cA4.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cA4.setText("Deutschland / Germany");
-
-        final Composite compositeNumbers = new Composite(container, SWT.NONE);
-        compositeNumbers.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        compositeNumbers.setLayout(new GridLayout());
-
-        final Label cN1 = new Label(compositeNumbers, SWT.NONE);
-        cN1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN1.setText(Messages.Telefon + ": +49 (0) 231/28219967");
-
-        final Label cN2 = new Label(compositeNumbers, SWT.NONE);
-        cN2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cN2.setText(Messages.Telefax + ": +49 (0) 231/28861681");
-
-        final Composite compositeInternet = new Composite(container, SWT.NONE);
-        compositeInternet.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        compositeInternet.setLayout(new GridLayout());
-
-        final Label cI1 = new Label(compositeInternet, SWT.NONE);
-        cI1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cI1.setText(Messages.E_Mail + ": info@taskforce-it.de");
-
-        final Link cI2 = new Link(compositeInternet, SWT.NONE);
-        cI2.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        cI2.setText(Messages.Internet + ": <a href=\"www.taskforce-it.de\">www.taskforce-it.de</a>");
-        cI2.addSelectionListener(new LinkSelectionListener());
-    }
-
-    private void createSeparator(Composite container) {
-        final Label labelSeparator1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-        final GridData gd_labelSeparator1 = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        labelSeparator1.setLayoutData(gd_labelSeparator1);
+        final Composite compositeInternet = createOneColumnComposite(container);
+        createLabeledEntry(compositeInternet, Messages.E_Mail, "info@taskforce-it.de");
+        createInternetLink(compositeInternet, "www.taskforce-it.de");
     }
 
     private void createSectionTools400(Composite container) {
-        final Label labelTools400Image = new Label(container, SWT.NONE);
-        labelTools400Image.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelTools400Image.setImage(ISphereBasePlugin.getDefault().getImageRegistry().get(ISphereBasePlugin.IMAGE_TOOLS400));
 
-        final Label labelTools400Name = new Label(container, SWT.NONE);
-        labelTools400Name.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelTools400Name.setText("Thomas Raddatz");
+        createImage(container, ISphereBasePlugin.IMAGE_TOOLS400);
 
-        final Composite compositeInternetTools400 = new Composite(container, SWT.NONE);
-        compositeInternetTools400.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        compositeInternetTools400.setLayout(new GridLayout());
+        createSimpleEntry(container, "Thomas Raddatz");
 
-        final Label labelTools400Email = new Label(compositeInternetTools400, SWT.NONE);
+        final Composite compositeInternetTools400 = createOneColumnComposite(container);
+        createLabeledEntry(compositeInternetTools400, Messages.E_Mail, "thomas.raddatz@tools400.de");
+        createInternetLink(compositeInternetTools400, "www.tools400.de");
+    }
+
+    private void createSectionTranslators(Composite parent) {
+
+        Composite translators = createTwoColumnComposite(parent);
+
+        createContributorEntry(translators, "Dutch:", "Peter Colpaert");
+        createContributorEntry(translators, null, "Wim Jongman", "remainsoftware.com");
+
+        createContributorEntry(translators, "Italian:", "Nicola Brion");
+        createContributorEntry(translators, null, "Marco Riva", "markonetools.it");
+    }
+
+    private void createSectionDocumentation(Composite parent) {
+
+        Composite documentation = createTwoColumnComposite(parent);
+
+        createContributorEntry(documentation, "Documentation:", "Buck Calabro");
+        createContributorEntry(documentation, "Sam Lennon");
+    }
+
+    private Composite createOneColumnComposite(Composite parent) {
+
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        composite.setLayout(new GridLayout());
+
+        return composite;
+    }
+
+    private Composite createTwoColumnComposite(Composite parent) {
+
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        GridLayout layout = new GridLayout(2, true);
+        layout.horizontalSpacing = 30;
+        composite.setLayout(layout);
+
+        return composite;
+    }
+
+    private void createImage(Composite parent, String image) {
+
+        final Label iamgeLabel = new Label(parent, SWT.NONE);
+        iamgeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        iamgeLabel.setImage(ISphereBasePlugin.getDefault().getImageRegistry().get(image));
+    }
+
+    private void createInternetLink(Composite parent, String homepage) {
+
+        final Link link = new Link(parent, SWT.NONE);
+        link.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        link.setText(Messages.Internet + ": <a href=\"" + homepage + "\">" + homepage + "</a>");
+        link.addSelectionListener(new LinkSelectionListener());
+    }
+
+    private void createLabeledEntry(Composite parent, String headline, String text) {
+        createSimpleEntry(parent, headline + ": " + text);
+    }
+
+    private void createSimpleEntry(Composite parent, String text) {
+
+        final Label labelTools400Email = new Label(parent, SWT.NONE);
         labelTools400Email.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelTools400Email.setText(Messages.E_Mail + ": thomas.raddatz@tools400.de");
-
-        final Link labelTools400Internet = new Link(compositeInternetTools400, SWT.NONE);
-        labelTools400Internet.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        labelTools400Internet.setText(Messages.Internet + ": <a href=\"www.tools400.de\">www.tools400.de</a>");
-        labelTools400Internet.addSelectionListener(new LinkSelectionListener());
+        labelTools400Email.setText(text);
     }
 
-    private void createSectionTranslators(Composite container) {
-
-        Composite translators = new Composite(container, SWT.NONE);
-        translators.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        GridLayout layout = new GridLayout(2, false);
-        layout.horizontalSpacing = 30;
-        translators.setLayout(layout);
-
-        Label labelDutch = new Label(translators, SWT.NONE);
-        labelDutch.setText("Dutch:");
-        Label peterColpaert = new Label(translators, SWT.NONE);
-        peterColpaert.setText("Peter Colpaert");
-
-        new Label(translators, SWT.NONE); // Filler
-        Link linkRemain = new Link(translators, SWT.NONE);
-        linkRemain.setText("<a href=\"remainsoftware.com\">Wim Jongman</a>");
-        linkRemain.addSelectionListener(new LinkSelectionListener());
-
-        Label labelItalian = new Label(translators, SWT.NONE);
-        labelItalian.setText("Italian:");
-        Label nicolaBrion = new Label(translators, SWT.NONE);
-        nicolaBrion.setText("Nicola Brion");
-
-        new Label(translators, SWT.NONE); // Filler
-        Link linkMarkonetools = new Link(translators, SWT.NONE);
-        linkMarkonetools.setText("<a href=\"www.markonetools.it\">Marco Riva</a>");
-        linkMarkonetools.addSelectionListener(new LinkSelectionListener());
-
+    private void createContributorEntry(Composite parent, String name) {
+        createContributorEntry(parent, null, name, null);
     }
 
-    private void createSectionDocumentation(Composite container) {
+    private void createContributorEntry(Composite parent, String headline, String name) {
+        createContributorEntry(parent, headline, name, null);
+    }
 
-        Composite documentation = new Composite(container, SWT.NONE);
-        documentation.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-        GridLayout layout = new GridLayout(2, false);
-        layout.horizontalSpacing = 30;
-        documentation.setLayout(layout);
+    private void createContributorEntry(Composite parent, String headline, String name, String homepage) {
 
-        Label labelDocumentation = new Label(documentation, SWT.NONE);
-        labelDocumentation.setText("Documentation:");
-        Label buckCalabro = new Label(documentation, SWT.NONE);
-        buckCalabro.setText("Buck Calabro");
+        if (headline == null) {
+            Label filler = new Label(parent, SWT.NONE);
+        } else {
+            Label leftLabel = new Label(parent, SWT.NONE);
+            leftLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+            leftLabel.setText(headline);
+        }
 
-        Label labelDummy1 = new Label(documentation, SWT.NONE);
-        Label samLennon = new Label(documentation, SWT.NONE);
-        samLennon.setText("Sam Lennon");
+        if (homepage == null) {
+            Label rightLabel = new Label(parent, SWT.NONE);
+            rightLabel.setText(name);
+        } else {
+            Link linkMarkonetools = new Link(parent, SWT.NONE);
+            linkMarkonetools.setText("<a href=\"" + homepage + "\">" + name + "</a>");
+            linkMarkonetools.addSelectionListener(new LinkSelectionListener());
+        }
+    }
 
+    private void createSeparator(Composite container) {
+
+        final Label labelSeparator1 = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
+        final GridData gd_labelSeparator1 = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        labelSeparator1.setLayoutData(gd_labelSeparator1);
     }
 
     public void init(IWorkbench workbench) {
