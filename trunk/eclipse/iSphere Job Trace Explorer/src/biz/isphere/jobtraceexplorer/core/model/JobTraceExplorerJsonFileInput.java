@@ -15,17 +15,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import biz.isphere.jobtraceexplorer.core.model.dao.JobTraceJsonDAO;
 
-public class JobTraceExplorerFileInput extends AbstractJobTraceExplorerInput {
+public class JobTraceExplorerJsonFileInput extends AbstractJobTraceExplorerInput {
 
     private static final String INPUT_TYPE = "file://"; //$NON-NLS-1$
 
     private File file;
 
-    public JobTraceExplorerFileInput(String path) {
+    public JobTraceExplorerJsonFileInput(String path) {
         this.file = new File(path);
     }
 
-    public JobTraceExplorerFileInput(File file) {
+    public JobTraceExplorerJsonFileInput(File file) {
         this.file = file;
     }
 
