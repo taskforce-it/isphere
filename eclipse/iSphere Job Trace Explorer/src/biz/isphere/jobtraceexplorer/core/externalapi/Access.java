@@ -13,7 +13,7 @@ import java.io.File;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerFileInput;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerJsonFileInput;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceExplorerSessionInput;
 import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 
@@ -32,7 +32,7 @@ public class Access extends AbstractAccess {
      */
     public static void openJobTraceExplorer(Shell shell, File jobTrace) throws Exception {
 
-        JobTraceExplorerFileInput input = new JobTraceExplorerFileInput(jobTrace);
+        JobTraceExplorerJsonFileInput input = new JobTraceExplorerJsonFileInput(jobTrace);
 
         JobTraceExplorerView.openJobTrace(ensureShell(shell), input);
     }
