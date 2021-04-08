@@ -174,7 +174,7 @@ public class Contributors extends PreferencePage implements IWorkbenchPreference
     private void createContributorEntry(Composite parent, String headline, String name, String homepage) {
 
         if (headline == null) {
-            Label filler = new Label(parent, SWT.NONE);
+            new Label(parent, SWT.NONE); // filler
         } else {
             Label leftLabel = new Label(parent, SWT.NONE);
             leftLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
