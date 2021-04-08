@@ -92,20 +92,26 @@ public class JrneToRtv implements Serializable, Cloneable {
 
     public void setSelectedObjects(IJournaledObject[] selectedObjects) {
 
-        if (selectedObjects != null) {
-            for (IJournaledObject selectedObject : selectedObjects) {
-                if (JournalExplorerHelper.isFile(selectedObject.getObjectType())) {
-                    addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(), selectedObject.getMember());
-                } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
-                    addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
-                } else {
-                    throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
-                }
+        if (selectedObjects == null) {
+            return;
+        }
+
+        for (IJournaledObject selectedObject : selectedObjects) {
+            if (JournalExplorerHelper.isFile(selectedObject.getObjectType())) {
+                addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType(), selectedObject.getMember());
+            } else if (JournalExplorerHelper.isValidObjectType(selectedObject.getObjectType())) {
+                addObject(selectedObject.getLibrary(), selectedObject.getName(), selectedObject.getObjectType());
+            } else {
+                throw new IllegalArgumentException("Object type not supported: " + selectedObject.getObjectType()); //$NON-NLS-1$
             }
         }
     }
 
     public void setSelectionCriteria(ISelectionCriteria selectionCriteria) {
+
+        if (selectionCriteria == null) {
+            return;
+        }
 
         setFromTime(selectionCriteria.getFromTime());
         setToTime(selectionCriteria.getToTime());
