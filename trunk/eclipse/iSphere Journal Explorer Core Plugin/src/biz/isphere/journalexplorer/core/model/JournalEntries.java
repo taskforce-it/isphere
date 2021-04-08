@@ -22,7 +22,6 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.json.JsonSerializable;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.helpers.TimeTaken;
-import biz.isphere.journalexplorer.core.internals.JournalExplorerHelper;
 import biz.isphere.journalexplorer.core.model.adapters.JOESDProperty;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperties;
 import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
@@ -71,10 +70,24 @@ public class JournalEntries implements JsonSerializable {
     private transient OutputFile outputFile;
     private transient boolean isOverflow;
 
+    /**
+     * Produces a JournalEntries object without an output file name and hence
+     * without output format information. This constructor is used by the Json
+     * importer. The output file is set from the Json data or (for iSphere < 4.0
+     * Json files) at the end of the import operation by calling
+     * {@link #finalizeJsonLoading(String, SQLWhereClause)}. .
+     */
     public JournalEntries() {
         this(null, 0);
     }
 
+    /**
+     * Produces a JournalEntries object for a given output file and initial
+     * capacity.
+     * 
+     * @param outputFile - output file.
+     * @param initialCapacity - initial capacity.
+     */
     public JournalEntries(OutputFile outputFile, int initialCapacity) {
 
         if (outputFile != null) {
@@ -104,8 +117,8 @@ public class JournalEntries implements JsonSerializable {
      */
     public OutputFile getOutputFile() {
 
-        if (outputFile == null) {
-            outputFile = new OutputFile(connectionName, outputFileLibraryName, outputFileMemberName);
+        if (outputFile == null && (connectionName != null && outputFileLibraryName != null && outputFileName != null && outputFileMemberName != null)) {
+            outputFile = new OutputFile(connectionName, outputFileLibraryName, outputFileName, outputFileMemberName);
         }
 
         return outputFile;
@@ -329,6 +342,7 @@ public class JournalEntries implements JsonSerializable {
         /*
          * Hack for old export files, exported prior to iSphere v4.0
          */
+        // TODO: remove at the end of 2021.
         if (this.outputFileName == null && getItems().size() > 0) {
             if (this.connectionName == null) {
                 this.connectionName = getItem(0).getConnectionName();
@@ -342,17 +356,17 @@ public class JournalEntries implements JsonSerializable {
     private void addJournaledObject(JournalEntry journalEntry) {
 
         String objectType = journalEntry.getObjectType();
-        if (JournalExplorerHelper.isValidObjectType(objectType)) {
-            String connectionName = journalEntry.getConnectionName();
-            String objectName = journalEntry.getObjectName();
-            String libraryName = journalEntry.getObjectLibrary();
-            if (journalEntry.isFile()) {
-                String memberName = journalEntry.getMemberName();
-                journaledObjects.add(new JournaledFile(connectionName, libraryName, objectName, memberName));
-            } else {
-                journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
-            }
+        // if (JournalExplorerHelper.isValidObjectType(objectType)) {
+        String connectionName = journalEntry.getConnectionName();
+        String objectName = journalEntry.getObjectName();
+        String libraryName = journalEntry.getObjectLibrary();
+        if (journalEntry.isFile()) {
+            String memberName = journalEntry.getMemberName();
+            journaledObjects.add(new JournaledFile(connectionName, libraryName, objectName, memberName));
+        } else {
+            journaledObjects.add(new JournaledObject(connectionName, libraryName, objectName, objectType));
         }
+        // }
 
     }
 }

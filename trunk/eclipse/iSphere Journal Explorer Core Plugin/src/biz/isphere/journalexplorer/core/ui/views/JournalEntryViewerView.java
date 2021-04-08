@@ -48,7 +48,6 @@ import biz.isphere.journalexplorer.core.ui.actions.DisplayChangedFieldsOnlyActio
 import biz.isphere.journalexplorer.core.ui.actions.GenericRefreshAction;
 import biz.isphere.journalexplorer.core.ui.contentproviders.JournalPropertiesContentProvider;
 import biz.isphere.journalexplorer.core.ui.popupmenus.JournalPropertiesMenuAdapter;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
 import biz.isphere.journalexplorer.core.ui.widgets.JournalEntryDetailsViewer;
 
 /**

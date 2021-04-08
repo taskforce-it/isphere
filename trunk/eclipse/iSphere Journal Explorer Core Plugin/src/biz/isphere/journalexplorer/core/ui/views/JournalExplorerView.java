@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.swt.widgets.sqleditor.SQLSyntaxErrorException;
@@ -50,14 +49,11 @@ import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.exceptions.BufferTooSmallException;
 import biz.isphere.journalexplorer.core.exceptions.NoJournalEntriesLoadedException;
 import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
+import biz.isphere.journalexplorer.core.model.AbstractJournalExplorerInput;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
-import biz.isphere.journalexplorer.core.model.JsonFile;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.model.OutputFile;
-import biz.isphere.journalexplorer.core.model.SQLWhereClause;
-import biz.isphere.journalexplorer.core.model.api.JrneToRtv;
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ConfigureParsersAction;
 import biz.isphere.journalexplorer.core.ui.actions.EditSqlAction;
@@ -68,10 +64,7 @@ import biz.isphere.journalexplorer.core.ui.actions.LoadJournalEntriesFromOutputF
 import biz.isphere.journalexplorer.core.ui.actions.SaveJournalEntriesAction;
 import biz.isphere.journalexplorer.core.ui.actions.ToggleHighlightUserEntriesAction;
 import biz.isphere.journalexplorer.core.ui.model.JournalEntryColumn;
-import biz.isphere.journalexplorer.core.ui.widgets.AbstractJournalEntriesViewerTab;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForLoadedJournalEntriesTab;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForOutputFilesTab;
-import biz.isphere.journalexplorer.core.ui.widgets.JournalEntriesViewerForRetrievedJournalEntriesTab;
+import biz.isphere.journalexplorer.core.ui.widgets.JournalExplorerTab;
 
 public class JournalExplorerView extends XViewPart implements ISelectionChangedListener, SelectionListener {
 
@@ -124,8 +117,8 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
             }
 
             public void close(CTabFolderEvent event) {
-                if (event.item instanceof AbstractJournalEntriesViewerTab) {
-                    AbstractJournalEntriesViewerTab closedTab = (AbstractJournalEntriesViewerTab)event.item;
+                if (event.item instanceof JournalExplorerTab) {
+                    JournalExplorerTab closedTab = (JournalExplorerTab)event.item;
                     closedTab.removeAsSelectionProvider(selectionProviderIntermediate);
                     selectNextTab(closedTab);
                 }
@@ -161,9 +154,9 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         getSite().setSelectionProvider(selectionProviderIntermediate);
     }
 
-    private void disposeJournalExplorerTabChecked(Object object) {
-        if (object instanceof AbstractJournalEntriesViewerTab) {
-            AbstractJournalEntriesViewerTab tabItem = (AbstractJournalEntriesViewerTab)object;
+    private void disposeJournalExplorerTabChecked(CTabItem object) {
+        if (object instanceof JournalExplorerTab) {
+            JournalExplorerTab tabItem = (JournalExplorerTab)object;
             tabItem.removeAsSelectionProvider(selectionProviderIntermediate);
             tabItem.dispose();
         }
@@ -188,7 +181,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         editSqlAction = new EditSqlAction(getShell()) {
             @Override
             public void postRunAction() {
-                AbstractJournalEntriesViewerTab tabItem = getSelectedViewer();
+                JournalExplorerTab tabItem = getSelectedViewer();
                 tabItem.setSqlEditorVisibility(editSqlAction.isChecked());
                 return;
             }
@@ -203,7 +196,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         reloadEntriesAction = new GenericRefreshAction() {
             @Override
             protected void postRunAction() {
-                performReloadJournalEntries();
+                refresh();
             }
         };
 
@@ -228,75 +221,47 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         viewMenu.add(saveJournalEntriesAction);
     }
 
-    private void createJournalTab(JrneToRtv jrneToRtv, boolean newTab) {
+    private void createJournalTab(AbstractJournalExplorerInput input, boolean newTab) {
 
-        JournalEntriesViewerForRetrievedJournalEntriesTab journalEntriesViewer = null;
+        if (input == null) {
+            throw new IllegalArgumentException("Parameter 'input' must not be [null]."); //$NON-NLS-1$
+        }
+
+        JournalExplorerTab jobLogExplorerTab = findExplorerTab(input);
+        if (jobLogExplorerTab == null) {
+            jobLogExplorerTab = new JournalExplorerTab(tabFolder, new SqlEditorSelectionListener());
+            jobLogExplorerTab.setAsSelectionProvider(selectionProviderIntermediate);
+            jobLogExplorerTab.addSelectionChangedListener(this);
+        }
 
         try {
 
-            journalEntriesViewer = new JournalEntriesViewerForRetrievedJournalEntriesTab(getShell(), tabFolder, jrneToRtv,
-                new SqlEditorSelectionListener());
+            jobLogExplorerTab.setInput(this, input);
+            setActionEnablement(jobLogExplorerTab);
 
-            journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
-            journalEntriesViewer.addSelectionChangedListener(this);
-
-            tabFolder.setSelection(journalEntriesViewer);
-
-            performLoadJournalEntries(journalEntriesViewer);
-
-        } catch (Throwable e) {
-            handleDataLoadException(journalEntriesViewer, e);
+        } catch (SQLSyntaxErrorException e) {
+            MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title, e.getLocalizedMessage());
+            return;
         }
+
+        tabFolder.setSelection(jobLogExplorerTab);
     }
 
-    private void createJournalTab(JsonFile jsonFile, SQLWhereClause whereClause) {
+    private JournalExplorerTab findExplorerTab(AbstractJournalExplorerInput input) {
 
-        JournalEntriesViewerForLoadedJournalEntriesTab journalEntriesViewer = null;
-
-        try {
-
-            journalEntriesViewer = new JournalEntriesViewerForLoadedJournalEntriesTab(getShell(), tabFolder, jsonFile, whereClause,
-                new SqlEditorSelectionListener());
-
-            journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
-            journalEntriesViewer.addSelectionChangedListener(this);
-
-            tabFolder.setSelection(journalEntriesViewer);
-
-            performLoadJournalEntries(journalEntriesViewer);
-
-        } catch (Throwable e) {
-            handleDataLoadException(journalEntriesViewer, e);
+        CTabItem[] tabItems = tabFolder.getItems();
+        for (CTabItem tabItem : tabItems) {
+            JournalExplorerTab journalTab = (JournalExplorerTab)tabItem;
+            AbstractJournalExplorerInput tabInput = journalTab.getInput();
+            if (tabInput == null || input.isSameInput(tabInput)) {
+                return journalTab;
+            }
         }
+
+        return null;
     }
 
-    private void createJournalTab(OutputFile outputFile, SQLWhereClause whereClause) {
-
-        JournalEntriesViewerForOutputFilesTab journalEntriesViewer = null;
-
-        try {
-
-            journalEntriesViewer = new JournalEntriesViewerForOutputFilesTab(getShell(), tabFolder, outputFile, whereClause,
-                new SqlEditorSelectionListener());
-
-            journalEntriesViewer.setAsSelectionProvider(selectionProviderIntermediate);
-            journalEntriesViewer.addSelectionChangedListener(this);
-
-            tabFolder.setSelection(journalEntriesViewer);
-
-            performLoadJournalEntries(journalEntriesViewer);
-
-            setActionEnablement(journalEntriesViewer);
-
-        } catch (Throwable e) {
-
-            ISpherePlugin.logError("*** Error in method JournalExplorerView.createJournalTab ***", e);
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-            disposeJournalExplorerTabChecked(journalEntriesViewer);
-        }
-    }
-
-    public void handleDataLoadException(AbstractJournalEntriesViewerTab tabItem, Throwable e) {
+    public void handleDataLoadException(CTabItem tabItem, Throwable e) {
 
         if (e instanceof ParseException) {
             MessageDialog.openInformation(getShell(), Messages.DisplayJournalEntriesDialog_Title,
@@ -338,65 +303,17 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
      * 
      * @return selected viewer
      */
-    public AbstractJournalEntriesViewerTab getSelectedViewer() {
+    public JournalExplorerTab getSelectedViewer() {
         CTabFolder tabFolder = getTabFolder();
         if (tabFolder == null) {
             return null;
         }
-        return (AbstractJournalEntriesViewerTab)tabFolder.getSelection();
+        return (JournalExplorerTab)tabFolder.getSelection();
     }
 
-    private void performReloadJournalEntries() {
+    public void finishDataLoading(AbstractJournalExplorerInput input, JournalEntries journalEntries, boolean isFilter) {
 
-        try {
-
-            AbstractJournalEntriesViewerTab tabItem = getSelectedViewer();
-            performLoadJournalEntries(tabItem);
-
-        } catch (Exception e) {
-            ISpherePlugin.logError("*** Error in method JournalExplorerView.performReloadJournalEntries() ***", e);
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
-    }
-
-    private void performLoadJournalEntries(AbstractJournalEntriesViewerTab tabItem) throws Exception {
-
-        SQLWhereClause initialWhereClause = tabItem.getSelectClause();
-        SQLWhereClause filterWhereClause = tabItem.getFilterClause();
-
-        tabItem.validateWhereClause(getViewSite().getShell(), initialWhereClause);
-        tabItem.validateWhereClause(getViewSite().getShell(), filterWhereClause);
-
-        tabItem.closeJournal();
-        updateStatusLine();
-        tabItem.openJournal(this, initialWhereClause, filterWhereClause);
-    }
-
-    private void performFilterJournalEntries(AbstractJournalEntriesViewerTab tabItem) throws Exception {
-
-        tabItem.validateWhereClause(getViewSite().getShell(), tabItem.getFilterClause());
-
-        tabItem.storeSqlEditorHistory();
-        refreshSqlEditorHistory();
-
-        // SQLWhereClause sqlWhereClause = new SQLWhereClause("ALPJ",
-        // "GH382DTL", tabItem.getFilterClause().getClause());
-        // SQLWhereClause sqlWhereClause = new SQLWhereClause("ALPJ",
-        // "GH382DTL");
-        SQLWhereClause sqlWhereClause = tabItem.getFilterClause();
-        tabItem.filterJournal(this, sqlWhereClause);
-    }
-
-    private void refreshSqlEditorHistory() {
-        for (CTabItem tabItem : tabFolder.getItems()) {
-            ((AbstractJournalEntriesViewerTab)tabItem).refreshSqlEditorHistory();
-        }
-    }
-
-    public void finishDataLoading(AbstractJournalEntriesViewerTab tabItem, boolean isFilter) {
-
-        if (tabItem != null) {
-            JournalEntries journalEntries = tabItem.getInput();
+        if (journalEntries != null) {
             if (journalEntries != null) {
                 if (journalEntries.isCanceled()) {
                     MessageDialog.openWarning(getShell(), Messages.Title_Load_Journal_Entries,
@@ -426,14 +343,14 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
 
     private void updateStatusLine() {
 
-        AbstractJournalEntriesViewerTab tabItem = getSelectedViewer();
+        JournalExplorerTab tabItem = getSelectedViewer();
 
         if (tabItem == null || tabItem.isLoading()) {
             clearStatusLine();
             return;
         }
 
-        JournalEntries journalEntries = tabItem.getInput();
+        JournalEntries journalEntries = tabItem.getInputData();
         if (journalEntries == null) {
             clearStatusLine();
             return;
@@ -503,7 +420,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
      * 
      * @param tabItem - the selected viewer (tab)
      */
-    private void setActionEnablement(AbstractJournalEntriesViewerTab tabItem) {
+    private void setActionEnablement(JournalExplorerTab tabItem) {
 
         if (tabItem == null || tabItem.getInput() == null) {
             editSqlAction.setEnabled(false);
@@ -529,7 +446,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         if (tabItem != null) {
 
             columns = tabItem.getColumns();
-            journalEntries = tabItem.getInput();
+            journalEntries = tabItem.getInputData();
             if (journalEntries != null) {
                 numEntries = journalEntries.size();
             }
@@ -552,7 +469,7 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
             resetColumnSizeAction.setViewer(null);
             loadJournalEntriesAction.setEnabled(true);
             saveJournalEntriesAction.setEnabled(false);
-            saveJournalEntriesAction.setSelectedItems(new JournalEntries());
+            saveJournalEntriesAction.setSelectedItems(null);
         } else {
             exportToExcelAction.setColumns(columns);
             exportToExcelAction.setEnabled(true);
@@ -609,14 +526,24 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
 
     @Override
     public void refresh() {
-        performReloadJournalEntries();
+
+        try {
+
+            JournalExplorerTab tabItem = getSelectedViewer();
+
+            tabItem.refresh(this);
+            updateStatusLine();
+
+        } catch (SQLSyntaxErrorException e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
     }
 
     private class SqlEditorSelectionListener implements SelectionListener {
 
         public void widgetSelected(SelectionEvent event) {
             try {
-                performFilterJournalEntries(getSelectedViewer());
+                getSelectedViewer().filterJournal(JournalExplorerView.this);
             } catch (SQLSyntaxErrorException e) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage() + "\n"
                     + Messages.Error_Did_you_forget_to_specify_the_table_name_when_using_entry_specific_fields);
@@ -632,37 +559,18 @@ public class JournalExplorerView extends XViewPart implements ISelectionChangedL
         }
     }
 
-    public static void openJournal(Shell shell, JrneToRtv jrneToRtv, boolean newTab) throws Exception {
+    public static void openJournal(Shell shell, AbstractJournalExplorerInput input, boolean newTab) throws Exception {
 
-        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
-
-        if (viewPart instanceof JournalExplorerView) {
-            JournalExplorerView view = (JournalExplorerView)viewPart;
-            view.createJournalTab(jrneToRtv, newTab);
-        }
-    }
-
-    public static void openJournalJsonFile(Shell shell, JsonFile jsonFile, SQLWhereClause sqlWhereClause, boolean newTab) throws Exception {
-
-        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
-
-        if (viewPart instanceof JournalExplorerView) {
-            JournalExplorerView view = (JournalExplorerView)viewPart;
-            view.createJournalTab(jsonFile, sqlWhereClause);
-        }
-    }
-
-    public static void openJournalOutputFile(Shell shell, OutputFile outputFile, SQLWhereClause sqlWhereClause, boolean newTab) throws Exception {
-
-        if (!ISphereHelper.checkISphereLibrary(shell, outputFile.getConnectionName())) {
-            return;
+        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JournalExplorerView.ID);
+        if (view == null) {
+            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
+        } else {
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
         }
 
-        IViewPart viewPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JournalExplorerView.ID);
-
-        if (viewPart instanceof JournalExplorerView) {
-            JournalExplorerView view = (JournalExplorerView)viewPart;
-            view.createJournalTab(outputFile, sqlWhereClause);
+        if (view instanceof JournalExplorerView) {
+            JournalExplorerView journalExplorerView = (JournalExplorerView)view;
+            journalExplorerView.createJournalTab(input, newTab);
         }
     }
 }
