@@ -9,8 +9,11 @@
 package biz.isphere.base.internal;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -27,6 +30,8 @@ public class DialogSettingsManager {
     private static final String COLUMN_NAME = "COLUMN_NAME";
     private static final String COLUMN_WIDTH = "COLUMN_WIDTH";
     private static final String COLUMN_ORDER = "COLUMN_ORDER";
+    private static final String COLUMN_PREVIOUS_WIDTH = "COLUMN_PREVIOUS_WIDTH";
+    private static final String COLUMN_IS_HIDDEN = "COLUMN_IS_HIDDEN";
 
     private IDialogSettings dialogSettings;
     private Class<?> section;
@@ -195,9 +200,10 @@ public class DialogSettingsManager {
         tableColumn.setResizable(true);
         tableColumn.setData(COLUMN_NAME, name);
         tableColumn.setData(COLUMN_WIDTH, new Integer(width));
+        tableColumn.setData(COLUMN_IS_HIDDEN, Boolean.FALSE);
 
         int effectiveWidth = loadIntValue(produceColumnWidthKey(tableColumn), width);
-        tableColumn.setWidth(effectiveWidth);
+        setColumnWidth(tableColumn, effectiveWidth);
 
         tableColumn.addControlListener(getColumnResizeListener());
 
@@ -269,10 +275,153 @@ public class DialogSettingsManager {
 
         for (int i = 0; i < table.getColumnCount(); i++) {
             TableColumn column = table.getColumn(i);
-            column.setWidth(getDefaultColumnWidth(column));
+            resetColumnWidth(column);
         }
 
         table.setVisible(true);
+    }
+
+    private void resetColumnWidth(TableColumn column) {
+        if (column.getResizable()) {
+            column.setWidth(getDefaultColumnWidth(column));
+        }
+    }
+
+    /**
+     * Resets the hidden attribute of all hidden columns to show all columns.
+     * 
+     * @param table - table whose hidden columns are to be shown
+     */
+    public void showAllTableColumns(Table table) {
+
+        TableColumn[] columns = table.getColumns();
+        for (TableColumn column : columns) {
+            showTableColumn(column);
+        }
+    }
+
+    /**
+     * Resets the hidden attribute of the columns identified by a given list of
+     * column names.
+     * 
+     * @param table - table whose hidden columns are to be shown
+     * @param columnNames - names of the columns whose hidden attributes are
+     *        reset.
+     */
+    public void showTableColumns(Table table, String... columnNames) {
+
+        if (columnNames.length == 0) {
+            return;
+        }
+
+        for (String columnName : columnNames) {
+            TableColumn column = getColumn(table, columnName);
+            showTableColumn(column);
+        }
+    }
+
+    /**
+     * Sets the hidden attribute of all columns to hide them all.
+     * 
+     * @param table - table whose columns are to be hidden
+     */
+    public void hideAllTableColumns(Table table) {
+
+        TableColumn[] columns = table.getColumns();
+        for (TableColumn column : columns) {
+            showTableColumn(column);
+        }
+    }
+
+    /**
+     * Sets the hidden attribute of the columns identified by a given list of
+     * column names.
+     * 
+     * @param table - table whose columns are hidden.
+     * @param columnNames - names of the columns whose hidden attributes are
+     *        set.
+     */
+    public void hideTableColumns(Table table, String... columnNames) {
+
+        if (columnNames.length == 0) {
+            return;
+        }
+
+        for (String columnName : columnNames) {
+            TableColumn column = getColumn(table, columnName);
+            hideTableColumn(column);
+        }
+    }
+
+    /**
+     * Sets the hidden attribute of the columns identified by a given list of
+     * column names. All other columns are set to the opposite.
+     * 
+     * @param table - table whose columns are hidden.
+     * @param shown - specifies whether the columns are shown or hidden.
+     * @param columnNames - names of the columns whose hidden attributes are
+     *        set.
+     */
+    public void setTableColumnsHidden(Table table, String[] columnNames, boolean hidden) {
+
+        if (columnNames.length == 0) {
+            return;
+        }
+
+        Set<String> names = new HashSet<String>(Arrays.asList(columnNames));
+
+        TableColumn[] columns = table.getColumns();
+        for (TableColumn column : columns) {
+            boolean isHidden;
+            if (names.contains(getColumnName(column))) {
+                if (hidden) {
+                    isHidden = true;
+                } else {
+                    isHidden = false;
+                }
+            } else {
+                isHidden = !hidden;
+            }
+            if (isHidden) {
+                hideTableColumn(column);
+            } else {
+                showTableColumn(column);
+
+            }
+        }
+    }
+
+    private void showTableColumn(TableColumn column) {
+
+        if (!isHidden(column)) {
+            return;
+        }
+
+        Integer width = (Integer)column.getData(COLUMN_PREVIOUS_WIDTH);
+        setColumnWidth(column, width);
+        column.setResizable(true);
+        column.setData(COLUMN_IS_HIDDEN, Boolean.FALSE);
+
+        column.removeControlListener(getColumnResizeListener());
+    }
+
+    private void hideTableColumn(TableColumn column) {
+
+        if (isHidden(column)) {
+            return;
+        }
+
+        column.removeControlListener(getColumnResizeListener());
+
+        column.setData(COLUMN_PREVIOUS_WIDTH, new Integer(column.getWidth()));
+        column.setWidth(0);
+        column.setResizable(false);
+        column.setData(COLUMN_IS_HIDDEN, Boolean.TRUE);
+    }
+
+    private boolean isHidden(TableColumn column) {
+        Boolean isHidden = (Boolean)column.getData(COLUMN_IS_HIDDEN);
+        return isHidden;
     }
 
     /**
@@ -292,6 +441,16 @@ public class DialogSettingsManager {
             }
         }
 
+    }
+
+    private void setColumnWidth(TableColumn tableColumn, Integer width) {
+
+        if (width != null && width > 0) {
+            tableColumn.setWidth(width);
+        } else {
+            resetColumnWidth(tableColumn);
+            storeValue(produceColumnWidthKey(tableColumn), tableColumn.getWidth());
+        }
     }
 
     /**
