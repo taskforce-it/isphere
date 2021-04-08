@@ -30,7 +30,6 @@ import com.ibm.as400.access.AS400Structure;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.AS400UnsignedBin2;
 import com.ibm.as400.access.AS400UnsignedBin4;
-import com.ibm.as400.access.FieldDescription;
 import com.ibm.as400.access.ProgramParameter;
 
 /**
@@ -414,28 +413,6 @@ public class RJNE0200 {
 
         return tTimestamp;
     }
-
-    // private Date convertToLocalTimeZone(Date timestamp) {
-
-    /*
-     * Do not convert when the IDE is WDSCi 7.0. In this case the IBM
-     * DateTimeConverter did not return the timestamp with the timezone of the
-     * IBM i, but with the local timezone of the PC client.
-     */
-
-    // if (isWDSCi) {
-    // return timestamp;
-    // }
-    //
-    // if (offsetMinutes > 0) {
-    // remoteCalendar.clear();
-    // remoteCalendar.setTime(timestamp);
-    // remoteCalendar.add(Calendar.MINUTE, offsetMinutes * -1);
-    // timestamp = remoteCalendar.getTime();
-    // }
-    //
-    // return timestamp;
-    // }
 
     /**
      * RJNE0200 Format, Journal entry's header:<br>
@@ -1792,28 +1769,6 @@ public class RJNE0200 {
             entrySpecificDataStructure = new AS400Structure(tStructure.toArray(new AS400DataType[0]));
         }
         return entrySpecificDataStructure;
-    }
-
-    /**
-     * Returns this journal entry's entry specific data structure.
-     * <p>
-     * Format:
-     * <ul>
-     * <li>Length of entry specific data</li>
-     * <li>Reserved</li>
-     * <li>Entry specific data splitted into individual fields</li>
-     * </ul>
-     * 
-     * @return entry specific data structure
-     */
-    private AS400Structure getEntrySpecificDataStructure(DynamicRecordFormat aRecordFormat) {
-        List<AS400DataType> tStructure = new ArrayList<AS400DataType>(getEntrySpecificDataStructureHeaderEntries());
-        FieldDescription[] fds = aRecordFormat.getFieldDescriptions();
-        for (int i = 0; i < fds.length; i++) {
-            tStructure.add(fds[i].getDataType());
-        }
-
-        return new AS400Structure(tStructure.toArray(new AS400DataType[0]));
     }
 
     /**
