@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,50 +8,44 @@
 
 package biz.isphere.rse.compareeditor.handler;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.handler.AbstractCommandHandler;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
-public class CompareSourceMembersHandler extends AbstractHandler implements IHandler {
+public class CompareSourceMembersHandler extends AbstractCommandHandler {
 
     public static final String ID = "biz.isphere.core.command.SourceMemberCompare.open";
 
-    private Shell shell;
-
-    public Object execute(ExecutionEvent arg0) throws ExecutionException {
+    public Object execute(ExecutionEvent event) throws ExecutionException {
 
         RSEMember[] selectedMembers = new RSEMember[0];
 
-        handleSourceCompare(selectedMembers);
+        handleSourceCompareInternally(getShell(), selectedMembers, true);
 
         return null;
     }
 
     public void handleReadOnlySourceCompare(Member[] selectedMembers) {
-        handleSourceCompareInternally(selectedMembers, false);
+        handleSourceCompareInternally(getShell(), selectedMembers, false);
     }
 
     public void handleSourceCompare(Member[] selectedMembers) {
-        handleSourceCompareInternally(selectedMembers, true);
+        handleSourceCompareInternally(getShell(), selectedMembers, true);
     }
 
-    private void handleSourceCompareInternally(Member[] selectedMembers, boolean selectEditable) {
-
-        shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+    private void handleSourceCompareInternally(Shell shell, Member[] selectedMembers, boolean selectEditable) {
 
         RSECompareDialog dialog;
         if (selectedMembers.length > 2) {
@@ -97,7 +91,7 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
                 String rightSourceFile = dialogRightMember.getSourceFile();
                 for (Member rseSelectedMember : selectedMembers) {
                     String rightMember = rseSelectedMember.getMember();
-                    RSEMember rseRightMember = getMember(rightConnection, rightLibrary, rightSourceFile, rightMember);
+                    RSEMember rseRightMember = getMember(shell, rightConnection, rightLibrary, rightSourceFile, rightMember);
                     if (!rseRightMember.exists()) {
                         String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
                             new Object[] { rightLibrary, rightSourceFile, rightMember });
@@ -138,7 +132,7 @@ public class CompareSourceMembersHandler extends AbstractHandler implements IHan
         return true;
     }
 
-    private RSEMember getMember(String connectionName, String libraryName, String sourceFileName, String memberName) {
+    private RSEMember getMember(Shell shell, String connectionName, String libraryName, String sourceFileName, String memberName) {
         try {
             IBMiConnection connection = IBMiConnection.getConnection(connectionName);
             return new RSEMember(connection.getMember(libraryName, sourceFileName, memberName, null));

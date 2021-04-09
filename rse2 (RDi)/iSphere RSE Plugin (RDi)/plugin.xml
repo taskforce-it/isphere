@@ -1062,66 +1062,38 @@
       	    iSphere Menu Contribution
       	  ==========================================
       	-->
-   
-   <extension
-         point="org.eclipse.ui.actionSets">
-         
-      <actionSet
-            id="biz.isphere.core.actionSet.rse"
-            label="%menu_iSphere_Menu_RSE"
-            visible="true">
-         
-         <action
-               class="biz.isphere.rse.actions.CompareEditorMenuAction"
-               id="biz.isphere.rse.actions.CompareEditorMenuAction"
-               definitionId="biz.isphere.core.command.SourceMemberCompare.open"
-               label="%menu_Compare_Source_Members"
-               icon="icons/compare.gif"
-               menubarPath="biz.isphere.core.menu.isphere/group0"
-               tooltip="%menu_Tooltip_Compare_Source_Members">
-         </action>
-         
-         <action
-               class="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
-               id="biz.isphere.rse.actions.OpenDataSpaceEditorDesignerAction"
-               definitionId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
-               label="%menu_DataSpace_Editor_Designer"
-               icon="icons/data_space_editor_designer.gif"
-               menubarPath="biz.isphere.core.menu.isphere/group0"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_DataSpace_Editor_Designer">
-         </action>
-         
-         <action
-               class="biz.isphere.rse.actions.OpenRSEUserActionManagementAction"
-               id="biz.isphere.rse.actions.OpenRSEUserActionManagementAction"
-               definitionId="biz.isphere.core.command.RSEUserActionManagement.open"
-               label="%menu_RSE_UserAction_Management"
-               icon="icons/iSphere_RSE_UserAction_Management.gif"
-               menubarPath="biz.isphere.core.menu.isphere/group0"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_UserAction_Management">
-         </action>
-         
-         <action
-               class="biz.isphere.rse.actions.OpenRSECommandManagementAction"
-               id="biz.isphere.rse.actions.OpenRSECommandManagementAction"
-               definitionId="biz.isphere.core.command.RSECommandManagement.open"
-               label="%menu_RSE_Command_Management"
-               icon="icons/iSphere_RSE_Command_Management.gif"
-               menubarPath="biz.isphere.core.menu.isphere/group0"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Command_Management">
-         </action>
-         
-         <action
-               class="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
-               id="biz.isphere.rse.actions.OpenRSEFilterManagementAction"
-               definitionId="biz.isphere.core.command.RSEFilterManagement.open"
-               label="%menu_RSE_Filter_Management"
-               icon="icons/iSphere_RSE_Filter_Management.gif"
-               menubarPath="biz.isphere.core.menu.isphere/group0"
-               tooltip="%menu_Tooltip_Opens_the_iSphere_RSE_Filter_Management">
-         </action>
-         
-      </actionSet>
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="menu:biz.isphere.core.menu.isphere?before=additions">
+
+			<command
+				id="biz.isphere.core.menu.RSEFilterManagement.open"
+				commandId="biz.isphere.core.command.RSEFilterManagement.open"
+				icon="icons/iSphere_RSE_Filter_Management.gif">
+			</command>
+			<command
+				id="biz.isphere.core.menu.RSECommandManagement.open"
+				commandId="biz.isphere.core.command.RSECommandManagement.open"
+				icon="icons/iSphere_RSE_Command_Management.gif">
+			</command>
+			<command
+				id="biz.isphere.core.menu.RSEUserActionManagement.open"
+				commandId="biz.isphere.core.command.RSEUserActionManagement.open"
+				icon="icons/iSphere_RSE_UserAction_Management.gif">
+			</command>
+
+			<command
+				id="biz.isphere.core.menu.DataSpaceEditorDesigner.open"
+				commandId="biz.isphere.core.command.DataSpaceEditorDesigner.open"
+				icon="icons/data_space_editor_designer.gif">
+			</command>
+
+			<command
+				id="biz.isphere.core.menu.SourceMemberCompare.open"
+				commandId="biz.isphere.core.command.SourceMemberCompare.open"
+				icon="icons/compare.gif">
+			</command>
+
+      </menuContribution>
    </extension>
 
       	<!--
