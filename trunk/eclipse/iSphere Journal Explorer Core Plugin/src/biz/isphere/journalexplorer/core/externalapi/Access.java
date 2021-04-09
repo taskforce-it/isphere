@@ -134,15 +134,14 @@ public class Access extends AbstractAccess {
      */
     public static void openJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
-        OpenJournalOutputFileDialog openJournalOutputFileDialog = new OpenJournalOutputFileDialog(shell);
-        openJournalOutputFileDialog.create();
+        OpenJournalOutputFileDialog dialog = new OpenJournalOutputFileDialog(shell);
 
-        if (openJournalOutputFileDialog.open() == Window.OK) {
-            String connectionName = openJournalOutputFileDialog.getConnectionName();
-            String libraryName = openJournalOutputFileDialog.getLibrary();
-            String fileName = openJournalOutputFileDialog.getFileName();
-            String memberName = openJournalOutputFileDialog.getMemberName();
-            String sqlWhereClause = openJournalOutputFileDialog.getSqlWhere();
+        if (dialog.open() == Window.OK) {
+            String connectionName = dialog.getConnectionName();
+            String libraryName = dialog.getLibrary();
+            String fileName = dialog.getFileName();
+            String memberName = dialog.getMemberName();
+            String sqlWhereClause = dialog.getSqlWhere();
             loadJournalExplorerView(ensureShell(shell), connectionName, libraryName, fileName, memberName, sqlWhereClause, newTab);
         }
     }
