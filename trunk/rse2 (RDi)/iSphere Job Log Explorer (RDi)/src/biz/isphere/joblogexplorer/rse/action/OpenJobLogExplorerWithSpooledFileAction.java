@@ -31,7 +31,7 @@ public class OpenJobLogExplorerWithSpooledFileAction extends AbstractOpenJobLogE
                 SpooledFileResource spooledFileResource = (SpooledFileResource)object;
                 SpooledFile spooledFile = spooledFileResource.getSpooledFile();
 
-                Access.openJobLogExplorer(shell, spooledFile);
+                Access.loadJobLogExplorer(shell, spooledFile);
 
             } catch (Exception e) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

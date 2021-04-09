@@ -30,7 +30,7 @@ public class OpenJobLogExplorerWithStreamFileAction extends AbstractOpenJobLogEx
 
             try {
 
-                Access.openJobLogExplorer(shell, new File(remoteFile.getAbsolutePath()));
+                Access.loadJobLogExplorer(shell, new File(remoteFile.getAbsolutePath()));
 
             } catch (Exception e) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

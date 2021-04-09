@@ -61,7 +61,7 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
         }
 
         for (SpooledFile spooledFile : spooledFiles) {
-            Access.openJobLogExplorer(shell, spooledFile);
+            Access.loadJobLogExplorer(shell, spooledFile);
         }
     }
 }

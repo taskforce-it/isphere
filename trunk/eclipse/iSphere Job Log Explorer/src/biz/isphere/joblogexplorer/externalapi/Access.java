@@ -27,8 +27,7 @@ import biz.isphere.joblogexplorer.views.JobLogExplorerView;
 public class Access extends AbstractAccess {
 
     /**
-     * Opens the job log explorer for a given job, identified by job name, user
-     * name and job number.
+     * Loads the job log of a given active job into the job log explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
@@ -37,7 +36,7 @@ public class Access extends AbstractAccess {
      * @param jobNumber - job number assigned by the system.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
+    public static void loadJobLogExplorer(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
 
         JobLogExplorerJobInput input = new JobLogExplorerJobInput(connectionName, jobName, userName, jobNumber);
 
@@ -45,7 +44,7 @@ public class Access extends AbstractAccess {
     }
 
     /**
-     * /** Opens the job log explorer for a spooled file identified by its name.
+     * Loads the content of a QPJOBLOG spooled file into the job log explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
@@ -56,7 +55,7 @@ public class Access extends AbstractAccess {
      * @param jobNumber - the number of the job that created the spooled file.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
+    public static void loadJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber) throws Exception {
 
         JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
@@ -66,7 +65,7 @@ public class Access extends AbstractAccess {
     }
 
     /**
-     * /** Opens the job log explorer for a spooled file identified by its name.
+     * Loads the content of a QPJOBLOG spooled file into the job log explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
@@ -81,7 +80,7 @@ public class Access extends AbstractAccess {
      *        the system.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
+    public static void loadJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber, String jobSystemName, Date creationTimestamp) throws Exception {
 
         JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
@@ -91,14 +90,14 @@ public class Access extends AbstractAccess {
     }
 
     /**
-     * /** Opens the job log explorer for a spooled file identified by its name.
+     * Loads the content of a QPJOBLOG spooled file into the job log explorer.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
      * @param spooledFile - iSphere spooled file.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, SpooledFile spooledFile) throws Exception {
+    public static void loadJobLogExplorer(Shell shell, SpooledFile spooledFile) throws Exception {
 
         JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(spooledFile);
 
@@ -106,14 +105,15 @@ public class Access extends AbstractAccess {
     }
 
     /**
-     * Opens the job log explorer for a given stream file. The stream file must
-     * have been created by the iSphere "Save as Text" option or
+     * Loads the content of a QPJOBLOG spooled file from a PC txt file into the
+     * job log explorer. The txt file must have been created by the iSphere
+     * "Save as Text" option or the "Download" option of ACS.
      * 
      * @param shell - the parent shell.
      * @param jobLog - stream file that contains the job log.
      * @throws Exception
      */
-    public static void openJobLogExplorer(Shell shell, File jobLog) throws Exception {
+    public static void loadJobLogExplorer(Shell shell, File jobLog) throws Exception {
 
         JobLogExplorerFileInput input = new JobLogExplorerFileInput(jobLog);
 
