@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+
+import com.ibm.as400.access.AS400;
 
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -43,8 +47,6 @@ import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
-
-import com.ibm.as400.access.AS400;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -188,11 +190,15 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         buttonTransfer.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                String hostConnectionName = textConnectionName.getText();
-                int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
-                TransferLibraryHandler handler = new TransferLibraryHandler(hostConnectionName, ftpPort, iSphereLibrary, aspGroup);
                 try {
-                    handler.execute(null);
+
+                    Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+                    String hostConnectionName = textConnectionName.getText();
+                    int ftpPort = IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber());
+
+                    TransferLibraryHandler handler = new TransferLibraryHandler();
+                    handler.execute(shell, hostConnectionName, ftpPort, iSphereLibrary, aspGroup, true);
+
                 } catch (Throwable e) {
                     ISpherePlugin.logError("Failed to transfer iSphere library.", e); //$NON-NLS-1$
                 }
@@ -252,8 +258,8 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     protected void setStoreToValues() {
 
         Preferences.getInstance().setConnectionName(textConnectionName.getText());
-        Preferences.getInstance().setFtpPortNumber(
-            IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance()
+            .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setSystemCcsid(IntHelper.tryParseInt(textSystemCcsid.getText(), Preferences.getInstance().getDefaultSystemCcsid()));
         Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
