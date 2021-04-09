@@ -36,7 +36,7 @@ public class OpenJournalJsonFileHandler extends AbstractShellHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.loadJournalEntriesFromJsonFile(getShell(), true);
+            Access.openJournalEntriesFromJsonFile(getShell(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
