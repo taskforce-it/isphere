@@ -11,13 +11,13 @@ package biz.isphere.rcp.handlers.journalexplorer;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 
-import biz.isphere.core.internal.handler.AbstractShellHandler;
+import biz.isphere.core.internal.handler.AbstractCommandHandler;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
 /**
  * This class is the action handler of the "Open Journal Json File" action.
  */
-public class OpenJournalJsonFileHandler extends AbstractShellHandler {
+public class OpenJournalJsonFileHandler extends AbstractCommandHandler {
 
     /*
      * (non-Javadoc)
