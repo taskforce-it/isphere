@@ -7,34 +7,27 @@
       	    iSphere Menu Contribution
       	  ==========================================
       	-->
-   
-	<extension
-         point="org.eclipse.ui.actionSets">
-         
-      <actionSet
-            id="biz.isphere.rcp.actionSet"
-            label="iSphere RCP Actions"
-            visible="true">
-         
-         <action
-               class="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
-               id="biz.isphere.rcp.menu.openjournaloutputfile"
-               definitionId="biz.isphere.rcp.command.JournalOutputFile.open"
-               label="Open Journal Output File"
-               icon="icons/open_journal_output_file.png"
-               menubarPath="biz.isphere.core.menu.isphere/additions">
-         </action>
-         
-         <action
-               class="biz.isphere.rcp.journalexplorer.OpenJournalJsonFileAction"
-               id="biz.isphere.rcp.menu.openjournaljsonfile"
-               definitionId="biz.isphere.rcp.command.JournalJsonFile.open"
-               label="Open Journal Json File"
-               icon="icons/open_journal_json_file.png"
-               menubarPath="biz.isphere.core.menu.isphere/additions">
-         </action>
-         
-      </actionSet>
+
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="menu:biz.isphere.core.menu.isphere?endof=additions">
+
+      	<menu
+      			id="biz.isphere.rcp.menu.JournalOutputFile"
+      			label="Journal Explorer"
+      			icon="icons/journal_explorer.png">
+	         <command
+	               id="biz.isphere.rcp.menu.JournalOutputFile.open"
+	               commandId="biz.isphere.rcp.command.JournalOutputFile.open"
+	               icon="icons/open_journal_output_file.png">
+	         </command>
+	         <command
+	               id="biz.isphere.rcp.menu.JournalJsonFile.open"
+	               commandId="biz.isphere.rcp.command.JournalJsonFile.open"
+	               icon="icons/open_journal_json_file.png">
+	         </command>
+      	</menu>
+
+      </menuContribution>
    </extension>
    
       	<!--
@@ -52,14 +45,14 @@
       </category>
       
       <command
-            defaultHandler="biz.isphere.rcp.journalexplorer.OpenJournalOutputFileAction"
+            defaultHandler="biz.isphere.rcp.handlers.journalexplorer.OpenJournalOutputFileHandler"
             id="biz.isphere.rcp.command.JournalOutputFile.open"
             categoryId="biz.isphere.rcd.Commands"
             name="Open Journal Output File">
       </command>
       
       <command
-            defaultHandler="biz.isphere.rcp.journalexplorer.OpenJournalJsonFileAction"
+            defaultHandler="biz.isphere.rcp.handlers.journalexplorer.OpenJournalJsonFileHandler"
             id="biz.isphere.rcp.command.JournalJsonFile.open"
             categoryId="biz.isphere.rcd.Commands"
             name="Open Journal Json File">
