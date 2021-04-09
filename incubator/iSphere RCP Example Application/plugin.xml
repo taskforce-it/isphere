@@ -8,7 +8,7 @@
       	  ==========================================
       	-->
    
-   <extension
+	<extension
          point="org.eclipse.ui.actionSets">
          
       <actionSet
@@ -33,18 +33,6 @@
                icon="icons/open_journal_json_file.png"
                menubarPath="biz.isphere.core.menu.isphere/additions">
          </action>
-         
-         <!--
-         <action
-               class="biz.isphere.rse.actions.DisplayHelpAction"
-               id="biz.isphere.rse.actions.DisplayHelpAction"
-               definitionId="biz.isphere.core.command.iSphereHelp.display"
-               label="%menu_Display_iSphere_help"
-               icon="icons/systemhelp.gif"
-               menubarPath="biz.isphere.core.menu.isphere/help"
-               tooltip="%menu_Tooltip_Display_iSphere_help">
-         </action>
-         -->
          
       </actionSet>
    </extension>
