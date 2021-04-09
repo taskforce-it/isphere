@@ -22,7 +22,7 @@ import biz.isphere.core.preferences.Preferences;
 /**
  * This class is the action handler of the "TransferLibraryAction".
  */
-public class TransferLibraryHandler extends AbstractShellHandler {
+public class TransferLibraryHandler extends AbstractCommandHandler {
 
     /**
      * Default constructor, used by the Eclipse framework.

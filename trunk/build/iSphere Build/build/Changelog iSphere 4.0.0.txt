@@ -8,6 +8,8 @@ Changelog: iSphere 4.0.0.b012
  • Updated Dutch translation (Peter Colpaert).
  • Refactored job trace explorer to use "view input" classes.
  • Changed attribute isOverflow of JournalEntries to transient.
+ • Changed the iSphere menu "biz.isphere.core.menu.isphere" to be
+   defined as a "menuContribution". (rev. 7609, ff.)
 
 Changelog: iSphere 4.0.0.b011
 -----------------------------

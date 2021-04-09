@@ -12,7 +12,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.PlatformUI;
 
-public class DisplayHelpHandler extends AbstractShellHandler {
+public class DisplayHelpHandler extends AbstractCommandHandler {
 
     public static final String ID = "biz.isphere.core.internal.handler.DisplayHelpHandler";
 

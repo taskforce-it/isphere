@@ -11,11 +11,27 @@ package biz.isphere.core.internal.handler;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-public abstract class AbstractShellHandler extends AbstractHandler {
+public abstract class AbstractCommandHandler extends AbstractHandler {
 
     protected Shell getShell(ExecutionEvent event) {
-        return HandlerUtil.getActiveShell(event);
+
+        Shell shell = null;
+
+        if (event != null) {
+            shell = HandlerUtil.getActiveShell(event);
+        }
+
+        if (shell == null) {
+            shell = getShell();
+        }
+
+        return shell;
+    }
+
+    protected Shell getShell() {
+        return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
     }
 }

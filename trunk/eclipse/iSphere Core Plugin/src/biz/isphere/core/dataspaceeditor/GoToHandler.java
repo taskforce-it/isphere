@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
 
 package biz.isphere.core.dataspaceeditor;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbench;
@@ -16,7 +15,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-public class GoToHandler extends AbstractHandler {
+import biz.isphere.core.internal.handler.AbstractCommandHandler;
+
+public class GoToHandler extends AbstractCommandHandler {
 
     public static final String ID = "biz.isphere.core.dataspaceeditor.GoToHandler";
 
