@@ -243,45 +243,30 @@
       	    iSphere Menu Contribution
       	  ==========================================
       	-->
-   
-   <extension
-         point="org.eclipse.ui.actionSets">
-         
-      <actionSet
-            id="biz.isphere.core.actionSet"
-            label="%menu_iSphere_Menu"
-            visible="true">
-            
-         <menu
+
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="menu:org.eclipse.ui.main.menu?before=window">
+
+          <menu 
                id="biz.isphere.core.menu.isphere"
                label="%menu_iSphere">
 	         <separator name="group0" visible="true" />
 	         <separator name="additions" visible="true" />
 	         <separator name="transferlibrary" visible="true" />
+	         <command
+	               id="biz.isphere.core.menu.iSphereLibrary.transfer"
+	               commandId="biz.isphere.core.command.iSphereLibrary.transfer"
+	               icon="icons/transfer_library_16.gif">
+	         </command>
 	         <separator name="help" visible="true" />
-         </menu>
-         
-         <action
-               class="biz.isphere.core.internal.action.TransferLibraryAction"
-               id="biz.isphere.core.internal.action.TransferLibraryAction"
-               definitionId="biz.isphere.core.command.iSphereLibrary.transfer"
-               label="%menu_Transfer_iSphere_library"
-               icon="icons/transfer_library_16.gif"
-               menubarPath="biz.isphere.core.menu.isphere/transferlibrary"
-               tooltip="%menu_Tooltip_Transfer_iSphere_library">
-         </action>
-         
-         <action
-               class="biz.isphere.core.internal.action.DisplayHelpAction"
-               id="biz.isphere.core.internal.action.DisplayHelpAction"
-               definitionId="biz.isphere.core.command.iSphereHelp.display"
-               label="%menu_Display_iSphere_help"
-               icon="icons/systemhelp.gif"
-               menubarPath="biz.isphere.core.menu.isphere/help"
-               tooltip="%menu_Tooltip_Display_iSphere_help">
-         </action>
-         
-      </actionSet>
+	         <command
+	               id="biz.isphere.core.menu.iSphereHelp.display"
+	               commandId="biz.isphere.core.command.iSphereHelp.display"
+	               icon="icons/systemhelp.gif">
+	         </command>
+          </menu>
+
+      </menuContribution>
    </extension>
    
       	<!--
