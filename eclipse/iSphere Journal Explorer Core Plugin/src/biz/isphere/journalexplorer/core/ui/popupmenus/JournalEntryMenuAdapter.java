@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.wb.swt.ResourceManager;
 
 import biz.isphere.journalexplorer.core.ui.actions.CompareSideBySideAction;
 import biz.isphere.journalexplorer.core.ui.actions.ExportToExcelAction;
 import biz.isphere.journalexplorer.core.ui.labelproviders.JournalEntryLabelProvider;
 import biz.isphere.journalexplorer.core.ui.widgets.actions.CopyJournalPropertyToClipboardAction;
+import biz.isphere.journalexplorer.core.ui.widgets.actions.ToggleTrimPropertyValuesAction;
 
 public class JournalEntryMenuAdapter extends MenuAdapter {
 
@@ -35,6 +37,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
     private MenuItem separator;
     private MenuItem copyAllToClipboardMenuItem;
     private MenuItem copyValuesToClipboardMenuItem;
+    private MenuItem toggleTrimPropertyValuesMenuItem;
 
     public JournalEntryMenuAdapter(Menu menuTableMembers, TableViewer tableViewer) {
         this.tableViewer = tableViewer;
@@ -54,6 +57,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
         dispose(separator);
         dispose(copyAllToClipboardMenuItem);
         dispose(copyValuesToClipboardMenuItem);
+        dispose(toggleTrimPropertyValuesMenuItem);
     }
 
     private int selectedItemsCount() {
@@ -83,6 +87,7 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
             copyAllToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
             final CopyJournalPropertyToClipboardAction copyAllToClipboardAction = new CopyJournalPropertyToClipboardAction(true);
             copyAllToClipboardMenuItem.setText(copyAllToClipboardAction.getText());
+            copyAllToClipboardMenuItem.setImage(ResourceManager.getImage(copyAllToClipboardAction.getImageDescriptor()));
             copyAllToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
@@ -94,11 +99,24 @@ public class JournalEntryMenuAdapter extends MenuAdapter {
             copyValuesToClipboardMenuItem = new MenuItem(menuTableMembers, SWT.NONE);
             final CopyJournalPropertyToClipboardAction copyValueToClipboardAction = new CopyJournalPropertyToClipboardAction(false);
             copyValuesToClipboardMenuItem.setText(copyValueToClipboardAction.getText());
+            copyValuesToClipboardMenuItem.setImage(ResourceManager.getImage(copyValueToClipboardAction.getImageDescriptor()));
             copyValuesToClipboardMenuItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     copyValueToClipboardAction.setSelectedItems(getSelection());
                     copyValueToClipboardAction.run();
+                }
+            });
+
+            toggleTrimPropertyValuesMenuItem = new MenuItem(menuTableMembers, SWT.CHECK);
+            final ToggleTrimPropertyValuesAction toggleTrimPropertyValuesAction = new ToggleTrimPropertyValuesAction();
+            toggleTrimPropertyValuesMenuItem.setText(toggleTrimPropertyValuesAction.getText());
+            toggleTrimPropertyValuesMenuItem.setImage(ResourceManager.getImage(toggleTrimPropertyValuesAction.getImageDescriptor()));
+            toggleTrimPropertyValuesMenuItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    toggleTrimPropertyValuesAction.setChecked(!toggleTrimPropertyValuesAction.isChecked());
+                    toggleTrimPropertyValuesAction.run();
                 }
             });
         }
