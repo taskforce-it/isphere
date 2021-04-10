@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.0.0.b013
+-----------------------------
+ • Fixed problem that the "pinned" status was lost, when loading
+   the same filter into a pinned "Spooled Files" view.
+
 Changelog: iSphere 4.0.0.b012
 -----------------------------
  • Enabled F5 to refresh the iSphere "Journal Explorer" view.

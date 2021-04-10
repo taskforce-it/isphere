@@ -91,7 +91,7 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate, IActio
             if (view instanceof WorkWithSpooledFilesView) {
                 WorkWithSpooledFilesView wrkSplfView = (WorkWithSpooledFilesView)view;
                 wrkSplfView.setInputData(inputData);
-                wrkSplfView.setPinned(isPinned);
+                wrkSplfView.setPinned(isPinned || view.isPinned());
             }
 
         } catch (Exception e) {
