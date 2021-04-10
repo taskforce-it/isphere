@@ -330,7 +330,8 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
         AbstractTypeViewerFactory factory = new Type5ViewerFactory();
         tableViewer = factory.createTableViewer(container, getDialogSettingsManager());
         tableViewer.addSelectionChangedListener(this);
-        tableViewer.getTable().setEnabled(false);
+
+        setEnabled(false);
 
         return tableViewer;
     }
@@ -386,6 +387,11 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
         return getLabelProvider().getColumns();
     }
 
+    private void setEnabled(boolean enabled) {
+        tableViewer.getTable().setEnabled(enabled);
+        setSqlEditorEnabled(enabled);
+    }
+
     public void filterJournal(final JournalExplorerView view) throws SQLSyntaxErrorException {
 
         JournalEntry[] selectedItems = getSelectedItems();
@@ -396,8 +402,7 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
         storeSqlEditorHistory();
         refreshSqlEditorHistory();
 
-        boolean visible = isSqlEditorVisible();
-        setSqlEditorEnabled(false);
+        setEnabled(false);
 
         try {
 
@@ -406,14 +411,13 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
 
             setInputData(data);
             setSelection(new StructuredSelection(selectedItems));
-            setSqlEditorEnabled(true);
             setFocusOnSqlEditor();
             view.finishDataLoading(getInput(), data, true);
 
         } catch (ParseException e) {
             throw new SQLSyntaxErrorException(e);
         } finally {
-            setSqlEditorEnabled(visible);
+            setEnabled(true);
         }
     }
 
@@ -422,13 +426,8 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
         this.data = data;
 
         if (data != null) {
-            if (isSqlEditorVisible()) {
-                sqlEditor.setEnabled(false);
-            }
-
             setText(getInput().getName());
             setToolTipText(getInput().getToolTipText());
-
         } else {
             setText(EMPTY);
             setToolTipText(EMPTY);
@@ -438,12 +437,12 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
             hideTableColumns(tableViewer, data);
             tableViewer.setItemCount(data.size());
             tableViewer.setInput(data);
-            tableViewer.getTable().setEnabled(true);
+            setEnabled(true);
         } else {
             hideTableColumns(tableViewer, null);
             tableViewer.setItemCount(0);
             tableViewer.setInput(null);
-            tableViewer.getTable().setEnabled(false);
+            setEnabled(false);
         }
 
         tableViewer.setSelection(null);
@@ -578,7 +577,7 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
         validateWhereClause(getInput().getWhereClause());
         validateWhereClause(getFilterClause());
 
-        tableViewer.getTable().setEnabled(false);
+        setEnabled(false);
 
         LoadJournalJob job = new LoadJournalJob(view, getInput(), getFilterClause(), getSelectedItems());
         job.schedule();
@@ -783,7 +782,7 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
                         public void run() {
                             setInputData(data);
                             setSelection(new StructuredSelection(selectedItems));
-                            setSqlEditorEnabled(true);
+                            setEnabled(true);
                             setFocusOnSqlEditor();
                             view.finishDataLoading(input, data, false);
                         }
@@ -807,7 +806,7 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
                     final Throwable e1 = e;
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
-                            setSqlEditorEnabled(true);
+                            setEnabled(true);
                             setFocusOnSqlEditor();
                             view.handleDataLoadException(JournalExplorerTab.this, e1);
                         }
