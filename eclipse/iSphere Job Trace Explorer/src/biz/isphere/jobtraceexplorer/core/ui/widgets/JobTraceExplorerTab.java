@@ -65,7 +65,7 @@ import biz.isphere.jobtraceexplorer.core.ui.views.IDataLoadPostRun;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.ISearchComparer;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerSQL;
 import biz.isphere.jobtraceexplorer.core.ui.widgets.internals.SearchComparerText;
-import biz.isphere.jobtraceexplorer.core.ui.widgets.jobs.OpenJobTraceSessionJsonJob;
+import biz.isphere.jobtraceexplorer.core.ui.widgets.jobs.OpenJobTraceSessionJob;
 
 /**
  * This widget is a viewer for the job trace entries loaded from a job trace
@@ -84,7 +84,7 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
     private AbstractJobTraceExplorerInput input;
     private Composite container;
-    private JobTraceExplorerSearchPanel filterPanel;
+    private JobTraceExplorerSearchPanel searchTextPanel;
     private Set<ISelectionChangedListener> selectionChangedListeners;
     private boolean isSqlEditorVisible;
     private SelectionListener loadJobTraceEntriesSelectionListener;
@@ -92,6 +92,7 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
     private TableViewer tableViewer;
     private JobTraceSession data;
     private SqlEditor sqlEditor;
+    private String filterWhereClause;
 
     private UpdateTableViewerJob updateTableViewerJob;
 
@@ -148,12 +149,10 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
     }
 
     protected void setEnabled(boolean enabled) {
+        searchTextPanel.setEnabled(enabled);
         tableViewer.getTable().setEnabled(enabled);
         if (isSqlEditorVisible()) {
-            filterPanel.setEnabled(false);
             setSqlEditorEnabled(enabled);
-        } else {
-            filterPanel.setEnabled(enabled);
         }
     }
 
@@ -174,7 +173,7 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
             sqlEditor = WidgetFactory.createSqlEditor(getContainer(), getClass().getSimpleName(), getDialogSettingsManager());
             sqlEditor.setContentAssistProposals(getContentAssistProposals());
             sqlEditor.addSelectionListener(loadJobTraceEntriesSelectionListener);
-            sqlEditor.setWhereClause(getFilterWhereClause());
+            sqlEditor.setWhereClause(filterWhereClause);
             GridData gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
             gd.heightHint = 120;
             sqlEditor.setLayoutData(gd);
@@ -229,11 +228,11 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
     }
 
     private void setFilterWhereClause(String filterWhereClause) {
-        data.getJobTraceEntries().setFilterWhereClause(filterWhereClause);
+        this.filterWhereClause = filterWhereClause;
     }
 
     public String getFilterWhereClause() {
-        return data.getJobTraceEntries().getFilterWhereClause();
+        return filterWhereClause;
     }
 
     public boolean isFiltered() {
@@ -259,9 +258,9 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
     private void createFilterPanel(Composite parent) {
 
-        filterPanel = new JobTraceExplorerSearchPanel(parent, SWT.NONE);
-        filterPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        filterPanel.addFilterChangedListener(this);
+        searchTextPanel = new JobTraceExplorerSearchPanel(parent, SWT.NONE);
+        searchTextPanel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        searchTextPanel.addFilterChangedListener(this);
     }
 
     private void createMainPanel(Composite parent) {
@@ -307,14 +306,12 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
     public void reloadJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
+        String filterWhereClause = getFilterWhereClause();
         JobTraceEntry selectedItem = getSelectedItem();
 
-        setJobTraceSession(null);
-
         setEnabled(false);
-        setSqlEditorEnabled(false);
 
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, getInput(), selectedItem);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(this, postRun, getInput(), filterWhereClause, selectedItem);
         loadJobTraceDataJob.schedule();
     }
 
@@ -322,16 +319,12 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
         this.input = input;
 
-        JobTraceEntry selectedItem = getSelectedItem();
+        setEnabled(false);
+        setJobTraceSession(null);
 
         prepareLoadingJobTraceData(input);
 
-        setJobTraceSession(null);
-
-        setEnabled(false);
-        setSqlEditorEnabled(false);
-
-        Job loadJobTraceDataJob = new OpenJobTraceSessionJsonJob(this, postRun, input, selectedItem);
+        Job loadJobTraceDataJob = new OpenJobTraceSessionJob(this, postRun, input);
         loadJobTraceDataJob.schedule();
     }
 
@@ -357,8 +350,6 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
         this.data = data;
 
         container.layout(true);
-        tableViewer.setInput(null);
-        tableViewer.setUseHashlookup(true);
 
         if (data != null && data.getJobTraceEntries() != null) {
             tableViewer.setItemCount(data.getJobTraceEntries().size());
@@ -366,6 +357,7 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
             setEnabled(true);
         } else {
             tableViewer.setItemCount(0);
+            tableViewer.setInput(null);
             setEnabled(false);
         }
 
@@ -392,6 +384,7 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
         tableViewer.setSelection(new StructuredSelection(jobTraceEntry));
         int index = tableViewer.getTable().getSelectionIndex();
+
         if (index >= 0) {
             tableViewer.getTable().setTopIndex(index);
         }
@@ -399,9 +392,13 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
     public void filterJobTraceSession(final IDataLoadPostRun postRun) throws Exception {
 
+        filterWhereClause = sqlEditor.getWhereClause();
+        JobTraceEntry selectedItem = getSelectedItem();
+
         setEnabled(false);
 
-        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(postRun);
+
+        Job filterJobTraceDataJob = new FilterJobTraceSessionDataJob(filterWhereClause, selectedItem, postRun);
         filterJobTraceDataJob.schedule();
     }
 
@@ -498,6 +495,8 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
             tableViewer = new JobTraceViewerFactory().createTableViewer(container, getDialogSettingsManager());
             tableViewer.addSelectionChangedListener(this);
             setEnabled(false);
+
+            tableViewer.setUseHashlookup(true);
 
             return tableViewer;
 
@@ -675,11 +674,13 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
     private class FilterJobTraceSessionDataJob extends Job {
 
+        private JobTraceEntry selectedItem;
         private IDataLoadPostRun postRun;
 
-        public FilterJobTraceSessionDataJob(IDataLoadPostRun postRun) {
+        public FilterJobTraceSessionDataJob(String filterWhereClause, JobTraceEntry selectedItem, IDataLoadPostRun postRun) {
             super(Messages.Status_Loading_job_trace_entries_of_session_A);
 
+            this.selectedItem = selectedItem;
             this.postRun = postRun;
         }
 
@@ -689,12 +690,14 @@ public class JobTraceExplorerTab extends CTabItem implements IResizableTableColu
 
             try {
 
+                data.getJobTraceEntries().setFilterWhereClause(filterWhereClause);
                 data.getJobTraceEntries().applyFilter();
 
                 if (!isDisposed()) {
                     getDisplay().asyncExec(new Runnable() {
                         public void run() {
                             setJobTraceSession(data);
+                            setSelectedItem(selectedItem);
                             setEnabled(true);
                             setFocusOnSqlEditor();
                             postRun.finishDataLoading(JobTraceExplorerTab.this, true);
