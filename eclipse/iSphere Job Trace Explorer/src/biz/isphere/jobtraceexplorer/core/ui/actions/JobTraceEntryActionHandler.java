@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import biz.isphere.jobtraceexplorer.core.Messages;
 import biz.isphere.jobtraceexplorer.core.model.HighlightedAttribute;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntries;
 import biz.isphere.jobtraceexplorer.core.model.JobTraceEntry;
+import biz.isphere.jobtraceexplorer.core.model.JobTraceSession;
 import biz.isphere.jobtraceexplorer.core.model.dao.ColumnsDAO;
 import biz.isphere.jobtraceexplorer.core.ui.model.JobTraceViewerFactory;
 import biz.isphere.jobtraceexplorer.core.ui.model.MouseCursorLocation;
@@ -189,7 +190,7 @@ public class JobTraceEntryActionHandler {
             return;
         }
 
-        MouseCursorLocation mouseCursorLocation = JobTraceViewerFactory.getMouseCursorLocation(tableViewer);
+        MouseCursorLocation mouseCursorLocation = JobTraceViewerFactory.getMouseCursorLocation(getTableViewer());
         if (mouseCursorLocation != null) {
             JobTraceEntry jobTraceEntry = mouseCursorLocation.getJobTraceEntry();
             JobTraceEntries parent = jobTraceEntry.getParent();
@@ -378,10 +379,11 @@ public class JobTraceEntryActionHandler {
 
     private JobTraceEntry getElementAt(int index, int itemCount) {
 
-        JobTraceEntries entries = (JobTraceEntries)tableViewer.getInput();
-
-        if (isValidIndex(index, itemCount)) {
-            return entries.getItem(index);
+        JobTraceEntries entries = getJobTraceEntries();
+        if (entries != null) {
+            if (isValidIndex(index, itemCount)) {
+                return entries.getItem(index);
+            }
         }
 
         return null;
@@ -432,8 +434,18 @@ public class JobTraceEntryActionHandler {
         return isValidIndex(index, getItemCountUI());
     }
 
+    private JobTraceEntries getJobTraceEntries() {
+
+        JobTraceSession session = (JobTraceSession)getTableViewer().getInput();
+        if (session != null) {
+            return session.getJobTraceEntries();
+        }
+
+        return null;
+    }
+
     private Table getTable() {
-        return tableViewer.getTable();
+        return getTableViewer().getTable();
     }
 
     private TableViewer getTableViewer() {
