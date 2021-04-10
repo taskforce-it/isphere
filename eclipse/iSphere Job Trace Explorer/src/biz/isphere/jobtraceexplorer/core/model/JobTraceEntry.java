@@ -443,8 +443,10 @@ public class JobTraceEntry {
         result = prime * result + callerHLLStmtNbr;
         result = prime * result + ((callerProcedureName == null) ? 0 : callerProcedureName.hashCode());
         result = prime * result + ((eventSubType == null) ? 0 : eventSubType.hashCode());
+        result = prime * result + ((excludedEntriesKey == null) ? 0 : excludedEntriesKey.hashCode());
         result = prime * result + hllStmtNbr;
         result = prime * result + id;
+        result = prime * result + (isHighlighted ? 1231 : 1237);
         result = prime * result + ((moduleLibrary == null) ? 0 : moduleLibrary.hashCode());
         result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
         result = prime * result + ((nanosSinceStarted == null) ? 0 : nanosSinceStarted.hashCode());
@@ -470,8 +472,12 @@ public class JobTraceEntry {
         if (eventSubType == null) {
             if (other.eventSubType != null) return false;
         } else if (!eventSubType.equals(other.eventSubType)) return false;
+        if (excludedEntriesKey == null) {
+            if (other.excludedEntriesKey != null) return false;
+        } else if (!excludedEntriesKey.equals(other.excludedEntriesKey)) return false;
         if (hllStmtNbr != other.hllStmtNbr) return false;
         if (id != other.id) return false;
+        if (isHighlighted != other.isHighlighted) return false;
         if (moduleLibrary == null) {
             if (other.moduleLibrary != null) return false;
         } else if (!moduleLibrary.equals(other.moduleLibrary)) return false;
@@ -507,4 +513,5 @@ public class JobTraceEntry {
 
         return buffer.toString();
     }
+
 }
