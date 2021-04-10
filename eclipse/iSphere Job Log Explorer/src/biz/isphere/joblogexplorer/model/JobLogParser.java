@@ -272,7 +272,7 @@ public class JobLogParser {
             if (matcher.group(3) != null) {
                 jobLogMessage.setSeverity(matcher.group(3));
             } else {
-                jobLogMessage.setSeverity("0"); //$NON-NLS-1$
+                jobLogMessage.setSeverity("");
             }
 
             try {
