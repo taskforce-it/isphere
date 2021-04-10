@@ -42,6 +42,7 @@ public class ToggleTrimPropertyValuesAction extends Action {
     }
 
     private void performToggleTrimOption() {
+        System.out.println("Setting to: " + isChecked());
         preferences.setTrimValues(isChecked());
     }
 }
