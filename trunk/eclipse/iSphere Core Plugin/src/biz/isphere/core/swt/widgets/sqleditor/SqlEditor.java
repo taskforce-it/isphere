@@ -53,6 +53,7 @@ public class SqlEditor extends Composite {
     private HistoryCombo cboHistory;
     private SelectionListener selectionListener;
     private Combo cboTableName;
+    private Button btnClearTableName;
 
     private boolean isButtonAddVisible;
     private boolean isButtonClearVisible;
@@ -104,6 +105,9 @@ public class SqlEditor extends Composite {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+
+        cboTableName.setEnabled(enabled);
+        btnClearTableName.setEnabled(enabled);
 
         setEnabledChecked(btnAddField, enabled);
         btnClear.setEnabled(enabled);
@@ -241,13 +245,13 @@ public class SqlEditor extends Composite {
         cboTableName.setToolTipText(Messages.SqlEditor_TableName_Tooltip);
         cboTableName.select(0);
 
-        Button btnClear = WidgetFactory.createPushButton(editorPanel);
-        btnClear.setText("X"); // //$NON-NLS-1$
-        btnClear.setToolTipText(Messages.SqlEditor_ClearTableName_Tooltip);
+        btnClearTableName = WidgetFactory.createPushButton(editorPanel);
+        btnClearTableName.setText("X"); // //$NON-NLS-1$
+        btnClearTableName.setToolTipText(Messages.SqlEditor_ClearTableName_Tooltip);
         GridData gd_btnClear = new GridData();
         gd_btnClear.verticalAlignment = 2;
-        btnClear.setLayoutData(gd_btnClear);
-        btnClear.addSelectionListener(new SelectionAdapter() {
+        btnClearTableName.setLayoutData(gd_btnClear);
+        btnClearTableName.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent paramSelectionEvent) {
                 cboTableName.select(0);
             }
