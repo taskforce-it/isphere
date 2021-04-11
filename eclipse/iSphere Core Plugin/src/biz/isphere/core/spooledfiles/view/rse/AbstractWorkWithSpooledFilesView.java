@@ -353,6 +353,10 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
             return;
         }
 
+        /*
+         * Do not clear input data to automatically select new spooled files.
+         */
+
         setInputDataInternally(getShell(), this.inputData);
     }
 

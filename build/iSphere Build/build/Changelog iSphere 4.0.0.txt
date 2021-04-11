@@ -1,4 +1,8 @@
 
+Changelog: iSphere 4.0.0.b014
+-----------------------------
+ • Refactored "worked with spooled files" "input" objects.
+
 Changelog: iSphere 4.0.0.b013
 -----------------------------
  • Fixed SQL editor to enable/disable the table name combo along
