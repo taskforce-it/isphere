@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,11 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
 
         try {
 
-            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, qualifiedJobName);
+            String jobName = qualifiedJobName.getJob();
+            String userName = qualifiedJobName.getUser();
+            String jobNumber = qualifiedJobName.getNumber();
+
+            AbstractWorkWithSpooledFilesInputData inputData = new WorkWithSpooledFilesJobInputData(connectionName, jobName, userName, jobNumber);
 
             String contentId = inputData.getContentId();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.SPOOLED_FILES_VIEWS);

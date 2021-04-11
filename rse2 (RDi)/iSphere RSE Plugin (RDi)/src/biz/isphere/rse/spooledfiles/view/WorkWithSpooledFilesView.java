@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,10 @@
  *******************************************************************************/
 
 package biz.isphere.rse.spooledfiles.view;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.rse.core.RSECorePlugin;
 import org.eclipse.rse.core.events.ISystemResourceChangeEvent;
@@ -17,6 +21,7 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
+import org.eclipse.rse.core.references.IRSEBaseReferencingObject;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.swt.widgets.Composite;
 
@@ -30,6 +35,12 @@ import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesFilterInputData
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView implements ISystemResourceChangeListener {
+
+    Map<Integer, Date> lastEvent;
+
+    public WorkWithSpooledFilesView() {
+        lastEvent = new HashMap<Integer, Date>();
+    }
 
     @Override
     public void dispose() {
@@ -69,9 +80,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
                 // Filter renamed.
                 ISystemFilterReference filterReference = (ISystemFilterReference)event.getSource();
                 if (getSubSystem(filterReference) instanceof SpooledFileSubSystem) {
-                    ISystemFilter filter = filterReference.getReferencedFilter();
-                    ISubSystem subSystem = getSubSystem(filterReference);
-                    doEvent(eventType, subSystem, filter);
+                    doEvent(eventType, filterReference);
                 }
             } else if (event.getSource() instanceof IHost) {
                 // Connection renamed.
@@ -80,8 +89,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
                 ISubSystem subSystem = connection.getSubSystemByClass(SpooledFileSubSystem.ID);
                 ISystemFilterReference[] filterReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterReferences(subSystem);
                 for (ISystemFilterReference reference : filterReferences) {
-                    ISystemFilter filter = reference.getReferencedFilter();
-                    doEvent(eventType, subSystem, filter);
+                    doEvent(eventType, reference);
                 }
             }
         } else if (eventType == ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE) {
@@ -89,27 +97,82 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
             if (event.getSource() instanceof ISystemFilter) {
                 if (event.getGrandParent() instanceof SpooledFileSubSystem) {
                     ISystemFilter filter = (ISystemFilter)event.getSource();
-                    ISubSystem subSystem = (SpooledFileSubSystem)event.getGrandParent();
-                    doEvent(eventType, subSystem, filter);
+                    for (IRSEBaseReferencingObject referencingObject : filter.getReferencingObjects()) {
+                        ISystemFilterReference filterReference = (ISystemFilterReference)referencingObject;
+                        doEvent(eventType, filterReference);
+                    }
+                }
+            }
+        } else if (eventType == ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE) {
+            if (event.getSource() instanceof ISystemFilterReference) {
+                // Filter refreshed.
+                ISystemFilterReference filterReference = (ISystemFilterReference)event.getSource();
+                if (getSubSystem(filterReference) instanceof SpooledFileSubSystem) {
+                    doEvent(eventType, filterReference);
                 }
             }
         }
     }
 
-    private void doEvent(int eventType, ISubSystem subSystem, ISystemFilter filter) {
+    private void doEvent(int eventType, ISystemFilterReference filterReference) {
 
-        WorkWithSpooledFilesFilterInputData inputData = (WorkWithSpooledFilesFilterInputData)getInputData();
-        if (inputData != null && inputData.referencesFilter(subSystem, filter)) {
+        WorkWithSpooledFilesFilterInputData newInputData = new WorkWithSpooledFilesFilterInputData(filterReference);
+        String thisContentId = newInputData.getContentId();
 
-            switch (eventType) {
-            case ISystemResourceChangeEvents.EVENT_RENAME:
-                refreshTitle();
-                break;
-            case ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE:
-                refreshData();
-                break;
+        WorkWithSpooledFilesFilterInputData otherInputData = (WorkWithSpooledFilesFilterInputData)getInputData();
+
+        if (thisContentId != null && thisContentId.equals(otherInputData.getContentId())) {
+
+            if (canRefresh(eventType)) {
+
+                switch (eventType) {
+                case ISystemResourceChangeEvents.EVENT_RENAME:
+                    refreshTitle();
+                    break;
+                case ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE:
+                    setInputData(newInputData);
+                    break;
+                case ISystemResourceChangeEvents.EVENT_REFRESH_REMOTE:
+                    refreshData();
+                    break;
+                }
+
+                lastEvent.put(eventType, new Date());
             }
         }
+    }
+
+    /**
+     * Hugly hack to catch duplicate events.
+     * 
+     * @param eventType - the system resource change event type
+     * @return can refresh or not
+     */
+    private boolean canRefresh(Integer eventType) {
+
+        Date lastEventDate = lastEvent.get(eventType);
+
+        if (lastEventDate == null || isWaitTimeElapsed(lastEventDate)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isWaitTimeElapsed(Date lastEventDate) {
+
+        if (lastEventDate == null) {
+            return true;
+        }
+
+        Date now = new Date();
+        long mSecsBetweenEvents = now.getTime() - lastEventDate.getTime();
+
+        if (mSecsBetweenEvents > 500) {
+            return true;
+        }
+
+        return false;
     }
 
     private ISubSystem getSubSystem(ISystemFilterReference filterReference) {
