@@ -319,19 +319,6 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
     /**
      * Sets the title of the view.
      */
-    public void setSubTitle(AbstractWorkWithSpooledFilesInputData inputData) {
-
-        if (inputData == null) {
-            labelHeadline.setText(Messages.EMPTY);
-            return;
-        }
-
-        setSubTitle(inputData.getConnectionName(), inputData.getFilterName());
-    }
-
-    /**
-     * Sets the title of the view.
-     */
     public void setSubTitle(String connectionName, String filterName) {
 
         if (connectionName == null || filterName == null) {
@@ -348,7 +335,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
      */
     public void refreshTitle() {
 
-        setSubTitle(inputData);
+        setSubTitle(inputData.getConnectionName(), inputData.getFilterName());
 
         if (isPinned()) {
             updatePinProperties();
@@ -427,7 +414,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
             autoRefreshJob.resetInterval();
         }
 
-        loadSpooledFilesJob = new LoadSpooledFilesJob(inputData.getConnectionName(), inputData.getFilterName(), inputData.getFilterStrings(), this);
+        loadSpooledFilesJob = new LoadSpooledFilesJob(inputData, this);
         loadSpooledFilesJob.schedule();
     }
 
@@ -435,7 +422,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
      * Called, when the spooled files have been loaded. This method starts a UI
      * job for loading the spooled files into the viewer.
      */
-    public void setLoadSpooledFilesPostRunData(final String connectionName, final String filterName, final SpooledFile[] spooledFiles) {
+    public void setLoadSpooledFilesPostRunData(final AbstractWorkWithSpooledFilesInputData inputData, final SpooledFile[] spooledFiles) {
 
         new UIJob(Messages.EMPTY) {
 
@@ -462,7 +449,7 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
                     return;
                 }
 
-                setSubTitle(inputData);
+                setSubTitle(inputData.getConnectionName(), inputData.getFilterName());
             }
 
             private void setInputDataChecked() {
@@ -471,13 +458,9 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
                     return;
                 }
 
-                // if (spooledFiles.length == 0) {
-                // setPinned(false);
-                // }
-
-                workWithSpooledFilesPanel.setInput(connectionName, spooledFiles);
+                workWithSpooledFilesPanel.setInput(inputData.getConnectionName(), spooledFiles);
                 workWithSpooledFilesHelper.setShell(getShell());
-                workWithSpooledFilesHelper.setConnection(connectionName);
+                workWithSpooledFilesHelper.setConnection(inputData.getConnectionName());
                 refreshActionsEnablement();
             }
 
