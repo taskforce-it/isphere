@@ -1,4 +1,8 @@
 
+Changelog: iSphere 4.0.0.b015
+-----------------------------
+ • Renamed method names of journal and job log explorer API.
+
 Changelog: iSphere 4.0.0.b014
 -----------------------------
  • Refactored "worked with spooled files" "input" objects.
