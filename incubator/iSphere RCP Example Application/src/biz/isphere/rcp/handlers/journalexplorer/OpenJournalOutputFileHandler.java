@@ -28,7 +28,7 @@ public class OpenJournalOutputFileHandler extends AbstractCommandHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.openJournalEntriesFromOutputFile(getShell(event), true);
+            Access.exploreJournalEntriesFromOutputFile(getShell(event), true);
         } catch (Exception e) {
             e.printStackTrace();
         }

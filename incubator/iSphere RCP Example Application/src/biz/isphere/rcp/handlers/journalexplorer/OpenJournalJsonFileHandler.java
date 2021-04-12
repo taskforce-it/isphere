@@ -28,7 +28,7 @@ public class OpenJournalJsonFileHandler extends AbstractCommandHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.openJournalEntriesFromJsonFile(getShell(event), true);
+            Access.exploreJournalEntriesFromJsonFile(getShell(event), true);
         } catch (Exception e) {
             e.printStackTrace();
         }
