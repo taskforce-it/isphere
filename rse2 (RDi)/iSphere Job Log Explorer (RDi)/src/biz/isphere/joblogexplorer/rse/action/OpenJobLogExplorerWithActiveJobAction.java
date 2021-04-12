@@ -33,7 +33,7 @@ public class OpenJobLogExplorerWithActiveJobAction extends AbstractOpenJobLogExp
                 String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getCmdSubSystem().getHostAliasName();
                 ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
 
-                Access.loadJobLogExplorer(shell, connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
+                Access.openJobLogExplorer(shell, connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
 
             } catch (Exception e) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

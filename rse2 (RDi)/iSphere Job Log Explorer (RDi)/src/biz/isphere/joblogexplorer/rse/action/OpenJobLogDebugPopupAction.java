@@ -55,7 +55,7 @@ public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
                     return;
                 }
 
-                Access.loadJobLogExplorer(shell, connectionName, qualifiedJobName.getJob(), qualifiedJobName.getUser(), qualifiedJobName.getNumber());
+                Access.openJobLogExplorer(shell, connectionName, qualifiedJobName.getJob(), qualifiedJobName.getUser(), qualifiedJobName.getNumber());
 
             } catch (Exception e) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
