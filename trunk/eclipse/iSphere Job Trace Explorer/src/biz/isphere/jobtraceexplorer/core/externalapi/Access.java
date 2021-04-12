@@ -23,15 +23,15 @@ import biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView;
 public class Access extends AbstractAccess {
 
     /**
-     * Loads a given given Json file with job trace entries into the iSphere Job
-     * Trace Explorer. The file must have been saved from the iSphere Job Trace
-     * Explorer view.
+     * Open the job trace explorer for exploring job trace entries exported as a
+     * PC text file.<br>
+     * The file must have been saved from the iSphere Job Trace Explorer view.
      * 
      * @param shell - the parent shell.
      * @param jobTrace - stream file that contains the job trace data.
      * @throws Exception
      */
-    public static void loadJobTraceExplorer(Shell shell, File jobTrace) throws Exception {
+    public static void openJobTraceExplorer(Shell shell, File jobTrace) throws Exception {
 
         JobTraceExplorerJsonFileInput input = new JobTraceExplorerJsonFileInput(jobTrace);
 
@@ -39,8 +39,9 @@ public class Access extends AbstractAccess {
     }
 
     /**
-     * Loads a given job trace session into tje iSphere Job Trace Explorer. The
-     * session must have been captured with the <code>STRTRC</code> and
+     * Opens the job trace explorer for exploring job traces stored in database
+     * files on the host.<br>
+     * The session must have been captured with the <code>STRTRC</code> and
      * <code>ENDTRC</code> commands.
      * 
      * @param shell - the parent shell.
@@ -54,7 +55,7 @@ public class Access extends AbstractAccess {
      *        page.
      * @throws Exception
      */
-    public static void loadJobTraceExplorer(Shell shell, String connectionName, String libraryName, String sessionID, boolean isIBMDataExcluded)
+    public static void openJobTraceExplorer(Shell shell, String connectionName, String libraryName, String sessionID, boolean isIBMDataExcluded)
         throws Exception {
 
         JobTraceExplorerSessionInput input = new JobTraceExplorerSessionInput(connectionName, libraryName, sessionID);
