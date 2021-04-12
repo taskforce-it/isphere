@@ -54,7 +54,7 @@ public class DisplayJournalEntriesHandler {
         }
 
         for (ISelectedJournal selectedJournal : selectedJournals) {
-            Access.loadJournalExplorerView(getShell(), selectedJournal.getConnectionName(), selectedJournal.getLibrary(), selectedJournal.getName(),
+            Access.openJournalExplorerView(getShell(), selectedJournal.getConnectionName(), selectedJournal.getLibrary(), selectedJournal.getName(),
                 selectionCriteria, true);
         }
     }
@@ -166,7 +166,7 @@ public class DisplayJournalEntriesHandler {
             throw new Exception(Messages.bind(Messages.Error_Cannot_perform_action_OS400_must_be_at_least_at_level_A, MIN_OS_RELEASE));
         }
 
-        Access.loadJournalExplorerView(getShell(), journal.getConnectionName(), journal.getLibrary(), journal.getName(),
+        Access.openJournalExplorerView(getShell(), journal.getConnectionName(), journal.getLibrary(), journal.getName(),
             journaledObjects.toArray(new JournaledObject[journaledObjects.size()]), selectionCriteria, true);
 
         return true;
