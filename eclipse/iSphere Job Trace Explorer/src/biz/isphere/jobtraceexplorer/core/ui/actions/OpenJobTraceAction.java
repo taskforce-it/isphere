@@ -60,7 +60,7 @@ public class OpenJobTraceAction extends Action {
                 boolean isIBMDataExcluded = openJournalOutputFileDialog.isIBMDataExcluded();
 
                 try {
-                    Access.loadJobTraceExplorer(shell, connectionName, libraryName, sessionID, isIBMDataExcluded);
+                    Access.openJobTraceExplorer(shell, connectionName, libraryName, sessionID, isIBMDataExcluded);
                 } catch (Exception e) {
                     MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
                 }

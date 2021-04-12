@@ -67,7 +67,7 @@ public class LoadJobTraceEntriesAction extends Action {
 
         try {
 
-            Access.loadJobTraceExplorer(shell, new File(importPath));
+            Access.openJobTraceExplorer(shell, new File(importPath));
 
         } catch (Exception e) {
             MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
