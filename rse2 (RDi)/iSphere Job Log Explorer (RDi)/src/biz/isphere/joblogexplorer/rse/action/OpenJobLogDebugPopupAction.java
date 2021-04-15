@@ -27,6 +27,13 @@ import biz.isphere.rse.internal.IBMiDebugHelper;
 
 import com.ibm.debug.pdt.internal.core.model.DebuggeeProcess;
 
+// TODO: for the next RDi release past 9.6
+//IProcess process;
+//String connectionName = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_CONNECTION_NAME);
+//String jobName = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_NAME);
+//String jobNumber = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_NUMBER);
+//String jobUser = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_USER);
+
 @SuppressWarnings("restriction")
 public class OpenJobLogDebugPopupAction implements IViewActionDelegate {
 
