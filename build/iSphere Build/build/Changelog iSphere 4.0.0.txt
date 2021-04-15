@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.b016
+-----------------------------
+ • Changed job log explorer to preserve the selected items when
+   refreshing the view.
+ • Fixed IBMiHelper.hhmmssToTime(().
+
 Changelog: iSphere 4.0.0.b015
 -----------------------------
  • Renamed method names of journal and job log explorer API.

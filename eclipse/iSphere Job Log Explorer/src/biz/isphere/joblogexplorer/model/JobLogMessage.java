@@ -30,11 +30,6 @@ public class JobLogMessage {
     public static final String EMPTY = ""; //$NON-NLS-1$
     public static final String ZERO = "0"; //$NON-NLS-1$
 
-    private int pageNumber;
-    private boolean selected;
-
-    private List<MessageModifyListener> listeners;
-
     private String id;
     private String type;
     private String severity;
@@ -56,11 +51,13 @@ public class JobLogMessage {
     private String fromProcedure;
     private String fromStatement;
 
-    private int severityInt;
-    private String lowerCaseText;
+    private transient int severityInt;
+    private transient String lowerCaseText;
+    private transient String error;
 
-    private String error;
-    private Exception exception;
+    private transient int pageNumber;
+    private transient boolean selected;
+    private transient List<MessageModifyListener> listeners;
 
     public static enum Fields {
         ID ("ID", 0, "CHAR(7)"),
@@ -188,7 +185,7 @@ public class JobLogMessage {
         return jobLogMessage;
     }
 
-    public static Comparable[] getSampleRow() {
+    public static Comparable<?>[] getSampleRow() {
 
         long now = new java.util.Date().getTime();
 
@@ -218,12 +215,11 @@ public class JobLogMessage {
     }
 
     public void setError(Exception e) {
-        setError(e.getLocalizedMessage(), e);
+        setError(e.getLocalizedMessage());
     }
 
-    private void setError(String error, Exception e) {
+    private void setError(String error) {
         this.error = error;
-        this.exception = e;
     }
 
     public int getPageNumber() {
@@ -445,9 +441,9 @@ public class JobLogMessage {
         return columnMappings;
     }
 
-    public Comparable[] getRow() {
+    public Comparable<?>[] getRow() {
 
-        Comparable[] row = new Comparable[columnMappings.size()];
+        Comparable<?>[] row = new Comparable[columnMappings.size()];
 
         row[Fields.ID.fieldIndex()] = getId();
         row[Fields.TYPE.fieldIndex()] = getType();
@@ -484,5 +480,93 @@ public class JobLogMessage {
         buffer.append(getText());
 
         return buffer.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((date == null) ? 0 : date.hashCode());
+        result = prime * result + ((fromLibrary == null) ? 0 : fromLibrary.hashCode());
+        result = prime * result + ((fromModule == null) ? 0 : fromModule.hashCode());
+        result = prime * result + ((fromProcedure == null) ? 0 : fromProcedure.hashCode());
+        result = prime * result + ((fromProgram == null) ? 0 : fromProgram.hashCode());
+        result = prime * result + ((fromStatement == null) ? 0 : fromStatement.hashCode());
+        result = prime * result + ((help == null) ? 0 : help.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((severity == null) ? 0 : severity.hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        result = prime * result + ((time == null) ? 0 : time.hashCode());
+        result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+        result = prime * result + ((toLibrary == null) ? 0 : toLibrary.hashCode());
+        result = prime * result + ((toModule == null) ? 0 : toModule.hashCode());
+        result = prime * result + ((toProcedure == null) ? 0 : toProcedure.hashCode());
+        result = prime * result + ((toProgram == null) ? 0 : toProgram.hashCode());
+        result = prime * result + ((toStatement == null) ? 0 : toStatement.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        JobLogMessage other = (JobLogMessage)obj;
+        if (date == null) {
+            if (other.date != null) return false;
+        } else if (!date.equals(other.date)) return false;
+        if (fromLibrary == null) {
+            if (other.fromLibrary != null) return false;
+        } else if (!fromLibrary.equals(other.fromLibrary)) return false;
+        if (fromModule == null) {
+            if (other.fromModule != null) return false;
+        } else if (!fromModule.equals(other.fromModule)) return false;
+        if (fromProcedure == null) {
+            if (other.fromProcedure != null) return false;
+        } else if (!fromProcedure.equals(other.fromProcedure)) return false;
+        if (fromProgram == null) {
+            if (other.fromProgram != null) return false;
+        } else if (!fromProgram.equals(other.fromProgram)) return false;
+        if (fromStatement == null) {
+            if (other.fromStatement != null) return false;
+        } else if (!fromStatement.equals(other.fromStatement)) return false;
+        if (help == null) {
+            if (other.help != null) return false;
+        } else if (!help.equals(other.help)) return false;
+        if (id == null) {
+            if (other.id != null) return false;
+        } else if (!id.equals(other.id)) return false;
+        if (severity == null) {
+            if (other.severity != null) return false;
+        } else if (!severity.equals(other.severity)) return false;
+        if (text == null) {
+            if (other.text != null) return false;
+        } else if (!text.equals(other.text)) return false;
+        if (time == null) {
+            if (other.time != null) return false;
+        } else if (!time.equals(other.time)) return false;
+        if (timestamp == null) {
+            if (other.timestamp != null) return false;
+        } else if (!timestamp.equals(other.timestamp)) return false;
+        if (toLibrary == null) {
+            if (other.toLibrary != null) return false;
+        } else if (!toLibrary.equals(other.toLibrary)) return false;
+        if (toModule == null) {
+            if (other.toModule != null) return false;
+        } else if (!toModule.equals(other.toModule)) return false;
+        if (toProcedure == null) {
+            if (other.toProcedure != null) return false;
+        } else if (!toProcedure.equals(other.toProcedure)) return false;
+        if (toProgram == null) {
+            if (other.toProgram != null) return false;
+        } else if (!toProgram.equals(other.toProgram)) return false;
+        if (toStatement == null) {
+            if (other.toStatement != null) return false;
+        } else if (!toStatement.equals(other.toStatement)) return false;
+        if (type == null) {
+            if (other.type != null) return false;
+        } else if (!type.equals(other.type)) return false;
+        return true;
     }
 }

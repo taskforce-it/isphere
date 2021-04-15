@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -76,7 +77,6 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     private final static String SASH_WEIGHTS = "SASH_WEIGHTS_"; //$NON-NLS-1$
 
-    private CTabFolder tabFolder;
     private SelectionListener sqlEditorSelectionListener;
 
     private Composite container;
@@ -114,25 +114,25 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         }
     }
 
-    public void setInput(AbstractJobLogExplorerInput input, boolean isReload) {
+    public void setInput(AbstractJobLogExplorerInput input) {
+        setInputInternally(input, null, true);
+    }
+
+    private void setInputInternally(AbstractJobLogExplorerInput input, ISelection selectedItems, boolean isCloseTabOnError) {
 
         jobLogExplorerInput = input;
 
         prepareLoadingJobLog(jobLogExplorerInput);
 
         if (jobLogExplorerInput instanceof AbstractJobLogExplorerInput) {
-            LoadJobLogJob job = new LoadJobLogJob(input, tableViewerPanel, filterPanel, isReload);
-            job.schedule();
-        } else {
-            jobLogExplorerInput = null;
-            SetEditorInputJob job = new SetEditorInputJob(jobLogExplorerInput, new JobLog(), tableViewerPanel, filterPanel, isReload);
+            LoadJobLogJob job = new LoadJobLogJob(input, tableViewerPanel, filterPanel, selectedItems, isCloseTabOnError);
             job.schedule();
         }
-
     }
 
     public void refresh() {
-        setInput(getInput(), true);
+        ISelection selectedItems = tableViewerPanel.getSelection();
+        setInputInternally(getInput(), selectedItems, false);
     }
 
     public AbstractJobLogExplorerInput getInput() {
@@ -197,7 +197,6 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
 
     private void initializeComponents(CTabFolder parent, SelectionListener sqlEditorSelectionListener) {
 
-        this.tabFolder = parent;
         this.sqlEditorSelectionListener = sqlEditorSelectionListener;
         this.statusChangedListeners = new ArrayList<IJobLogExplorerStatusChangedListener>();
 
@@ -400,7 +399,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         handleDataLoadException(message, e, false, false);
     }
 
-    private void handleDataLoadException(String message, Throwable e, boolean addToErrorLog, boolean isReload) {
+    private void handleDataLoadException(String message, Throwable e, boolean addToErrorLog, boolean isCloseTabOnError) {
 
         if (message != null) {
             if (addToErrorLog) {
@@ -411,7 +410,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         final JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(
             JobLogExplorerStatusChangedEvent.EventType.DATA_LOAD_ERROR, this);
         status.setException(message, e);
-        status.setReload(isReload);
+        status.setDisposeTab(isCloseTabOnError);
 
         if (Display.getCurrent() == null) {
             UIJob job = new UIJob(EMPTY) {
@@ -540,16 +539,18 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private AbstractJobLogExplorerInput input;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
-        private boolean isReload;
+        private ISelection selectedItems;
+        private boolean isCloseTabOnError;
 
         public LoadJobLogJob(AbstractJobLogExplorerInput jobInput, JobLogExplorerTableViewer viewer, JobLogExplorerFilterPanel filterPanel,
-            boolean isReload) {
+            ISelection selectedItems, boolean isCloseTabOnError) {
             super(Messages.Job_Loading_job_log);
 
             this.input = jobInput;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
-            this.isReload = isReload;
+            this.selectedItems = selectedItems;
+            this.isCloseTabOnError = isCloseTabOnError;
         }
 
         @Override
@@ -558,18 +559,18 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
             try {
 
                 JobLog jobLog = input.load(monitor);
-                new SetEditorInputJob(input, jobLog, viewer, filterPanel, isReload).schedule();
+                new SetEditorInputJob(input, jobLog, viewer, filterPanel, selectedItems, isCloseTabOnError).schedule();
 
             } catch (DownloadSpooledFileException e) {
-                handleDataLoadException(e.getLocalizedMessage(), e, false, isReload);
+                handleDataLoadException(e.getLocalizedMessage(), e, false, isCloseTabOnError);
             } catch (InvalidJobLogFormatException e) {
-                handleDataLoadException(e.getLocalizedMessage(), e, false, isReload);
+                handleDataLoadException(e.getLocalizedMessage(), e, false, isCloseTabOnError);
             } catch (JobNotFoundException e) {
-                handleDataLoadException(e.getLocalizedMessage(), e, false, isReload);
+                handleDataLoadException(e.getLocalizedMessage(), e, false, isCloseTabOnError);
             } catch (JobLogNotLoadedException e) {
-                handleDataLoadException(e.getLocalizedMessage(), e, false, isReload);
+                handleDataLoadException(e.getLocalizedMessage(), e, false, isCloseTabOnError);
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to retrieve job log ***", e, true, isReload); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to retrieve job log ***", e, true, isCloseTabOnError); //$NON-NLS-1$
             }
 
             return Status.OK_STATUS;
@@ -583,17 +584,19 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
         private JobLog jobLog;
         private JobLogExplorerTableViewer viewer;
         private JobLogExplorerFilterPanel filterPanel;
-        private boolean isReload;
+        private ISelection selectedItems;
+        private boolean isCloseTabOnError;
 
         public SetEditorInputJob(AbstractJobLogExplorerInput input, JobLog jobLog, JobLogExplorerTableViewer viewer,
-            JobLogExplorerFilterPanel filterPanel, boolean isReload) {
+            JobLogExplorerFilterPanel filterPanel, ISelection selectedItems, boolean isCloseTabOnError) {
             super(EMPTY);
 
             this.input = input;
             this.jobLog = jobLog;
             this.viewer = viewer;
             this.filterPanel = filterPanel;
-            this.isReload = isReload;
+            this.selectedItems = selectedItems;
+            this.isCloseTabOnError = isCloseTabOnError;
         }
 
         @Override
@@ -620,11 +623,16 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                     setFilterPanelOptions();
                 }
 
-                if (viewer.getItemCount() != 0) {
-                    viewer.setSelection(0);
+                if (selectedItems == null || selectedItems.isEmpty()) {
+                    if (viewer.getItemCount() != 0) {
+                        viewer.setSelection(0);
+                    } else {
+                        viewer.setSelection(-1);
+                    }
                 } else {
-                    viewer.setSelection(-1);
+                    viewer.setSelection(selectedItems);
                 }
+
                 viewer.setFocus();
 
                 if (jobLog.getErrorCount() > 0) {
@@ -633,7 +641,7 @@ public class JobLogExplorerTab extends CTabItem implements IResizableTableColumn
                 }
 
             } catch (Throwable e) {
-                handleDataLoadException("*** Failed to set job log data ***", e, true, isReload); //$NON-NLS-1$
+                handleDataLoadException("*** Failed to set job log data ***", e, true, isCloseTabOnError); //$NON-NLS-1$
             }
 
             JobLogExplorerStatusChangedEvent status = new JobLogExplorerStatusChangedEvent(

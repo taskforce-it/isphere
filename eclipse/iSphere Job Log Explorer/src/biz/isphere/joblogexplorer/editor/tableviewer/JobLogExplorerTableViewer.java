@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -95,6 +96,14 @@ public class JobLogExplorerTableViewer implements SelectionListener {
     public void setInputData(JobLog jobLog) {
         tableViewer.setInput(jobLog);
     }
+    public ISelection getSelection() {
+        return tableViewer.getSelection();
+    }
+
+    public void setSelection(ISelection selection) {
+        tableViewer.setSelection(selection);
+    }
+
 
     public JobLog getInputData() {
         return (JobLog)tableViewer.getInput();
