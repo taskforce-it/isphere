@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,8 +258,11 @@ public class HistoryCombo {
     }
 
     private void setHistoryItems(Set<String> items) {
-
+        String currentText = cboHistory.getText();
         cboHistory.setItems(items.toArray(new String[items.size()]));
+        if (!StringHelper.isNullOrEmpty(currentText)) {
+            cboHistory.setText(currentText);
+        }
     }
 
     private String getCountKey() {
