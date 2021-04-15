@@ -32,6 +32,21 @@ public final class IBMiDebugHelper {
     }
 
     // @formatter:off
+    //
+    // Available after RDi 9.6:
+    // ------------------------
+    // TODO: for the next RDi release past 9.6
+    //
+    // Hello Thomas, I just wanted to let you know that your request enhancement is in. I wanted to let you
+    // know right away.  It will be delivered in the next release of RDi but that won't be for a few months.
+    // (major release)
+    //
+    // IProcess process;
+    // String connectionName = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_CONNECTION_NAME);
+    // String jobName = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_NAME);
+    // String jobNumber = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_NUMBER);
+    // String jobUser = process.getAttribute(IPDTDebugConstants.ATTRIBUTE_JOB_USER);
+    //
     // Available with RDi 9.6:
     // -----------------------
     // Hello Thomas,
