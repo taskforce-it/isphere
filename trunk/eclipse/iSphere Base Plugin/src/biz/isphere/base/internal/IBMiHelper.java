@@ -8,6 +8,7 @@
 
 package biz.isphere.base.internal;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -290,7 +291,14 @@ public final class IBMiHelper {
 
         Date time;
         try {
-            time = hhmmssFormatter.parse(hhmmss);
+            if (hhmmss.length() > 6) {
+                Timestamp timestamp = new Timestamp(hhmmssFormatter.parse(hhmmss.substring(0, 6)).getTime());
+                String nanos = hhmmss.substring(6);
+                timestamp.setNanos(IntHelper.tryParseInt(nanos, 0) * 1000);
+                time = new Date(timestamp.getTime());
+            } else {
+                time = hhmmssFormatter.parse(hhmmss);
+            }
         } catch (ParseException e) {
             return null;
         }
