@@ -106,8 +106,10 @@ public class SqlEditor extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
 
-        cboTableName.setEnabled(enabled);
-        btnClearTableName.setEnabled(enabled);
+        if (showTableControl) {
+            cboTableName.setEnabled(enabled);
+            btnClearTableName.setEnabled(enabled);
+        }
 
         setEnabledChecked(btnAddField, enabled);
         btnClear.setEnabled(enabled);
