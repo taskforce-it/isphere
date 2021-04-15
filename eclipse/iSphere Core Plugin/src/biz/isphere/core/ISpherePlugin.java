@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
@@ -139,6 +140,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_UNLOCKED = "unlocked.png";
     public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
     public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
+    public static final String IMAGE_SYSTEM = "system.gif"; //$NON-NLS-1$
+    public static final String IMAGE_LIBRARY = "library.gif"; //$NON-NLS-1$
+    public static final String IMAGE_CURRENT_LIBRARY = "current_library.gif"; //$NON-NLS-1$
+    public static final String IMAGE_LIBRARY_LIST = "library_list.gif"; //$NON-NLS-1$
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -321,6 +326,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_UNLOCKED, getImageDescriptor(IMAGE_UNLOCKED));
         reg.put(IMAGE_DISPLAY_MODULE_VIEW, getImageDescriptor(IMAGE_DISPLAY_MODULE_VIEW));
         reg.put(IMAGE_RETRIEVE_BINDER_SOURCE, getImageDescriptor(IMAGE_RETRIEVE_BINDER_SOURCE));
+        reg.put(IMAGE_SYSTEM, getImageDescriptor(IMAGE_SYSTEM));
+        reg.put(IMAGE_LIBRARY, getImageDescriptor(IMAGE_LIBRARY));
+        reg.put(IMAGE_CURRENT_LIBRARY, getImageDescriptor(IMAGE_CURRENT_LIBRARY));
+        reg.put(IMAGE_LIBRARY_LIST, getImageDescriptor(IMAGE_LIBRARY_LIST));
     }
 
     @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
@@ -332,6 +341,10 @@ public class ISpherePlugin extends AbstractUIPlugin {
         } catch (MalformedURLException e) {
             return ImageDescriptor.getMissingImageDescriptor();
         }
+    }
+
+    public Image getImage(String name) {
+        return getImageRegistry().getDescriptor(name).createImage();
     }
 
     public static URL getInstallURL() {

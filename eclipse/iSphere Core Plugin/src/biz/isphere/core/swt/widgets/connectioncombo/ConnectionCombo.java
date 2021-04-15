@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@ package biz.isphere.core.swt.widgets.connectioncombo;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -47,6 +48,14 @@ public class ConnectionCombo extends Composite {
 
     public void removeModifyListener(ModifyListener listener) {
         connectionCombo.removeModifyListener(listener);
+    }
+
+    public void addSelectionListener(SelectionListener listener) {
+        connectionCombo.addSelectionListener(listener);
+    }
+
+    public void removeSelectionListener(SelectionListener listener) {
+        connectionCombo.removeSelectionListener(listener);
     }
 
     @Override

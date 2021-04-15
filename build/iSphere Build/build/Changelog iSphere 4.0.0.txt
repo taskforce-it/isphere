@@ -1,6 +1,7 @@
 
 Changelog: iSphere 4.0.0.b016
 -----------------------------
+ • Added iSphere QSYS object selector.
  • Changed HistoryCombo to preserve current text, when loading
    history items.
  • Changed job log explorer to preserve the selected items when
