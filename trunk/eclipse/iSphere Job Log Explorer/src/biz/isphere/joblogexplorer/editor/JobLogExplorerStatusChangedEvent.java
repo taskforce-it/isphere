@@ -23,7 +23,7 @@ public class JobLogExplorerStatusChangedEvent {
     private int numberOfMessagesSelected;
     private String message;
     private Throwable throwable;
-    private boolean isReload;
+    private boolean isDispose;
 
     public JobLogExplorerStatusChangedEvent(EventType eventType, Object source) {
         this.eventType = eventType;
@@ -35,7 +35,7 @@ public class JobLogExplorerStatusChangedEvent {
         this.source = source;
         this.numberOfMessages = data.numberOfMessages;
         this.numberOfMessagesSelected = data.numberOfMessagesSelected;
-        this.isReload = false;
+        this.isDispose = false;
     }
 
     public EventType getEventType() {
@@ -79,12 +79,12 @@ public class JobLogExplorerStatusChangedEvent {
         this.throwable = throwable;
     }
 
-    public boolean isReload() {
-        return isReload;
+    public boolean isDisposeTab() {
+        return isDispose;
     }
 
-    public void setReload(boolean isReload) {
-        this.isReload = isReload;
+    public void setDisposeTab(boolean dispose) {
+        this.isDispose = dispose;
     }
 
     @Override

@@ -197,10 +197,9 @@ public class JobLogExplorerView extends XViewPart implements IJobLogExplorerStat
             jobLogExplorerTab = new JobLogExplorerTab(tabFolder, new SqlEditorSelectionListener());
             jobLogExplorerTab.setSqlEditorVisibility(false);
             jobLogExplorerTab.addStatusChangedListener(this);
-            jobLogExplorerTab.setInput(input, false);
-        } else {
-            jobLogExplorerTab.refresh();
         }
+
+        jobLogExplorerTab.setInput(input);
 
         tabFolder.setSelection(jobLogExplorerTab);
     }
@@ -419,7 +418,7 @@ public class JobLogExplorerView extends XViewPart implements IJobLogExplorerStat
         }
 
         if (data.getEventType() == JobLogExplorerStatusChangedEvent.EventType.DATA_LOAD_ERROR) {
-            handleDataLoadException(data.getSource(), data.getMessage(), data.getThrowable(), !data.isReload());
+            handleDataLoadException(data.getSource(), data.getMessage(), data.getThrowable(), data.isDisposeTab());
         }
     }
 
