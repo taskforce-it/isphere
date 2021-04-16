@@ -14,9 +14,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
 import biz.isphere.core.messagefilecompare.rse.AbstractTableLabelProvider;
-import biz.isphere.rse.internal.RSESelectObjectDialog;
-
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import biz.isphere.core.swt.widgets.objectselector.ISelectRemoteQSYSObjectDialog;
+import biz.isphere.core.swt.widgets.objectselector.ISelectedObject;
+import biz.isphere.core.swt.widgets.objectselector.SelectRemoteQSYSObjectDialog;
 
 public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
 
@@ -27,15 +27,22 @@ public class MessageFileCompareEditor extends AbstractMessageFileCompareEditor {
     @Override
     protected RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String messageFileName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
-        RSESelectObjectDialog dialog = RSESelectObjectDialog.createSelectMessageFileDialog(getShell(), connection);
+        ISelectRemoteQSYSObjectDialog dialog = SelectRemoteQSYSObjectDialog.createSelectMessageFileDialog(getShell(), connectionName);
         dialog.setLibraryName(libraryName);
-        dialog.setMessageFileName(messageFileName);
-        if (dialog.open() == RSESelectObjectDialog.CANCEL) {
+        dialog.setObjectName(messageFileName);
+        if (dialog.open() == SelectRemoteQSYSObjectDialog.CANCEL) {
             return null;
         }
 
-        return dialog.getRemoteObject();
+        ISelectedObject selectedObject = dialog.getObject();
+
+        String connection = selectedObject.getConnectionName();
+        String name = selectedObject.getName();
+        String library = selectedObject.getLibrary();
+        String objectType = selectedObject.getObjectType();
+        String description = selectedObject.getDescription();
+
+        return new RemoteObject(connection, name, library, objectType, description);
     }
 
     @Override
