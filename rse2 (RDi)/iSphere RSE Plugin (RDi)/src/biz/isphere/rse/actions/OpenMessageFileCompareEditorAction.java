@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
+import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorConfiguration;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -40,11 +40,12 @@ public class OpenMessageFileCompareEditorAction implements IObjectActionDelegate
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
             if (isValidSelection(structuredSelection)) {
+                MessageFileCompareEditorConfiguration configuration = MessageFileCompareEditorConfiguration.getDefaultConfiguration();
                 RemoteObject[] remoteObjects = getSelectedMessageFiles(structuredSelection);
                 if (remoteObjects.length == 2) {
-                    AbstractMessageFileCompareEditor.openEditor(remoteObjects[0], remoteObjects[1], IEditor.EDIT);
+                    Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], remoteObjects[1], configuration);
                 } else {
-                    AbstractMessageFileCompareEditor.openEditor(remoteObjects[0], null, IEditor.EDIT);
+                    Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], null, configuration);
                 }
             }
         }

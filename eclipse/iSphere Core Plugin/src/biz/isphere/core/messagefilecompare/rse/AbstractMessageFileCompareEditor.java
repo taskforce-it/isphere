@@ -58,6 +58,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.externalapi.IMessageFileCompareEditorConfiguration;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.IEditor;
@@ -107,8 +108,11 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
     private DialogSettingsManager dialogSettingsManager;
 
-    private Label lblRightMessageFile;
     private Label lblLeftMessageFile;
+    private Button btnSelectLeftMessageFile;
+    private Label lblRightMessageFile;
+    private Button btnSelectRightMessageFile;
+
     private Button btnCopyRight;
     private Button btnEqual;
     private Button btnNoCopy;
@@ -167,7 +171,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         lblLeftMessageFile = new Label(leftHeaderArea, SWT.BORDER);
         lblLeftMessageFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        Button btnSelectLeftMessageFile = WidgetFactory.createPushButton(leftHeaderArea);
+        btnSelectLeftMessageFile = WidgetFactory.createPushButton(leftHeaderArea);
         btnSelectLeftMessageFile.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectLeftMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectLeftMessageFile.addSelectionListener(new SelectionListener() {
@@ -200,7 +204,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         lblRightMessageFile = new Label(rightHeaderArea, SWT.BORDER);
         lblRightMessageFile.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        Button btnSelectRightMessageFile = WidgetFactory.createPushButton(rightHeaderArea);
+        btnSelectRightMessageFile = WidgetFactory.createPushButton(rightHeaderArea);
         btnSelectRightMessageFile.setToolTipText(Messages.Tooltip_Select_object);
         btnSelectRightMessageFile.setImage(ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_OPEN).createImage());
         btnSelectRightMessageFile.addSelectionListener(new SelectionListener() {
@@ -439,7 +443,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tableViewer.addFilter(tableFilter);
         tableViewer.setLabelProvider(getTableLabelProvider(tableViewer, 3));
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
-        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu));
+        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, input.getConfiguration()));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
         TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
@@ -533,11 +537,11 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         return true;
     }
 
-    public static void openEditor(RemoteObject leftMessageFile, RemoteObject rightMessageFile, String mode) {
+    public static void openEditor(RemoteObject leftMessageFile, RemoteObject rightMessageFile, IMessageFileCompareEditorConfiguration configuration) {
 
         try {
 
-            MessageFileCompareEditorInput editorInput = new MessageFileCompareEditorInput(leftMessageFile, rightMessageFile);
+            MessageFileCompareEditorInput editorInput = new MessageFileCompareEditorInput(leftMessageFile, rightMessageFile, configuration);
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractMessageFileCompareEditor.ID);
 
         } catch (PartInitException e) {
@@ -660,6 +664,25 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         btnCompare.setEnabled(isCompareEnabled);
         btnSynchronize.setEnabled(isSynchronizeEnabled);
+
+        IMessageFileCompareEditorConfiguration config = input.getConfiguration();
+        if (config.isLeftEditorEnabled() && config.isRightEditorEnabled()) {
+            btnSynchronize.setEnabled(true);
+        } else {
+            btnSynchronize.setEnabled(false);
+        }
+
+        if (config.isLeftSelectMessageFileEnabled()) {
+            btnSelectLeftMessageFile.setEnabled(true);
+        } else {
+            btnSelectLeftMessageFile.setEnabled(false);
+        }
+
+        if (config.isRightSelectMessageFileEnabled()) {
+            btnSelectRightMessageFile.setEnabled(true);
+        } else {
+            btnSelectRightMessageFile.setEnabled(false);
+        }
 
         displayCompareStatus();
     }
@@ -985,6 +1008,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         private static final int RIGHT = 2;
 
         private Menu parent;
+        private IMessageFileCompareEditorConfiguration configuration;
+
         private MenuItem menuItemRemoveSelection;
         private MenuItem menuItemSelectForCopyingToTheRight;
         private MenuItem menuItemSelectForCopyingToTheLeft;
@@ -995,8 +1020,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         private MenuItem menuItemDeleteLeft;
         private MenuItem menuItemDeleteRight;
 
-        public TableContextMenu(Menu parent) {
+        public TableContextMenu(Menu parent, IMessageFileCompareEditorConfiguration configuration) {
             this.parent = parent;
+            this.configuration = configuration;
         }
 
         @Override
@@ -1041,15 +1067,22 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 return;
             }
 
+            boolean isLeftEditorEnabled = configuration.isLeftEditorEnabled();
+            boolean isRightEditorEnabled = configuration.isRightEditorEnabled();
+
             createMenuItemRemoveSelection();
-            createMenuItemSelectForCopyingToTheLeft(getTheSelectedItem());
-            createMenuItemSelectForCopyingToTheRight(getTheSelectedItem());
-            createMenuItemEditLeft(getTheSelectedItem());
-            createMenuItemEditRight(getTheSelectedItem());
+
+            if (isLeftEditorEnabled) createMenuItemSelectForCopyingToTheLeft(getTheSelectedItem());
+            if (isRightEditorEnabled) createMenuItemSelectForCopyingToTheRight(getTheSelectedItem());
+            if (isLeftEditorEnabled) createMenuItemEditLeft(getTheSelectedItem());
+            if (isRightEditorEnabled) createMenuItemEditRight(getTheSelectedItem());
+
             createMenuItemCompareLeftAndRight(getTheSelectedItem());
+
             createMenuItemSeparator();
-            createMenuItemDeleteLeft(getTheSelectedItem());
-            createMenuItemDeleteRight(getTheSelectedItem());
+
+            if (isLeftEditorEnabled) createMenuItemDeleteLeft(getTheSelectedItem());
+            if (isRightEditorEnabled) createMenuItemDeleteRight(getTheSelectedItem());
         }
 
         private void createMenuItemSeparator() {
