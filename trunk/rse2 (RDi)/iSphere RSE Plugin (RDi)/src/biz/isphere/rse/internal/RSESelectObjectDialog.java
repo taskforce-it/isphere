@@ -27,6 +27,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.swt.widgets.objectselector.SelectRemoteQSYSObjectDialog;
 import biz.isphere.rse.Messages;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
@@ -35,6 +36,12 @@ import com.ibm.etools.iseries.rse.ui.widgets.QSYSObjectPrompt;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSObject;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+/**
+ * This class has been replaced by the {@link SelectRemoteQSYSObjectDialog}.
+ * 
+ * @deprecated
+ */
+// TODO: remove obsolete class
 public class RSESelectObjectDialog extends XDialog {
 
     private static final String CONNECTION_NAME = "CONNECTION_NAME"; //$NON-NLS-1$
