@@ -2,6 +2,9 @@
 Changelog: iSphere 4.0.0.b016
 -----------------------------
  • Added iSphere QSYS object selector.
+ • Added message file compare editor to core APPI.
+ • Added option "Ignore white spaces" to source member compare
+   preferences page.
  • Changed HistoryCombo to preserve current text, when loading
    history items.
  • Changed job log explorer to preserve the selected items when
