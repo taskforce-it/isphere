@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,7 +100,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         createSectionMessageFileCompare(container);
 
-        createSectionSourceMemberCompare(container);
+        createSectionSourceMemberCompareDialog(container);
 
         createSectionSourceFileCompare(container);
 
@@ -127,6 +127,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         Label labelMessageFileSearchResultsAutoSaveFileName = new Label(group, SWT.NONE);
         labelMessageFileSearchResultsAutoSaveFileName.setLayoutData(createLabelLayoutData());
         labelMessageFileSearchResultsAutoSaveFileName.setText(Messages.Line_width_colon);
+        labelMessageFileSearchResultsAutoSaveFileName
+            .setToolTipText(Messages.Tooltip_Line_with_of_word_wrap_of_first_and_second_level_text_when_comparing_message_descriptions);
 
         textMessageFileCompareLineWith = WidgetFactory.createIntegerText(group);
         textMessageFileCompareLineWith
@@ -141,7 +143,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         });
     }
 
-    private void createSectionSourceMemberCompare(Composite parent) {
+    private void createSectionSourceMemberCompareDialog(Composite parent) {
 
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(1, false));
