@@ -60,6 +60,8 @@ public class Messages extends NLS {
 
     public static String Comparing_source_members;
 
+    public static String Connection;
+
     public static String Connection_colon;
 
     public static String Consider_date;
@@ -1651,6 +1653,10 @@ public class Messages extends NLS {
     public static String SaveAsPDF;
 
     public static String SaveAsHTML;
+
+    public static String Select_A;
+
+    public static String Browse_For_A;
 
     /*
      * Warning messages

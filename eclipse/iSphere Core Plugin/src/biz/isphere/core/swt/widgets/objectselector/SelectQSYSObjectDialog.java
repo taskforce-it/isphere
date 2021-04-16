@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +41,6 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.objectselector.model.AbstractListItem;
 import biz.isphere.core.swt.widgets.objectselector.model.LibraryItem;
@@ -101,13 +99,7 @@ public class SelectQSYSObjectDialog extends XDialog implements ISelectQSYSObject
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
 
-        if (ISeries.LIB.equals(objectType)) {
-            newShell.setText(Messages.bind("Browse for {0}", objectLabel));
-        } else if (ISeries.MSGF.equals(objectType)) {
-            newShell.setText(Messages.bind("Browse for {0}", objectLabel));
-        } else {
-            newShell.setText(Messages.bind("Browse for {0}", "Object"));
-        }
+        newShell.setText(Messages.bind(Messages.Browse_For_A, objectLabel));
     }
 
     @Override
@@ -120,7 +112,7 @@ public class SelectQSYSObjectDialog extends XDialog implements ISelectQSYSObject
 
         toDoLabel = new Label(container, SWT.NONE);
         toDoLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        toDoLabel.setText(NLS.bind("Select {0}:", objectLabel));
+        toDoLabel.setText(Messages.bind(Messages.Select_A, objectLabel));
 
         WidgetFactory.createLineFiller(container);
 
@@ -244,7 +236,7 @@ public class SelectQSYSObjectDialog extends XDialog implements ISelectQSYSObject
     private boolean isValidObjectType(AbstractListItem listItem) {
 
         if (!(listItem instanceof ObjectItem)) {
-            throw new IllegalArgumentException("Unexpected object type: " + listItem.getClass().getName());
+            throw new IllegalArgumentException("Unexpected object type: " + listItem.getClass().getName()); //$NON-NLS-1$
         }
 
         Set<String> types = new HashSet<String>(Arrays.asList(objectType));
