@@ -10,5 +10,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.base;bundle-version="4.0.0",
- biz.isphere.core
+ biz.isphere.core;bundle-version="4.0.0"
 Bundle-ActivationPolicy: lazy
