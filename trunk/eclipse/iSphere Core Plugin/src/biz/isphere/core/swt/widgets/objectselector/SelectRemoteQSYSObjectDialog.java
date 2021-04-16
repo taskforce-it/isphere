@@ -82,13 +82,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
 
-        if (ISeries.LIB.equals(objectType)) {
-            newShell.setText(Messages.bind("Select {0}", objectLabel));
-        } else if (ISeries.MSGF.equals(objectType)) {
-            newShell.setText(Messages.bind("Select {0}", objectLabel));
-        } else {
-            newShell.setText(Messages.bind("Select {0}", "Object"));
-        }
+        newShell.setText(Messages.bind(Messages.Select_A, objectLabel));
     }
 
     @Override
@@ -99,7 +93,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         Label lblConnectionName = new Label(dialogArea, SWT.NONE);
-        lblConnectionName.setText(Messages.Connection_colon);
+        lblConnectionName.setText(Messages.Connection);
 
         cboConnectionName = WidgetFactory.createConnectionCombo(dialogArea, SWT.NONE);
         cboConnectionName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -112,7 +106,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         cboLibraryName = WidgetFactory.createNameHistoryCombo(dialogArea);
         cboLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        btnSelectLibrary = WidgetFactory.createPushButton(dialogArea, "Browse");
+        btnSelectLibrary = WidgetFactory.createPushButton(dialogArea, Messages.Browse);
 
         Label lblObjectName = new Label(dialogArea, SWT.NONE);
         lblObjectName.setText(objectLabel);
@@ -120,7 +114,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         cboObjectName = WidgetFactory.createNameHistoryCombo(dialogArea);
         cboObjectName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        btnSelectObject = WidgetFactory.createPushButton(dialogArea, "Browse");
+        btnSelectObject = WidgetFactory.createPushButton(dialogArea, Messages.Browse);
 
         loadScreenValues();
 
@@ -176,8 +170,11 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             }
 
             if (!ISphereHelper.checkObject(system, libraryName, fileName, objectType)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                    Messages.bind("Object {0} in library {1} not_found", new Object[] { fileName, libraryName }));
+                MessageDialog.openError(
+                    getShell(),
+                    Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist, new Object[] { fileName, libraryName,
+                        objectType }));
                 return;
             }
 
