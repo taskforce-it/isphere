@@ -15,6 +15,7 @@ import org.eclipse.ui.IPersistableElement;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.externalapi.IMessageFileCompareEditorConfiguration;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
@@ -24,11 +25,14 @@ public class MessageFileCompareEditorInput implements IEditorInput {
     private RemoteObject rightMessageFile;
     private Image titleImage;
 
+    private IMessageFileCompareEditorConfiguration configuration;
     private MessageDescription[] leftMessageDescriptions;
     private MessageDescription[] rightMessageDescriptions;
 
-    public MessageFileCompareEditorInput(RemoteObject leftMessageFile, RemoteObject rightMessageFile) {
+    public MessageFileCompareEditorInput(RemoteObject leftMessageFile, RemoteObject rightMessageFile,
+        IMessageFileCompareEditorConfiguration configuration) {
 
+        this.configuration = configuration;
         this.leftMessageFile = leftMessageFile;
         this.rightMessageFile = rightMessageFile;
         this.titleImage = ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE_MESSAGE_FILES);
@@ -49,6 +53,10 @@ public class MessageFileCompareEditorInput implements IEditorInput {
     @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         return null;
+    }
+
+    public IMessageFileCompareEditorConfiguration getConfiguration() {
+        return configuration;
     }
 
     public RemoteObject getLeftMessageFile() {

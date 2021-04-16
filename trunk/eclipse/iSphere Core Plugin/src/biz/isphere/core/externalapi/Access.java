@@ -18,6 +18,7 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
@@ -140,6 +141,47 @@ public class Access {
     }
 
     /**
+     * @param shell - the parent shell.
+     * @param leftConnectionName - name of the connection where the left message
+     *        file is loaded from.
+     * @param leftLibrary - library name of the left message file.
+     * @param leftMessageFile - name of the message file that is loaded to the
+     *        left side of the editor.
+     * @param rightConnectionName - name of the connection where the right
+     *        message file is loaded from.
+     * @param rightLibrary - library name of the right message file.
+     * @param rightMessageFile - name of the message file that is loaded to the
+     *        right side of the editor.
+     * @param configuration - message file editor configuration
+     */
+    public static void openMessageFileCompareEditorEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
+        String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration) {
+
+        RemoteObject leftRemoteMessageFile = new RemoteObject(leftConnectionName, leftMessageFile, leftLibrary, ISeries.MSGF, getObjectDescription(
+            leftConnectionName, leftLibrary, leftMessageFile, ISeries.MSGF));
+        RemoteObject rightRemoteMessageFile = new RemoteObject(rightConnectionName, rightMessageFile, rightLibrary, ISeries.MSGF,
+            getObjectDescription(rightConnectionName, rightLibrary, rightMessageFile, ISeries.MSGF));
+
+        openMessageFileCompareEditorEditor(shell, leftRemoteMessageFile, rightRemoteMessageFile, configuration);
+
+    }
+
+    /**
+     * @param shell - the parent shell.
+     * @param leftMessageFile - remote message file that is loaded to the left
+     *        side of the editor.
+     * @param rightMessageFile - remote message file that is loaded to the left
+     *        side of the editor.
+     * @param configuration - message file editor configuration
+     */
+    public static void openMessageFileCompareEditorEditor(Shell shell, RemoteObject leftMessageFile, RemoteObject rightMessageFile,
+        IMessageFileCompareEditorConfiguration configuration) {
+
+        MessageFileCompareEditor.openEditor(leftMessageFile, rightMessageFile, configuration);
+
+    }
+
+    /**
      * Private method for retrieving the object description (text) of a given
      * object.
      * 
@@ -175,5 +217,4 @@ public class Access {
 
         return description;
     }
-
 }

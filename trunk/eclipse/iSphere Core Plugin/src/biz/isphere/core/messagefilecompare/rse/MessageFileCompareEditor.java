@@ -6,14 +6,12 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.messagefilecompare.rse;
+package biz.isphere.core.messagefilecompare.rse;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditor;
-import biz.isphere.core.messagefilecompare.rse.AbstractTableLabelProvider;
 import biz.isphere.core.swt.widgets.objectselector.ISelectRemoteQSYSObjectDialog;
 import biz.isphere.core.swt.widgets.objectselector.ISelectedObject;
 import biz.isphere.core.swt.widgets.objectselector.SelectRemoteQSYSObjectDialog;

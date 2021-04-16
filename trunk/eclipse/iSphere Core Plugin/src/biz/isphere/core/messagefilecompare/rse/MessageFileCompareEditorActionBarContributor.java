@@ -6,10 +6,9 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rse.messagefilecompare.rse;
+package biz.isphere.core.messagefilecompare.rse;
 
 import biz.isphere.core.dataspaceeditor.StatusLine;
-import biz.isphere.core.messagefilecompare.rse.AbstractMessageFileCompareEditorActionBarContributor;
 
 public class MessageFileCompareEditorActionBarContributor extends AbstractMessageFileCompareEditorActionBarContributor {
 

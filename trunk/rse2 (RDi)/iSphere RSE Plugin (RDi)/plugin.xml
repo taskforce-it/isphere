@@ -44,8 +44,8 @@
       <editor
             name=""
             icon="icons/compare_message_files.png"
-            class="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"
-            contributorClass="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
+            class="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"
+            contributorClass="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
             id="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"/>
 	</extension>
 
