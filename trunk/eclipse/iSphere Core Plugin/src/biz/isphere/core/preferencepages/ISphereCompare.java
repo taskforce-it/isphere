@@ -56,6 +56,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private Button chkLoadingPreviousValuesRightMemberEnabled;
     private Button chkLoadingPreviousValuesAncestorMemberEnabled;
+    private Button chkIgnoreWhiteSpaces;
 
     private Table tblFileExtensions;
     private Button btnNew;
@@ -191,6 +192,28 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         group.setText(Messages.Source_member);
 
+        Composite options = new Composite(group, SWT.NONE);
+        options.setLayout(new GridLayout());
+        options.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+
+        chkIgnoreWhiteSpaces = WidgetFactory.createCheckbox(options, Messages.Ignore_white_spaces);
+        chkIgnoreWhiteSpaces.setToolTipText(Messages.Tooltip_Ignore_white_spaces);
+        chkIgnoreWhiteSpaces.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        chkIgnoreWhiteSpaces.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                checkAllValues();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        Label lblFileExtensions = new Label(options, SWT.NONE);
+        lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
+        lblFileExtensions.setToolTipText(Messages.Tooltip_Compare_Filter_File_extensions);
+        lblFileExtensions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
         Composite tblComposite = new Composite(group, SWT.NONE);
         tblComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         tblComposite.setLayout(new GridLayout(1, false));
@@ -199,7 +222,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         GridData gd_tblFileExtensions = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
         gd_tblFileExtensions.heightHint = 0;
         tblFileExtensions.setLayoutData(gd_tblFileExtensions);
-        tblFileExtensions.setHeaderVisible(true);
+        tblFileExtensions.setHeaderVisible(false);
         tblFileExtensions.setLinesVisible(true);
         tblFileExtensions.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent anEvent) {
@@ -306,6 +329,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(chkLoadingPreviousValuesRightMemberEnabled.getSelection());
         preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(chkLoadingPreviousValuesAncestorMemberEnabled.getSelection());
 
+        preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
+
         if (sourceFileCompareEnabled) {
             CompareFilterContributionsHandler.setFileExtensions(getFileExtensionsArray());
         }
@@ -323,6 +348,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         chkLoadingPreviousValuesRightMemberEnabled.setSelection(preferences.isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled());
         chkLoadingPreviousValuesAncestorMemberEnabled.setSelection(preferences.isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled());
+
+        chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
 
         if (sourceFileCompareEnabled) {
             String[] fileExtensions = CompareFilterContributionsHandler.getFileExtensions();
@@ -343,6 +370,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         chkLoadingPreviousValuesRightMemberEnabled.setSelection(preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
         chkLoadingPreviousValuesAncestorMemberEnabled.setSelection(preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+
+        chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 
         if (sourceFileCompareEnabled) {
             setFileExtensionsArray(CompareFilterContributionsHandler.getDefaultFileExtensions());

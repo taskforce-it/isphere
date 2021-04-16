@@ -1168,7 +1168,13 @@ public class Messages extends NLS {
 
     public static String Source_member;
 
+    public static String Ignore_white_spaces;
+
+    public static String Tooltip_Ignore_white_spaces;
+
     public static String Compare_Filter_File_extensions;
+
+    public static String Tooltip_Compare_Filter_File_extensions;
 
     public static String Button_New;
 

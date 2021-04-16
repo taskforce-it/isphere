@@ -213,6 +213,8 @@ public final class Preferences {
     private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER = SOURCE_MEMBER_COMPARE
         + "LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER"; //$NON-NLS-1$
 
+    private static final String SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES = SOURCE_MEMBER_COMPARE + "SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES"; //$NON-NLS-1$
+
     private static final String APPEARANCE = DOMAIN + "APPEARANCE."; //$NON-NLS-1$
 
     private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
@@ -565,6 +567,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
     }
 
+    public boolean isSourceMemberCompareIgnoreWhiteSpaces() {
+        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES);
+    }
+
     public String getDateFormatLabel() {
         return preferenceStore.getString(APPEARANCE_DATE_FORMAT);
     }
@@ -841,6 +847,10 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, enabled);
     }
 
+    public void setSourceMemberCompareIgnoreWhiteSpaces(boolean enabled) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, enabled);
+    }
+
     public void setDateFormatLabel(String dateFormatLabel) {
         preferenceStore.setValue(APPEARANCE_DATE_FORMAT, dateFormatLabel);
     }
@@ -962,6 +972,8 @@ public final class Preferences {
             getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER,
             getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+
+        preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
@@ -1464,6 +1476,10 @@ public final class Preferences {
 
     public boolean getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
         return false;
+    }
+
+    public boolean getDefaultSourceMemberCompareIgnoreWhiteSpaces() {
+        return true;
     }
 
     public String getDefaultDateFormatLabel() {
