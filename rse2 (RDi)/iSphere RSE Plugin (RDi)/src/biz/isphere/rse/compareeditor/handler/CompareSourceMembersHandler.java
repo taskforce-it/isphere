@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
+import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.handler.AbstractCommandHandler;
@@ -74,7 +75,7 @@ public class CompareSourceMembersHandler extends AbstractCommandHandler {
                 rseAncestorMember = dialog.getAncestorRSEMember();
             }
 
-            CompareEditorConfiguration cc = new CompareEditorConfiguration();
+            CompareEditorConfiguration cc = new SourceMemberCompareEditorConfiguration();
             cc.setLeftEditable(editable);
             cc.setRightEditable(false);
             cc.setConsiderDate(considerDate);

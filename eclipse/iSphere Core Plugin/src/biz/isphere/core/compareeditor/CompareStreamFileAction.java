@@ -43,10 +43,10 @@ public class CompareStreamFileAction {
     private CompareStreamFileInput fInput;
 
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
-    public CompareStreamFileAction(boolean editable, boolean threeWay, StreamFile ancestorStreamFile, StreamFile leftStreamFile, StreamFile rightStreamFile,
-        String editorTitle) {
+    public CompareStreamFileAction(boolean editable, boolean threeWay, StreamFile ancestorStreamFile, StreamFile leftStreamFile,
+        StreamFile rightStreamFile, String editorTitle) {
 
-        this.cc = new CompareEditorConfiguration();
+        this.cc = new SourceMemberCompareEditorConfiguration();
         cc.setLeftEditable(editable);
         cc.setRightEditable(false);
         cc.setThreeWay(threeWay);
@@ -58,8 +58,8 @@ public class CompareStreamFileAction {
 
     }
 
-    public CompareStreamFileAction(CompareEditorConfiguration compareConfiguration, StreamFile ancestorStreamFile, StreamFile leftStreamFile, StreamFile rightStreamFile,
-        String editorTitle) {
+    public CompareStreamFileAction(CompareEditorConfiguration compareConfiguration, StreamFile ancestorStreamFile, StreamFile leftStreamFile,
+        StreamFile rightStreamFile, String editorTitle) {
         this.cc = compareConfiguration;
         this.ancestorStreamFile = ancestorStreamFile;
         this.leftStreamFile = leftStreamFile;
@@ -109,8 +109,8 @@ public class CompareStreamFileAction {
 
                 IEditorPart editor = findStreamFileInEditor(leftStreamFile);
                 if (editor != null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files, Messages.bind(
-                        Messages.Stream_file_is_already_open_in_an_editor, leftStreamFile.getStreamFile()));
+                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files,
+                        Messages.bind(Messages.Stream_file_is_already_open_in_an_editor, leftStreamFile.getStreamFile()));
                     return;
                 }
 

@@ -61,7 +61,7 @@ public class CompareAction {
             }
         }
 
-        this.cc = new CompareEditorConfiguration();
+        this.cc = new SourceMemberCompareEditorConfiguration();
         cc.setLeftEditable(editable);
         cc.setRightEditable(false);
         cc.setConsiderDate(considerDate);
@@ -86,6 +86,7 @@ public class CompareAction {
         this.leftMember = leftMember;
         this.rightMember = rightMember;
         this.editorTitle = editorTitle;
+
     }
 
     public void run() {
