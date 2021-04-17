@@ -60,6 +60,12 @@
             class="biz.isphere.core.userspaceeditor.UserSpaceEditor"
             contributorClass="biz.isphere.core.userspaceeditor.UserSpaceEditorActionBarContributor"
             id="biz.isphere.core.userspaceeditor.UserSpaceEditor"/>
+      <editor
+            name=""
+            icon="icons/compare_message_files.png"
+            class="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"
+            contributorClass="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
+            id="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"/>
    </extension>
       	
       	<!--
