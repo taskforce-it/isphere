@@ -12,11 +12,13 @@ import java.io.IOException;
 
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
@@ -46,8 +48,7 @@ public class Access {
      */
     public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, ISeries.MSGF, getObjectDescription(connectionName,
-            library, messageFile, ISeries.MSGF));
+        RemoteObject remoteObject = createRemoteObject(connectionName, library, messageFile, ISeries.MSGF);
 
         String mode;
         if (readOnly) {
@@ -74,8 +75,7 @@ public class Access {
      */
     public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, ISeries.BNDDIR, getObjectDescription(connectionName,
-            library, bindingDirectory, ISeries.BNDDIR));
+        RemoteObject remoteObject = createRemoteObject(connectionName, library, bindingDirectory, ISeries.BNDDIR);
 
         String mode;
         if (readOnly) {
@@ -100,8 +100,7 @@ public class Access {
      */
     public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connectionName, dataArea, library, ISeries.DTAARA, getObjectDescription(connectionName, library,
-            dataArea, ISeries.DTAARA));
+        RemoteObject remoteObject = createRemoteObject(connectionName, library, dataArea, ISeries.DTAARA);
 
         String mode;
         if (readOnly) {
@@ -126,8 +125,7 @@ public class Access {
      */
     public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) {
 
-        RemoteObject remoteObject = new RemoteObject(connectionName, userSpace, library, ISeries.USRSPC, getObjectDescription(connectionName,
-            library, userSpace, ISeries.USRSPC));
+        RemoteObject remoteObject = createRemoteObject(connectionName, library, userSpace, ISeries.USRSPC);
 
         String mode;
         if (readOnly) {
@@ -157,10 +155,8 @@ public class Access {
     public static void openMessageFileCompareEditorEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
         String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration) {
 
-        RemoteObject leftRemoteMessageFile = new RemoteObject(leftConnectionName, leftMessageFile, leftLibrary, ISeries.MSGF, getObjectDescription(
-            leftConnectionName, leftLibrary, leftMessageFile, ISeries.MSGF));
-        RemoteObject rightRemoteMessageFile = new RemoteObject(rightConnectionName, rightMessageFile, rightLibrary, ISeries.MSGF,
-            getObjectDescription(rightConnectionName, rightLibrary, rightMessageFile, ISeries.MSGF));
+        RemoteObject leftRemoteMessageFile = createRemoteObject(leftConnectionName, leftLibrary, leftMessageFile, ISeries.MSGF);
+        RemoteObject rightRemoteMessageFile = createRemoteObject(rightConnectionName, rightLibrary, rightMessageFile, ISeries.MSGF);
 
         openMessageFileCompareEditorEditor(shell, leftRemoteMessageFile, rightRemoteMessageFile, configuration);
 
@@ -179,6 +175,43 @@ public class Access {
 
         MessageFileCompareEditor.openEditor(leftMessageFile, rightMessageFile, configuration);
 
+    }
+
+    /**
+     * @param shell - the parent shell.
+     * @param configuration - message file editor configuration
+     */
+    public static void openMessageFileCompareEditorEditor(Shell shell, IMessageFileCompareEditorConfiguration configuration) {
+
+        MessageFileCompareEditor.openEditor(null, null, configuration);
+
+    }
+
+    /**
+     * Produces a remote object of a given type.
+     * 
+     * @param connectionName - connection name.
+     * @param library - name of the library where the object is stored.
+     * @param object - name of the object.
+     * @param objectType - type of the object.
+     * @return remote object
+     */
+    private static RemoteObject createRemoteObject(String connectionName, String library, String object, String objectType) {
+
+        if (StringHelper.isNullOrEmpty(connectionName) || StringHelper.isNullOrEmpty(library) || StringHelper.isNullOrEmpty(object)
+            || StringHelper.isNullOrEmpty(objectType)) {
+            return null;
+        }
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (system == null || !ISphereHelper.checkObject(system, library, object, objectType)) {
+            return null;
+        }
+
+        String description = getObjectDescription(connectionName, library, object, objectType);
+        RemoteObject remoteObject = new RemoteObject(connectionName, object, library, objectType, description);
+
+        return remoteObject;
     }
 
     /**
