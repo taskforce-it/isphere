@@ -11,16 +11,15 @@ package biz.isphere.rse.actions;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class MessageFileEditorAction implements IObjectActionDelegate {
@@ -40,24 +39,16 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
 
                 if (qsysRemoteObject.getType().equals(ISeries.MSGF)) {
 
-                    String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+                    String profileName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
                     String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-
+                    String qualifiedConnectionName = new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
                     String messageFile = qsysRemoteObject.getName();
                     String library = qsysRemoteObject.getLibrary();
-                    IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connectionName);
 
-                    if (ibmiConnection != null) {
-
-                        AS400 as400 = null;
-                        try {
-                            as400 = ibmiConnection.getAS400ToolboxObject();
-                        } catch (SystemMessageException e) {
-                        }
-
-                        if (as400 != null) {
-                            Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
-                        }
+                    try {
+                        Access.openMessageFileEditor(shell, qualifiedConnectionName, library, messageFile, false);
+                    } catch (Exception e) {
+                        ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
                     }
                 }
             }

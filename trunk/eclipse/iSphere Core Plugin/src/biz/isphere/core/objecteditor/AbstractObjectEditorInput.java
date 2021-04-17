@@ -15,6 +15,7 @@ import org.eclipse.ui.IEditorInput;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
@@ -31,7 +32,14 @@ public abstract class AbstractObjectEditorInput implements IEditorInput, IObject
         as400 = anAS400;
         jdbcConnection = aJdbcConnection;
         remoteObject = anRemoteObject;
-        mode = aMode;
+
+        // Switch from deprecated BRWOSER mode to DISPLAY.
+        if (IEditor.BROWSE.equals(aMode)) {
+            mode = IEditor.DISPLAY;
+        } else {
+            mode = aMode;
+        }
+
         titleImage = ISpherePlugin.getDefault().getImageRegistry().get(anImageID);
     }
 

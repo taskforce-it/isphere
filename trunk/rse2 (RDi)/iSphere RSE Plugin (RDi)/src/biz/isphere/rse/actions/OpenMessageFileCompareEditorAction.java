@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
@@ -40,12 +41,18 @@ public class OpenMessageFileCompareEditorAction implements IObjectActionDelegate
         if (structuredSelection != null && !structuredSelection.isEmpty()) {
 
             if (isValidSelection(structuredSelection)) {
+
                 MessageFileCompareEditorConfiguration configuration = MessageFileCompareEditorConfiguration.getDefaultConfiguration();
                 RemoteObject[] remoteObjects = getSelectedMessageFiles(structuredSelection);
-                if (remoteObjects.length == 2) {
-                    Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], remoteObjects[1], configuration);
-                } else {
-                    Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], null, configuration);
+
+                try {
+                    if (remoteObjects.length == 2) {
+                        Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], remoteObjects[1], configuration);
+                    } else {
+                        Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], null, configuration);
+                    }
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not open message file compare editor ***", e); //$NON-NLS-1$
                 }
             }
         }

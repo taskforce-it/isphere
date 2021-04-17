@@ -105,15 +105,10 @@ public class BindingDirectoryEditor extends EditorPart {
         }
     }
 
-    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) {
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) throws PartInitException {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
-            try {
-
-                BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(connectionName, remoteObject, mode);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
-
-            } catch (PartInitException e) {
-            }
+            BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(connectionName, remoteObject, mode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
         }
     }
 

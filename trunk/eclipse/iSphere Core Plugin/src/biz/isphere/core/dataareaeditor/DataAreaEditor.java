@@ -13,12 +13,12 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.dataspace.WrappedDataSpace;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.DataAreaEditorInput;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.dataspace.WrappedDataSpace;
 
 import com.ibm.as400.access.AS400;
 
@@ -45,16 +45,11 @@ public class DataAreaEditor extends AbstractDataSpaceEditor {
         }
     }
 
-    public static void openEditor(String connectionName, RemoteObject remoteObject, String aMode) {
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String aMode) throws PartInitException {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
-            try {
-
-                DataAreaEditorInput editorInput = new DataAreaEditorInput(connectionName, remoteObject, aMode);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DataAreaEditor.ID);
-
-            } catch (PartInitException e) {
-            }
+            DataAreaEditorInput editorInput = new DataAreaEditorInput(connectionName, remoteObject, aMode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, DataAreaEditor.ID);
         }
     }
-    
+
 }

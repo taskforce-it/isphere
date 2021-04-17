@@ -1,6 +1,7 @@
 
 Changelog: iSphere 4.0.0.r
 --------------------------
+ • Changed iSphere Core API to throw exceptions.
  • Changed iSphere to thoroughly use the Access API for opening
    editors.
  • Fixed NullPointerException, when no history values are available.
