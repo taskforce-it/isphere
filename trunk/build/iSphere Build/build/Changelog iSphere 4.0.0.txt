@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.0.0.r
+--------------------------
+ • Fixed NullPointerException, when no history values are available.
+ • Moved definition of message file compare editor to core plug-in to
+   make it available for an iSphere standalone application.  
+
 Changelog: iSphere 4.0.0.b016
 -----------------------------
  • Added iSphere QSYS object selector.
