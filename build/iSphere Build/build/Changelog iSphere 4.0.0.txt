@@ -1,6 +1,8 @@
 
 Changelog: iSphere 4.0.0.r
 --------------------------
+ • Added missing hashCode() and equals() methods of
+   MessageFileCompareEditorInput.
  • Changed iSphere Core API to throw exceptions.
  • Changed iSphere to thoroughly use the Access API for opening
    editors.
