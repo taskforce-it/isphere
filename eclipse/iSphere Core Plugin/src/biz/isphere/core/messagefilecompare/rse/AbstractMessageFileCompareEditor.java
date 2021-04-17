@@ -80,7 +80,7 @@ import com.ibm.as400.access.AS400;
 
 public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
-    public static final String ID = "biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"; //$NON-NLS-1$
 
     private static final String BUTTON_COPY_LEFT = "BUTTON_COPY_LEFT"; //$NON-NLS-1$
     private static final String BUTTON_COPY_RIGHT = "BUTTON_COPY_RIGHT"; //$NON-NLS-1$
