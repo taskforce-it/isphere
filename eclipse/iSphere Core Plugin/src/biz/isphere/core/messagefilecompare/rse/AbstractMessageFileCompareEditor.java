@@ -537,15 +537,25 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         return true;
     }
 
-    public static void openEditor(RemoteObject leftMessageFile, RemoteObject rightMessageFile, IMessageFileCompareEditorConfiguration configuration) {
+    public static void openEditor(RemoteObject leftMessageFile, RemoteObject rightMessageFile, IMessageFileCompareEditorConfiguration configuration)
+        throws PartInitException {
 
-        try {
-
-            MessageFileCompareEditorInput editorInput = new MessageFileCompareEditorInput(leftMessageFile, rightMessageFile, configuration);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractMessageFileCompareEditor.ID);
-
-        } catch (PartInitException e) {
+        if (leftMessageFile != null) {
+            String leftConnectionName = leftMessageFile.getConnectionName();
+            if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), leftConnectionName)) {
+                return;
+            }
         }
+
+        if (rightMessageFile != null) {
+            String rightConnectionName = rightMessageFile.getConnectionName();
+            if (!ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), rightConnectionName)) {
+                return;
+            }
+        }
+
+        MessageFileCompareEditorInput editorInput = new MessageFileCompareEditorInput(leftMessageFile, rightMessageFile, configuration);
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractMessageFileCompareEditor.ID);
     }
 
     private void refreshAndCheckMessageFileNames() {

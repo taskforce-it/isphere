@@ -45,16 +45,18 @@ public class Access {
      * @param messageFile - name of the message file whose content is edited.
      * @param readOnly - specifies whether to open the message file in
      *        <i>display</i> oder <i>edit</i> mode.
+     * @throws Exception
      */
-    public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly) {
+    public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly)
+        throws Exception {
 
         RemoteObject remoteObject = createRemoteObject(connectionName, library, messageFile, ISeries.MSGF);
 
         String mode;
         if (readOnly) {
-            mode = "*DISPLAY";
+            mode = IEditor.DISPLAY;
         } else {
-            mode = "*EDIT";
+            mode = IEditor.EDIT;
         }
 
         MessageFileEditor.openEditor(connectionName, remoteObject, mode);
@@ -72,16 +74,18 @@ public class Access {
      *        edited.
      * @param readOnly - specifies whether to open the binding directory in
      *        <i>display</i> oder <i>edit</i> mode.
+     * @throws Exception
      */
-    public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly) {
+    public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly)
+        throws Exception {
 
         RemoteObject remoteObject = createRemoteObject(connectionName, library, bindingDirectory, ISeries.BNDDIR);
 
         String mode;
         if (readOnly) {
-            mode = "*DISPLAY";
+            mode = IEditor.DISPLAY;
         } else {
-            mode = "*EDIT";
+            mode = IEditor.EDIT;
         }
 
         BindingDirectoryEditor.openEditor(connectionName, remoteObject, mode);
@@ -97,14 +101,15 @@ public class Access {
      * @param dataArea - name of the data area whose content is edited.
      * @param readOnly - specifies whether to open the data area in
      *        <i>display</i> oder <i>edit</i> mode.
+     * @throws Exception
      */
-    public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) {
+    public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) throws Exception {
 
         RemoteObject remoteObject = createRemoteObject(connectionName, library, dataArea, ISeries.DTAARA);
 
         String mode;
         if (readOnly) {
-            mode = IEditor.BROWSE;
+            mode = IEditor.DISPLAY;
         } else {
             mode = IEditor.EDIT;
         }
@@ -122,14 +127,15 @@ public class Access {
      * @param userSpace - name of the user space whose content is edited.
      * @param readOnly - specifies whether to open the user space in
      *        <i>display</i> oder <i>edit</i> mode.
+     * @throws Exception
      */
-    public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) {
+    public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) throws Exception {
 
         RemoteObject remoteObject = createRemoteObject(connectionName, library, userSpace, ISeries.USRSPC);
 
         String mode;
         if (readOnly) {
-            mode = IEditor.BROWSE;
+            mode = IEditor.DISPLAY;
         } else {
             mode = IEditor.EDIT;
         }
@@ -151,9 +157,11 @@ public class Access {
      * @param rightMessageFile - name of the message file that is loaded to the
      *        right side of the editor.
      * @param configuration - message file editor configuration
+     * @throws Exception
      */
     public static void openMessageFileCompareEditorEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
-        String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration) {
+        String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration)
+        throws Exception {
 
         RemoteObject leftRemoteMessageFile = createRemoteObject(leftConnectionName, leftLibrary, leftMessageFile, ISeries.MSGF);
         RemoteObject rightRemoteMessageFile = createRemoteObject(rightConnectionName, rightLibrary, rightMessageFile, ISeries.MSGF);
@@ -169,21 +177,12 @@ public class Access {
      * @param rightMessageFile - remote message file that is loaded to the left
      *        side of the editor.
      * @param configuration - message file editor configuration
+     * @throws Exception
      */
     public static void openMessageFileCompareEditorEditor(Shell shell, RemoteObject leftMessageFile, RemoteObject rightMessageFile,
-        IMessageFileCompareEditorConfiguration configuration) {
+        IMessageFileCompareEditorConfiguration configuration) throws Exception {
 
         MessageFileCompareEditor.openEditor(leftMessageFile, rightMessageFile, configuration);
-
-    }
-
-    /**
-     * @param shell - the parent shell.
-     * @param configuration - message file editor configuration
-     */
-    public static void openMessageFileCompareEditorEditor(Shell shell, IMessageFileCompareEditorConfiguration configuration) {
-
-        MessageFileCompareEditor.openEditor(null, null, configuration);
 
     }
 

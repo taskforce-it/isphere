@@ -262,7 +262,11 @@ public class SearchResultViewer {
                     String connectionName = _searchResult.getConnectionName();
                     String messageFile = _searchResult.getMessageFile();
                     String library = _searchResult.getLibrary();
-                    Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+                    try {
+                        Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+                    } catch (Exception e) {
+                        ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
+                    }
                 }
             }
         }
@@ -580,7 +584,11 @@ public class SearchResultViewer {
                 String connectionName = _searchResult.getConnectionName();
                 String messageFile = _searchResult.getMessageFile();
                 String library = _searchResult.getLibrary();
-                Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+                try {
+                    Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
+                }
             }
         }
     }

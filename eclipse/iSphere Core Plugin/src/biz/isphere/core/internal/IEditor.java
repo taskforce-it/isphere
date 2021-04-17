@@ -11,7 +11,12 @@ package biz.isphere.core.internal;
 public interface IEditor {
 
     public static final String EDIT = "*EDIT";
-    public static final String BROWSE = "*BROWSE";
+
+    // TODO: clean up, to use either BROWSE or DISPLAY
+    @Deprecated
+    public static final String BROWSE = "*BROWSE"; // same function as *DISPLAY
+
+    public static final String DISPLAY = "*DISPLAY"; // same function as *BROWSE
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode);
 

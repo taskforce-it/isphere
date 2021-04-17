@@ -97,7 +97,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         String type = "";
         String length = "0"; //$NON-NLS-1$
         String text = "";
-        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
+        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.DISPLAY)) {
             type = getWrappedDataArea().getDataType();
             length = getWrappedDataArea().getLengthAsText();
             text = getWrappedDataArea().getText();
@@ -108,7 +108,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         createHeadline(header, Messages.Text_colon, text);
 
         editorDelegate = createEditorDelegate();
-        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
+        if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.DISPLAY)) {
             editorDelegate.createPartControl(editorParent);
         }
 
@@ -119,8 +119,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
                 editorDelegate.setEnabled(false);
                 editorDelegate.setStatusMessage(getObjectLockMessage(null));
             }
-        }
-        else if (mode.equals(IEditor.BROWSE)) {
+        } else if (mode.equals(IEditor.DISPLAY)) {
             editorDelegate.setEnabled(false);
         }
 
@@ -170,7 +169,7 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
         AbstractObjectEditorInput input = (AbstractObjectEditorInput)anInput;
 
         mode = input.getMode();
-        
+
         try {
 
             if (mode.equals(IEditor.EDIT)) {
@@ -179,8 +178,8 @@ public abstract class AbstractDataSpaceEditor extends EditorPart implements IFin
                     MessageDialog.openError(getSite().getShell(), Messages.E_R_R_O_R, getObjectLockMessage(Messages.Data_cannot_be_changed));
                 }
             }
-            
-            if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.BROWSE)) {
+
+            if ((mode.equals(IEditor.EDIT) && objectLock != null) || mode.equals(IEditor.DISPLAY)) {
                 wrappedDataArea = createDataSpaceWrapper(input.getRemoteObject());
             } else {
                 wrappedDataArea = null;

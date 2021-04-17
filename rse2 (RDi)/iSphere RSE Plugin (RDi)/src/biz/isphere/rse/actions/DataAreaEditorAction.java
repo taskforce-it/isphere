@@ -13,16 +13,15 @@ import java.util.Iterator;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class DataAreaEditorAction implements IObjectActionDelegate {
@@ -46,24 +45,16 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
 
         if (qsysRemoteObject.getType().equals(ISeries.DTAARA)) {
 
-            String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
+            String profileName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
             String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-
+            String qualifiedConnectionName = new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
             String dataArea = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
-            IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connectionName);
 
-            if (ibmiConnection != null) {
-
-                AS400 as400 = null;
-                try {
-                    as400 = ibmiConnection.getAS400ToolboxObject();
-                } catch (SystemMessageException e) {
-                }
-
-                if (as400 != null) {
-                    Access.openDataAreaEditor(shell, connectionName, library, dataArea, false);
-                }
+            try {
+                Access.openDataAreaEditor(shell, qualifiedConnectionName, library, dataArea, false);
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not open data area editor ***", e); //$NON-NLS-1$
             }
         }
     }

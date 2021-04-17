@@ -685,7 +685,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         tableStatements.setHeaderVisible(true);
         tableStatements.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        final TableColumn tableColumnStatement = createTableColumn(tableStatements, "statement", 800, Messages.Statement, 1);
+        createTableColumn(tableStatements, "statement", 800, Messages.Statement, 1);
 
         final Menu menuTableStatement = new Menu(tableStatements);
         menuTableStatement.addMenuListener(new TableStatementsMenuAdapter(menuTableStatement));
@@ -749,7 +749,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         if (isEditMode) {
             return IEditor.EDIT;
         } else {
-            return IEditor.BROWSE;
+            return IEditor.DISPLAY;
         }
     }
 
@@ -810,7 +810,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsMembers[idx];
                 editor.openEditor(connectionName, _searchResult.getLibrary(), _searchResult.getFile(), _searchResult.getMember(), statement,
-                    IEditor.BROWSE);
+                    IEditor.DISPLAY);
             }
         }
     }

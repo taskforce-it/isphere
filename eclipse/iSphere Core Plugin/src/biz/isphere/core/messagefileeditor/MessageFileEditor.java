@@ -92,15 +92,10 @@ public class MessageFileEditor extends EditorPart {
         }
     }
 
-    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) {
+    public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) throws PartInitException {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
-            try {
-
-                MessageFileEditorInput editorInput = new MessageFileEditorInput(connectionName, remoteObject, mode);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
-
-            } catch (PartInitException e) {
-            }
+            MessageFileEditorInput editorInput = new MessageFileEditorInput(connectionName, remoteObject, mode);
+            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
         }
     }
 }
