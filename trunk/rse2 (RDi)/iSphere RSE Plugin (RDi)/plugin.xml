@@ -41,12 +41,6 @@
 			icon="icons/data_space_editor_designer.gif"
 			class="biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner"
 			id="biz.isphere.rse.dataspaceeditordesigner.rse.DataSpaceEditorDesigner"/>
-      <editor
-            name=""
-            icon="icons/compare_message_files.png"
-            class="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"
-            contributorClass="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
-            id="biz.isphere.rse.messagefilecompare.rse.MessageFileCompareEditor"/>
 	</extension>
 
    <extension
