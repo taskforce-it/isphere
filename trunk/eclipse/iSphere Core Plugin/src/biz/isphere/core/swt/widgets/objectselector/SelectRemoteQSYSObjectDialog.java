@@ -44,6 +44,8 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     private static final String LIBRARY_NAME = "LIBRARY_NAME"; //$NON-NLS-1$
     private static final String FILE_NAME = "FILE_NAME"; //$NON-NLS-1$
 
+    private static final String EMPTY = ""; //$NON-NLS-1$
+
     private String connectionName;
     private String objectType;
     private String objectLabel;
@@ -141,15 +143,15 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
     private void configureControls() {
 
-        cboConnectionName.addSelectionListener(new SelectConnectionListener());
+        ControlEnablementListener controlsEnablementListerner = new ControlEnablementListener();
 
-        SelectLibraryListener selectLibraryListener = new SelectLibraryListener(cboConnectionName, cboLibraryName);
-        cboLibraryName.addModifyListener(selectLibraryListener);
-        btnSelectLibrary.addSelectionListener(selectLibraryListener);
+        cboConnectionName.addSelectionListener(controlsEnablementListerner);
+        cboLibraryName.addModifyListener(controlsEnablementListerner);
+        cboObjectName.addModifyListener(controlsEnablementListerner);
 
-        SelectObjectListener selectObjectListener = new SelectObjectListener(cboConnectionName, cboLibraryName, cboObjectName, objectType);
-        cboLibraryName.addModifyListener(selectObjectListener);
-        btnSelectObject.addSelectionListener(selectObjectListener);
+        btnSelectLibrary.addSelectionListener(new BrowseLibraryListener(cboConnectionName, cboLibraryName));
+
+        btnSelectObject.addSelectionListener(new BrowseObjectListener(cboConnectionName, cboLibraryName, cboObjectName, objectType));
     }
 
     @Override
@@ -211,21 +213,21 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     private void loadScreenValues() {
 
         if (connectionName == null) {
-            connectionName = getDialogBoundsSettings().get(CONNECTION_NAME);
+            connectionName = loadValue(CONNECTION_NAME, EMPTY);
         }
         if (!StringHelper.isNullOrEmpty(connectionName)) {
             cboConnectionName.setText(connectionName);
         }
 
         if (libraryName == null) {
-            libraryName = getDialogBoundsSettings().get(LIBRARY_NAME);
+            libraryName = loadValue(LIBRARY_NAME, EMPTY);
         }
         if (!StringHelper.isNullOrEmpty(libraryName)) {
             cboLibraryName.setText(libraryName);
         }
 
         if (objectName == null) {
-            objectName = getDialogBoundsSettings().get(FILE_NAME);
+            objectName = loadValue(FILE_NAME, EMPTY);
         }
         if (!StringHelper.isNullOrEmpty(objectName)) {
             cboObjectName.setText(objectName);
@@ -237,9 +239,9 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
     private void saveScreenValues() {
 
-        getDialogBoundsSettings().put(CONNECTION_NAME, cboConnectionName.getText());
-        getDialogBoundsSettings().put(LIBRARY_NAME, cboLibraryName.getText());
-        getDialogBoundsSettings().put(FILE_NAME, cboObjectName.getText());
+        storeValue(CONNECTION_NAME, cboConnectionName.getText());
+        storeValue(LIBRARY_NAME, cboLibraryName.getText());
+        storeValue(FILE_NAME, cboObjectName.getText());
 
         saveHistoryCombo(cboLibraryName);
         saveHistoryCombo(cboObjectName);
@@ -269,19 +271,23 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
-    private class SelectConnectionListener extends SelectionAdapter {
+    private class ControlEnablementListener extends SelectionAdapter implements ModifyListener {
         @Override
         public void widgetSelected(SelectionEvent e) {
             setControlsEnablement();
         }
+
+        public void modifyText(ModifyEvent e) {
+            setControlsEnablement();
+        }
     }
 
-    private class SelectLibraryListener extends SelectionAdapter implements ModifyListener {
+    private class BrowseLibraryListener extends SelectionAdapter implements ModifyListener {
 
         private ConnectionCombo comboConnectionName;
         private HistoryCombo comboLibraryName;
 
-        public SelectLibraryListener(ConnectionCombo comboConnectionName, HistoryCombo comboLibraryName) {
+        public BrowseLibraryListener(ConnectionCombo comboConnectionName, HistoryCombo comboLibraryName) {
             this.comboConnectionName = comboConnectionName;
             this.comboLibraryName = comboLibraryName;
         }
@@ -308,14 +314,14 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         }
     }
 
-    private class SelectObjectListener extends SelectionAdapter implements ModifyListener {
+    private class BrowseObjectListener extends SelectionAdapter implements ModifyListener {
 
         private ConnectionCombo comboConnectionName;
         private HistoryCombo comboLibraryName;
         private HistoryCombo comboObjectName;
         private String objectType;
 
-        public SelectObjectListener(ConnectionCombo comboConnectionName, HistoryCombo comboLibraryName, HistoryCombo comboObjectName,
+        public BrowseObjectListener(ConnectionCombo comboConnectionName, HistoryCombo comboLibraryName, HistoryCombo comboObjectName,
             String objectType) {
             this.comboConnectionName = comboConnectionName;
             this.comboLibraryName = comboLibraryName;
