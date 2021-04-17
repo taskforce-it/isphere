@@ -46,6 +46,7 @@ public class Access extends AbstractAccess {
      *        entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
+     * @throws Exception
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -68,6 +69,7 @@ public class Access extends AbstractAccess {
      *        entries.
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
+     * @throws Exception
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         IJournaledObject[] selectedObjects, ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -113,6 +115,7 @@ public class Access extends AbstractAccess {
      *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
+     * @throws Exception
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
@@ -132,6 +135,7 @@ public class Access extends AbstractAccess {
      * @param shell - the parent shell.
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
+     * @throws Exception
      */
     public static void exploreJournalEntriesFromOutputFile(Shell shell, boolean newTab) throws Exception {
 
@@ -164,6 +168,7 @@ public class Access extends AbstractAccess {
      *        journal entries using native SQL on the server.
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
+     * @throws Exception
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause, boolean newTab) throws Exception {
