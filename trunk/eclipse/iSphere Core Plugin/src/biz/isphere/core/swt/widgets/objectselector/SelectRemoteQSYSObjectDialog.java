@@ -34,7 +34,6 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
-import biz.isphere.core.swt.widgets.objectselector.model.LibraryItem;
 import biz.isphere.core.swt.widgets.objectselector.model.SelectedObject;
 
 import com.ibm.as400.access.AS400;
@@ -156,9 +155,9 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     @Override
     protected void okPressed() {
 
-        String connectionName = cboConnectionName.getText();
-        String libraryName = cboLibraryName.getText();
-        String fileName = cboObjectName.getText();
+        connectionName = cboConnectionName.getText();
+        libraryName = cboLibraryName.getText();
+        objectName = cboObjectName.getText();
 
         try {
 
@@ -169,11 +168,11 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
                 return;
             }
 
-            if (!ISphereHelper.checkObject(system, libraryName, fileName, objectType)) {
+            if (!ISphereHelper.checkObject(system, libraryName, objectName, objectType)) {
                 MessageDialog.openError(
                     getShell(),
                     Messages.E_R_R_O_R,
-                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist, new Object[] { fileName, libraryName,
+                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist, new Object[] { objectName, libraryName,
                         objectType }));
                 return;
             }
@@ -182,10 +181,6 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
             return;
         }
-
-        connectionName = cboConnectionName.getText();
-        libraryName = cboLibraryName.getText();
-        objectName = cboObjectName.getText();
 
         saveScreenValues();
 
@@ -303,8 +298,8 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             dialog.setExpandLibraryListsEnabled(true);
             if (dialog.open() == Dialog.OK) {
                 ISelectedObject selectedObject = dialog.getSelectedItem();
-                LibraryItem objectItem = (LibraryItem)selectedObject;
-                comboLibraryName.setText(objectItem.getLabel());
+                ISelectedObject objectItem = (ISelectedObject)selectedObject;
+                comboLibraryName.setText(objectItem.getName());
             }
         }
 
