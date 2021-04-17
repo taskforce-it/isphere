@@ -8,8 +8,8 @@ import org.osgi.framework.BundleContext;
 
 public class ISphereRCPExampleApplication extends AbstractUIPlugin {
 
-    private static final String ICON_PATH = "icons/";
-    public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_outfile.png";
+    private static final String ICON_PATH = "icons/"; //$NON-NLS-1$
+    public static final String IMAGE_OPEN_JOURNAL_OUTFILE = "open_journal_outfile.png"; //$NON-NLS-1$
 
     // The plug-in ID
     public static final String PLUGIN_ID = "biz.isphere.rcp"; //$NON-NLS-1$

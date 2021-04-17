@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.rcp.handlers.journalexplorer;
+package biz.isphere.rcp.journalexplorer.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -15,9 +15,9 @@ import biz.isphere.core.internal.handler.AbstractCommandHandler;
 import biz.isphere.journalexplorer.core.externalapi.Access;
 
 /**
- * This class is the action handler of the "Open Journal Json File" action.
+ * This class is the action handler of the "Open Journal Output File" action.
  */
-public class OpenJournalJsonFileHandler extends AbstractCommandHandler {
+public class OpenJournalOutputFileHandler extends AbstractCommandHandler {
 
     /*
      * (non-Javadoc)
@@ -28,7 +28,7 @@ public class OpenJournalJsonFileHandler extends AbstractCommandHandler {
     public Object execute(ExecutionEvent event) throws ExecutionException {
 
         try {
-            Access.exploreJournalEntriesFromJsonFile(getShell(event), true);
+            Access.exploreJournalEntriesFromOutputFile(getShell(event), true);
         } catch (Exception e) {
             e.printStackTrace();
         }

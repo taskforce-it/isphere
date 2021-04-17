@@ -13,7 +13,7 @@
 
       	<menu
       			id="biz.isphere.rcp.menu.JournalOutputFile"
-      			label="Journal Explorer"
+      			label="%Menu_Journal_Explorer"
       			icon="icons/journal_explorer.png">
 	         <command
 	               id="biz.isphere.rcp.menu.JournalOutputFile.open"
@@ -24,6 +24,17 @@
 	               id="biz.isphere.rcp.menu.JournalJsonFile.open"
 	               commandId="biz.isphere.rcp.command.JournalJsonFile.open"
 	               icon="icons/open_journal_json_file.png">
+	         </command>
+      	</menu>
+
+      	<menu
+      			id="biz.isphere.rcp.menu.MessageFile"
+      			label="%Menu_Message_File"
+      			icon="icons/message_file.gif">
+	         <command
+	               id="biz.isphere.rcp.menu.MessageFile.compare"
+	               commandId="biz.isphere.rcp.command.MessageFile.compare"
+	               icon="icons/message_file.gif">
 	         </command>
       	</menu>
 
@@ -45,17 +56,24 @@
       </category>
       
       <command
-            defaultHandler="biz.isphere.rcp.handlers.journalexplorer.OpenJournalOutputFileHandler"
+            defaultHandler="biz.isphere.rcp.journalexplorer.handlers.OpenJournalOutputFileHandler"
             id="biz.isphere.rcp.command.JournalOutputFile.open"
             categoryId="biz.isphere.rcd.Commands"
-            name="Open Journal Output File">
+            name="%Label_Open_Journal_Output_File">
       </command>
       
       <command
-            defaultHandler="biz.isphere.rcp.handlers.journalexplorer.OpenJournalJsonFileHandler"
+            defaultHandler="biz.isphere.rcp.journalexplorer.handlers.OpenJournalJsonFileHandler"
             id="biz.isphere.rcp.command.JournalJsonFile.open"
             categoryId="biz.isphere.rcd.Commands"
-            name="Open Journal Json File">
+            name="%Label_Open_Journal_From_File">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rcp.messagefilecompareeditor.handlers.OpenCompareMessageFileHandler"
+            id="biz.isphere.rcp.command.MessageFile.compare"
+            categoryId="biz.isphere.rcd.Commands"
+            name="%Label_Compare_Message_Files">
       </command>
    </extension>
       	
@@ -69,7 +87,7 @@
    
       <perspective 
 	       id="biz.isphere.rcp.perspectives.JournalExplorerPerspectiveLayout" 
-	       name="%Perspective_Journal_Explorer"
+	       name="%Title_Perspective_Journal_Explorer"
 	       class="biz.isphere.rcp.perspectives.JournalExplorerPerspectiveLayout"
 	       icon="icons/journal_explorer.png">
       </perspective>

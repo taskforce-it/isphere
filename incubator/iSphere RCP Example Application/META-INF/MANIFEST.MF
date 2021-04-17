@@ -13,6 +13,7 @@ Require-Bundle: javax.inject,
  org.eclipse.e4.core.di.annotations,
  org.eclipse.ui,
  org.eclipse.core.runtime,
+ com.ibm.etools.iseries.toolbox,
  biz.isphere.base;bundle-version="4.0.0",
  biz.isphere.core;bundle-version="4.0.0",
  biz.isphere.journalexplorer.core;bundle-version="4.0.0"
