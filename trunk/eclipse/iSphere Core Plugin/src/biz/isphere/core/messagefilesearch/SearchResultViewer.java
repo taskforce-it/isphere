@@ -48,16 +48,14 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.DialogActionTypes;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
-import biz.isphere.core.internal.ISeries;
-import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
-import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 
@@ -262,13 +260,9 @@ public class SearchResultViewer {
                 IEditor editor = ISpherePlugin.getEditor();
                 if (editor != null) {
                     String connectionName = _searchResult.getConnectionName();
-                    String bindingDirectory = _searchResult.getMessageFile();
+                    String messageFile = _searchResult.getMessageFile();
                     String library = _searchResult.getLibrary();
-                    String objectType = ISeries.MSGF;
-                    String description = _searchResult.getDescription();
-
-                    RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
-                    MessageFileEditor.openEditor(_searchResult.getConnectionName(), remoteObject, IEditor.EDIT);
+                    Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
                 }
             }
         }
@@ -584,13 +578,9 @@ public class SearchResultViewer {
                 SearchResult _searchResult = (SearchResult)selectedItemsMessageFiles[idx];
 
                 String connectionName = _searchResult.getConnectionName();
-                String bindingDirectory = _searchResult.getMessageFile();
+                String messageFile = _searchResult.getMessageFile();
                 String library = _searchResult.getLibrary();
-                String objectType = ISeries.MSGF;
-                String description = _searchResult.getDescription();
-
-                RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
-                MessageFileEditor.openEditor(connectionName, remoteObject, IEditor.EDIT);
+                Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
             }
         }
     }

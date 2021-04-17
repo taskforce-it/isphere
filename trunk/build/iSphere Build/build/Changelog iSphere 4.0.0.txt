@@ -1,6 +1,8 @@
 
 Changelog: iSphere 4.0.0.r
 --------------------------
+ • Changed iSphere to thoroughly use the Access API for opening
+   editors.
  • Fixed NullPointerException, when no history values are available.
  • Moved definition of message file compare editor to core plug-in to
    make it available for an iSphere standalone application.  

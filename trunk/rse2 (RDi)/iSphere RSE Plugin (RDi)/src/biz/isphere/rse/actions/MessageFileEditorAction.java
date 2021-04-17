@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.internal.IEditor;
+import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.messagefileeditor.MessageFileEditor;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -41,14 +39,12 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
                 QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
 
                 if (qsysRemoteObject.getType().equals(ISeries.MSGF)) {
-                    
+
                     String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
                     String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
 
                     String messageFile = qsysRemoteObject.getName();
                     String library = qsysRemoteObject.getLibrary();
-                    String objectType = qsysRemoteObject.getType();
-                    String description = qsysRemoteObject.getDescription();
                     IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connectionName);
 
                     if (ibmiConnection != null) {
@@ -60,10 +56,7 @@ public class MessageFileEditorAction implements IObjectActionDelegate {
                         }
 
                         if (as400 != null) {
-
-                            RemoteObject remoteObject = new RemoteObject(connectionName, messageFile, library, objectType, description);
-                            MessageFileEditor.openEditor(connectionName, remoteObject, IEditor.EDIT);
-
+                            Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
                         }
                     }
                 }

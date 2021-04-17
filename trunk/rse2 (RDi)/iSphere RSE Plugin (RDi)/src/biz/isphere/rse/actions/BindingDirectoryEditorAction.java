@@ -17,11 +17,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 
-import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
+import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
 import com.ibm.as400.access.AS400;
@@ -50,8 +48,6 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
                     String bindingDirectory = qsysRemoteObject.getName();
                     String library = qsysRemoteObject.getLibrary();
-                    String objectType = qsysRemoteObject.getType();
-                    String description = qsysRemoteObject.getDescription();
 
                     AS400 as400 = IBMiHostContributionsHandler.getSystem(qualifiedConnectionName);
                     if (as400 == null) {
@@ -59,9 +55,7 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
                     }
                     Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
                     if (as400 != null && jdbcConnection != null) {
-
-                        RemoteObject remoteObject = new RemoteObject(connectionName, bindingDirectory, library, objectType, description);
-                        BindingDirectoryEditor.openEditor(as400, jdbcConnection, remoteObject, IEditor.EDIT);
+                        Access.openBindingDirectoryEditor(shell, connectionName, library, bindingDirectory, false);
                     }
                 }
             }
