@@ -44,6 +44,15 @@ public class MessageFileCompareEditorConfiguration implements IMessageFileCompar
         return config;
     }
 
+    public static MessageFileCompareEditorConfiguration getReadOnlyConfiguration() {
+        MessageFileCompareEditorConfiguration config = new MessageFileCompareEditorConfiguration();
+        config.setLeftEditorEnabled(false);
+        config.setLeftSelectMessageFileEnabled(false);
+        config.setRightEditorEnabled(false);
+        config.setRightSelectMessageFileEnabled(false);
+        return config;
+    }
+
     public boolean isLeftEditorEnabled() {
         return isLeftEditorEnabled;
     }
