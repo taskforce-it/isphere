@@ -254,18 +254,20 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         createFilterOptionsArea(optionsArea, verticalSpan);
 
-        btnSynchronize = WidgetFactory.createPushButton(optionsArea);
-        btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
-        btnSynchronize.setText(Messages.Synchronize);
-        btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize);
-        btnSynchronize.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent event) {
-                performSynchronizeMessageFiles();
-            }
+        if (isSynchronizationEnabled()) {
+            btnSynchronize = WidgetFactory.createPushButton(optionsArea);
+            btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
+            btnSynchronize.setText(Messages.Synchronize);
+            btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize);
+            btnSynchronize.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent event) {
+                    performSynchronizeMessageFiles();
+                }
 
-            public void widgetDefaultSelected(SelectionEvent event) {
-            }
-        });
+                public void widgetDefaultSelected(SelectionEvent event) {
+                }
+            });
+        }
 
         btnCancel = WidgetFactory.createPushButton(optionsArea);
         btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
@@ -280,17 +282,19 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         });
 
-        chkCompareAfterSync = WidgetFactory.createCheckbox(optionsArea);
-        chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
-        chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_synchronization);
-        chkCompareAfterSync.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                storeScreenValues();
-            }
+        if (isSynchronizationEnabled()) {
+            chkCompareAfterSync = WidgetFactory.createCheckbox(optionsArea);
+            chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
+            chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_synchronization);
+            chkCompareAfterSync.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                    storeScreenValues();
+                }
 
-            public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
-            }
-        });
+                public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
+                }
+            });
+        }
     }
 
     private void createFilterOptionsArea(Composite parent, int verticalSpan) {
@@ -622,6 +626,11 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         getTableStatistics().clearStatistics();
     }
 
+    private boolean isSynchronizationEnabled() {
+        IMessageFileCompareEditorConfiguration config = input.getConfiguration();
+        return config.isLeftEditorEnabled() || config.isRightEditorEnabled();
+    }
+
     private synchronized void setButtonEnablementAndDisplayCompareStatus() {
 
         boolean isCompareEnabled = true;
@@ -673,13 +682,17 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
 
         btnCompare.setEnabled(isCompareEnabled);
-        btnSynchronize.setEnabled(isSynchronizeEnabled);
 
         IMessageFileCompareEditorConfiguration config = input.getConfiguration();
-        if (config.isLeftEditorEnabled() && config.isRightEditorEnabled()) {
-            btnSynchronize.setEnabled(true);
-        } else {
-            btnSynchronize.setEnabled(false);
+
+        if (btnSynchronize != null && chkCompareAfterSync != null) {
+            if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
+                btnSynchronize.setEnabled(isSynchronizeEnabled);
+                chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
+            } else {
+                btnSynchronize.setEnabled(false);
+                chkCompareAfterSync.setEnabled(false);
+            }
         }
 
         if (config.isLeftSelectMessageFileEnabled()) {
@@ -750,7 +763,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         btnNoCopy.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_NO_COPY, true));
         btnSingles.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_SINGLES, true));
         btnDuplicates.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_DUPLICATES, true));
-        chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
+        if (isSynchronizationEnabled()) {
+            chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
+        }
     }
 
     /**
@@ -764,7 +779,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         dialogSettingsManager.storeValue(BUTTON_NO_COPY, btnNoCopy.getSelection());
         dialogSettingsManager.storeValue(BUTTON_SINGLES, btnSingles.getSelection());
         dialogSettingsManager.storeValue(BUTTON_DUPLICATES, btnDuplicates.getSelection());
-        dialogSettingsManager.storeValue(BUTTON_COMPARE_AFTER_SYNC, chkCompareAfterSync.getSelection());
+        if (isSynchronizationEnabled()) {
+            dialogSettingsManager.storeValue(BUTTON_COMPARE_AFTER_SYNC, chkCompareAfterSync.getSelection());
+        }
     }
 
     private MessageFileCompareItem[] getSelectedItems() {
@@ -917,8 +934,10 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 getTableStatistics().addElement(compareItem, filterData);
             }
 
-            if (chkCompareAfterSync.getSelection()) {
-                performCompareMessageFiles();
+            if (isSynchronizationEnabled()) {
+                if (chkCompareAfterSync.getSelection()) {
+                    performCompareMessageFiles();
+                }
             }
 
         } finally {
