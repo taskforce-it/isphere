@@ -1,6 +1,12 @@
 
-Changelog: iSphere 4.0.0.r
---------------------------
+Changelog: iSphere 4.0.0.b017
+-----------------------------
+ • Changed message file compare editor to hide controls for read-only
+   configurations.
+ • Updated Italian translation.
+
+Changelog: iSphere 4.0.0.b017
+-----------------------------
  • Added missing hashCode() and equals() methods of
    MessageFileCompareEditorInput.
  • Changed iSphere Core API to throw exceptions.

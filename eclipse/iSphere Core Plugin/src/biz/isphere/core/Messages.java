@@ -1042,7 +1042,11 @@ public class Messages extends NLS {
 
     public static String Edit_left;
 
+    public static String Display_left;
+
     public static String Edit_right;
+
+    public static String Display_right;
 
     public static String Compare_left_AND_right;
 

@@ -1103,8 +1103,9 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
             if (isLeftEditorEnabled) createMenuItemSelectForCopyingToTheLeft(getTheSelectedItem());
             if (isRightEditorEnabled) createMenuItemSelectForCopyingToTheRight(getTheSelectedItem());
-            if (isLeftEditorEnabled) createMenuItemEditLeft(getTheSelectedItem());
-            if (isRightEditorEnabled) createMenuItemEditRight(getTheSelectedItem());
+
+            createMenuItemEditLeft(getTheSelectedItem(), isLeftEditorEnabled);
+            createMenuItemEditRight(getTheSelectedItem(), isRightEditorEnabled);
 
             createMenuItemCompareLeftAndRight(getTheSelectedItem());
 
@@ -1159,13 +1160,21 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         }
 
-        private void createMenuItemEditLeft(MessageFileCompareItem compareItem) {
+        private void createMenuItemEditLeft(MessageFileCompareItem compareItem, final boolean isEditable) {
+
+            String label;
+            if (isEditable) {
+                label = Messages.Edit_left;
+            } else {
+                label = Messages.Display_left;
+            }
+
             menuItemEditLeft = new MenuItem(parent, SWT.NONE);
-            menuItemEditLeft.setText(Messages.Edit_left);
+            menuItemEditLeft.setText(label);
             menuItemEditLeft.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    performEditMessageDescriptions(LEFT);
+                    performEditMessageDescriptions(LEFT, isEditable);
                 }
             });
 
@@ -1174,13 +1183,21 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         }
 
-        private void createMenuItemEditRight(MessageFileCompareItem compareItem) {
+        private void createMenuItemEditRight(MessageFileCompareItem compareItem, final boolean isEditable) {
+
+            String label;
+            if (isEditable) {
+                label = Messages.Edit_right;
+            } else {
+                label = Messages.Display_right;
+            }
+
             menuItemEditRight = new MenuItem(parent, SWT.NONE);
-            menuItemEditRight.setText(Messages.Edit_right);
+            menuItemEditRight.setText(label);
             menuItemEditRight.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    performEditMessageDescriptions(RIGHT);
+                    performEditMessageDescriptions(RIGHT, isEditable);
                 }
             });
 
@@ -1244,7 +1261,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             return null;
         }
 
-        private void performEditMessageDescriptions(int side) {
+        private void performEditMessageDescriptions(int side, boolean isEditable) {
 
             IStructuredSelection structuredSelection = (IStructuredSelection)tableViewer.getSelection();
 
@@ -1264,8 +1281,15 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
                 MessageDescriptionHelper.refreshMessageDescription(messageDescription);
                 tableViewer.update(compareItem, null);
 
+                String mode;
+                if (isEditable) {
+                    mode = IEditor.EDIT;
+                } else {
+                    mode = IEditor.DISPLAY;
+                }
+
                 MessageDescriptionDetailDialog messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(getShell(),
-                    DialogActionTypes.getSubEditorActionType(IEditor.EDIT), messageDescription);
+                    DialogActionTypes.getSubEditorActionType(mode), messageDescription);
                 if (messageDescriptionDetailDialog.open() == Dialog.OK) {
                     tableViewer.update(compareItem, null);
                 }
