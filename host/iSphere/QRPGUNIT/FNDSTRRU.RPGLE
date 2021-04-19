@@ -779,7 +779,7 @@
            count += 1;
 
            aEqual('DEMO4': XOMBR: 'XOMBR');
-           assert(XOSTMT = 37 or XOSTMT = 84
+           assert(XOSTMT = 38 or XOSTMT = 85
                   : 'Unexpected statement #' + %char(XOSTMT));
 
          endif;
