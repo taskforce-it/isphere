@@ -624,7 +624,7 @@
                   : 'Unexpected member: ' + %trim(XOMBR));
 
 
-           assert(XOSTMT = 35 or XOSTMT = 37
+           assert(XOSTMT = 36 or XOSTMT = 38
                   : 'Unexpected statement: ' + %char(XOSTMT));
 
            assert(%subst(XOMBR: 1: 4) = 'DEMO'
