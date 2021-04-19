@@ -53,8 +53,6 @@
      D  text                        100a
      D   marker                       3a   overlay(text)
 
-     D g_msg           s             52a
-
      D sds            sds                  qualified
      D  pgmLib                81     90a
 
