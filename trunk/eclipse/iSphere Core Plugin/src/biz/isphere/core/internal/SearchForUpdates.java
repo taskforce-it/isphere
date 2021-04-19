@@ -142,7 +142,7 @@ public class SearchForUpdates extends Job {
                     lastVersion = null;
                 }
                 if (lastVersion == null || lastVersion.compareTo(availableVersion) != 0) {
-                    new UIJob("ISPHERE_UPDATES") {
+                    new UIJob(Messages.iSphere_Search_for_updates) {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
@@ -155,7 +155,7 @@ public class SearchForUpdates extends Job {
                     }.schedule();
                 }
             } else {
-                new UIJob("ISPHERE_UPDATES") {
+                new UIJob(Messages.iSphere_Search_for_updates) {
                     @Override
                     public IStatus runInUIThread(IProgressMonitor monitor) {
                         Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
