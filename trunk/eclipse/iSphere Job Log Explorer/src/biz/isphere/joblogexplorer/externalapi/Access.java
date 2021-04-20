@@ -14,6 +14,7 @@ import java.util.Date;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
+import biz.isphere.core.annotations.ISphereDeprecated;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
@@ -100,6 +101,7 @@ public class Access extends AbstractAccess {
      * @param spooledFile - iSphere spooled file.
      * @throws Exception
      */
+    @ISphereDeprecated(info = "SpooledFile will be changed to ISpooledFileId in the next release.")
     public static void openJobLogExplorer(Shell shell, SpooledFile spooledFile) throws Exception {
 
         JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(spooledFile);
