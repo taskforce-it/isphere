@@ -1,4 +1,13 @@
 
+Changelog: iSphere 4.0.0.r
+--------------------------
+
+ • Added @ISphereDeprecated.
+ • Added options for displaying message descriptions in DISPLAY mode
+   (right and left side).
+ • Changed message file compare editor to hide controls for read-only
+   configurations.
+
 Changelog: iSphere 4.0.0.b017
 -----------------------------
  • Changed message file compare editor to hide controls for read-only
