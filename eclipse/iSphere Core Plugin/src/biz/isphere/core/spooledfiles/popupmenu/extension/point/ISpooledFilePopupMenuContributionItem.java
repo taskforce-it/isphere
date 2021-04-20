@@ -11,6 +11,7 @@ package biz.isphere.core.spooledfiles.popupmenu.extension.point;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.annotations.ISphereDeprecated;
 import biz.isphere.core.spooledfiles.SpooledFile;
 
 public interface ISpooledFilePopupMenuContributionItem {
@@ -21,6 +22,7 @@ public interface ISpooledFilePopupMenuContributionItem {
 
     public Image getImage();
 
+    @ISphereDeprecated(info = "SpooledFile will be changed to ISpooledFileId in the next release.")
     public void setSelection(Shell shell, SpooledFile[] spooledFiles);
 
     public boolean isEnabled();
