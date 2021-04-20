@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.WorkWithSpooledFilesHelper;
@@ -124,6 +125,7 @@ public class WorkWithSpooledFilesMenuAdapter extends MenuAdapter implements IDou
                     try {
                         contributionItem.execute();
                     } catch (Exception e) {
+                        ISpherePlugin.logError("*** Could not execute menu contribution ***", e); //$NON-NLS-1$
                         MessageDialog.openError(getShell(), Messages.Error, ExceptionHelper.getLocalizedMessage(e));
                     }
                 }
