@@ -159,14 +159,14 @@ public class Access {
      * @param configuration - message file editor configuration
      * @throws Exception
      */
-    public static void openMessageFileCompareEditorEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
+    public static void openMessageFileCompareEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
         String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration)
         throws Exception {
 
         RemoteObject leftRemoteMessageFile = createRemoteObject(leftConnectionName, leftLibrary, leftMessageFile, ISeries.MSGF);
         RemoteObject rightRemoteMessageFile = createRemoteObject(rightConnectionName, rightLibrary, rightMessageFile, ISeries.MSGF);
 
-        openMessageFileCompareEditorEditor(shell, leftRemoteMessageFile, rightRemoteMessageFile, configuration);
+        openMessageFileCompareEditor(shell, leftRemoteMessageFile, rightRemoteMessageFile, configuration);
 
     }
 
@@ -179,7 +179,7 @@ public class Access {
      * @param configuration - message file editor configuration
      * @throws Exception
      */
-    public static void openMessageFileCompareEditorEditor(Shell shell, RemoteObject leftMessageFile, RemoteObject rightMessageFile,
+    public static void openMessageFileCompareEditor(Shell shell, RemoteObject leftMessageFile, RemoteObject rightMessageFile,
         IMessageFileCompareEditorConfiguration configuration) throws Exception {
 
         MessageFileCompareEditor.openEditor(leftMessageFile, rightMessageFile, configuration);
