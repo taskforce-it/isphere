@@ -52,7 +52,7 @@ public class OpenCompareMessageFileHandler extends AbstractCommandHandler {
 
             CompareConfiguration configuration = new CompareConfiguration();
 
-            Access.openMessageFileCompareEditorEditor(getShell(event), leftConnection, leftLibrary, leftMessageFile, rightConnection, rightLibrary,
+            Access.openMessageFileCompareEditor(getShell(event), leftConnection, leftLibrary, leftMessageFile, rightConnection, rightLibrary,
                 rightMessageFile, configuration);
 
         } catch (Exception e) {
