@@ -47,9 +47,9 @@ public class OpenMessageFileCompareEditorAction implements IObjectActionDelegate
 
                 try {
                     if (remoteObjects.length == 2) {
-                        Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], remoteObjects[1], configuration);
+                        Access.openMessageFileCompareEditor(shell, remoteObjects[0], remoteObjects[1], configuration);
                     } else {
-                        Access.openMessageFileCompareEditorEditor(shell, remoteObjects[0], null, configuration);
+                        Access.openMessageFileCompareEditor(shell, remoteObjects[0], null, configuration);
                     }
                 } catch (Exception e) {
                     ISpherePlugin.logError("*** Could not open message file compare editor ***", e); //$NON-NLS-1$
