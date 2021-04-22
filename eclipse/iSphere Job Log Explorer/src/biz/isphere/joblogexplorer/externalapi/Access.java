@@ -14,12 +14,10 @@ import java.util.Date;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.externalapi.AbstractAccess;
-import biz.isphere.core.annotations.ISphereDeprecated;
-import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.ISpooledFileBrief;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerFileInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerJobInput;
 import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput;
-import biz.isphere.joblogexplorer.editor.JobLogExplorerSpooledFileInput2;
 import biz.isphere.joblogexplorer.views.JobLogExplorerView;
 
 /**
@@ -60,8 +58,7 @@ public class Access extends AbstractAccess {
     public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber) throws Exception {
 
-        JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
-            jobNumber);
+        JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(connectionName, splfName, splfNumber, jobName, userName, jobNumber);
 
         JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
@@ -86,26 +83,26 @@ public class Access extends AbstractAccess {
     public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber, String jobSystemName, Date creationTimestamp) throws Exception {
 
-        JobLogExplorerSpooledFileInput2 input = new JobLogExplorerSpooledFileInput2(connectionName, splfName, splfNumber, jobName, userName,
-            jobNumber, jobSystemName, creationTimestamp);
+        JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(connectionName, splfName, splfNumber, jobName, userName, jobNumber,
+            jobSystemName, creationTimestamp);
 
         JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 
     /**
      * Opens the job log explorer for exploring the job log printed to a
-     * QPJOBLOG spooled file.
+     * QPJOBLOG spooled file.<br>
+     * This method has been intentionally created for iSphere but may also be
+     * used by other applications.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
-     * @param spooledFile - iSphere spooled file.
+     * @param spooledFile - iSphere spooled file identifier.
      * @throws Exception
      */
-    @ISphereDeprecated(info = "SpooledFile will be changed to ISpooledFileId in the next release.")
-    public static void openJobLogExplorer(Shell shell, SpooledFile spooledFile) throws Exception {
+    public static void openJobLogExplorer(Shell shell, ISpooledFileBrief spooledFile) throws Exception {
 
         JobLogExplorerSpooledFileInput input = new JobLogExplorerSpooledFileInput(spooledFile);
-
         JobLogExplorerView.openJobLog(ensureShell(shell), input);
     }
 

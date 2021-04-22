@@ -11,7 +11,7 @@ package biz.isphere.joblogexplorer.spooledfiles.popupmenu.extension;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.ISpooledFileBrief;
 import biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributionItem;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
@@ -19,8 +19,10 @@ import biz.isphere.joblogexplorer.externalapi.Access;
 
 public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenuContributionItem {
 
+    private static final String QPJOBLOG = "QPJOBLOG"; //$NON-NLS-1$
+
     private Shell shell;
-    private SpooledFile[] spooledFiles;
+    private ISpooledFileBrief[] spooledFiles;
 
     public String getText() {
         return Messages.Job_Log_Explorer;
@@ -34,7 +36,7 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
         return ISphereJobLogExplorerPlugin.getDefault().getImage(ISphereJobLogExplorerPlugin.IMAGE_JOB_LOG_EXPLORER);
     }
 
-    public void setSelection(Shell shell, SpooledFile[] spooledFiles) {
+    public void setSelection(Shell shell, final ISpooledFileBrief[] spooledFiles) {
         this.shell = shell;
         this.spooledFiles = spooledFiles;
     }
@@ -45,8 +47,8 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
             return false;
         }
 
-        for (SpooledFile spooledFile : spooledFiles) {
-            if (!"QPJOBLOG".equals(spooledFile.getFile())) { //$NON-NLS-1$
+        for (ISpooledFileBrief spooledFile : spooledFiles) {
+            if (!QPJOBLOG.equals(spooledFile.getFile())) { //$NON-NLS-1$
                 return false;
             }
         }
@@ -60,7 +62,7 @@ public class OpenJobLogExplorerContributionItem implements ISpooledFilePopupMenu
             return;
         }
 
-        for (SpooledFile spooledFile : spooledFiles) {
+        for (ISpooledFileBrief spooledFile : spooledFiles) {
             Access.openJobLogExplorer(shell, spooledFile);
         }
     }
