@@ -63,7 +63,7 @@ import com.ibm.as400.access.IFSFileInputStream;
 import com.ibm.as400.access.PrintObject;
 import com.ibm.as400.access.RequestNotSupportedException;
 
-public class SpooledFile implements IPropertySource {
+public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
     private static final String ISPHERE_SPOOLED_FILE_NAME_PREFIX = "iSphere_Spooled_File_"; //$NON-NLS-1$
 
@@ -1267,6 +1267,11 @@ public class SpooledFile implements IPropertySource {
 
         return true;
     }
+
+    /*
+     * Implementation of the {@link IPropertySource} interface.
+     * @see org.eclipse.ui.views.properties.IPropertySource#getEditableValue()
+     */
 
     public Object getEditableValue() {
         return this;

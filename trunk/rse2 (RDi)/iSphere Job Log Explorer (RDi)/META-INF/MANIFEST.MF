@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.rse.core,
+ org.eclipse.ui.views,
  org.eclipse.rse.subsystems.files.core,
  com.ibm.etools.iseries.subsystems.qsys,
  com.ibm.etools.iseries.services.qsys,

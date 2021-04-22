@@ -1,7 +1,8 @@
 
 Changelog: iSphere 4.0.0.r
 --------------------------
-
+ • Changed job log explorer API to accept an ISpooledFileBrief object
+   instead of a SpooledFile.
  • Added @ISphereDeprecated.
  • Added options for displaying message descriptions in DISPLAY mode
    (right and left side).
