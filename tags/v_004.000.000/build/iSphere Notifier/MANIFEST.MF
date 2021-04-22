@@ -1,0 +1,33 @@
+Manifest-Version: 1.0
+Bundle-Version: 4.0.0.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
+X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
+ Changed iSphere Source File Search to resolve remote system filters and objects in batch.\n
+ Changed layout of iSphere Source File Search view.\n
+ Changed layout of iSphere Message File Search view.\n
+ Enhanced the iSphere Journal Explorer and added option to search for entry specific data.\n
+ Added option 'Work With Spooled Files' to job entries of a RSE job filter.\n
+ Added option 'Copy Qualified Name' to job entries of a RSE job filter.\n
+ Added option 'Display changed fields only' to iSphere Journal Explorer.\n
+ Added preferences option to merge spooled file filters and sort items by creation time.\n
+ Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
+ Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
+ Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.\n
+ Improved performance when retrieving journal entries.
+X-Beta-Version: 4.0.0.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
+X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
+ Changed iSphere Source File Search to resolve remote system filters and objects in batch.\n
+ Changed layout of iSphere Source File Search view.\n
+ Changed layout of iSphere Message File Search view.\n
+ Enhanced the iSphere Journal Explorer and added option to search for entry specific data.\n
+ Added option 'Work With Spooled Files' to job entries of a RSE job filter.\n
+ Added option 'Copy Qualified Name' to job entries of a RSE job filter.\n
+ Added option 'Display changed fields only' to iSphere Journal Explorer.\n
+ Added preferences option to merge spooled file filters and sort items by creation time.\n
+ Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
+ Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
+ Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.\n
+ Improved performance when retrieving journal entries.
