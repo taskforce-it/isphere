@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Session Theme</title>
+</head>
+<body>
+	<h1>Session Theme</h1>
+	<p>
+	<ul>
+	<li><a href="#introduction">Introduction</a></li>
+	<li><a href="start_working_with_themes">Start Working With Themes</a></li>
+	<li><a href="#creating_a_theme">Creating a Theme</a></li>
+	<li><a href="#assigning_a_theme_to_a_session">Assigning a Theme to a Session</a></li>
+	<li><a href="#changing_colors">Changing Colors</a></li>
+	</ul>
+	<p>
+	<a id="introduction"></a>
+	<h2>Introduction</h2>
+	<p>
+	A session theme is used for overriding the default session colors with the colors of the theme. This way
+	you can use different colors for your sessions, while keeping all other session attributes, such as the 
+	keyboard layout, the same.
+	<p>
+	<table>
+		<tr>
+			<td class="info">The theme configuration files are stored in folder <i>%USERPROFILE%\.tn5250j</i> and
+			                 named <i>*.theme</i> where the asterisk equals the name of the theme.</td>
+		</tr>
+	</table>
+	<p>
+	<a id="start_working_with_themes"></a>
+	<h2>Start Working With Themes</h2>
+	<p>
+	Before you start configuring your own color schemes you should create a temporary working scheme to avoid
+	damaging your default configuration or existing themes. It is recommended to follow these steps:
+	<p>
+	<ul>
+	<li>Read <i><a href="#creating_a_theme">Creating a Theme</a></i> and create a theme, but do not change any 
+	    colors at this time. Give it a meaningful name, such as <i>'Designing Themes'</i>. You are going to 
+	    used that theme whenever you want to create a new theme.
+    <li>Create a session and assign that theme to it. Perhaps you should name that session <i>'Designing Themes'</i>, too.</li>
+    <li>Start that session whenever you want to create a new theme.</li>
+	</ul>
+	<p>
+	The advantage of that approach is, that you do not accidentally overwrite your default configuration or
+	another theme, when you save your color settings before saving them as a theme.
+	<p>
+	<a id="creating_a_theme"></a>
+	<h2>Creating a Theme</h2>
+	<p>
+	Start with opening a 5250 session when you want to create a new theme. Immediately use option "Save as Theme..." 
+	to save the current settings as a theme. Then use the "Settings..." option to <a href="#changing_colors">tweak 
+	the color attributes</a> to match your needs.
+	<p>
+	<img src="assets/save_theme.png" align="middle">
+	<p>
+	<a id="assigning_a_theme_to_a_session"></a>
+	<h2>Assigning a Theme to a Session</h2>
+	<p>
+	Themes are assigned to a session on the session configuration dialog.
+	<p>
+	Right-click on an "iSphere 5020 Session" and select the "Change session" option:
+	<p>
+	<img src="assets/session_popup.png" align="middle">
+	<p>
+	Select a theme from the "Theme" combo box:
+	<p>
+	<img src="assets/select_theme.png" align="middle">
+	<p>
+	Select option <i>*NONE</i> if you do not want to use a theme for this session.
+	<p>
+	Eventually click the [OK] button to save the configuration.
+	<p>
+	<a id="changing_colors"></a>
+	<h2>Changing colors</h2>
+	<p>
+	Select option "Settings..." from the context menu of a 5250 session to open the <i>Session Attributes</i> dialog. Select
+	<i>Colors</i> to change the color attributes of the session:
+	<p>
+	<table>
+	<tr><td><img src="assets/open_settings.png" align="middle"></td><td width="10px"></td><td><img src="assets/color_preferences.png" align="middle"></td></tr>
+	</table>
+	<p>
+	Click the "Apply" button for each color that you have changed. Save the settings when you are done.
+	<p>
+		<iframe src="../../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

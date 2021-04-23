@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      	
+      	<!--
+      	  ==========================================
+      	    File contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember"
+            id="biz.isphere.journalexplorer.menu.mbr.displayjournalentries">
+	         
+	         <action
+                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                enablesFor="*"
+                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                label="%Display_Journal_Entries"
+                icon="icons/display_journal_entries.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile"
+            id="biz.isphere.journalexplorer.menu.pf.displayjournalentries">
+	         
+	         <action
+                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                enablesFor="*"
+                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                label="%Display_Journal_Entries"
+                icon="icons/display_journal_entries.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Journal contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject">
+
+			 <visibility>
+			 	<or>
+				    <objectState name="type" value="*JRN" />
+				    <objectState name="type" value="*DTAARA" />
+				    <objectState name="type" value="*DTAQ" />
+			    </or>
+			 </visibility>
+	         
+	         <action
+                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                enablesFor="*"
+                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
+                label="%Display_Journal_Entries"
+                icon="icons/display_journal_entries.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Journal Explorer Perspective
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.perspectives">
+   
+      <!-- ID does not match package, because perspective was moved from core to rse plugin. 21.03.2021 -->
+      <perspective 
+	       id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
+	       name="%Perspective_Journal_Explorer"
+	       class="biz.isphere.journalexplorer.rse.shared.ui.perspectives.JournalExplorerPerspectiveLayout"
+	       icon="icons/journal_explorer.png">
+      </perspective>
+       
+   </extension>   
+
+</plugin>
