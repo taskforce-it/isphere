@@ -33,7 +33,7 @@ public class Journal implements ISelectedJournal {
     }
 
     public String getLibrary() {
-        return qualifiedName.getObjectName();
+        return qualifiedName.getLibraryName();
     }
 
     public String getObjectType() {

@@ -1,4 +1,8 @@
 
+Changelog: iSphere 4.0.1.r
+--------------------------
+ • Fixed journal explorer, which picked up a wrong library name.
+
 Changelog: iSphere 4.0.0.r
 --------------------------
  • Changed job log explorer API to accept an ISpooledFileBrief object
