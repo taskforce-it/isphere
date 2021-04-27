@@ -45,12 +45,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -75,6 +69,12 @@ import biz.isphere.rse.Messages;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -734,14 +734,17 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      */
     public boolean performAction() {
 
+        String sourceFileLibrary = getSourceFileLibrary();
+        String sourceFile = getSourceFile();
+
         if (sourceMemberRadioButton.getSelection()) {
-            if (StringHelper.isNullOrEmpty(getSourceFileLibrary())) {
+            if (StringHelper.isNullOrEmpty(sourceFileLibrary)) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_library_name);
                 sourceFilePrompt.getLibraryCombo().setFocus();
                 return false;
             }
 
-            if (StringHelper.isNullOrEmpty(getSourceFile())) {
+            if (StringHelper.isNullOrEmpty(sourceFile)) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Enter_or_select_a_simple_or_generic_file_name);
                 sourceFilePrompt.getFileCombo().setFocus();
                 return false;
@@ -773,14 +776,15 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (!filterRadioButton.getSelection()) {
 
                 AS400 system = tConnection.getAS400ToolboxObject();
-                if (!ISphereHelper.checkLibrary(system, getSourceFileLibrary())) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, getSourceFileLibrary()));
+                if (!isGeneric(sourceFileLibrary) && !ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, sourceFileLibrary));
                     sourceFilePrompt.getLibraryCombo().setFocus();
                     return false;
                 }
 
-                if (!ISphereHelper.checkObject(system, getSourceFileLibrary(), getSourceFile(), ISeries.FILE)) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.File_A_in_library_B_not_found, getSourceFile(), getSourceFileLibrary()));
+                if (!isGeneric(sourceFile) && !ISphereHelper.checkObject(system, sourceFileLibrary, sourceFile, ISeries.FILE)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                        Messages.bind(Messages.File_A_in_library_B_not_found, sourceFile, sourceFileLibrary));
                     sourceFilePrompt.getObjectCombo().setFocus();
                     return false;
                 }
@@ -816,8 +820,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                     selectedFilters.add(getFilter());
                     new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(selectedFilters, searchOptions);
                 } else {
-                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(getSourceFileLibrary(), getSourceFile(), getSourceMember(),
-                        searchOptions);
+                    new RSESearchExec(workbenchWindow, tConnection)
+                        .resolveAndExecute(sourceFileLibrary, sourceFile, getSourceMember(), searchOptions);
                 }
             } else {
 
@@ -826,7 +830,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                 if (filterRadioButton.getSelection()) {
                     searchElements = loadFilterSearchElements(tConnection, getFilter());
                 } else {
-                    searchElements = loadSourceMemberSearchElements(tConnection, getSourceFileLibrary(), getSourceFile(), getSourceMember());
+                    searchElements = loadSourceMemberSearchElements(tConnection, sourceFileLibrary, sourceFile, getSourceMember());
                 }
 
                 SourceFileSearchFilter filter = new SourceFileSearchFilter();
@@ -849,6 +853,15 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         }
 
         return true;
+    }
+
+    private boolean isGeneric(String string) {
+
+        if (string.indexOf("*") >= 0) {
+            return true;
+        }
+
+        return false;
     }
 
     private HashMap<String, SearchElement> loadSourceMemberSearchElements(IBMiConnection connection, String library, String sourceFile,
