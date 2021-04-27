@@ -775,18 +775,21 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
             if (!filterRadioButton.getSelection()) {
 
-                AS400 system = tConnection.getAS400ToolboxObject();
-                if (!isGenericOrSpecialValue(sourceFileLibrary) && !ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, sourceFileLibrary));
-                    sourceFilePrompt.getLibraryCombo().setFocus();
-                    return false;
-                }
+                if (!isGenericOrSpecialValue(sourceFileLibrary)) {
 
-                if (!isGenericOrSpecialValue(sourceFile) && !ISphereHelper.checkObject(system, sourceFileLibrary, sourceFile, ISeries.FILE)) {
-                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                        Messages.bind(Messages.File_A_in_library_B_not_found, sourceFile, sourceFileLibrary));
-                    sourceFilePrompt.getObjectCombo().setFocus();
-                    return false;
+                    AS400 system = tConnection.getAS400ToolboxObject();
+                    if (!ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, sourceFileLibrary));
+                        sourceFilePrompt.getLibraryCombo().setFocus();
+                        return false;
+                    }
+
+                    if (!isGenericOrSpecialValue(sourceFile) && !ISphereHelper.checkObject(system, sourceFileLibrary, sourceFile, ISeries.FILE)) {
+                        MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                            Messages.bind(Messages.File_A_in_library_B_not_found, sourceFile, sourceFileLibrary));
+                        sourceFilePrompt.getObjectCombo().setFocus();
+                        return false;
+                    }
                 }
             }
 
