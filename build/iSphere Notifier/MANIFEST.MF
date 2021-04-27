@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-Version: 4.0.2.r
+Bundle-Version: 4.0.3.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
@@ -17,7 +17,7 @@ X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
  Improved performance when retrieving journal entries.\n
  Fixed journal explorer, which picked up a wrong library name.\n
  Fixed iSphere Source File Search page to allow generic library and source file names.
-X-Beta-Version: 4.0.2.r
+X-Beta-Version: 4.0.3.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
