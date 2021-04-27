@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+      	
+      	<!--
+      	  ==========================================
+      	    Job Trace Explorer Views
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="iSphere"
+            id="biz.isphere.core.views.categories">
+      </category>
+      <view
+            icon="icons/jobtrace_explorer.png"
+            class="biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView"
+            category="biz.isphere.core.views.categories"
+            name="%JobTraceExplore_View"
+            id="biz.isphere.jobtraceexplorer.core.ui.views.JobTraceExplorerView">
+      </view>
+
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    Job Trace Explorer Perspective
+      	  ==========================================
+      	-->
+
+   <extension point="org.eclipse.ui.perspectives">
+   
+      <perspective 
+	       id="biz.isphere.jobtraceexplorer.core.ui.perspectives.JobTraceExplorerPerspectiveLayout" 
+	       name="%Job_Trace_Explorer_Perspective"
+	       class="biz.isphere.jobtraceexplorer.core.ui.perspectives.JobTraceExplorerPerspectiveLayout"
+	       icon="icons/jobtrace_explorer.png">
+      </perspective>
+       
+   </extension>   
+   
+      	<!--
+      	  ==========================================
+      	    Job Trace Explorer Preferences Initializer
+      	  ==========================================
+      	-->
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.jobtraceexplorer.core.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
+      	    iSphere Preferences
+      	  ==========================================
+      	-->
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.jobtraceexplorer.core.ui.preferencepages.JobTraceExplorerPreferencePage"
+            category="biz.isphere.base.preferencepages.General"
+            name="%JobTrace_Explorer_PreferencePage"
+            id="biz.isphere.jobtraceexplorer.core.ui.preferencepages.JobTraceExplorerPreferencePage"/>
+   </extension>
+   
+</plugin>

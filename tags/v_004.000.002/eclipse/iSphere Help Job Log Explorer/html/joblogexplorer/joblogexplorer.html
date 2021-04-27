@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Job Log Explorer</title>
+</head>
+
+<body>
+<h1>Job Log Explorer</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/joblogexplorer.png" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The Job Log Explorer is supposed to be used for viewing and filtering the job log
+messages fast and easily. You can open it from the context menus of a remote job, a
+remote spooled file or a local spooled file (Text format).
+<p>
+Messages can be colored depending on their severity to get your attention.
+<p>
+<ul>
+<li><a href="#opening_the_job_log_explorer_perspective">Opening the Job Log Explorer Perspective</a></li>
+<li><a href="#opening_job_log_by_job_name">Opening Job Log by Job Name</a></li>
+<li><a href="#opening_job_log_of_remote_job">Opening Job Log of Remote Job</a></li>
+<li><a href="#opening_job_log_from_breakpoint">Opening Job Log From Breakpoint</a></li>
+<li><a href="#parsing_a_remote_QPJOBLOG_spooled_file">Parsing a Remote QPJOBLOG Spooled File</a></li>
+<li><a href="#parsing_a_local_QPJOBLOG_spooled_file">Parsing a Local QPJOBLOG Spooled File</a></li>
+<li><a href="#filtering_job_log_messages">Filtering Job Log Messages</a></li>
+</ul>
+<p>
+<a id="#opening_the_job_log_explorer_perspective"></a>
+<h2>Opening the Job Log Explorer Perspective</h2>
+<p>
+You can open the Job Log Explorer perspective from 'Window -> Open Perspective -> Other...'. The perspective looks like that: 
+<p>
+<img src="assets/joblogexplorer_view.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="middle"><img src="assets/open_joblog.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Open a dialog for selecting the job whose job log is to be shown.</td></tr>
+<tr><td valign="middle"><img src="assets/edit_sql.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Opens an SQL editor for editing the SQL WHERE clause for filtering the job log entries.<br>(Local operation that does not contact the host system.)</td></tr>
+<tr><td valign="middle"><img src="assets/export_to_excel.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Exports all job log entries to Excel.</td></tr>
+<tr><td valign="middle"><img src="assets/reset_column_size.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Resets all columns to their default size.</td></tr>
+<tr><td valign="middle"><img src="assets/refresh.png" /></td><td width="10px">&nbsp;</td><td valign="middle">Reloads the job log entries.<br>(Remote operation that reloads the data from the host.)</td></tr>
+</table>
+<p>
+The properties of the job log are displayed in the Eclipse <i>Properties</i> view:
+<p>
+<img src="assets/joblogexplorer_properties.png" align="middle">
+<p>
+<a id="#opening_job_log_by_job_name"></a>
+<h2>Opening Job Log by Job Name</h2>
+<p>
+Click the <i>Explore job log</i> button at the top of the <i>Job Log Explorer</i> view:
+<p>
+<img src="assets/open_joblog.png" align="middle">
+<p>
+Select the connection and fill in the job name, user name and job number and click the [OK] button.
+<p>
+<img src="assets/open_job_log_by_name.png" align="middle">
+<p>
+Select the <i>Retrieve job name from clipboard</i> option to let the dialog retrieve a qualified
+job name from the clipboard. The supported formats are:
+<p>
+<ul>
+<li>number/user/job</li>
+<li>JOB(number/user/job)</li>
+</ul>
+<p>
+<a id="opening_job_log_of_remote_job"></a>
+<h2>Opening Job Log of Remote Job</h2>
+<p>
+Go to the <i>Jobs</i> subsystem and start the Job Log Explorer from the context menu of a 
+remote job:
+<p>
+<img src="assets/open_remote_job.png" align="middle">
+<p>
+<a id="opening_job_log_from_breakpoint"></a>
+<h2>Opening Job Log From Breakpoint</h2>
+<p>
+Set a service entry point and launch your program. When the program hits the breakpoint, you can launch 
+the Job Log Explorer from the context menu of the <i>Job</i> node:
+<p>
+<img src="assets/open_from_breakpoint.png" align="middle">
+<p>
+<a id="#parsing_a_remote_QPJOBLOG_spooled_file"></a>
+<h2>Parsing a Remote QPJOBLOG Spooled File</h2>
+<p>
+Go to the <i>iSphere Spooled Files</i> subsystem and start the Job Log Explorer from the context menu of a 
+QPJOBLOG spooled file:
+<p>
+<img src="assets/open_spooled_file.png" align="middle">
+<p>
+<a id="#parsing_a_local_QPJOBLOG_spooled_file"></a>
+<h2>Parsing a Local QPJOBLOG Spooled File</h2>
+<p>
+Go to the <i>Local</i> subsystem and start the Job Log Explorer from the context menu of a 
+given local file:
+<p>
+<img src="assets/open_local_file.png" align="middle">
+<p>
+The file name must not necessarily start with QPJOBLOG. If the job log parser cannot not recognize the
+format, an error message is displayed: 
+<p>
+<img src="assets/error_invalid_format.png" align="middle">
+<p>
+<a id="filtering_job_log_messages"></a>
+<h2>Filtering Job Log Messages</h2>
+<p>
+Use the drop down combo boxes and the text field at the top of the view to set your filters. Then 
+press the [Apply filters] button to apply the filters to the job log. Each search argument can be negated
+with a preceding exclamation mark (!): 
+<p>
+<img src="assets/negated_search_argument.png" align="middle">
+<p>
+You may also select specific message, which are displayed regardless of the filter settings. Click the
+checkbox icon next to a job log message to select or deselect a message.
+<p>
+The text field can also be used for searching the messages for a given text. Today, the search
+does not include the <i>second level text</i>.
+<p>
+<img src="assets/text_field.png" align="middle">
+<p>
+For more advanced queries you can use the SQL editor. Click the <i>Edit SQL</i> button at the top of 
+the <i>Job Log Explorer</i> view to open the SQL editor:
+<p>
+<img src="assets/edit_sql.png" align="middle">
+<p>
+The <i>SQL Editor</i> is used to enter a SQL WHERE condition for selecting a subset of the available job log entries 
+entries. Enter the WHERE condition and then click the <i>Execute</i> button or press <i>Ctrl+Enter</i> to execute
+the query. Refer to the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html"><i>SQL Reference</i></a> to see the list of available functions.
+<p>
+<img src="assets/sql_editor.png" align="middle">
+<p>
+Use Ctrl+SPACE for content assistance.
+<p>
+<img src="assets/content_assistance.png" align="middle">
+<p>
+The following actions are available:
+<p>
+<table>
+<tr><td valign="top">Ctrl+SPACE</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Add Field</td><td valign="top">-</td><td valign="top">Content assist.</td></tr>
+<tr><td valign="top">Clear</td><td valign="top">-</td><td valign="top">Clears the where condition.</td></tr>
+<tr><td valign="top">Ctrl+ENTER</td><td valign="top">-</td><td valign="top">See: Filter</td></tr>
+<tr><td valign="top">Filter</td><td valign="top">-</td><td valign="top">Executes the query with the current where condition to create a subsetted list of the available job log entries.</td></tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>Filtering job log entries is a local task, which does not reload the
+		                                  job log from the host.</td>
+	</tr>
+</table>
+<p>
+<table>
+	<tr>
+		<td class="notice"><b>Notice: </b>The SQL WHERE clause is applied to the records that have been downloaded to the PC. It must be specified in
+		                   the <a href="/help/topic/biz.isphere.base.help/html/sql/sql_reference.html">iSphere SQL</a> syntax, which in most cases
+		                   matches the IBM i SQL syntax.
+		</td>
+	</tr>
+</table>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
