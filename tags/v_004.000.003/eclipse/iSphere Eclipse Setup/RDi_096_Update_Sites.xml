@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookmarks>
+   <site url="http://download.eclipse.org/releases/helios" selected="true" name="[Setup] Helios Milestone Repository"/>
+   <site url="jar:file:/C:/Workspaces/rdp_096/workspace/iSphere Eclipse Setup/plug-ins/iSphere_Ant_Contribution.zip!/" selected="true" name="[Setup] iSphere Ant Contribution Local Update Site"/>
+   <site url="jar:file:/C:/Workspaces/rdp_096/workspace/iSphere Eclipse Setup/plug-ins/Java_Scoped_Template_Variables.zip!/" selected="true" name="[Setup] Java Scoped Template Variables Local Update Site"/>
+</bookmarks>
