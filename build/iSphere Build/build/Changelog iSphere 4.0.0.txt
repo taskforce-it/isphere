@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.0.2.r
+--------------------------
+ • Fixed iSphere Source File Search page to allow generic library and
+   source file names.
+
 Changelog: iSphere 4.0.1.r
 --------------------------
  • Fixed journal explorer, which picked up a wrong library name.
