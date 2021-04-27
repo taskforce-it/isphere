@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-Version: 4.0.1.r
+Bundle-Version: 4.0.2.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
@@ -14,8 +14,10 @@ X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
  Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
  Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
  Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.\n
- Improved performance when retrieving journal entries.
-X-Beta-Version: 4.0.1.r
+ Improved performance when retrieving journal entries.\n
+ Fixed journal explorer, which picked up a wrong library name.\n
+ Fixed iSphere Source File Search page to allow generic library and source file names.
+X-Beta-Version: 4.0.2.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
@@ -30,4 +32,6 @@ X-Beta-Info: Support of WDSCi 7.0 has been discontinued.\n
  Added 'Copy' and 'Copy value' actions to context menu of journal entry details viewer.\n
  Updated STRPREPRC command to v1.19.1 with improved error reporting.\n
  Fixed problem that the sort order was not restored when loading a pinned iSphere 'Spooled Files' view.\n
- Improved performance when retrieving journal entries.
+ Improved performance when retrieving journal entries.\n
+ Fixed journal explorer, which picked up a wrong library name.\n
+ Fixed iSphere Source File Search page to allow generic library and source file names.
