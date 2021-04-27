@@ -776,13 +776,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             if (!filterRadioButton.getSelection()) {
 
                 AS400 system = tConnection.getAS400ToolboxObject();
-                if (!isGeneric(sourceFileLibrary) && !ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
+                if (!isGenericOrSpecialValue(sourceFileLibrary) && !ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, sourceFileLibrary));
                     sourceFilePrompt.getLibraryCombo().setFocus();
                     return false;
                 }
 
-                if (!isGeneric(sourceFile) && !ISphereHelper.checkObject(system, sourceFileLibrary, sourceFile, ISeries.FILE)) {
+                if (!isGenericOrSpecialValue(sourceFile) && !ISphereHelper.checkObject(system, sourceFileLibrary, sourceFile, ISeries.FILE)) {
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                         Messages.bind(Messages.File_A_in_library_B_not_found, sourceFile, sourceFileLibrary));
                     sourceFilePrompt.getObjectCombo().setFocus();
@@ -855,9 +855,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         return true;
     }
 
-    private boolean isGeneric(String string) {
+    private boolean isGenericOrSpecialValue(String string) {
 
-        if (string.indexOf("*") >= 0) {
+        if (string.indexOf("*") >= 0) { //$NON-NLS-1$
             return true;
         }
 
