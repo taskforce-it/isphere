@@ -8,16 +8,14 @@
 
 package biz.isphere.rse.dataqueue.rse;
 
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-
-import biz.isphere.core.dataqueue.rse.AbstractDropDataDataQueueListener;
 import biz.isphere.core.dataqueue.rse.AbstractDataQueueMonitorView;
+import biz.isphere.core.dataqueue.rse.AbstractDropDataDataQueueListener;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class DataQueueMonitorView extends AbstractDataQueueMonitorView {
 
@@ -33,12 +31,7 @@ public class DataQueueMonitorView extends AbstractDataQueueMonitorView {
 
     @Override
     protected AS400 getSystem(String connectionName) {
-        
-        try {
-            IBMiConnection connection = IBMiConnection.getConnection(connectionName);
-            return connection.getAS400ToolboxObject();
-        } catch (SystemMessageException e) {
-            return null;
-        }
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+        return system;
     }
 }

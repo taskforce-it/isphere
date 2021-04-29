@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.ibmi.contributions.extension.point;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
@@ -22,6 +23,11 @@ public class QualifiedConnectionName implements Comparable<QualifiedConnectionNa
 
     private String connectionName;
     private String profileName;
+
+    public QualifiedConnectionName(IHost host) {
+        this.profileName = host.getSystemProfileName();
+        this.connectionName = host.getAliasName();
+    }
 
     public QualifiedConnectionName(IBMiConnection connection) {
         this.profileName = connection.getProfileName();

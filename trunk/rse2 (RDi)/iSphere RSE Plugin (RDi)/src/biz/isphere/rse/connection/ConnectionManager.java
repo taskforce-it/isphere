@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.rse.core.model.ISystemProfile;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -174,8 +175,17 @@ public class ConnectionManager implements ISystemModelChangeListener {
         commitProfile(profile);
     }
 
+    public static String getConnectionName(IBMiConnection connection) {
+        return getConnectionName(connection.getHost());
+    }
+
     public static String getConnectionName(IHost host) {
-        return host.getAliasName();
+        QualifiedConnectionName connectionName = new QualifiedConnectionName(host);
+        return connectionName.getQualifiedName();
+    }
+
+    public static String getConnectionName(String profileName, String connectionName) {
+        return new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
     }
 
     private ConnectionProperties getOrCreateProperties(IHost host) {

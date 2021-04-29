@@ -30,11 +30,11 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IPinableView;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.dataqueue.rse.DataQueueMonitorView;
 
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class MonitorDataQueueAction implements IObjectActionDelegate {
@@ -71,12 +71,12 @@ public class MonitorDataQueueAction implements IObjectActionDelegate {
     protected void openMonitorForObject(QSYSRemoteObject qsysRemoteObject, IWorkbenchPage page) {
         try {
 
-            String connection = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(getHost(qsysRemoteObject));
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String objectType = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            RemoteObject remoteObject = new RemoteObject(connection, name, library, objectType, description);
+            RemoteObject remoteObject = new RemoteObject(qualifiedConnectionName, name, library, objectType, description);
 
             String contentId = remoteObject.getAbsoluteName();
             IViewManager viewManager = ISphereRSEPlugin.getDefault().getViewManager(IViewManager.DATA_QUEUE_MONITOR_VIEWS);
