@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -389,10 +389,17 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     }
 
     private void updateDataSpaceEditorLabels(DDataSpaceValue dataSpaceValue) {
+        if (isDisposed()) {
+            return;
+        }
         labelObject.setText(dataSpaceValue.getName());
         labelLibrary.setText(dataSpaceValue.getLibrary());
         labelType.setText(dataSpaceValue.getObjectType());
         labelDescription.setText(dataSpaceValue.getDescrption());
+    }
+
+    private boolean isDisposed() {
+        return mainArea.isDisposed();
     }
 
     private Label createLabel(Composite parent, String label, String value) {
@@ -500,6 +507,10 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
     private void copyDataToControls(DDataSpaceValue dataSpaceValue) {
 
+        if (isDisposed()) {
+            return;
+        }
+
         boolean hasInvalidDataWarning = false;
         boolean hasInvalidDataError = false;
         String errorItem = ""; //$NON-NLS-1$
@@ -545,6 +556,10 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     }
 
     private void refreshEditor() {
+
+        if (isDisposed()) {
+            return;
+        }
 
         mainArea.layout();
 

@@ -1,6 +1,11 @@
 
-Changelog: iSphere 4.0.2.r
+Changelog: iSphere 4.0.4.r
 --------------------------
+ • Fixed NullPointerException, when closing the data queue monitor,
+   when auto-refresh is enabled.
+
+Changelog: iSphere 4.0.2.r/4.0.3.r
+----------------------------------
  • Fixed iSphere Source File Search page to allow generic library and
    source file names.
 
