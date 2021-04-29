@@ -14,7 +14,7 @@ import java.util.List;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -24,9 +24,8 @@ import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorConfiguration;
+import biz.isphere.rse.connection.ConnectionManager;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class OpenMessageFileCompareEditorAction implements IObjectActionDelegate {
@@ -75,29 +74,15 @@ public class OpenMessageFileCompareEditorAction implements IObjectActionDelegate
 
     private RemoteObject createRemoteObject(QSYSRemoteObject qsysRemoteObject) {
 
-        String profil = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-        String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+        IHost host = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost();
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(host);
 
         String messageFile = qsysRemoteObject.getName();
         String library = qsysRemoteObject.getLibrary();
         String objectType = qsysRemoteObject.getType();
         String description = qsysRemoteObject.getDescription();
-        IBMiConnection ibmiConnection = IBMiConnection.getConnection(profil, connectionName);
 
-        if (ibmiConnection != null) {
-
-            AS400 as400 = null;
-            try {
-                as400 = ibmiConnection.getAS400ToolboxObject();
-            } catch (SystemMessageException e) {
-            }
-
-            if (as400 != null) {
-                return new RemoteObject(connectionName, messageFile, library, objectType, description);
-            }
-        }
-
-        return null;
+        return new RemoteObject(qualifiedConnectionName, messageFile, library, objectType, description);
     }
 
     private boolean isValidSelection(IStructuredSelection selectedObject) {

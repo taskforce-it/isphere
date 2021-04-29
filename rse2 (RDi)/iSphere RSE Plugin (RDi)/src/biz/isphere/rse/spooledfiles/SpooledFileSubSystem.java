@@ -128,15 +128,13 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
 
         Connection jdbcConnection = null;
 
-        IHost host = null;
-        String connectionName = null;
+        String qualifiedConnectionName = null;
 
         try {
-            host = getHost();
-            connectionName = host.getAliasName();
-            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            qualifiedConnectionName = ConnectionManager.getConnectionName(getHost());
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
         } catch (Throwable e) {
-            ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", connectionName), e); //$NON-NLS-1$
+            ISpherePlugin.logError(NLS.bind("*** Could not get JDBC connection for system {0} ***", qualifiedConnectionName), e); //$NON-NLS-1$
         }
         return jdbcConnection;
     }

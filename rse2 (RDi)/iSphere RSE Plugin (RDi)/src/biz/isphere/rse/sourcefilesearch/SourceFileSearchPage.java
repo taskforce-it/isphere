@@ -51,6 +51,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.exception.InvalidFilterException;
@@ -66,6 +67,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
@@ -766,10 +768,12 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         try {
 
             StructuredSelection tSelection = (StructuredSelection)connectionCombo.getSelection();
-            IHost tHost = (IHost)tSelection.getFirstElement();
 
+            IHost tHost = (IHost)tSelection.getFirstElement();
             IBMiConnection tConnection = IBMiConnection.getConnection(tHost);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getConnectionName())) {
+            String tQualifiedCOnnectionName = ConnectionManager.getConnectionName(tConnection);
+
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tQualifiedCOnnectionName)) {
                 return false;
             }
 
@@ -777,7 +781,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
                 if (!isGenericOrSpecialValue(sourceFileLibrary)) {
 
-                    AS400 system = tConnection.getAS400ToolboxObject();
+                    AS400 system = IBMiHostContributionsHandler.getSystem(tQualifiedCOnnectionName);
                     if (!ISphereHelper.checkLibrary(system, sourceFileLibrary)) {
                         MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, sourceFileLibrary));
                         sourceFilePrompt.getLibraryCombo().setFocus();

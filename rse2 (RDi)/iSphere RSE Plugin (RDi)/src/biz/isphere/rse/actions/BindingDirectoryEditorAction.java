@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.Access;
 import biz.isphere.core.internal.ISeries;
-import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
@@ -41,7 +41,7 @@ public class BindingDirectoryEditorAction implements IObjectActionDelegate {
 
                     String profileName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
                     String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-                    String qualifiedConnectionName = new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
+                    String qualifiedConnectionName = ConnectionManager.getConnectionName(profileName, connectionName);
                     String bindingDirectory = qsysRemoteObject.getName();
                     String library = qsysRemoteObject.getLibrary();
 

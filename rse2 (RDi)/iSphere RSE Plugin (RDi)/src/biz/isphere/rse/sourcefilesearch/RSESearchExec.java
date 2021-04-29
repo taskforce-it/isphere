@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -31,19 +29,23 @@ import biz.isphere.core.sourcefilesearch.SearchExec;
 import biz.isphere.core.sourcefilesearch.SearchPostRun;
 import biz.isphere.core.sourcefilesearch.SourceFileSearchFilter;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
+
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSESearchExec extends SearchExec {
 
     private IWorkbenchWindow _workbenchWindow;
     private IBMiConnection _connection;
     private Connection _jdbcConnection;
+    private String _qualifiedConnectionName;
 
     public RSESearchExec(IWorkbenchWindow workbenchWindow, IBMiConnection connection) {
 
         this._workbenchWindow = workbenchWindow;
         this._connection = connection;
-
-        this._jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(this._connection.getConnectionName());
+        this._qualifiedConnectionName = ConnectionManager.getConnectionName(this._connection);
+        this._jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(this._qualifiedConnectionName);
     }
 
     public void resolveAndExecute(String library, String file, String member, SearchOptions searchOptions) {
@@ -74,7 +76,7 @@ public class RSESearchExec extends SearchExec {
     }
 
     private void execute(ArrayList<SearchElement> filteredElements, SearchOptions searchOptions, SearchPostRun postRun) {
-        execute(_connection.getConnectionName(), _jdbcConnection, searchOptions, filteredElements, postRun);
+        execute(_qualifiedConnectionName, _jdbcConnection, searchOptions, filteredElements, postRun);
     }
 
     private SearchPostRun createPostRun(IWorkbenchWindow workbenchWindow, IBMiConnection connection, SearchOptions searchOptions) {
@@ -134,7 +136,8 @@ public class RSESearchExec extends SearchExec {
                     return Status.OK_STATUS;
                 }
 
-                execute(connection.getConnectionName(), jdbcConnection, searchOptions, filteredElements, postRun);
+                String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
+                execute(qualifiedConnectionName, jdbcConnection, searchOptions, filteredElements, postRun);
 
                 monitor.worked(1);
 
@@ -199,7 +202,8 @@ public class RSESearchExec extends SearchExec {
                     return Status.OK_STATUS;
                 }
 
-                execute(connection.getConnectionName(), jdbcConnection, searchOptions, filteredElements, postRun);
+                String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
+                execute(qualifiedConnectionName, jdbcConnection, searchOptions, filteredElements, postRun);
 
                 monitor.worked(1);
 
