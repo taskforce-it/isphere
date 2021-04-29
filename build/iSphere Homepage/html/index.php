@@ -150,6 +150,7 @@
            
 		<h2 class="release">Articles About iSphere</h2>
         <div class="section">
+        <b>English</b>
 		<table class="nomargin">
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"></td><td><a target="_article1" href="http://www.ibmsystemsmag.com/ibmi/developer/rpg/rse_goodies/">New Free RSE Goodies by Jon Paris and Susan Gantner (March 2013)</a></td></tr>
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article2" href="http://www.ibmsystemsmag.com/ibmi/developer/rpg/isphere-details/?utm_campaign=ibm-enews&utm_medium=email&utm_source=ibmi-sep17-2014&utm_content=exclusive3-headline">A Closer Look at iSphere by Jon Paris and Susan Gantner (September 2014)</a></td></tr>
@@ -158,6 +159,11 @@
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article5" href="http://www.itjungle.com/fhg/fhg061615-story01.html">iSphere Plug-in Expands RSE/RDi Toolset by Susan Gantner (June 25, 2015)</a></td></tr>
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article6" href="http://www.itjungle.com/fhg/fhg070715-story01.html">Looking For Stuff With iSphere by Susan Gantner (July 7, 2015)</a></td></tr>
 		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article7" href="http://www.itjungle.com/fhg/fhg092915-story03.html">More iSphere Goodies by Susan Gantner (September 29, 2015)</a></td></tr>
+		</table>
+        <b>Italian</b>
+		<table class="nomargin">
+		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"></td><td><a target="_article1" href="https://blog.faq400.com/it/programmazione/rdi-isphere-plugin-update-3-6-0/">Rational Rdi – Isphere Plugin Update 3.6.0.r (February 2020)</a></td></tr>
+		<tr><td width="0px"><img class="noborder" align="center" src="./assets/newspaper.png"><td><a target="_article2" href="https://blog.faq400.com/it/programmazione/tools/estendere-rdi-con-il-plug-in-isphere/">Estendere RDi con il plug-in iSphere (March 2021)</a></td></tr>
 		</table>
 		</div>
         <p/>
