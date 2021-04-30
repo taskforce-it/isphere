@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
@@ -25,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.handler.DisplayModuleViewHandler;
 
 import com.ibm.etools.iseries.services.qsys.api.IQSYSProgramBase;
@@ -51,8 +53,8 @@ public class DisplayModuleViewAction implements IObjectActionDelegate {
 
                     try {
 
-                        String connectionName = qsysRemoteProgramModule.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem()
-                            .getHostAliasName();
+                        IHost host = qsysRemoteProgramModule.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHost();
+                        String connectionName = ConnectionManager.getConnectionName(host);
 
                         IQSYSProgramBase program = qsysRemoteProgramModule.getProgram();
 
