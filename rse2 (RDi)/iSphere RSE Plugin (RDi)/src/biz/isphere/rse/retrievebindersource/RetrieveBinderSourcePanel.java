@@ -24,6 +24,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.retrievebindersource.AbstractRetrieveBinderSourcePanel;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
@@ -202,7 +203,7 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
     }
 
     public String getConnectionName() {
-        return connectionCombo.getText();
+        return ConnectionManager.getConnectionName(connectionCombo.getHost());
     }
 
     public String getSourceFileLibrary() {
@@ -305,9 +306,9 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
         return !isError();
     }
 
-    private IBMiConnection getConnection(String connectionName) {
+    private IBMiConnection getConnection(String qualifiedConnectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
 
         return connection;
     }
