@@ -11,9 +11,9 @@ package biz.isphere.rse.clcommands;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class ICLPrompterImpl implements ICLPrompter {
 
@@ -32,7 +32,7 @@ public class ICLPrompterImpl implements ICLPrompter {
     }
 
     public void setConnection(String connectionName) {
-        prompter.setConnection(IBMiConnection.getConnection(connectionName));
+        prompter.setConnection(ConnectionManager.getIBMiConnection(connectionName));
     }
 
     public void setParent(Shell parent) {
