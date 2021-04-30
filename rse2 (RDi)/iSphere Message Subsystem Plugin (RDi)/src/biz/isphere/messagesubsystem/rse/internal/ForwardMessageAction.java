@@ -11,16 +11,17 @@
 
 package biz.isphere.messagesubsystem.rse.internal;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.messagesubsystem.rse.SendMessageDelegate;
 import biz.isphere.messagesubsystem.rse.SendMessageDialog;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
  * This class adds a popup menu extension to queued message resources in order
@@ -56,8 +57,8 @@ public class ForwardMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
 
     private AS400 getAS400Toolbox(ISubSystem subSystem) throws SystemMessageException {
 
-        String connectionName = subSystem.getHostAliasName();
-        return IBMiConnection.getConnection(connectionName).getAS400ToolboxObject();
+        IHost host = subSystem.getHost();
+        return ConnectionManager.getIBMiConnection(host).getAS400ToolboxObject();
     }
 
 }
