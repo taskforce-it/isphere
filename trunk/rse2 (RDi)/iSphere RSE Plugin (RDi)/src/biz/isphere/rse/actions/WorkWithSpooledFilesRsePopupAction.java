@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionDelegate2;
@@ -30,6 +31,7 @@ import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.view.WorkWithSpooledFilesView;
 import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesJobInputData;
 
@@ -75,7 +77,8 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
                         return;
                     }
 
-                    String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getHostAliasName();
+                    IHost host = remoteJob.getRemoteJobContext().getJobSubsystem().getHost();
+                    String connectionName = ConnectionManager.getConnectionName(host);
                     if (connectionName != null) {
                         IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
                         if (window != null) {
