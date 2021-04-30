@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -420,7 +420,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         connectionCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 debugPrint("Connection: -> SelectionListener"); //$NON-NLS-1$
-                loadFilterPoolsOfConnection(connectionCombo.getText());
+                loadFilterPoolsOfConnection(ConnectionManager.getConnectionName(connectionCombo.getHost()));
             }
 
             public void widgetDefaultSelected(SelectionEvent event) {
@@ -464,7 +464,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         showAllRecordsButton.setSelection(loadBooleanValue(SHOW_RECORDS, true));
 
         if (loadValue(CONNECTION, null) != null) {
-            IBMiConnection connection = IBMiConnection.getConnection(loadValue(CONNECTION, null));
+            IBMiConnection connection = ConnectionManager.getIBMiConnection(loadValue(CONNECTION, null));
             if (connection != null) {
                 debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
                 connectionCombo.select(connection);
@@ -658,7 +658,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
      * @return name of the RSE connection
      */
     private String getConnectionName() {
-        return connectionCombo.getText();
+        return ConnectionManager.getConnectionName(connectionCombo.getHost());
     }
 
     private ISystemFilter getFilter() {
@@ -768,9 +768,9 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         try {
 
             StructuredSelection tSelection = (StructuredSelection)connectionCombo.getSelection();
-
             IHost tHost = (IHost)tSelection.getFirstElement();
-            IBMiConnection tConnection = IBMiConnection.getConnection(tHost);
+
+            IBMiConnection tConnection = ConnectionManager.getIBMiConnection(tHost);
             String tQualifiedCOnnectionName = ConnectionManager.getConnectionName(tConnection);
 
             if (!ISphereHelper.checkISphereLibrary(getShell(), tQualifiedCOnnectionName)) {

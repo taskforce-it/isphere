@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class RSESearchExec extends SearchExec {
 
         SearchPostRun postRun = new SearchPostRun();
         postRun.setConnection(connection);
-        postRun.setConnectionName(connection.getConnectionName());
+        postRun.setConnectionName(ConnectionManager.getConnectionName(connection));
         postRun.setSearchString(searchOptions.getCombinedSearchString());
         postRun.setSearchElements(new SourceFileSearchDelegate(workbenchWindow.getShell(), connection).createHashMap(searchElements));
         postRun.setWorkbenchWindow(workbenchWindow);
