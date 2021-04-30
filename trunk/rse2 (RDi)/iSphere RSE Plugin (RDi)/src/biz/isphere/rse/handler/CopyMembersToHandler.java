@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,18 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.rse.core.filters.SystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
+
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
+import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
@@ -31,11 +38,6 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember;
-
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.sourcemembercopy.rse.CopyMemberDialog;
-import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
-import biz.isphere.rse.Messages;
 
 public class CopyMembersToHandler extends AbstractHandler implements IHandler {
 
@@ -89,7 +91,8 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                 }
             } else if (ResourceTypeUtil.isSourceFile(selectedObject)) {
                 QSYSRemoteSourceFile object = (QSYSRemoteSourceFile)selectedObject;
-                String connectionName = object.getRemoteObjectContext().getObjectSubsystem().getHost().getAliasName();
+                IHost host = object.getRemoteObjectContext().getObjectSubsystem().getHost();
+                String connectionName = ConnectionManager.getConnectionName(host);
                 if (!addElementsFromSourceFile(shell, connectionName, object.getLibrary(), object.getName())) {
                     return false;
                 }
@@ -98,7 +101,8 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
                 String filterType = filterReference.getReferencedFilter().getType();
                 if ("Object".equals(filterType) || "Member".equals(filterType)) {
                     String[] filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                    String connectionName = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost().getAliasName();
+                    IHost host = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost();
+                    String connectionName = ConnectionManager.getConnectionName(host);
                     if (!addElementsFromFilterString(shell, connectionName, filterStrings)) {
                         return false;
                     }
@@ -116,13 +120,13 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
             return false;
         }
 
-        IBMiConnection IBMiConnection = object.getConnection();
-        if (IBMiConnection != null) {
-            String connectionName = IBMiConnection.getConnectionName();
+        IBMiConnection connection = object.getConnection();
+        if (connection != null) {
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
             if (jobDescription == null) {
-                jobDescription = new CopyMemberService(shell, connectionName);
+                jobDescription = new CopyMemberService(shell, qualifiedConnectionName);
             } else {
-                if (!jobDescription.getFromConnectionName().equals(connectionName)) {
+                if (!jobDescription.getFromConnectionName().equals(qualifiedConnectionName)) {
                     MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Cannot_copy_source_members_from_different_connections);
                     return false;
                 }
@@ -140,7 +144,7 @@ public class CopyMembersToHandler extends AbstractHandler implements IHandler {
         for (int idx = 0; idx < filterStrings.length; idx++) {
 
             String _filterString = filterStrings[idx];
-            IBMiConnection _connection = IBMiConnection.getConnection(connectionName);
+            IBMiConnection _connection = ConnectionManager.getIBMiConnection(connectionName);
             QSYSObjectSubSystem _fileSubSystemImpl = _connection.getQSYSObjectSubSystem();
 
             try {
