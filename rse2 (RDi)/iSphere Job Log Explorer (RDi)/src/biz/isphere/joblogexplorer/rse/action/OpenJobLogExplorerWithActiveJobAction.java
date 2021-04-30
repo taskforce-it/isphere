@@ -9,11 +9,13 @@
 package biz.isphere.joblogexplorer.rse.action;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.core.model.IHost;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.joblogexplorer.action.rse.AbstractOpenJobLogExplorerAction;
 import biz.isphere.joblogexplorer.externalapi.Access;
 import biz.isphere.joblogexplorer.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesJobName;
 import com.ibm.etools.iseries.subsystems.qsys.jobs.QSYSRemoteJob;
@@ -30,7 +32,8 @@ public class OpenJobLogExplorerWithActiveJobAction extends AbstractOpenJobLogExp
             try {
 
                 QSYSRemoteJob remoteJob = (QSYSRemoteJob)object;
-                String connectionName = remoteJob.getRemoteJobContext().getJobSubsystem().getCmdSubSystem().getHostAliasName();
+                IHost host = remoteJob.getRemoteJobContext().getJobSubsystem().getCmdSubSystem().getHost();
+                String connectionName = ConnectionManager.getConnectionName(host);
                 ISeriesJobName jobName = new ISeriesJobName(remoteJob.getFullJobName());
 
                 Access.openJobLogExplorer(shell, connectionName, jobName.getName(), jobName.getUser(), jobName.getNumber());
