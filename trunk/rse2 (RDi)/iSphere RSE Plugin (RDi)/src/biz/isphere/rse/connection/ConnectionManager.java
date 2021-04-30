@@ -27,6 +27,7 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class ConnectionManager implements ISystemModelChangeListener {
 
@@ -175,6 +176,15 @@ public class ConnectionManager implements ISystemModelChangeListener {
         commitProfile(profile);
     }
 
+    public static String getConnectionName(QSYSRemoteObject qsysRemoteObject) {
+
+        IHost host = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getHost();
+        String profileName = host.getSystemProfileName();
+        String connectionName = host.getAliasName();
+
+        return getConnectionName(profileName, connectionName);
+    }
+
     public static String getConnectionName(IBMiConnection connection) {
         return getConnectionName(connection.getHost());
     }
@@ -186,6 +196,11 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
     public static String getConnectionName(String profileName, String connectionName) {
         return new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
+    }
+
+    public static IBMiConnection getIBMiConnection(String qualifiedConnectionName) {
+        QualifiedConnectionName connectionName = new QualifiedConnectionName(qualifiedConnectionName);
+        return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
     }
 
     private ConnectionProperties getOrCreateProperties(IHost host) {
