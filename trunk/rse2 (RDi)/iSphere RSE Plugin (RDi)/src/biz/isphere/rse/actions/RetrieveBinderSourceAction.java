@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.retrievebindersource.RetrieveBinderSourceDialog;
 
 import com.ibm.as400.access.AS400;
@@ -71,8 +72,7 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
 
                 if (qsysRemoteObject.getType().equals(ISeries.SRVPGM)) {
 
-                    String serviceProgramConnectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem()
-                        .getHostAliasName();
+                    String serviceProgramConnectionName = ConnectionManager.getConnectionName(qsysRemoteObject);
                     String serviceProgram = qsysRemoteObject.getName();
                     String serviceProgramLibrary = qsysRemoteObject.getLibrary();
                     String sourceMemberDescription = qsysRemoteObject.getDescription();
@@ -89,13 +89,13 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
                         boolean copyToClipboard = dialog.isCopyToClipboard();
                         sourceMemberDescription = dialog.getSourceMemberDescription();
 
-                        IBMiConnection serviceProgramConnection = IBMiConnection.getConnection(serviceProgramConnectionName);
+                        IBMiConnection serviceProgramConnection = ConnectionManager.getIBMiConnection(serviceProgramConnectionName);
 
                         if (copyToClipboard) {
                             performRetrieveBinderSourceToClipboard(serviceProgramConnection, serviceProgramLibrary, serviceProgram,
                                 sourceFileLibrary, sourceFile, sourceMember);
                         } else {
-                            IBMiConnection sourceFileConnection = IBMiConnection.getConnection(sourceFileConnectionName);
+                            IBMiConnection sourceFileConnection = ConnectionManager.getIBMiConnection(sourceFileConnectionName);
                             performRetrieveBinderSourceToSourceMember(serviceProgramConnection, serviceProgramLibrary, serviceProgram,
                                 sourceFileConnection, sourceFileLibrary, sourceFile, sourceMember, sourceMemberDescription);
                         }
