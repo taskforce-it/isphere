@@ -30,7 +30,9 @@ import biz.isphere.journalexplorer.core.handlers.ISelectedObject;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
+import biz.isphere.rse.connection.ConnectionManager;
 
+import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContext;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile;
@@ -67,7 +69,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 if (_object instanceof QSYSRemoteMember) {
 
                     QSYSRemoteMember member = (QSYSRemoteMember)_object;
-                    String connectionName = member.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                    String connectionName = getConnectionName(member.getRemoteObjectContext());
                     String libraryName = member.getLibrary();
                     String fileName = member.getFile();
                     String memberName = member.getName();
@@ -77,7 +79,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 } else if (_object instanceof QSYSRemotePhysicalFile) {
 
                     QSYSRemotePhysicalFile file = (QSYSRemotePhysicalFile)_object;
-                    String connectionName = file.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                    String connectionName = getConnectionName(file.getRemoteObjectContext());
                     String libraryName = file.getLibrary();
                     String fileName = file.getName();
                     String memberName = "*ALL"; //$NON-NLS-1$
@@ -87,7 +89,7 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
                 } else if (_object instanceof QSYSRemoteObject) {
 
                     QSYSRemoteObject remoteObject = (QSYSRemoteObject)_object;
-                    String connectionName = remoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
+                    String connectionName = getConnectionName(remoteObject.getRemoteObjectContext());
                     String libraryName = remoteObject.getLibrary();
                     String objectName = remoteObject.getName();
                     String objectType = remoteObject.getType();
@@ -147,5 +149,9 @@ public class DisplayJournalEntriesAction implements IObjectActionDelegate {
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
         shell = workbenchPart.getSite().getShell();
+    }
+
+    private String getConnectionName(IRemoteObjectContext context) {
+        return ConnectionManager.getConnectionName(context.getObjectSubsystem().getObjectSubSystem().getHost());
     }
 }
