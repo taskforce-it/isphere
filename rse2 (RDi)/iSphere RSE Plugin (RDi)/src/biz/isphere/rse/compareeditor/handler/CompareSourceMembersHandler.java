@@ -21,6 +21,7 @@ import biz.isphere.core.internal.IProjectMember;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.handler.AbstractCommandHandler;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -135,7 +136,7 @@ public class CompareSourceMembersHandler extends AbstractCommandHandler {
 
     private RSEMember getMember(Shell shell, String connectionName, String libraryName, String sourceFileName, String memberName) {
         try {
-            IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+            IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
             return new RSEMember(connection.getMember(libraryName, sourceFileName, memberName, null));
         } catch (Exception e) {
             MessageDialog.openError(shell, biz.isphere.core.Messages.Error, e.getMessage());

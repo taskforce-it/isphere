@@ -23,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
@@ -33,7 +34,7 @@ public class Editor implements IEditor {
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 
-        IBMiConnection _connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection _connection = ConnectionManager.getIBMiConnection(connectionName);
 
         try {
 
