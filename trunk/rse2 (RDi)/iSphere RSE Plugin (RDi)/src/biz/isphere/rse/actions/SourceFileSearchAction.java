@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -82,8 +83,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
                         _selectedElements.add(element);
 
-                        checkIfMultipleConnections(IBMiConnection.getConnection(((IRemoteObjectContextProvider)element).getRemoteObjectContext()
-                            .getObjectSubsystem().getHost()));
+                        IHost host = ((IRemoteObjectContextProvider)element).getRemoteObjectContext().getObjectSubsystem().getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                     }
 
@@ -97,8 +98,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
-                        .getHost()));
+                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
@@ -110,8 +111,8 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
-                        .getHost()));
+                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 }
 
