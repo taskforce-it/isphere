@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 SoftLanding Systems, Inc. and others.
+ * Copyright (c) 2021 SoftLanding Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFactory;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
@@ -263,7 +264,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     }
 
     public QSYSObjectSubSystem getCommandExecutionProperties() {
-        return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(getHost());
+        return connection.getQSYSObjectSubSystem();
     }
 
     public QSYSCommandSubSystem getCmdSubSystem() {
@@ -305,7 +307,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     private AS400 getToolboxAS400Object(boolean createNew) {
 
         try {
-            return IBMiConnection.getConnection(getHost()).getAS400ToolboxObject(createNew);
+            IBMiConnection connection = ConnectionManager.getIBMiConnection(getHost());
+            return connection.getAS400ToolboxObject(createNew);
         } catch (SystemMessageException e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
             return null;

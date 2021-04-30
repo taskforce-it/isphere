@@ -19,6 +19,7 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.etools.iseries.toolbox,
  biz.isphere.core,
  biz.isphere.base,
- biz.isphere.messagesubsystem
+ biz.isphere.messagesubsystem,
+ biz.isphere.rse
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
