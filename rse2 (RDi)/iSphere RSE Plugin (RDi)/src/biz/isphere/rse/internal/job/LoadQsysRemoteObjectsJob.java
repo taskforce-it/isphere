@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 
 import biz.isphere.core.dataspaceeditordesigner.rse.IListOfRemoteObjectsReceiver;
 import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.rse.connection.ConnectionManager;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject;
 
 public class LoadQsysRemoteObjectsJob extends Job {
@@ -45,12 +45,12 @@ public class LoadQsysRemoteObjectsJob extends Job {
         List<QSYSRemoteObject> qsysRemoteObjects = getRSESourceObjects(droppedObjects);
         List<RemoteObject> remoteObjects = new ArrayList<RemoteObject>();
         for (QSYSRemoteObject qsysRemoteObject : qsysRemoteObjects) {
-            String connectionName = IBMiConnection.getConnection(getHost(qsysRemoteObject)).getConnectionName();
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(getHost(qsysRemoteObject));
             String name = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
             String objectType = qsysRemoteObject.getType();
             String description = qsysRemoteObject.getDescription();
-            remoteObjects.add(new RemoteObject(connectionName, name, library, objectType, description));
+            remoteObjects.add(new RemoteObject(qualifiedConnectionName, name, library, objectType, description));
         }
         receiver.setRemoteObjects(remoteObjects.toArray(new RemoteObject[remoteObjects.size()]));
 

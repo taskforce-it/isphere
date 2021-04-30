@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,11 @@
 package biz.isphere.rse.dataspace.rse;
 
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.RemoteObject;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.CharacterDataArea;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
  * Class that serves as a universal data provider for data area and user space
@@ -32,8 +32,9 @@ public class WrappedDataSpace extends AbstractWrappedDataSpace {
         super(remoteObject);
     }
 
-    protected AS400 getSystem(String connectionName) throws Exception {
-        return IBMiConnection.getConnection(connectionName).getAS400ToolboxObject();
+    protected AS400 getSystem(String qualifiedConnectionName) throws Exception {
+        AS400 system = IBMiHostContributionsHandler.getSystem(qualifiedConnectionName);
+        return system;
     }
 
     protected byte[] loadCharacterDataAreaBytes(CharacterDataArea characterDataArea) throws Exception {
