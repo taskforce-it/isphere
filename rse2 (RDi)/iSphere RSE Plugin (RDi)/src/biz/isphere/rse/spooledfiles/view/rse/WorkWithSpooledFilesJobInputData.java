@@ -46,6 +46,6 @@ public class WorkWithSpooledFilesJobInputData extends AbstractWorkWithSpooledFil
 
     @Override
     public String getContentId() {
-        return INPUT_TYPE + String.format("%s:%s:%s", getConnectionName(), getFilterName()); //$NON-NLS-1$
+        return INPUT_TYPE + String.format("%s:%s", getConnectionName(), getFilterName()); //$NON-NLS-1$
     }
 }
