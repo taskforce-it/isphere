@@ -203,6 +203,10 @@ public class ConnectionManager implements ISystemModelChangeListener {
         return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
     }
 
+    public static IBMiConnection getIBMiConnection(IHost host) {
+        return IBMiConnection.getConnection(host);
+    }
+
     private ConnectionProperties getOrCreateProperties(IHost host) {
 
         String connectionName = getConnectionName(host);
