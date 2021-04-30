@@ -8,7 +8,9 @@
 
 package biz.isphere.rse.spooledfiles.view.rse;
 
+import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterReference;
+import org.eclipse.rse.core.subsystems.ISubSystem;
 
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.rse.connection.ConnectionManager;
@@ -46,6 +48,22 @@ public class WorkWithSpooledFilesFilterInputData extends AbstractWorkWithSpooled
 
     public String getContentId() {
         return INPUT_TYPE + String.format("%s:%s:%s:%s", getConnectionName(), getFilterReferenceName(), getFilterPoolName(), getFilterName()); //$NON-NLS-1$
+    }
+
+    public boolean isSameFilterReference(WorkWithSpooledFilesFilterInputData other) {
+
+        if (other == null) {
+            return false;
+        }
+
+        ISubSystem otherSubSystem = other.filterReference.getSubSystem();
+        ISystemFilter otherReferencesFilter = other.filterReference.getReferencedFilter();
+
+        if (this.filterReference.getSubSystem().equals(otherSubSystem) && this.filterReference.getReferencedFilter().equals(otherReferencesFilter)) {
+            return true;
+        }
+
+        return false;
     }
 
     private String getFilterReferenceName() {
