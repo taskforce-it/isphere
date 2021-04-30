@@ -632,7 +632,7 @@ public class XRDiContributions implements IIBMiHostContributions {
             throw new IllegalArgumentException("Parameter 'profile' must not be null");
         }
 
-        return IBMiConnection.getConnection(profile, connectionName);
+        return ConnectionManager.getIBMiConnection(profile, connectionName);
     }
 
     /**
