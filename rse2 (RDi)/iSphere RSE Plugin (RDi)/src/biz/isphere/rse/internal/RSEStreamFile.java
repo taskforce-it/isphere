@@ -45,7 +45,7 @@ public class RSEStreamFile extends StreamFile {
     }
 
     public IBMiConnection getRSEConnection() {
-        return IBMiConnection.getConnection(_editableStreamFile.getSubSystem().getHost());
+        return ConnectionManager.getIBMiConnection(_editableStreamFile.getSubSystem().getHost());
     }
 
     @Override
