@@ -23,6 +23,7 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectLock;
 import com.ibm.etools.iseries.rse.ui.IBMiRSEPlugin;
@@ -66,7 +67,9 @@ public class RSEMember extends Member {
 
     @Override
     public String getConnection() {
-        return _editableMember.getISeriesConnection().getConnectionName();
+        IBMiConnection connection = _editableMember.getISeriesConnection();
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
+        return qualifiedConnectionName;
     }
 
     @Override
@@ -95,8 +98,8 @@ public class RSEMember extends Member {
     @Override
     public boolean download(IProgressMonitor monitor) throws Exception {
         if (_editableMember.getISeriesConnection().isOffline()) {
-            String connectionName = _editableMember.getISeriesConnection().getConnectionName();
-            String message = Messages.bind(Messages.Connection_is_offline, connectionName);
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(_editableMember.getISeriesConnection());
+            String message = Messages.bind(Messages.Connection_is_offline, qualifiedConnectionName);
             throw new SystemMessageException(new SystemMessage("RSE", "ISPHERE", "0", SystemMessage.ERROR, message, ""));
         }
         return _editableMember.download(monitor);
@@ -121,7 +124,8 @@ public class RSEMember extends Member {
 
         _editableMember.connect();
         if (!_editableMember.isConnected()) {
-            return Messages.bind(Messages.Failed_to_connect_to_system_A, _editableMember.getISeriesConnection().getConnectionName());
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(_editableMember.getISeriesConnection());
+            return Messages.bind(Messages.Failed_to_connect_to_system_A, qualifiedConnectionName);
         }
         _editableMember.closeStream();
 

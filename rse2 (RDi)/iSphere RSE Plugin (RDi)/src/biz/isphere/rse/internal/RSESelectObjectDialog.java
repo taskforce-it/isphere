@@ -29,6 +29,7 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.swt.widgets.objectselector.SelectRemoteQSYSObjectDialog;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSMsgFilePrompt;
@@ -181,7 +182,8 @@ public class RSESelectObjectDialog extends XDialog {
             return;
         }
 
-        remoteObject = new RemoteObject(connection.getConnectionName(), qsysObject.getName(), qsysObject.getLibrary(), objectType,
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
+        remoteObject = new RemoteObject(qualifiedConnectionName, qsysObject.getName(), qsysObject.getLibrary(), objectType,
             qsysObject.getDescription());
 
         saveScreenValues();
