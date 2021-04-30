@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
 import biz.isphere.core.internal.StreamFile;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEStreamFile;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
@@ -47,7 +48,8 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     private String ancestorDirectory;
     private String ancestorStreamFile;
 
-    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile, RSEStreamFile ancestorStreamFile) {
+    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile,
+        RSEStreamFile ancestorStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         this.rseLeftStreamFile = leftStreamFile;
         initializeRightStreamFile(rightStreamFile);
@@ -174,67 +176,64 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
         if (hasMultipleRightStreamFiles()) {
 
-            rightConnection = IBMiConnection.getConnection(rightConnectionCombo.getHost());
+            rightConnection = ConnectionManager.getIBMiConnection(rightConnectionCombo.getHost());
             rightDirectory = getRightDirectoryName();
             rightStreamFile = null;
 
             // TODO : Check directory for validity : RIGHT
-/*
-            IQSYSDirectory _directory = null;
-            try {
-                _directory = rightConnection.getDirectory(rightDirectory, null);
-            } catch (Exception e) {
-            }
-            if (_directory == null) {
-                String message = biz.isphere.core.Messages.bind(Messages.Directory_A_not_found, new Object[] { rightDirectory });
-                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                rightStreamFilePrompt.getDirectoryCombo().setFocus();
-                return;
-            }
- */           
+            /*
+             * IQSYSDirectory _directory = null; try { _directory =
+             * rightConnection.getDirectory(rightDirectory, null); } catch
+             * (Exception e) { } if (_directory == null) { String message =
+             * biz.isphere.core.Messages.bind(Messages.Directory_A_not_found,
+             * new Object[] { rightDirectory });
+             * MessageDialog.openError(getShell(),
+             * biz.isphere.core.Messages.Error, message);
+             * rightStreamFilePrompt.getDirectoryCombo().setFocus(); return; }
+             */
 
         } else if (!hasRightStreamFile()) {
 
-            rightConnection = IBMiConnection.getConnection(rightConnectionCombo.getHost());
+            rightConnection = ConnectionManager.getIBMiConnection(rightConnectionCombo.getHost());
             rightDirectory = getRightDirectoryName();
             rightStreamFile = getRightStreamFileName();
-            
+
             // TODO : Check stream file for validity : RIGHT
 
-/*
-            RSEStreamFile _rightStreamFile = getRightRSEStreamFile();
-            if (_rightStreamFile == null) {
-                rightStreamFilePrompt.getStreamFileCombo().setFocus();
-                return;
-            } else if (!_rightStreamFile.exists()) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.StreamFile_2_in_directory_0_not_found, new Object[] {
-                    rightDirectory, rightStreamFile });
-                MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                rightStreamFilePrompt.getStreamFileCombo().setFocus();
-                return;
-            }
-*/
+            /*
+             * RSEStreamFile _rightStreamFile = getRightRSEStreamFile(); if
+             * (_rightStreamFile == null) {
+             * rightStreamFilePrompt.getStreamFileCombo().setFocus(); return; }
+             * else if (!_rightStreamFile.exists()) { String message =
+             * biz.isphere.core.Messages.bind(biz.isphere.core.Messages.
+             * StreamFile_2_in_directory_0_not_found, new Object[] {
+             * rightDirectory, rightStreamFile });
+             * MessageDialog.openError(getShell(),
+             * biz.isphere.core.Messages.Error, message);
+             * rightStreamFilePrompt.getStreamFileCombo().setFocus(); return; }
+             */
             if (isThreeWay()) {
 
-                ancestorConnection = IBMiConnection.getConnection(ancestorConnectionCombo.getHost());
+                ancestorConnection = ConnectionManager.getIBMiConnection(ancestorConnectionCombo.getHost());
                 ancestorDirectory = getAncestorDirectoryName();
                 ancestorStreamFile = getAncestorStreamFileName();
-                
+
                 // TODO : Check stream file for validity : ANCESTOR
-                
-/*
-                RSEStreamFile _ancestorStreamFile = getAncestorRSEStreamFile();
-                if (_ancestorStreamFile == null) {
-                    ancestorStreamFilePrompt.getStreamFileCombo().setFocus();
-                    return;
-                } else if (!_ancestorStreamFile.exists()) {
-                    String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.StreamFile_2_in_directory_0_not_found,
-                        new Object[] { ancestorDirectory, ancestorStreamFile });
-                    MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
-                    ancestorStreamFilePrompt.getStreamFileCombo().setFocus();
-                    return;
-                }
-*/
+
+                /*
+                 * RSEStreamFile _ancestorStreamFile =
+                 * getAncestorRSEStreamFile(); if (_ancestorStreamFile == null)
+                 * { ancestorStreamFilePrompt.getStreamFileCombo().setFocus();
+                 * return; } else if (!_ancestorStreamFile.exists()) { String
+                 * message =
+                 * biz.isphere.core.Messages.bind(biz.isphere.core.Messages
+                 * .StreamFile_2_in_directory_0_not_found, new Object[] {
+                 * ancestorDirectory, ancestorStreamFile });
+                 * MessageDialog.openError(getShell(),
+                 * biz.isphere.core.Messages.Error, message);
+                 * ancestorStreamFilePrompt.getStreamFileCombo().setFocus();
+                 * return; }
+                 */
             }
 
         }
@@ -246,9 +245,8 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     @Override
     public boolean canFinish() {
         if (isThreeWay()) {
-            if (getRightStreamFileName() == null || getRightStreamFileName().length() == 0
-                || getRightDirectoryName() == null || getRightDirectoryName().length() == 0 || getAncestorStreamFileName() == null
-                || getAncestorStreamFileName().length() == 0
+            if (getRightStreamFileName() == null || getRightStreamFileName().length() == 0 || getRightDirectoryName() == null
+                || getRightDirectoryName().length() == 0 || getAncestorStreamFileName() == null || getAncestorStreamFileName().length() == 0
                 || getAncestorDirectoryName() == null || getAncestorDirectoryName().length() == 0) {
                 return false;
             }
@@ -381,7 +379,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         initializeRightStreamFile((RSEStreamFile)leftStreamFile);
         this.rseLeftStreamFile = (RSEStreamFile)rightStreamFile;
     }
-    
+
     public IFSFileServiceSubSystem getFileServiceSubSystem(IBMiConnection ibmiConnection) {
         IFSFileServiceSubSystem fileServiceSubSystem = null;
         ISubSystem[] sses = RSECorePlugin.getTheSystemRegistry().getSubSystems(ibmiConnection.getHost());
