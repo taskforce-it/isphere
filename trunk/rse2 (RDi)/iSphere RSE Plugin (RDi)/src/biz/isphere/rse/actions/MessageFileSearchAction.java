@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
@@ -38,6 +39,7 @@ import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
 
 import com.ibm.as400.access.AS400;
@@ -87,8 +89,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                         _selectedElements.add(element);
 
-                        checkIfMultipleConnections(IBMiConnection.getConnection(((IRemoteObjectContextProvider)element).getRemoteObjectContext()
-                            .getObjectSubsystem().getHost()));
+                        IHost host = ((IRemoteObjectContextProvider)element).getRemoteObjectContext().getObjectSubsystem().getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                     }
 
@@ -102,8 +104,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
-                        .getHost()));
+                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
@@ -115,8 +117,8 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
                     _selectedElements.add(element);
 
-                    checkIfMultipleConnections(IBMiConnection.getConnection(((SubSystem)element.getFilterPoolReferenceManager().getProvider())
-                        .getHost()));
+                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 }
 
@@ -181,30 +183,31 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
 
             AS400 as400 = null;
             Connection jdbcConnection = null;
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(_connection);
+
             try {
                 as400 = _connection.getAS400ToolboxObject();
-                jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(_connection.getConnectionName());
+                jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
             } catch (Exception e) {
                 ISpherePlugin.logError("*** Could not get JDBC connection ***", e);
             }
 
             if (as400 != null && jdbcConnection != null) {
 
-                String connectionName = _connection.getConnectionName();
-                if (ISphereHelper.checkISphereLibrary(_shell, connectionName)) {
+                if (ISphereHelper.checkISphereLibrary(_shell, qualifiedConnectionName)) {
 
                     SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
                     if (dialog.open() == Dialog.OK) {
 
                         SearchPostRun postRun = new SearchPostRun();
                         postRun.setConnection(_connection);
-                        postRun.setConnectionName(connectionName);
+                        postRun.setConnectionName(qualifiedConnectionName);
                         postRun.setSearchString(dialog.getCombinedSearchString());
                         postRun.setSearchElements(_searchElements);
                         postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 
-                        new SearchExec().execute(as400, connectionName, jdbcConnection, dialog.getSearchOptions(), dialog.getSelectedElements(),
-                            postRun);
+                        new SearchExec().execute(as400, qualifiedConnectionName, jdbcConnection, dialog.getSearchOptions(),
+                            dialog.getSelectedElements(), postRun);
 
                     }
 
