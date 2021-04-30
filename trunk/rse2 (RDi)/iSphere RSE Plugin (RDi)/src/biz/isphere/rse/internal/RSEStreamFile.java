@@ -15,6 +15,7 @@ import org.eclipse.rse.files.ui.resources.SystemUniversalTempFileListener;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 
 import biz.isphere.core.internal.StreamFile;
+import biz.isphere.rse.connection.ConnectionManager;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -49,7 +50,8 @@ public class RSEStreamFile extends StreamFile {
 
     @Override
     public String getConnection() {
-        return IBMiConnection.getConnection(_editableStreamFile.getSubSystem().getHost()).getConnectionName();
+        String qualifiedCOnnectionName = ConnectionManager.getConnectionName(_editableStreamFile.getSubSystem().getHost());
+        return qualifiedCOnnectionName;
     }
 
     @Override
@@ -88,12 +90,12 @@ public class RSEStreamFile extends StreamFile {
 
     @Override
     public void openStream() throws Exception {
-//        _editableStreamFile.openStream();
+        // _editableStreamFile.openStream();
     }
 
     @Override
     public void closeStream() throws Exception {
-//        _editableStreamFile.closeStream();
+        // _editableStreamFile.closeStream();
     }
 
     @Override
