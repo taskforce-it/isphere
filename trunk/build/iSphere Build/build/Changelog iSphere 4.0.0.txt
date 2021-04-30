@@ -1,6 +1,6 @@
 
-Changelog: iSphere 4.0.4.r
---------------------------
+Changelog: iSphere 4.1.0.b001
+-----------------------------
  • Fixed problems in various views and editors, when using connection
    profiles.
  • Fixed NullPointerException, when closing the data queue monitor,
