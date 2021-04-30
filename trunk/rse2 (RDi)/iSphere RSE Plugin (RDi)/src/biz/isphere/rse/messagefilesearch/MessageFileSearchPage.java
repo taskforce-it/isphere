@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
@@ -428,7 +429,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         connectionCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 debugPrint("Connection: -> SelectionListener"); //$NON-NLS-1$
-                loadFilterPoolsOfConnection(connectionCombo.getText());
+                loadFilterPoolsOfConnection(ConnectionManager.getConnectionName(connectionCombo.getHost()));
             }
 
             public void widgetDefaultSelected(SelectionEvent event) {
@@ -477,7 +478,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         includeMessageIdButton.setSelection(loadBooleanValue(INCLUDE_MESSAGE_ID, false));
 
         if (loadValue(CONNECTION, null) != null) {
-            IBMiConnection connection = IBMiConnection.getConnection(loadValue(CONNECTION, null));
+            IBMiConnection connection = ConnectionManager.getIBMiConnection(loadValue(CONNECTION, null));
             if (connection != null) {
                 debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
                 connectionCombo.select(connection);
@@ -671,7 +672,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
      * @return name of the RSE connection
      */
     private String getConnectionName() {
-        return connectionCombo.getText();
+        return ConnectionManager.getConnectionName(connectionCombo.getHost());
     }
 
     private ISystemFilter getFilter() {
@@ -777,8 +778,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             StructuredSelection tSelection = (StructuredSelection)connectionCombo.getSelection();
             IHost tHost = (IHost)tSelection.getFirstElement();
 
-            IBMiConnection tConnection = IBMiConnection.getConnection(tHost);
-            if (!ISphereHelper.checkISphereLibrary(getShell(), tConnection.getConnectionName())) {
+            IBMiConnection tConnection = ConnectionManager.getIBMiConnection(tHost);
+            String tQualifiedConnectionName = ConnectionManager.getConnectionName(tHost);
+            if (!ISphereHelper.checkISphereLibrary(getShell(), tQualifiedConnectionName)) {
                 return false;
             }
 
@@ -796,7 +798,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
             SearchPostRun postRun = new SearchPostRun();
             postRun.setConnection(tConnection);
-            postRun.setConnectionName(tConnection.getConnectionName());
+            postRun.setConnectionName(tQualifiedConnectionName);
             postRun.setSearchString(getCombinedSearchString());
             postRun.setSearchElements(searchElements);
             postRun.setWorkbenchWindow(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
@@ -821,9 +823,9 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
             searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_SECOND_LEVEL_TEXT, new Boolean(isIncludeSecondLevelText()));
             searchOptions.setGenericOption(GenericSearchOption.MSGF_INCLUDE_MESSAGE_ID, new Boolean(isIncludeMessageId()));
 
-            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tConnection.getConnectionName());
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(tQualifiedConnectionName);
 
-            new SearchExec().execute(tConnection.getAS400ToolboxObject(), tConnection.getHost().getName(), jdbcConnection, searchOptions,
+            new SearchExec().execute(tConnection.getAS400ToolboxObject(), tQualifiedConnectionName, jdbcConnection, searchOptions,
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
