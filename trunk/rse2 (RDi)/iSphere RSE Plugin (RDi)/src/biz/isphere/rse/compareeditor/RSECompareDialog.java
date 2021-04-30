@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
@@ -181,7 +182,7 @@ public class RSECompareDialog extends CompareDialog {
         if (member instanceof RSEMember) {
             return ((RSEMember)member).getRSEConnection();
         } else {
-            return IBMiConnection.getConnection(member.getConnection());
+            return ConnectionManager.getIBMiConnection(member.getConnection());
         }
 
     }
@@ -559,15 +560,17 @@ public class RSECompareDialog extends CompareDialog {
             // return value for read-only left member
             return leftConnection;
         }
-        return IBMiConnection.getConnection(getCurrentLeftConnectionName());
+        return ConnectionManager.getIBMiConnection(getCurrentLeftConnectionName());
     }
 
     private String getCurrentLeftConnectionName() {
         if (leftConnectionCombo == null) {
             // return value for read-only left member
-            return getLeftConnection().getConnectionName();
+            IBMiConnection connection = getLeftConnection();
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
+            return qualifiedConnectionName;
         }
-        return leftConnectionCombo.getHost().getName();
+        return ConnectionManager.getConnectionName(leftConnectionCombo.getHost());
     }
 
     private String getCurrentLeftLibraryName() {
@@ -595,11 +598,12 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     private IBMiConnection getCurrentRightConnection() {
-        return IBMiConnection.getConnection(getCurrentRightConnectionName());
+        return ConnectionManager.getIBMiConnection(getCurrentRightConnectionName());
     }
 
     private String getCurrentRightConnectionName() {
-        return rightConnectionCombo.getHost().getName();
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(rightConnectionCombo.getHost());
+        return qualifiedConnectionName;
     }
 
     private String getCurrentRightLibraryName() {
@@ -615,11 +619,12 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     private IBMiConnection getCurrentAncestorConnection() {
-        return IBMiConnection.getConnection(getCurrentAncestorConnectionName());
+        return ConnectionManager.getIBMiConnection(getCurrentAncestorConnectionName());
     }
 
     private String getCurrentAncestorConnectionName() {
-        return ancestorConnectionCombo.getHost().getName();
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(ancestorConnectionCombo.getHost());
+        return qualifiedConnectionName;
     }
 
     private String getCurrentAncestorLibraryName() {
