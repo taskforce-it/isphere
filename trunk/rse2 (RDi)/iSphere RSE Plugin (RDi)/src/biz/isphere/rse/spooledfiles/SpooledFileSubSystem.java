@@ -117,7 +117,8 @@ public class SpooledFileSubSystem extends SubSystem implements IISeriesSubSystem
     }
 
     public QSYSObjectSubSystem getObjectSubSystem() {
-        return IBMiConnection.getConnection(getHost()).getQSYSObjectSubSystem();
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(getHost());
+        return connection.getQSYSObjectSubSystem();
     }
 
     public String getConnectionName() {
