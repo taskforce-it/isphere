@@ -25,6 +25,7 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
@@ -230,7 +231,7 @@ public class RSEFilterHelper extends AbstractSystemHelper {
 
     private static IBMiConnection getConnection(String connectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
 
         return connection;
     }

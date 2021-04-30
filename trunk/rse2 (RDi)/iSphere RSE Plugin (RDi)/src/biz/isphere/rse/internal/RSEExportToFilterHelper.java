@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.core.internal.FilterUpdateType;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesLibraryFilterString;
@@ -168,7 +169,7 @@ public class RSEExportToFilterHelper {
 
     private static IBMiConnection getConnection(String connectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
 
         return connection;
     }
