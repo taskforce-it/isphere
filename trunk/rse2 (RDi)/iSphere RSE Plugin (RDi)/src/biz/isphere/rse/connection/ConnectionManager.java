@@ -77,7 +77,7 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
     public ConnectionProperties getConnectionProperties(String connectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getIBMiConnection(connectionName);
 
         if (connection == null) {
             return null;
@@ -88,7 +88,7 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
     public void saveConnectionProperties(String connectionName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = getIBMiConnection(connectionName);
 
         if (connection == null) {
             return;
