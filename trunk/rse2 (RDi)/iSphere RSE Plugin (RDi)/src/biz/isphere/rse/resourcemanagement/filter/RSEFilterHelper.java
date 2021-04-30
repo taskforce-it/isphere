@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,10 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         List<ISystemFilterPoolReference> filterPools = new LinkedList<ISystemFilterPoolReference>();
 
         IBMiConnection connection = getConnection(connectionName);
+        if (connection == null) {
+            return new ISystemFilterPoolReference[0];
+        }
+
         ISubSystem subSystem = getObjectSubSystem(connection);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
