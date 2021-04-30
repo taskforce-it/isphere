@@ -29,6 +29,7 @@ import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesInputData;
 import biz.isphere.core.spooledfiles.view.rse.AbstractWorkWithSpooledFilesView;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.spooledfiles.SpooledFileSubSystem;
 import biz.isphere.rse.spooledfiles.view.rse.WorkWithSpooledFilesFilterInputData;
 
@@ -85,7 +86,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
             } else if (event.getSource() instanceof IHost) {
                 // Connection renamed.
                 IHost host = (IHost)event.getSource();
-                IBMiConnection connection = IBMiConnection.getConnection(host.getAliasName());
+                IBMiConnection connection = ConnectionManager.getIBMiConnection(host);
                 ISubSystem subSystem = connection.getSubSystemByClass(SpooledFileSubSystem.ID);
                 ISystemFilterReference[] filterReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterReferences(subSystem);
                 for (ISystemFilterReference reference : filterReferences) {
@@ -117,17 +118,19 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
     private void doEvent(int eventType, ISystemFilterReference filterReference) {
 
         WorkWithSpooledFilesFilterInputData newInputData = new WorkWithSpooledFilesFilterInputData(filterReference);
-        String thisContentId = newInputData.getContentId();
 
         WorkWithSpooledFilesFilterInputData otherInputData = (WorkWithSpooledFilesFilterInputData)getInputData();
+        if (otherInputData == null) {
+            return;
+        }
 
-        if (thisContentId != null && thisContentId.equals(otherInputData.getContentId())) {
+        if (otherInputData.isSameFilterReference(newInputData)) {
 
             if (canRefresh(eventType)) {
 
                 switch (eventType) {
                 case ISystemResourceChangeEvents.EVENT_RENAME:
-                    refreshTitle();
+                    setInputData(newInputData);
                     break;
                 case ISystemResourceChangeEvents.EVENT_CHANGE_FILTER_REFERENCE:
                     setInputData(newInputData);
@@ -185,7 +188,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
             return null;
         }
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
         ISubSystem subSystem = connection.getSubSystemByClass(SpooledFileSubSystem.ID);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference filterPoolReference : filterPoolReferences) {
@@ -206,7 +209,7 @@ public class WorkWithSpooledFilesView extends AbstractWorkWithSpooledFilesView i
     @Override
     protected AbstractWorkWithSpooledFilesInputData produceInputData(String connectionName, String filterPoolName, String filterName) {
 
-        IBMiConnection connection = IBMiConnection.getConnection(connectionName);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
         if (connection == null) {
             return null;
         }
