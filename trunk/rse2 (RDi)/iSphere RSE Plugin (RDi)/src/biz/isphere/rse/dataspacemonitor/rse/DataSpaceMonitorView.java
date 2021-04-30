@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import biz.isphere.core.internal.IControlDecoration;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.rse.ISphereRSEPlugin;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.dataspace.rse.WrappedDataSpace;
 import biz.isphere.rse.dataspaceeditordesigner.rse.DropDataSpaceListener;
 import biz.isphere.rse.internal.RSEControlDecoration;
@@ -41,8 +42,9 @@ public class DataSpaceMonitorView extends AbstractDataSpaceMonitorView {
     @Override
     protected AbstractWrappedDataSpace createDataSpaceWrapper(RemoteObject remoteObject) throws Exception {
 
-        IQSYSObject object = IBMiConnection.getConnection(remoteObject.getConnectionName()).getObject(remoteObject.getLibrary(),
-            remoteObject.getName(), remoteObject.getObjectType(), null);
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(remoteObject.getConnectionName());
+
+        IQSYSObject object = connection.getObject(remoteObject.getLibrary(), remoteObject.getName(), remoteObject.getObjectType(), null);
         if (object == null) {
             return null;
         }
