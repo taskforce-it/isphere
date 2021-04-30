@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ package biz.isphere.tn5250j.rse.designerpart;
 import org.eclipse.swt.widgets.Shell;
 import org.tn5250j.Session5250;
 
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.tn5250j.core.designerpart.CoreDesignerPanel;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JGUI;
@@ -34,7 +35,7 @@ public class DesignerPanel extends CoreDesignerPanel {
     @Override
     public String getHost() {
         DesignerInfo designerInfo = (DesignerInfo)getTN5250JInfo();
-        IBMiConnection iSeriesConnection = IBMiConnection.getConnection(designerInfo.getRSEProfil(), designerInfo.getRSEConnection());
+        IBMiConnection iSeriesConnection = ConnectionManager.getIBMiConnection(designerInfo.getRSEProfil(), designerInfo.getRSEConnection());
         if (iSeriesConnection != null) {
             return iSeriesConnection.getHostName();
         }

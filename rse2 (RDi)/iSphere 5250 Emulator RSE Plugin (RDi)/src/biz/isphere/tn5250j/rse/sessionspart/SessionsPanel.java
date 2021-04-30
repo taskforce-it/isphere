@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,8 @@ import org.tn5250j.framework.tn5250.ScreenField;
 import org.tn5250j.framework.tn5250.ScreenFields;
 import org.tn5250j.keyboard.HostKey;
 
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.tn5250j.core.session.Session;
 import biz.isphere.tn5250j.core.sessionspart.CoreSessionsPanel;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JGUI;
@@ -24,6 +23,8 @@ import biz.isphere.tn5250j.core.tn5250jpart.TN5250JInfo;
 import biz.isphere.tn5250j.rse.sessionspart.handler.OpenCompareAsync;
 import biz.isphere.tn5250j.rse.sessionspart.handler.OpenLpexAsync;
 import biz.isphere.tn5250j.rse.sessionspart.handler.SetSEPAsync;
+
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class SessionsPanel extends CoreSessionsPanel {
 
@@ -246,7 +247,7 @@ public class SessionsPanel extends CoreSessionsPanel {
     @Override
     public String getHost() {
         SessionsInfo sessionsInfo = (SessionsInfo)getTN5250JInfo();
-        IBMiConnection iSeriesConnection = IBMiConnection.getConnection(sessionsInfo.getRSEProfil(), sessionsInfo.getRSEConnection());
+        IBMiConnection iSeriesConnection = ConnectionManager.getIBMiConnection(sessionsInfo.getRSEProfil(), sessionsInfo.getRSEConnection());
         if (iSeriesConnection != null) {
             return iSeriesConnection.getHostName();
         }
