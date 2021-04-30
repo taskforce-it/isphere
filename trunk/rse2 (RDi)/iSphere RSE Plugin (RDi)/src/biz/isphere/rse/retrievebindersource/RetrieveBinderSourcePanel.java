@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.retrievebindersource.AbstractRetrieveBinderSourcePanel;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.rse.Messages;
+import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
 
 import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
@@ -159,11 +161,17 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
         isEnabledConnectionCombo = enabled;
     }
 
-    public void setConnectionName(String connectionName) {
+    public void setConnectionName(String qualifiedConnectionName) {
+
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
+            return;
+        }
+
+        String tQualifiedConnectionName = new QualifiedConnectionName(qualifiedConnectionName).getConnectionName();
 
         String[] connectionNames = connectionCombo.getItems();
         for (int i = 0; i < connectionNames.length; i++) {
-            if (connectionNames[i].equals(connectionName)) {
+            if (connectionNames[i].equals(tQualifiedConnectionName)) {
                 connectionCombo.setSelectionIndex(i);
                 return;
             }
