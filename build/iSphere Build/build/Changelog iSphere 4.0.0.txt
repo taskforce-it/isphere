@@ -5,6 +5,9 @@ Changelog: iSphere 4.1.0.b001
    system profiles.
  • Fixed NullPointerException, when closing the data queue monitor,
    when auto-refresh is enabled.
+ • Fixed problem that property "Display informational messages as
+   list on startup" on the "Message Queue Monitoring" properties
+   page was not persisted.
 
 Changelog: iSphere 4.0.2.r/4.0.3.r
 ----------------------------------
