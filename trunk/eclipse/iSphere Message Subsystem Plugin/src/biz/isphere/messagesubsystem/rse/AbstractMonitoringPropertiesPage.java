@@ -49,12 +49,10 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
     private Button monitorButton;
     private Button removeButton;
-    private Label removeLabel;
     private Composite prefGroup;
     private Combo inqCombo;
     private Combo infCombo;
     private Button collectMessagesButton;
-    private Label collectMessagesLabel;
     private Group emailGroup;
     private Text emailText;
     private Text fromText;
@@ -108,30 +106,18 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         Composite monGroup = new Composite(propsGroup, SWT.NONE);
         GridLayout monLayout = new GridLayout();
-        monLayout.numColumns = 2;
+        monLayout.numColumns = 1;
         monGroup.setLayout(monLayout);
         monGroup.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
-        monitorButton = WidgetFactory.createCheckbox(monGroup);
+        monitorButton = WidgetFactory.createCheckbox(monGroup, Messages.Monitor_message_queue);
         monitorButton.setToolTipText(Messages.Monitor_message_queue_tooltip);
 
-        Label monitorLabel = new Label(monGroup, SWT.NONE);
-        monitorLabel.setText(Messages.Monitor_message_queue);
-        monitorLabel.setToolTipText(Messages.Monitor_message_queue_tooltip);
-
-        removeButton = WidgetFactory.createCheckbox(monGroup);
+        removeButton = WidgetFactory.createCheckbox(monGroup, Messages.Remove_informational_messages_after_notification);
         removeButton.setToolTipText(Messages.Remove_informational_messages_after_notification_tooltip);
 
-        removeLabel = new Label(monGroup, SWT.NONE);
-        removeLabel.setText(Messages.Remove_informational_messages_after_notification);
-        removeLabel.setToolTipText(Messages.Remove_informational_messages_after_notification_tooltip);
-
-        collectMessagesButton = WidgetFactory.createCheckbox(monGroup);
+        collectMessagesButton = WidgetFactory.createCheckbox(monGroup, Messages.Collect_informational_messages_on_startup);
         collectMessagesButton.setToolTipText(Messages.Collect_informational_messages_on_startup_tooltip);
-
-        collectMessagesLabel = new Label(monGroup, SWT.NONE);
-        collectMessagesLabel.setText(Messages.Collect_informational_messages_on_startup);
-        collectMessagesLabel.setToolTipText(Messages.Collect_informational_messages_on_startup_tooltip);
 
         prefGroup = new Composite(propsGroup, SWT.NONE);
         GridLayout prefLayout = new GridLayout();
@@ -394,6 +380,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         monitorButton.setSelection(monitoringAttributes.isMonitoringEnabled());
         removeButton.setSelection(monitoringAttributes.isRemoveInformationalMessages());
+        collectMessagesButton.setSelection(monitoringAttributes.isCollectMessagesOnStartup());
         inqCombo.select(inqCombo.indexOf(monitoringAttributes.getInqueryMessageNotificationTypeForGUI()));
         infCombo.select(inqCombo.indexOf(monitoringAttributes.getInformationalMessageNotificationTypeForGUI()));
         emailText.setText(monitoringAttributes.getEmail());
@@ -412,6 +399,7 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         monitoringAttributes.setMonitoring(monitorButton.getSelection());
         monitoringAttributes.setRemoveInformationalMessages(removeButton.getSelection());
+        monitoringAttributes.setCollectMessagesOnStartup(collectMessagesButton.getSelection());
         monitoringAttributes.setInqueryMessageNotificationTypeFromGUI(inqCombo.getText());
         monitoringAttributes.setInformationalMessageNotificationTypeFromGUI(infCombo.getText());
         monitoringAttributes.setEmail(emailText.getText());
@@ -430,16 +418,12 @@ public abstract class AbstractMonitoringPropertiesPage extends PropertyPage {
 
         if (!monitorButton.getSelection()) {
             removeButton.setVisible(false);
-            removeLabel.setVisible(false);
             collectMessagesButton.setVisible(false);
-            collectMessagesLabel.setVisible(false);
             prefGroup.setVisible(false);
             emailGroup.setVisible(false);
         } else {
             removeButton.setVisible(true);
-            removeLabel.setVisible(true);
             collectMessagesButton.setVisible(true);
-            collectMessagesLabel.setVisible(true);
 
             if (infCombo.getSelectionIndex() == infCombo.indexOf(Messages.Notification_type_Beep)) {
                 removeButton.setEnabled(false);
