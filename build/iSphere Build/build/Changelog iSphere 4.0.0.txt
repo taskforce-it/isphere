@@ -1,8 +1,8 @@
 
 Changelog: iSphere 4.1.0.b001
 -----------------------------
- • Fixed problems in various views and editors, when using connection
-   profiles.
+ • Fixed problems in various views and editors, when using remote
+   system profiles.
  • Fixed NullPointerException, when closing the data queue monitor,
    when auto-refresh is enabled.
 
