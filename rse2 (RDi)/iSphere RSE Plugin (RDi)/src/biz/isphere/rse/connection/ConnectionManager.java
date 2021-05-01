@@ -176,37 +176,71 @@ public class ConnectionManager implements ISystemModelChangeListener {
         commitProfile(profile);
     }
 
+    /**
+     * Returns the connection name in the form of "[profile]:connection".
+     * 
+     * @param qsysRemoteObject - A remote QSYS object.
+     * @return qualified connection name
+     */
     public static String getConnectionName(QSYSRemoteObject qsysRemoteObject) {
 
         IHost host = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getHost();
-        String profileName = host.getSystemProfileName();
-        String connectionName = host.getAliasName();
 
-        return getConnectionName(profileName, connectionName);
+        return getConnectionName(host);
     }
 
+    /**
+     * Returns the connection name in the form of "[profile]:connection".
+     * 
+     * @param connection - A remote system connection.
+     * @return qualified connection name
+     */
     public static String getConnectionName(IBMiConnection connection) {
         return getConnectionName(connection.getHost());
     }
 
+    /**
+     * Returns the connection name in the form of "[profile]:connection".
+     * 
+     * @param host - A remote system host.
+     * @return qualified connection name
+     */
     public static String getConnectionName(IHost host) {
         QualifiedConnectionName connectionName = new QualifiedConnectionName(host);
         return connectionName.getQualifiedName();
     }
 
-    public static String getConnectionName(String profileName, String connectionName) {
-        return new QualifiedConnectionName(profileName, connectionName).getQualifiedName();
-    }
-
+    /**
+     * Returns the remote system connection identified by a given qualified
+     * connection name.
+     * 
+     * @param qualifiedConnectionName - A qualified connection name.
+     * @return remote system connection
+     */
     public static IBMiConnection getIBMiConnection(String qualifiedConnectionName) {
         QualifiedConnectionName connectionName = new QualifiedConnectionName(qualifiedConnectionName);
         return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
     }
 
+    /**
+     * Returns the remote system connection identified by given profile and
+     * connection names.
+     * 
+     * @param profileName - A remote system profile name.
+     * @param connectionName - A connection name.
+     * @return remote system connection
+     */
     public static IBMiConnection getIBMiConnection(String profileName, String connectionName) {
         return IBMiConnection.getConnection(profileName, connectionName);
     }
 
+    /**
+     * Returns the remote system connection identified by a given remote system
+     * host.
+     * 
+     * @param host - A remote system host.
+     * @return remote system connection
+     */
     public static IBMiConnection getIBMiConnection(IHost host) {
         return IBMiConnection.getConnection(host);
     }

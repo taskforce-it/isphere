@@ -45,10 +45,7 @@ public class UserSpaceEditorAction implements IObjectActionDelegate {
 
         if (qsysRemoteObject.getType().equals(ISeries.USRSPC)) {
 
-            String profileName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-            String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-            String qualifiedConnectionName = ConnectionManager.getConnectionName(profileName, connectionName);
-
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(qsysRemoteObject);
             String userSpace = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
 
