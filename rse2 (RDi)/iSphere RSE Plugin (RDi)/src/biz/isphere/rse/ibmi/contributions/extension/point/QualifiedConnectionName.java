@@ -83,12 +83,15 @@ public class QualifiedConnectionName implements Comparable<QualifiedConnectionNa
     public QualifiedConnectionName(String qualifiedConnectionName) {
 
         int x = qualifiedConnectionName.lastIndexOf(CONNECTION_NAME_DELIMITER);
-        if (x < 0) {
-            profileName = getDefaultSystemProfileName();
-            connectionName = qualifiedConnectionName;
-        } else {
+        if (x > 0) {
             profileName = qualifiedConnectionName.substring(0, x);
             connectionName = qualifiedConnectionName.substring(x + 1);
+        } else if (x == 0) {
+            profileName = null;
+            connectionName = qualifiedConnectionName.substring(1);
+        } else {
+            profileName = null;
+            connectionName = qualifiedConnectionName;
         }
 
         if (StringHelper.isNullOrEmpty(connectionName)) {
@@ -106,7 +109,7 @@ public class QualifiedConnectionName implements Comparable<QualifiedConnectionNa
 
     public String getQualifiedName() {
 
-        if (profileName.matches(getDefaultSystemProfileName())) {
+        if (profileName == null || profileName.matches(getDefaultSystemProfileName())) {
             return connectionName;
         }
 
@@ -144,11 +147,20 @@ public class QualifiedConnectionName implements Comparable<QualifiedConnectionNa
 
     private int compareProfileNames(String other) {
 
+        int compare = compare(profileName, other);
+        if (compare == 0) {
+            return 0;
+        }
+
+        if (profileName == null) {
+            return -1;
+        }
+
         if (profileName.equals(getDefaultSystemProfileName())) {
             return -1;
         }
 
-        return compare(profileName, other);
+        return compare;
     }
 
     private int compareConnectionNames(String other) {
