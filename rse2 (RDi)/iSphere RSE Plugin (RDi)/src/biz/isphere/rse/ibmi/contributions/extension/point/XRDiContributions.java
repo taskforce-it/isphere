@@ -627,11 +627,6 @@ public class XRDiContributions implements IIBMiHostContributions {
      * @return IBMiConnection
      */
     private IBMiConnection getConnection(String profile, String connectionName) {
-
-        if (profile == null) {
-            throw new IllegalArgumentException("Parameter 'profile' must not be null");
-        }
-
         return ConnectionManager.getIBMiConnection(profile, connectionName);
     }
 
