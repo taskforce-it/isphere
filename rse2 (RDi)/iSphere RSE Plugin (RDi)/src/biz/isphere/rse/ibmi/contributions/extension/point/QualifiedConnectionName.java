@@ -12,6 +12,8 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemProfile;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
+import biz.isphere.base.internal.StringHelper;
+
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 /**
@@ -80,19 +82,16 @@ public class QualifiedConnectionName implements Comparable<QualifiedConnectionNa
      */
     public QualifiedConnectionName(String qualifiedConnectionName) {
 
-        String[] parts = qualifiedConnectionName.split(CONNECTION_NAME_DELIMITER);
-        switch (parts.length) {
-        case 1:
+        int x = qualifiedConnectionName.lastIndexOf(CONNECTION_NAME_DELIMITER);
+        if (x < 0) {
             profileName = getDefaultSystemProfileName();
-            connectionName = parts[0];
-            break;
+            connectionName = qualifiedConnectionName;
+        } else {
+            profileName = qualifiedConnectionName.substring(0, x);
+            connectionName = qualifiedConnectionName.substring(x + 1);
+        }
 
-        case 2:
-            profileName = parts[0];
-            connectionName = parts[1];
-            break;
-
-        default:
+        if (StringHelper.isNullOrEmpty(connectionName)) {
             throw new IllegalArgumentException("Illegal qualified connection name: " + qualifiedConnectionName);
         }
     }
