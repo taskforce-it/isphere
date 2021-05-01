@@ -45,9 +45,7 @@ public class DataAreaEditorAction implements IObjectActionDelegate {
 
         if (qsysRemoteObject.getType().equals(ISeries.DTAARA)) {
 
-            String profileName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getSystemProfileName();
-            String connectionName = qsysRemoteObject.getRemoteObjectContext().getObjectSubsystem().getObjectSubSystem().getHostAliasName();
-            String qualifiedConnectionName = ConnectionManager.getConnectionName(profileName, connectionName);
+            String qualifiedConnectionName = ConnectionManager.getConnectionName(qsysRemoteObject);
             String dataArea = qsysRemoteObject.getName();
             String library = qsysRemoteObject.getLibrary();
 
