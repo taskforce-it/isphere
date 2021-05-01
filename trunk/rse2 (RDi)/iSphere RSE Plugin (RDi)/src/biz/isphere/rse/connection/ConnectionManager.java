@@ -21,6 +21,7 @@ import org.eclipse.rse.core.model.IProperty;
 import org.eclipse.rse.core.model.IPropertySet;
 import org.eclipse.rse.core.model.ISystemProfile;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.preferences.Preferences;
@@ -221,7 +222,11 @@ public class ConnectionManager implements ISystemModelChangeListener {
      */
     public static IBMiConnection getIBMiConnection(String qualifiedConnectionName) {
         QualifiedConnectionName connectionName = new QualifiedConnectionName(qualifiedConnectionName);
-        return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
+        if (StringHelper.isNullOrEmpty(connectionName.getProfileName())) {
+            return IBMiConnection.getConnection(connectionName.getConnectionName());
+        } else {
+            return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
+        }
     }
 
     /**
