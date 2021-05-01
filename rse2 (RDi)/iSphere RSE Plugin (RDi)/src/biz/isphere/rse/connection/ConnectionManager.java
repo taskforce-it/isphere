@@ -222,11 +222,7 @@ public class ConnectionManager implements ISystemModelChangeListener {
      */
     public static IBMiConnection getIBMiConnection(String qualifiedConnectionName) {
         QualifiedConnectionName connectionName = new QualifiedConnectionName(qualifiedConnectionName);
-        if (StringHelper.isNullOrEmpty(connectionName.getProfileName())) {
-            return IBMiConnection.getConnection(connectionName.getConnectionName());
-        } else {
-            return IBMiConnection.getConnection(connectionName.getProfileName(), connectionName.getConnectionName());
-        }
+        return getIBMiConnection(connectionName.getProfileName(), connectionName.getConnectionName());
     }
 
     /**
