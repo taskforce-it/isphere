@@ -54,6 +54,7 @@ public class Access extends AbstractAccess {
      *        excluding IBM specific data can be managed on the preferences
      *        page.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJobTraceExplorer(Shell shell, String connectionName, String libraryName, String sessionID, boolean isIBMDataExcluded)
         throws Exception {

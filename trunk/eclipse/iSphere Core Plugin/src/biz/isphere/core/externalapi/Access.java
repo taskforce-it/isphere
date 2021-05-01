@@ -46,6 +46,7 @@ public class Access {
      * @param readOnly - specifies whether to open the message file in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly)
         throws Exception {
@@ -75,6 +76,7 @@ public class Access {
      * @param readOnly - specifies whether to open the binding directory in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly)
         throws Exception {
@@ -102,6 +104,7 @@ public class Access {
      * @param readOnly - specifies whether to open the data area in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) throws Exception {
 
@@ -128,6 +131,7 @@ public class Access {
      * @param readOnly - specifies whether to open the user space in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) throws Exception {
 
@@ -158,6 +162,7 @@ public class Access {
      *        right side of the editor.
      * @param configuration - message file editor configuration
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openMessageFileCompareEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
         String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration)
@@ -194,6 +199,7 @@ public class Access {
      * @param object - name of the object.
      * @param objectType - type of the object.
      * @return remote object
+     * @see QualifiedConnectionName
      */
     private static RemoteObject createRemoteObject(String connectionName, String library, String object, String objectType) {
 
@@ -223,6 +229,7 @@ public class Access {
      *        retrieved.
      * @param objectType - object type.
      * @return object description (text)
+     * @see QualifiedConnectionName
      */
     private static String getObjectDescription(String connectionName, String library, String object, String objectType) {
 

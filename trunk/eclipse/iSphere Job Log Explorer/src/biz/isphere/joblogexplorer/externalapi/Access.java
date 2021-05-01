@@ -34,6 +34,7 @@ public class Access extends AbstractAccess {
      * @param userName - name of the user profile under which the job is run.
      * @param jobNumber - job number assigned by the system.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJobLogExplorer(Shell shell, String connectionName, String jobName, String userName, String jobNumber) throws Exception {
 
@@ -54,6 +55,7 @@ public class Access extends AbstractAccess {
      * @param userName - the user who created the spooled file.
      * @param jobNumber - the number of the job that created the spooled file.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber) throws Exception {
@@ -79,6 +81,7 @@ public class Access extends AbstractAccess {
      * @param creationTimestamp - the timestamp the spooled file was created on
      *        the system.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJobLogExplorer(Shell shell, String connectionName, String splfName, int splfNumber, String jobName, String userName,
         String jobNumber, String jobSystemName, Date creationTimestamp) throws Exception {
@@ -99,6 +102,7 @@ public class Access extends AbstractAccess {
      * @param connectionName - connection name.
      * @param spooledFile - iSphere spooled file identifier.
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJobLogExplorer(Shell shell, ISpooledFileBrief spooledFile) throws Exception {
 
