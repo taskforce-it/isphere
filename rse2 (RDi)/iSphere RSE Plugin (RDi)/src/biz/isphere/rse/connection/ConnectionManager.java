@@ -212,10 +212,12 @@ public class ConnectionManager implements ISystemModelChangeListener {
 
     /**
      * Returns the remote system connection identified by a given qualified
-     * connection name.
+     * connection name, which must be formatted as
+     * <code>'profileName:connectionName'</code>.
      * 
      * @param qualifiedConnectionName - A qualified connection name.
      * @return remote system connection
+     * @see QualifiedConnectionName
      */
     public static IBMiConnection getIBMiConnection(String qualifiedConnectionName) {
         QualifiedConnectionName connectionName = new QualifiedConnectionName(qualifiedConnectionName);
