@@ -47,6 +47,7 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -70,6 +71,7 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String journalName,
         IJournaledObject[] selectedObjects, ISelectionCriteria selectionCriteria, boolean newTab) throws Exception {
@@ -116,6 +118,7 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String path, String whereClause, boolean newTab) throws Exception {
 
@@ -169,6 +172,7 @@ public class Access extends AbstractAccess {
      * @param newTab - specifies whether the journal explorer is opened in a new
      *        tab. (Not yet implemented. Defaults to true.)
      * @throws Exception
+     * @see QualifiedConnectionName
      */
     public static void openJournalExplorerView(Shell shell, String connectionName, String libraryName, String fileName, String memberName,
         String whereClause, boolean newTab) throws Exception {
