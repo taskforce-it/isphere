@@ -25,6 +25,7 @@
       <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
    </topic>
    <topic label="API" href="html/api/api.html" sort="true">
+      <topic label="Connection Name" href="html/api/connection-name.html" />
       <anchor id="api"/>
    </topic>
    <topic label="Utilities" >
