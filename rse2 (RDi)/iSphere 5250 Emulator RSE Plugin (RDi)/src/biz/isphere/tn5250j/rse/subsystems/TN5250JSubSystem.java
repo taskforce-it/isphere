@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class TN5250JSubSystem extends SubSystem {
 
         ArrayList<RSESession> arrayListRSESessions = new ArrayList<RSESession>();
 
-        String directory = TN5250JRSEPlugin.getRSESessionDirectory(getSystemProfileName() + "-" + getHostAliasName());
+        String directory = TN5250JRSEPlugin.getRSESessionDirectory(getSystemProfileName(), getHostAliasName());
         File directoryTN5250J = new File(directory);
         if (!directoryTN5250J.exists()) {
             directoryTN5250J.mkdir();

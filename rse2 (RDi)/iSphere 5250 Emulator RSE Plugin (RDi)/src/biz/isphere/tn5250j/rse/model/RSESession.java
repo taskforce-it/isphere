@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,8 +77,7 @@ public class RSESession extends AbstractResource {
     }
 
     public static RSESession load(String rseProfil, String rseConnection, String name) {
-        Session session = Session.load(TN5250JRSEPlugin.getRSESessionDirectory(rseProfil + "-" + rseConnection), rseProfil + "-" + rseConnection,
-            name);
+        Session session = Session.load(TN5250JRSEPlugin.getRSESessionDirectory(rseProfil, rseConnection), rseProfil + "-" + rseConnection, name);
         if (session != null) {
             return new RSESession(rseProfil, rseConnection, name, session);
         }
@@ -86,8 +85,7 @@ public class RSESession extends AbstractResource {
     }
 
     public static RSESession load(SubSystem subSystem, String name) {
-        Session session = Session.load(
-            TN5250JRSEPlugin.getRSESessionDirectory(subSystem.getSystemProfileName() + "-" + subSystem.getHostAliasName()),
+        Session session = Session.load(TN5250JRSEPlugin.getRSESessionDirectory(subSystem.getSystemProfileName(), subSystem.getHostAliasName()),
             subSystem.getSystemProfileName() + "-" + subSystem.getHostAliasName(), name);
         if (session != null) {
             return new RSESession(subSystem, name, session);

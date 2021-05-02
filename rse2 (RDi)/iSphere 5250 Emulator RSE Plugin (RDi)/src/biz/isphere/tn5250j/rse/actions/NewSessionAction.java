@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,12 +39,12 @@ public class NewSessionAction implements IObjectActionDelegate {
 
     public void run(IAction action) {
         for (int idx = 0; idx < selectedSubSystems.size(); idx++) {
-            Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
-                + selectedSubSystems.get(idx).getHostAliasName()));
+            Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName(),
+                selectedSubSystems.get(idx).getHostAliasName()));
             session.setConnection(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName());
             SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
-                    + selectedSubSystems.get(idx).getHostAliasName()), DialogActionTypes.CREATE, session);
+                TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName(), selectedSubSystems.get(idx)
+                    .getHostAliasName()), DialogActionTypes.CREATE, session);
             if (sessionDetailDialog.open() == Dialog.OK) {
                 RSESession rseSession = new RSESession(selectedSubSystems.get(idx), session.getName(), session);
                 rseSession.create(selectedSubSystems.get(idx));
