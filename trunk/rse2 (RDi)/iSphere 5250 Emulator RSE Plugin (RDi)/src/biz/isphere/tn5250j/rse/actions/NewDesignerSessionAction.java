@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,15 +41,15 @@ public class NewDesignerSessionAction implements IObjectActionDelegate {
 
     public void run(IAction action) {
         for (int idx = 0; idx < selectedSubSystems.size(); idx++) {
-            Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
-                + selectedSubSystems.get(idx).getHostAliasName()));
+            Session session = new Session(TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName(),
+                selectedSubSystems.get(idx).getHostAliasName()));
             session.setConnection(selectedSubSystems.get(idx).getSystemProfileName() + "-" + selectedSubSystems.get(idx).getHostAliasName());
             session.setName(ISession.DESIGNER);
             session.setProgram("DESIGNERW");
             session.setLibrary(ISession.ISPHERE_PRODUCT_LIBRARY);
             SessionDetailDialog sessionDetailDialog = new SessionDetailDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName() + "-"
-                    + selectedSubSystems.get(idx).getHostAliasName()), DialogActionTypes.CREATE, session);
+                TN5250JRSEPlugin.getRSESessionDirectory(selectedSubSystems.get(idx).getSystemProfileName(), selectedSubSystems.get(idx)
+                    .getHostAliasName()), DialogActionTypes.CREATE, session);
             if (sessionDetailDialog.open() == Dialog.OK) {
                 RSESession rseSession = new RSESession(selectedSubSystems.get(idx), session.getName(), session);
                 rseSession.create(selectedSubSystems.get(idx));
@@ -74,7 +74,7 @@ public class NewDesignerSessionAction implements IObjectActionDelegate {
     }
 
     public boolean isEnabled(String profil, String connection) {
-        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil + "-" + connection) + File.separator + ISession.DESIGNER;
+        String designer = TN5250JRSEPlugin.getRSESessionDirectory(profil, connection) + File.separator + ISession.DESIGNER;
         File fileDesigner = new File(designer);
         if (fileDesigner.exists()) {
             return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,8 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
         return TN5250JCorePlugin.getTN5250JPluginDirectory();
     }
 
-    public static String getRSESessionDirectory(String connection) {
+    public static String getRSESessionDirectory(String rseProfile, String rseConnection) {
+        String connection = rseProfile.replaceAll(":", "_") + "-" + rseConnection;
         return getRSEConnectionDirectory() + File.separator + connection;
     }
 

@@ -1,4 +1,10 @@
 
+Changelog: iSphere 4.1.0.b002
+-----------------------------
+ • Fixed NullPointerException in TN5250JSubSystem.getRSESessions(),
+   when the system profile name contains a colon. That was impossible
+   before RDi 9.x.
+
 Changelog: iSphere 4.1.0.b001
 -----------------------------
  • Fixed problems in various views and editors, when using remote

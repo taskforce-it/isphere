@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ public class DisplaySessionAction extends SystemBaseAction {
         if (getFirstSelection() instanceof RSESession) {
             RSESession rseSession = (RSESession)getFirstSelection();
             if (rseSession != null) {
-                new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil() + "-"
-                    + rseSession.getRSEConnection()), DialogActionTypes.DISPLAY, rseSession.getSession()).open();
+                new SessionDetailDialog(shell, TN5250JRSEPlugin.getRSESessionDirectory(rseSession.getRSEProfil(), rseSession.getRSEConnection()),
+                    DialogActionTypes.DISPLAY, rseSession.getSession()).open();
             }
         }
     }

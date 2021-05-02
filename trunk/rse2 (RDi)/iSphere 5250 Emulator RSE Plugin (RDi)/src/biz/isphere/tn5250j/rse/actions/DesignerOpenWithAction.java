@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,8 +108,7 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
                 stringLibraryList = stringLibraryList + " " + user[y];
             }
 
-            String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(ibmiConnection.getProfileName() + "-"
-                + ibmiConnection.getConnectionName());
+            String sessionDirectory = TN5250JRSEPlugin.getRSESessionDirectory(ibmiConnection.getProfileName(), ibmiConnection.getConnectionName());
             String connection = ibmiConnection.getProfileName() + "-" + ibmiConnection.getConnectionName();
             String name = ISession.DESIGNER;
 
