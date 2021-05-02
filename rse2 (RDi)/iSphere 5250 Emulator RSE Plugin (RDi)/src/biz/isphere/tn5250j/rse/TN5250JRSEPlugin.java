@@ -26,6 +26,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.annotations.CMOneDeprecated;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.rse.sessionsview.SessionsView;
@@ -108,6 +110,12 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
 
     public static String getRSEConnectionDirectory() {
         return TN5250JCorePlugin.getTN5250JPluginDirectory();
+    }
+
+    @CMOneDeprecated(info = "Replaced by: getRSESessionDirectory(String rseProfile, String rseConnection)")
+    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
+    public static String getRSESessionDirectory(String connection) {
+        return getRSEConnectionDirectory() + File.separator + connection.replaceAll(":", "_");
     }
 
     public static String getRSESessionDirectory(String rseProfile, String rseConnection) {
