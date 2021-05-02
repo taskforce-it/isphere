@@ -17,7 +17,7 @@ X-Bundle-Info: Support of WDSCi 7.0 has been discontinued.\n
  Improved performance when retrieving journal entries.\n
  Fixed journal explorer, which picked up a wrong library name.\n
  Fixed iSphere Source File Search page to allow generic library and source file names.
-X-Beta-Version: 4.1.0.b001
+X-Beta-Version: 4.1.0.b002
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
 X-Beta-Info: Fixed connection problems when using 'Remote System Profiles'.
