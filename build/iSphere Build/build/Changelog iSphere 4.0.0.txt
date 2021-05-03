@@ -1,4 +1,8 @@
 
+Changelog: iSphere 4.1.0.r
+--------------------------
+ • Fixed daylight saving offset when retrieving journal entries.
+
 Changelog: iSphere 4.1.0.b002
 -----------------------------
  • Fixed NullPointerException in TN5250JSubSystem.getRSESessions(),

@@ -53,7 +53,7 @@ public class DTSDateConverter {
      * @param bytes - *DTS byte array
      * @return date
      */
-    public Timestamp convert(byte[] as400Value) {
+    public Timestamp convert(byte[] as400Value, boolean ignoreDaylightSaving) {
 
         if (as400Value.length != 8) {
             throw new IllegalArgumentException("DTS date must be an 8-byte array."); //$NON-NLS-1$
@@ -105,6 +105,11 @@ public class DTSDateConverter {
         // Convert milliseconds to java.util.Date
         Calendar localCalendar = Calendar.getInstance();
         localCalendar.setTimeInMillis(millisSince1970);
+
+        if (ignoreDaylightSaving) {
+            int dstOffset = localCalendar.get(Calendar.DST_OFFSET);
+            localCalendar.add(Calendar.MILLISECOND, (dstOffset * -1));
+        }
 
         // Fix timezone offset
         int offsetMillisGMT = TimeZone.getDefault().getRawOffset();
