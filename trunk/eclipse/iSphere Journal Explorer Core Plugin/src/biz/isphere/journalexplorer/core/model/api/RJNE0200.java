@@ -118,7 +118,7 @@ public class RJNE0200 {
             throw new IllegalArgumentException("Receiver Length not valid; value must be divisable by 16.");
         }
 
-        bufferSize = aBufferSize;
+        this.bufferSize = aBufferSize;
 
         resetReader();
     }
@@ -409,7 +409,12 @@ public class RJNE0200 {
 
         Object[] tResult = getEntryHeaderData();
 
-        Timestamp tTimestamp = new DTSDateConverter().convert((byte[])tResult[7]);
+        Timestamp tTimestamp = new DTSDateConverter().convert((byte[])tResult[7], true);
+
+        // TODO: remove obsolete statement
+        // Timestamp tTimestamp = new Timestamp(new
+        // DateTimeConverter(system).convert((byte[])tResult[7],
+        // "*DTS").getTime());
 
         return tTimestamp;
     }
