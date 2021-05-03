@@ -131,7 +131,8 @@ public class HelpBuilder {
             html.append("<li>");
 
             if (topic.getHref() != null) {
-                html.append("<a href=\"../" + topic.getHref() + "\" target=\"content\" style=\"text-decoration:none\">");
+                String href = removePluginPath(topic.getHref());
+                html.append("<a href=\"../" + href + "\" target=\"content\" style=\"text-decoration:none\">");
             }
             html.append(topic.getLabel());
             if (topic.getHref() != null) {
@@ -153,6 +154,16 @@ public class HelpBuilder {
             html.append("</li>");
             html.append(Configuration.NEW_LINE);
         }
+    }
+
+    private String removePluginPath(String href) {
+
+        int i = href.indexOf("html/");
+        if (i <= 0) {
+            return href;
+        }
+
+        return href = href.substring(i);
     }
 
     private String space(int level) {
@@ -193,7 +204,7 @@ public class HelpBuilder {
 
         if (linkToFile.startsWith(".")) {
             linkToFile = linkToFile.substring(1);
-            baseDir = new File( getProjectDir(baseDir, toc.getPluginTocPath()) );
+            baseDir = new File(getProjectDir(baseDir, toc.getPluginTocPath()));
         }
 
         String linkToTocPath = FileUtil.resolvePath(baseDir, linkToFile);
@@ -219,20 +230,20 @@ public class HelpBuilder {
 
             String baseDirResolved = FileUtil.resolvePath(baseDir.getAbsolutePath());
             if (!baseDirResolved.endsWith(Configuration.FORWARD_SLASH)) {
-                baseDirResolved+=Configuration.FORWARD_SLASH;
+                baseDirResolved += Configuration.FORWARD_SLASH;
             }
             String pluginTocPathResolved = FileUtil.resolvePath(pluginTocPath);
 
             for (int i = baseDirResolved.length(); i < pluginTocPathResolved.length(); i++) {
-                if (Configuration.FORWARD_SLASH.equals(pluginTocPathResolved.substring(i, i+1))){
+                if (Configuration.FORWARD_SLASH.equals(pluginTocPathResolved.substring(i, i + 1))) {
                     return pluginTocPathResolved.substring(0, i);
                 }
             }
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
 
