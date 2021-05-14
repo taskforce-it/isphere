@@ -1,4 +1,11 @@
 
+Changelog: iSphere 4.1.1.r
+--------------------------
+ • Fixed resetting column size of "statements" table of iSphere
+   source file search.
+ • Fixed resetting column size of "message ids" table of iSphere
+   message file search.
+
 Changelog: iSphere 4.1.0.r
 --------------------------
  • Fixed daylight saving offset when retrieving journal entries.
