@@ -1036,6 +1036,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
     public void resetColumnWidths() {
         getDialogSettingsManager().resetColumnWidths(tableMembers);
+        getDialogSettingsManager().resetColumnWidths(tableStatements);
     }
 
     private Shell getShell() {
