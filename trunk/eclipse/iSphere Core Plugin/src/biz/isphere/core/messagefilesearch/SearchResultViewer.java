@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.externalapi.Access;
@@ -59,7 +60,7 @@ import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 
-public class SearchResultViewer {
+public class SearchResultViewer implements IResizableTableColumnsViewer {
 
     private String connectionName;
     private String searchString;
@@ -475,14 +476,9 @@ public class SearchResultViewer {
         tableMessageFiles.setHeaderVisible(true);
         tableMessageFiles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        // final TableColumn tableColumnMessageFile = new
-        // TableColumn(tableMessageFiles, SWT.NONE);
-        // tableColumnMessageFile.setWidth(800);
-        // tableColumnMessageFile.setText(Messages.Message_file);
-
         final TableColumn tableColumnLibrary = createTableColumn(tableMessageFiles, "library", 100, Messages.Library, 0);
-        final TableColumn tableColumnFile = createTableColumn(tableMessageFiles, "file", 100, Messages.Message_file, 0);
-        final TableColumn tableColumnDescription = createTableColumn(tableMessageFiles, "description", 300, Messages.Description, 4);
+        final TableColumn tableColumnFile = createTableColumn(tableMessageFiles, "file", 100, Messages.Message_file, 1);
+        final TableColumn tableColumnDescription = createTableColumn(tableMessageFiles, "description", 300, Messages.Description, 2);
 
         final Menu menuTableMessageFiles = new Menu(tableMessageFiles);
         menuTableMessageFiles.addMenuListener(new TableMessageFilesMenuAdapter(menuTableMessageFiles));
@@ -516,13 +512,8 @@ public class SearchResultViewer {
         tableMessageIds.setHeaderVisible(true);
         tableMessageIds.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        final TableColumn tableColumnMessageId = new TableColumn(tableMessageIds, SWT.NONE);
-        tableColumnMessageId.setWidth(125);
-        tableColumnMessageId.setText(Messages.Message_Id);
-
-        final TableColumn tableColumnMessage = new TableColumn(tableMessageIds, SWT.NONE);
-        tableColumnMessage.setWidth(700);
-        tableColumnMessage.setText(Messages.Message);
+        createTableColumn(tableMessageIds, "messageId", 125, Messages.Message_Id, 0);
+        createTableColumn(tableMessageIds, "message", 700, Messages.Message, 1);
 
         setMessageIds();
         tableViewerMessageIds.setInput(new Object());
@@ -764,6 +755,11 @@ public class SearchResultViewer {
 
     public void invertSelectedItems() {
         executeMenuItemInvertSelectedItems();
+    }
+
+    public void resetColumnWidths() {
+        getDialogSettingsManager().resetColumnWidths(tableMessageFiles);
+        getDialogSettingsManager().resetColumnWidths(tableMessageIds);
     }
 
     private DialogSettingsManager getDialogSettingsManager() {
