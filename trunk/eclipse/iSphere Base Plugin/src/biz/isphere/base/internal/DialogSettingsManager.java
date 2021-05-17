@@ -445,7 +445,7 @@ public class DialogSettingsManager {
 
     private void setColumnWidth(TableColumn tableColumn, Integer width) {
 
-        if (width != null && width > 0) {
+        if (width != null && width >= 0) {
             tableColumn.setWidth(width);
         } else {
             resetColumnWidth(tableColumn);
