@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -290,11 +292,13 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         table.setLinesVisible(true);
         table.setHeaderVisible(true);
 
-        addTableColumn(tableViewer.getTable(), Columns.FROM_LIBRARY);
-        addTableColumn(tableViewer.getTable(), Columns.FROM_FILE);
-        addTableColumn(tableViewer.getTable(), Columns.FROM_MEMBER);
-        addTableColumn(tableViewer.getTable(), Columns.TO_MEMBER);
-        addTableColumn(tableViewer.getTable(), Columns.ERROR_MESSAGE, 400);
+        MinColumnSizeListener listener = new MinColumnSizeListener(10);
+        
+        addTableColumn(tableViewer.getTable(), Columns.FROM_LIBRARY).addControlListener(listener);
+        addTableColumn(tableViewer.getTable(), Columns.FROM_FILE).addControlListener(listener);
+        addTableColumn(tableViewer.getTable(), Columns.FROM_MEMBER).addControlListener(listener);
+        addTableColumn(tableViewer.getTable(), Columns.TO_MEMBER).addControlListener(listener);
+        addTableColumn(tableViewer.getTable(), Columns.ERROR_MESSAGE, 400).addControlListener(listener);
 
         tableViewer.setCellModifier(new CopyMemberItemTableCellModifier(tableViewer));
         tableViewer.setContentProvider(new ContentProviderMemberItems());
@@ -583,6 +587,22 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
+    private class MinColumnSizeListener extends ControlAdapter {
+        private int minWidth;
+        
+        public MinColumnSizeListener(int minWidth) {
+            this.minWidth=minWidth;
+        }
+        
+        @Override
+        public void controlResized(ControlEvent event) {
+            TableColumn column = (TableColumn)event.getSource();
+            if (column.getWidth() < minWidth) {
+                column.setWidth(minWidth);
+            }
+        }
+    }
+    
     /**
      * Content provider for the member list table.
      */

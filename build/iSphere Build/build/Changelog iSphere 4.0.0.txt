@@ -1,6 +1,9 @@
 
 Changelog: iSphere 4.1.1.r
 --------------------------
+ • Changed dialog settings manager to not reset the column size to
+   the default value, when the column size has been reduced to 0.
+ • Changed minimum column size of "Copy Members" dialog to 10 pixel.
  • Fixed resetting column size of "statements" table of iSphere
    source file search.
  • Fixed resetting column size of "message ids" table of iSphere
