@@ -8,6 +8,8 @@ Changelog: iSphere 4.1.1.r
    source file search.
  • Fixed resetting column size of "message ids" table of iSphere
    message file search.
+ • Updated STRPREPRC command to v1.20.0 to properly retrieve the
+   compile errors when the target object library has be overridden.
 
 Changelog: iSphere 4.1.0.r
 --------------------------
