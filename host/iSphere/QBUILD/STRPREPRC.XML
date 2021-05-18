@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 1/26/2021">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/18/2021">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3369,13 +3369,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.19.1 - 26.01.2021 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.20.0 - 18.05.2021 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.19.1'
+     d                 C                   '1.20.0'
      d STRPREPRC_DATE...
-     d                 C                   '26.01.2021'
+     d                 C                   '18.05.2021'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3473,6 +3473,13 @@ srccssid=  "01141">
      D                 pr                  extproc('STRPREPRC4_+
      D                                     closeEventFile+
      D                                     ')
+
+     D copyEventFile...
+     D                 pr                  extproc('STRPREPRC4_+
+     D                                     copyEventFile+
+     D                                     ')
+     D  i_fromLib                    10a   const
+     D  i_fromMbr                    10a   const
 
       /endif
 ]]>  </copysrc>
@@ -10374,6 +10381,16 @@ srccssid=  "01141">
       *                            not replaced when the library list was   *
       *                            empty.                                   *
       *                                                                     *
+      *  18.05.2021  Th.Raddatz    Changed performSetLibraryList(),         *
+      *                            performSetCurrentLibrary() and           *
+      *                            peformCmd() to call endAbnormal()        *
+      *                            without 'event file' parameter.          *
+      *                                                                     *
+      *  18.05.2021  Th.Raddatz    Changed writeJobLogToEventf() to copy    *
+      *                            the event file data from the actual      *
+      *                            event file used by the IBM object        *
+      *                            creation command.                        *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -12110,11 +12127,7 @@ srccssid=  "01141">
                msg = f_newMsg('PRZ0034': PRZ0034: cMsg_Info);
                f_sndPgmMsg(msg: cMsg_Same: cMsg_ToMyself);
             else;
-               if (%scan(cEVENTF_YES: i_cmd) > 0);
-                  endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
-               else;
-                  endAbnormal();
-               endif;
+               endAbnormal();
             endif;
          endif;
 
@@ -12402,11 +12415,7 @@ srccssid=  "01141">
          endif;
 
          if (not executeCmd(cTrue: i_cmd));
-            if (%scan(cEVENTF_YES: i_cmd) > 0);
-               endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
-            else;
-               endAbnormal();
-            endif;
+            endAbnormal();
          endif;
 
       /end-free
@@ -12446,11 +12455,7 @@ srccssid=  "01141">
          endif;
 
          if (not executeCmd(cTrue: i_cmd));
-            if (%scan(cEVENTF_YES: i_cmd) > 0);
-               endAbnormal(retrieveEventFile(i_cmd)); // EVENT file created by command
-            else;
-               endAbnormal();
-            endif;
+            endAbnormal();
          endif;
 
       /end-free
@@ -13748,12 +13753,22 @@ srccssid=  "01141">
 
          monitor;
 
-            // Event file of IBM object creation command
-            if (g_eventf.lib <> '' and g_eventf.mbr <> '');
-               isEmpty = isEmptyEventFile(g_eventf.lib: g_eventf.mbr);
-            else;
-               isEmpty = cTrue;
+            if (i_qEventf.name <> '' and i_qEventf.lib <> '');
+               if (i_qEventf.name <> g_eventf.mbr or
+                   i_qEventf.lib <> g_eventf.lib);
+                  if (not isEmptyEventFile(i_qEventf.lib: i_qEventf.name));
+                     g_eventf.isOpen = openEventFile(
+                                          g_eventf.mbr: g_eventf.lib: doAppend);
+                     if (g_eventf.isOpen);
+                        copyEventFile(i_qEventf.lib: i_qEventf.name);
+                        closeEventFile();
+                        g_eventf.isOpen = cFalse;
+                     endif;
+                  endif;
+               endif;
             endif;
+
+            isEmpty = isEmptyEventFile(g_eventf.lib: g_eventf.mbr);
 
             select; // g_prePostCmdsMode
             when (g_prePostCmdsMode = MODE_PRECMDS);
@@ -13771,8 +13786,6 @@ srccssid=  "01141">
                doAppend = not isEmpty;
                // TODO: Copy compile listing from pre/post-command if available
                //       instead of appending the job log???
-               // g_eventf.isOpen = openEventFile(g_eventf.mbr: g_eventf.lib
-               //                                 : doAppend: i_qEventf);
                g_eventf.isOpen = openEventFile(
                                     g_eventf.mbr: g_eventf.lib: doAppend);
                if (g_eventf.isOpen);
@@ -14653,6 +14666,21 @@ srccssid=  "01141">
            Eventf_close();
            g_status.haveEventFile = cFalse;
         endif;
+
+      /end-free
+     P                 e
+      *
+      *===============================================================*
+      *  Copy event file.
+      *===============================================================*
+     P copyEventFile...
+     P                 b                   export
+     D                 pi
+     D  i_fromLib                    10a   const
+     D  i_fromMbr                    10a   const
+      /free
+
+        Eventf_copyFrom(i_fromLib: i_fromMbr);
 
       /end-free
      P                 e
