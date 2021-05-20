@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/18/2021">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/19/2021">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3369,13 +3369,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.20.0 - 18.05.2021 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.20.1 - 19.05.2021 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.20.0'
+     d                 C                   '1.20.1'
      d STRPREPRC_DATE...
-     d                 C                   '18.05.2021'
+     d                 C                   '19.05.2021'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3456,8 +3456,6 @@ srccssid=  "01141">
      D  i_obj                        10a   const
      D  i_lib                        10a   const
      D  i_append                       n   const
-     D  i_qEventf                          const  likeds(qObj_t)
-     D                                            options(*nopass)
 
      D writeEventFile...
      D                 pr                  extproc('STRPREPRC4_+
@@ -3480,6 +3478,8 @@ srccssid=  "01141">
      D                                     ')
      D  i_fromLib                    10a   const
      D  i_fromMbr                    10a   const
+     D  i_toLib                      10a   const
+     D  i_toMbr                      10a   const
 
       /endif
 ]]>  </copysrc>
@@ -8922,6 +8922,60 @@ end-proc;
 
 // ------------------------------------------------------------
 //  STRPREPRC options:
+//    *EVENTF, *NOJOBLOG
+//  Pre-command:
+//    no error
+//  Compile command:
+//    error, no event file
+//  Post-command:
+//    *NONE
+//  Specials:
+//    Module name has been overridden in STRPREPRC header.
+//  Expected:
+//    FILEID 001 (TESTCASE) with job log of compile command.
+//    (replacement for compile listing)
+// ------------------------------------------------------------
+dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_ERROR_2 export;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  append('/* ---------------------------------------------------------------- */': 100);
+  append('/*     Produces an error in the main command.                       */');
+  append('/* ---------------------------------------------------------------- */');
+  append('/* >>PRE-COMPILER<<                                                 */');
+  append('/*   >>CRTCMD<< CRTCLMOD  MODULE(&LI/&OB) SRCFILE(&SL/&SF) +        */');
+  append('/*                        SRCMBR(&SM) OPTION(*EVENTF) +             */');
+  append('/*                        OUTPUT(*NONE);                            */');
+  append('/*   >>CMD<<    CHKOBJ OBJ(QTEMP/RUNIT_TST) OBJTYPE(*FILE);         */');
+  append('/*   >>IMPORTANT<<                                                  */');
+  append('/*     >>PARM<<  MODULE(&LI/TEST);                                  */');
+  append('/*   >>END-IMPORTANT<<                                              */');
+  append('/*   >>EXECUTE<<                                                    */');
+  append('/* >>END-PRE-COMPILER<<                                             */');
+  append('PGM');
+  append('  DCL LIB *CHAR 10');
+  append('  CHKOBJ OBJ(QSYS) OBJTYPE(*LIB)');
+  append('ENDPGM');
+
+  monitor;
+    runCmd('STRPREPRC USESRCFILE(QTEMP/RUNIT_TST) USESRCMBR(TESTCASE) +
+              OPTION(*EVENTF *NOJOBLOG) LIB(QTEMP) OBJ(TESTCASE) +
+              SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
+    fail('STRPREPRC should have thown an error (004)');
+  on-error;
+  // Exception seen!
+  endmon;
+
+  assertFileID_001('TESTCASE');
+  assertMsgID('CPD0081': 'S'); // Variable name required for parameter VAR.
+
+  assertNoJobLog();
+
+  assertNoMsgId('PRZ0029');
+
+end-proc;
+
+// ------------------------------------------------------------
+//  STRPREPRC options:
 //    *EVENTF, *ADDJOBLOG
 //  Pre-command:
 //    no error
@@ -10390,6 +10444,9 @@ srccssid=  "01141">
       *                            the event file data from the actual      *
       *                            event file used by the IBM object        *
       *                            creation command.                        *
+      *                                                                     *
+      *  19.05.2021  Th.Raddatz    Fixed duplicate TIMESTAMP and PROCESSOR  *
+      *                            entries after copying an EVENTF member.  *
       *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
@@ -13757,13 +13814,8 @@ srccssid=  "01141">
                if (i_qEventf.name <> g_eventf.mbr or
                    i_qEventf.lib <> g_eventf.lib);
                   if (not isEmptyEventFile(i_qEventf.lib: i_qEventf.name));
-                     g_eventf.isOpen = openEventFile(
-                                          g_eventf.mbr: g_eventf.lib: doAppend);
-                     if (g_eventf.isOpen);
-                        copyEventFile(i_qEventf.lib: i_qEventf.name);
-                        closeEventFile();
-                        g_eventf.isOpen = cFalse;
-                     endif;
+                        copyEventFile(i_qEventf.lib: i_qEventf.name
+                                      : g_eventf.lib: g_eventf.mbr);
                   endif;
                endif;
             endif;
@@ -14451,12 +14503,7 @@ srccssid=  "01141">
      D  i_obj                        10a   const
      D  i_lib                        10a   const
      D  i_append                       n   const
-     D  i_qEventf                          const  likeds(qObj_t)
-     D                                            options(*nopass)
 
-     D p_qEventf       c                   4
-
-     D qEventf         ds                  likeds(i_qEventf)
      D rtnLib          s                   like(i_lib)
       /free
 
@@ -14464,30 +14511,13 @@ srccssid=  "01141">
             return cFalse;
          endif;
 
-         if (%parms() >= p_qEventf and %addr(i_qEventf) <> *null);
-            qEventf = i_qEventf;
-         else;
-            clear qEventf;
-         endif;
-
          g_status.openForAppend = i_append;
-         g_status.copyEvents = cFalse;
-
-         if (qEventf.name <> '' and qEventf.lib <> '');
-           if (qEventf.name <> i_obj or qEventf.lib <> i_lib);
-             g_status.copyEvents = cTrue;
-           endif;
-         endif;
 
          if (g_status.openForAppend);
             Eventf_openAppend(i_lib: i_obj: rtnLib);
          else;
             Eventf_open(i_lib: i_obj: rtnLib);
-            if (g_status.copyEvents);
-               Eventf_copyFrom(qEventf.lib: qEventf.name);
-            else;
-               Eventf_writeProcessor();
-            endif;
+            Eventf_writeProcessor();
          endif;
 
          g_status.haveEventFile = cTrue;
@@ -14678,9 +14708,13 @@ srccssid=  "01141">
      D                 pi
      D  i_fromLib                    10a   const
      D  i_fromMbr                    10a   const
+     D  i_toLib                      10a   const
+     D  i_toMbr                      10a   const
       /free
 
+        Eventf_open(i_toLib: i_toMbr);
         Eventf_copyFrom(i_fromLib: i_fromMbr);
+        Eventf_close();
 
       /end-free
      P                 e
