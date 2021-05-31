@@ -29,7 +29,7 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
     }
 
     public boolean canCacheFilteredRegions() {
-        return true;
+        return false;
     }
 
     public IRegion[] getFilteredRegions(HashMap arg0) {
