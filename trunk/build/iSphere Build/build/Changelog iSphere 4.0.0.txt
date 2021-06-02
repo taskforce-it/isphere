@@ -10,6 +10,8 @@ Changelog: iSphere 4.1.1.r
    message file search.
  • Updated STRPREPRC command to v1.20.1 to properly retrieve the
    compile errors when the target object library has be overridden.
+ • Disabled caching of filtered regions in iSphere Compare Editor
+   to fix compare errors.
 
 Changelog: iSphere 4.1.0.r
 --------------------------
