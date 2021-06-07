@@ -22,4 +22,6 @@ public interface IPreferences {
 
     static final String OUTPUT_FORMAT_TEXT = "*TEXT";
 
+    static final String OUTPUT_FORMAT_DFT = "*DFT";
+
 }

@@ -10,9 +10,12 @@ package biz.isphere.core.externalapi;
 
 import java.io.IOException;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.Messages;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -22,6 +25,9 @@ import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.preferencepages.IPreferences;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
 import com.ibm.as400.access.AS400;
@@ -256,4 +262,66 @@ public class Access {
 
         return description;
     }
+    
+    /**
+     * Opens a spooled file.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param file - The name of the spooled file.
+     * @param fileNumber - The number of the spooled file.
+     * @param jobName - The name of the job that created the spooled file.
+     * @param jobUser - The user who created the spooled file.
+     * @param jobNumber - The number of the job that created the spooled file.
+     * @param jobSystem - The name of the system where the spooled file was created.
+     * @param creationDate - The date the spooled file was created on the system. 
+     *        The date is encoded in a character string with the format CYYMMDD.
+     * @param creationTime - The time the spooled file was created on the system. 
+     *        The time is encoded in a character string with the format HHMMSS.
+     * @param format - The output format of the spooled file. 
+     *        IPreferences.OUTPUT_FORMAT_PDF 
+     *        IPreferences.OUTPUT_FORMAT_HTML 
+     *        IPreferences.OUTPUT_FORMAT_TEXT 
+     *        IPreferences.OUTPUT_FORMAT_DFT
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static void openSpooledFile(Shell shell, String connectionName, String file, int fileNumber, String jobName, String jobUser, String jobNumber, String jobSystem, String creationDate, String creationTime, String format)
+        throws Exception {
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+        if (system != null) {
+            
+            if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
+                
+                SpooledFile spooledFile = new SpooledFile();
+                spooledFile.setConnectionName(connectionName);
+                spooledFile.setAS400(system);
+                spooledFile.setFile(file);
+                spooledFile.setFileNumber(fileNumber);
+                spooledFile.setJobName(jobName);
+                spooledFile.setJobUser(jobUser);
+                spooledFile.setJobNumber(jobNumber);
+                spooledFile.setJobSystem(jobSystem);
+                spooledFile.setCreationDate(creationDate);
+                spooledFile.setCreationTime(creationTime);
+                
+                String _format = format;
+                if (_format.equals(IPreferences.OUTPUT_FORMAT_DFT)) {
+                    _format = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
+                }
+                
+                String message = spooledFile.open(_format);
+                
+                if (message != null) {
+                    MessageDialog.openError(shell, Messages.Error, message);
+                }
+                
+            }
+            
+        }
+
+    }
+    
 }
