@@ -9,10 +9,11 @@
 package biz.isphere.core.externalapi;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
@@ -27,6 +28,7 @@ import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
@@ -323,5 +325,68 @@ public class Access {
         }
 
     }
-    
+
+    /**
+     * Searches for strings in source files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchOptions - Contains the strings to search for and other search options.
+     * @param _searchElements - Contains the elements (Source file members) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.sourcefilesearch.SearchResult[] searchStringInSourceFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.sourcefilesearch.SearchElement> _searchElements)
+        throws Exception {
+
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            Connection _jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            if (_jdbcConnection != null) {
+                
+                return new biz.isphere.core.sourcefilesearch.SearchExec().executeJoin(
+                        _as400,
+                        _jdbcConnection,
+                        _searchOptions,
+                        _searchElements);
+                
+            }
+        }
+        
+        return new biz.isphere.core.sourcefilesearch.SearchResult[0];
+        
+    }
+
+    /**
+     * Searches for strings in message files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchOptions - Contains the strings to search for and other search options.
+     * @param _searchElements - Contains the elements (Message files) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.messagefilesearch.SearchResult[] searchStringInMessageFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.messagefilesearch.SearchElement> _searchElements)
+        throws Exception {
+
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            Connection _jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            if (_jdbcConnection != null) {
+                
+                return new biz.isphere.core.messagefilesearch.SearchExec().executeJoin(
+                        _as400,
+                        connectionName,
+                        _jdbcConnection,
+                        _searchOptions,
+                        _searchElements);
+                
+            }
+        }
+        
+        return new biz.isphere.core.messagefilesearch.SearchResult[0];
+        
+    }
+ 
 }
