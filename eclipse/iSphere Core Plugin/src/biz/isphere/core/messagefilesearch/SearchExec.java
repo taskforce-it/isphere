@@ -35,7 +35,6 @@ public class SearchExec {
     private class Search extends Job {
 
         private AS400 _as400;
-        private String _hostName;
         private String _connectionName;
         private Connection _jdbcConnection;
         private SearchOptions _searchOptions;
@@ -45,26 +44,19 @@ public class SearchExec {
         private int _counter;
         private String iSphereLibrary;
 
-        public Search(AS400 _as400, String _connectionName, Connection _jdbcConnection, SearchOptions _searchOptions,
-            ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
-
-            this(_as400, _connectionName, null, _jdbcConnection, _searchOptions, _searchElements, _searchPostRun);
-        }
-
         @CMOne(info = "This constructor is used by CMOne")
-        public Search(AS400 _as400, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
+        public Search(AS400 _as400, String _connectionName, Connection _jdbcConnection, SearchOptions _searchOptions,
             ArrayList<SearchElement> _searchElements) {
 
-            this(_as400, _hostName, null, _jdbcConnection, _searchOptions, _searchElements, null);
+            this(_as400, _connectionName, _jdbcConnection, _searchOptions, _searchElements, null);
         }
 
-        private Search(AS400 _as400, String _connectionName, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
+        private Search(AS400 _as400, String _connectionName, Connection _jdbcConnection, SearchOptions _searchOptions,
             ArrayList<SearchElement> _searchElements, ISearchPostRun _searchPostRun) {
 
             super("iSphere Message File Search");
 
             this._as400 = _as400;
-            this._hostName = _hostName;
             this._connectionName = _connectionName;
             this._jdbcConnection = _jdbcConnection;
             this._searchOptions = _searchOptions;
@@ -148,8 +140,7 @@ public class SearchExec {
                             monitor.done();
 
                             if (!monitor.isCanceled()) {
-                                _searchResults = SearchResult.getSearchResults(iSphereLibrary, _jdbcConnection, _handle, _as400, _connectionName,
-                                    _hostName);
+                                _searchResults = SearchResult.getSearchResults(iSphereLibrary, _jdbcConnection, _handle, _as400, _connectionName);
                             }
 
                             new XFNDSTR_clear().run(_as400, _handle);
