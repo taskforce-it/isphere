@@ -55,7 +55,7 @@ public class SearchExec {
         public Search(AS400 _as400, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
             ArrayList<SearchElement> _searchElements) {
 
-            this(_as400, null, _hostName, _jdbcConnection, _searchOptions, _searchElements, null);
+            this(_as400, _hostName, null, _jdbcConnection, _searchOptions, _searchElements, null);
         }
 
         private Search(AS400 _as400, String _connectionName, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
