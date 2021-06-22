@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import biz.isphere.base.internal.SqlHelper;
-import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 import com.ibm.as400.access.AS400;
@@ -24,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 public class SearchResult {
 
     private String connectionName;
-    private String hostName;
     private String library;
     private String messageFile;
     private String description;
@@ -35,7 +33,6 @@ public class SearchResult {
 
     public SearchResult() {
         connectionName = "";
-        hostName = "";
         library = "";
         messageFile = "";
         description = "";
@@ -55,31 +52,6 @@ public class SearchResult {
 
     private void setAS400(AS400 as400) {
         this.as400 = as400;
-    }
-
-    /**
-     * This method returns the name of the host, where the search has been
-     * executed.
-     * <p>
-     * This method is used by CMOne and must not be used by the iSphere plug-in.
-     * 
-     * @return host name
-     */
-    @CMOne(info = "This method is used by CMOne and must not be used by the iSphere plug-in.")
-    public String getHostName() {
-        return hostName;
-    }
-
-    /**
-     * Sets the host name, where the search has been executed.
-     * <p>
-     * This method is for compatibility to CMOne.
-     * 
-     * @param hostName
-     */
-    @CMOne(info = "This method is for compatibility to CMOne.")
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
     }
 
     public String getConnectionName() {
@@ -122,8 +94,7 @@ public class SearchResult {
         this.messageIds = messageIds;
     }
 
-    public static SearchResult[] getSearchResults(String iSphereLibrary, Connection jdbcConnection, int handle, AS400 as400, String connectionName,
-        String hostName) {
+    public static SearchResult[] getSearchResults(String iSphereLibrary, Connection jdbcConnection, int handle, AS400 as400, String connectionName) {
 
         // String _separator;
         // try {
@@ -179,7 +150,6 @@ public class SearchResult {
 
                     _searchResult = new SearchResult();
                     _searchResult.setConnectionName(connectionName);
-                    _searchResult.setHostName(hostName); // CMOne compatibility
                     _searchResult.setLibrary(library);
                     _searchResult.setMessageFile(messageFile);
 
