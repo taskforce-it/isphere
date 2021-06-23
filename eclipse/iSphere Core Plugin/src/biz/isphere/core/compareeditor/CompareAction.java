@@ -44,41 +44,7 @@ public class CompareAction {
     private String editorTitle;
     private CompareInput fInput;
 
-    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons. With CMOne NG 5.1.8 and higher this constructor will NO LONGER be used. In July 2019 this constructor can be removed.")
-    public CompareAction(boolean editable, boolean considerDate, boolean threeWay, Member ancestorMember, Member leftMember, Member rightMember,
-        String editorTitle) {
-
-        boolean sequenceNumbersAndDateFields = true;
-        if (!leftMember.hasSequenceNumbersAndDateFields()) {
-            sequenceNumbersAndDateFields = false;
-        } else {
-            if (!rightMember.hasSequenceNumbersAndDateFields()) {
-                sequenceNumbersAndDateFields = false;
-            } else {
-                if (threeWay && !ancestorMember.hasSequenceNumbersAndDateFields()) {
-                    sequenceNumbersAndDateFields = false;
-                }
-            }
-        }
-
-        this.cc = new SourceMemberCompareEditorConfiguration();
-        cc.setLeftEditable(editable);
-        cc.setRightEditable(false);
-        cc.setConsiderDate(considerDate);
-        cc.setIgnoreCase(false);
-        cc.setIgnoreChangesLeft(false);
-        cc.setIgnoreChangesRight(false);
-        cc.setThreeWay(threeWay);
-        cc.setDropSequenceNumbersAndDateFields(!sequenceNumbersAndDateFields);
-
-        this.ancestorMember = ancestorMember;
-        this.leftMember = leftMember;
-        this.rightMember = rightMember;
-        this.editorTitle = editorTitle;
-
-    }
-
-    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons. With CMOne NG 5.1.8 and higher this constructor will be used.")
+    @CMOne(info = "Don`t change/remove this method due to CMOne compatibility reasons.")
     public CompareAction(CompareEditorConfiguration compareConfiguration, Member ancestorMember, Member leftMember, Member rightMember,
         String editorTitle) {
         this.cc = compareConfiguration;
