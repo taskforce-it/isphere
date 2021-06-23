@@ -23,7 +23,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.viewmanager.IViewManager;
 import biz.isphere.ide.lpex.menu.ILpexMenuExtension;
 import biz.isphere.ide.lpex.menu.LpexMenuExtensionPlugin;
@@ -106,7 +105,6 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
         reg.put(IMAGE_DISPLAY_MODULE_VIEW, getImageDescriptor(IMAGE_DISPLAY_MODULE_VIEW));
     }
 
-    @CMOne(info = "Don`t change this method due to CMOne compatibility reasons")
     public static ImageDescriptor getImageDescriptor(String name) {
         String iconPath = "icons/";
         try {
