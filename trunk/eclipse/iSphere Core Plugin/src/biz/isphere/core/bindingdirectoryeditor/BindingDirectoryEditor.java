@@ -8,8 +8,6 @@
 
 package biz.isphere.core.bindingdirectoryeditor;
 
-import java.sql.Connection;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -22,12 +20,9 @@ import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.Messages;
-import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
-
-import com.ibm.as400.access.AS400;
 
 public class BindingDirectoryEditor extends EditorPart {
 
@@ -90,19 +85,6 @@ public class BindingDirectoryEditor extends EditorPart {
     @Override
     public boolean isSaveOnCloseNeeded() {
         return false;
-    }
-
-    @CMOne(info = "This method is used by CMOne")
-    public static void openEditor(AS400 as400, Connection jdbcConnection, RemoteObject remoteObject, String mode) {
-        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
-            try {
-
-                BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(as400, jdbcConnection, remoteObject, mode);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
-
-            } catch (PartInitException e) {
-            }
-        }
     }
 
     public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) throws PartInitException {
