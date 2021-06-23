@@ -46,7 +46,6 @@ Export-Package: biz.isphere.rse,
  biz.isphere.rse.internal,
  biz.isphere.rse.preferencepages,
  biz.isphere.rse.preferences,
- biz.isphere.rse.spooledfiles,
- biz.isphere.rse.userspaceeditor
+ biz.isphere.rse.spooledfiles
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
