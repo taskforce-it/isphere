@@ -18,11 +18,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
-import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
-
-import com.ibm.as400.access.AS400;
 
 public class MessageFileEditor extends EditorPart {
 
@@ -77,19 +74,6 @@ public class MessageFileEditor extends EditorPart {
     @Override
     public boolean isSaveOnCloseNeeded() {
         return false;
-    }
-
-    @CMOne(info = "This method is used by CMOne")
-    public static void openEditor(AS400 as400, RemoteObject remoteObject, String mode) {
-        if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), as400)) {
-            try {
-
-                MessageFileEditorInput editorInput = new MessageFileEditorInput(as400, remoteObject, mode);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, MessageFileEditor.ID);
-
-            } catch (PartInitException e) {
-            }
-        }
     }
 
     public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) throws PartInitException {
