@@ -32,7 +32,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 import biz.isphere.base.versioncheck.PluginCheck;
-import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.IEditor;
