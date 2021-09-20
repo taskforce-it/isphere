@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>IBM regular Expressions</title>
+</head>
+
+<body>
+  <h1>IBM regular Expressions</h1>
+  <a href="https://sourceforge.net/projects/isphere/" target="_blank">
+    <img src="assets/regular_expressions.png"
+    style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
+    border=0>
+  </a>
+  The iSphere search feature relies on the IBM regular expression functions and uses
+  regcomp() for compiling regular expressions.
+  This function follows more of a Posix/Unix specification, as stated by IBM support. Therefore
+  some commonly used character classes to not work, for example <i>\s</i> for white spaces.
+  <p>
+  For example, comonly used expression when searching for <i>white spaces</i> are:
+  <pre class="codeIndent">
+  dcl-f +filea
+  dcl-f\s+filea
+  dcl-f[ ]+filea
+  dcl-f[\s]+filea
+  </pre>
+  Let as assume we had the following input data:
+  <pre class="codeIndent">
+  dcl-f filea;
+  dcl-f  filea;
+  dcl-f   filea;
+  dcl-f   fileb;
+  </pre>
+  In that case we would get three matches, namely for the first three lines. The
+  fourth line does not match the expression, because of the <i>'fileb'</i> literal.
+  <p>
+  Not so the regcomp() function. It does not understand the <i>\s</i> character class
+  for white spaces and hence searches for a back-slash (\) followed by letter 'a'.
+  <p>
+  Instead of using <i>\s</i>, you have to pass <i>[:space:]</i> to regcomp() to search for
+  white spaces. But that only works when used in a character set. So you have to enclose
+  <i>[:space:]</i> into [], which makes it look like this:
+  <pre class="codeIndent">
+  dcl-f[[:space:]]+filea
+  </pre>
+  It is not very surprising, that other languages does not support Posix expressions,
+  such as <i>[:space:]</i>.
+  <p>
+  Please refer to the following documents to learn more about Posix regular expressions. The
+  first link was provided by IBM support. Thank you IBM support.
+  <ul>
+  <li><a href="https://pubs.opengroup.org/onlinepubs/007908799/xbd/re.html">The Single UNIX ® Specification, Version 2</a></li>
+  <li><a href="https://www.regular-expressions.info/posixbrackets.html">POSIX Bracket Expressions</a></ul></li>
+  </ul>
+  <p>
+  Due to the lack of a complete description of <i>regcom()</i>, it is up to you to figure
+  out what Posix expressions work with <i>regcom()</i> and which expressions are not
+  supported.
+  <p>
+  	<iframe src="../../copyright.html" width="100%" frameborder="0"
+		marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
