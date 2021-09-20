@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.2.0.r
+--------------------------
+ • Removed support for RDP 8.0.
+ • Changed development environment to RDi 9.5.1.3.
+
 Changelog: iSphere 4.1.1.r
 --------------------------
  • Changed dialog settings manager to not reset the column size to

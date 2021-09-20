@@ -5,16 +5,8 @@ Setup Eclipse (Helios) for iSphere
 Prerequisites:
 --------------
 
-Installed IBM Rational Developer for Power Systems Software (RDP 8.0).
-For WDSCi 7.0 it is recommended to install the SVN plug-in
-from:
-
-   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-local-update-site-1.10.13.zip
-
-For RDP 8.0 it is recommended to install the SVN plug-in
-from:
-
-   ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-local-update-site-1.12.xx.zip
+Installed IBM Rational Developer for Power Systems Software (RDP 9.5.1.3), which
+ist the development IDE for iSphere.
 
 For RDi 9.5 it is recommended to install the SVNKit and SVN plug-in
 from:
@@ -55,10 +47,6 @@ project from:
 Ant Home:
 ---------
 
-For WDSCi and RDP 8.0 use Ant of RDP 8.0:
-
-   c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.7.1.v20100518-1145/
-
 For RDi 9.5.1.3+ use Ant of RDI 9.5.1.3:
 
    c:/Program Files (x86)/IBM/SDP_Shared/plugins/org.apache.ant_1.9.2.v20140417-1502/
@@ -93,25 +81,6 @@ Eclipse Settings:
 
 a) Preferences -> Java -> Installed JREs (
 
-   For WDSC 7.0:
-   -------------
-
-   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
-   JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
-
-   Flagged as "Default JRE".
-
-   RDP 8.0 and RDi 9.1+:
-   ---------------------
-
-   JRE home:   C:\Programme_x86\IBM\SDP_070\jdk   (example path)
-   JRE name:   JRE 1.5.0 IBM J9                   (must be spelled as shown)
-
-   JRE home:   C:\Programme_x86\IBM\SDP_080\jdk   (example path)
-   JRE name:   JRE 1.6.0 IBM J9                   (must be spelled as shown)
-
-   Flagged as "Default JRE".
-
    RDi 9.5.1.3+:
    -------------
 
@@ -126,10 +95,6 @@ b) Preferences - Java -> Code Style -> Clean Up
 
    Alternatively import and enable the cleanup profile for
    each iSphere project.
-
-   WDSCi: Restore default values for all "Clean Up" tabs.
-          Uncheck "Change all accesses through subtypes"
-          on "Member Accesses" tab.
 
 c) Preferences - Java -> Code Style -> Formatter
 
@@ -155,7 +120,7 @@ e) Preferences - Java -> Editor -> Save Actions:
 
    Disable: Additional actions
 
-f) For RDi and WDSCi add classpath variable IBM_SHARED_PLUGINS to the Java build path:
+f) Add classpath variable IBM_SHARED_PLUGINS to the Java build path:
 
    Preferences - Java - Build path - Classpath variables
 
@@ -234,12 +199,6 @@ Usefull plug-ins:
 
 Eclipse Plug-in Spy:
 
-RDi 8.0:
---------
-
-Name:     Eclipse RCP Plug-in Developer Resources
-Location: Helios Milestone Repository - http://download.eclipse.org/releases/helios
-
 RDi 9.0/9.1:
 ------------
 
@@ -250,29 +209,6 @@ Window Spy: Alt-Shift-F1
 Menu Spy:   Alt-Shift-F2
 
 Java Decompiler
-
-RDi 8.0 and WDSCi 7.0:
-----------------------
-
-Name:     JD-Eclipse Decompiler Local Update Site
-Location: ${workspace_loc}\iSphere Eclipse Setup\plug-ins\jd-eclipse-site-1.0.1.zip
-
-Version 1.0.1 has been created from 1.0.0-RC2 and can be installed in WDSCi 7.0.
-
-Configuration:
-
-   General -> Editors -> File Associations
-
-      a) Add file type '*.class'
-      b) associate editor 'JD Class File Viewer'
-      c) Make 'JD Class File Viewer' the default editor
-
-   Eventually you should have the following editors associated to *.class:
-
-      JD Class File Viewer (default)
-      Class File Viewer (locked by 'Java Class File' content type)
-
-   See also: https://github.com/java-decompiler/jd-eclipse
 
 RDi 9.5:
 --------
