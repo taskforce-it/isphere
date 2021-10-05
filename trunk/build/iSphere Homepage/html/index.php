@@ -69,7 +69,11 @@
 			<tr><td height="15px"></td></tr>
 			<tr><td nowrap>Peter Colpaert</td><td>-</td><td nowrap>Dutch Translation</td></tr>
 			<tr><td height="20px"></td></tr>
+			<tr><td nowrap>Wim Jongman</td><td>-</td><td nowrap>Dutch Translation</td></tr>
+			<tr><td height="20px"></td></tr>
 	        <tr><td nowrap>Nicola Brion</td><td>-</td><td nowrap>Italian Translation</td></tr>
+			<tr><td height="20px"></td></tr>
+	        <tr><td nowrap>Marco Riva</td><td>-</td><td nowrap>Italian Translation</td></tr>
 			<tr><td height="20px"></td></tr>
 	        <tr><td nowrap>Sam Lennon</td><td>-</td><td nowrap>Documentation</td></tr>
 			<tr><td height="20px"></td></tr>
