@@ -8,10 +8,13 @@ Prerequisites:
 Installed IBM Rational Developer for Power Systems Software (RDP 9.5.1.3), which
 ist the development IDE for iSphere.
 
-For RDi 9.5 it is recommended to install the SVNKit and SVN plug-in
+For RDi 9.5 it is recommended to install the Subclipse SVNKit and SVN plug-in
 from:
 
+   "Subclipse SVNKit 1.10.2"
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\org.tmatesoft.svn_1.10.2.eclipse.zip
+
+   "Subclipse 4.3.0"
    ${workspace_loc}\iSphere Eclipse Setup\plug-ins\subclipse-4.3.0.zip
 
 For RDi 9.6 it is recommended to install the SVN plug-in
