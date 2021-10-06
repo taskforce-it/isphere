@@ -12,7 +12,7 @@ and uncommenting source lines to the Lpex editor as well as options for
 indenting and unindenting source lines. It is mainly
 intended to be used with WDSCi but you can also install it for
 RDi, if you want to get the same actions and behavior for both
-development environments. RDi 8.0+ uses Ctrl+/ and Ctrl+\ for
+development environments. RDi 9.5.1.3+ uses Ctrl+/ and Ctrl+\ for
 commenting and uncommenting source lines, whereas WDSCi 7.0 lacks
 these options. Both development environments have no shortcuts for
 indenting and unindenting source lines.

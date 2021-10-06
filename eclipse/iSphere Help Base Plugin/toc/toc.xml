@@ -6,7 +6,7 @@
    <topic label="Upgrade Instructions" href="html/upgrade/upgrade_instructions.html" />
    <topic label="Install Instructions" >
       <topic label="Install Plugin for WDSCi 7.0" href="html/install/wdsci7.0/install_wdsci.html" />
-      <topic label="Install Plugin for RDi 8.0+" href="html/install/rdi8.0/install_rdi.html" />
+      <topic label="Install Plugin for RDi 9.5.1.3+" href="html/install/rdi8.0/install_rdi.html" />
       <topic label="Install iSphere Library" href="html/install/install_library.html" />
    </topic>
    <topic label="Uninstall Instructions" >
