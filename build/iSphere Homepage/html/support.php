@@ -83,8 +83,7 @@
         <div class="section">
 		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
 		<ul>
-		<li>Websphere Development Studio Client for iSeries 7.0</li>
-		<li>IBM Rational Developer for i 8.0+</li>
+		<li>IBM Rational Developer for i 9.5.1.3+</li>
 		</ul>
 		</div>
         <p/>

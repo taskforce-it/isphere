@@ -43,7 +43,7 @@
         
         <h2 class="release">Introduction</h2>
         <div class="section">
-        iSphere is an open source plug-in for WDSCi 7.0 and RDi 8.0+. It delivers high quality extensions 
+        iSphere is an open source plug-in for RDi 9.5.1.3+. It delivers high quality extensions 
         for WDSC, RDP and RDi to further improve developer productivity. The current version is <?php echo $current_version; ?>.
 		<p/>
 		IBM's current Eclipse based Integrated Development Environment (IDE) is a huge step beyond SEU, but 
@@ -127,8 +127,7 @@
         The easiest way to install the iSphere plug-in is using the official update sites:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+</a></td></tr>
-        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="http://isphere.sourceforge.net/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 9.5.1.3+</a></td></tr>
         </table>
         <p/>
         Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/help/">help</a> page for detailed installation instructions.
@@ -136,8 +135,7 @@
         The iSphere beta versions are available here:
         <p/>
         <table class="nomargin">
-        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 8.0+ (beta)</a></td></tr>
-        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/wdsci7.0/">Websphere Development Studio Client for iSeries - WDSCi 7.0 (beta)</a></td></tr>
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="http://isphere.sourceforge.net/beta-version/eclipse/rdi8.0/">IBM Rational Developer for i - RDi 9.5.1.3+ (beta)</a></td></tr>
         </table>
         <p/>
         Refer to the iSphere <a target="_help" href="http://isphere.sourceforge.net/beta-version/help/">help (beta version)</a> page for detailed installation instructions.
@@ -177,8 +175,7 @@
         <div class="section">
 		The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
 		<ul>
-		<li>Websphere Development Studio Client for iSeries 7.0</li>
-		<li>IBM Rational Developer for i 8.0+</li>
+		<li>IBM Rational Developer for i 9.5.1.3+</li>
 		</ul>
 		</div>
         <p/>
