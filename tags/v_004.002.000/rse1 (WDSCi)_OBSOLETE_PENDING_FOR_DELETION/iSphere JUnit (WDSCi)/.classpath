@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE 1.5.0 IBM J9"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere Base Plugin"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere Core Plugin"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/iSphere Task Tags Plugin"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere RSE Plugin (WDSCi)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Adapter Plugin (WDSCi)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin (WDSCi)"/>
+	<classpathentry kind="lib" path="lib/swt-debug.jar"/>
+	<classpathentry kind="var" path="IBM_SHARED_PLUGINS/org.eclipse.osgi_3.2.3.R32x_v20071108.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Message Subsystem Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere STRPREPRC Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator Core Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere 5250 Emulator RSE Plugin (WDSCi)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Log Explorer (WDSCi)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer RSE Plugin (WDSCi)"/>
+	<classpathentry kind="lib" path="lib/jt400_7.1.0.6.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Journal Explorer Core Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Lpex Editor Extensions Plugin"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/iSphere IDE Base Plugin"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
