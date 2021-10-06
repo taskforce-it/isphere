@@ -197,8 +197,8 @@ a) Map the [Enter] key to "splittLine":
    Source: http://www-01.ibm.com/support/docview.wss?uid=swg21639969
 
 
-Usefull plug-ins:
-=================
+Useful plug-ins:
+================
 
 Eclipse Plug-in Spy:
 
@@ -224,3 +224,14 @@ RDi 9.6:
 
 Name:     Enhanced Class Decompiler
 Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
+
+
+Useful Color Settings:
+======================
+
+General - Appearance:
+  Theme: Classic
+General - Appearance - Colors and Fonts:
+  View and Editor Folders
+    Active part background begin: R=255, G=128, B=128
+    Active part background end  : R=255, G=0, B=0
