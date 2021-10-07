@@ -12,4 +12,3 @@ Require-Bundle: org.eclipse.osgi,
 Bundle-ActivationPolicy: lazy
 Import-Package: com.ibm.icu.util,
  com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
