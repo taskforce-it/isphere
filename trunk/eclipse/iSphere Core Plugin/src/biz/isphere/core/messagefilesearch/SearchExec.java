@@ -281,7 +281,6 @@ public class SearchExec {
 
     private SearchResult[] _searchResults;
 
-    @CMOne(info = "This method is used by CMOne")
     public SearchResult[] executeJoin(AS400 _as400, String _hostName, Connection _jdbcConnection, SearchOptions _searchOptions,
         ArrayList<SearchElement> _searchElements) {
 
