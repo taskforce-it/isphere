@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
 package biz.isphere.rse.resourcemanagement.useraction;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -65,7 +66,9 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
 
         Arrays.sort(userActions, new UserActionXmlComparator());
 
-        XMLPrettyPrintWriter streamWriter = createXMLStreamWriter(toFile);
+        FileOutputStream fileOutputStream = new FileOutputStream(toFile);
+        
+        XMLPrettyPrintWriter streamWriter = createXMLStreamWriter(fileOutputStream);
 
         streamWriter.writeStartDocument();
 
@@ -108,6 +111,7 @@ public class XMLUserActionHelper extends AbstractXmlHelper {
         streamWriter.flush();
         streamWriter.close();
 
+        fileOutputStream.close();
     }
 
     private static void createUserActions(XMLPrettyPrintWriter streamWriter, RSEUserAction[] userActions) throws XMLStreamException {

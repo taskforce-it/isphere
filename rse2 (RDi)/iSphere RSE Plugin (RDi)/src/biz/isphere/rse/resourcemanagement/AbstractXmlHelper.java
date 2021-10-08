@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2021 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -82,10 +82,10 @@ public abstract class AbstractXmlHelper {
         return eventReader;
     }
 
-    protected static XMLPrettyPrintWriter createXMLStreamWriter(File file) throws FileNotFoundException, XMLStreamException {
+    protected static XMLPrettyPrintWriter createXMLStreamWriter(FileOutputStream fileOutputStream) throws FileNotFoundException, XMLStreamException {
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(new FileOutputStream(file));
+        XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(fileOutputStream);
 
         return new XMLPrettyPrintWriter(streamWriter);
     }

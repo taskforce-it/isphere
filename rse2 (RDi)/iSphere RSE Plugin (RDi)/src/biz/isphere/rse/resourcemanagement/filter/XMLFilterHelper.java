@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,9 @@ public class XMLFilterHelper {
 
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
-        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(toFile));
+        FileOutputStream fileOutputStream = new FileOutputStream(toFile);
+        
+        XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(fileOutputStream);
 
         XMLEventFactory eventFactory = XMLEventFactory.newInstance();
         XMLEvent end = eventFactory.createDTD("\n");
@@ -102,6 +104,9 @@ public class XMLFilterHelper {
 
         eventWriter.close();
 
+        // See: OpenJDK Issue #JDK-8190919
+        // https://bugs.openjdk.java.net/browse/JDK-8190919
+        fileOutputStream.close();
     }
 
     private static void createFilters(XMLEventWriter eventWriter, XMLEventFactory eventFactory, XMLEvent end, XMLEvent tab, RSEFilter[] filters)

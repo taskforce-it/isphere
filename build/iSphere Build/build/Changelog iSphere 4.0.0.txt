@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.2.1.r
+--------------------------
+ • Fixed iSphere Filter, Command and User Action Managers to
+   properly close their repository XML files.
+
 Changelog: iSphere 4.2.0.r
 --------------------------
  • Removed support for RDP 8.0.
