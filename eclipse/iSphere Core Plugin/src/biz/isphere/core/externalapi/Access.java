@@ -325,7 +325,68 @@ public class Access {
         }
 
     }
+    
+    /**
+     * Saves a spooled file.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param file - The name of the spooled file.
+     * @param fileNumber - The number of the spooled file.
+     * @param jobName - The name of the job that created the spooled file.
+     * @param jobUser - The user who created the spooled file.
+     * @param jobNumber - The number of the job that created the spooled file.
+     * @param jobSystem - The name of the system where the spooled file was created.
+     * @param creationDate - The date the spooled file was created on the system. 
+     *        The date is encoded in a character string with the format CYYMMDD.
+     * @param creationTime - The time the spooled file was created on the system. 
+     *        The time is encoded in a character string with the format HHMMSS.
+     * @param format - The output format of the spooled file. 
+     *        IPreferences.OUTPUT_FORMAT_PDF 
+     *        IPreferences.OUTPUT_FORMAT_HTML 
+     *        IPreferences.OUTPUT_FORMAT_TEXT 
+     *        IPreferences.OUTPUT_FORMAT_DFT
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static void saveSpooledFile(Shell shell, String connectionName, String file, int fileNumber, String jobName, String jobUser, String jobNumber, String jobSystem, String creationDate, String creationTime, String format)
+        throws Exception {
 
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+        if (system != null) {
+            
+            if (ISphereHelper.checkISphereLibrary(shell, connectionName)) {
+                
+                SpooledFile spooledFile = new SpooledFile();
+                spooledFile.setConnectionName(connectionName);
+                spooledFile.setAS400(system);
+                spooledFile.setFile(file);
+                spooledFile.setFileNumber(fileNumber);
+                spooledFile.setJobName(jobName);
+                spooledFile.setJobUser(jobUser);
+                spooledFile.setJobNumber(jobNumber);
+                spooledFile.setJobSystem(jobSystem);
+                spooledFile.setCreationDate(creationDate);
+                spooledFile.setCreationTime(creationTime);
+                
+                String _format = format;
+                if (_format.equals(IPreferences.OUTPUT_FORMAT_DFT)) {
+                    _format = Preferences.getInstance().getSpooledFileConversionDefaultFormat();
+                }
+                
+                String message = spooledFile.save(shell, _format);
+                
+                if (message != null) {
+                    MessageDialog.openError(shell, Messages.Error, message);
+                }
+                
+            }
+            
+        }
+
+    }
+    
     /**
      * Searches for strings in source files and returns the search results.
      * 
