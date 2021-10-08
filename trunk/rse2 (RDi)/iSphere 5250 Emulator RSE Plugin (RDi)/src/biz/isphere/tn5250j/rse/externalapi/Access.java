@@ -10,6 +10,7 @@ package biz.isphere.tn5250j.rse.externalapi;
 
 import java.io.File;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
@@ -19,6 +20,8 @@ import biz.isphere.tn5250j.core.tn5250jpart.DisplaySession;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.rse.TN5250JRSEPlugin;
 import biz.isphere.tn5250j.rse.designerpart.DesignerInfo;
+import biz.isphere.tn5250j.rse.sessionspart.SessionsInfo;
+import biz.isphere.tn5250j.rse.sessionspart.handler.SetSEPAsync;
 
 public class Access {
 
@@ -96,5 +99,22 @@ public class Access {
 		}
 
     }
-	
+
+    public static void setServiceEntryPoint(Shell shell, String _rseProfil, String _rseConnection, String _library, String _object, String _objectType)
+            throws Exception {
+
+		SessionsInfo sessionInfo = new SessionsInfo(null);
+		sessionInfo.setRSEProfil(_rseProfil);
+		sessionInfo.setRSEConnection(_rseConnection);
+			
+		Runnable runnable = new SetSEPAsync(
+				shell, 
+				sessionInfo, 
+				_library, 
+				_object, 
+				_objectType);
+        shell.getDisplay().asyncExec(runnable);
+
+    }
+    
 }
