@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Job Log Explorer (WDSCi)
+Bundle-Name: iSphere Job Log Explorer (RDi)
 Bundle-SymbolicName: biz.isphere.joblogexplorer.rse;singleton:=true
 Bundle-Version: 4.2.0.r
 Bundle-Activator: biz.isphere.joblogexplorer.rse.ISphereJobLogExplorerRSEPlugin
