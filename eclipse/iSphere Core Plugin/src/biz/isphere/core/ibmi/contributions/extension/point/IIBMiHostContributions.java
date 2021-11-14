@@ -13,11 +13,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.internal.Member;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
 
 public interface IIBMiHostContributions {
 
@@ -83,52 +82,6 @@ public interface IIBMiHostContributions {
      *        connection
      */
     public void setOffline(String qualifiedConnectionName, boolean offline);
-
-    /**
-     * Executes a given command for a given connection.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param command - command that is executed
-     * @param rtnMessages - list of error messages or <code>null</code>
-     * @return error message text on error or <code>null</code> on success
-     */
-    public String executeCommand(String qualifiedConnectionName, String command, List<AS400Message> rtnMessages);
-
-    /**
-     * Returns whether a given library exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public boolean checkLibrary(String qualifiedConnectionName, String libraryName);
-
-    /**
-     * Checks whether a given file exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else <code>false</code>.
-     */
-    public boolean checkFile(String qualifiedConnectionName, String libraryName, String fileName);
-
-    /**
-     * Checks whether a given member exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that should contain the member
-     * @param memberName - name of the member that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public boolean checkMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName);
 
     /**
      * Returns the name of the iSphere library that is associated to a given

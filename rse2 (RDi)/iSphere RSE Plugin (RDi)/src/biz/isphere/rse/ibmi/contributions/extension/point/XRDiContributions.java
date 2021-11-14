@@ -28,7 +28,19 @@ import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 
-import biz.isphere.base.internal.ExceptionHelper;
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.SecureAS400;
+import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
+import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
+import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
+import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
+import com.ibm.etools.iseries.subsystems.qsys.objects.RemoteObjectContext;
+import com.ibm.etools.systems.editor.IRemoteResourceProperties;
+import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
@@ -36,28 +48,10 @@ import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.rse.Messages;
 import biz.isphere.rse.clcommands.ICLPrompterImpl;
 import biz.isphere.rse.compareeditor.handler.CompareSourceMembersHandler;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.SecureAS400;
-import com.ibm.etools.iseries.perspective.model.AbstractISeriesProject;
-import com.ibm.etools.iseries.perspective.model.util.ISeriesModelUtil;
-import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
-import com.ibm.etools.iseries.rse.util.clprompter.CLPrompter;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember;
-import com.ibm.etools.iseries.subsystems.qsys.objects.RemoteObjectContext;
-import com.ibm.etools.systems.editor.IRemoteResourceProperties;
-import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 
 /**
  * This class connects to the
@@ -204,137 +198,6 @@ public class XRDiContributions implements IIBMiHostContributions {
                 connection.getHost().setOffline(offline);
             }
         }
-    }
-
-    /**
-     * Executes a given command for a given connection.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param command - command that is executed
-     * @param rtnMessages - list of error messages or <code>null</code>
-     * @return error message text on error or <code>null</code> on success
-     */
-    public String executeCommand(String qualifiedConnectionName, String command, List<AS400Message> rtnMessages) {
-
-        try {
-
-            IBMiConnection connection = getConnection(qualifiedConnectionName);
-            if (connection == null) {
-                return Messages.bind(Messages.Connection_A_not_found, qualifiedConnectionName);
-            }
-
-            AS400 system = connection.getAS400ToolboxObject();
-
-            String escapeMessage = null;
-            CommandCall commandCall = new CommandCall(system);
-            if (!commandCall.run(command)) {
-                AS400Message[] messageList = commandCall.getMessageList();
-                if (messageList.length > 0) {
-                    for (int idx = 0; idx < messageList.length; idx++) {
-                        if (messageList[idx].getType() == AS400Message.ESCAPE) {
-                            escapeMessage = messageList[idx].getHelp();
-                        }
-                        if (rtnMessages != null) {
-                            rtnMessages.add(messageList[idx]);
-                        }
-                    }
-                }
-
-                if (escapeMessage == null) {
-                    escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
-                }
-            }
-
-            return escapeMessage;
-
-        } catch (Throwable e) {
-            ISpherePlugin.logError("*** Failed to execute command: " + command + " for connection " + qualifiedConnectionName + " ***", e); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-            return ExceptionHelper.getLocalizedMessage(e);
-        }
-    }
-
-    /**
-     * Returns whether a given library exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public boolean checkLibrary(String qualifiedConnectionName, String libraryName) {
-
-        IBMiConnection connection = getConnection(qualifiedConnectionName);
-
-        IQSYSLibrary library = null;
-        try {
-            library = connection.getLibrary(libraryName, null);
-        } catch (Throwable e) {
-            return false;
-        }
-
-        if (library == null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks whether a given file exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else <code>false</code>.
-     */
-    public boolean checkFile(String qualifiedConnectionName, String libraryName, String fileName) {
-
-        IBMiConnection connection = getConnection(qualifiedConnectionName);
-
-        IQSYSFile file = null;
-        try {
-            file = connection.getFile(libraryName, fileName, null);
-        } catch (Throwable e) {
-            return false;
-        }
-
-        if (file == null) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Checks whether a given member exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that should contain the member
-     * @param memberName - name of the member that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public boolean checkMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName) {
-
-        IBMiConnection connection = getConnection(qualifiedConnectionName);
-
-        IQSYSMember member = null;
-        try {
-            member = connection.getMember(libraryName, fileName, memberName, null);
-        } catch (Throwable e) {
-            return false;
-        }
-
-        if (member == null) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

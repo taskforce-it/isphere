@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,15 +14,17 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Member;
-
-import com.ibm.as400.access.AS400Message;
 
 public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
@@ -315,14 +317,15 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         try {
 
             String message = null;
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 
             Member fromSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getFromLibrary(), getFromFile(), getFromMember());
             if (fromSourceMember == null) {
-                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
-                    getFromMember() });
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found,
+                    new Object[] { getFromLibrary(), getFromFile(), getFromMember() });
             }
 
-            if (!IBMiHostContributionsHandler.checkMember(connectionName, getToLibrary(), getToFile(), getToMember())) {
+            if (!ISphereHelper.checkMember(system, getToLibrary(), getToFile(), getToMember())) {
                 message = addSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
             } else {
                 message = prepareSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
@@ -355,7 +358,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
             command.append(" CRTFILE(*NO)"); //$NON-NLS-1$
             command.append(" FMTOPT(*MAP)"); //$NON-NLS-1$
 
-            message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+            message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
             if (message != null) {
                 return buildMMessageString(rtnMessages);
             }
@@ -391,8 +394,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
             Member fromSourceMember = IBMiHostContributionsHandler.getMember(fromConnectionName, getFromLibrary(), getFromFile(), getFromMember());
             if (fromSourceMember == null) {
-                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] { getFromLibrary(), getFromFile(),
-                    getFromMember() });
+                return Messages.bind(Messages.Member_2_of_file_1_in_library_0_not_found,
+                    new Object[] { getFromLibrary(), getFromFile(), getFromMember() });
             }
 
             debugPrint("Retrieving the source member attributes took " + (System.currentTimeMillis() - startTime) + " mSecs.");
@@ -400,14 +403,14 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
             IFile localResource = fromSourceMember.downloadMember(null);
             if (localResource == null) {
-                return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0, new Object[] { getFromLibrary(), getFromFile(),
-                    getFromMember() });
+                return Messages.bind(Messages.Could_not_download_member_2_of_file_1_of_library_0,
+                    new Object[] { getFromLibrary(), getFromFile(), getFromMember() });
             }
 
             debugPrint("Downloading the source member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
             startTime = System.currentTimeMillis();
 
-            if (!IBMiHostContributionsHandler.checkMember(toConnectionName, getToLibrary(), getToFile(), getToMember())) {
+            if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(toConnectionName), getToLibrary(), getToFile(), getToMember())) {
                 message = addSourceMember(toConnectionName, getToLibrary(), getToFile(), getToMember());
                 debugPrint("Adding the target member took " + (System.currentTimeMillis() - startTime) + " mSecs.");
                 startTime = System.currentTimeMillis();
@@ -475,7 +478,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append(" SRCTYPE('*NONE')"); //$NON-NLS-1$
 
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
-        String message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        String message = ISphereHelper.executeCommand(IBMiHostContributionsHandler.getSystem(connectionName), command.toString(), rtnMessages);
         if (message != null) {
             return buildMMessageString(rtnMessages);
         }
@@ -490,6 +493,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         StringBuilder command = new StringBuilder();
 
         rtnMessages.clear();
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
         command.delete(0, command.length());
 
         command.append("CHGPFM"); //$NON-NLS-1$
@@ -504,7 +509,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append(" TEXT('*** iSphere Copying Member ***')"); //$NON-NLS-1$
         command.append(" SRCTYPE('*NONE')"); //$NON-NLS-1$
 
-        message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
         if (message != null) {
             return buildMMessageString(rtnMessages);
         }
@@ -522,7 +527,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append(memberName);
         command.append(")"); //$NON-NLS-1$
 
-        message = IBMiHostContributionsHandler.executeCommand(connectionName, command.toString(), rtnMessages);
+        message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
         if (message != null) {
             return buildMMessageString(rtnMessages);
         }
@@ -553,7 +558,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         command.append(")"); //$NON-NLS-1$
 
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
-        String message = IBMiHostContributionsHandler.executeCommand(toSourceMember.getConnection(), command.toString(), rtnMessages);
+        String message = ISphereHelper.executeCommand(IBMiHostContributionsHandler.getSystem(toSourceMember.getConnection()), command.toString(),
+            rtnMessages);
         if (message != null) {
             return buildMMessageString(rtnMessages);
         }

@@ -1,4 +1,15 @@
 
+Changelog: iSphere 4.2.2.r
+--------------------------
+
+ • Removed methods from interface IIBMiHostContributions.
+    - executeCommand()
+    - checkLibrary()
+    - checkFile()
+    - checkMember()
+   Removed from IBMiHostContributionsHandler.
+    - resolveMemberName()
+
 Changelog: iSphere 4.2.1.r
 --------------------------
  • Fixed iSphere Filter, Command and User Action Managers to
