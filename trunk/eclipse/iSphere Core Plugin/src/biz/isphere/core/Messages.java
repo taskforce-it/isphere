@@ -1668,6 +1668,8 @@ public class Messages extends NLS {
 
     public static String Browse_For_A;
 
+    public static String Failed_to_execute_command_A;
+
     /*
      * Warning messages
      */

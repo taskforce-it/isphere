@@ -8,8 +8,6 @@
 
 package biz.isphere.core.ibmi.contributions.extension.handler;
 
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
@@ -22,19 +20,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 
-import biz.isphere.core.ISpherePlugin;
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
-import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
-import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Exception;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.AS400SecurityException;
-import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.ObjectDoesNotExistException;
 
 public class IBMiHostContributionsHandler {
 
@@ -175,102 +165,6 @@ public class IBMiHostContributionsHandler {
         }
 
         factory.setOffline(qualifiedConnectionName, offline);
-    }
-
-    /**
-     * Executes a given command for a given connection.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param command - command that is executed
-     * @param rtnMessages - list of error messages or <code>null</code>
-     * @return error message text on error or <code>null</code> on success
-     */
-    public static String executeCommand(String qualifiedConnectionName, String command) {
-        return executeCommand(qualifiedConnectionName, command, null);
-    }
-
-    public static String executeCommand(String connectionName, String command, List<AS400Message> rtnMessages) {
-
-        IIBMiHostContributions factory = getContributionsFactory();
-
-        if (factory == null) {
-            return "RDi plug-in not installed."; //$NON-NLS-1$
-        }
-
-        return factory.executeCommand(connectionName, command, rtnMessages);
-    }
-
-    /**
-     * Returns whether a given library exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public static boolean checkLibrary(String qualifiedConnectionName, String libraryName) {
-
-        IIBMiHostContributions factory = getContributionsFactory();
-
-        if (factory == null) {
-            return false;
-        }
-
-        return factory.checkLibrary(qualifiedConnectionName, libraryName);
-    }
-
-    /**
-     * Checks whether a given file exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that is tested
-     * @return <code>true</code>, when the file exists, else <code>false</code>.
-     */
-    public static boolean checkFile(String qualifiedConnectionName, String libraryName, String fileName) {
-
-        IIBMiHostContributions factory = getContributionsFactory();
-
-        if (factory == null) {
-            return false;
-        }
-
-        return factory.checkFile(qualifiedConnectionName, libraryName, fileName);
-    }
-
-    /**
-     * Checks whether a given member exists or not.
-     * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
-     * @param libraryName - library that should contain the file
-     * @param fileName - file that should contain the member
-     * @param memberName - name of the member that is tested
-     * @return <code>true</code>, when the library exists, else
-     *         <code>false</code>.
-     */
-    public static boolean checkMember(String qualifiedConnectionName, String libraryName, String fileName, String memberName) {
-
-        IIBMiHostContributions factory = getContributionsFactory();
-
-        if (factory == null) {
-            return false;
-        }
-
-        String tMemberName = memberName;
-
-        if (memberName.startsWith("*")) {
-            try {
-                tMemberName = resolveMemberName(qualifiedConnectionName, libraryName, fileName, tMemberName);
-            } catch (Exception e) {
-                return false;
-            }
-        }
-
-        return factory.checkMember(qualifiedConnectionName, libraryName, fileName, tMemberName);
     }
 
     /**
@@ -519,27 +413,6 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.getLocalResource(connectionName, libraryName, fileName, memberName, srcType);
-    }
-
-    public static String resolveMemberName(String connectionName, String libraryName, String fileName, String memberName) throws AS400Exception,
-        AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
-
-        try {
-
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            MBRD0100 mbrd0100 = new MBRD0100(system);
-
-            QUSRMBRD memberDescription = new QUSRMBRD(system);
-            memberDescription.setFile(fileName, libraryName, memberName);
-            if (memberDescription.execute(mbrd0100)) {
-                return mbrd0100.getMemberName();
-            }
-
-        } catch (PropertyVetoException e) {
-            ISpherePlugin.logError("*** Failed to retrieve member description " + libraryName + "/" + fileName + "(" + memberName + ")" + " ***", e);
-        }
-
-        return null;
     }
 
     public static int getSystemCcsid(String connectionName) {

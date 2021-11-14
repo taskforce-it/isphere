@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,15 @@
 
 package biz.isphere.core.internal;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.List;
 
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.base.internal.IntHelper;
-import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.Messages;
-import biz.isphere.core.annotations.CMOne;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.CharacterDataArea;
@@ -30,6 +26,16 @@ import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.Job;
 import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.as400.access.QSYSObjectPathName;
+
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
+import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.api.retrievememberdescription.MBRD0100;
+import biz.isphere.core.internal.api.retrievememberdescription.QUSRMBRD;
 
 public class ISphereHelper {
 
@@ -79,8 +85,8 @@ public class ISphereHelper {
     public static boolean checkISphereLibrary(Shell shell, String connectionName) {
         if (IBMiHostContributionsHandler.isOffline(connectionName)) {
             if (shell != null) {
-                new DisplayMessage(shell, Messages.Error, Messages.bind(
-                    Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName)).start();
+                new DisplayMessage(shell, Messages.Error,
+                    Messages.bind(Messages.Connection_A_does_not_exist_or_is_currently_offline_and_cannot_be_connected, connectionName)).start();
             }
             return false;
         }
@@ -128,20 +134,18 @@ public class ISphereHelper {
 
         if (serverProvided.compareTo(clientNeedsServer) < 0) {
 
-            String message = Messages
-                .bind(
-                    Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
-                    new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided), getVersionFormatted(clientNeedsServer) });
+            String message = Messages.bind(
+                Messages.iSphere_library_A_on_System_B_is_of_version_C_but_at_least_version_D_is_needed_Please_transfer_the_current_iSphere_library_A_to_system_B,
+                new String[] { library, as400.getSystemName(), getVersionFormatted(serverProvided), getVersionFormatted(clientNeedsServer) });
 
             return message;
         }
 
         if (clientProvided.compareTo(serverNeedsClient) < 0) {
 
-            String message = Messages
-                .bind(
-                    Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client,
-                    new String[] { getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient) });
+            String message = Messages.bind(
+                Messages.The_current_installed_iSphere_client_is_of_version_A_but_the_iSphere_server_needs_at_least_version_B_Please_install_the_current_iSphere_client,
+                new String[] { getVersionFormatted(clientProvided), getVersionFormatted(serverNeedsClient) });
 
             return message;
         }
@@ -230,6 +234,38 @@ public class ISphereHelper {
         return ""; //$NON-NLS-1$
     }
 
+    public static String executeCommand(AS400 as400, String command, List<AS400Message> rtnMessages) {
+
+        try {
+
+            String escapeMessage = null;
+            CommandCall commandCall = new CommandCall(as400);
+            if (!commandCall.run(command)) {
+                AS400Message[] messageList = commandCall.getMessageList();
+                if (messageList.length > 0) {
+                    for (int idx = 0; idx < messageList.length; idx++) {
+                        if (messageList[idx].getType() == AS400Message.ESCAPE) {
+                            escapeMessage = messageList[idx].getHelp();
+                        }
+                        if (rtnMessages != null) {
+                            rtnMessages.add(messageList[idx]);
+                        }
+                    }
+                }
+
+                if (escapeMessage == null) {
+                    escapeMessage = Messages.bind(Messages.Failed_to_execute_command_A, command);
+                }
+            }
+
+            return escapeMessage;
+
+        } catch (Throwable e) {
+            ISpherePlugin.logError("*** Failed to execute command: " + command + " ***", e); //$NON-NLS-1$//$NON-NLS-2$
+            return ExceptionHelper.getLocalizedMessage(e);
+        }
+    }
+
     public static String getCurrentLibrary(AS400 _as400) throws Exception {
 
         String currentLibrary = null;
@@ -316,6 +352,10 @@ public class ISphereHelper {
         return checkObject(system, new QSYSObjectPathName(library, object, type));
     }
 
+    public static boolean checkFile(AS400 system, String library, String file) {
+        return checkObject(system, new QSYSObjectPathName(library, file, "FILE"));
+    }
+
     public static boolean checkMember(AS400 system, String library, String file, String member) {
         return checkObject(system, new QSYSObjectPathName(library, file, member, "MBR"));
     }
@@ -330,7 +370,7 @@ public class ISphereHelper {
         command.append("CHKOBJ OBJ("); //$NON-NLS-1$
 
         command.append(pathName.getLibraryName());
-        command.append("/"); //$NON-NLS-1$0
+        command.append("/"); //$NON-NLS-1$
         command.append(pathName.getObjectName());
 
         command.append(") OBJTYPE("); //$NON-NLS-1$
@@ -358,6 +398,26 @@ public class ISphereHelper {
         }
 
         return false;
+    }
+
+    public static String resolveMemberName(AS400 system, String libraryName, String fileName, String memberName) throws AS400Exception,
+        AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
+
+        try {
+
+            MBRD0100 mbrd0100 = new MBRD0100(system);
+
+            QUSRMBRD memberDescription = new QUSRMBRD(system);
+            memberDescription.setFile(fileName, libraryName, memberName);
+            if (memberDescription.execute(mbrd0100)) {
+                return mbrd0100.getMemberName();
+            }
+
+        } catch (PropertyVetoException e) {
+            ISpherePlugin.logError("*** Failed to retrieve member description " + libraryName + "/" + fileName + "(" + memberName + ")" + " ***", e);
+        }
+
+        return null;
     }
 
     private static boolean isMember(QSYSObjectPathName pathName) {

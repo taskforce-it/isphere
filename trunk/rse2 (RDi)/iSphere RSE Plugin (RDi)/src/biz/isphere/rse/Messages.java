@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,8 +111,6 @@ public class Messages extends NLS {
     public static String Failed_to_load_data_from_file_colon_A;
 
     public static String Connection_A_not_found;
-
-    public static String Failed_to_execute_command_A;
 
     public static String Cannot_copy_source_members_from_different_connections;
 

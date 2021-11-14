@@ -62,6 +62,8 @@ import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
 
+import com.ibm.as400.access.AS400;
+
 public class OpenJournalOutputFileDialog extends XDialog {
 
     private static final String CONNECTION = "CONNECTION";
@@ -151,8 +153,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         txtMemberName.setLayoutData(createLayoutData());
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(),
-            SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
+            | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);
@@ -431,13 +433,15 @@ public class OpenJournalOutputFileDialog extends XDialog {
             return false;
         }
 
-        if (!IBMiHostContributionsHandler.checkLibrary(connectionName, libraryName)) {
+        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+
+        if (!ISphereHelper.checkLibrary(system, libraryName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_does_not_exist, new String[] { libraryName }));
             txtLibraryName.setFocus();
             return false;
         }
 
-        if (!IBMiHostContributionsHandler.checkFile(connectionName, libraryName, fileName)) {
+        if (!ISphereHelper.checkFile(system, libraryName, fileName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.File_A_B_does_not_exist, new String[] { libraryName, fileName }));
             txtFileName.setFocus();
@@ -447,7 +451,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         if (memberName.startsWith("*")) {
             if ("*FIRST".equals(memberName)) {
                 try {
-                    resolvedMemberName = IBMiHostContributionsHandler.resolveMemberName(connectionName, libraryName, fileName, memberName);
+                    resolvedMemberName = ISphereHelper.resolveMemberName(system, libraryName, fileName, memberName);
                 } catch (Exception e) {
                     resolvedMemberName = null;
                     MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
@@ -463,7 +467,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
             resolvedMemberName = memberName;
         }
 
-        if (!IBMiHostContributionsHandler.checkMember(connectionName, libraryName, fileName, resolvedMemberName)) {
+        if (!ISphereHelper.checkMember(system, libraryName, fileName, resolvedMemberName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.Member_C_does_not_exist_in_file_A_B, new String[] { libraryName, fileName, resolvedMemberName }));
             txtMemberName.setFocus();

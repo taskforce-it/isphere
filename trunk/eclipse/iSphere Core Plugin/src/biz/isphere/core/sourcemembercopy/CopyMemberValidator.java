@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,17 +21,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.FieldDescription;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.file.description.RecordFormatDescription;
 import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Validator;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.FieldDescription;
 
 public class CopyMemberValidator extends Thread {
 
@@ -154,18 +155,21 @@ public class CopyMemberValidator extends Thread {
                 errorItem = ERROR_TO_LIBRARY;
                 errorMessage = Messages.bind(Messages.Invalid_library_name, toLibrary);
                 isError = true;
-            } else if (!IBMiHostContributionsHandler.checkLibrary(toConnectionName, toLibrary)) {
-                errorItem = ERROR_TO_LIBRARY;
-                errorMessage = Messages.bind(Messages.Library_A_not_found, toLibrary);
-                isError = true;
-            } else if (!nameValidator.validate(toFile)) {
-                errorItem = ERROR_TO_FILE;
-                errorMessage = Messages.bind(Messages.Invalid_file_name, toFile);
-                isError = true;
-            } else if (!IBMiHostContributionsHandler.checkFile(toConnectionName, toLibrary, toFile)) {
-                errorItem = ERROR_TO_FILE;
-                errorMessage = Messages.bind(Messages.File_A_not_found, toFile);
-                isError = true;
+            } else {
+                AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
+                if (!ISphereHelper.checkLibrary(toSystem, toLibrary)) {
+                    errorItem = ERROR_TO_LIBRARY;
+                    errorMessage = Messages.bind(Messages.Library_A_not_found, toLibrary);
+                    isError = true;
+                } else if (!nameValidator.validate(toFile)) {
+                    errorItem = ERROR_TO_FILE;
+                    errorMessage = Messages.bind(Messages.Invalid_file_name, toFile);
+                    isError = true;
+                } else if (!ISphereHelper.checkFile(toSystem, toLibrary, toFile)) {
+                    errorItem = ERROR_TO_FILE;
+                    errorMessage = Messages.bind(Messages.File_A_not_found, toFile);
+                    isError = true;
+                }
             }
 
             return !isError;
@@ -232,13 +236,12 @@ public class CopyMemberValidator extends Thread {
                     } else if (targetMembers.contains(to)) {
                         member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
                         isError = true;
-                    } else if (!IBMiHostContributionsHandler.checkMember(fromConnectionName, member.getFromLibrary(), member.getFromFile(),
-                        member.getFromMember())) {
+                    } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
+                        member.getFromFile(), member.getFromMember())) {
                         member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
                         isError = true;
-                    } else if (!replace
-                        && IBMiHostContributionsHandler.checkMember(jobDescription.getToConnectionName(), member.getToLibrary(), member.getToFile(),
-                            member.getToMember())) {
+                    } else if (!replace && ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
+                        member.getToLibrary(), member.getToFile(), member.getToMember())) {
                         member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
                         isError = true;
                     } else if (!ignoreDataLostError) {
@@ -248,8 +251,8 @@ public class CopyMemberValidator extends Thread {
 
                         FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
                         if (fromSrcDta == null) {
-                            member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A, new String[] {
-                                member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
+                            member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
+                                new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
                             isError = true;
                             isSeriousError = true;
                         } else {
@@ -313,7 +316,7 @@ public class CopyMemberValidator extends Thread {
 
             } catch (Exception e) {
                 String message = "*** Failed retrieving list of open editors ***";
-                ISpherePlugin.logError(message, e); //$NON-NLS-1$
+                ISpherePlugin.logError(message, e); // $NON-NLS-1$
                 throw new Exception(message);
             }
 
