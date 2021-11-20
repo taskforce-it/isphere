@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 5/19/2021">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate="11/20/2021">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3369,13 +3369,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V1.20.1 - 19.05.2021 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V1.20.2 - 20.11.2021 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '1.20.1'
+     d                 C                   '1.20.2'
      d STRPREPRC_DATE...
-     d                 C                   '19.05.2021'
+     d                 C                   '20.11.2021'
       *
 ]]>  </copysrc>
 </mbr>
@@ -3480,6 +3480,12 @@ srccssid=  "01141">
      D  i_fromMbr                    10a   const
      D  i_toLib                      10a   const
      D  i_toMbr                      10a   const
+
+     D updateLDA...
+     D                 pr                  extproc('STRPREPRC4_+
+     D                                     updateLDA')
+     D  i_lib                        10a   const
+     D  i_obj                        10a   const
 
       /endif
 ]]>  </copysrc>
@@ -8240,6 +8246,13 @@ dcl-ds errCode_t qualified template;
   reserved_1   char(1) inz;
   excDta       char(100) inz;
 end-ds;
+// ------------------------------------------------------------
+//  Local data area (*LDA).
+// ------------------------------------------------------------
+dcl-ds g_LDA qualified dtaara(*LDA);
+  library      char(10);
+  object       char(10);
+end-ds;
 
 // ------------------------------------------------------------
 //  Set up test suite.
@@ -8336,6 +8349,8 @@ dcl-proc setUp export;
     endif;
   endif;
 
+  clearLDA();
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8370,6 +8385,10 @@ dcl-proc test_MONMSG export;
 
   assertEmpty();
 
+  assertLDA('': ''); // Job log entries are not added to the event file
+                     // for pre- and post commands. Therefore no event file
+                     // is created.
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8399,6 +8418,8 @@ dcl-proc test_PreCmd_NOEVENTF_NOJOBLOG_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('': '');
 
 end-proc;
 
@@ -8435,6 +8456,8 @@ dcl-proc test_PreCmd_NOEVENTF_NOJOBLOG_ERROR export;
 
   assertEmpty();
 
+  assertLDA('': '');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8464,6 +8487,10 @@ dcl-proc test_PreCmd_EVENTF_NOJOBLOG_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('': ''); // Job log entries are not added to the event file
+                     // for pre- and post commands. Therefore no event file
+                     // is created.
 
 end-proc;
 
@@ -8503,6 +8530,8 @@ dcl-proc test_PreCmd_EVENTF_NOJOBLOG_ERROR export;
 
   assertNoJobLog();
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8532,6 +8561,10 @@ dcl-proc test_PreCmd_EVENTF_ADDJOBLOG_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('': ''); // Job log entries are not added to the event file
+                     // for pre- and post commands. Therefore no event file
+                     // is created.
 
 end-proc;
 
@@ -8571,6 +8604,8 @@ dcl-proc test_PreCmd_EVENTF_ADDJOBLOG_ERROR export;
 
   assertNoJobLog();
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8608,6 +8643,8 @@ dcl-proc test_Execute_NOEVENTF_NOJOBLOG_NOEVENTF_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('': '');
 
 end-proc;
 
@@ -8651,6 +8688,8 @@ dcl-proc test_Execute_NOEVENTF_NOJOBLOG_NOEVENTF_ERROR export;
 
   assertEmpty();
 
+  assertLDA('': '');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8688,6 +8727,8 @@ dcl-proc test_Execute_EVENTF_NOJOBLOG_NOEVENTF_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -8737,6 +8778,8 @@ dcl-proc test_Execute_EVENTF_NOJOBLOG_NOEVENTF_ERROR export;
 
   assertNoJobLog();
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // -----------------------------------------------------------------------
@@ -8778,6 +8821,8 @@ dcl-proc test_Execute_EVENTF_ADDJOBLOG_NOEVENTF_OK export;
   assertMsgID('PRZ0033': 'W'); // Object created.
 
   assertNoJobLog();
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -8827,6 +8872,8 @@ dcl-proc test_Execute_EVENTF_ADDJOBLOG_NOEVENTF_ERROR export;
 
   assertNoJobLog();
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -8870,6 +8917,8 @@ dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_OK export;
   assertNoJobLog();
 
   assertNoMsgId('PRZ0029');
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -8917,6 +8966,8 @@ dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_ERROR export;
   assertNoJobLog();
 
   assertNoMsgId('PRZ0029');
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -8972,6 +9023,8 @@ dcl-proc test_Execute_EVENTF_NOJOBLOG_EVENTF_ERROR_2 export;
 
   assertNoMsgId('PRZ0029');
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -9013,6 +9066,8 @@ dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_OK export;
   assertNoJobLog();
 
   assertNoMsgId('PRZ0029');
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9061,6 +9116,8 @@ dcl-proc test_Execute_EVENTF_ADDJOBLOG_EVENTF_ERROR export;
 
   assertNoMsgId('PRZ0029');
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // ------------------------------------------------------------
@@ -9098,6 +9155,8 @@ dcl-proc test_PostCmd_EVENTF_NOJOBLOG_NOEVENTF_OK_OK export;
             SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT)');
 
   assertEmpty();
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9140,6 +9199,8 @@ dcl-proc test_PostCmd_EVENTF_ADDJOBLOG_NOEVENTF_OK_OK export;
   assertNoJobLog();
 
   assertMsgID('PRZ0029': 'W'); // STRPREPRZ messages
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9187,6 +9248,8 @@ dcl-proc test_PostCmd_EVENTF_NOJOBLOG_NOEVENTF_OK_ERROR export;
   assertMsgId('CPF7306': 'T'); // Member not added
 
   assertNoJobLog();
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9238,6 +9301,8 @@ dcl-proc test_PostCmd_EVENTF_ADDJOBLOG_NOEVENTF_OK_ERROR export;
   assertMsgID('CPF7312': 'S'); // File not found
   assertMsgId('CPF7306': 'T'); // Member not added
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // -----------------------------------------------------------------------
@@ -9286,6 +9351,8 @@ dcl-proc test_PostCmd_EVENTF_ADDJOBLOG_EVENTF_OK_ERROR export;
   assertMsgID('CPF7312': 'S'); // File not found
   assertMsgId('CPF7306': 'T'); // Member not added
 
+  assertLDA('QTEMP': 'TESTCASE');
+
 end-proc;
 
 // -----------------------------------------------------------------------
@@ -9325,6 +9392,8 @@ dcl-proc test_PostCmd_EVENTF_ADDJOBLOG_EVENTF_OK_OK export;
   assertMsgID('CPD0729': 'W'); // No executable commands found in source file.
 
   assertNoJobLog();
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9373,6 +9442,8 @@ dcl-proc test_PostCmd_EVENTF_ADDJOBLOG_EVENTF_OK_ERROR_COPY export;
 
   assertFileID_999('*JOBLOG'); // Job log of *POSTCMD, due to error in post-command.
   assertMsgID('CPF0821': 'T'); // Module TESTCASE2 not created.
+
+  assertLDA('QTEMP': 'TESTCASE');
 
 end-proc;
 
@@ -9480,6 +9551,27 @@ dcl-proc assertMsgID;
   assert(not isSqlError(sqlState));
 
   assert(count >= 1: 'Event file must contain a message with ID: ' + i_msgID);
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Asserts that the local data area (*LDA) was updated.
+// ------------------------------------------------------------
+dcl-proc assertLDA;
+  dcl-pi *n extproc(*dclcase);
+    i_lib  char(10) const;
+    i_obj  char(10) const;
+  end-pi;
+
+  dcl-ds lda likeds(g_LDA);
+
+  lda = retrieveLDA();
+
+  assert(lda.library = i_lib: 'Library name [' + %trim(lda.library) +
+                              '] in *LDA does not match: ' + %trim(i_lib));
+
+  assert(lda.object = i_obj: 'Object name [' + %trim(lda.object) +
+                             '] in *LDA does not match: ' + %trim(i_obj));
 
 end-proc;
 
@@ -9768,6 +9860,38 @@ dcl-proc exist;
   endif;
 
   return errCode.bytAvl = 0;
+
+end-proc;
+
+// ------------------------------------------------------------
+//  Clear local data area (*LDA).
+// ------------------------------------------------------------
+dcl-proc clearLDA;
+  dcl-pi *n extproc(*dclcase) end-pi;
+
+  monitor;
+    in g_LDA;
+    g_LDA.library = '';
+    g_LDA.object = '';
+    out g_LDA;
+  on-error;
+  endmon;
+end-proc;
+
+// ------------------------------------------------------------
+//  Retrieve local data area (*LDA).
+// ------------------------------------------------------------
+dcl-proc retrieveLDA;
+  dcl-pi *n likeds(g_lda) extproc(*dclcase) end-pi;
+
+  clear g_LDA;
+
+  monitor;
+    in g_LDA;
+  on-error;
+  endmon;
+
+  return g_LDA;
 
 end-proc;
 
@@ -10447,6 +10571,9 @@ srccssid=  "01141">
       *                                                                     *
       *  19.05.2021  Th.Raddatz    Fixed duplicate TIMESTAMP and PROCESSOR  *
       *                            entries after copying an EVENTF member.  *
+      *                                                                     *
+      *  19.11.2021  Th.Raddatz    Fixed problem that the *LDA was not      *
+      *                            properly set. (==> updateLDA())          *
       *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
@@ -13836,8 +13963,6 @@ srccssid=  "01141">
 
             if (doAppendJobLog);
                doAppend = not isEmpty;
-               // TODO: Copy compile listing from pre/post-command if available
-               //       instead of appending the job log???
                g_eventf.isOpen = openEventFile(
                                     g_eventf.mbr: g_eventf.lib: doAppend);
                if (g_eventf.isOpen);
@@ -13846,6 +13971,9 @@ srccssid=  "01141">
                      : f1_line_number: i_isAbnEnd);
                endif;
             endif;
+
+            // Update *LDA with event file name.
+            updateLDA(g_eventf.lib: g_eventf.mbr);
 
          on-error;
             g_eventf.isOpen = cFalse;
@@ -14287,6 +14415,9 @@ srccssid=  "01141">
       *  22.12.2020  Th.Raddatz    Changed writing job log entries as ERROR *
       *                            entries, in case of compilation errors.  *
       *                                                                     *
+      *  19.11.2021  Th.Raddatz    Moved prototype of updateLDA() to member *
+      *                            PROTO_H.                                 *
+      *                                                                     *
       * =================================================================== *
       * >>PRE-COMPILER<<                                                    *
       *   >>CRTCMD<< CRTRPGMOD    MODULE(&LI/&OB) +                         *
@@ -14394,12 +14525,6 @@ srccssid=  "01141">
       /copy QEVENTF,PEVENTF                        EVFEVENT API - Public Interface
       /copy QJOBLOG,PJOBLOG                        EVFEVENT API - Job Log
       *
-      *  Updated the *LDA with the name of the event file.
-     D updateLDA...
-     D                 pr                  extproc('updateLDA')
-     D  i_lib                        10a   const
-     D  i_obj                        10a   const
-      *
       * =============================================================
       *  Enables this module.
       * =============================================================
@@ -14488,9 +14613,6 @@ srccssid=  "01141">
             g_status.msgKey = *ALLx'FF';
          endif;
 
-         // Initialize *LDA. Reset event file name.
-         // updateLDA('': '');
-
       /end-free
      P                 e
       *
@@ -14515,20 +14637,20 @@ srccssid=  "01141">
 
          if (g_status.openForAppend);
             Eventf_openAppend(i_lib: i_obj: rtnLib);
+            if (rtnLib = '');
+               return cFalse;
+            endif;
          else;
             Eventf_open(i_lib: i_obj: rtnLib);
+            if (rtnLib = '');
+               return cFalse;
+            endif;
             Eventf_writeProcessor();
          endif;
 
          g_status.haveEventFile = cTrue;
 
-         updateLDA(rtnLib: i_obj);
-
-         if (rtnLib <> '');
-            return cTrue;
-         endif;
-
-         return cFalse;
+         return cTrue;
 
       /end-free
      P                 e
