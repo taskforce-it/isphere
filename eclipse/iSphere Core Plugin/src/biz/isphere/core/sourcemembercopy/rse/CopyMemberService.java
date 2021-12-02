@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * This class copies a given list of members to another library, file or member
@@ -44,8 +44,6 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toLibrary;
     private String toFile;
     private SortedSet<CopyMemberItem> members;
-    // TODO: remove obsolete stmt
-    // private boolean useLocalCache;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -65,8 +63,6 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toLibrary = null;
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
-        // TODO: remove obsolete stmt
-        // this.useLocalCache = true;
     }
 
     public CopyMemberItem addItem(String file, String library, String member, String srcType) {
@@ -147,11 +143,6 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toFile = fileName;
     }
 
-    // TODO: remove obsolete stmt
-    // public void setUseLocalCache(boolean useLocalCache) {
-    // this.useLocalCache = useLocalCache;
-    // }
-
     public CopyMemberItem[] getCopiedItems() {
 
         SortedSet<CopyMemberItem> copied = new TreeSet<CopyMemberItem>();
@@ -206,9 +197,6 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         isCanceled = false;
 
-        // TODO: remove obsolete stmt
-        // copyMembersJob = new CopyMembersJob(fromConnectionName,
-        // toConnectionName, members, useLocalCache, this);
         copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, this);
         copyMembersJob.schedule();
     }
