@@ -360,7 +360,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
             message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
             if (message != null) {
-                return buildMMessageString(rtnMessages);
+                return buildMessageString(rtnMessages);
             }
 
             Member toSourceMember = IBMiHostContributionsHandler.getMember(connectionName, getToLibrary(), getToFile(), getToMember());
@@ -480,7 +480,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
         String message = ISphereHelper.executeCommand(IBMiHostContributionsHandler.getSystem(connectionName), command.toString(), rtnMessages);
         if (message != null) {
-            return buildMMessageString(rtnMessages);
+            return buildMessageString(rtnMessages);
         }
 
         return null;
@@ -511,7 +511,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
         if (message != null) {
-            return buildMMessageString(rtnMessages);
+            return buildMessageString(rtnMessages);
         }
 
         rtnMessages.clear();
@@ -529,7 +529,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
         message = ISphereHelper.executeCommand(system, command.toString(), rtnMessages);
         if (message != null) {
-            return buildMMessageString(rtnMessages);
+            return buildMessageString(rtnMessages);
         }
 
         return null;
@@ -561,20 +561,20 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         String message = ISphereHelper.executeCommand(IBMiHostContributionsHandler.getSystem(toSourceMember.getConnection()), command.toString(),
             rtnMessages);
         if (message != null) {
-            return buildMMessageString(rtnMessages);
+            return buildMessageString(rtnMessages);
         }
 
         return null;
     }
 
-    private String buildMMessageString(List<AS400Message> rtnMessages) {
+    private String buildMessageString(List<AS400Message> rtnMessages) {
 
         StringBuilder message = new StringBuilder();
 
         Iterator<AS400Message> iterator = rtnMessages.iterator();
         while (iterator.hasNext()) {
             if (message.length() > 0) {
-                message.append(" "); //$NON-NLS-1$
+                message.append(" :: "); //$NON-NLS-1$
             }
             message.append(iterator.next().getText());
         }
