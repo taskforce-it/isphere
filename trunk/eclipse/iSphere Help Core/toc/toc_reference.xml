@@ -9,6 +9,7 @@
   <topic label="Connection Properties" href="html/connection/properties.html"> 
   </topic>
   <topic label="Copy Members"  href="html/copymembers/copymembers.html"> 
+    <topic label="Preferences" href="html/copymembers/preferences/preferences.html" />
   </topic>
   <topic label="Data Area Editor"  href="html/dataareaeditor/dataareaeditor.html"> 
     <topic label="Preferences" href="html/dataareaeditor/preferences/preferences.html" />

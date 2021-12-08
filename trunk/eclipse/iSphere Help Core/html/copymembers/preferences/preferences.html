@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Preferences</title>
+</head>
+
+<body>
+<h1>Preferences</h1>
+The options for copying members can be changed on the <i>Copy Members</i>
+preference page:
+<p>
+<img src="assets/copymembers_preferences.png" 
+     align="middle">
+<p>
+For now there is only one rule for producing names for backup members:
+<ul>
+<li>Numerical</li>
+</ul>
+More options may follow in the future.
+<p>
+<h2>Renaming Rules</h2>
+<h3>Numerical</h3>
+<p>
+The <i>Numerical</i> renaming rule produces backup member names by adding a sequence number
+optionally separated by a delimiter character.
+<p>
+The available options are:
+<p>
+<table>
+	<tr>
+		<td valign="top" nowrap>Delimiter</td>
+		<td valign="top">-</td>
+		<td valign="top">Optional. Delimiter that separates the original member name from the
+		                 sequence number.</td>
+	</tr>
+	<tr>
+		<td valign="top" nowrap>Minimum value</td>
+		<td valign="top">-</td>
+		<td valign="top">Starting sequence number.</td>
+	</tr>
+	<tr>
+		<td valign="top" nowrap>Minimum value</td>
+		<td valign="top">-</td>
+		<td valign="top">Maximum sequence number. Renaming a member fails when the
+		                 maximum sequence number has been reached.</td>
+	</tr>
+</table>
+<p>
+Sequence numbers are generated as fixed-length numbers, such as <i>.01</i>, <i>.02</i>, <i>.03</i>
+to <i>.99</i>. For example:
+<p>
+<table>
+	<tr><td>Original name</td><td>-</td><td>DEMO1</td></tr>
+	<tr><td>First backup</td><td>-</td><td>DEMO1.01</td></tr>
+	<tr><td>Second backup</td><td>-</td><td>DEMO1.02</td></tr>
+	<tr><td>Third backup</td><td>-</td><td>DEMO1.03</td></tr>
+</table>
+<p>
+There will be an exception, when the new member name exceeds 10 characters.
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

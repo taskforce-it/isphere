@@ -1,6 +1,8 @@
 
 Changelog: iSphere 4.2.2.r
 --------------------------
+ • Added option for renaming existing members when copying
+   members.
  • Fixed STRPREPRC to properly set the *LDA.
  • Updated STRPREPRC to v1.20.2.
  • Removed methods from interface IIBMiHostContributions.

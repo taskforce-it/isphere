@@ -24,6 +24,10 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
+import biz.isphere.core.memberrename.factories.MemberRenamingRuleFactory;
+import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
+import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.sourcefilesearch.SearchResultManager;
 import biz.isphere.core.spooledfiles.SpooledFile;
@@ -119,14 +123,22 @@ public final class Preferences {
 
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
+    private static final String BACKUP_MEMBER_NAME_CURRENT_RULE = DOMAIN + "BACKUP_MEMBER_NAME.CURRENT_RULE"; //$NON-NLS-1$
+
     // Removes with rev. 7363
-    //    private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
+    // private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH =
+    // DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    //    private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
+    // private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH =
+    // DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    //    private static final String SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
+    // private static final String
+    // SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN +
+    // "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
 
-    //    private static final String SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN + "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
+    // private static final String
+    // SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN +
+    // "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
@@ -257,8 +269,13 @@ public final class Preferences {
      */
     public synchronized static Preferences getInstance() {
         if (instance == null) {
+            ISpherePlugin plugin = ISpherePlugin.getDefault();
+            if (plugin == null) {
+                // JUnit test
+                return null;
+            }
             instance = new Preferences();
-            instance.preferenceStore = ISpherePlugin.getDefault().getPreferenceStore();
+            instance.preferenceStore = plugin.getPreferenceStore();
         }
         return instance;
     }
@@ -362,6 +379,38 @@ public final class Preferences {
 
     public String getSpooledFileRSEDescription() {
         return preferenceStore.getString(SPOOLED_FILES_RSE_DESCRIPTION);
+    }
+
+    public IMemberRenamingRule getMemberRenamingRule() {
+
+        IMemberRenamingRule rule = null;
+
+        String className = preferenceStore.getString(BACKUP_MEMBER_NAME_CURRENT_RULE);
+
+        try {
+
+            Class clazz = Class.forName(className);
+            rule = MemberRenamingRuleFactory.getInstance().getMemberRenamingRule(clazz);
+
+        } catch (Exception e) {
+            // Ignore exceptions
+        }
+
+        if (rule == null) {
+            rule = getDefaultMemberRenamingRule();
+        }
+
+        return rule;
+    }
+
+    public IMemberRenamingRuleAdapter getMemberRenamingRuleAdapter(Class<? extends IMemberRenamingRule> clazz) {
+
+        IMemberRenamingRuleAdapter adapters = MemberRenamingRuleFactory.getInstance().getMemberRenamingRuleAdapter(clazz);
+        if (adapters == null) {
+            return MemberRenamingRuleFactory.getInstance().getMemberRenamingRuleAdapter(MemberRenamingRuleNumber.class);
+        }
+
+        return adapters;
     }
 
     // public int getSourceFileSearchMemberColumnWidth() {
@@ -700,6 +749,10 @@ public final class Preferences {
         preferenceStore.setValue(SPOOLED_FILES_RSE_DESCRIPTION, description);
     }
 
+    public void setMemberRenamingRule(IMemberRenamingRule rule) {
+        preferenceStore.setValue(BACKUP_MEMBER_NAME_CURRENT_RULE, rule.getClass().getName());
+    }
+
     // public void setSourceFileSearchMemberColumnWidth(int width) {
     // preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
     // }
@@ -988,6 +1041,13 @@ public final class Preferences {
         preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());
 
         preferenceStore.setDefault(JDBC_USE_ISPHERE_MANAGER, getDefaultUseISphereJdbcConnectionManager());
+
+        preferenceStore.setDefault(BACKUP_MEMBER_NAME_CURRENT_RULE, getDefaultMemberRenamingRule().getClass().getName());
+
+        IMemberRenamingRuleAdapter[] adapters = MemberRenamingRuleFactory.getInstance().getMemberRenamingRuleAdapters();
+        for (IMemberRenamingRuleAdapter adapter : adapters) {
+            adapter.initializeDefaultPreferences(preferenceStore);
+        }
     }
 
     /*
@@ -1114,6 +1174,16 @@ public final class Preferences {
      */
     public String getDefaultSpooledFileRSEDescription() {
         return SpooledFile.VARIABLE_SPLF + " - " + SpooledFile.VARIABLE_STATUS; //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the default backup member name rule.
+     * 
+     * @return default backup member name rule to use
+     */
+    public IMemberRenamingRule getDefaultMemberRenamingRule() {
+        IMemberRenamingRule rule = MemberRenamingRuleFactory.getInstance().getMemberRenamingRule(MemberRenamingRuleNumber.class);
+        return rule;
     }
 
     /**
@@ -1683,9 +1753,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED,
+            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

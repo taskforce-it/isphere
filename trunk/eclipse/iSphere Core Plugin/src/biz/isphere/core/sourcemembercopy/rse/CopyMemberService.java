@@ -10,6 +10,7 @@ package biz.isphere.core.sourcemembercopy.rse;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -23,9 +24,15 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.memberrename.RenameMemberActor;
+import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 
@@ -44,6 +51,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toLibrary;
     private String toFile;
     private SortedSet<CopyMemberItem> members;
+    private ExistingMemberAction existingMemberAction;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -63,6 +71,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toLibrary = null;
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
+        this.existingMemberAction = ExistingMemberAction.ERROR;
+    }
+
+    public void setExistingMemberAction(ExistingMemberAction action) {
+        this.existingMemberAction = action;
     }
 
     public CopyMemberItem addItem(String file, String library, String member, String srcType) {
@@ -197,7 +210,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         isCanceled = false;
 
-        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, this);
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members, existingMemberAction, this);
         copyMembersJob.schedule();
     }
 
@@ -320,9 +333,10 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         private DoCopyMembers doCopyMembers;
         private ICopyMembersPostRun postRun;
 
-        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members, ICopyMembersPostRun postRun) {
+        public CopyMembersJob(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members,
+            ExistingMemberAction existingMemberAction, ICopyMembersPostRun postRun) {
             super(Messages.Copying_dots);
-            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members);
+            this.doCopyMembers = new DoCopyMembers(fromConnectionName, toConnectionName, members, existingMemberAction);
             this.postRun = postRun;
         }
 
@@ -363,16 +377,20 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         private String fromConnectionName;
         private String toConnectionName;
         private SortedSet<CopyMemberItem> members;
+        private ExistingMemberAction existingMemberAction;
+
         private IProgressMonitor monitor;
 
         private boolean isError;
         private int copiedCount;
         private long averageTime;
 
-        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members) {
+        public DoCopyMembers(String fromConnectionName, String toConnectionName, SortedSet<CopyMemberItem> members,
+            ExistingMemberAction existingMemberAction) {
             this.fromConnectionName = fromConnectionName;
             this.toConnectionName = toConnectionName;
             this.members = members;
+            this.existingMemberAction = existingMemberAction;
         }
 
         public void start(IProgressMonitor monitor) {
@@ -388,6 +406,8 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         public void run() {
 
             monitor.beginTask(Messages.Copying_dots, members.size());
+
+            AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
 
             try {
 
@@ -414,7 +434,21 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                         monitor.setTaskName(Messages.bind(Messages.Copying_A_B_of_C, new Object[] { member.getFromMember(), count, members.size() }));
                     }
 
-                    if (!member.performCopyOperation(fromConnectionName, toConnectionName)) {
+                    boolean canCopy;
+                    if (isMember(toSystem, member.getToLibrary(), member.getToFile(), member.getToMember())) {
+                        if (ExistingMemberAction.RENAME.equals(existingMemberAction)) {
+                            canCopy = performRenameMember(toSystem, member);
+                        } else if (ExistingMemberAction.REPLACE.equals(existingMemberAction)) {
+                            canCopy = true;
+                        } else {
+                            canCopy = false;
+                            member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, member.getToMember()));
+                        }
+                    } else {
+                        canCopy = true;
+                    }
+
+                    if (!canCopy || !member.performCopyOperation(fromConnectionName, toConnectionName)) {
                         isError = true;
                     } else {
                         copiedCount++;
@@ -423,13 +457,72 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                     monitor.worked(count);
                 }
 
-                averageTime = (System.currentTimeMillis() - startTime) / copiedCount;
+                if (copiedCount > 0) {
+                    averageTime = (System.currentTimeMillis() - startTime) / copiedCount;
+                }
                 // System.out.println("\nAverage time used: " + averageTime +
                 // " mSecs.");
 
             } finally {
                 monitor.done();
             }
+        }
+
+        private boolean isMember(AS400 toSystem, String library, String file, String member) {
+
+            boolean isMember = ISphereHelper.checkMember(toSystem, library, file, member);
+
+            return isMember;
+        }
+
+        private boolean performRenameMember(AS400 system, CopyMemberItem copyMemberItem) {
+
+            IMemberRenamingRule newNameRule = Preferences.getInstance().getMemberRenamingRule();
+            RenameMemberActor actor = new RenameMemberActor(system, newNameRule);
+
+            String library = copyMemberItem.getToLibrary();
+            String file = copyMemberItem.getToFile();
+            String member = copyMemberItem.getToMember();
+
+            try {
+
+                // printDebug(String.format("Renaming member: %s", member));
+                // //$NON-NLS-1$
+
+                List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
+                QSYSObjectPathName newMember = actor.produceNewMemberName(new QSYSObjectPathName(library, file, member, "MBR")); //$NON-NLS-1$
+
+                String command = String.format("RNMM FILE(%s/%s) MBR(%s) NEWMBR(%s)", library, file, member, newMember.getMemberName()); //$NON-NLS-1$
+                String message = ISphereHelper.executeCommand(system, command, rtnMessages);
+
+                if (message != null) {
+                    // printDebug(message);
+                    StringBuilder errorMessage = new StringBuilder();
+                    for (AS400Message as400Message : rtnMessages) {
+                        if (errorMessage.length() > 0) {
+                            errorMessage.append(" :: "); //$NON-NLS-1$
+                        }
+                        errorMessage.append(as400Message.getText());
+                    }
+                    copyMemberItem.setErrorMessage(errorMessage.toString());
+                    return false;
+                }
+
+                // printDebug(String.format("Renamed member: %s --> %s", member,
+                // newMember.getMemberName())); //$NON-NLS-1$
+
+                return true;
+
+            } catch (Exception e) {
+                // e.printStackTrace();
+                copyMemberItem.setErrorMessage(e.getMessage());
+                return false;
+            }
+
+        }
+
+        private void printDebug(String message) {
+            System.out.println(message);
         }
 
         public void cancel() {
