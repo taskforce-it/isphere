@@ -1234,6 +1234,10 @@ public class Messages extends NLS {
 
     public static String File_A_not_found;
 
+    public static String No_more_names_available_Delete_old_backups;
+
+    public static String Invalid_member_name_Name_is_too_long_A;
+
     public static String Failed_to_copy_one_or_more_items;
 
     public static String Validation_ended_with_errors_Request_canceled;
@@ -1250,7 +1254,11 @@ public class Messages extends NLS {
 
     public static String Can_not_copy_member_twice_to_same_target_member;
 
+    public static String Existing_members_action_colon;
+
     public static String Replace_existing_members;
+
+    public static String Rename_existing_members;
 
     public static String Ignore_data_lost_error;
 
@@ -1669,6 +1677,28 @@ public class Messages extends NLS {
     public static String Browse_For_A;
 
     public static String Failed_to_execute_command_A;
+
+    public static String Rename_member_rule_column;
+
+    public static String Tooltip_Specifies_the_rule_for_creating_a_backup_name;
+
+    public static String Error_Renaming_rule_UI_dapter_not_found_A;
+
+    public static String Error_Renaming_rule_not_found_A;
+
+    public static String Link_to_copy_member_preferences_A_B;
+
+    public static String Label_Configuration;
+
+    public static String Tooltip_Renaming_rule_onfiguration;
+
+    public static String Renaming_rule_Numerical;
+
+    public static String Label_Delimiter_colon;
+
+    public static String Label_Minimum_value_colon;
+
+    public static String Label_Maximum_value_colon;
 
     /*
      * Warning messages

@@ -190,6 +190,11 @@
             category="biz.isphere.base.preferencepages.General"
             name="%Appearance"
             id="biz.isphere.core.preferencepages.ISphereAppearance"/>
+      <page
+            class="biz.isphere.core.preferencepages.ISphereCopyMembers"
+            category="biz.isphere.base.preferencepages.General"
+            name="%Copy_Members"
+            id="biz.isphere.core.preferencepages.ISphereCopyMembers"/>
     	
    </extension>
    

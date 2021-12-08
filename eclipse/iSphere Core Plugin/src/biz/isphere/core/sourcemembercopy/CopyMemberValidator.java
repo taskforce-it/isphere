@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -23,6 +22,7 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.FieldDescription;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -31,8 +31,14 @@ import biz.isphere.core.file.description.RecordFormatDescription;
 import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.Validator;
+import biz.isphere.core.memberrename.RenameMemberActor;
+import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
+import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.rse.CopyMemberService;
+import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 
 public class CopyMemberValidator extends Thread {
 
@@ -42,6 +48,7 @@ public class CopyMemberValidator extends Thread {
     public static final int ERROR_TO_LIBRARY = 3;
     public static final int ERROR_TO_MEMBER = 4;
     public static final int ERROR_CANCELED = 5;
+    public static final int ERROR_EXCEPTION = 6;
 
     private DoValidateMembers doValidateMembers;
     private IValidateMembersPostRun postRun;
@@ -51,8 +58,9 @@ public class CopyMemberValidator extends Thread {
 
     private boolean isActive;
 
-    public CopyMemberValidator(CopyMemberService jobDescription, boolean replace, boolean ignoreDataLostError, IValidateMembersPostRun postRun) {
-        doValidateMembers = new DoValidateMembers(jobDescription, replace, ignoreDataLostError);
+    public CopyMemberValidator(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError,
+        IValidateMembersPostRun postRun) {
+        doValidateMembers = new DoValidateMembers(jobDescription, existingMemberAction, ignoreDataLostError);
         this.postRun = postRun;
     }
 
@@ -100,13 +108,13 @@ public class CopyMemberValidator extends Thread {
     private class DoValidateMembers extends Thread {
 
         private CopyMemberService jobDescription;
-        private boolean replace;
+        private ExistingMemberAction existingMemberAction;
         private boolean ignoreDataLostError;
         private boolean isCanceled;
 
-        public DoValidateMembers(CopyMemberService jobDescription, boolean replace, boolean ignoreDataLostError) {
+        public DoValidateMembers(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError) {
             this.jobDescription = jobDescription;
-            this.replace = replace;
+            this.existingMemberAction = existingMemberAction;
             this.ignoreDataLostError = ignoreDataLostError;
             this.isCanceled = false;
         }
@@ -124,7 +132,8 @@ public class CopyMemberValidator extends Thread {
             }
 
             if (!isCanceled && errorItem == ERROR_NONE) {
-                validateMembers(jobDescription.getFromConnectionName(), jobDescription.getToConnectionName(), replace, ignoreDataLostError);
+                validateMembers(jobDescription.getFromConnectionName(), jobDescription.getToConnectionName(), existingMemberAction,
+                    ignoreDataLostError);
             }
 
             if (isCanceled) {
@@ -183,7 +192,8 @@ public class CopyMemberValidator extends Thread {
             return hasConnection;
         }
 
-        private boolean validateMembers(String fromConnectionName, String toConnectionName, boolean replace, boolean ignoreDataLostError) {
+        private boolean validateMembers(String fromConnectionName, String toConnectionName, ExistingMemberAction existingMemberAction,
+            boolean ignoreDataLostError) {
 
             boolean isError = false;
             boolean isSeriousError = false;
@@ -193,6 +203,9 @@ public class CopyMemberValidator extends Thread {
 
             RecordFormatDescriptionsStore fromSourceFiles = new RecordFormatDescriptionsStore(fromSystem);
             RecordFormatDescriptionsStore toSourceFiles = new RecordFormatDescriptionsStore(toSystem);
+
+            IMemberRenamingRule newNameRule = Preferences.getInstance().getMemberRenamingRule();
+            RenameMemberActor actor = new RenameMemberActor(toSystem, newNameRule);
 
             Set<String> targetMembers = new HashSet<String>();
 
@@ -240,10 +253,28 @@ public class CopyMemberValidator extends Thread {
                         member.getFromFile(), member.getFromMember())) {
                         member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
                         isError = true;
-                    } else if (!replace && ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
+                    } else if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
                         member.getToLibrary(), member.getToFile(), member.getToMember())) {
-                        member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
-                        isError = true;
+
+                        if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
+                            // that is fine, go ahead
+                        } else if (existingMemberAction.equals(ExistingMemberAction.RENAME)) {
+
+                            try {
+                                actor.produceNewMemberName(
+                                    new QSYSObjectPathName(member.getToLibrary(), member.getToFile(), member.getToMember(), "MBR")); //$NON-NLS-1$
+                            } catch (NoMoreNamesAvailableException e) {
+                                member.setErrorMessage(Messages.No_more_names_available_Delete_old_backups);
+                                isError = true;
+                            } catch (Exception e) {
+                                member.setErrorMessage(e.getLocalizedMessage());
+                                isError = true;
+                            }
+
+                        } else {
+                            member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
+                            isError = true;
+                        }
                     } else if (!ignoreDataLostError) {
 
                         RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
@@ -284,8 +315,9 @@ public class CopyMemberValidator extends Thread {
                 }
 
             } catch (Exception e) {
-                MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), Messages.E_R_R_O_R,
-                    ExceptionHelper.getLocalizedMessage(e));
+                errorItem = ERROR_EXCEPTION;
+                errorMessage = Messages.Validation_ended_with_errors_Request_canceled;
+                MessageDialogAsync.displayError(Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
 
             return !isError;

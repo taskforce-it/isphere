@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -35,11 +36,14 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.StringHelper;
@@ -73,6 +77,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private Text textToLibrary;
     private TableViewer tableViewer;
     private Button chkBoxReplace;
+    private Button chkBoxRename;
     private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
 
@@ -152,6 +157,17 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         return false;
     }
 
+    private ExistingMemberAction getExistingMemberAction() {
+
+        if (chkBoxReplace.getSelection()) {
+            return ExistingMemberAction.REPLACE;
+        } else if (chkBoxRename.getSelection()) {
+            return ExistingMemberAction.RENAME;
+        } else {
+            return ExistingMemberAction.ERROR;
+        }
+    }
+
     private void validateUserInputAndPerformCopyOperation() {
 
         tableViewer.setSelection(null);
@@ -159,9 +175,9 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         copyMemberService.setToConnection(getToConnectionName());
         copyMemberService.setToLibrary(getToLibraryName());
         copyMemberService.setToFile(getToFileName());
+        copyMemberService.setExistingMemberAction(getExistingMemberAction());
 
-        copyMemberValidator = new CopyMemberValidator(copyMemberService, chkBoxReplace.getSelection(), chkBoxIgnoreDataLostError.getSelection(),
-            this);
+        copyMemberValidator = new CopyMemberValidator(copyMemberService, getExistingMemberAction(), chkBoxIgnoreDataLostError.getSelection(), this);
 
         setControlEnablement();
         copyMemberValidator.start();
@@ -313,9 +329,31 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         new Label(mainArea, SWT.NONE).setVisible(false);
 
-        chkBoxReplace = WidgetFactory.createCheckbox(mainArea);
-        chkBoxReplace.setText(Messages.Replace_existing_members);
-        chkBoxReplace.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
+        Group existingMembersActionGroup = new Group(mainArea, SWT.NONE);
+        existingMembersActionGroup.setLayout(new GridLayout(2, false));
+        existingMembersActionGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false, 4, 1));
+        existingMembersActionGroup.setText(Messages.Existing_members_action_colon);
+
+        chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Replace_existing_members);
+        chkBoxReplace.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+
+        chkBoxRename = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Rename_existing_members);
+        chkBoxRename.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
+
+        String lnkLabel = Messages.bind(Messages.Link_to_copy_member_preferences_A_B,
+            "<a href=\"biz.isphere.core.preferencepages.ISphereCopyMembers\">", "</a>");
+
+        Link lnkPreferences = new Link(existingMembersActionGroup, SWT.MULTI | SWT.WRAP);
+        lnkPreferences.setLayoutData(new GridData());
+        lnkPreferences.setText(lnkLabel);
+        lnkPreferences.pack();
+        lnkPreferences.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
+                dialog.open();
+            }
+        });
 
         chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
@@ -515,6 +553,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         textToLibrary.setEnabled(enabled);
         tableViewer.getTable().setEnabled(enabled);
         chkBoxReplace.setEnabled(enabled);
+        chkBoxRename.setEnabled(enabled);
         chkBoxIgnoreDataLostError.setEnabled(enabled);
     }
 
