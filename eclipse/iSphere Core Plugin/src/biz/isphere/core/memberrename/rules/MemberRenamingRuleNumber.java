@@ -23,8 +23,6 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     public static String MIN_VALUE = "minValue"; //$NON-NLS-1$
     public static String MAX_VALUE = "maxValue"; //$NON-NLS-1$
 
-    private static String NUMBERS = "0123456789"; //$NON-NLS-1$
-
     /*
      * Only used by JUnit tests
      */
@@ -51,7 +49,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     }
 
     public void setDelimiter(String delimiter) {
-        this.delimiter = delimiter;
+        this.delimiter = delimiter.trim();
     }
 
     public int getMinValue() {
@@ -80,7 +78,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
 
     public String getBaseName(String memberName) throws NoMoreNamesAvailableException, PropertyVetoException {
 
-        initializeBaseOldName(memberName);
+        initializeBaseName(memberName);
 
         String nextMemberNamePath = String.format("%s%s", baseMemberName, getDelimiter()); //$NON-NLS-1$
 
@@ -89,7 +87,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
 
     public String getNextName(String currentMemberName) throws NoMoreNamesAvailableException, PropertyVetoException {
 
-        initializeBaseOldName(currentMemberName);
+        initializeBaseName(currentMemberName);
 
         if (currentValue >= getMaxValue()) {
             throw new NoMoreNamesAvailableException();
@@ -112,54 +110,20 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return adapter;
     }
 
-    public String formatName(String memberName) throws PropertyVetoException {
-
-        initializeBaseOldName(memberName);
-
-        String formattedMemberName = formatName(baseMemberName, currentValue);
-
-        return formattedMemberName;
-    }
-
     private String formatName(String baseOldName, int currentCount) throws PropertyVetoException {
         int numSpaces = Integer.toString(getMaxValue()).length();
         return String.format("%s%s%s", baseOldName, getDelimiter(), StringHelper.getFixLengthLeading(Integer.toString(currentCount), numSpaces, "0")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void initializeBaseOldName(String oldMemberName) {
-
-        int i;
+    private void initializeBaseName(String oldMemberName) {
 
         if (getDelimiter() == null || getDelimiter().length() == 0) {
 
-            i = oldMemberName.length() - 1;
-            while (i >= 0) {
-                String ch = oldMemberName.substring(i, i + 1);
-                if (NUMBERS.indexOf(ch) == -1) {
-                    i++;
-                    break;
-                }
-                i--;
-            }
-
-            if (i == oldMemberName.length()) {
-                baseMemberName = oldMemberName;
-                currentValue = getMinValue() - 1;
-            } else {
-                if (i <= -1) {
-                    // Hypothetical, because member names cannot start with a
-                    // digit
-                    baseMemberName = ""; //$NON-NLS-1$
-                    currentValue = Integer.parseInt(oldMemberName);
-                } else {
-                    baseMemberName = oldMemberName.substring(0, i);
-                    currentValue = Integer.parseInt(oldMemberName.substring(i + getDelimiter().length()));
-                }
-            }
+            throw new RuntimeException("Invalid delimter. Delimiter must not be empty."); //$NON-NLS-1$
 
         } else {
 
-            i = oldMemberName.lastIndexOf(getDelimiter());
+            int i = oldMemberName.lastIndexOf(getDelimiter());
 
             if (i <= -1) {
                 baseMemberName = oldMemberName;

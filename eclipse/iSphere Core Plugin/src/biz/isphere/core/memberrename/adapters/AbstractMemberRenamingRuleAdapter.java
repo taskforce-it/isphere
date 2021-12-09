@@ -28,12 +28,12 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
     }
 
     protected void setValue(String property, String value) {
-        preferenceStore.setValue(getKey(property), value);
+        preferenceStore.setValue(getKey(property), value.trim());
     }
 
     public String getString(String property) {
         String value = preferenceStore.getString(getKey(property));
-        return value;
+        return value.trim();
     }
 
     public int getInteger(String property) {
@@ -42,12 +42,12 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
     }
 
     protected void setDefault(String property, String value) {
-        preferenceStore.setDefault(getKey(property), value);
+        preferenceStore.setDefault(getKey(property), value.trim());
     }
 
     protected String getDefaultString(String property) {
         String value = preferenceStore.getDefaultString(getKey(property));
-        return value;
+        return value.trim();
     }
 
     protected int getDefaultInteger(String property) {
@@ -76,6 +76,18 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
         mainArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         return mainArea;
+    }
+
+    protected Text createNameText(Composite parent, String label) {
+
+        createLabel(parent, label);
+
+        Text text = WidgetFactory.createNameText(parent);
+        GridData gridData = new GridData();
+        gridData.widthHint = 60;
+        text.setLayoutData(gridData);
+
+        return text;
     }
 
     protected Text createText(Composite parent, String label) {

@@ -21,7 +21,5 @@ public interface IMemberRenamingRule {
 
     public String getNextName(String currentMemberName) throws NoMoreNamesAvailableException, PropertyVetoException;
 
-    public String formatName(String memberName) throws PropertyVetoException;
-
     public IMemberRenamingRuleAdapter getAdapter();
 }
