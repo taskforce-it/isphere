@@ -13,6 +13,8 @@ Changelog: iSphere 4.2.2.r
    Removed from IBMiHostContributionsHandler.
     - resolveMemberName()
  • Disabled spaces when creating a object name text field.
+ • Fixed NullPointerException, when the iSphere Compare Filetrs
+   plug-in ist not installed (preferences page).
 
 Changelog: iSphere 4.2.1.r
 --------------------------

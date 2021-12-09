@@ -178,10 +178,6 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceFileCompare(Composite parent) {
 
-        if (!sourceFileCompareEnabled) {
-            return;
-        }
-
         Group group = new Group(parent, SWT.NONE);
         GridLayout groupLayout = new GridLayout(2, false);
         groupLayout.marginBottom = 10;
@@ -189,12 +185,12 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         groupLayout.horizontalSpacing = 2;
         groupLayout.verticalSpacing = 4;
         group.setLayout(groupLayout);
-        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         group.setText(Messages.Source_member);
 
         Composite options = new Composite(group, SWT.NONE);
         options.setLayout(new GridLayout());
-        options.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
+        options.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
 
         chkIgnoreWhiteSpaces = WidgetFactory.createCheckbox(options, Messages.Ignore_white_spaces);
         chkIgnoreWhiteSpaces.setToolTipText(Messages.Tooltip_Ignore_white_spaces);
@@ -208,6 +204,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
                 widgetSelected(event);
             }
         });
+
+        if (!sourceFileCompareEnabled) {
+            return;
+        }
 
         Label lblFileExtensions = new Label(options, SWT.NONE);
         lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
