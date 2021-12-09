@@ -37,7 +37,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     private String baseMemberName;
 
     public MemberRenamingRuleNumber() {
-        super(Messages.Renaming_rule_Numerical);
+        super(Messages.Label_Renaming_rule_Numerical);
     }
 
     public String getDelimiter() {

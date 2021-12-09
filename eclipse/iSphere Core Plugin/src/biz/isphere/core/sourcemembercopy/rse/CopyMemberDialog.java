@@ -332,12 +332,12 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         Group existingMembersActionGroup = new Group(mainArea, SWT.NONE);
         existingMembersActionGroup.setLayout(new GridLayout(2, false));
         existingMembersActionGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false, 4, 1));
-        existingMembersActionGroup.setText(Messages.Existing_members_action_colon);
+        existingMembersActionGroup.setText(Messages.Label_Existing_members_action_colon);
 
-        chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Replace_existing_members);
+        chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Replace_existing_members);
         chkBoxReplace.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
 
-        chkBoxRename = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Rename_existing_members);
+        chkBoxRename = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Rename_existing_members);
         chkBoxRename.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
 
         String lnkLabel = Messages.bind(Messages.Link_to_copy_member_preferences_A_B,

@@ -57,7 +57,7 @@ public class RenameMemberActor {
         if (oldMemberName.length() > 9) {
             // Too long, because we cannot add the asterisk required for the
             // member list
-            throw new InvalidMemberNameException(Messages.bind(Messages.Invalid_member_name_Name_is_too_long_A, oldMemberName));
+            throw new InvalidMemberNameException(Messages.bind(Messages.Error_Invalid_member_name_Name_is_too_long_A, oldMemberName));
         }
 
         MemberDescription[] memberDescriptions = null;
@@ -79,7 +79,7 @@ public class RenameMemberActor {
 
             String nextMemberName = memberRenamingRule.getNextName(oldMemberPath.getMemberName());
             if (nextMemberName.length() > 10) {
-                throw new InvalidMemberNameException(Messages.bind(Messages.Invalid_member_name_Name_is_too_long_A, nextMemberName));
+                throw new InvalidMemberNameException(Messages.bind(Messages.Error_Invalid_member_name_Name_is_too_long_A, nextMemberName));
             }
 
             nextMemberNamePath = new QSYSObjectPathName(oldMemberPath.getPath());

@@ -264,7 +264,7 @@ public class CopyMemberValidator extends Thread {
                                 actor.produceNewMemberName(
                                     new QSYSObjectPathName(member.getToLibrary(), member.getToFile(), member.getToMember(), "MBR")); //$NON-NLS-1$
                             } catch (NoMoreNamesAvailableException e) {
-                                member.setErrorMessage(Messages.No_more_names_available_Delete_old_backups);
+                                member.setErrorMessage(Messages.Error_No_more_names_available_Delete_old_backups);
                                 isError = true;
                             } catch (Exception e) {
                                 member.setErrorMessage(e.getLocalizedMessage());

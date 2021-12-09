@@ -82,7 +82,7 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
 
         Label labelMemberRenamingRule = new Label(main, SWT.NONE);
         labelMemberRenamingRule.setLayoutData(new GridData());
-        labelMemberRenamingRule.setText(Messages.Rename_member_rule_column);
+        labelMemberRenamingRule.setText(Messages.Label_Rename_member_rule_column);
         labelMemberRenamingRule.setToolTipText(Messages.Tooltip_Specifies_the_rule_for_creating_a_backup_name);
 
         comboMemberRenamingRule = WidgetFactory.createReadOnlyCombo(main);
@@ -98,7 +98,7 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
         GridLayout dynamicRuleAreaContainerLayout = new GridLayout(1, true);
         groupRenamingRule.setLayout(dynamicRuleAreaContainerLayout);
         groupRenamingRule.setText(Messages.Label_Configuration);
-        groupRenamingRule.setToolTipText(Messages.Tooltip_Renaming_rule_onfiguration);
+        groupRenamingRule.setToolTipText(Messages.Tooltip_Renaming_rule_configuration);
         dynamicRuleAreaContainerLayout.marginHeight = 0;
         dynamicRuleAreaContainerLayout.marginWidth = 0;
     }
