@@ -87,7 +87,6 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
         } else {
             // Hack for RDi 9.5, where node is a type of
             // com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement
-
             if ("com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement".equals(node.getClass().getName())) { //$NON-NLS-1$
                 try {
                     Field[] fields = node.getClass().getDeclaredFields();
