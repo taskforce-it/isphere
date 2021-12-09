@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.comparefilters.ignoredate;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.eclipse.compare.ICompareFilter;
@@ -76,9 +77,30 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
 
     private String getFileExtension(Object node) {
 
-        // if (node instanceof ITypedElement) {
-        if (node instanceof biz.isphere.core.compareeditor.CompareNode) {
+        if (node == null) {
+            return null;
+        }
+
+        if (node instanceof ITypedElement) {
+            // RDi 9.6: biz.isphere.core.compareeditor.CompareNode
             return FileHelper.getFileExtension(((ITypedElement)node).getName());
+        } else {
+            // Hack for RDi 9.5, where node is a type of
+            // com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement
+
+            if ("com.ibm.etools.iseries.compare.internal.QSYSMemberAccessorTypedElement".equals(node.getClass().getName())) { //$NON-NLS-1$
+                try {
+                    Field[] fields = node.getClass().getDeclaredFields();
+                    for (Field field : fields) {
+                        if ("accessor".equals(field.getName())) {
+                            field.setAccessible(true);
+                            return getFileExtension(field.get(node));
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return null;
