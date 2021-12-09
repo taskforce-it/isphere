@@ -20,6 +20,6 @@ public class NoMoreNamesAvailableException extends Exception {
 
     @Override
     public String getMessage() {
-        return Messages.No_more_names_available_Delete_old_backups;
+        return Messages.Error_No_more_names_available_Delete_old_backups;
     }
 }
