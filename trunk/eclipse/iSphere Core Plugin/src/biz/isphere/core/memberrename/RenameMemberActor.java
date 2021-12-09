@@ -46,12 +46,7 @@ public class RenameMemberActor {
     }
 
     public void addMemberName(QSYSObjectPathName memberPath) throws PropertyVetoException {
-
-        String formattedMemberName = memberRenamingRule.formatName(memberPath.getMemberName());
-        QSYSObjectPathName formattedPath = new QSYSObjectPathName(memberPath.getPath());
-        formattedPath.setMemberName(formattedMemberName);
-
-        qsysMemberPaths.add(formattedPath.getPath());
+        qsysMemberPaths.add(memberPath.getPath());
     }
 
     public QSYSObjectPathName produceNewMemberName(QSYSObjectPathName oldMemberPath)

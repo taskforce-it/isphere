@@ -12,6 +12,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 
@@ -69,12 +70,17 @@ public class MemberRenamingRuleNumberAdapter extends AbstractMemberRenamingRuleA
             return null;
         }
 
-        if (textMinValue.getText().length() == 0) {
+        if (StringHelper.isNullOrEmpty(textDelimiter.getText())) {
+            textDelimiter.setFocus();
+            return Messages.Invalid_or_missing_value;
+        }
+
+        if (StringHelper.isNullOrEmpty(textMinValue.getText())) {
             textMinValue.setFocus();
             return Messages.Invalid_or_missing_numeric_value;
         }
 
-        if (textMaxValue.getText().length() == 0) {
+        if (StringHelper.isNullOrEmpty(textMaxValue.getText())) {
             textMaxValue.setFocus();
             return Messages.Invalid_or_missing_numeric_value;
         }
@@ -90,9 +96,9 @@ public class MemberRenamingRuleNumberAdapter extends AbstractMemberRenamingRuleA
 
         mainArea = createMainArea(parent);
 
-        textDelimiter = createText(mainArea, Messages.Label_Delimiter_colon);
-        textMinValue = createInteger(mainArea, Messages.Label_Minimum_value_colon, 9);
-        textMaxValue = createInteger(mainArea, Messages.Label_Maximum_value_colon, 9);
+        textDelimiter = createNameText(mainArea, Messages.Label_Delimiter_colon);
+        textMinValue = createInteger(mainArea, Messages.Label_Minimum_value_colon, 10);
+        textMaxValue = createInteger(mainArea, Messages.Label_Maximum_value_colon, 10);
 
         return mainArea;
     }

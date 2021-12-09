@@ -24,7 +24,7 @@ import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 
 public class TestRenameSourceMemberActor {
 
-    private static String[] delimiters = { ".", "#", "" };
+    private static String[] delimiters = { ".", "#" };
 
     private static AS400 system = null;
 
@@ -65,16 +65,17 @@ public class TestRenameSourceMemberActor {
             actor.addMemberName(produceOldName("OLD" + delimiter + "003"));
             actor.addMemberName(produceOldName("OLD" + delimiter + "004"));
             actor.addMemberName(produceOldName("OLD" + delimiter + "005"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "06"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "7"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "008"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "006"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "007"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "08"));
             actor.addMemberName(produceOldName("OLD" + delimiter + "009"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "0010"));
 
             QSYSObjectPathName oldMemberPath = produceOldName("OLD" + delimiter + "005");
             QSYSObjectPathName newName = actor.produceNewMemberName(oldMemberPath);
 
             assertEquals("OLD" + delimiter + "005", oldMemberPath.getMemberName());
-            assertEquals("OLD" + delimiter + "010", newName.getMemberName());
+            assertEquals("OLD" + delimiter + "008", newName.getMemberName());
         }
     }
 
@@ -120,6 +121,34 @@ public class TestRenameSourceMemberActor {
             } catch (Exception e) {
                 assertEquals(InvalidMemberNameException.class, e.getClass());
             }
+        }
+    }
+
+    @Test
+    public void testNameNumbersOnly() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
+
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceOldName("0815"));
+
+            assertEquals("0815" + delimiter + "001", newName.getMemberName());
+        }
+    }
+
+    @Test
+    public void testEmptyDelimiter() throws Exception {
+
+        String delimiter = "";
+
+        RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
+
+        try {
+            actor.produceNewMemberName(produceOldName("123"));
+            fail("Should have faild with an RuntimeException");
+        } catch (Exception e) {
+            assertEquals(RuntimeException.class, e.getClass());
         }
     }
 

@@ -18,7 +18,7 @@ import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 
 public class TestNewNameNumberRule {
 
-    private static String[] delimiters = { ".", "#", "" };
+    private static String[] delimiters = { ".", "#" };
 
     @Test
     public void testGetNextNameFirst() throws Exception {
@@ -92,6 +92,24 @@ public class TestNewNameNumberRule {
             } catch (NoMoreNamesAvailableException e) {
                 assertEquals(NoMoreNamesAvailableException.class, e.getClass());
             }
+        }
+    }
+
+    @Test
+    public void testEmptyDelimiter() throws Exception {
+
+        String oldName = "OLD";
+
+        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
+        newNameRule.setDelimiter("");
+        newNameRule.setMinValue(1);
+        newNameRule.setMaxValue(999);
+
+        try {
+            newNameRule.getNextName(oldName);
+            fail("Should have faild with a RuntimeException");
+        } catch (Throwable e) {
+            assertEquals(RuntimeException.class, e.getClass());
         }
     }
 }
