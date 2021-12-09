@@ -15,6 +15,8 @@ Changelog: iSphere 4.2.2.r
  • Disabled spaces when creating a object name text field.
  • Fixed NullPointerException, when the iSphere Compare Filters
    plug-in is not installed (preferences page).
+ • Added hack to IgnoreDateCompareFilter for RDi 9.5, where node is
+   a type of QSYSMemberAccessorTypedElement.
 
 Changelog: iSphere 4.2.1.r
 --------------------------
