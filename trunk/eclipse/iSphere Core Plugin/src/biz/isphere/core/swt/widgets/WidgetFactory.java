@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2021 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.swt.widgets.AutoScrollbarsListener;
+import biz.isphere.base.swt.widgets.NoSpacesListener;
 import biz.isphere.base.swt.widgets.NumericOnlyVerifyListener;
 import biz.isphere.base.swt.widgets.SelectAllFocusListener;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
@@ -170,6 +171,7 @@ public final class WidgetFactory {
     public static Text createNameText(Composite parent, boolean widthHint) {
 
         Text text = createUpperCaseText(parent);
+        text.addVerifyListener(new NoSpacesListener());
         text.setTextLimit(10);
 
         if (widthHint) {
@@ -867,7 +869,8 @@ public final class WidgetFactory {
      * @param showTableControl show table name control
      * @return editor for editing SQL where clauses
      */
-    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, boolean showTableControl) {
+    public static SqlEditor createSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager,
+        boolean showTableControl) {
         return WidgetFactory.getInstance().produceSqlEditor(parent, historyKey, dialogSettingsManager, showTableControl, SWT.NONE);
     }
 

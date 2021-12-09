@@ -12,6 +12,7 @@ Changelog: iSphere 4.2.2.r
     - checkMember()
    Removed from IBMiHostContributionsHandler.
     - resolveMemberName()
+ • Disabled spaces when creating a object name text field.
 
 Changelog: iSphere 4.2.1.r
 --------------------------
