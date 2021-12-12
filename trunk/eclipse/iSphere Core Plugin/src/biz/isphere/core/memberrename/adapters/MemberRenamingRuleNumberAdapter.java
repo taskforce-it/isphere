@@ -27,8 +27,9 @@ public class MemberRenamingRuleNumberAdapter extends AbstractMemberRenamingRuleA
         super.initializeDefaultPreferences(preferenceStore);
 
         setDefault(MemberRenamingRuleNumber.DELIMITER, ".");
-        setDefault(MemberRenamingRuleNumber.MIN_VALUE, "1");
-        setDefault(MemberRenamingRuleNumber.MAX_VALUE, "99");
+        setDefault(MemberRenamingRuleNumber.MIN_VALUE, 1);
+        setDefault(MemberRenamingRuleNumber.MAX_VALUE, 99);
+        setDefault(MemberRenamingRuleNumber.IS_SKIP_GAPS_ENABLED, true);
     }
 
     public void storePreferences() {
@@ -40,6 +41,7 @@ public class MemberRenamingRuleNumberAdapter extends AbstractMemberRenamingRuleA
         setValue(MemberRenamingRuleNumber.DELIMITER, textDelimiter.getText());
         setValue(MemberRenamingRuleNumber.MIN_VALUE, textMinValue.getText());
         setValue(MemberRenamingRuleNumber.MAX_VALUE, textMaxValue.getText());
+        setValue(MemberRenamingRuleNumber.IS_SKIP_GAPS_ENABLED, true);
     }
 
     public void loadPreferences() {

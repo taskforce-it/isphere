@@ -17,6 +17,8 @@ public interface IMemberRenamingRule {
 
     public String getLabel();
 
+    public boolean isSkipGapsEnabled();
+
     public String getBaseName(String memberName) throws NoMoreNamesAvailableException, PropertyVetoException;
 
     public String getNextName(String currentMemberName) throws NoMoreNamesAvailableException, PropertyVetoException;

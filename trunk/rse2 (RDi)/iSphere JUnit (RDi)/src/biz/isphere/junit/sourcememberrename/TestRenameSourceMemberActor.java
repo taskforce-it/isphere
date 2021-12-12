@@ -13,14 +13,14 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.QSYSObjectPathName;
-
 import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.exceptions.InvalidMemberNameException;
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
+
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.QSYSObjectPathName;
 
 public class TestRenameSourceMemberActor {
 
@@ -55,11 +55,12 @@ public class TestRenameSourceMemberActor {
     }
 
     @Test
-    public void testGetNextNameSkipExistingNames() throws Exception {
+    public void testGetNextNameFillGapsInNames() throws Exception {
 
         for (String delimiter : delimiters) {
 
-            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
+            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter, false));
+
             actor.addMemberName(produceOldName("OLD" + delimiter + "001"));
             actor.addMemberName(produceOldName("OLD" + delimiter + "002"));
             actor.addMemberName(produceOldName("OLD" + delimiter + "003"));
@@ -76,6 +77,29 @@ public class TestRenameSourceMemberActor {
 
             assertEquals("OLD" + delimiter + "005", oldMemberPath.getMemberName());
             assertEquals("OLD" + delimiter + "008", newName.getMemberName());
+        }
+    }
+
+    @Test
+    public void testGetNextNameSkipGapsNames() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter, true));
+
+            actor.addMemberName(produceOldName("OLD" + delimiter + "001"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "002"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "003"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "004"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "005"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "006"));
+            actor.addMemberName(produceOldName("OLD" + delimiter + "009"));
+
+            QSYSObjectPathName oldMemberPath = produceOldName("OLD" + delimiter + "005");
+            QSYSObjectPathName newName = actor.produceNewMemberName(oldMemberPath);
+
+            assertEquals("OLD" + delimiter + "005", oldMemberPath.getMemberName());
+            assertEquals("OLD" + delimiter + "010", newName.getMemberName());
         }
     }
 
@@ -159,6 +183,17 @@ public class TestRenameSourceMemberActor {
     private IMemberRenamingRule produceNewNameRule(String delimiter) {
 
         MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
+        newNameRule.setDelimiter(delimiter);
+        newNameRule.setMinValue(1);
+        newNameRule.setMaxValue(999);
+
+        return newNameRule;
+    }
+
+    private IMemberRenamingRule produceNewNameRule(String delimiter, boolean isSkipGapsEnabled) {
+
+        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
+        newNameRule.setSkipGapsEnabled(isSkipGapsEnabled);
         newNameRule.setDelimiter(delimiter);
         newNameRule.setMinValue(1);
         newNameRule.setMaxValue(999);

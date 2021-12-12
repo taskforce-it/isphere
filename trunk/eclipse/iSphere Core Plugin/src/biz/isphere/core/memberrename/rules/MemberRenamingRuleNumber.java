@@ -22,6 +22,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     public static String DELIMITER = "delimiter"; //$NON-NLS-1$
     public static String MIN_VALUE = "minValue"; //$NON-NLS-1$
     public static String MAX_VALUE = "maxValue"; //$NON-NLS-1$
+    public static String IS_SKIP_GAPS_ENABLED = "isSkipGapsEnabled"; //$NON-NLS-1$
 
     /*
      * Only used by JUnit tests
@@ -29,6 +30,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     private String delimiter;
     private int minValue;
     private int maxValue;
+    private boolean isSkipGapsEnabled;
 
     /*
      * Used when computing the next member name
@@ -38,6 +40,18 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
 
     public MemberRenamingRuleNumber() {
         super(Messages.Label_Renaming_rule_Numerical);
+    }
+
+    public boolean isSkipGapsEnabled() {
+        MemberRenamingRuleNumberAdapter adapter = getAdapter();
+        if (adapter == null) {
+            return isSkipGapsEnabled;
+        }
+        return adapter.getBoolean(IS_SKIP_GAPS_ENABLED);
+    }
+
+    public void setSkipGapsEnabled(boolean enabled) {
+        this.isSkipGapsEnabled = enabled;
     }
 
     public String getDelimiter() {

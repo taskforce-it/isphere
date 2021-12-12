@@ -31,6 +31,14 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
         preferenceStore.setValue(getKey(property), value.trim());
     }
 
+    protected void setValue(String property, Integer value) {
+        preferenceStore.setValue(getKey(property), value.toString());
+    }
+
+    protected void setValue(String property, Boolean value) {
+        preferenceStore.setValue(getKey(property), value.toString());
+    }
+
     public String getString(String property) {
         String value = preferenceStore.getString(getKey(property));
         return value.trim();
@@ -41,8 +49,21 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
         return IntHelper.tryParseInt(value, 0);
     }
 
+    public boolean getBoolean(String property) {
+        boolean value = preferenceStore.getBoolean(getKey(property));
+        return value;
+    }
+
     protected void setDefault(String property, String value) {
         preferenceStore.setDefault(getKey(property), value.trim());
+    }
+
+    protected void setDefault(String property, Integer value) {
+        preferenceStore.setDefault(getKey(property), value.toString());
+    }
+
+    protected void setDefault(String property, Boolean value) {
+        preferenceStore.setDefault(getKey(property), value.toString());
     }
 
     protected String getDefaultString(String property) {
@@ -53,6 +74,11 @@ public abstract class AbstractMemberRenamingRuleAdapter implements IMemberRenami
     protected int getDefaultInteger(String property) {
         String value = preferenceStore.getDefaultString(getKey(property));
         return IntHelper.tryParseInt(value, 0);
+    }
+
+    protected boolean getDefaultBoolean(String property) {
+        boolean value = preferenceStore.getDefaultBoolean(getKey(property));
+        return value;
     }
 
     protected abstract String getId();
