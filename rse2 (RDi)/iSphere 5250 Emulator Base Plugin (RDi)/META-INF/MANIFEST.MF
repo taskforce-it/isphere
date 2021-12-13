@@ -16,8 +16,10 @@ Bundle-ClassPath: .,
  lib/jython.jar,
  lib/jythonlib.jar,
  lib/smtp.jar,
- lib/log4j.jar,
- resources/
+ resources/,
+ lib/log4j-1.2-api-2.15.0.jar,
+ lib/log4j-api-2.15.0.jar,
+ lib/log4j-core-2.15.0.jar
 Export-Package: org.tn5250j,
  org.tn5250j.encoding,
  org.tn5250j.encoding.builtin,
