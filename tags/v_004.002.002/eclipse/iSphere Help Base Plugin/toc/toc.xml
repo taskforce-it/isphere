@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="iSphere">
+   <topic label="Introduction" href="html/introduction/introduction.html" />
+   <topic label="Upgrade Instructions" href="html/upgrade/upgrade_instructions.html" />
+   <topic label="Install Instructions" >
+      <topic label="Install Plugin for WDSCi 7.0" href="html/install/wdsci7.0/install_wdsci.html" />
+      <topic label="Install Plugin for RDi 9.5.1.3+" href="html/install/rdi8.0/install_rdi.html" />
+      <topic label="Install iSphere Library" href="html/install/install_library.html" />
+   </topic>
+   <topic label="Uninstall Instructions" >
+      <topic label="Uninstall WDSC" href="html/uninstall/uninstall_wdsci/uninstall_wdsci.html" />
+      <topic label="Uninstall RDi" href="html/uninstall/uninstall_rdi.html" />
+      <topic label="Uninstall Library" href="html/uninstall/uninstall_library.html" />
+   </topic>
+   <topic label="Reference" sort="true">
+     <anchor id="reference"/>
+   </topic>
+   <topic label="Local Update Site" href="html/localupdatesite/localupdatesite.html" />
+   <topic label="Contribution" href="html/contributions/contributions.html" >
+      <topic label="Setting up RDP and SVN" href="html/contributions/setup/setup_rdp_svn.html" />
+      <topic label="Setting up iSphere" href="html/contributions/setup/setup_isphere.html" />
+      <topic label="Building iSphere" href="html/contributions/build/build_isphere.html" />
+      <topic label="Special Projects" href="html/contributions/specialprojects/specialprojects.html" />
+   </topic>
+   <topic label="API" href="html/api/api.html" sort="true">
+      <topic label="Connection Name" href="html/api/connection-name.html" />
+      <anchor id="api"/>
+   </topic>
+   <topic label="Utilities" >
+      <topic label="Start Pre-Processor (STRPREPRC)" href="html/utilities/strpreprc/strpreprc.html" >
+         <topic label="Usage" href="html/utilities/strpreprc/usage.html" />
+         <topic label="Header" href="html/utilities/strpreprc/header.html" />
+         <topic label="Example Headers">
+            <topic label="Create RPG Module" href="html/utilities/strpreprc/example_crtrpgmod.html" />
+            <topic label="Create Program" href="html/utilities/strpreprc/example_crtpgm.html" />
+            <topic label="Create Service Program" href="html/utilities/strpreprc/example_crtsrvpgm.html" />
+            <topic label="Create Data Area" href="html/utilities/strpreprc/example_crtdtaara.html" />
+            <topic label="Create SQL Table" href="html/utilities/strpreprc/example_runsqlstm.html" />
+            <topic label="Create SQL Table with CMOne" href="html/utilities/strpreprc/example_xcrtsqlobj.html" />
+         </topic> 
+         <!-- <topic label="Plug-in"> -->
+            <anchor id="strpreprc_plugin" />
+         <!-- </topic> -->
+         <topic label="History" href="html/utilities/strpreprc/history.html" />
+      </topic>
+      <topic label="Who am I (WHOAMI)" href="html/utilities/whoami/whoami.html" />
+   </topic>
+   <topic label="Troubleshooting" >
+      <topic label="Debugging Server Jobs" href="html/troubleshooting/debugging_server_jobs/debugging_server_jobs.html" />
+      <topic label="Orphaned Member Locks" href="html/troubleshooting/orphaned_member_locks/orphaned_member_locks.html" />
+      <topic label="RSE Object Decoration is Missing" href="html/troubleshooting/rse_object_decoration/rse_object_decoration.html" />
+      <topic label="SSL Connection Problems" href="html/troubleshooting/ssl_connections/ssl_connections.html" />
+   </topic>
+   <topic label="Links" href="html/links/links.html" />
+</toc>
