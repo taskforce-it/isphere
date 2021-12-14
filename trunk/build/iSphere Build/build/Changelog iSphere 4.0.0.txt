@@ -17,8 +17,9 @@ Changelog: iSphere 4.2.2.r
    plug-in is not installed (preferences page).
  • Added hack to IgnoreDateCompareFilter for RDi 9.5, where node is
    a type of QSYSMemberAccessorTypedElement.
- • Migrated to Log4j 2 by using Log4j 1.x API Bridge because of
+ • Migrated to Log4j2 by using Log4j 1.x API Bridge because of
    vulnerability (CVE-2021-44228).
+ • Updated Log4j2 from 2.15.0 to 2.16.0.
 
 Changelog: iSphere 4.2.1.r
 --------------------------
