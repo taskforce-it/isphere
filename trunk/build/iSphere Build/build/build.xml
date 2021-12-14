@@ -185,7 +185,7 @@
 	</fileset>
 
 	<!-- Set build target dependant parameters -->
-	<property name="target.ide.product.name.short.rdi" value="RDi 8.0+" />
+	<property name="target.ide.product.name.short.rdi" value="RDi 9.5.1.3+" />
 	<property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
 	<property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
 	<property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
@@ -814,10 +814,12 @@
 		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HELP@" value="${sf.help.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_RDI@" value="${target.ide.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_WDSCI@" value="${target.ide.wdsci}" />
+		<!-- obsolete
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_RDI@" value="${target.ide.product.name.long.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@" value="${target.ide.product.name.long.wdsci}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_RDI@" value="${target.ide.product.name.short.rdi}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@" value="${target.ide.product.name.short.wdsci}" />
+		-->
 		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_MANIFEST@" value="${sf.notifier.url}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_VERSION@" value="${sf.ftp.beta.dir.name}" />
 		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
