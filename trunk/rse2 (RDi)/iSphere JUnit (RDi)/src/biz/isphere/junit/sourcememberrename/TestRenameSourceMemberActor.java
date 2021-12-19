@@ -13,14 +13,14 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.QSYSObjectPathName;
+
 import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.exceptions.InvalidMemberNameException;
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.QSYSObjectPathName;
 
 public class TestRenameSourceMemberActor {
 
@@ -35,9 +35,11 @@ public class TestRenameSourceMemberActor {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
-            QSYSObjectPathName newName = actor.produceNewMemberName(produceOldName("OLD"));
+            String baseName = "OLD";
 
-            assertEquals("OLD" + delimiter + "001", newName.getMemberName());
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "01", newName.getMemberName());
         }
     }
 
@@ -48,58 +50,117 @@ public class TestRenameSourceMemberActor {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
-            QSYSObjectPathName newName = actor.produceNewMemberName(produceOldName("OLD" + delimiter + "1"));
+            String baseName = "OLD";
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "01"));
 
-            assertEquals("OLD" + delimiter + "002", newName.getMemberName());
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "02", newName.getMemberName());
         }
     }
 
     @Test
-    public void testGetNextNameFillGapsInNames() throws Exception {
+    public void testMinValueOutOfBoundsFillGaps() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            MemberRenamingRuleNumber renameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter, false);
+            renameRule.setMinValue(20);
+
+            RenameMemberActor actor = produceActor(system, renameRule);
+
+            String baseName = "OLD";
+
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "01"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "02"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "03"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "04"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "05"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "06"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "07"));
+
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "20", newName.getMemberName());
+        }
+    }
+
+    @Test
+    public void testMinValueOutOfBoundsSkipGaps() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            MemberRenamingRuleNumber renameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter, true);
+            renameRule.setMinValue(20);
+
+            RenameMemberActor actor = produceActor(system, renameRule);
+
+            String baseName = "OLD";
+
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "01"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "02"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "03"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "04"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "05"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "06"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "07"));
+
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "20", newName.getMemberName());
+        }
+    }
+
+    @Test
+    public void testGetNextNameFillGaps() throws Exception {
 
         for (String delimiter : delimiters) {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter, false));
 
-            actor.addMemberName(produceOldName("OLD" + delimiter + "001"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "002"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "003"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "004"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "005"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "006"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "007"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "08"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "009"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "0010"));
+            String baseName = "OLD";
 
-            QSYSObjectPathName oldMemberPath = produceOldName("OLD" + delimiter + "005");
-            QSYSObjectPathName newName = actor.produceNewMemberName(oldMemberPath);
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "01"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "02"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "03"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "04"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "05"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "06"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "07"));
+            // must be filled with OLD.08, because of different lengths of
+            // extensions:
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "8"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "091"));
 
-            assertEquals("OLD" + delimiter + "005", oldMemberPath.getMemberName());
-            assertEquals("OLD" + delimiter + "008", newName.getMemberName());
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "08", newName.getMemberName());
         }
     }
 
     @Test
-    public void testGetNextNameSkipGapsNames() throws Exception {
+    public void testGetNextNameSkipGaps() throws Exception {
 
         for (String delimiter : delimiters) {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter, true));
 
-            actor.addMemberName(produceOldName("OLD" + delimiter + "001"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "002"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "003"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "004"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "005"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "006"));
-            actor.addMemberName(produceOldName("OLD" + delimiter + "009"));
+            String baseName = "OLD";
 
-            QSYSObjectPathName oldMemberPath = produceOldName("OLD" + delimiter + "005");
-            QSYSObjectPathName newName = actor.produceNewMemberName(oldMemberPath);
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "01"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "02"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "03"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "04"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "05"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "06"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "07"));
+            // must not be skipped, because of different lengths of extensions:
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "8"));
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "091"));
 
-            assertEquals("OLD" + delimiter + "005", oldMemberPath.getMemberName());
-            assertEquals("OLD" + delimiter + "010", newName.getMemberName());
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "08", newName.getMemberName());
         }
     }
 
@@ -110,9 +171,13 @@ public class TestRenameSourceMemberActor {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
-            QSYSObjectPathName newName = actor.produceNewMemberName(produceOldName("OLD" + delimiter + "998"));
+            String baseName = "OLD";
 
-            assertEquals("OLD" + delimiter + "999", newName.getMemberName());
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "98"));
+
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "99", newName.getMemberName());
         }
     }
 
@@ -121,14 +186,43 @@ public class TestRenameSourceMemberActor {
 
         for (String delimiter : delimiters) {
 
+            String baseName = "OLD";
+
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "99"));
+
             try {
-                actor.produceNewMemberName(produceOldName("OLD" + delimiter + "999"));
+                actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
                 fail("Should have faild with a NoMoreNamesAvailableException");
             } catch (Exception e) {
                 assertEquals(NoMoreNamesAvailableException.class, e.getClass());
             }
+        }
+    }
+
+    @Test
+    public void testGetNextNameNoMoreNamesFillGaps() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            String baseName = "OLD";
+
+            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter, false));
+
+            actor.addMemberName(produceQSYSObjectPathName(baseName + delimiter + "99"));
+
+            QSYSObjectPathName newName;
+
+            newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "01", newName.getMemberName());
+
+            actor.addMemberName(newName);
+
+            newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals(baseName + delimiter + "02", newName.getMemberName());
         }
     }
 
@@ -140,7 +234,7 @@ public class TestRenameSourceMemberActor {
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
             try {
-                actor.produceNewMemberName(produceOldName("TOO_LONG"));
+                actor.produceNewMemberName(produceQSYSObjectPathName("TOO_LONG"));
                 fail("Should have faild with an InvalidMemberNameException");
             } catch (Exception e) {
                 assertEquals(InvalidMemberNameException.class, e.getClass());
@@ -155,9 +249,24 @@ public class TestRenameSourceMemberActor {
 
             RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
-            QSYSObjectPathName newName = actor.produceNewMemberName(produceOldName("0815"));
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName("0815"));
 
-            assertEquals("0815" + delimiter + "001", newName.getMemberName());
+            assertEquals("0815" + delimiter + "01", newName.getMemberName());
+        }
+    }
+
+    @Test
+    public void testRenameBackupMember() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
+
+            String baseName = "OLD.015";
+
+            QSYSObjectPathName newName = actor.produceNewMemberName(produceQSYSObjectPathName(baseName));
+
+            assertEquals("OLD.015" + delimiter + "01", newName.getMemberName());
         }
     }
 
@@ -169,10 +278,10 @@ public class TestRenameSourceMemberActor {
         RenameMemberActor actor = produceActor(system, produceNewNameRule(delimiter));
 
         try {
-            actor.produceNewMemberName(produceOldName("123"));
-            fail("Should have faild with an RuntimeException");
+            actor.produceNewMemberName(produceQSYSObjectPathName("123"));
+            fail("Should have faild with an InvalidDelimiterException");
         } catch (Exception e) {
-            assertEquals(RuntimeException.class, e.getClass());
+            assertEquals(IllegalArgumentException.class, e.getClass());
         }
     }
 
@@ -181,13 +290,7 @@ public class TestRenameSourceMemberActor {
     }
 
     private IMemberRenamingRule produceNewNameRule(String delimiter) {
-
-        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-        newNameRule.setDelimiter(delimiter);
-        newNameRule.setMinValue(1);
-        newNameRule.setMaxValue(999);
-
-        return newNameRule;
+        return produceNewNameRule(delimiter, true);
     }
 
     private IMemberRenamingRule produceNewNameRule(String delimiter, boolean isSkipGapsEnabled) {
@@ -196,12 +299,12 @@ public class TestRenameSourceMemberActor {
         newNameRule.setSkipGapsEnabled(isSkipGapsEnabled);
         newNameRule.setDelimiter(delimiter);
         newNameRule.setMinValue(1);
-        newNameRule.setMaxValue(999);
+        newNameRule.setMaxValue(99);
 
         return newNameRule;
     }
 
-    private QSYSObjectPathName produceOldName(String oldMemberName) {
+    private QSYSObjectPathName produceQSYSObjectPathName(String oldMemberName) {
         return new QSYSObjectPathName("ISPHEREDVP", "QRPGLESRC", oldMemberName, "MBR");
     }
 }

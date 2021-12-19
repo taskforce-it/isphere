@@ -26,7 +26,7 @@ public class MemberRenamingRuleNumberAdapter extends AbstractMemberRenamingRuleA
     public void initializeDefaultPreferences(IPreferenceStore preferenceStore) {
         super.initializeDefaultPreferences(preferenceStore);
 
-        setDefault(MemberRenamingRuleNumber.DELIMITER, ".");
+        setDefault(MemberRenamingRuleNumber.DELIMITER, "."); //$NON-NLS-1$
         setDefault(MemberRenamingRuleNumber.MIN_VALUE, 1);
         setDefault(MemberRenamingRuleNumber.MAX_VALUE, 99);
         setDefault(MemberRenamingRuleNumber.IS_SKIP_GAPS_ENABLED, true);

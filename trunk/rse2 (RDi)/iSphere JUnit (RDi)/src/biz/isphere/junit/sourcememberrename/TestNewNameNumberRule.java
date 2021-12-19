@@ -13,7 +13,10 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import com.ibm.as400.access.QSYSObjectPathName;
+
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
+import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 
 public class TestNewNameNumberRule {
@@ -21,20 +24,96 @@ public class TestNewNameNumberRule {
     private static String[] delimiters = { ".", "#" };
 
     @Test
+    public void testIsValidNameTrue() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            String baseName = "OLD";
+
+            MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
+
+            assertEquals(true, newNameRule.isMatchingName(baseName + delimiter + "01"));
+        }
+
+        for (String delimiter : delimiters) {
+
+            String baseName = "OLD.01";
+
+            MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
+
+            assertEquals(true, newNameRule.isMatchingName(baseName + delimiter + "01"));
+        }
+    }
+
+    @Test
+    public void testIsValidNameFalse() throws Exception {
+
+        for (String delimiter : delimiters) {
+
+            String baseName = "OLD";
+
+            MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
+
+            assertEquals(false, newNameRule.isMatchingName(baseName + delimiter + "1"));
+        }
+
+        for (String delimiter : delimiters) {
+
+            String baseName = "OLD" + delimiter + "01";
+
+            MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
+
+            assertEquals(false, newNameRule.isMatchingName(baseName + delimiter + "001"));
+        }
+    }
+
+    @Test
+    public void testIsValidNameFalseRegExDotValue() throws Exception {
+
+        String baseName = "OLD";
+
+        MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(".");
+        newNameRule.setBaseMemberName(baseName);
+
+        assertEquals(false, newNameRule.isMatchingName(baseName + "#01"));
+    }
+
+    @Test
+    public void testInvalidExtension() throws Exception {
+
+        String delimiter = ".";
+
+        String baseName = "OLD";
+
+        IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
+        newNameRule.setBaseMemberName(baseName);
+
+        newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(baseName + delimiter + "AB").getPath() });
+
+        String newName = newNameRule.getNextName();
+
+        assertEquals(baseName + delimiter + "01", newName);
+    }
+
+    @Test
     public void testGetNextNameFirst() throws Exception {
 
         for (String delimiter : delimiters) {
 
-            String oldName = "OLD";
+            String baseName = "OLD";
 
-            MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-            newNameRule.setDelimiter(delimiter);
-            newNameRule.setMinValue(1);
-            newNameRule.setMaxValue(999);
+            IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
 
-            String newName = newNameRule.getNextName(oldName);
+            newNameRule.setExistingMembers(null);
 
-            assertEquals("OLD" + delimiter + "001", newName);
+            String newName = newNameRule.getNextName();
+
+            assertEquals(baseName + delimiter + "01", newName);
         }
     }
 
@@ -43,16 +122,17 @@ public class TestNewNameNumberRule {
 
         for (String delimiter : delimiters) {
 
-            String oldName = "OLD" + delimiter + "1";
+            String baseName = "OLD";
+            String memberOnSystem = baseName + delimiter + "01";
 
-            MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-            newNameRule.setDelimiter(delimiter);
-            newNameRule.setMinValue(1);
-            newNameRule.setMaxValue(999);
+            IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
 
-            String newName = newNameRule.getNextName(oldName);
+            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
-            assertEquals("OLD" + delimiter + "002", newName);
+            String newName = newNameRule.getNextName();
+
+            assertEquals(baseName + delimiter + "02", newName);
         }
     }
 
@@ -61,16 +141,17 @@ public class TestNewNameNumberRule {
 
         for (String delimiter : delimiters) {
 
-            String oldName = "OLD" + delimiter + "998";
+            String baseName = "OLD";
+            String memberOnSystem = baseName + delimiter + "98";
 
-            MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-            newNameRule.setDelimiter(delimiter);
-            newNameRule.setMinValue(1);
-            newNameRule.setMaxValue(999);
+            IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
 
-            String newName = newNameRule.getNextName(oldName);
+            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
-            assertEquals("OLD" + delimiter + "999", newName);
+            String newName = newNameRule.getNextName();
+
+            assertEquals(baseName + delimiter + "99", newName);
         }
     }
 
@@ -79,15 +160,16 @@ public class TestNewNameNumberRule {
 
         for (String delimiter : delimiters) {
 
-            String oldName = "OLD" + delimiter + "999";
+            String baseName = "OLD";
+            String memberOnSystem = baseName + delimiter + "99";
 
-            MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-            newNameRule.setDelimiter(delimiter);
-            newNameRule.setMinValue(1);
-            newNameRule.setMaxValue(999);
+            IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
+            newNameRule.setBaseMemberName(baseName);
+
+            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
             try {
-                newNameRule.getNextName(oldName);
+                newNameRule.getNextName();
                 fail("Should have faild with a NoMoreNamesAvailableException");
             } catch (NoMoreNamesAvailableException e) {
                 assertEquals(NoMoreNamesAvailableException.class, e.getClass());
@@ -98,18 +180,32 @@ public class TestNewNameNumberRule {
     @Test
     public void testEmptyDelimiter() throws Exception {
 
-        String oldName = "OLD";
+        String baseName = "OLD";
 
-        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-        newNameRule.setDelimiter("");
-        newNameRule.setMinValue(1);
-        newNameRule.setMaxValue(999);
+        IMemberRenamingRule newNameRule = produceNewNameRule("");
+        newNameRule.setBaseMemberName(baseName);
 
         try {
-            newNameRule.getNextName(oldName);
-            fail("Should have faild with a RuntimeException");
+            newNameRule.setExistingMembers(null);
+            newNameRule.getNextName();
+            fail("Should have faild with an InvalidDelimiterException");
         } catch (Throwable e) {
-            assertEquals(RuntimeException.class, e.getClass());
+            assertEquals(IllegalArgumentException.class, e.getClass());
         }
+    }
+
+    private QSYSObjectPathName produceQSYSObjectPathName(String memberName) {
+        return new QSYSObjectPathName("ISPHEREDVP", "QRPGLESRC", memberName, "MBR");
+    }
+
+    private IMemberRenamingRule produceNewNameRule(String delimiter) {
+
+        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
+        newNameRule.setSkipGapsEnabled(true);
+        newNameRule.setDelimiter(delimiter);
+        newNameRule.setMinValue(1);
+        newNameRule.setMaxValue(99);
+
+        return newNameRule;
     }
 }

@@ -9,7 +9,14 @@
 package biz.isphere.core.memberrename.rules;
 
 import java.beans.PropertyVetoException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
+import com.ibm.as400.access.QSYSObjectPathName;
+
+import biz.isphere.base.comparators.QSYSObjectPathNameComparator;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.memberrename.adapters.MemberRenamingRuleNumberAdapter;
@@ -24,6 +31,8 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     public static String MAX_VALUE = "maxValue"; //$NON-NLS-1$
     public static String IS_SKIP_GAPS_ENABLED = "isSkipGapsEnabled"; //$NON-NLS-1$
 
+    private Pattern memberNameFilterPattern;
+
     /*
      * Only used by JUnit tests
      */
@@ -35,14 +44,13 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     /*
      * Used when computing the next member name
      */
-    private int currentValue;
-    private String baseMemberName;
+    private NameProperties nameProperties;
 
     public MemberRenamingRuleNumber() {
         super(Messages.Label_Renaming_rule_Numerical);
     }
 
-    public boolean isSkipGapsEnabled() {
+    private boolean isSkipGapsEnabled() {
         MemberRenamingRuleNumberAdapter adapter = getAdapter();
         if (adapter == null) {
             return isSkipGapsEnabled;
@@ -50,10 +58,19 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return adapter.getBoolean(IS_SKIP_GAPS_ENABLED);
     }
 
+    /**
+     * Used by JUnit tests only.
+     * 
+     * @param enabled - specifies whether gaps in the list of existing backup
+     *        member names are skip or not.
+     */
     public void setSkipGapsEnabled(boolean enabled) {
         this.isSkipGapsEnabled = enabled;
     }
 
+    /**
+     * @return delimiter used for producing a backup member name.
+     */
     public String getDelimiter() {
         MemberRenamingRuleNumberAdapter adapter = getAdapter();
         if (adapter == null) {
@@ -62,10 +79,20 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return adapter.getString(DELIMITER);
     }
 
+    /**
+     * Used by JUnit tests only.
+     * 
+     * @param delimiter - specifies the delimiter used for producing a backup
+     *        member name.
+     */
     public void setDelimiter(String delimiter) {
         this.delimiter = delimiter.trim();
     }
 
+    /**
+     * @return starting value of the extension that is added to the original
+     *         member name, when producing a backup name.
+     */
     public int getMinValue() {
         MemberRenamingRuleNumberAdapter adapter = getAdapter();
         if (adapter == null) {
@@ -74,10 +101,20 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return getAdapter().getInteger(MIN_VALUE);
     }
 
+    /**
+     * Used by JUnit tests only.
+     * 
+     * @param minValue - specifies the starting value of the extension that is
+     *        added to the original member name, when producing a backup name.
+     */
     public void setMinValue(int minValue) {
         this.minValue = minValue;
     }
 
+    /**
+     * @return maximum value of the extension that is added to the original
+     *         member name, when producing a backup name.
+     */
     public int getMaxValue() {
         MemberRenamingRuleNumberAdapter adapter = getAdapter();
         if (adapter == null) {
@@ -86,28 +123,81 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return getAdapter().getInteger(MAX_VALUE);
     }
 
+    /**
+     * Used by JUnit tests only.
+     * 
+     * @param maxValue - specifies the maximum value of the extension that is
+     *        added to the original member name, when producing a backup name.
+     */
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
     }
 
-    public String getBaseName(String memberName) throws NoMoreNamesAvailableException, PropertyVetoException {
+    @Override
+    public void setBaseMemberName(String memberName) {
+        super.setBaseMemberName(memberName);
 
-        initializeBaseName(memberName);
+        String memberNameFilterMask = "^" + getBaseMemberName() + getDelimiter() + "[0-9]{" + getLengthOfExtension() + "}$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        memberNameFilterMask = memberNameFilterMask.replaceAll("\\.", "\\\\.");
 
-        String nextMemberNamePath = String.format("%s%s", baseMemberName, getDelimiter()); //$NON-NLS-1$
-
-        return nextMemberNamePath;
+        this.memberNameFilterPattern = Pattern.compile(memberNameFilterMask);
     }
 
-    public String getNextName(String currentMemberName) throws NoMoreNamesAvailableException, PropertyVetoException {
+    public String getMemberNameFilter() {
+        return getBaseMemberName() + getDelimiter() + "*"; //$NON-NLS-1$
+    }
 
-        initializeBaseName(currentMemberName);
+    /*
+     * Exported for JUnit tests only.
+     */
+    public boolean isMatchingName(String memberName) {
+        return memberNameFilterPattern.matcher(memberName).matches();
+    }
 
-        if (currentValue >= getMaxValue()) {
+    public void setExistingMembers(String[] existingMemberPaths) {
+
+        if (existingMemberPaths == null || existingMemberPaths.length == 0 || !isSkipGapsEnabled()) {
+            // Initialize properties to their starting values.
+            this.nameProperties = retrieveNameProperties(null);
+            return;
+        }
+
+        // Determine the last (highest) member name found on the system.
+        List<QSYSObjectPathName> existingQSYSMemberNames = new ArrayList<QSYSObjectPathName>();
+        for (int i = 0; i < existingMemberPaths.length; i++) {
+            QSYSObjectPathName qsysMemberPath = new QSYSObjectPathName(existingMemberPaths[i]);
+            if (isMatchingName(qsysMemberPath.getMemberName())) {
+                existingQSYSMemberNames.add(qsysMemberPath);
+            }
+        }
+
+        if (existingQSYSMemberNames.size() <= 0) {
+            // Initialize properties to their starting values.
+            this.nameProperties = retrieveNameProperties(null);
+            return;
+        }
+
+        QSYSObjectPathName[] existingQSYSMemberNamesArray = existingQSYSMemberNames.toArray(new QSYSObjectPathName[existingQSYSMemberNames.size()]);
+        Arrays.sort(existingQSYSMemberNamesArray, new QSYSObjectPathNameComparator());
+        QSYSObjectPathName lastQSYSMemberNameUsed = existingQSYSMemberNamesArray[existingQSYSMemberNamesArray.length - 1];
+
+        // Set properties to the last (highest) member name found on the system.
+        this.nameProperties = retrieveNameProperties(lastQSYSMemberNameUsed.getMemberName());
+    }
+
+    public String getNextName() throws NoMoreNamesAvailableException, PropertyVetoException {
+
+        if (nameProperties.currentValue >= getMaxValue()) {
             throw new NoMoreNamesAvailableException();
         }
 
-        String nextMemberNamePath = formatName(baseMemberName, currentValue + 1);
+        if (nameProperties.currentValue <= getMinValue() - 1) {
+            nameProperties.currentValue = getMinValue() - 1;
+        }
+
+        nameProperties.currentValue++;
+
+        String nextMemberNamePath = formatName(getBaseMemberName(), nameProperties.currentValue);
 
         return nextMemberNamePath;
     }
@@ -116,7 +206,6 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
 
         Preferences preferences = Preferences.getInstance();
         if (preferences == null) {
-            // JUnit test0
             return null;
         }
 
@@ -124,28 +213,52 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         return adapter;
     }
 
-    private String formatName(String baseOldName, int currentCount) throws PropertyVetoException {
-        int numSpaces = Integer.toString(getMaxValue()).length();
-        return String.format("%s%s%s", baseOldName, getDelimiter(), StringHelper.getFixLengthLeading(Integer.toString(currentCount), numSpaces, "0")); //$NON-NLS-1$ //$NON-NLS-2$
+    private String formatName(String memberName, int currentCount) throws PropertyVetoException {
+
+        int numSpaces = getLengthOfExtension();
+        String extension = StringHelper.getFixLengthLeading(Integer.toString(currentCount), numSpaces, "0"); //$NON-NLS-1$
+
+        return String.format("%s%s%s", memberName, getDelimiter(), extension); //$NON-NLS-1$
     }
 
-    private void initializeBaseName(String oldMemberName) {
+    private int getLengthOfExtension() {
+        return Integer.toString(getMaxValue()).length();
+    }
+
+    private NameProperties retrieveNameProperties(String memberName) {
+
+        int currentValue;
 
         if (getDelimiter() == null || getDelimiter().length() == 0) {
 
-            throw new RuntimeException("Invalid delimter. Delimiter must not be empty."); //$NON-NLS-1$
+            throw new IllegalArgumentException("Invalid delimter. Delimiter must not be empty"); //$NON-NLS-1$
 
         } else {
 
-            int i = oldMemberName.lastIndexOf(getDelimiter());
+            if (!StringHelper.isNullOrEmpty(memberName)) {
 
-            if (i <= -1) {
-                baseMemberName = oldMemberName;
-                currentValue = getMinValue() - 1;
-            } else {
-                baseMemberName = oldMemberName.substring(0, i);
-                currentValue = Integer.parseInt(oldMemberName.substring(i + getDelimiter().length()));
+                int i = memberName.lastIndexOf(getDelimiter());
+                if (i >= 0) {
+
+                    String extension = memberName.substring(i + getDelimiter().length());
+                    currentValue = Integer.parseInt(extension);
+
+                    return new NameProperties(currentValue);
+                }
             }
+
+            currentValue = getMinValue() - 1;
+
+            return new NameProperties(currentValue);
+        }
+    }
+
+    private class NameProperties {
+
+        protected int currentValue;
+
+        public NameProperties(int currentValue) {
+            this.currentValue = currentValue;
         }
     }
 }

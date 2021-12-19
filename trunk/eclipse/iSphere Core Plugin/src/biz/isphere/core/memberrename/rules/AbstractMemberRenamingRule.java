@@ -8,9 +8,12 @@
 
 package biz.isphere.core.memberrename.rules;
 
+import biz.isphere.base.internal.StringHelper;
+
 public abstract class AbstractMemberRenamingRule implements IMemberRenamingRule {
 
     private String label;
+    private String baseMemberName;
 
     public AbstractMemberRenamingRule(String label) {
         this.label = label;
@@ -18,5 +21,18 @@ public abstract class AbstractMemberRenamingRule implements IMemberRenamingRule 
 
     public String getLabel() {
         return label;
+    }
+
+    public void setBaseMemberName(String memberName) {
+        this.baseMemberName = memberName;
+    }
+
+    public String getBaseMemberName() {
+
+        if (StringHelper.isNullOrEmpty(baseMemberName)) {
+            throw new IllegalArgumentException("Field must not be empty: 'baseMemberName'"); //$NON-NLS-1$
+        }
+
+        return baseMemberName;
     }
 }
