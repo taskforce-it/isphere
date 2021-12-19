@@ -1,4 +1,12 @@
 
+Changelog: iSphere 4.2.4.r
+--------------------------
+ • Fixed renaming rule to ignore backup names with a different length
+   of the extension.
+ • Reworked renaming rule so that backup member names can be renamed,
+   too. For example OLD.05 is renamed to OLD.05.01, when copied for
+   the first time. 
+
 Changelog: iSphere 4.2.3.r
 --------------------------
  • Updated Log4j2 from 2.15.0 to 2.16.0.
