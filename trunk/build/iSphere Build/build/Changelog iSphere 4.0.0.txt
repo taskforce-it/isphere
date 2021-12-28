@@ -1,6 +1,7 @@
 
-Changelog: iSphere 4.2.4.r
---------------------------
+Changelog: iSphere 4.2.4.b001
+-----------------------------
+ • Added renaming rule "Numerical Extended".
  • Fixed renaming rule to ignore backup names with a different length
    of the extension.
  • Reworked renaming rule so that backup member names can be renamed,

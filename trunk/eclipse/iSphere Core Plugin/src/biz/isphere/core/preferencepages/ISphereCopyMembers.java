@@ -15,8 +15,10 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,18 +29,20 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.memberrename.adapters.IAdapterModificationListener;
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
 import biz.isphere.core.memberrename.factories.MemberRenamingRuleFactory;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPreferencePage {
+public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPreferencePage, IAdapterModificationListener {
 
     private Combo comboMemberRenamingRule;
     private Composite mainPageContainer;
     private Group groupRenamingRule;
     private Composite dynamicRuleArea;
+    private Button chkBoxEnableMemberPrecheck;
 
     private IMemberRenamingRule[] rules;
 
@@ -67,7 +71,9 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
         IMemberRenamingRule rule = Preferences.getInstance().getMemberRenamingRule();
         String ruleLabel = rule.getLabel();
 
-        createDynamicRuleArea(groupRenamingRule, ruleLabel);
+        createDynamicRuleArea(ruleLabel);
+
+        createAdditonalOptionsArea(container);
 
         setScreenToValues(ruleLabel);
 
@@ -87,8 +93,8 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
 
         comboMemberRenamingRule = WidgetFactory.createReadOnlyCombo(main);
         comboMemberRenamingRule.setToolTipText(Messages.Tooltip_Specifies_the_rule_for_creating_a_backup_name);
-        GridData comboMemberRenamingRuleLayoutData = new GridData();
-        comboMemberRenamingRuleLayoutData.widthHint = 120;
+        GridData comboMemberRenamingRuleLayoutData = new GridData(GridData.FILL_HORIZONTAL);
+        // comboMemberRenamingRuleLayoutData.widthHint = 180;
         comboMemberRenamingRule.setLayoutData(comboMemberRenamingRuleLayoutData);
         comboMemberRenamingRule.addSelectionListener(new MemberRenamingRuleSelectionListener());
         fillMemberRenamingRuleCombo();
@@ -103,9 +109,9 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
         dynamicRuleAreaContainerLayout.marginWidth = 0;
     }
 
-    private void createDynamicRuleArea(Composite parent, String ruleLabel) {
+    private void createDynamicRuleArea(String ruleLabel) {
 
-        if (parent == null) {
+        if (groupRenamingRule == null) {
             // happens, when the page is being build
             return;
         }
@@ -118,14 +124,25 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
         IMemberRenamingRuleAdapter adapter = getRuleAdapter(ruleLabel);
 
         if (adapter == null) {
-            dynamicRuleArea = createAdapterNotFoundArea(parent, ruleLabel);
+            dynamicRuleArea = createAdapterNotFoundArea(groupRenamingRule, ruleLabel);
         } else {
-            dynamicRuleArea = adapter.createComposite(parent);
+            adapter.addAdapterModificationListener(this);
+            dynamicRuleArea = adapter.createComposite(groupRenamingRule);
         }
 
-        dynamicRuleArea.layout();
-        groupRenamingRule.layout();
-        mainPageContainer.layout();
+        mainPageContainer.layout(true, true);
+    }
+
+    private void createAdditonalOptionsArea(Composite parent) {
+
+        Composite main = new Composite(parent, SWT.NONE);
+        main.setLayout(new GridLayout(2, false));
+        main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        chkBoxEnableMemberPrecheck = WidgetFactory.createCheckbox(main, Messages.Label_Enable_member_precheck);
+        chkBoxEnableMemberPrecheck.setToolTipText(Messages.Tooltip_Enable_member_precheck);
+        chkBoxEnableMemberPrecheck.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+
     }
 
     private void loadMemberRenamingRuleValues() {
@@ -201,6 +218,8 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
 
         IMemberRenamingRuleAdapter adapter = getRuleAdapter(ruleLabel);
         adapter.storePreferences();
+
+        Preferences.getInstance().setMemberRenamingPrechek(chkBoxEnableMemberPrecheck.getSelection());
     }
 
     protected void setScreenToValues(String ruleLabel) {
@@ -209,17 +228,18 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
 
         IMemberRenamingRuleAdapter adapter = getRuleAdapter(ruleLabel);
         adapter.loadPreferences();
+
+        chkBoxEnableMemberPrecheck.setSelection(Preferences.getInstance().isMemberRenamingPrecheck());
     }
 
     protected void setScreenToDefaultValues() {
 
-        IMemberRenamingRule rule = Preferences.getInstance().getDefaultMemberRenamingRule();
-        String ruleLabel = rule.getLabel();
+        String ruleLabel = comboMemberRenamingRule.getText();
 
-        comboMemberRenamingRule.setText(ruleLabel);
-
-        createDynamicRuleArea(groupRenamingRule, ruleLabel);
+        createDynamicRuleArea(ruleLabel);
         loadMemberRenamingRuleDefaultValues();
+
+        chkBoxEnableMemberPrecheck.setSelection(Preferences.getInstance().getDefaultIsMemberRenamingPrecheck());
     }
 
     private void fillMemberRenamingRuleCombo() {
@@ -236,6 +256,10 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
 
     private boolean validateMemberRenamingRule() {
 
+        if (dynamicRuleArea == null || dynamicRuleArea.isDisposed()) {
+            return false;
+        }
+
         String ruleLabel = getMemberRenamingRuleLabel();
         IMemberRenamingRuleAdapter adapter = getRuleAdapter(ruleLabel);
         if (adapter == null) {
@@ -249,6 +273,8 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
             setError(message);
             return false;
         }
+
+        clearError();
 
         return true;
     }
@@ -294,11 +320,19 @@ public class ISphereCopyMembers extends PreferencePage implements IWorkbenchPref
             if (validateMemberRenamingRule()) {
                 checkAllValues();
                 if (isValid()) {
-                    String ruleLabel = comboMemberRenamingRule.getText();
-                    createDynamicRuleArea(groupRenamingRule, ruleLabel);
+                    Combo combo = (Combo)event.getSource();
+                    String ruleLabel = combo.getText();
+                    createDynamicRuleArea(ruleLabel);
                     loadMemberRenamingRuleValues();
+                    if (isValid()) {
+                        combo.setFocus();
+                    }
                 }
             }
         }
+    }
+
+    public void changed(TypedEvent event) {
+        checkAllValues();
     }
 }

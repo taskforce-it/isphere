@@ -6,8 +6,10 @@ import java.util.Map;
 
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
 import biz.isphere.core.memberrename.adapters.MemberRenamingRuleNumberAdapter;
+import biz.isphere.core.memberrename.adapters.MemberRenamingRuleNumberAdapterExtended;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
+import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumberExtended;
 
 public final class MemberRenamingRuleFactory {
 
@@ -49,11 +51,10 @@ public final class MemberRenamingRuleFactory {
         memberRenamingRuleAdapters = new HashMap<String, IMemberRenamingRuleAdapter>();
 
         addAdapter(MemberRenamingRuleNumber.class, new MemberRenamingRuleNumberAdapter());
-        // addAdapter(MemberRenamingRuleNumber2.class, new
-        // MemberRenamingRuleNumberAdapter2());
+        addAdapter(MemberRenamingRuleNumberExtended.class, new MemberRenamingRuleNumberAdapterExtended());
 
         addRule(new MemberRenamingRuleNumber());
-        // addRule(new MemberRenamingRuleNumber2());
+        addRule(new MemberRenamingRuleNumberExtended());
     }
 
     private void addAdapter(Class<? extends IMemberRenamingRule> clazz, IMemberRenamingRuleAdapter adapter) {

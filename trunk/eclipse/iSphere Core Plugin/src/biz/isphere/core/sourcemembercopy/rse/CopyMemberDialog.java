@@ -52,6 +52,8 @@ import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.Columns;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
@@ -76,8 +78,10 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private Combo comboToFile;
     private Text textToLibrary;
     private TableViewer tableViewer;
+    private Button chkBoxError;
     private Button chkBoxReplace;
     private Button chkBoxRename;
+    private Link lnkPreferences;
     private Button chkBoxIgnoreDataLostError;
     private Label labelNumElem;
 
@@ -177,7 +181,10 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         copyMemberService.setToFile(getToFileName());
         copyMemberService.setExistingMemberAction(getExistingMemberAction());
 
-        copyMemberValidator = new CopyMemberValidator(copyMemberService, getExistingMemberAction(), chkBoxIgnoreDataLostError.getSelection(), this);
+        boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
+
+        copyMemberValidator = new CopyMemberValidator(copyMemberService, getExistingMemberAction(), chkBoxIgnoreDataLostError.getSelection(),
+            fullErrorCheck, this);
 
         setControlEnablement();
         copyMemberValidator.start();
@@ -334,24 +341,25 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         existingMembersActionGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false, 4, 1));
         existingMembersActionGroup.setText(Messages.Label_Existing_members_action_colon);
 
+        chkBoxError = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Error);
+        chkBoxError.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
+
         chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Replace_existing_members);
         chkBoxReplace.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
 
         chkBoxRename = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Rename_existing_members);
         chkBoxRename.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 1, 1));
 
-        String lnkLabel = Messages.bind(Messages.Link_to_copy_member_preferences_A_B,
-            "<a href=\"biz.isphere.core.preferencepages.ISphereCopyMembers\">", "</a>");
+        lnkPreferences = new Link(existingMembersActionGroup, SWT.MULTI | SWT.WRAP);
+        setLinkPreferencesText();
 
-        Link lnkPreferences = new Link(existingMembersActionGroup, SWT.MULTI | SWT.WRAP);
-        lnkPreferences.setLayoutData(new GridData());
-        lnkPreferences.setText(lnkLabel);
         lnkPreferences.pack();
         lnkPreferences.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
                 dialog.open();
+                setLinkPreferencesText();
             }
         });
 
@@ -364,6 +372,20 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         loadScreenValues();
 
         return mainArea;
+    }
+
+    private void setLinkPreferencesText() {
+
+        IMemberRenamingRule rule = Preferences.getInstance().getMemberRenamingRule();
+        String ruleLabel = rule.getLabel();
+
+        String lnkLabel = Messages.bind(Messages.Link_to_copy_member_preferences_A_B,
+            new Object[] { "<a href=\"biz.isphere.core.preferencepages.ISphereCopyMembers\">", "</a>", ruleLabel });
+
+        lnkPreferences.setLayoutData(new GridData());
+        lnkPreferences.setText(lnkLabel);
+
+        mainArea.layout();
     }
 
     private int getNumberOfLayoutColumns(Composite composite) {
@@ -446,6 +468,8 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         }
 
         tableViewer.setInput(copyMemberService);
+
+        chkBoxError.setSelection(true);
     }
 
     /**
@@ -552,6 +576,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         comboToFile.setEnabled(enabled);
         textToLibrary.setEnabled(enabled);
         tableViewer.getTable().setEnabled(enabled);
+        chkBoxError.setEnabled(enabled);
         chkBoxReplace.setEnabled(enabled);
         chkBoxRename.setEnabled(enabled);
         chkBoxIgnoreDataLostError.setEnabled(enabled);

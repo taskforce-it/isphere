@@ -24,4 +24,8 @@ public interface IMemberRenamingRuleAdapter {
     public String validatePreferences();
 
     public Composite createComposite(Composite parent);
+
+    public void addAdapterModificationListener(IAdapterModificationListener listener);
+
+    public void removeAdapterModificationListener(IAdapterModificationListener listener);
 }

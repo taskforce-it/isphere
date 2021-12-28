@@ -125,6 +125,8 @@ public final class Preferences {
 
     private static final String BACKUP_MEMBER_NAME_CURRENT_RULE = DOMAIN + "BACKUP_MEMBER_NAME.CURRENT_RULE"; //$NON-NLS-1$
 
+    private static final String BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK = DOMAIN + "BACKUP_MEMBER_NAME.ENABLE_MEMBER_PRECHECK"; //$NON-NLS-1$
+
     // Removes with rev. 7363
     // private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH =
     // DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
@@ -411,6 +413,10 @@ public final class Preferences {
         }
 
         return adapters;
+    }
+
+    public boolean isMemberRenamingPrecheck() {
+        return preferenceStore.getBoolean(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK);
     }
 
     // public int getSourceFileSearchMemberColumnWidth() {
@@ -753,6 +759,10 @@ public final class Preferences {
         preferenceStore.setValue(BACKUP_MEMBER_NAME_CURRENT_RULE, rule.getClass().getName());
     }
 
+    public void setMemberRenamingPrechek(boolean enabled) {
+        preferenceStore.setValue(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK, enabled);
+    }
+
     // public void setSourceFileSearchMemberColumnWidth(int width) {
     // preferenceStore.setValue(SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH, width);
     // }
@@ -1048,6 +1058,8 @@ public final class Preferences {
         for (IMemberRenamingRuleAdapter adapter : adapters) {
             adapter.initializeDefaultPreferences(preferenceStore);
         }
+
+        preferenceStore.setDefault(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK, getDefaultIsMemberRenamingPrecheck());
     }
 
     /*
@@ -1590,6 +1602,10 @@ public final class Preferences {
 
     public boolean getDefaultUseISphereJdbcConnectionManager() {
         return false;
+    }
+
+    public boolean getDefaultIsMemberRenamingPrecheck() {
+        return true;
     }
 
     /**
