@@ -393,6 +393,8 @@ public class ISphereHelper {
             if (StringHelper.isNullOrEmpty(message)) {
                 return true;
             }
+        } catch (NullPointerException e) {
+            throw e;
         } catch (Exception e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
