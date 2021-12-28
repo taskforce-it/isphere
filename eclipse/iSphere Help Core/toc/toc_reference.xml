@@ -9,7 +9,10 @@
   <topic label="Connection Properties" href="html/connection/properties.html"> 
   </topic>
   <topic label="Copy Members"  href="html/copymembers/copymembers.html"> 
-    <topic label="Preferences" href="html/copymembers/preferences/preferences.html" />
+    <topic label="Preferences" href="html/copymembers/preferences/preferences.html" >
+    	<topic label="Numerical Rule" href="html/copymembers/preferences/rule_numerical/rule_numerical.html" />
+    	<topic label="Numerical Extended Rule" href="html/copymembers/preferences/rule_numerical_extended/rule_numerical_extended.html" />
+    </topic>
   </topic>
   <topic label="Data Area Editor"  href="html/dataareaeditor/dataareaeditor.html"> 
     <topic label="Preferences" href="html/dataareaeditor/preferences/preferences.html" />

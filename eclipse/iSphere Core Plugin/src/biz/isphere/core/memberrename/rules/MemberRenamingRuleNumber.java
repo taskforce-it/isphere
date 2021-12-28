@@ -9,27 +9,36 @@
 package biz.isphere.core.memberrename.rules;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.ErrorCompletingRequestException;
+import com.ibm.as400.access.ObjectDoesNotExistException;
 import com.ibm.as400.access.QSYSObjectPathName;
 
 import biz.isphere.base.comparators.QSYSObjectPathNameComparator;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.memberrename.adapters.MemberRenamingRuleNumberAdapter;
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
-import biz.isphere.core.preferences.Preferences;
 
-public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
+public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule<MemberRenamingRuleNumberAdapter> {
+
+    private static final long serialVersionUID = 614340387390813036L;
 
     public static String ID = "biz.isphere.core.memberrename.rules.number"; //$NON-NLS-1$
+
     public static String DELIMITER = "delimiter"; //$NON-NLS-1$
     public static String MIN_VALUE = "minValue"; //$NON-NLS-1$
     public static String MAX_VALUE = "maxValue"; //$NON-NLS-1$
-    public static String IS_SKIP_GAPS_ENABLED = "isSkipGapsEnabled"; //$NON-NLS-1$
 
     private Pattern memberNameFilterPattern;
 
@@ -39,7 +48,7 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     private String delimiter;
     private int minValue;
     private int maxValue;
-    private boolean isSkipGapsEnabled;
+    private boolean isFillGaps = false;
 
     /*
      * Used when computing the next member name
@@ -50,12 +59,16 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         super(Messages.Label_Renaming_rule_Numerical);
     }
 
-    private boolean isSkipGapsEnabled() {
-        MemberRenamingRuleNumberAdapter adapter = getAdapter();
-        if (adapter == null) {
-            return isSkipGapsEnabled;
-        }
-        return adapter.getBoolean(IS_SKIP_GAPS_ENABLED);
+    protected MemberRenamingRuleNumber(String label) {
+        super(label);
+    }
+
+    /**
+     * @return returns <code>true</code>, when gaps in existing member names are
+     *         filled, else <code>false</code>.
+     */
+    public boolean isFillGapsEnabled() {
+        return isFillGaps;
     }
 
     /**
@@ -64,8 +77,8 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
      * @param enabled - specifies whether gaps in the list of existing backup
      *        member names are skip or not.
      */
-    public void setSkipGapsEnabled(boolean enabled) {
-        this.isSkipGapsEnabled = enabled;
+    public void setFillGapsEnabled(boolean enabled) {
+        this.isFillGaps = enabled;
     }
 
     /**
@@ -134,16 +147,61 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
     }
 
     @Override
-    public void setBaseMemberName(String memberName) {
-        super.setBaseMemberName(memberName);
+    public void initialize(AS400 system, String libraryName, String fileName, String memberName) throws AS400Exception, PropertyVetoException,
+        AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException {
+        super.initialize(system, libraryName, fileName, memberName);
 
-        String memberNameFilterMask = "^" + getBaseMemberName() + getDelimiter() + "[0-9]{" + getLengthOfExtension() + "}$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        memberNameFilterMask = memberNameFilterMask.replaceAll("\\.", "\\\\.");
+        if (getMemberNameFilter().length() <= 10) {
 
-        this.memberNameFilterPattern = Pattern.compile(memberNameFilterMask);
+            String memberNameFilterMask = "^" + getBaseMemberName() + getDelimiter() + "[0-9]{" + getLengthOfExtension() + "}$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            memberNameFilterMask = memberNameFilterMask.replaceAll("\\.", "\\\\.");
+
+            this.memberNameFilterPattern = Pattern.compile(memberNameFilterMask);
+
+            String[] membersOnSystemPaths = loadMemberList(getBaseMemberLibrary(), getBaseMemberFile(), getMemberNameFilter());
+
+            calculateLastMemberNameUsedOnSystem(membersOnSystemPaths);
+
+        } else {
+            calculateLastMemberNameUsedOnSystem(null);
+        }
     }
 
-    public String getMemberNameFilter() {
+    public String getNextName() throws NoMoreNamesAvailableException, PropertyVetoException {
+
+        if (nameProperties.currentValue >= getMaxValue()) {
+            throw new NoMoreNamesAvailableException();
+        }
+
+        if (nameProperties.currentValue <= getMinValue() - 1) {
+            nameProperties.currentValue = getMinValue() - 1;
+        }
+
+        String nextMemberName = null;
+        while (nextMemberName == null) {
+
+            nameProperties.currentValue++;
+
+            nextMemberName = formatName(getBaseMemberName(), nameProperties.currentValue);
+            if (nextMemberName.length() > 10) {
+                // Name too long. Actor will throw exception.
+                return nextMemberName;
+            }
+
+            if (exists(getSystem(), getBaseMemberLibrary(), getBaseMemberFile(), nextMemberName)) {
+                // May happen, when skip gaps is disabled.
+                nextMemberName = null;
+            }
+        }
+
+        return nextMemberName;
+    }
+
+    protected boolean exists(AS400 system, String libraryName, String fileName, String nextMemberName) {
+        return ISphereHelper.checkMember(system, libraryName, fileName, nextMemberName);
+    }
+
+    private String getMemberNameFilter() {
         return getBaseMemberName() + getDelimiter() + "*"; //$NON-NLS-1$
     }
 
@@ -151,14 +209,23 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
      * Exported for JUnit tests only.
      */
     public boolean isMatchingName(String memberName) {
+
+        if (memberNameFilterPattern == null) {
+            return false;
+        }
+
         return memberNameFilterPattern.matcher(memberName).matches();
     }
 
-    public void setExistingMembers(String[] existingMemberPaths) {
+    /*
+     * Exported for JUnit tests only.
+     */
+    public void calculateLastMemberNameUsedOnSystem(String[] existingMemberPaths) {
 
-        if (existingMemberPaths == null || existingMemberPaths.length == 0 || !isSkipGapsEnabled()) {
-            // Initialize properties to their starting values.
-            this.nameProperties = retrieveNameProperties(null);
+        // Initialize properties to their starting values.
+        this.nameProperties = retrieveNameProperties(null);
+
+        if (existingMemberPaths == null || existingMemberPaths.length == 0 || isFillGapsEnabled()) {
             return;
         }
 
@@ -172,8 +239,6 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         }
 
         if (existingQSYSMemberNames.size() <= 0) {
-            // Initialize properties to their starting values.
-            this.nameProperties = retrieveNameProperties(null);
             return;
         }
 
@@ -183,34 +248,6 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
 
         // Set properties to the last (highest) member name found on the system.
         this.nameProperties = retrieveNameProperties(lastQSYSMemberNameUsed.getMemberName());
-    }
-
-    public String getNextName() throws NoMoreNamesAvailableException, PropertyVetoException {
-
-        if (nameProperties.currentValue >= getMaxValue()) {
-            throw new NoMoreNamesAvailableException();
-        }
-
-        if (nameProperties.currentValue <= getMinValue() - 1) {
-            nameProperties.currentValue = getMinValue() - 1;
-        }
-
-        nameProperties.currentValue++;
-
-        String nextMemberNamePath = formatName(getBaseMemberName(), nameProperties.currentValue);
-
-        return nextMemberNamePath;
-    }
-
-    public MemberRenamingRuleNumberAdapter getAdapter() {
-
-        Preferences preferences = Preferences.getInstance();
-        if (preferences == null) {
-            return null;
-        }
-
-        MemberRenamingRuleNumberAdapter adapter = (MemberRenamingRuleNumberAdapter)preferences.getMemberRenamingRuleAdapter(this.getClass());
-        return adapter;
     }
 
     private String formatName(String memberName, int currentCount) throws PropertyVetoException {
@@ -253,7 +290,9 @@ public class MemberRenamingRuleNumber extends AbstractMemberRenamingRule {
         }
     }
 
-    private class NameProperties {
+    private class NameProperties implements Serializable {
+
+        private static final long serialVersionUID = -8447362726714216951L;
 
         protected int currentValue;
 

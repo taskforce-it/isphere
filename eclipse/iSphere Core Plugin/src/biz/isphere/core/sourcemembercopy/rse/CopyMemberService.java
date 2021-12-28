@@ -490,7 +490,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
                 // //$NON-NLS-1$
 
                 List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
-                QSYSObjectPathName newMember = actor.produceNewMemberName(new QSYSObjectPathName(library, file, member, "MBR")); //$NON-NLS-1$
+                QSYSObjectPathName newMember = actor.produceNewMemberName(library, file, member);
 
                 String command = String.format("RNMM FILE(%s/%s) MBR(%s) NEWMBR(%s)", library, file, member, newMember.getMemberName()); //$NON-NLS-1$
                 String message = ISphereHelper.executeCommand(system, command, rtnMessages);

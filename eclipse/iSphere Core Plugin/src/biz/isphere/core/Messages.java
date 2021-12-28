@@ -120,6 +120,8 @@ public class Messages extends NLS {
 
     public static String Helptext_colon;
 
+    public static String Help;
+
     public static String Host_name_colon;
 
     public static String Ignore_case;
@@ -1252,6 +1254,8 @@ public class Messages extends NLS {
 
     public static String Label_Existing_members_action_colon;
 
+    public static String Label_Error;
+
     public static String Label_Replace_existing_members;
 
     public static String Label_Rename_existing_members;
@@ -1686,11 +1690,31 @@ public class Messages extends NLS {
 
     public static String Label_Renaming_rule_Numerical;
 
+    public static String Label_Renaming_rule_Numerical_Extended;
+
     public static String Label_Delimiter_colon;
+
+    public static String Tooltip_Delimiter;
 
     public static String Label_Minimum_value_colon;
 
+    public static String Tooltip_Minimum_value;
+
     public static String Label_Maximum_value_colon;
+
+    public static String Tooltip_Maximum_value;
+
+    public static String Label_Minimum_name_length_colon;
+
+    public static String Tooltip_Minimum_name_length;
+
+    public static String Label_Is_variying_length;
+
+    public static String Tooltip_Is_variying_length;
+
+    public static String Label_Enable_member_precheck;
+
+    public static String Tooltip_Enable_member_precheck;
 
     public static String Error_Renaming_rule_UI_dapter_not_found_A;
 
@@ -1699,6 +1723,8 @@ public class Messages extends NLS {
     public static String Error_No_more_names_available_Delete_old_backups;
 
     public static String Error_Invalid_member_name_Name_is_too_long_A;
+
+    public static String Error_Invalid_value_A_Value_must_be_between_B_and_C;
 
     /*
      * Warning messages

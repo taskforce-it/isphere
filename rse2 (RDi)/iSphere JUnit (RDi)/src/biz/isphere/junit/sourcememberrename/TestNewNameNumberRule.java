@@ -21,6 +21,9 @@ import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 
 public class TestNewNameNumberRule {
 
+    private static final String LIBRARY_NAME = "ISPHEREDVP";
+    private static final String FILE_NAME = "QRPGLESRC";
+
     private static String[] delimiters = { ".", "#" };
 
     @Test
@@ -31,7 +34,7 @@ public class TestNewNameNumberRule {
             String baseName = "OLD";
 
             MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
+            initializeRule(newNameRule, baseName);
 
             assertEquals(true, newNameRule.isMatchingName(baseName + delimiter + "01"));
         }
@@ -41,7 +44,7 @@ public class TestNewNameNumberRule {
             String baseName = "OLD.01";
 
             MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
+            initializeRule(newNameRule, baseName);
 
             assertEquals(true, newNameRule.isMatchingName(baseName + delimiter + "01"));
         }
@@ -55,7 +58,7 @@ public class TestNewNameNumberRule {
             String baseName = "OLD";
 
             MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
+            initializeRule(newNameRule, baseName);
 
             assertEquals(false, newNameRule.isMatchingName(baseName + delimiter + "1"));
         }
@@ -65,7 +68,7 @@ public class TestNewNameNumberRule {
             String baseName = "OLD" + delimiter + "01";
 
             MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
+            initializeRule(newNameRule, baseName);
 
             assertEquals(false, newNameRule.isMatchingName(baseName + delimiter + "001"));
         }
@@ -77,7 +80,7 @@ public class TestNewNameNumberRule {
         String baseName = "OLD";
 
         MemberRenamingRuleNumber newNameRule = (MemberRenamingRuleNumber)produceNewNameRule(".");
-        newNameRule.setBaseMemberName(baseName);
+        initializeRule(newNameRule, baseName);
 
         assertEquals(false, newNameRule.isMatchingName(baseName + "#01"));
     }
@@ -90,9 +93,7 @@ public class TestNewNameNumberRule {
         String baseName = "OLD";
 
         IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
-        newNameRule.setBaseMemberName(baseName);
-
-        newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(baseName + delimiter + "AB").getPath() });
+        initializeRule(newNameRule, baseName, new String[] { produceQSYSObjectPathName(baseName + delimiter + "AB").getPath() });
 
         String newName = newNameRule.getNextName();
 
@@ -107,9 +108,7 @@ public class TestNewNameNumberRule {
             String baseName = "OLD";
 
             IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
-
-            newNameRule.setExistingMembers(null);
+            initializeRule(newNameRule, baseName);
 
             String newName = newNameRule.getNextName();
 
@@ -126,9 +125,7 @@ public class TestNewNameNumberRule {
             String memberOnSystem = baseName + delimiter + "01";
 
             IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
-
-            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
+            initializeRule(newNameRule, baseName, new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
             String newName = newNameRule.getNextName();
 
@@ -145,9 +142,7 @@ public class TestNewNameNumberRule {
             String memberOnSystem = baseName + delimiter + "98";
 
             IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
-
-            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
+            initializeRule(newNameRule, baseName, new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
             String newName = newNameRule.getNextName();
 
@@ -164,9 +159,7 @@ public class TestNewNameNumberRule {
             String memberOnSystem = baseName + delimiter + "99";
 
             IMemberRenamingRule newNameRule = produceNewNameRule(delimiter);
-            newNameRule.setBaseMemberName(baseName);
-
-            newNameRule.setExistingMembers(new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
+            initializeRule(newNameRule, baseName, new String[] { produceQSYSObjectPathName(memberOnSystem).getPath() });
 
             try {
                 newNameRule.getNextName();
@@ -183,25 +176,33 @@ public class TestNewNameNumberRule {
         String baseName = "OLD";
 
         IMemberRenamingRule newNameRule = produceNewNameRule("");
-        newNameRule.setBaseMemberName(baseName);
 
         try {
-            newNameRule.setExistingMembers(null);
-            newNameRule.getNextName();
+            initializeRule(newNameRule, baseName);
+            // newNameRule.getNextName();
             fail("Should have faild with an InvalidDelimiterException");
         } catch (Throwable e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
     }
 
+    private void initializeRule(IMemberRenamingRule newNameRule, String memberName) throws Exception {
+        initializeRule(newNameRule, memberName, null);
+    }
+
+    private void initializeRule(IMemberRenamingRule newNameRule, String memberName, String[] existingMemberPaths) throws Exception {
+        newNameRule.initialize(null, LIBRARY_NAME, FILE_NAME, memberName);
+        ((MemberRenamingRuleNumber)newNameRule).calculateLastMemberNameUsedOnSystem(existingMemberPaths);
+    }
+
     private QSYSObjectPathName produceQSYSObjectPathName(String memberName) {
-        return new QSYSObjectPathName("ISPHEREDVP", "QRPGLESRC", memberName, "MBR");
+        return new QSYSObjectPathName(LIBRARY_NAME, FILE_NAME, memberName, "MBR");
     }
 
     private IMemberRenamingRule produceNewNameRule(String delimiter) {
 
-        MemberRenamingRuleNumber newNameRule = new MemberRenamingRuleNumber();
-        newNameRule.setSkipGapsEnabled(true);
+        JUnitMemberRenamingRuleNumber newNameRule = new JUnitMemberRenamingRuleNumber();
+        newNameRule.setFillGapsEnabled(false);
         newNameRule.setDelimiter(delimiter);
         newNameRule.setMinValue(1);
         newNameRule.setMaxValue(99);

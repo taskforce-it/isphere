@@ -22,7 +22,6 @@ import org.eclipse.ui.part.FileEditorInput;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.FieldDescription;
-import com.ibm.as400.access.QSYSObjectPathName;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -59,8 +58,8 @@ public class CopyMemberValidator extends Thread {
     private boolean isActive;
 
     public CopyMemberValidator(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError,
-        IValidateMembersPostRun postRun) {
-        doValidateMembers = new DoValidateMembers(jobDescription, existingMemberAction, ignoreDataLostError);
+        boolean fullErrorCheck, IValidateMembersPostRun postRun) {
+        doValidateMembers = new DoValidateMembers(jobDescription, existingMemberAction, ignoreDataLostError, fullErrorCheck);
         this.postRun = postRun;
     }
 
@@ -110,12 +109,15 @@ public class CopyMemberValidator extends Thread {
         private CopyMemberService jobDescription;
         private ExistingMemberAction existingMemberAction;
         private boolean ignoreDataLostError;
+        private boolean fullErrorCheck;
         private boolean isCanceled;
 
-        public DoValidateMembers(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError) {
+        public DoValidateMembers(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError,
+            boolean fullErrorCheck) {
             this.jobDescription = jobDescription;
             this.existingMemberAction = existingMemberAction;
             this.ignoreDataLostError = ignoreDataLostError;
+            this.fullErrorCheck = fullErrorCheck;
             this.isCanceled = false;
         }
 
@@ -133,7 +135,7 @@ public class CopyMemberValidator extends Thread {
 
             if (!isCanceled && errorItem == ERROR_NONE) {
                 validateMembers(jobDescription.getFromConnectionName(), jobDescription.getToConnectionName(), existingMemberAction,
-                    ignoreDataLostError);
+                    ignoreDataLostError, fullErrorCheck);
             }
 
             if (isCanceled) {
@@ -193,7 +195,7 @@ public class CopyMemberValidator extends Thread {
         }
 
         private boolean validateMembers(String fromConnectionName, String toConnectionName, ExistingMemberAction existingMemberAction,
-            boolean ignoreDataLostError) {
+            boolean ignoreDataLostError, boolean fullErrorCheck) {
 
             boolean isError = false;
             boolean isSeriousError = false;
@@ -243,62 +245,68 @@ public class CopyMemberValidator extends Thread {
                     if (mustCheckEditors && openFiles.contains(localResourcePath)) {
                         member.setErrorMessage(Messages.Member_is_open_in_editor_and_has_unsaved_changes);
                         isError = true;
-                    } else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-                        member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
-                        isError = true;
-                    } else if (targetMembers.contains(to)) {
-                        member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
-                        isError = true;
-                    } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
-                        member.getFromFile(), member.getFromMember())) {
-                        member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
-                        isError = true;
-                    } else if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
-                        member.getToLibrary(), member.getToFile(), member.getToMember())) {
+                    } else {
 
-                        if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
-                            // that is fine, go ahead
-                        } else if (existingMemberAction.equals(ExistingMemberAction.RENAME)) {
+                        if (fullErrorCheck) {
 
-                            try {
-                                actor.produceNewMemberName(
-                                    new QSYSObjectPathName(member.getToLibrary(), member.getToFile(), member.getToMember(), "MBR")); //$NON-NLS-1$
-                            } catch (NoMoreNamesAvailableException e) {
-                                member.setErrorMessage(Messages.Error_No_more_names_available_Delete_old_backups);
+                            if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
+                                member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
                                 isError = true;
-                            } catch (Exception e) {
-                                member.setErrorMessage(e.getLocalizedMessage());
+                            } else if (targetMembers.contains(to)) {
+                                member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
                                 isError = true;
-                            }
-
-                        } else {
-                            member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
-                            isError = true;
-                        }
-                    } else if (!ignoreDataLostError) {
-
-                        RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
-                        RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
-
-                        FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
-                        if (fromSrcDta == null) {
-                            member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
-                                new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
-                            isError = true;
-                            isSeriousError = true;
-                        } else {
-
-                            FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
-                            if (toSrcDta == null) {
-                                member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
-                                    new String[] { member.getToFile(), member.getToLibrary(), "SRCDTA" }));
+                            } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
+                                member.getFromFile(), member.getFromMember())) {
+                                member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
                                 isError = true;
-                                isSeriousError = true;
-                            } else {
+                            } else if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
+                                member.getToLibrary(), member.getToFile(), member.getToMember())) {
 
-                                if (fromSrcDta.getLength() > toSrcDta.getLength()) {
-                                    member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
+                                if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
+                                    // that is fine, go ahead
+                                } else if (existingMemberAction.equals(ExistingMemberAction.RENAME)) {
+
+                                    try {
+                                        actor.produceNewMemberName(member.getToLibrary(), member.getToFile(), member.getToMember()); // $NON-NLS-1$
+                                    } catch (NoMoreNamesAvailableException e) {
+                                        member.setErrorMessage(Messages.Error_No_more_names_available_Delete_old_backups);
+                                        isError = true;
+                                    } catch (Exception e) {
+                                        member.setErrorMessage(e.getLocalizedMessage());
+                                        isError = true;
+                                    }
+
+                                } else {
+                                    member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
                                     isError = true;
+                                }
+                            } else if (!ignoreDataLostError) {
+
+                                RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(),
+                                    member.getFromLibrary());
+                                RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
+
+                                FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
+                                if (fromSrcDta == null) {
+                                    member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
+                                        new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
+                                    isError = true;
+                                    isSeriousError = true;
+                                } else {
+
+                                    FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
+                                    if (toSrcDta == null) {
+                                        member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
+                                            new String[] { member.getToFile(), member.getToLibrary(), "SRCDTA" }));
+                                        isError = true;
+                                        isSeriousError = true;
+                                    } else {
+
+                                        if (fromSrcDta.getLength() > toSrcDta.getLength()) {
+                                            member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
+                                            isError = true;
+                                        }
+                                    }
                                 }
                             }
                         }

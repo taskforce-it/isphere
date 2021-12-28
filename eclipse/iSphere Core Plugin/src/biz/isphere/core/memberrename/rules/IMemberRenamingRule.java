@@ -9,10 +9,14 @@
 package biz.isphere.core.memberrename.rules;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 
-import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.ErrorCompletingRequestException;
+import com.ibm.as400.access.ObjectDoesNotExistException;
 
-import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
 
@@ -35,28 +39,8 @@ public interface IMemberRenamingRule {
      * 
      * @param memberName - name of the member that is renamed.
      */
-    public void setBaseMemberName(String memberName);
-
-    /**
-     * Returns the mask for producing a list of members that exist on the
-     * system. This method is called by the {@link RenameMemberActor} in order
-     * to produce a list of members that exist on the system.
-     * 
-     * @return list of existing members
-     */
-    public String getMemberNameFilter();
-
-    /**
-     * Optional method. Sets the list of members that exist on the system. This
-     * method can be called before <code>getNextName(String)</code>. It can be
-     * used for calculating the last (highest) backup member name used, so that
-     * gaps can be skipped.
-     * 
-     * @param existingMemberPaths - list of members on the system, that matches
-     *        the rule. The path must match the value returned by
-     *        {@link QSYSObjectPathName#getPath()}.
-     */
-    public void setExistingMembers(String[] existingMemberPaths);
+    public void initialize(AS400 system, String libraryName, String fileName, String memberName) throws AS400Exception, PropertyVetoException,
+        AS400SecurityException, ErrorCompletingRequestException, IOException, InterruptedException, ObjectDoesNotExistException;
 
     /**
      * Returns the next backup member name.
