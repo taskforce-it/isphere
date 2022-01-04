@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.compareeditor.LoadPreviousValues;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
@@ -615,11 +616,49 @@ public final class Preferences {
     }
 
     public boolean isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled() {
-        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
+        String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
+        if ("true".equals(value)) { //$NON-NLS-1$
+            return true;
+        } else if (!LoadPreviousValues.NONE.name().equals(value)) { //$NON-NLS-1$
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfRightMember() {
+        try {
+            String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
+            if ("true".equals(value)) {
+                return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+            }
+            return LoadPreviousValues.valueOf(value);
+        } catch (Throwable e) {
+            return LoadPreviousValues.NONE;
+        }
     }
 
     public boolean isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled() {
-        return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
+        String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
+        if ("true".equals(value)) { //$NON-NLS-1$
+            return true;
+        } else if (!LoadPreviousValues.NONE.name().equals(value)) { //$NON-NLS-1$
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember() {
+        try {
+            String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
+            if ("true".equals(value)) {
+                return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+            }
+            return LoadPreviousValues.valueOf(value);
+        } catch (Throwable e) {
+            return LoadPreviousValues.NONE;
+        }
     }
 
     public boolean isSourceMemberCompareIgnoreWhiteSpaces() {
@@ -902,12 +941,12 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
     }
 
-    public void setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(boolean enabled) {
-        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER, enabled);
+    public void setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(LoadPreviousValues value) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER, value.name());
     }
 
-    public void setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(boolean enabled) {
-        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, enabled);
+    public void setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(LoadPreviousValues value) {
+        preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, value.name());
     }
 
     public void setSourceMemberCompareIgnoreWhiteSpaces(boolean enabled) {
@@ -1032,9 +1071,9 @@ public final class Preferences {
 
         preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER,
-            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled().name());
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER,
-            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+            getDefaultSourceMemberCompareLoadingPreviousValuesEnabled().name());
 
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 
@@ -1556,8 +1595,8 @@ public final class Preferences {
         return 70;
     }
 
-    public boolean getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
-        return false;
+    public LoadPreviousValues getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
+        return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
     }
 
     public boolean getDefaultSourceMemberCompareIgnoreWhiteSpaces() {
@@ -1769,9 +1808,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED,
-            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
-                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

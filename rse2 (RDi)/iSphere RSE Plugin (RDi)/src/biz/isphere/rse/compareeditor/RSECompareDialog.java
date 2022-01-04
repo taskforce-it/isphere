@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
+import biz.isphere.core.compareeditor.LoadPreviousValues;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
@@ -701,7 +702,8 @@ public class RSECompareDialog extends CompareDialog {
             // Load left member, when no members has been selected (iSphere
             // search selected from the main menu)
             if (isLoadingPreviousValuesOfLeftMemberEnabled()) {
-                loadMemberValues(PREFIX_LEFT, leftConnectionCombo, leftMemberPrompt);
+                LoadPreviousValues loadPreviousValue = LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+                loadMemberValues(PREFIX_LEFT, loadPreviousValue, leftConnectionCombo, leftMemberPrompt);
             }
         }
 
@@ -711,7 +713,8 @@ public class RSECompareDialog extends CompareDialog {
 
             if (isLoadingPreviousValuesOfRightMemberEnabled()) {
                 // Load previous member values
-                hasLoaded = loadMemberValues(PREFIX_RIGHT, rightConnectionCombo, rightMemberPrompt);
+                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfRightMember();
+                hasLoaded = loadMemberValues(PREFIX_RIGHT, loadPreviousValue, rightConnectionCombo, rightMemberPrompt);
             }
 
             if (!hasLoaded) {
@@ -731,7 +734,8 @@ public class RSECompareDialog extends CompareDialog {
             boolean hasLoaded = false;
 
             if (isLoadingPreviousValuesOfAncestorMemberEnabled()) {
-                hasLoaded = loadMemberValues(PREFIX_ANCESTOR, ancestorConnectionCombo, ancestorMemberPrompt);
+                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfAnchestorMember();
+                hasLoaded = loadMemberValues(PREFIX_ANCESTOR, loadPreviousValue, ancestorConnectionCombo, ancestorMemberPrompt);
             }
 
             if (!hasLoaded) {
@@ -742,12 +746,36 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    private boolean loadMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
+    private boolean loadMemberValues(String prefix, LoadPreviousValues loadPreviousValue, IBMiConnectionCombo connectionCombo,
+        QSYSMemberPrompt memberPrompt) {
 
-        String connection = loadValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), null);
-        String library = loadValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), null);
-        String file = loadValue(getMemberPromptDialogSettingsKey(prefix, FILE), null);
-        String member = loadValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), null);
+        String connection;
+        if (loadPreviousValue.isConnection()) {
+            connection = loadValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), null);
+        } else {
+            connection = getCurrentLeftConnectionName();
+        }
+
+        String library;
+        if (loadPreviousValue.isLibrary()) {
+            library = loadValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), null);
+        } else {
+            library = getCurrentLeftLibraryName();
+        }
+
+        String file;
+        if (loadPreviousValue.isFile()) {
+            file = loadValue(getMemberPromptDialogSettingsKey(prefix, FILE), null);
+        } else {
+            file = getCurrentLeftFileName();
+        }
+
+        String member;
+        if (loadPreviousValue.isMember()) {
+            member = loadValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), null);
+        } else {
+            member = getCurrentLeftMemberName();
+        }
 
         return setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
     }

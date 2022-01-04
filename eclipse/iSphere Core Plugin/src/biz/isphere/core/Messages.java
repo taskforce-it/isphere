@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1099,6 +1099,16 @@ public class Messages extends NLS {
     public static String Load_previous_values_ancestor;
 
     public static String Tooltip_Load_previous_values_ancestor;
+
+    public static String Label_Connection_Library_File_Member;
+
+    public static String Label_Connection_Library_File;
+
+    public static String Label_Connection_Library;
+
+    public static String Label_Connection;
+
+    public static String Label_None;
 
     public static String Message_descriptions_compare;
 

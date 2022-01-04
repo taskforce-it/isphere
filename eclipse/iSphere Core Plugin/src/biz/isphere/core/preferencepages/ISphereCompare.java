@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -40,6 +41,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.compareeditor.LoadPreviousValues;
 import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
@@ -54,8 +56,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private Text textMessageFileCompareLineWith;
     private boolean messageFileCompareEnabled;
 
-    private Button chkLoadingPreviousValuesRightMemberEnabled;
-    private Button chkLoadingPreviousValuesAncestorMemberEnabled;
+    private Combo chkLoadingPreviousValuesRightMemberEnabled;
+    private Combo chkLoadingPreviousValuesAncestorMemberEnabled;
     private Button chkIgnoreWhiteSpaces;
 
     private Table tblFileExtensions;
@@ -147,12 +149,17 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private void createSectionSourceMemberCompareDialog(Composite parent) {
 
         Group group = new Group(parent, SWT.NONE);
-        group.setLayout(new GridLayout(1, false));
+        group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group.setText(Messages.Source_member_compare_dialog);
 
-        chkLoadingPreviousValuesRightMemberEnabled = WidgetFactory.createCheckbox(group, Messages.Load_previous_values_right);
+        Label labelLoadingPreviousValuesRightMemberEnabled = new Label(group, SWT.NONE);
+        labelLoadingPreviousValuesRightMemberEnabled.setText(Messages.Load_previous_values_right);
+        labelLoadingPreviousValuesRightMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+
+        chkLoadingPreviousValuesRightMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
         chkLoadingPreviousValuesRightMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+        chkLoadingPreviousValuesRightMemberEnabled.setItems(loadPreviousValuesItems());
         chkLoadingPreviousValuesRightMemberEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 checkAllValues();
@@ -163,8 +170,13 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             }
         });
 
-        chkLoadingPreviousValuesAncestorMemberEnabled = WidgetFactory.createCheckbox(group, Messages.Load_previous_values_ancestor);
+        Label labelLoadingPreviousValuesAncestorMemberEnabled = new Label(group, SWT.NONE);
+        labelLoadingPreviousValuesAncestorMemberEnabled.setText(Messages.Load_previous_values_ancestor);
+        labelLoadingPreviousValuesAncestorMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+
+        chkLoadingPreviousValuesAncestorMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
         chkLoadingPreviousValuesAncestorMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+        chkLoadingPreviousValuesAncestorMemberEnabled.setItems(loadPreviousValuesItems());
         chkLoadingPreviousValuesAncestorMemberEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 checkAllValues();
@@ -298,6 +310,11 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         btnImport.setText(Messages.Button_Import);
     }
 
+    private String[] loadPreviousValuesItems() {
+        return new String[] { LoadPreviousValues.NONE.label(), LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER.label(),
+            LoadPreviousValues.CONNECTION_LIBRARY_FILE.label(), LoadPreviousValues.CONNECTION_LIBRARY.label(), LoadPreviousValues.CONNECTION.label() };
+    }
+
     @Override
     protected void performApply() {
         setStoreToValues();
@@ -326,8 +343,13 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             preferences.setMessageFileCompareLineWidth(IntHelper.tryParseInt(textMessageFileCompareLineWith.getText(), defaultLineWidth));
         }
 
-        preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(chkLoadingPreviousValuesRightMemberEnabled.getSelection());
-        preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(chkLoadingPreviousValuesAncestorMemberEnabled.getSelection());
+        LoadPreviousValues value;
+
+        value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
+        preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(value);
+
+        value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
+        preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(value);
 
         preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
 
@@ -346,8 +368,9 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getMessageFileCompareLineWidth()));
         }
 
-        chkLoadingPreviousValuesRightMemberEnabled.setSelection(preferences.isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled());
-        chkLoadingPreviousValuesAncestorMemberEnabled.setSelection(preferences.isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled());
+        setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled, preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
+        setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            preferences.getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember());
 
         chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
 
@@ -360,6 +383,17 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         setControlsEnablement();
     }
 
+    private void setPreviousValueSelection(Combo combo, LoadPreviousValues value) {
+        String[] items = combo.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (value.label().equals(items[i])) {
+                combo.select(i);
+                return;
+            }
+        }
+        setPreviousValueSelection(combo, LoadPreviousValues.NONE);
+    }
+
     protected void setScreenToDefaultValues() {
 
         Preferences preferences = getPreferences();
@@ -368,8 +402,9 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getDefaultMessageFileCompareMinLineWidth()));
         }
 
-        chkLoadingPreviousValuesRightMemberEnabled.setSelection(preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-        chkLoadingPreviousValuesAncestorMemberEnabled.setSelection(preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+        setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled, preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+        setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
 
         chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 
