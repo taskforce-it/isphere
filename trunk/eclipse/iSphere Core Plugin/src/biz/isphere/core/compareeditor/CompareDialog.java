@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -251,6 +251,10 @@ public abstract class CompareDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
+    public LoadPreviousValues getLoadPreviousValuesOfRightMember() {
+        return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
+    }
+
     protected boolean isLoadingPreviousValuesOfAncestorMemberEnabled() {
 
         if (isLoadedFromMainMenu()) {
@@ -260,6 +264,10 @@ public abstract class CompareDialog extends XDialog {
         boolean isLoadingPreviousValuesEnabled = Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled();
 
         return isLoadingPreviousValuesEnabled;
+    }
+
+    public LoadPreviousValues getLoadPreviousValuesOfAnchestorMember() {
+        return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember();
     }
 
     private boolean isLoadedFromMainMenu() {

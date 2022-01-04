@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.2.4.b002
+-----------------------------
+ • Enhanced options "Compare / Load previous values" to let the user
+   select the values to be preserved for the next compare.
+
 Changelog: iSphere 4.2.4.b001
 -----------------------------
  • Added renaming rule "Numerical Extended".
