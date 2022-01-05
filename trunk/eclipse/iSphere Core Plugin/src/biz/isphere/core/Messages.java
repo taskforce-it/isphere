@@ -1718,7 +1718,7 @@ public class Messages extends NLS {
 
     public static String Tooltip_Minimum_name_length;
 
-    public static String Label_Is_variying_length;
+    public static String Label_Is_varying_length;
 
     public static String Tooltip_Is_variying_length;
 
