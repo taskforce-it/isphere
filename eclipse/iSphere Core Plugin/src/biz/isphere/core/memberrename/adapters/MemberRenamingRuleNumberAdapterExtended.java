@@ -91,8 +91,8 @@ public class MemberRenamingRuleNumberAdapterExtended extends MemberRenamingRuleN
         int minLength = Integer.parseInt(textMinNameLength.getText());
         if (minLength > maxMinLengthValueAllowed) {
             textMinNameLength.setFocus();
-            return Messages.bind(Messages.Error_Invalid_value_A_Value_must_be_between_B_and_C,
-                new Object[] { textMinNameLength.getText(), new Integer(1), new Integer(maxMinLengthValueAllowed) });
+            return Messages.bind(Messages.Error_Invalid_value_A_Value_must_be_between_B_and_C, new Object[] { textMinNameLength.getText(),
+                new Integer(1), new Integer(maxMinLengthValueAllowed) });
         }
 
         return null;
@@ -111,7 +111,7 @@ public class MemberRenamingRuleNumberAdapterExtended extends MemberRenamingRuleN
         Composite mainArea = super.createComposite(parent);
 
         textMinNameLength = createInteger(mainArea, Messages.Label_Minimum_name_length_colon, Messages.Tooltip_Minimum_name_length, 2);
-        chkIsVaryingNameLength = createCheckbox(mainArea, Messages.Label_Is_variying_length, Messages.Tooltip_Is_variying_length);
+        chkIsVaryingNameLength = createCheckbox(mainArea, Messages.Label_Is_varying_length, Messages.Tooltip_Is_variying_length);
 
         return mainArea;
     }
