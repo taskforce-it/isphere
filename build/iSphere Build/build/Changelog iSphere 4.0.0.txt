@@ -1,4 +1,8 @@
 
+Changelog: iSphere 4.2.4.b003
+-----------------------------
+ • Removed plug-in discovery sites that are no update sites.
+
 Changelog: iSphere 4.2.4.b002
 -----------------------------
  • Enhanced options "Compare / Load previous values" to let the user
