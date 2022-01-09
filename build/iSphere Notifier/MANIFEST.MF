@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 4.2.3.r
-X-Bundle-Update-Library: true
-X-Bundle-Update-Library-Info: Updated STRPREPRC to v1.20.2.
-X-Bundle-Info: Added option for renaming members.\nFixed Log4j2 vulnerability (CVE-2021-44228).\nMinor bug fixes.
-X-Beta-Version: 4.2.4.b002
+Bundle-Version: 4.2.4.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Enhanced options "Compare / Load previous values" to let the user select the values to be preserved for the next compare.\nAdded renaming rule "Numerical Extended".\nMinor bug fix for existing renaming rule "Numeric".
+X-Beta-Version: 4.2.4.r
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Added renaming rule "Numerical Extended".\nEnhanced options "Compare / Load previous values" to let the user select the values to be preserved for the next compare.\nMinor bug fix for existing renaming rule "Numeric".
+X-Beta-Info: Enhanced options "Compare / Load previous values" to let the user select the values to be preserved for the next compare.\nAdded renaming rule "Numerical Extended".\nMinor bug fix for existing renaming rule "Numeric".
