@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?><templates><template autoinsert="false" context="java" deleted="false" description="main class with run() methode" enabled="true" name="main_class">package ${enclosing_package};&#13;
+&#13;
+public class ${primary_type_name} {&#13;
+&#13;
+    public static void main(String[] args) {&#13;
+		${primary_type_name} main = new ${primary_type_name}();&#13;
+		main.run(args);&#13;
+    }&#13;
+&#13;
+    private void run(String[] args) {&#13;
+		// TODO Auto-generated methode stub&#13;
+&#13;
+    }&#13;
+&#13;
+}</template></templates>

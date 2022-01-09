@@ -1,0 +1,5 @@
+<pcml version="4.0">
+   <program name="SPLF_setUser" path="/QSYS.LIB/%LIBL%.LIB/W003002.PGM">
+      <data name="user" type="char" length="10" usage="input" />
+   </program>
+</pcml>

@@ -1,0 +1,1264 @@
+<!--
+ * =====================================================================
+ *   This Ant script helps you to create an upload the project's 
+ *   update site. Before you can run the script, you need to copy
+ *   'template_ftp.properties' to 'ftp.properties' and change the
+ *   properties to meet your needs.
+ *
+ *   In order to use all features of the script, you need to
+ *   have the 'iSphere Ant Plugin' installed.
+ *
+ *   The main switches to control the build process are:
+ *
+ *     build.files.enabled - specifies whether to build the plug-in
+ *     build.web.enabled   - specifies whether to build the update site html file
+ *     build.help.enabled  - specifies whether to build the help pages
+ *     build.dryrun        - specifies whether to apply changes to SourceForge
+ *
+ *   See also: build.properties
+ *
+ *   Here are the steps to create an update site:
+ *
+ *     - On the PC run the 'CheckNLSMessages' JUnit test to check
+ *       for missing or obsolete message property entries.
+ *
+ *     - On the PC change version number in COPYRIGHT.RPGLE.
+ *     - On the PC push changes of project's i Project to the AS/400.
+ *     - On the AS/400 compile and execute the BUILD command.
+ *     - On the PC update minimum server version number in, e.g. class
+ *       'biz.isphere.core.ISpherePlugin'.
+ *
+ *     - On the PC search java sources for missing copyright header.
+ *       Menu: Search -> File -> (?s)\A((?!copyright).)*\Z
+ *             Check: Regular expression
+ *     - On the PC update document the document specified at key 'build.project.doc'
+ *       in file 'build.properties'.
+ *     - On the PC set version number (build.version) in build.properties and the
+ *       propertes for selecting what to build according to your needs.
+ *       (version number is automatically updated in MANIFEST.MF, feature.xml 
+ *        and plugin.xml by build target 'updateVersionNumber'.)
+ *
+ *        build.version
+ *        build.files.enabled
+ *        build.web.enabled
+ *        build.help.enabled
+ *
+ *   Repeat for RDi and WDSC:
+ *     - On the PC run target 'downloadIBMiLibrary'.
+ *     - On the PC run target 'build' using lauch for RDP or WDSC.
+ *     - On the PC right click 'site.xml', 
+ *       select 'PDE Tools' -> 'Build Site'.
+ *     - On the PC run target 'createSourceForgeFiles'.
+ *     - On the PC run target 'uploadSourceForgeFiles'.
+ *     - Check files on SourceForge.
+ *     - Check the green "Download" button on SourceForge.
+ *   Last steps when all changes are committed to the repository and all the
+ *   files are published at sourceforge.
+ *     - Open project's "Summary" page at SourceForge and select "Browse all files".
+ *       Klick the "i" button (view details) nest to the RDi zip file and
+ *       click "select all" for the "Download Button".
+ *     - On the PC run target 'releaseNewVersion'.
+ *     - Signon to the Eclipse Marketplace and change the version
+ *       number of the iSphere application.
+ *   Last steps:
+ *     - Set the version number in MANIFEST.MF in the project specified at key
+ *       'build.notifier.project' in file 'build.properties'.
+ *       and commit the change to the repository.
+ *     - Create SVN tag.
+ *
+ * ===================================================================== -->
+<project basedir="." default="build">
+
+	<!-- Include Ant Contrib tasks -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}/lib/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<!-- Load project names and new version number -->
+	<property file="build.properties" />
+
+	<!-- Load ftp properties -->
+	<property file="ftp.properties" />
+
+	<!-- Load ftp user name and password -->
+	<property file="ftp-credentials.properties" />
+
+	<!-- Load properties for local update site -->
+	<property file="localUpdateSite.properties" />
+
+	<!-- Set date and time -->
+	<tstamp>
+		<format property="today.timestamp" pattern="dd.MM.yyyy - kk:mm:ss" locale="de,DE" />
+		<format property="today.date.eur" pattern="dd.MM.yyyy" locale="de,DE" />
+		<format property="today.date.iso" pattern="yyyy-MM-dd" locale="de,DE" />
+		<format property="today.year" pattern="yyyy" locale="de,DE" />
+	</tstamp>
+
+	<!-- Set local FTP properties -->
+	<property name="local.download.directory" location="${basedir}/temp-downloads" />
+	<property name="local.savefile.name" value="${IBMi.ftp.savefile.name}" />
+	<property name="local.savefile.directory" location="${basedir}/../../${build.project.core}/Server" />
+
+	<!-- Set regular expressions and replacement values -->
+	<property name="version.number.validation.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:(b)[0-9]{3}|(r)[0-9]{0,1}))?" />
+	
+	<property name="version.number.search.regex" value="[1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.(?:b[0-9]{1,3}|r[0-9]{0,1}))?" />
+	
+	<property name="validate.version.regex" value="^(${version.number.validation.regex})$" />
+	<property name="release.flag.regex" value="^(?:${version.number.validation.regex})$" />
+
+	<property name="manifest.version.regex" value="(Bundle-Version:\s)(${version.number.search.regex})" />
+	<property name="manifest.version.replace" value="\1${build.version}" />
+
+	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;\s+provider-name.*?&gt;)" />
+	<property name="feature.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)(${version.number.search.regex})(&quot;\s*)(match.*)?(/&gt;)" />
+	<property name="feature.2.version.replace" value="\1${build.version}\3\4\5" />
+	
+	<property name="feature.copyright.1.date.regex" value="^([ ]*Copyright.*[0-9]{4})-([0-9]{4})(.*)$" />
+	<property name="feature.copyright.1.date.replace" value="\1-${today.year}\3" />
+
+	<property name="site.1.version.regex" value="(&lt;feature.*_)(${version.number.search.regex})(\.jar)" />
+	<property name="site.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)(${version.number.search.regex})(&quot;)" />
+	<property name="site.2.version.replace" value="\1${build.version}\3" />
+
+	<property name="html.copyright.1.version.regex" value="^(Version: )(${version.number.search.regex})(.*)?" />
+	<property name="html.copyright.1.version.replace" value="\1${build.version}\3" />
+	
+	<property name="html.copyright.2.version.regex" value="(Copyright: )([0-9]{4})" />
+	<property name="html.copyright.2.version.replace" value="\1${today.year}" />
+	
+	<!-- Check for BETA or RELEASE version -->
+	<propertyregex property="release.flag" input="${build.version}" regexp="${release.flag.regex}" select="\1" casesensitive="true" />
+	<if>
+		<equals arg1="${release.flag}" arg2="b" />
+		<then>
+			<echo>Building a BETA version.</echo>
+			<property name="is.beta.version" value="true" />
+			<property name="beta.dir" value="${sf.ftp.beta.dir.name}" />
+			<property name="version.info" value="&lt;div class=&quot;beta&quot;&gt;Beta Version - ${build.version}&lt;/div&gt;" />
+		</then>
+		<else>
+			<echo>Building a RELEASE version.</echo>
+			<property name="is.beta.version" value="false" />
+			<property name="beta.dir" value="." />
+			<property name="version.info" value="&lt;div class=&quot;release&quot;&gt;Release Version - ${build.version}&lt;/div&gt;" />
+		</else>
+	</if>
+
+	<!-- Set workspace home directory -->
+	<property name="workspace.home" location="${basedir}/../.." />
+
+	<!-- Set build home directory -->
+	<property name="build.home" location="${basedir}" />
+	
+	<!-- Set the name of the default home page file -->
+	<property name="home.page" value="index.php" />
+	<property name="support.page" value="support.php" />
+
+	<!-- Set zip file and directory names -->
+	<property name="build.template.dir" location="${build.home}/templates" />
+	<property name="build.template.dir.maintenance" location="${build.template.dir}/template_maintenance" />
+	<property name="build.template.dir.web" location="${build.template.dir}/template_updatesite_web" />
+	<property name="build.template.dir.files" location="${build.template.dir}/template_no_beta_version" />
+	<property name="build.upload.dir" location="${workspace.home}/${build.project.name}/upload" />
+	<property name="build.upload.dir.maintenance" location="${build.upload.dir}/sf-maintenance/${beta.dir}/maintenance" />
+	<property name="build.upload.dir.files" location="${build.upload.dir}/sf-files/${beta.dir}" />
+	<property name="build.upload.dir.files.eclipse" location="${build.upload.dir}/sf-files/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.notifier" location="${build.upload.dir}/sf-web" />
+	<property name="build.upload.dir.web" location="${build.upload.dir}/sf-web/${beta.dir}" />
+	<property name="build.upload.dir.web.eclipse" location="${build.upload.dir}/sf-web/${beta.dir}/eclipse" />
+	<property name="build.upload.dir.help" location="${build.upload.dir}/sf-help/${beta.dir}/help" />
+	<property name="build.upload.dir.home" location="${build.upload.dir}/sf-home/" />
+	<property name="zip.base.directory" location="${workspace.home}/${build.updatesite}" />
+	<property name="project.doc" location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
+	<property name="project.pdf" location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
+	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.updatesite} v${build.version}.tag" />
+
+	<fileset dir="${build.home}" id="build.changelog.files">
+		<include name="Changelog ${build.public.project.name}*.txt" />
+	</fileset>
+
+	<!-- Set build target dependant parameters -->
+	<property name="target.ide.product.name.short.rdi" value="RDi 8.0+" />
+	<property name="target.ide.product.name.short.wdsci" value="WDSCi 7.0" />
+	<property name="target.ide.product.name.long.rdi" value="IBM Rational Developer for i" />
+	<property name="target.ide.product.name.long.wdsci" value="Websphere Development Studio Client for iSeries" />
+	<property name="target.ide.rdi" value="rdi8.0" />
+	<property name="target.ide.wdsci" value="wdsci7.0" />
+	
+	<!-- Set target IDE -->
+	<if>
+		<equals arg1="${build.target}" arg2="RDi" />
+		<then>
+			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
+			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
+			<property name="target.ide.sf.dir" value="${target.ide.rdi}" />
+			<property name="target.ide.exclude.site.xml" value="" />
+			<property name="target.ide.exclude.web.files" value="**/wdsci*.*" />
+			<property name="target.ide.exclude.download.files" value="*wdsci*" />
+		</then>
+		<else>
+			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
+			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
+			<property name="target.ide.sf.dir" value="${target.ide.wdsci}" />
+			<property name="target.ide.exclude.site.xml" value="" />
+			<property name="target.ide.exclude.web.files" value="**/rdi*.*" />
+			<property name="target.ide.exclude.download.files" value="*rdi*"/>
+		</else>
+	</if>
+
+	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
+
+	<if>
+		<equals arg1="${is.beta.version}" arg2="true" />
+		<then>
+			<property name="target.ide.root.update.site.url" value="${sf.root.url}/${beta.dir}/eclipse/${target.ide.sf.dir}/" />
+			<property name="target.ide.root.help.site.url" value="${sf.root.url}/${beta.dir}/${sf.dir.updatesite.help.dir}/" />
+			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/${beta.dir}/eclipse/${target.ide.sf.dir}" />
+		</then>
+		<else>
+			<property name="target.ide.root.update.site.url" value="${sf.root.url}/eclipse/${target.ide.sf.dir}/" />
+			<property name="target.ide.root.help.site.url" value="${sf.root.url}/${sf.dir.updatesite.help.dir}/" />
+			<property name="site.xml.property.url" value="${sf.root.master.dl.url}/eclipse/${target.ide.sf.dir}" />
+		</else>
+	</if>
+
+	<property name="site.xml.property.url.regex" value="(&lt;site)([ ]*url=&quot;\S*&quot;[ ]*)?(&gt;)" />
+	<property name="site.xml.property.url.replace" value="\1 url=&quot;${site.xml.property.url}&quot;\3" />
+	
+	<!-- Check what shall be build -->
+	<if>
+		<equals arg1="${build.files.enabled}" arg2="true" />
+		<then>
+			<!-- build files for download area -->
+			<echo>Building ${build.public.project.name} download files ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.files" value="true" />
+			<echo>IGNORED: ${build.public.project.name} Download Files</echo>
+		</else>
+	</if>
+
+	<if>
+		<equals arg1="${build.web.enabled}" arg2="true" />
+		<then>
+			<!-- build files of update site -->
+			<echo>Building web pages of ${build.public.project.name} update site ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.web" value="true" />
+			<echo>IGNORED: ${build.public.project.name} Update Site</echo>
+		</else>
+	</if>
+
+	<if>
+		<equals arg1="${build.help.enabled}" arg2="true" />
+		<then>
+			<!-- build help pages -->
+			<echo>Building ${build.public.project.name} help web pages ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.help" value="true" />
+			<echo>IGNORED: ${build.public.project.name} Help</echo>
+		</else>
+	</if>
+
+	<if>
+		<equals arg1="${build.home.enabled}" arg2="true" />
+		<then>
+			<!-- build home page -->
+			<if>
+				<equals arg1="${is.beta.version}" arg2="false" />
+				<then>
+					<echo>Building ${build.public.project.name} help home page ...</echo>
+				</then>
+				<else>
+					<property name="ignore.build.home" value="true" />
+					<echo>IGNORED: ${build.public.project.name} Home Page (due to beta version number)</echo>
+				</else>
+			</if>
+		</then>
+		<else>
+			<property name="ignore.build.home" value="true" />
+			<echo>IGNORED: ${build.public.project.name} Home Page</echo>
+		</else>
+	</if>
+
+	<if>
+		<or>
+			<equals arg1="${build.web.enabled}" arg2="true" />
+			<equals arg1="${build.help.enabled}" arg2="true" />
+			<equals arg1="${build.home.enabled}" arg2="true" />
+		</or>
+		<then>
+			<!-- build files of update site -->
+			<echo>Building 'maintenance' web page ...</echo>
+		</then>
+		<else>
+			<property name="ignore.build.maintenance" value="true" />
+			<echo>IGNORED: ${build.public.project.name} 'maintenance' web page</echo>
+		</else>
+	</if>
+
+
+	<!--
+    * =====================================================================
+    *   Downloads the library from the System i.
+    *   This target requires a patched version of commons-net-3.3.jar
+    *   where bug NET-512 has been fixed.
+    *   (https://issues.apache.org/jira/browse/NET-512)
+    * ===================================================================== -->
+	<target name="downloadIBMiLibrary" depends="ftpCredentialsIBMi" description="Download library from IBM i">
+
+		<echo>Downloading save file ${IBMi.ftp.savefile.name} ...</echo>
+
+		<ftp action="get" server="${IBMi.ftp.server}" userid="${IBMi.ftp.user}" password="${IBMi.ftp.password}" binary="true" verbose="true" remotedir="${IBMi.ftp.savefile.library}" systemTypeKey="OS/400">
+			<fileset dir="${local.download.directory}" casesensitive="false">
+				<include name="${IBMi.ftp.savefile.name}" />
+			</fileset>
+		</ftp>
+
+		<move file="${local.download.directory}/${IBMi.ftp.savefile.name}" tofile="${local.savefile.directory}/${local.savefile.name}" overwrite="true" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+		<eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Main build procedure. Cleans folders, updates the version number
+    *   and creates the version tag file.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="build" depends="checkBuildTarget,cleanUpdateSite, cleanUploadDir, updateVersionNumber, updateStylesheets, createTagFile, refreshProjects" description="Build SourceForge Update Site">
+
+		<echo>+------------------------------------------------------+</echo>
+		<echo>|  Finished ${build.public.project.name} build ${build.version}</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Right-click 'site.xml' and select 'PDE Tools' ->    |</echo>
+		<echo>|  'Build Site' to build the update site.              |</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Then proceed with:   createSourceForgeFiles         |</echo>
+		<echo>|                       uploadSourceForgeFiles         |</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>*** Finished ***</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Produces the files that must be uploaded to SourceForge.
+    *   This target creates all files that must be uploaded to SourceForge.
+    *   It must be run, after the update site has been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="createSourceForgeFiles" depends="checkBuildTarget,cleanUploadDir,checkProjectDocument,checkPdfFile,updatePdfFile,createSourceForgeDownloadFiles,createSourceForgeWebPages,createSourceForgeHelp,createSourceForgeHome,createSourceForgeMaintenance,prepareNewReleaseNotification" description="Create SourceForge files and web pages">
+
+		<echo>+------------------------------------------------------+</echo>
+		<echo>|  Check files in '${build.public.project.name} Build/upload/...'</echo>
+		<echo>|                                                      |</echo>
+		<echo>|  Then proceed with:   uploadSourceForgeFiles         |</echo>
+		<echo>+------------------------------------------------------+</echo>
+		<echo>*** Finished ***</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the entire project files to SourceForge.
+    *   This target must be run, after the SourceForge files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeFiles" depends="checkBuildTarget,ftpCredentialsSourceForge" description="Uploads the entire project to SourceForge">
+
+		<echo>Uploading files to SourceForge ...</echo>
+
+		<antcall target="cleanSourceForgeDownloadFiles" />
+
+		<antcall target="cleanSourceForgeWebPages" />
+
+		<antcall target="cleanSourceForgeHelp" />
+
+		<antcall target="cleanSourceForgeHome" />
+
+		<antcall target="uploadSourceForgeDownloadFiles" />
+
+		<antcall target="uploadSourceForgeWebPages" />
+
+		<antcall target="uploadSourceForgeHelp" />
+
+		<antcall target="uploadSourceForgeHome" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Create a local update site for your company.
+    *   This target must be run, after the SourceForge files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="uploadLocalUpdateSite" depends="checkBuildTarget" description="Copies the update site to a local directory" >
+
+		<if>
+			<equals arg1="${local.updateSite.enabled}" arg2="true" />
+			<then>
+				
+				<echo>Creating local update site ...</echo>
+				
+				<antcall target="cleanLocalUpdateSite" />
+				
+				<antcall target="uploadLocalUpdateSiteDownloadFiles" />
+			</then>	
+		</if>
+			
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads MANIFEST.MF to the iSphere update sites to inform
+    *   the users about a new version.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+	<target name="releaseNewVersion" depends="checkBuildTarget,prepareNewReleaseNotification,ftpCredentialsSourceForge" description="Releases a new version">
+
+		<echo>Releasing version ${build.version} ...</echo>
+
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<property name="manifest.release.version.property.name" value="X-Beta-Version"/>
+			</then>
+			<else>
+				<property name="manifest.release.version.property.name" value="Bundle-Version"/>
+			</else>
+		</if>
+
+		<loadfile property="manifest.version" srcFile="${workspace.home}\${build.notifier.project}\${build.notifier.file}">
+		    <filterchain>
+		        <!-- following filter tokenize input file and return only
+		             the lines that match the pattern. Matched string is 
+		             replaced by an empty string to get only the value of the
+		             manifest property.
+		        -->
+		        <tokenfilter>
+		            <containsregex pattern="${manifest.release.version.property.name}:[ \t]*" replace="" flags="i"/>
+		        </tokenfilter>
+		    	<!-- Eventually remove carriage return and new line characters
+		    	     and trim the remaining value
+	    	    --> 
+	        	<deletecharacters chars="\r\n"/>
+	        	<trim/>
+		    </filterchain>
+		</loadfile>
+		
+		<echo>Manifest version: ${manifest.version}</echo>
+		
+		<if>
+			<not>
+			<equals arg1="${build.version}" arg2="${manifest.version}" />
+			</not>
+			<then>
+				<fail>*** ERROR: Manifest version number '${manifest.version}' does not match build version number '${build.version}' ***</fail>
+			</then>
+		</if>
+		
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}">
+			<copydir dir="${build.upload.dir.notifier}" toDir="." subDirs="false" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Sets the properties that are used for building your local
+    *   update site.
+    *   This target uses the properties stored in 
+    *   'localUpdateSite.properties'.
+    * ===================================================================== -->
+	<target name="setLocalUpdateSiteProperties" >
+		
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<property name="local.updateSite.path" value="${local.updateSite.beta.path}" />
+			</then>
+			<else>
+				<property name="local.updateSite.path" value="${local.updateSite.release.path}" />
+			</else>
+		</if>
+		
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all generated files from the local 
+    *   'Update Site' folder. This target is indented to be called
+    *   before the update site is build from the context menu of the
+    *   'Update Site' project.
+    * ===================================================================== -->
+	<target name="cleanUpdateSite">
+
+		<echo>Removing old files from '${build.updatesite}' ...</echo>
+<echo>${workspace.home}\${build.updatesite}\${build.project.pdf}</echo>
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.tag" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="logs.zip" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="*.pdf" />
+		</delete>
+
+		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+
+		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the local 'upload' directory.
+    *   This target is intended to be called before any build is done. 
+    * ===================================================================== -->
+	<target name="cleanUploadDir">
+
+		<echo>Cleaning upload directory ...</echo>
+
+		<mkdir dir="${build.upload.dir.files}" />
+		
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.project.name}\upload" includes="**/*" />
+		</delete>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the local update site folders of
+    *   your company.
+    * ===================================================================== -->
+	<target name="cleanLocalUpdateSite" depends="setLocalUpdateSiteProperties">
+
+		<echo>Cleaning local update Site '${local.updateSite.path}' ...</echo>
+
+		<mkdir dir="${local.updateSite.path}" />
+		
+		<delete includeemptydirs="true">
+			<fileset dir="${local.updateSite.path}" includes="**/*" />
+		</delete>
+
+		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the files of the download area on SourceForge.
+    *   This target creates the files, that go to the SourceForge
+    *   download area.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *   This target is intended to be called only from the 'build' target.
+    *
+    *   Set the build properties as shown below, if you want to update the
+    *   download area only:
+    * 
+    *     build.files.enabled=true
+    *     build.web.enabled=false
+    *     build.help.enabled=false
+    * ===================================================================== -->
+	<target name="createSourceForgeDownloadFiles" unless="ignore.build.files">
+
+		<echo>Creating SourceForge download folders ...</echo>
+
+		<echo>Preparing directory structure ...</echo>
+		<mkdir dir="${build.upload.dir.files}" />
+		<mkdir dir="${build.upload.dir.files}/eclipse" />
+		<mkdir dir="${build.upload.dir.files}/eclipse/${target.ide.sf.dir}" />
+
+		<echo>Copying zip and pdf files ...</echo>
+		
+		<copy file="${project.pdf}" todir="${workspace.home}\${build.updatesite}" overwrite="true"/>
+		
+		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir.files}\${target.ide.zip.file.name}">
+			<exclude name="*.log" />
+			<exclude name="${target.ide.exclude.site.xml}" />
+			<exclude name=".project" />
+		</zip>
+
+		<condition property="project.pdf.exists">
+			<available file="${project.pdf}" type="file"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${project.pdf.exists}" arg2="true" />
+			<then>
+				<copy file="${project.pdf}" todir="${build.upload.dir.files}" />
+			</then>
+		</if>
+
+		<echo>Deleting 'logs.zip' ...</echo>
+		<delete file="${workspace.home}\${build.updatesite}\logs.zip" />
+		
+		<echo>Copying Eclipse update site files ...</echo>
+		<copy todir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+			<fileset dir="${workspace.home}\${build.updatesite}">
+				<exclude name="*.log" />
+				<exclude name="${target.ide.exclude.site.xml}" />
+				<exclude name=".project" />
+			</fileset>
+		</copy>
+		
+		<echo>Adding 'url' property to 'site.xml' ...</echo>
+		<replaceregexp match="${site.xml.property.url.regex}" replace="${site.xml.property.url.replace}" flags="s" byline="false">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" includes="site.xml" />
+		</replaceregexp>
+
+		<echo>Copying release/beta version dependant files ...</echo>
+		<if>
+			<equals arg1="${is.beta.version}" arg2="true" />
+			<then>
+				<echo>Copying "Changelog ${build.public.project.name}.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}">
+					<fileset refid="build.changelog.files" />
+				</copy>
+			</then>
+			<else>
+				<!--
+				<echo>Copying "Not yet available.txt" ...</echo>
+				<copy todir="${build.upload.dir.files}">
+					<fileset dir="${build.template.dir.files}" />
+				</copy>
+				-->
+			</else>
+		</if>
+
+		<eclipse.refreshLocal resource="${build.updatesite}" depth="infinite" />
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Copies the update site files to your local update site.
+    *   Also copies MANIFEST.MF of the 'Notifier' project to
+    *   your local update site to inform your colleagues about the new
+    *   version.
+    * ===================================================================== -->
+	<target name="uploadLocalUpdateSiteDownloadFiles" depends="setLocalUpdateSiteProperties">
+
+		<echo>Copying files to local update Site '${local.updateSite.path}' ...</echo>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}">
+			</fileset>
+		</copy>
+
+		<copy todir="${local.updateSite.path}">
+			<fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
+			</fileset>
+		</copy>
+
+		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Create the web pages of the update site.
+    *   This target creates the html page and the .htaccess file that
+    *   go to the project's update site.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    *
+    *   Set the build properties as shown below, if you want to update 
+    *   index.html and .htaccess only:
+    * 
+    *     build.files.enabled=false
+    *     build.web.enabled=true
+    *     build.help.enabled=false
+    *
+    *   You can also update the update site like this:
+    *     cleanUploadDir
+    *     createSourceForgeWebPages
+    *     cleanSourceForgeWebPages
+    *     uploadSourceForgeWebPages
+    * ===================================================================== -->
+	<target name="createSourceForgeWebPages" unless="ignore.build.web">
+
+		<echo>Creating Eclipse web folders ...</echo>
+
+		<echo>Preparing directory structure ...</echo>
+		<mkdir dir="${build.upload.dir.web}" />
+
+		<echo>Copying templates directory ...</echo>
+		<copy todir="${build.upload.dir.web}">
+			<fileset dir="${build.template.dir.web}">
+				<exclude name="${target.ide.exclude.web.files}" />
+			</fileset>
+		</copy>
+
+		<echo>Renaming ${target.ide.sf.dir} ...</echo>
+		<move todir="${build.upload.dir.web.eclipse}\${target.ide.sf.dir}">
+			<fileset dir="${build.upload.dir.web.eclipse}\build_target" />
+		</move>
+
+		<echo>Renaming index.html ...</echo>
+		<move file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\${build.target}_index.html" tofile="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" />
+
+		<echo>Renaming .htaccess ...</echo>
+		<move file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\_htaccess" tofile="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" />
+
+		<echo>Replacing '@' variables ...</echo>
+
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BUILD_TARGET@" value="${target.ide.sf.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@BETA_VERSION@" value="${beta.dir}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@VERSION_NUMBER@" value="${build.version}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_FTP_PROJECT@" value="${sf.ftp.project}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_MASTER_DL@" value="${sf.root.master.dl.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="@SF_DOWNLOADS@" value="${sf.root.downloads.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\.htaccess" token="/./" value="/" />
+
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_INFO@" value="${version.info}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@IDE_PRODUCT_NAME_LONG@" value="${target.ide.ide.product.name.long}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@UPDATE_SITE_URL@" value="${target.ide.root.update.site.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@HELP_SITE_URL@" value="${target.ide.root.help.site.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@YEAR@" value="${today.year}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@VERSION_NUMBER@" value="${build.version}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
+		<replace file="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}\index.html" token="@PROJECT_HELP@" value="${sf.help.url}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the help pages.
+    *   This target call the build script of the 'Help Builder'
+    *   project to create the web folder.
+    *   This target creates the html help pages that go to the project's 
+    *   web folder.
+    *   This target is not specific to RDi/WDSCi. It does not matter for 
+    *   what target it is called.
+    *
+    *   Set the build properties as shown below, if you want to update 
+    *   index.html and .htaccess only:
+    * 
+    *     build.files.enabled=false
+    *     build.web.enabled=false
+    *     build.help.enabled=true
+    *
+    *   You can also update the help pages like this:
+    *     cleanUploadDir
+    *     createSourceForgeHelpPages
+    *     cleanSourceForgeHelpPages
+    *     uploadSourceForgeHelpPages
+    * ===================================================================== -->
+	<target name="createSourceForgeHelp" unless="ignore.build.help">
+
+		<echo>Creating ${build.public.project.name} help ...</echo>
+		
+		<copy todir="${workspace.home}/${build.help.builder}/build/" file="${basedir}/helpproject.properties" overwrite="true" />
+
+		<ant inheritAll="false" inheritrefs="false" antfile="${workspace.home}/${build.help.builder}/build/build.xml" target="build" />
+
+		<copy todir="${build.upload.dir.help}">
+			<fileset dir="${workspace.home}/${build.help.builder}/upload" />
+		</copy>
+
+		<echo>Replacing '@' variables ...</echo>
+		
+		<replace dir="${build.upload.dir.help}"  token="@PROJECT_HELP@" value="${sf.help.url}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the project's home page.
+    * ===================================================================== -->
+	<target name="createSourceForgeHome" unless="ignore.build.home">
+
+		<echo>Creating ${build.public.project.name} home page ...</echo>
+
+		<copy todir="${build.upload.dir.home}">
+			<fileset dir="${workspace.home}/${build.homepage.project}/html" />
+		</copy>
+		
+		<!--
+		<replace name="notifier.url.encoded" token=" " value="${sf.notifier.url}" />
+		-->
+		
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TODAY@" value="${today.timestamp}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@YEAR@" value="${today.year}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_MANIFEST@" value="${sf.notifier.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HOME@" value="${sf.home.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@PROJECT_HELP@" value="${sf.help.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_RDI@" value="${target.ide.rdi}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_WDSCI@" value="${target.ide.wdsci}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_RDI@" value="${target.ide.product.name.long.rdi}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_LONG_WDSCI@" value="${target.ide.product.name.long.wdsci}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_RDI@" value="${target.ide.product.name.short.rdi}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@TARGET_IDE_PRODUCT_NAME_SHORT_WDSCI@" value="${target.ide.product.name.short.wdsci}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_MANIFEST@" value="${sf.notifier.url}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@BETA_VERSION@" value="${sf.ftp.beta.dir.name}" />
+		<replace file="${build.upload.dir.home}/${home.page}" token="@VERSION_NUMBER@" value="${build.version}" />
+		
+		<replace file="${build.upload.dir.home}/${support.page}" token="@TODAY@" value="${today.timestamp}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the project's maintenance page.
+    * ===================================================================== -->
+	<target name="createSourceForgeMaintenance" unless="ignore.build.maintenance">
+
+		<echo>Creating ${build.public.project.name} maintenance web page ...</echo>
+
+		<copy todir="${build.upload.dir.maintenance}">
+			<fileset dir="${build.template.dir.maintenance}" />
+		</copy>
+		
+		<replace file="${build.upload.dir.maintenance}/index.html" token="@PROJECT_HOME@" value="${sf.home.url}" />
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Prepares MANIFEST.MF for releasing a new version.
+    * ===================================================================== -->
+	<target name="prepareNewReleaseNotification" unless="ignore.build.maintenance">
+
+		<echo>Preparing release notification file ...</echo>
+
+		<copy todir="${build.upload.dir.notifier}">
+			<fileset file="${workspace.home}\${build.notifier.project}\${build.notifier.file}" >
+			</fileset>
+		</copy>
+
+		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the project's download area on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
+
+		<echo>Deleting SourceForge: files (download area) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}/${beta.dir}/">
+			<Rmdir dir="." subDirs="false" >
+				<IgnoreFile pattern="${target.ide.exclude.download.files}.zip" ignoreCase="true" />
+			</Rmdir>
+			<Rmdir dir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the project's update site web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeWebPages" depends="ftpCredentialsSourceForge" unless="ignore.build.web">
+
+		<echo>Deleting: web pages (update site) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}/${beta.dir}/eclipse/">
+			<copydir dir="${build.upload.dir.maintenance}" toDir="./${target.ide.sf.dir}" subDirs="true" />
+			<Rmdir dir="./${target.ide.sf.dir}" subDirs="true" >
+				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
+				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
+			</Rmdir>
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the project's help pages web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeHelp" depends="ftpCredentialsSourceForge" unless="ignore.build.help">
+
+		<echo>Deleting SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}/${beta.dir}/">
+			<copydir dir="${build.upload.dir.maintenance}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.help.dir}" subDirs="true" >
+				<IgnoreFile pattern="*/index.html" ignoreCase="true" />
+				<IgnoreFile pattern="*/maintenance-assets/*" ignoreCase="true" />
+			</Rmdir>
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Cleans the project's home page web folder on SourceForge.
+    * ===================================================================== -->
+	<target name="cleanSourceForgeHome" depends="ftpCredentialsSourceForge" unless="ignore.build.home">
+
+		<echo>Deleting SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="t" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.home}" remoteDir="${sf.dir.updatesite.home.root}">
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the project's files to the SourceForge download area.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeDownloadFiles" depends="ftpCredentialsSourceForge" unless="ignore.build.files">
+
+		<echo>Uploading SourceForge: files (download area) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.files}" remoteDir="${sf.dir.updatesite.files.root}/${beta.dir}/">
+			<copydir dir="${build.upload.dir.files}" toDir="." subDirs="false" />
+			<copydir dir="${build.upload.dir.files.eclipse}\${target.ide.sf.dir}" toDir="./eclipse/${target.ide.sf.dir}" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the project's web pages of the Eclipse update site 
+    *   to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeWebPages" depends="ftpCredentialsSourceForge" unless="ignore.build.web">
+
+		<echo>Uploading: web pages (update site) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.web}" remoteDir="${sf.dir.updatesite.web.root}/${beta.dir}/eclipse/">
+			<copydir dir="${build.upload.dir.web.eclipse}/${target.ide.sf.dir}" toDir="./${target.ide.sf.dir}" subDirs="true" />
+			<Rmdir dir="./${target.ide.sf.dir}/maintenance-assets" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the project's help pages to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeHelp" depends="ftpCredentialsSourceForge" unless="ignore.build.help">
+
+		<echo>Uploading SourceForge: web pages (help) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.help}" remoteDir="${sf.dir.updatesite.help.root}/${beta.dir}/">
+			<copydir dir="${build.upload.dir.help}" toDir="./${sf.dir.updatesite.help.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.help.dir}/maintenance-assets" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Uploads the project's home page to the SourceForge web folder.
+    * ===================================================================== -->
+	<target name="uploadSourceForgeHome" depends="ftpCredentialsSourceForge" unless="ignore.build.home">
+
+		<echo>Uploading SourceForge: web pages (home) ...</echo>
+
+		<SF user="${sf.ftp.user},${sf.ftp.project}" password="${sf.ftp.password}" trust="true" dryrun="${build.dryrun}" 
+			host="${sf.ftp.server.home}" remoteDir="${sf.dir.updatesite.home.root}">
+			<copydir dir="${build.upload.dir.home}" toDir="./${sf.dir.updatesite.home.dir}" subDirs="true" />
+			<Rmdir dir="./${sf.dir.updatesite.home.dir}/maintenance-assets" subDirs="true" />
+		</SF>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Creates the tag file to indicate the project's version 
+    *   of the zip file.
+    * ===================================================================== -->
+	<target name="createTagFile">
+
+		<echo>Creating version tag file ${updatesite.tag.file} ...</echo>
+
+		<touch file="${updatesite.tag.file}" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Checks whether the project has a project documentation file.
+    * ===================================================================== -->
+	<target name="checkProjectDocument">
+
+		<echo>Checking existance of file: ${project.doc}</echo>
+		
+		<condition property="project.doc.exists">
+			<available file="${project.doc}" type="file"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${project.doc.exists}" arg2="true" />
+			<then>
+				<echo>Project documentation file found!</echo>
+			</then>
+			<else>
+				<echo>No project documentation file found.</echo>
+				<property name="pdf.isUpToDate" value="true"/>
+			</else>
+		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Checks whether the PDF file is up to date.
+    * ===================================================================== -->
+	<target name="checkPdfFile" if ="project.doc.exists">
+
+		<if>
+			<equals arg1="${build.files.enabled}" arg2="true" />
+			<then>
+				<eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+		
+				<uptodate property="pdf.isUpToDate" srcfile="${project.doc}" targetfile="${project.pdf}" />
+		
+				<echo>Check ${build.public.project.name} PDF result: ${pdf.isUpToDate}</echo>
+			</then>
+		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the PDF file from 'project.doc'.
+    * ===================================================================== -->
+	<target name="updatePdfFile" unless="pdf.isUpToDate" description="Updates the PDF file">
+		
+		<if>
+			<equals arg1="${build.files.enabled}" arg2="true" />
+			<then>
+				<echo>Updating ${build.public.project.name} PDF file ...</echo>
+		
+				<winword file="${project.doc}" visible="true">
+					<saveAs toFile="${project.pdf}" saveFormat="pdf" />
+				</winword>
+
+				<eclipse.refreshLocal resource="${build.project.core}" depth="infinite" />
+			</then>
+		</if>
+				
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Validates the version number to ensure, that it matches
+    *   the required format.
+    * ===================================================================== -->
+	<target name="validateVersionNumber">
+
+		<echo>Validating version number to: ${build.version} ...</echo>
+
+		<propertyregex property="validated.version" input="${build.version}" regexp="${validate.version.regex}" select="\1" casesensitive="true" />
+
+		<if>
+			<equals arg1="${build.version}" arg2="${validated.version}" />
+			<then>
+				<echo>Version number validated: OK</echo>
+			</then>
+			<else>
+				<echo>+------------------------------------------------------+</echo>
+				<echo>| Version number does not match expected pattern!      |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| Pattern:                                             |</echo>
+				<echo>| major.minor.micro.qualifier                          |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| major - major version number (requested)             |</echo>
+				<echo>| minor - minor version number (recommended)           |</echo>
+				<echo>| micro - micro version number (optional)              |</echo>
+				<echo>|                                                      |</echo>
+				<echo>| The possible qualifiers are:                         |</echo>
+				<echo>| r     - release version                              |</echo>
+				<echo>| bnnn  - beta version, where nnn between 001 and 999  |</echo>
+				<echo>+------------------------------------------------------+</echo>
+				<fail>*** ERROR: Invalid version number. ***</fail>
+			</else>
+		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the version numbers of the following files:
+    *     - MANIFEST.MF
+    *     - feature.xml
+    *     - site.xml
+    * ===================================================================== -->
+	<target name="updateVersionNumber" depends="validateVersionNumber">
+
+		<echo>Updating version number to: ${build.version} ...</echo>
+
+		<for list="${build.projects}" delimiter="," param="project">
+			<sequential>
+
+				<if>
+					<available file="${workspace.home}\@{project}" type="dir"/>
+					<then>
+
+						<echo message="${workspace.home}\@{project}" />
+
+						<if>
+							<available file="${workspace.home}\@{project}/META-INF" />
+							<then>
+								<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+								</replaceregexp>
+							</then>
+						</if>
+		
+						<if>
+							<available file="${workspace.home}\@{project}/html" />
+							<then>
+								<replaceregexp match="${html.copyright.1.version.regex}" replace="${html.copyright.1.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
+								</replaceregexp>
+								<replaceregexp match="${html.copyright.2.version.regex}" replace="${html.copyright.2.version.replace}" byline="true">
+									<fileset dir="${workspace.home}\@{project}/html" includes="copyright.html" />
+								</replaceregexp>
+							</then>
+						</if>
+		
+						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+						</replaceregexp>
+		
+						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+						</replaceregexp>
+						
+						<replaceregexp match="${feature.copyright.1.date.regex}" replace="${feature.copyright.1.date.replace}" flags="g" byline="true">
+							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+						</replaceregexp>
+		
+						<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+						</replaceregexp>
+		
+						<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
+							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+						</replaceregexp>
+
+					</then>
+				</if>
+			</sequential>
+		</for>
+
+		<echo>Done.</echo>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates stylesheet.css of the help projects.
+    * ===================================================================== -->
+	<target name="updateStylesheets">
+
+		<echo message="Updating stylesheets ..."/>
+
+		<for list="${build.help.projects}" delimiter="," param="project">
+			<sequential>
+				<copy file="${build.template.dir}/stylesheet.css" todir="${workspace.home}/@{project}/html" overwrite="true"/>
+			</sequential>
+		</for>
+		
+	</target>	
+
+	<!--
+    * =====================================================================
+    *   Asks for FTP credentials: username and password.
+    *   Property 'IBMi.ftp.user' is loaded from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="ftpCredentialsIBMi" unless="IBMi.ftp.password">
+
+		<input message="Please enter FTP password:" addproperty="IBMi.ftp.password" defaultvalue="" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Asks for FTP credentials: username and password.
+    *   Properties 'sf.ftp.user' is loaded from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="ftpCredentialsSourceForge" unless="sf.ftp.password">
+
+		<input message="Please enter the SourceForge FTP password:" addproperty="sf.ftp.password" defaultvalue="" />
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Asks for FTP credentials: username and password.
+    *   Properties 'sf.ftp.user' is loaded from 'ftp.properties'.
+    * ===================================================================== -->
+	<target name="checkBuildTarget">
+
+		<echo>Checking build target: ${build.target}</echo>
+		
+		<condition property="build.updatesite.exists">
+			<available file="${workspace.home}\${build.updatesite}" type="dir"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${build.updatesite.exists}" arg2="true" />
+			<then>
+				<echo>*** Success ***</echo>
+			</then>
+			<else>
+				<fail>*** Error: Update site ${build.updatesite} not found! ***</fail>
+			</else>
+		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Refreshs the projects listed in 'build.properties'.
+    * ===================================================================== -->
+	<target name="refreshProjects">
+
+		<echo>Refereshing projects ...</echo>
+
+		<for list="${build.projects}" delimiter="," param="project">
+			<sequential>
+				<eclipse.refreshLocal resource="@{project}" depth="infinite" />
+				<echo>* @{project}</echo>
+			</sequential>
+		</for>
+
+		<echo>Done.</echo>
+
+	</target>
+
+</project>

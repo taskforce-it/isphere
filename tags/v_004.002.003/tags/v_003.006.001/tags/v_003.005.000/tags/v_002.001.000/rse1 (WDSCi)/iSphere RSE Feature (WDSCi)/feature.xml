@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="biz.isphere.rse"
+      label="iSphere for WDSCi 7.0 (recommended)"
+      version="2.1.0"
+      provider-name="iSphere Project Owners">
+
+   <description>
+      iSphere for WDSCi 7.0
+   </description>
+
+   <copyright>
+      (c) Copyright iSphere Project Owners 2012, 2014. All rights reserved.
+   </copyright>
+
+   <license>
+      License agreement.
+   </license>
+
+   <plugin
+         id="biz.isphere.rse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="biz.isphere.adapter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

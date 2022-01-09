@@ -1,0 +1,176 @@
+<!--
+=============================================================================
+  build.xml (ant build script)
+
+  SQLJEP - Java SQL Expression Parser
+  http://sourceforge.net/projects/sqljep
+
+  Setting up your system to compile JEP:
+    1. Set the JAVAHOME environment variable
+    2. Set the JAVACCHOME environment variable to the location of the
+       library directory of JavaCC (e.g. C:\apps\javacc\bin\lib)
+=============================================================================
+-->
+
+<project name="SQLJEP" default="compile" basedir=".">
+	
+	<!-- set global properties for this build -->
+	<property name="src"     value="src"/>
+	<property name="build"   value="build"/>
+	<property name="dist"    value="dist"/>
+	<property name="doc"     value="doc"/>
+	<property name="version" value="0.2"/>
+	<property name="jar"     value="${app.name}-${version}.jar"/>
+	<property name="src.zip" value="${app.name}-${version}-src.zip"/>
+	<property name="src.tar.gz" value="${app.name}-${version}-src.tar.gz"/>
+	<property name="disttemp"   value="disttemp"/>
+	<property environment="env"/>
+	<property name="javacchome" value="${env.JAVACCHOME}"/>
+	<property name="java.home" value="${env.JAVAHOME}"/>
+	<property name="tools.jar" value="${java.home}/../lib/tools.jar"/>
+
+
+<!--======================================================================-->
+<!-- INIT -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+
+		<!-- Ensure JavaCC is present -->
+		<available file="${javacchome}/JavaCC.jar" property="javacc.present"/>
+	</target>
+
+<!--======================================================================-->
+<!-- JJTREE -->
+	<target name="jjtree" depends="init" if="javacc.present">
+		<jjtree
+			target="${src}/org/medfoster/sqljep/Parser.jjt"
+			javacchome="${javacchome}"
+			outputdirectory="${src}/org/medfoster/sqljep"
+		/>
+	</target>
+
+<!--======================================================================-->
+<!-- JAVACC -->
+	<target name="javacc" depends="jjtree" if="javacc.present">
+		<javacc
+			target="${src}/org/medfoster/sqljep/Parser.jj"
+			javacchome="${javacchome}"
+			outputdirectory="${src}/org/medfoster/sqljep"
+		/>
+	</target>
+
+      
+<!--======================================================================-->
+<!-- COMPILE -->
+	<target name="compile" depends="javacc">
+		<!-- Create the build directory -->
+		<mkdir dir="${build}"/>
+
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac srcdir="${src}"
+		       destdir="${build}"
+		       source="1.5"
+		       target="1.5">
+		</javac>
+	</target>
+
+
+<!--======================================================================-->
+<!-- JAVADOC -->
+	<target name="javadoc" depends="init">
+		<delete dir="doc/javadoc"/>
+		<mkdir dir="doc/javadoc"/>
+		<javadoc packagenames="org.medfoster.sqljep.*"
+				sourcepath="src"
+				destdir="doc/javadoc"
+				windowtitle="SQLJEP API">
+			<bottom><![CDATA[<A HREF=\"http://sourceforge.net/projects/sqljep\" TARGET=\"_blank\">http://sourceforge.net/projects/sqljep</A> Copyright &#169; 2006 Alexey Gaidukov]]></bottom>
+		</javadoc>
+	</target>
+
+<!--======================================================================-->
+<!-- DIST -->
+	<target name="dist" depends="compile,javadoc">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}"/>
+
+		<!-- Put everything in ${build} into the sqljep-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}/sqljep-${version}.jar"
+		     basedir="${build}"
+		     includes="org/medfoster/sqljep/**"/>
+		
+		<!-- Create a temp dir for contents of packages-->
+		<mkdir dir="${disttemp}/sqljep-${version}"/>
+
+		<!-- Copy jar -->
+		<copy file="${dist}/sqljep-${version}.jar" todir="${disttemp}/sqljep-${version}"/>
+
+		<!-- Copy src files -->
+		<!-- define filterset -->
+		<filterset id="sourcefilters" begintoken="%" endtoken="*">
+			<filter token="SQLJEPHEADER" value="SQLJEP - Java SQL Expression Parser ${version}"/>
+			<filter token="SQLJEPDATE" value="${TODAY}"/>
+			<filter token="SQLJEPAUTHOR" value="SQLJEP Author: Alexey Gaidukov"/>
+			<filter token="SQLJEPCOPYRIGHT" value="   (c) Copyright 2006, Alexey Gaidukov"/>
+			<filter token="SQLJEPCOPYRIGHT2" value="SQLJEP is based on JEP 2.24 (http://www.singularsys.com/jep/)"/>
+			<filter token="SQLJEPCOPYRIGHT3" value="     (c) Copyright 2002, Nathan Funk"/>
+			<filter token="SQLJEPLICENSE" value="See LICENSE.txt for license information."/>
+		</filterset>
+		<copy todir="${disttemp}/sqljep-${version}">
+			<fileset dir="."
+					includes="
+					 ${src}/org/medfoster/sqljep/**"/>
+			<filterset refid="sourcefilters"/>
+		</copy>
+
+		<!-- Copy doc, build, and single files -->
+		<copy todir="${disttemp}/sqljep-${version}">
+			<fileset dir="."
+					includes="
+					 ${doc}/**,
+					 ${build}/**,
+					 build.xml,
+					 LICENSE.txt,
+					 README.html"/>
+		</copy>
+
+		<!-- zip file -->
+		<delete file="${dist}/sqljep-${version}.zip"/>
+		<zip zipfile="${dist}/sqljep-${version}.zip"
+		     basedir="${disttemp}"
+		     >
+		</zip>
+
+		<!-- tar.gz file -->
+		<delete file="${dist}/sqljep-${version}.tar.gz"/>
+		<tar tarfile="${dist}/sqljep-${version}.tar"
+		     basedir="${disttemp}"
+		     >
+		</tar>
+		<gzip zipfile="${dist}/sqljep-${version}.tar.gz"
+		      src="${dist}/sqljep-${version}.tar"/>
+
+		<!-- clean up temporary files -->
+		<delete file="${dist}/sqljep-${version}.tar"/>
+		<delete dir="${disttemp}" />
+	</target>
+
+
+<!--======================================================================-->
+<!-- CLEAN -->
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+
+
+<!--======================================================================-->
+<!-- EOLUNIX -->
+	<target name="eolunix">
+		<fixcrlf srcdir="${src}"
+			eol="lf" eof="remove"/>
+	</target>
+</project>
+

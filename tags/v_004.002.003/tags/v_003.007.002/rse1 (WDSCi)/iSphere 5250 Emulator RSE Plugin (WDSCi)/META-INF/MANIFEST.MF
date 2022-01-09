@@ -1,0 +1,31 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere TN5250J for WDSCi 7.0
+Bundle-SymbolicName: biz.isphere.tn5250j.rse;singleton:=true
+Bundle-Version: 3.7.2.r
+Bundle-Activator: biz.isphere.tn5250j.rse.TN5250JRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.views,
+ com.ibm.etools.iseries.core,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.etools.systems.core,
+ biz.isphere.tn5250j.core,
+ com.ibm.etools.systems.dstore.core,
+ biz.isphere.tn5250j.base,
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.rse,
+ com.ibm.etools.iseries.debug
+Eclipse-LazyStart: true
+Bundle-ClassPath: .
+Export-Package: biz.isphere.tn5250j.rse,
+ biz.isphere.tn5250j.rse.actions,
+ biz.isphere.tn5250j.rse.designerpart,
+ biz.isphere.tn5250j.rse.designerview,
+ biz.isphere.tn5250j.rse.model,
+ biz.isphere.tn5250j.rse.sessionspart,
+ biz.isphere.tn5250j.rse.sessionsview,
+ biz.isphere.tn5250j.rse.subsystems

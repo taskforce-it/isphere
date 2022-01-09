@@ -1,0 +1,43 @@
+      *------------------------------------------------------------------------------------------*
+      *                                                                                          *
+      * Copyright (c) 2012-2014 iSphere Project Owners                                           *
+      * All rights reserved. This program and the accompanying materials                         *
+      * are made available under the terms of the Common Public License v1.0                     *
+      * which accompanies this distribution, and is available at                                 *
+      * http://www.eclipse.org/legal/cpl-v10.html                                                *
+      *                                                                                          *
+      *------------------------------------------------------------------------------------------*
+      *                                                                                          *
+      * Demo to produce a DIN A4 landscape spooled file.                                 *
+      *                                                                                          *
+      *------------------------------------------------------------------------------------------*
+      * STRPREPRC Compile Options:                                                               *
+      *   >>PRE-COMPILER<<                                                                       *
+      *     >>CRTCMD<<    CRTPRTF    FILE(&LI/&OB) +                                             *
+      *                              SRCFILE(&SL/&SF) SRCMBR(&SM);                               *
+      *       >>COMPILE<<                                                                        *
+      *         >>PARM<<  PAGESIZE(49 115);                                                      *
+      *         >>PARM<<  CPI(10);                                                               *
+      *         >>PARM<<  LPI(6);                                                                *
+      *         >>PARM<<  OVRFLW(41);                                                            *
+      *         >>PARM<<  USRDTA('landscape');                                                   *
+      *       >>END-COMPILE<<                                                                    *
+      *       >>EXECUTE<<                                                                        *
+      *   >>END-PRE-COMPILER<<                                                                   *
+      *------------------------------------------------------------------------------------------*
+     A          R NEW_PAGE
+     A                                      SKIPB(003)
+     A                                      HIGHLIGHT
+     A                                    11DFT('iSphere Demo Printer File +
+     A                                      DIN A4 (landscape)')
+      *
+     A          R HEADLINE1                 SPACEB(003) SPACEA(002)
+     A            TEXT          65        11HIGHLIGHT
+      *
+     A          R HEADLINE2                 SPACEB(002) SPACEA(001)
+     A            TEXT          65        11UNDERLINE
+      *
+     A          R STANDARD                  SPACEB(001)
+     A            TEXT          65        11
+      *
+

@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>Data Area Editor</title>
+</head>
+
+<body>
+<h1>Data Area Editor</h1>
+<a href="https://sourceforge.net/projects/isphere/" target="_blank">
+<img src="assets/dataareaeditor.png" 
+     width="64" height="64" 
+     style="float:right; margin-left:60px; margin-right:20px;  margin-bottom:40px" border=0></a>
+The <i>Data Area Editor</i> is used to edit data areas. There are different
+editors for each data area type. For the *CHAR data area editor, the font and the
+background color of protected areas can be changed from the 
+<a href="./preferences.html"><i>Colors and Fonts</i></a> preference page.
+<p>
+The following example shows a *CHAR data area editor: 
+<p>
+<img src="assets/dataareaeditor_char.png" 
+     width="532" height="388" 
+     align="middle">
+<br>
+<p>
+The status bar at the bottom of the editor shows the cursor position and
+whether or not the editor is in "Insert" or "Overwrite" mode.
+<p>
+<h2>Search and Replace</h2>
+<p>
+The editor utilizes the Eclipse <i>Search & Replace</i> action. <i>Search & Replace</i> can
+be started from the menu or by the associated shortcut. Usually that is CTRL+f. 
+<p>
+<img src="assets/dataareaeditor_search_and_replace.png" 
+     width="237" height="357" 
+     align="middle">
+<br>
+<p>
+<h2>Known Issues</h2>
+<ul>
+<li>Flickering when changing the content of a data area.<br>
+That issue is related to the way the SWT Text widget works. For now there is no idea how to solve that.</li>
+<li>Edited line is positioned at the bottom<br>
+That issue is related to the way the SWT Text widget works. Solving that problems increases the flickering. Hence it is still open.</li>
+</ul>
+<p>
+<h2>Data Space Editor</h2>
+<p>
+Instead of using the native data area editor you can use take advantage from the <a href="../dataspaces/editor/dataspaceeditor.html"><i>Data Space Editor</i></a>, 
+which are created and maintained by the <a href="../dataspaces/designer/dataspaceeditordesigner.html"><i>iSphere Data Space Editor Designer</i></a>.
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

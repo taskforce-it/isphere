@@ -1,0 +1,234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Data Queue Monitor</title>
+</head>
+
+<body>
+	<h1>Data Queue Monitor</h1>
+	<img src="assets/dataqueuemonitor.png"
+		style="float: right; margin-left: 60px; margin-right: 20px; margin-bottom: 40px"
+		border=0> The
+	<i>Data Queue Monitor</i> is used to monitor and display messages on a
+	data queue.
+	<p>The display of messages may be refreshed manually, or the
+		display may be set to refresh automatically after a specified interval
+		of either 1, 3, 10 or 30 seconds.
+	<p>The data queue entries are read from the queue without removing
+		them from it, so it will have no impact on programs that are reading
+		or writing to the data queue.
+	<p>
+	<h2>Displaying Data Queue Messages</h2>
+	<P>
+		On the context menu of a data queue (right click), then click <i>iSphere
+			Data Queue Monitor</i>.
+	<p>
+		<img src="assets/dtaq_start.png" align="middle">
+	<p>
+		The <i>iSphere Data Queue Monitor</i> tab opens, and if there are
+		entries in the data queue they are displayed:
+	<p>
+		<img src="assets/dtaq_tab.png" align="middle">
+	<ul>
+		<li>At the top left the data queue being displayed is shown.
+			<p>
+		<li>At the bottom left you can how many messages are displayed
+			and how many messages there are on the data queue; in this example
+			the first 5 of 21 messages are displayed.
+	</ul>
+	<h2>Customizing the display</h2>
+	There are a number of options to customize how the messages are
+	displayed and these are listed belowed.
+	<p>
+		Some of these options can be defaulted: see the <a
+			href="../preferences/preferences.html"><i>iSphere Data Queue
+				Monitor</i></a> preference page.
+	<h2>Hex Display</h2>
+	If the messages are displayed in hex, as below, then you can toggle
+	between hex and character by using the
+	<i>View in Hex mode</i> button:
+	<p>
+		<img src="assets/dtaq_tab_hex.png" align="middle">
+	<h2>View Menu Options</h2>
+	There are a number of additional options on the view menu:
+	<p>
+		<img src="assets/dtaq_view_menu_button.png" align="middle">
+	<p>
+		<img src="assets/view_menu2.gif" align="middle">
+	<p>The options are:
+	<p>
+	<table>
+		<tr>
+			<td valign="top">Refresh</td>
+			<td valign="top">-</td>
+			<td valign="top">Opens a sub menu with options to specify the
+				time interval after which the display is <b>automatically</b>
+				refreshed.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">Message length</td>
+			<td valign="top">-</td>
+			<td valign="top">Opens a sub menu with options to specify the
+				maximum number of bytes to retrieve of each message.</td>
+		</tr>
+		<tr>
+			<td valign="top">Hex mode</td>
+			<td valign="top">-</td>
+			<td valign="top">Toggles the display mode between <i>Hex</i> and
+				<i>Text</i> mode.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">Display end of data</td>
+			<td valign="top">-</td>
+			<td valign="top">Optionally adds an <i>end-of-data</i> indicator
+				to the message data. This may be useful if your messages have
+				trailing blanks.
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">Send message</td>
+			<td valign="top">-</td>
+			<td valign="top">Sends a message to a data queue.
+			</td>
+		</tr>
+	</table>
+	<p>
+	<table>
+		<tr>
+			<td class="notice">Note: The data queue monitor shows only the first 259 characters 
+			                   of the message data on Windows PCs. This is a known limitation
+			                   of the Windows SWT plug-in. 
+			                   See: <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=259013" target="show_bug_259013">https://bugs.eclipse.org/bugs/show_bug.cgi?id=259013</a>
+			                   or
+			                   <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=257815" target="show_bug_257815">https://bugs.eclipse.org/bugs/show_bug.cgi?id=257815</a>
+			                   for details.
+            </td>
+		</tr>
+	</table>
+	<p>
+	<h2>Displaying a Message</h2>
+	<p>To completely display a message, double-click on it; or select
+		one or more messages and from the context menu (right click), then
+		click display. The message is displayed in hex and in character:
+	<p>
+		<img src="assets/dtaq_message_viewer.png" align="middle">
+	<p>
+		The <i>Previous</i> and <i>Next</i> buttons at the bottom left of the
+		viewer let you move forward and back in the list of messages. The
+		scope of these buttons, and the numbering of the messages, depends on
+		how the viewer was started:
+	<p>
+	<table>
+		<tr>
+			<td valign="top">Double-click</td>
+			<td valign="top">-</td>
+			<td valign="top">The buttons operate on all messages of the
+				list.</td>
+		</tr>
+		<tr>
+			<td valign="top">Context menu</td>
+			<td valign="top">-</td>
+			<td valign="top">The buttons move forth and back within the
+				selected messages.</td>
+		</tr>
+	</table>
+	<p>
+	<h2>Message Entry options</h2>
+	<p>If you right click on a message you get a sub menu with these
+		options:
+	<p>
+		<img src="assets/popup_menu.gif" align="middle">
+	<p>
+	<table>
+		<tr>
+			<td valign="top">Display</td>
+			<td valign="top">-</td>
+			<td valign="top">Displays the selected message(s). (This is the
+				same as double clicking on a message.)</td>
+		</tr>
+		<tr>
+			<td valign="top">Copy message as text</td>
+			<td valign="top">-</td>
+			<td valign="top">Copies the message text as displayed in the
+				table to the clipboard.</td>
+		</tr>
+		<tr>
+			<td valign="top">Copy message as hex</td>
+			<td valign="top">-</td>
+			<td valign="top">Copies the message text as a string of hex
+				values to the clipboard.</td>
+		</tr>
+		<tr>
+			<td valign="top">Copy message as hex (formatted)</td>
+			<td valign="top">-</td>
+			<td valign="top">Copies the message text as a string of hex
+				values to the clipboard. The text is formatted into packages for
+				easier reading.</td>
+		</tr>
+		<tr>
+			<td valign="top">Save message</td>
+			<td valign="top">-</td>
+			<td valign="top">Saves the pure message bytes, without key and
+				sender ID, as received from the host to a file.</td>
+		</tr>
+	</table>
+	<p>
+	<h2>Data Truncation Warning</h2>
+	<p>If an actual message size exceeds the maximum message length
+		specified for retrieving messages, a data truncation warning is
+		displayed at the bottom of the view:
+	<p>
+		<img src="assets/dtaq_truncation_warning.png" align="middle">
+	<p>The ellipsis (...) shows where the truncation starts in a
+		message.
+	<p>
+		If you get this message, you may want to increase the <i>'Message
+			length'</i> value and then refresh the view. Keep in mind that you may
+		need to decrease the <i>'Number of messages'</i> being retrieved at
+		the same time, to avoid downloading to much data to your PC.
+	<p>
+	<h2>Display End of Data Option</h2>
+	<p>
+		The <i>'Display end of data option'</i> adds a '«' character to the
+		end of the message data. This option may be useful for message data
+		with trailing spaces or any other invisible characters:
+	<p>
+		<img src="assets/dtaq_display_end_of_data.png" align="middle">
+	<p>
+	<H2>Keyed Data Queues</H2>
+	If there is a key on the data queue, the key is shown in a separate
+	column:
+	<p>
+		<img src="assets/dtaq_keyed.png" align="middle">
+	<p>
+	<h2>SENDERID Data Queues</h2>
+	If the data queue was created with SENDERID(*YES), the sender
+	information is shown in a separate column:
+	<p>
+		<img src="assets/dtaq_senderid.png" align="middle">
+	<p>
+	<p>
+	<h2>Send Message to Data Queue</h2>
+	The following dialog sends a message to a data queue. If the data queue is keyed, an
+	additional <i>key</i> field is displayed. Data can be entered as a string or as a
+	hex-string value. A hex-string value is a series of 2-character tokens, each describing
+	a byte value.
+	<p>
+		<img src="assets/dtaq_sendmessage.png" align="middle">
+	<p>
+	<h2>Preferences</h2>
+	Some of the options may be defaulted on the
+	<a href="../preferences/preferences.html"><i>iSphere Data Queue
+			Monitor</i></a> preference page.
+	<p>
+
+
+		<iframe src="../../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

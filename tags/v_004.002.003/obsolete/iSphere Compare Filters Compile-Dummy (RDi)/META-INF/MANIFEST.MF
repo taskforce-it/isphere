@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Compile Eclipse Compare Dummy (RDi)
+Bundle-SymbolicName: biz.isphere.dummy.compile.eclipse.compare;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.compare.ISphereCompareFilterCompilePlugin
+Bundle-Vendor: iSphere Project Team
+Export-Package: org.eclipse.compare
+Require-Bundle: org.eclipse.osgi,
+ org.eclipse.compare.core,
+ org.eclipse.jface.text
+Bundle-ActivationPolicy: lazy
+Import-Package: com.ibm.icu.util,
+ com.ibm.icu.text

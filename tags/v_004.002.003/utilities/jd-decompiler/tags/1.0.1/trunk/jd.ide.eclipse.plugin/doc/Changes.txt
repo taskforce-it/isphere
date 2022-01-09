@@ -1,0 +1,21 @@
+
+Changes in the 'JD-Eclipse' plug-in are marked in *.java files with:
+
+   // CHANGED: Rz, dd.MM.yyyy - v.v.v
+
+   Rz         = Author
+   dd.MM.yyyy = Date changed
+   v.v.v      = Version number
+
+The following changes have been applied to the 'JD-Eclipse' plug-in
+to make it work for WDSCi 7.0:
+
+ * Added dependency 'org.eclipse.ui.workbench.texteditor' to fix
+   error:
+
+     The type org.eclipse.ui.texteditor.SourceViewerDecorationSupport
+     cannot be resolved. It is indirectly referenced from required .class files
+
+ * Added property 'Eclipse-LazyStart: true'.
+
+ * Changed title of preferences page to show the version number.

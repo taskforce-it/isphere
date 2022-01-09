@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.taskforce.isphere_1.4.2.jar" id="de.taskforce.isphere" version="1.4.2">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <feature url="features/de.taskforce.isphere.rse_1.4.2.jar" id="de.taskforce.isphere.rse" version="1.4.2">
+      <category name="iSphere for WDSCi 7.0"/>
+   </feature>
+   <category-def name="iSphere for WDSCi 7.0" label="iSphere for WDSCi 7.0"/>
+</site>

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-Version: 4.1.0.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
+X-Bundle-Info: Fixed connection problems when using 'Remote System Profiles'.\n
+ Minor bug fixes.
+X-Beta-Version: 4.1.0.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: Update the iSphere library for STRPREPRC 1.19.1.
+X-Beta-Info: Fixed connection problems when using 'Remote System Profiles'.\n
+ Minor bug fixes.

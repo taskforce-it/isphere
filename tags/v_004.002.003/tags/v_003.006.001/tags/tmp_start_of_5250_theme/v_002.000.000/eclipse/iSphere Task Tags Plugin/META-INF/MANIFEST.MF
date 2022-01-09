@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Task Tags
+Bundle-SymbolicName: biz.isphere.lpex.tasks;singleton:=true
+Bundle-Version: 2.0.0
+Bundle-Activator: biz.isphere.lpex.tasktags.ISphereLpexTasksPlugin
+Bundle-Vendor: iSphere Project
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.ui.editors,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.jface.text,
+ biz.isphere.base,
+ biz.isphere.adapter
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true

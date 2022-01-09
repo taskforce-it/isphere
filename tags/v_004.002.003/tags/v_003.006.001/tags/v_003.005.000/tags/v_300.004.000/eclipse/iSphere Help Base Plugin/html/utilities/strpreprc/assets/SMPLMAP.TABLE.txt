@@ -1,0 +1,34 @@
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Simple Map                                                             *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CURLIB<<     &CL;                                                *
+-- *     >>LIBL<<       &LL;                                                *
+-- *     >>EXECUTE<<                                                        *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
+
+CREATE TABLE SMPLMAP
+(
+ MKEY   VARCHAR (100) ALLOCATE(25) NOT NULL WITH DEFAULT,
+ MVALUE VARCHAR (1024) ALLOCATE(128) NOT NULL WITH DEFAULT
+);
+
+LABEL ON TABLE SMPLMAP
+ IS 'Simple map (key/value pairs) table';
+
+LABEL ON COLUMN SMPLMAP
+(
+ MKEY IS 'Key' ,
+ MVALUE IS 'Value'
+);
+
+LABEL ON COLUMN SMPLMAP
+(
+ MKEY TEXT IS 'Key' ,
+ MVALUE TEXT IS 'Value'
+);
+ 

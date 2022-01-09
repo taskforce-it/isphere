@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+	<title>Utility: Start PRe-Processor</title>
+</head>
+
+<body>
+<h1>Start Pre-Processor (STRPREPRC)</h1>
+<p>
+The <i>Start Pre-Processor</i> is used to retrieve the compile command and the compile parameters
+from the source member and compile the object afterwards. This way, object specific compile parameters 
+can be stored in the source member without any risk of getting lost. 
+<p>
+The iSphere project team uses the STRPREPRC utility to compile all objects of the iSphere library.
+<p>
+Another advantage of the utility is that you do not need to use different object creation commands,
+but STRPREPRC for all object types.
+<p>
+Furthermore you can use it for creating non-source objects from source. The iSphere data area 
+<i>ISPHERE</i>, which contains version information, is a good and elaborated example for that. All 
+you need for simple objects is a source member with the STRPREPRC section with the CL command for 
+creating the object. But for the iSphere data area we do it slightly different, because we want to 
+initialize the data area with certain values. For that purpose we compile a CL program into QTEMP 
+and afterwards execute it to create and initialize the data area. 
+<p>
+<table border="0" width="95%" height="50%" cellpadding="0" cellspacing="0">
+<tr><td><iframe src="./assets/ISPHERE.CLP.txt" 
+   frameborder="1" scrolling="yes" 
+   width="100%" height="100%" marginwidth="15" marginheight="10" ></iframe></td></tr>
+</table>
+<p>
+The STRPREPRC utility is shipped with the iSphere library and it is up to you to take advantage from 
+it. A good starting point is the following 'general purposes' command: 
+<p>
+<div class="codeCommand">STRPREPRC USESRCFILE(&L/&F) USESRCMBR(&N) OPTION(*EVENTF) CHGOBJD(*NO) LIB(&O) OBJ(&N) SRCLIB(&L) SRCFILE(&F) SRCMBR(&N) USER0(&X)</div> 
+<p>
+Open the <i>i Projects</i> perspective and select the <i>Work With Compile Commands...</i> option from 
+the context menu of your i Project.
+<p>
+<img alt="Work With Compile Commands" src="./assets/work_with_compile_commands.png" />
+<p>
+Then add the <i>STRPREPRC</i> command to the source member types that you want to use the STRPREPRC 
+utility for:
+<p>
+<img alt="Add compile command" src="./assets/add_compile_command.png" />
+<p>
+<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

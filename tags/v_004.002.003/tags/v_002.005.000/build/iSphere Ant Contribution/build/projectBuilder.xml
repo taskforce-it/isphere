@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="iSphere-ant-contrib" basedir="../." default="build">
+
+	<!-- Include Ant Contrib tasks -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}/lib/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<tstamp>
+		<format property="build.date" pattern="MM.dd.yyyy hh:mm aa" />
+	</tstamp>
+
+	<!-- Build properties -->
+	<property name="build.dir" value="${basedir}/build" />
+	<property file="${build.dir}/build.properties" />
+
+	<property name="application.title"		value="iSphere Ant Contribution" />
+	<property name="application.vendor" 	value="http://isphere.sourceforge.net/" />
+	<property name="application.provider" 	value="iSphere Project Team" />
+	<property name="src.java.mainpackage"	value="biz.isphere.antcontrib" />
+	
+	<property name="workspace.home" location="${basedir}/.." />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="plugin.dir" value="${basedir}" />
+	<property name="manifest.dir" value="${basedir}/META-INF" />
+	<property name="eclipse.plugin.dir" value="${workspace.home}/iSphere Eclipse Setup/plug-ins" />
+
+	<property name="release.dir" value="${workspace.home}/${build.plugin.project}/lib" />
+	<property name="release.file.jar.plugin" value="iSphere-ant-plugin.jar" />
+	<property name="release.file.jar.runtime" value="iSphere-ant-runtime.jar" />
+	<property name="release.file.jar.standalone" value="iSphere-ant-standalone.jar" />
+
+	<property name="compile.dir" value="${basedir}/compile" />
+	<property name="compile.version" value="1.5" />
+	<property name="compile.debug" value="source,lines,vars" />
+
+	<patternset id="project-builder-files-patternset">
+		<include name="projectBuilder.xml" />
+		<include name="build.properties" />
+	</patternset>
+
+	<patternset id="src-files-antlib-patternset">
+		<include name="biz/isphere/antcontrib/antcontrib.properties" />
+		<include name="biz/isphere/antcontrib/antlib.xml" />
+	</patternset>
+
+	<patternset id="src-files-taskdef-patternset">
+		<include name="biz/isphere/antcontrib/taskdef/**" />
+	</patternset>
+
+	<patternset id="src-files-plugin-patternset">
+		<patternset refid="src-files-taskdef-patternset" />
+	</patternset>
+
+	<patternset id="src-files-runtime-patternset">
+		<include name="biz/isphere/antcontrib/configuration/**" />
+		<include name="biz/isphere/antcontrib/internal/**" />
+		<include name="biz/isphere/antcontrib/logger/**" />
+		<include name="biz/isphere/antcontrib/winword/**" />
+	</patternset>
+
+	<patternset id="src-files-standalone-patternset">
+		<patternset refid="src-files-runtime-patternset" />
+		<patternset refid="src-files-taskdef-patternset" />
+		<patternset refid="src-files-antlib-patternset" />
+	</patternset>
+
+	<patternset id="lib-files-jacob-patternset">
+		<include name="*.dll" />
+		<include name="jacob.jar" />
+	</patternset>
+
+	<fileset dir="${build.dir}" id="project-builder-files">
+		<patternset refid="project-builder-files-patternset" />
+	</fileset>
+
+	<fileset dir="${src.dir}" id="src-files-antlib">
+		<patternset refid="src-files-antlib-patternset" />
+	</fileset>
+
+	<fileset dir="${src.dir}" id="src-files-taskdef">
+		<patternset refid="src-files-taskdef-patternset" />
+	</fileset>
+
+	<fileset dir="${src.dir}" id="src-files-plugin">
+		<patternset refid="src-files-plugin-patternset" />
+	</fileset>
+
+	<fileset dir="${src.dir}" id="src-files-runtime">
+		<patternset refid="src-files-runtime-patternset" />
+	</fileset>
+
+	<fileset dir="${src.dir}" id="src-files-standalone">
+		<patternset refid="src-files-standalone-patternset" />
+	</fileset>
+
+	<fileset dir="${lib.dir}" id="lib-files-jacob">
+		<patternset refid="lib-files-jacob-patternset" />
+	</fileset>
+
+	<path id="Plug-in Dependencies.libraryclasspath">
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.runtime_3.6.0.v20100505.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.osgi_3.6.3.R36x_v20110629.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/com.ibm.cds_2.1.0.201009130929.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.osgi.nl1_3.6.2.v201111132303.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.common_3.6.0.v20100503.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.jobs_3.5.1.R36x_v20100824.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.runtime.compatibility.registry_3.3.0.v20100520/runtime_registry_compatibility.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.registry_3.5.0.v20100503.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.registry.nl1_3.5.0.v201111132303.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.preferences_3.3.1.R36x_v20110302.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.core.contenttype_3.4.100.v20100505-1235.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.equinox.app_1.3.1.R36x_v20100803.jar" />
+        <pathelement location="../../../../org.eclipse.ui.workbench "/>
+        <pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-antlr.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bcel.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-bsf.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-log4j.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-oro.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-regexp.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-apache-resolver.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-logging.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-commons-net.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jai.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-javamail.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jdepend.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jmf.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-jsch.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-junit.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-launcher.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-netrexx.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-nodeps.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-starteam.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-stylebook.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-swing.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-trax.jar" />
+		<pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.apache.ant_1.7.1.v20100518-1145/lib/ant-weblogic.jar" />
+	</path>
+
+	<path id="Jacob Dependencies.libraryclasspath">
+		<pathelement location="lib/jacob.jar" />
+        <pathelement location="../../../../Programme_x86/IBM/SDPShared/plugins/org.eclipse.ant.core_3.2.202.v20110829_r363.jar" />
+	</path>
+
+	<path id="compile.runtime.classpath">
+		<path refid="Jacob Dependencies.libraryclasspath" />
+	</path>
+
+	<path id="compile.plugin.classpath">
+		<path refid="Plug-in Dependencies.libraryclasspath" />
+		<pathelement location="bin" />
+	</path>
+
+	<!-- Set regular expressions and replacement values -->
+	<property name="manifest.version.regex" value="(Bundle-Version:\s)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)" />
+	<property name="manifest.version.replace" value="\1${build.version}" />
+
+	<property name="feature.1.version.regex" value="(&lt;feature.*version=&quot;)([1-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;\s+provider-name.*?&gt;)" />
+	<property name="feature.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="feature.2.version.regex" value="(&lt;import feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;\s+match.*?&gt;)" />
+	<property name="feature.2.version.replace" value="\1${build.version}\3" />
+
+	<property name="site.1.version.regex" value="(&lt;feature.*_)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(\.jar)" />
+	<property name="site.1.version.replace" value="\1${build.version}\3" />
+
+	<property name="site.2.version.regex" value="(&lt;feature.*version=&quot;)([0-9]+\.[0-9]+(?:\.[0-9]+)?(?:\.b[0-9]+)?)(&quot;)" />
+	<property name="site.2.version.replace" value="\1${build.version}\3" />
+
+	<!-- Set zip file and directory names -->
+	<property name="build.upload.dir"		location="${workspace.home}/${build.plugin.project}/upload" />
+	<property name="zip.base.directory"		location="${workspace.home}/${build.updatesite}" />
+	<property name="zip.file.name" 			value="iSphere Ant Contribution (v${build.version} Update Site).zip" />
+	<property name="updatesite.tag.file"	location="${workspace.home}/${build.updatesite}/${build.updatesite} v${build.version}.tag" />
+
+
+	<!-- ======================================================================
+		      Build the project.
+		 ================================================================== -->
+	<target name="build" depends="initialize,clean,updateVersionNumber,jarPlugin,jarRuntime,jarStandalone">
+		<echo message="${application.title} : finished on ${build.date}" />
+	</target>
+
+	<target name="initialize">
+		<mkdir dir="${compile.dir}" />
+		<mkdir dir="${release.dir}" />
+	</target>
+	
+
+	<!-- ======================================================================
+		      Clean temporary directories.
+		 ================================================================== -->
+	<target name="clean" depends="cleanCompile,cleanRelease,cleanUpdateSite" >
+	</target>
+
+
+	<!-- ======================================================================
+		      Cleans the temporary compile directory.
+		      Called by:  all prepareCompile* targets
+		 ================================================================== -->
+	<target name="cleanCompile">
+		<delete includeemptydirs="true" failonerror="false" >
+			<fileset dir="${compile.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+
+	<!-- ======================================================================
+		      Cleans the release directory.
+		 ================================================================== -->
+	<target name="cleanRelease">
+		<delete includeemptydirs="true">
+			<fileset dir="${release.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Removes all files from the following directories of the 
+    *   update site project:
+    *     - features
+    *     - plugins
+    * ===================================================================== -->
+	<target name="cleanUpdateSite" >
+
+		<echo>Removing old files from '${build.updatesite}' ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${workspace.home}\${build.updatesite}\features" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}\plugins" includes="**/*" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="artifacts.jar" />
+			<fileset dir="${workspace.home}\${build.updatesite}" includes="content.jar" />
+		</delete>
+	</target>
+
+	
+	<!--
+    * =====================================================================
+    *   Updates the version numbers of the following files:
+    *     - MANIFEST.MF
+    *     - feature.xml
+    *     - site.xml
+    * ===================================================================== -->
+	<target name="updateVersionNumber">
+
+		<echo>Updating version number to: ${build.version} ...</echo>
+
+		<for list="${build.projects},${build.plugin.project},${build.updatesite}" delimiter="," param="project">
+			<sequential>
+
+				<echo message="${workspace.home}\@{project}" />
+				<if>
+					<available file="${workspace.home}\@{project}/META-INF" />
+					<then>
+						<replaceregexp match="${manifest.version.regex}" replace="${manifest.version.replace}" byline="true">
+							<fileset dir="${workspace.home}\@{project}/META-INF" includes="MANIFEST.MF" />
+						</replaceregexp>
+					</then>
+				</if>
+
+				<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+				</replaceregexp>
+
+				<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
+					<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
+				</replaceregexp>
+
+			</sequential>
+		</for>
+
+		<echo>Done.</echo>
+	</target>
+
+
+	<!-- ======================================================================
+		      JARS the plug-in contribution jar.
+		 ================================================================== -->
+	<target name="jarPlugin" depends="checkPluginJar" unless="jarPluginUpToDate">
+		<echo message="${application.title} : creating plug-in jar at ${build.date}" />
+
+		<antcall target="compilePlugin" />
+
+		<jar destfile="${release.dir}/${release.file.jar.plugin}" basedir="${compile.dir}">
+			<manifest>
+				<attribute name="Built-By" value="${application.provider}" /> 
+				<section name="${src.java.mainpackage}">
+					<attribute name="Specification-Title" value="${application.title}" />
+					<attribute name="Specification-Vendor" value="${application.vendor}" />
+					<attribute name="Implementation-Title" value="${application.title} - Plug-in" />
+					<attribute name="Implementation-Version" value="${build.version} on ${build.date}" />
+				</section>
+			</manifest>
+		</jar>
+
+		<antcall target="cleanUpdateSite" />
+		
+	</target>
+
+
+	<!-- ======================================================================
+		      JARS the runtime jar.
+		 ================================================================== -->
+	<target name="jarRuntime" depends="checkRuntimeJar" unless="jarRuntimeUpToDate">
+		<echo message="${application.title} : creating runtime jar at ${build.date}" />
+
+		<antcall target="compileRuntime" />
+
+		<jar destfile="${release.dir}/${release.file.jar.runtime}" basedir="${compile.dir}">
+			<manifest>
+				<attribute name="Built-By" value="${application.provider}" />
+				<section name="${src.java.mainpackage}">
+					<attribute name="Specification-Title" value="${application.title}" />
+					<attribute name="Specification-Vendor" value="${application.vendor}" />
+					<attribute name="Implementation-Title" value="${application.title} - Plug-in Runtime Library" />
+					<attribute name="Implementation-Version" value="${build.version} on ${build.date}" />
+				</section>
+			</manifest>
+		</jar>
+
+		<antcall target="cleanUpdateSite" />
+
+	</target>
+
+
+	<!-- ======================================================================
+		      JARS the standalone jar.
+		 ================================================================== -->
+	<target name="jarStandalone" depends="checkStandaloneJar" unless="jarStandaloneUpToDate">
+		<echo message="${application.title} : creating runtime jar at ${build.date}" />
+
+		<antcall target="compileStandalone" />
+
+		<jar destfile="${release.dir}/${release.file.jar.standalone}" basedir="${compile.dir}">
+			<manifest>
+				<attribute name="Built-By" value="${application.provider}" />
+				<section name="${src.java.mainpackage}">
+					<attribute name="Specification-Title" value="${application.title}" />
+					<attribute name="Specification-Vendor" value="${application.vendor}" />
+					<attribute name="Implementation-Title" value="${application.title} - Standalone Library" />
+					<attribute name="Implementation-Version" value="${build.version} on ${build.date}" />
+				</section>
+			</manifest>
+		</jar>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compiles the plug-in contribution classes.
+		 ================================================================== -->
+	<target name="compilePlugin" depends="prepareCompilePlugin">
+		<echo message="${application.title} : compiling plug-in classes at ${build.date}" />
+
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
+			<src path="${compile.dir}" />
+			<classpath refid="compile.plugin.classpath" />
+		</javac>
+
+		<copy includeemptydirs="false" todir="${release.dir}">
+			<fileset refid="lib-files-jacob" />
+		</copy>
+		
+	</target>
+
+
+	<!-- ======================================================================
+		      Prepares compiling the plug-in contribution classes.
+		 ================================================================== -->
+	<target name="prepareCompilePlugin">
+
+		<antcall target="cleanCompile" />
+
+		<copy includeemptydirs="false" todir="${compile.dir}">
+			<fileset refid="src-files-plugin" />
+		</copy>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compiles the runtime classes.
+		 ================================================================== -->
+	<target name="compileRuntime" depends="prepareCompileRuntime">
+		<echo message="${application.title} : compiling runtime classes at ${build.date}" />
+
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
+			<src path="${compile.dir}" />
+			<classpath refid="compile.runtime.classpath" />
+		</javac>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Prepares compiling the runtime classes.
+		 ================================================================== -->
+	<target name="prepareCompileRuntime">
+
+		<antcall target="cleanCompile" />
+
+		<copy includeemptydirs="false" todir="${compile.dir}">
+			<fileset refid="src-files-runtime" />
+		</copy>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compiles the standalone classes.
+		 ================================================================== -->
+	<target name="compileStandalone" depends="prepareCompileStandalone">
+		<echo message="${application.title} : compiling standalone classes at ${build.date}" />
+
+		<javac debug="true" debuglevel="${compile.debug}" destdir="${compile.dir}" target="${compile.version}">
+			<src path="${compile.dir}" />
+			<classpath refid="compile.runtime.classpath" />
+		</javac>
+
+		<copy includeemptydirs="false" todir="${compile.dir}">
+			<fileset refid="src-files-antlib" />
+		</copy>
+
+		<copy includeemptydirs="false" todir="${compile.dir}/lib/">
+			<fileset refid="lib-files-jacob" />
+		</copy>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Prepares compiling the standalone classes.
+		 ================================================================== -->
+	<target name="prepareCompileStandalone">
+
+		<antcall target="cleanCompile" />
+
+		<copy includeemptydirs="false" todir="${compile.dir}">
+			<fileset refid="src-files-standalone" />
+		</copy>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compare the date/time of the plugin contribution JAR against  
+		      that of the java source          
+		 ================================================================== -->
+	<target name="checkPluginJar">
+
+		<uptodate property="jarPluginUpToDate" targetfile="${release.dir}/${release.file.jar.plugin}">
+			<srcfiles refid="src-files-plugin" />
+			<!-- Check the build file itself as well -->
+			<srcfiles refid="project-builder-files" />
+		</uptodate>
+
+		<if>
+			<equals arg1="${jarPluginUpToDate}" arg2="true" />
+			<then>
+				<echo message="checkPluginJar says jarUpToDate= ${jarPluginUpToDate}" />
+			</then>
+			<else>
+				<echo message="checkPluginJar says jarUpToDate= *** outdated ***" />
+			</else>
+		</if>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compare the date/time of the plugin runtime JAR against  
+		      that of the java source          
+		 ================================================================== -->
+	<target name="checkRuntimeJar">
+
+		<uptodate property="jarRuntimeUpToDate" targetfile="${release.dir}/${release.file.jar.runtime}">
+			<srcfiles refid="src-files-runtime" />
+			<srcfiles refid="lib-files-jacob" />
+			<!-- Check the build file itself as well -->
+			<srcfiles refid="project-builder-files" />
+		</uptodate>
+
+		<if>
+			<equals arg1="${jarRuntimeUpToDate}" arg2="true" />
+			<then>
+				<echo message="checkRuntimeJar says jarRuntimeUpToDate= ${jarRuntimeUpToDate}" />
+			</then>
+			<else>
+				<echo message="checkRuntimeJar says jarRuntimeUpToDate= *** outdated ***" />
+			</else>
+		</if>
+
+	</target>
+
+
+	<!-- ======================================================================
+		      Compare the date/time of the standalone JAR against  
+		      that of the java source          
+		 ================================================================== -->
+	<target name="checkStandaloneJar">
+
+		<uptodate property="jarStandaloneUpToDate" targetfile="${release.dir}/${release.file.jar.standalone}">
+			<srcfiles refid="src-files-runtime" />
+			<srcfiles refid="src-files-taskdef" />
+			<srcfiles refid="lib-files-jacob" />
+			<!-- Check the build file itself as well -->
+			<srcfiles refid="project-builder-files" />
+		</uptodate>
+		<if>
+			<equals arg1="${jarStandaloneUpToDate}" arg2="true" />
+			<then>
+				<echo message="checkStandaloneJar says jarStandaloneUpToDate= ${jarStandaloneUpToDate}" />
+			</then>
+			<else>
+				<echo message="checkStandaloneJar says jarStandaloneUpToDate= *** outdated ***" />
+			</else>
+		</if>
+
+	</target>
+
+	
+	<!--
+    * =====================================================================
+    *   Produces the files that must be uploaded to SourceForge:
+    * ===================================================================== -->
+	<target name="createSourceForgeFiles" description="create SourceForge files">
+
+		<echo>Creating files to upload to SourceForge '${build.updatesite}' ...</echo>
+
+		<delete includeemptydirs="true">
+			<fileset dir="${build.upload.dir}" includes="**/*" />
+		</delete>
+
+		<zip basedir="${zip.base.directory}" destfile="${build.upload.dir}\${zip.file.name}">
+			<include name="**/*" />
+			<exclude name="**/.project" />
+		</zip>
+
+		<antcall target="copyUpdateSiteToEclipseSetup">
+		</antcall>
+		
+	</target>
+
+	
+	<!--
+    * =====================================================================
+    *   Copies the update site zip file to the iSphere Eclipse Setup 
+    *   project.
+    * ===================================================================== -->
+	<target name="copyUpdateSiteToEclipseSetup" >
+
+		<copy includeemptydirs="false" toFile="${eclipse.plugin.dir}/iSphere Ant Contribution.zip">
+			<fileset dir="${build.upload.dir}">
+				<include name="${zip.file.name}"/>
+			</fileset>
+		</copy>
+		
+	</target>
+
+</project>

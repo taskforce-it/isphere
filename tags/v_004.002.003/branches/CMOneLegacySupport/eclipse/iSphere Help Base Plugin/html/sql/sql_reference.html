@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+	<title>SQL Reference</title>
+</head>
+
+<body>
+<h1>SQL Reference</h1>
+The SQL language that is used for filtering journal entries is very similar to the IBM SQL. In
+most cases it should be possible to use the same SQL statements that would be used on the host
+system.
+<p>
+<h2>Type Casting</h2>
+<p>
+Strings are automatically casted into <i>Number</i>, <i>Date</i>, <i>Time</i> and <i>Timestamp</i> values.
+<p>
+<h2>Date formats</h2>
+<p>
+<table  cellspacing="10">
+<tr><td width="90">ISO</td><td>YYYY-MM-DD</td></tr>
+<tr><td width="90">USA</td><td>MM/DD/YYYY</td></tr>
+<tr><td width="90">EUR</td><td>DD.MM.YYYY</td></tr>
+</table>
+<p>
+<h2>Time formats</h2>
+<p>
+<table  cellspacing="10">
+<tr><td width="90">ISO</td><td>HH24.MI.SS</td></tr>
+<tr><td width="90">USA (am)</td><td>HH12:MI AM</td></tr>
+<tr><td width="90">USA (pm)</td><td>HH12:MI PM</td></tr>
+<tr><td width="90">EUR</td><td>HH24:MI:SS</td></tr>
+</table>
+<p>
+<h2>Timestamp formats</h2>
+<p>
+<table  cellspacing="10">
+<tr><td width="90">ISO</td><td>YYYY-MM-DD HH24:MI:SS.NNN</td></tr>
+<tr><td width="90">IBM</td><td>YYYY-MM-DD-HH24.MI.SS.NNN</td></tr>
+</table>
+<p>
+<h2>SQL Functions</h2>
+<p>
+<table cellspacing="10">
+<tr><th align="left">Function</th>   <th align="left">Example</th></tr>
+<tr><td valign="top">Abs</td>        <td>Abs(7.59) = 7.59<br>
+                                         Abs(-7.59) = 7.59</td></tr>
+<tr><td valign="top">Add</td>        <td>7.59 + 2.41 = 10.0<br>
+                                         Date('2016-02-27') + Day(5) = '2016-03-03'<br>
+                                         Time('15.10.30') + Hour(15) = '06:10:30'<br>
+                                         Timestamp('2018-12-21-15.10.30.123') + Hour(5) = '2018-12-21-20.10.30.123'</td></tr>
+<tr><td valign="top">Between</td>    <td>5 Between 1 And 10<br>
+                                         Date('2018-12-21') Between '2018-12-20' And '2018-12-22'<br>
+                                         Time('15.10.30') Between '15.10.29' And '15.10.31'<br>
+                                         Timestamp('2018-12-21-15.10.30') Between '2018-12-21-15.10.29' And '2018-12-21-15.10.31'</td></tr>
+<tr><td valign="top">Ceil</td>       <td>Ceil(10.5) = 11<br>
+                                         Ceil(1.234e2) = 124</td></tr>
+<tr><td valign="top">Concat</td>     <td>Concat('Hello', '-World') = 'Hello-World'<br>
+                                         'a' || 'b' || 'c' = 'abc'</td></tr>
+<tr><td valign="top">Date</td>       <td>Date('2018-12-05') = '2018-12-05'<br>
+                                         Date('2018-12-05') > '2018-12-04'<br>
+                                         Date(Timestamp('2018-12-05-15.30.00.123')) = '2018-12-05'</td></tr>
+<tr><td valign="top">Day</td>        <td>Day(Date('2018-12-05')) = 5<br>
+                                         Date('2018-12-05') + Day(10) = '2018-12-15'<br>
+                                         Date('2018-12-05') - Day(10) = '2018-11-25'</td></tr>
+<tr><td valign="top">Divide</td>     <td>26 / 8 = 3.25<br>
+                                         26 / '3.25' = 8</td></tr>
+<tr><td valign="top">Floor</td>      <td>Floor(10.5) = 10<br>
+                                         Floor(1.234e2) = 123</td></tr>
+<tr><td valign="top">Hour</td>       <td>Hour(Time('12:00:00')) = 12<br>
+                                         Time('12:00:00') + Hour(3) = '15:00:00'<br>
+                                         Time('12:00:00') - Hour(3) = '09:00:00'</td></tr>
+<tr><td valign="top">In</td>         <td>'PT' In('PT', 'PX', 'UB', 'UP', 'UR', 'DL', 'DR')<br>
+                                         '2.2' In(1, 2.2, 3, 4.5, 5, 6)<br>
+                                         Date('2018-12-20') In(Date('2018-12-19'), '2018-12-20', '2018-12-21')</td></tr>
+<tr><td valign="top">Length</td>     <td>Length('Hello World') = 11</td></tr>
+<tr><td valign="top">Like</td>       <td>'Westend New York' Like('%New%') = true<br>
+                                         'Westend New York' Like('__stend New York') = true<br>
+                                         'Eastend New York' Like('__stend New York') = true<p>
+                                         With regular expression (expression starts and ends with a slash):<br>
+                                         'Westend New York' Like('/.*New.*/') = true</td></tr>
+<tr><td valign="top">Lower</td>      <td>Lower('Hello World') = 'hello world'</td></tr>
+<tr><td valign="top">Lpad</td>       <td>Lpad('Hello', 10) = '     Hello'<br>
+                                         Lpad('Hello', 10, '-+') = '-+-+-Hello'</td></tr>
+<tr><td valign="top">Ltrim</td>      <td>LTrim('   It works!   ') = 'It works!   '<br>
+                                         LTrim('***It works!###', '*') = 'It works!###'<br>
+                                         LTrim('123It works!789', '0123456789') = 'It works!789'</td></tr>
+<tr><td valign="top">Microsecond</td><td>Microsecond(Timestamp('2018-12-05-15.00.55.123')) = 123</td></tr>
+<tr><td valign="top">Minute</td>     <td>Minute(Time('12:25:00')) = 25<br>
+                                         Time('12:00:00') + Minute(65) = '13:05:00'<br>
+                                         Time('12:00:00') - Minute(65) = '10:55:00'</td></tr>
+<tr><td valign="top">Modulus</td>    <td>11 Mod 3 = 2<br>
+                                         9 Mod 3 = 0</td></tr>
+<tr><td valign="top">Month</td>      <td>Month(Date('2018-12-05')) = 12<br>
+                                         Date('2018-12-05') + Month(1) = '2019-01-05'<br>
+                                         Date('2018-12-05') - Month(1) = '2018-11-05'</td></tr>
+<tr><td valign="top">Multiply</td>   <td>3.25 * 8 = 26<br>
+                                         8 * '3.25' = 26</td></tr>
+<tr><td valign="top">Regexp_Like</td><td>'Westend New York' Regexp_Like('.*New.*') = true<br>
+                                         'Westend New York' Regexp_Like('.{2}stend New York') = true<br>
+                                         'Eastend New York' Regexp_Like('.{2}stend New York') = true</td></tr>
+<tr><td valign="top">Replace</td>    <td>Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC', 'WWW') = 'ZZZ-WWW-ZZZ-WWW-ZZZ'<br>
+                                         Replace('ZZZ-ABC-ZZZ-ABC-ZZZ', 'ABC') = 'ZZZ--ZZZ--ZZZ'</td></tr>
+<tr><td valign="top">Round</td>      <td>Round(26.4) = 26<br>
+                                         Round(26.5) = 27<p>
+                                         Round(125.432, 1) = 125.4<br>
+                                         Round(124.567, 1) = 124.6<p>
+                                         Round(125.432, 0) = 125<br>
+                                         Round(124.567, 0) = 125<p>
+                                         Round(125.432, -1) = 130<br>
+                                         Round(124.567, -1) = 120<p>
+                                         Round(Date('2018-07-01'), 'YYYY') = '2019-01-01'<br>
+                                         Round(Date('2018-06-30'), 'YYYY') = '2018-01-01'<br>
+                                         Round(Date('2016-02-16'), 'MM') = '2016-03-01'<br>
+                                         Round(Date('2016-02-15'), 'MM') = '2016-02-01'<p>
+                                         Round(Time('23:30:00'), 'HH24') = '00:00:00'<br>
+                                         Round(Time('23:29:00'), 'HH24') = '23:00:00'<br>
+                                         Round(Time('23:59:30'), 'MI') = '00:00:00'<br>
+                                         Round(Time('23:59:30'), 'MI') = '00:00:00'</td></tr>
+<tr><td valign="top">Rpad</td>       <td>Rpad('Hello', 10) = 'Hello     '<br>
+                                         Rpad('Hello', 10, '-+') = 'Hello-+-+-'</td></tr>
+<tr><td valign="top">Rtrim</td>      <td>RTrim('   It works!   ') = '   It works!'<br>
+                                         RTrim('***It works!###', '#') = '***It works!'<br>
+                                         RTrim('123It works!789', '0123456789') = '123It works!'</td></tr>
+<tr><td valign="top">Second</td>     <td>Second(Time('12:00:25')) = 25<br>
+                                         Time('12:00:00') + Second(65) = '12:01:05'<br>
+                                         Time('12:00:00') - Second(65) = '11:58:55'</td></tr>
+<tr><td valign="top">Sign</td>       <td>Sign(-10) = -1<br>
+                                         Sign(0) = 0<br>
+                                         Sign(10) = 1</td></tr>
+<tr><td valign="top">Substract</td>  <td>2.41 - 10 = -7.59<br>
+                                         Date('2016-03-03') - Day(5) = '2016-02-27'<br>
+                                         Time('15.10.30') - Hour(5) = '10:10:30'<br>
+                                         Timestamp('2018-12-21-15.10.30.123') - Hour(5) = '2018-12-21-10.10.30.123'</td></tr>
+<tr><td valign="top">Substr</td>     <td>Equivalent to: <i>Substring</i></td></tr>
+<tr><td valign="top">Substring</td>  <td>Substring('Hello World', 1, 5) = 'Hello'<br>
+                                         Substring('Hello World', 7) = 'World'<br>
+                                         Substring('Hello World', 7, 999) = 'World'<br>
+                                         Substring('Hello World', 999) = ''</td></tr>
+<tr><td valign="top">Time</td>       <td>Time('12:00:00') = '12:00:00'<br>
+                                         Time('12:00:00') > '11:59:59'<br>
+                                         Time(Timestamp('2018-12-05-15.30.00.123')) = '15.30.00'</td></tr>
+<tr><td valign="top">Timestamp</td>  <td>Timestamp('2018-12-05 12:15:25') = Date('2018-12-05') + Time('12:15:25')</td></tr>
+<tr><td valign="top">Trim</td>       <td>Trim('   It works!   ') = 'It works!'<br>
+                                         Trim('***It works!###', '*') = 'It works!###'<br>
+                                         Trim('123It works!789', '0123456789') = 'It works!'</td></tr>
+<tr><td valign="top">Upper</td>      <td>Upper('Hello World') = 'HELLO WORLD'</td></tr>
+<tr><td valign="top">Year</td>       <td>Year(Date('2018-12-05')) = 2018<br>
+                                         Date('2018-12-05') + Year(1) = '2019-12-05'<br>
+                                         Date('2018-12-05') - Year(1) = '2017-12-05'</td></tr>
+</table>
+<p>
+<iframe src="../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

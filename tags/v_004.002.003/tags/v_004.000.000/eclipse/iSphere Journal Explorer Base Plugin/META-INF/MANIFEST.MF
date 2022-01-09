@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Journal Explorer Base
+Bundle-SymbolicName: biz.isphere.journalexplorer.base
+Bundle-Version: 4.0.0.r
+Bundle-Activator: biz.isphere.journalexplorer.base.ISphereJournalExplorerBasePlugin
+Bundle-Vendor: iSphere Project Team
+Require-Bundle: org.eclipse.core.runtime,
+ com.ibm.etools.iseries.toolbox
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Export-Package: biz.isphere.journalexplorer.base.as400.access,
+ biz.isphere.journalexplorer.base.as400.system,
+ biz.isphere.journalexplorer.base.interfaces

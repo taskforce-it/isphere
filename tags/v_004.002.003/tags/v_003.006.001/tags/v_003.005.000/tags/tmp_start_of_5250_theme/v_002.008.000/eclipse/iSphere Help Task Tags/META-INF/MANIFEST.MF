@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Task Tags Help (optional)
+Bundle-SymbolicName: biz.isphere.lpex.tasks.help;singleton:=true
+Bundle-Version: 2.8.0.r
+Require-Bundle: org.eclipse.help,
+ biz.isphere.base.help
+Bundle-Vendor: iSphere Project Team

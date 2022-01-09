@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Core Plug-in API" link_to="../biz.isphere.base.help/toc/toc.xml#api"> 
+  <topic label="Core Plug-in API" href="html/api/core-plugin-api.html"> 
+  </topic>
+</toc> 

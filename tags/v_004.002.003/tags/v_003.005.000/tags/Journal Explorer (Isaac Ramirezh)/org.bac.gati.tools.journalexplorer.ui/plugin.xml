@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%Plugin-Category"
+            id="org.bac.gati.tools">
+      </category>
+      <view
+            name="%JournalExplore-View"
+            icon="icons/book_search.png"
+            category="org.bac.gati.tools"
+            class="org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView"
+            id="org.bac.gati.tools.journalexplorer.ui.views.JournalExplorerView">
+      </view>
+      <view
+            category="org.bac.gati.tools"
+            class="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"
+            icon="icons/segment_edit.png"
+            id="org.bac.gati.tools.journalexplorer.ui.views.JournalEntryView"
+            name="%JournalEntryViewer-View">
+      </view>
+   </extension>
+</plugin>
