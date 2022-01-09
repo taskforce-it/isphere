@@ -1,5 +1,5 @@
 
-Changelog: iSphere 4.2.4.b003
+Changelog: iSphere 4.2.4.r
 -----------------------------
  • Removed plug-in discovery sites that are no update sites.
 
