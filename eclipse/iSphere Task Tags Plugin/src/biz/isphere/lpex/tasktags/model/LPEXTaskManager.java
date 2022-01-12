@@ -10,6 +10,8 @@ package biz.isphere.lpex.tasktags.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,10 +19,14 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 import biz.isphere.base.internal.JDTCoreUtils;
@@ -64,16 +70,42 @@ public class LPEXTaskManager {
      * @throws CoreException
      */
     public void createMarkers() throws CoreException {
+
+        final List<Marker> markers = new LinkedList<Marker>();
+
         if (resource != null && document != null) {
             for (LPEXTask tTask : parseDocument()) {
-                Map<String, Object> tAttrs = new HashMap<String, Object>();
-                tAttrs.put("userEditable", false);
-                tAttrs.put("priority", new Integer(tTask.getPriority()));
-                MarkerUtilities.setLineNumber(tAttrs, tTask.getLine());
-                MarkerUtilities.setMessage(tAttrs, tTask.getMessage());
-                MarkerUtilities.setCharStart(tAttrs, tTask.getCharStart());
-                MarkerUtilities.setCharEnd(tAttrs, tTask.getCharEnd());
-                MarkerUtilities.createMarker(resource, tAttrs, LPEXTask.ID);
+                Marker marker = new Marker(tTask);
+                markers.add(marker);
+            }
+        }
+
+        /*
+         * Create markers on the UI thread to let them show up in the document.
+         * It seems that the editor must have been created before adding the
+         * markers.
+         */
+
+        UIJob uiJob = new UIJob("") {
+
+            @Override
+            public IStatus runInUIThread(IProgressMonitor var1) {
+
+                createMarkersInternally(markers);
+
+                return Status.OK_STATUS;
+            }
+        };
+        uiJob.schedule();
+    }
+
+    private void createMarkersInternally(final List<Marker> markers) {
+
+        for (Marker marker : markers) {
+            try {
+                MarkerUtilities.createMarker(resource, marker.getAttributes(), LPEXTask.ID);
+            } catch (CoreException e) {
+                ISphereLpexTasksPlugin.logError("Failed to process document: " + getDocumentName(), e);
             }
         }
     }

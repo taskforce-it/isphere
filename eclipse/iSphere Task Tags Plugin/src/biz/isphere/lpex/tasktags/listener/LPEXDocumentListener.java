@@ -14,7 +14,6 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -102,8 +101,8 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     private void processDocument() {
         LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
-        Job tJob = new DocumentScanner("Building task list ...", lpexTaskManager);
-        tJob.schedule();
+        DocumentScanner tScanner = new DocumentScanner(lpexTaskManager);
+        tScanner.runAsBackgroundProcess("Building task list ..."); // $NON-NLS-1$
     }
 
     /**
