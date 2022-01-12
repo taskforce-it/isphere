@@ -22,30 +22,42 @@ import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
  * 
  * @author Thomas Raddatz
  */
-public class DocumentScanner extends Job {
+public class DocumentScanner {
 
     private LPEXTaskManager manager;
 
-    public DocumentScanner(String aName, LPEXTaskManager aManager) {
-        super(aName);
+    public DocumentScanner(LPEXTaskManager aManager) {
         manager = aManager;
     }
 
-    @Override
-    protected IStatus run(IProgressMonitor arg0) {
+    public void runAsBackgroundProcess(String aName) {
+        Job job = new Job(aName) {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                runInternally(monitor);
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
+    }
+
+    protected void runInternally(IProgressMonitor monitor) {
+
+        // Calendar start = Calendar.getInstance();
 
         try {
             manager.removeMarkers();
-            if (!manager.markerAreEnabled()) {
-                return Status.OK_STATUS;
+            if (manager.markerAreEnabled()) {
+                manager.createMarkers();
             }
 
-            manager.createMarkers();
         } catch (Exception e) {
             ISphereLpexTasksPlugin.logError("Failed to process document: " + manager.getDocumentName(), e);
         }
 
-        return Status.OK_STATUS;
+        // Calendar end = Calendar.getInstance();
+        // System.out.println("ms: " + (end.getTimeInMillis() -
+        // start.getTimeInMillis()));
     }
 
 }
