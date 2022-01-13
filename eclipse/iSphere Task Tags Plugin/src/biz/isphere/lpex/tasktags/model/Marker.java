@@ -11,6 +11,7 @@ package biz.isphere.lpex.tasktags.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 
 public class Marker {
@@ -21,8 +22,8 @@ public class Marker {
 
         attrs = new HashMap<String, Object>();
 
-        attrs.put("userEditable", false); //$NON-NLS-1$
-        attrs.put("priority", new Integer(task.getPriority())); //$NON-NLS-1$
+        attrs.put(IMarker.USER_EDITABLE, false);
+        attrs.put(IMarker.PRIORITY, new Integer(task.getPriority()));
 
         MarkerUtilities.setLineNumber(attrs, task.getLine());
         MarkerUtilities.setMessage(attrs, task.getMessage());
