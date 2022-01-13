@@ -1,6 +1,8 @@
 
 Changelog: iSphere 4.2.5.b001
 -----------------------------
+ • Changed LPEX Task Tags plug-in to execute the scanner when the
+   document is changed.
  • Fixed creating LPEX task tags. Markers are created on the UI
    thread, now.
 
