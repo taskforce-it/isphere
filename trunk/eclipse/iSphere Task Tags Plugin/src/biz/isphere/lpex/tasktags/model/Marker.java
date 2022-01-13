@@ -31,7 +31,31 @@ public class Marker {
         MarkerUtilities.setCharEnd(attrs, task.getCharEnd());
     }
 
-    public Map<String, Object> getAttributes() {
+    public int getLineNumber() {
+        return (Integer)getAttributes().get(IMarker.LINE_NUMBER);
+    }
+
+    public String getMessage() {
+        return (String)getAttributes().get(IMarker.MESSAGE);
+    }
+
+    public int getCharStart() {
+        return (Integer)getAttributes().get(IMarker.CHAR_START);
+    }
+
+    public int getCharEnd() {
+        return (Integer)getAttributes().get(IMarker.CHAR_END);
+    }
+
+    public boolean getUserEditable() {
+        return (Boolean)getAttributes().get(IMarker.USER_EDITABLE);
+    }
+
+    public int getPriority() {
+        return (Integer)getAttributes().get(IMarker.PRIORITY);
+    }
+
+    private Map<String, Object> getAttributes() {
         return attrs;
     }
 }
