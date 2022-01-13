@@ -127,7 +127,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         textISphereLibrary.setLayoutData(createTextLayoutData());
         textISphereLibrary.setTextLimit(10);
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         validatorLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelASPGroup = new Label(container, SWT.NONE);

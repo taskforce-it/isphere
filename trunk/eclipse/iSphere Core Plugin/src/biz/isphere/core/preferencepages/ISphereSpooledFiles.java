@@ -306,7 +306,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionTextLibrary.setLayoutData(createGroupLayoutData());
         textConversionTextLibrary.setTextLimit(10);
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         validatorConversionTextLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionTextCommand = new Label(groupConversionText, SWT.NONE);
@@ -410,7 +409,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionHTMLLibrary.setLayoutData(createGroupLayoutData());
         textConversionHTMLLibrary.setTextLimit(10);
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         validatorConversionHTMLLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionHTMLCommand = new Label(groupConversionHTML, SWT.NONE);
@@ -506,7 +504,6 @@ public class ISphereSpooledFiles extends PreferencePage implements IWorkbenchPre
         textConversionPDFLibrary.setLayoutData(createGroupLayoutData());
         textConversionPDFLibrary.setTextLimit(10);
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         validatorConversionPDFLibrary = Validator.getLibraryNameInstance(getDefaultSystemCcsid());
 
         Label labelConversionPDFCommand = new Label(groupConversionPDF, SWT.NONE);

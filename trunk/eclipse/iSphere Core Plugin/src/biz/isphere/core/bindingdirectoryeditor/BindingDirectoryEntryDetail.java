@@ -103,7 +103,6 @@ public class BindingDirectoryEntryDetail {
             comboLibrary.setEnabled(false);
         }
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         validatorLibrary = Validator.getLibraryNameInstance(ccsid, ISeries.SPCVAL_LIBL);
 
         // Object
@@ -124,7 +123,6 @@ public class BindingDirectoryEntryDetail {
             textObject.setEnabled(false);
         }
 
-        // TODO: fix name validator (pass CCSID) - DONE
         validatorObject = Validator.getNameInstance(ccsid);
 
         // Object type
