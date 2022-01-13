@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 
 import biz.isphere.base.internal.JDTCoreUtils;
 import biz.isphere.base.internal.StringHelper;
@@ -82,8 +81,8 @@ public class LPEXTaskManager {
 
         /*
          * Create markers on the UI thread to let them show up in the document.
-         * It seems that the editor must have been created before adding the
-         * markers.
+         * It seems that the editor must have been created before the markers
+         * can be added.
          */
 
         UIJob uiJob = new UIJob("") {
@@ -103,7 +102,16 @@ public class LPEXTaskManager {
 
         for (Marker marker : markers) {
             try {
-                MarkerUtilities.createMarker(resource, marker.getAttributes(), LPEXTask.ID);
+
+            	// Taken from: https://www.vogella.com/tutorials/EclipseEditors/article.html
+                IMarker iMarker = resource.createMarker(LPEXTask.ID);
+                iMarker.setAttribute(IMarker.LINE_NUMBER, marker.getLineNumber());
+                iMarker.setAttribute(IMarker.MESSAGE, marker.getMessage());
+                iMarker.setAttribute(IMarker.CHAR_START, marker.getCharStart());
+                iMarker.setAttribute(IMarker.CHAR_END, marker.getCharEnd());
+                iMarker.setAttribute(IMarker.USER_EDITABLE, marker.getUserEditable());
+                iMarker.setAttribute(IMarker.PRIORITY, marker.getPriority());
+
             } catch (CoreException e) {
                 ISphereLpexTasksPlugin.logError("Failed to process document: " + getDocumentName(), e);
             }
