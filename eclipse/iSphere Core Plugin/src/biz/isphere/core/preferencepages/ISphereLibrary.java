@@ -34,8 +34,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -47,6 +45,8 @@ import biz.isphere.core.internal.handler.TransferLibraryHandler;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
+
+import com.ibm.as400.access.AS400;
 
 public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -66,15 +66,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
     private Button buttonTransfer;
     private Button chkboxUseISphereJdbc;
 
-    private boolean updateISphereLibraryVersion;
-
     public ISphereLibrary() {
         super();
 
         setPreferenceStore(ISpherePlugin.getDefault().getPreferenceStore());
         getPreferenceStore();
-
-        this.updateISphereLibraryVersion = false;
     }
 
     @Override
@@ -178,7 +174,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         buttonUpdateISphereLibraryVersion.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_REFRESH));
         buttonUpdateISphereLibraryVersion.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent arg0) {
-                updateISphereLibraryVersion = true;
                 updateISphereLibraryVersion();
             }
 
@@ -246,20 +241,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         return super.performOk();
     }
 
-    private void setControlEnablement() {
-
-        if (updateISphereLibraryVersion) {
-            buttonUpdateISphereLibraryVersion.setEnabled(false);
-        } else {
-            buttonUpdateISphereLibraryVersion.setEnabled(true);
-        }
-    }
-
     protected void setStoreToValues() {
 
         Preferences.getInstance().setConnectionName(textConnectionName.getText());
-        Preferences.getInstance()
-            .setFtpPortNumber(IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
+        Preferences.getInstance().setFtpPortNumber(
+            IntHelper.tryParseInt(textFtpPortNumber.getText(), Preferences.getInstance().getDefaultFtpPortNumber()));
         Preferences.getInstance().setISphereLibrary(iSphereLibrary);
         Preferences.getInstance().setSystemCcsid(IntHelper.tryParseInt(textSystemCcsid.getText(), Preferences.getInstance().getDefaultSystemCcsid()));
         Preferences.getInstance().setUseISphereJdbcConnectionManager(chkboxUseISphereJdbc.getSelection());
@@ -321,18 +307,11 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
         }
 
         textISphereLibraryVersion.setText(text);
-
-        setControlEnablement();
     }
 
     private String getISphereLibraryVersion(String connectionName, String library) {
 
-        if (!updateISphereLibraryVersion) {
-            return ""; //$NON-NLS-1$
-        }
-
         if (StringHelper.isNullOrEmpty(connectionName) || StringHelper.isNullOrEmpty(library)) {
-            updateISphereLibraryVersion = false;
             return Messages.not_found;
         }
 
@@ -342,7 +321,6 @@ public class ISphereLibrary extends PreferencePage implements IWorkbenchPreferen
 
             AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
             if (as400 == null) {
-                updateISphereLibraryVersion = false;
                 return Messages.bind(Messages.Host_A_not_found_or_connected, connectionName);
             }
 
