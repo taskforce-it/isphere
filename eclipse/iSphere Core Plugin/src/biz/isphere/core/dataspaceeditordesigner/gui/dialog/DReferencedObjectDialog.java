@@ -61,7 +61,6 @@ public class DReferencedObjectDialog extends AbstractDialog {
             }
         });
 
-        // TODO: fix name validator (pass CCSID) - DONE
         nameValidator = Validator.getNameInstance(getDefaultSystemCcsid());
 
         // Library
@@ -74,7 +73,6 @@ public class DReferencedObjectDialog extends AbstractDialog {
             }
         });
 
-        // TODO: fix library name validator (pass CCSID) - DONE
         libraryValidator = Validator.getLibraryNameInstance(getDefaultSystemCcsid(), ISeries.SPCVAL_LIBL);
     }
 
