@@ -22,23 +22,19 @@ import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
  * 
  * @author Thomas Raddatz
  */
-public class DocumentScanner {
+public class DocumentScanner extends Job {
 
     private LPEXTaskManager manager;
 
     public DocumentScanner(LPEXTaskManager aManager) {
+        super(""); //$NON-NLS-1$
         manager = aManager;
     }
 
-    public void runAsBackgroundProcess(String aName) {
-        Job job = new Job(aName) {
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
-                runInternally(monitor);
-                return Status.OK_STATUS;
-            }
-        };
-        job.schedule();
+    @Override
+    protected IStatus run(IProgressMonitor monitor) {
+        runInternally(monitor);
+        return Status.OK_STATUS;
     }
 
     protected void runInternally(IProgressMonitor monitor) {
@@ -59,5 +55,4 @@ public class DocumentScanner {
         // System.out.println("ms: " + (end.getTimeInMillis() -
         // start.getTimeInMillis()));
     }
-
 }
