@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,8 +19,8 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.tn5250j.core.Messages;
 import biz.isphere.tn5250j.core.session.ISession;
@@ -121,15 +121,14 @@ public class DesignerOpenWithAction implements IObjectActionDelegate {
 
                 if (ISession.AREA_VIEW.equals(area)) {
 
-                    tn5250jPart = (ITN5250JPart)(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(DesignerView.ID));
+                    tn5250jPart = (ITN5250JPart)UIHelper.getActivePage().showView(DesignerView.ID);
 
                 } else if (ISession.AREA_EDITOR.equals(area)) {
 
                     TN5250JEditorInput editorInput = new TN5250JEditorInput(DesignerEditor.ID, Messages.iSphere_5250_Designer, "TN5250J",
                         TN5250JRSEPlugin.getDefault().getImageRegistry().get(TN5250JRSEPlugin.IMAGE_TN5250J));
 
-                    tn5250jPart = (ITN5250JPart)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                        .openEditor(editorInput, DesignerEditor.ID);
+                    tn5250jPart = (ITN5250JPart)UIHelper.getActivePage().openEditor(editorInput, DesignerEditor.ID);
 
                 }
 

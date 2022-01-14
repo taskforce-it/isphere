@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.base.jface.dialogs.XViewPart;
 import biz.isphere.core.ISpherePlugin;
@@ -495,11 +495,11 @@ public class JobLogExplorerView extends XViewPart implements IJobLogExplorerStat
 
     public static void openJobLog(Shell shell, AbstractJobLogExplorerInput input) throws Exception {
 
-        IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(JobLogExplorerView.ID);
+        IViewPart view = UIHelper.getActivePage().findView(JobLogExplorerView.ID);
         if (view == null) {
-            view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(JobLogExplorerView.ID);
+            view = UIHelper.getActivePage().showView(JobLogExplorerView.ID);
         } else {
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(view);
+            UIHelper.getActivePage().activate(view);
         }
 
         if (view instanceof JobLogExplorerView) {

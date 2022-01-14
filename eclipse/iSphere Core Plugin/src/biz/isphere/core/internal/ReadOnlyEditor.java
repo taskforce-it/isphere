@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+
+import biz.isphere.base.internal.UIHelper;
 
 public class ReadOnlyEditor extends AbstractDecoratedTextEditor implements IWorkbenchListener {
 
@@ -69,7 +71,7 @@ public class ReadOnlyEditor extends AbstractDecoratedTextEditor implements IWork
 
     public boolean preShutdown(IWorkbench workbench, boolean forced) {
         if (editorPart != null) {
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editorPart, false);
+            UIHelper.getActivePage().closeEditor(editorPart, false);
         }
         PlatformUI.getWorkbench().removeWorkbenchListener(this);
         return true;

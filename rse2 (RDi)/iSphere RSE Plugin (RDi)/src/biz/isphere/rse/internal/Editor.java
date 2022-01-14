@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
@@ -97,7 +98,7 @@ public class Editor implements IEditor {
                     if (statement != 0) {
                         if (!mbr.openIsCanceled()) {
                             SystemTextEditor systemTextEditor = mbr.getEditor();
-                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(mbr.getEditorPart());
+                            UIHelper.getActivePage().activate(mbr.getEditorPart());
                             if (systemTextEditor != null) {
                                 systemTextEditor.gotoLine(statement);
                             }

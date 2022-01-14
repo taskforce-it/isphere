@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.swt.events.TableAutoSizeControlListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -559,7 +560,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         }
 
         MessageFileCompareEditorInput editorInput = new MessageFileCompareEditorInput(leftMessageFile, rightMessageFile, configuration);
-        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, AbstractMessageFileCompareEditor.ID);
+        UIHelper.getActivePage().openEditor(editorInput, AbstractMessageFileCompareEditor.ID);
     }
 
     private void refreshAndCheckMessageFileNames() {

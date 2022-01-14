@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -207,7 +207,7 @@ public class MessageDescriptionViewer {
         @Override
         public void widgetSelected(SelectionEvent event) {
             try {
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(AbstractViewMessageDescriptionPreview.ID);
+                UIHelper.getActivePage().showView(AbstractViewMessageDescriptionPreview.ID);
             } catch (PartInitException e) {
                 // ignore errors
             }

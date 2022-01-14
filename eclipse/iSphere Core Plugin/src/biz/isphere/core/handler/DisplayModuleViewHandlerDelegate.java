@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2022 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,8 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.as400.access.AS400;
-
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -29,6 +28,8 @@ import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMVResult;
 import biz.isphere.core.moduleviewer.ModuleViewEditor;
 import biz.isphere.core.moduleviewer.ModuleViewEditorInput;
+
+import com.ibm.as400.access.AS400;
 
 public class DisplayModuleViewHandlerDelegate {
 
@@ -149,7 +150,7 @@ public class DisplayModuleViewHandlerDelegate {
             ModuleViewEditorInput tEditorInput = new ModuleViewEditorInput(system, connectionName, iSphereLibrary, debuggerViews,
                 debuggerView.getNumber());
 
-            IWorkbenchPage tPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage tPage = UIHelper.getActivePage();
             ModuleViewEditor tEditor = tEditorInput.findEditor(tPage);
             if (tEditor != null) {
                 tEditor.setInput(tEditorInput);

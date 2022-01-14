@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
 import org.tn5250j.TN5250jConstants;
 
 import biz.isphere.base.internal.IntHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.tn5250j.core.Messages;
@@ -237,7 +237,7 @@ public class PreferencePage2 extends PreferencePage implements IWorkbenchPrefere
 
     private boolean is5250ViewVisible() {
 
-        IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
+        IViewReference[] viewReferences = UIHelper.getActivePage().getViewReferences();
         for (IViewReference iViewReference : viewReferences) {
             if ("biz.isphere.tn5250j.rse.sessionsview.SessionsView".equals(iViewReference.getId())) {
                 return true;
