@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.lpex.tasktags.job.DocumentScanner;
+import biz.isphere.lpex.tasktags.job.DocumentScannerJob;
 import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
 
 /**
@@ -124,7 +124,7 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
             scannerJob.cancel();
         }
 
-        scannerJob = new DocumentScanner(lpexTaskManager);
+        scannerJob = new DocumentScannerJob(lpexTaskManager);
         scannerJob.schedule(250);
     }
 
