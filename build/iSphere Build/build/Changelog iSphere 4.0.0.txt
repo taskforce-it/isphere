@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.2.5.b003
+-----------------------------
+ • Introduced class UIHelper and replaced
+   'PlatformUI.getWorkbench().getActiveWorkbenchWindow()'.
+
 Changelog: iSphere 4.2.5.b002
 -----------------------------
  • Do not disable the "Refresh" button on the "Library" page.
