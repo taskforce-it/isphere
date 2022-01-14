@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -90,7 +91,7 @@ public class BindingDirectoryEditor extends EditorPart {
     public static void openEditor(String connectionName, RemoteObject remoteObject, String mode) throws PartInitException {
         if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
             BindingDirectoryEditorInput editorInput = new BindingDirectoryEditorInput(connectionName, remoteObject, mode);
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
+            UIHelper.getActivePage().openEditor(editorInput, BindingDirectoryEditor.ID);
         }
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,12 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.tn5250j.Session5250;
 import org.tn5250j.keyboard.HostKey;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.tn5250j.core.tn5250jpart.ITN5250JPart;
 import biz.isphere.tn5250j.core.tn5250jpart.RemoveSessionTab;
 import biz.isphere.tn5250j.core.tn5250jpart.TN5250JGUI;
@@ -54,7 +55,7 @@ public abstract class CoreDesignerGUI extends TN5250JGUI {
                             if (myString.startsWith("*VIEW-")) {
                                 String view = myString.substring(6);
                                 try {
-                                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(view);
+                                    UIHelper.getActivePage().showView(view);
                                 } catch (PartInitException e) {
                                 }
                             }

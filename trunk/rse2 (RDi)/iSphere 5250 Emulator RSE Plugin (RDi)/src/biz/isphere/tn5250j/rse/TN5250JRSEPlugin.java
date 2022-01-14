@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.BundleContext;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.tn5250j.core.TN5250JCorePlugin;
 import biz.isphere.tn5250j.core.preferences.Preferences;
 import biz.isphere.tn5250j.rse.sessionsview.SessionsView;
@@ -122,7 +122,7 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
             @Override
             public IStatus runInUIThread(IProgressMonitor paramIProgressMonitor) {
 
-                IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
+                IViewReference[] viewReferences = UIHelper.getActivePage().getViewReferences();
                 for (IViewReference iViewReference : viewReferences) {
                     if (SessionsView.ID.equals(iViewReference.getId())) {
                         IWorkbenchPart part = iViewReference.getPart(false);
@@ -131,7 +131,7 @@ public class TN5250JRSEPlugin extends AbstractUIPlugin {
                         }
                         if (part instanceof SessionsView) {
                             SessionsView sessionsView = (SessionsView)part;
-                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().bringToTop(sessionsView);
+                            UIHelper.getActivePage().bringToTop(sessionsView);
                         }
                     }
                 }

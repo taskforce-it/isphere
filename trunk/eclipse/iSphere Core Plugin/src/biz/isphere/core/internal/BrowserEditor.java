@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,9 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
+
+import biz.isphere.base.internal.UIHelper;
 
 public class BrowserEditor extends EditorPart {
 
@@ -39,7 +40,7 @@ public class BrowserEditor extends EditorPart {
             browser.setUrl(input.getUrl());
             browser.addCloseWindowListener(new CloseWindowListener() {
                 public void close(WindowEvent event) {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeEditor(editor, false);
+                    UIHelper.getActivePage().closeEditor(editor, false);
                 }
             });
         } catch (SWTError e) {
@@ -79,5 +80,5 @@ public class BrowserEditor extends EditorPart {
     public boolean isSaveAsAllowed() {
         return false;
     }
-    
+
 }
