@@ -23,11 +23,11 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.KeyHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
@@ -96,13 +96,9 @@ public class WorkWithSpooledFilesDebugPopupAction implements IViewActionDelegate
                         return;
                     }
 
-                    IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
-                        }
+                    IWorkbenchPage page = UIHelper.getActivePage();
+                    if (page != null) {
+                        openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
                     }
                 }
             }

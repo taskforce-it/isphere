@@ -19,11 +19,8 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.lpex.tasktags.job.DocumentScannerJob;
 import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
 
@@ -61,7 +58,7 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     public void documentChanged(DocumentEvent anEvent) {
 
-        IEditorPart activeEditor = getActiveEditor();
+        IEditorPart activeEditor = UIHelper.getActiveEditor();
 
         if (activeEditor != null) {
             processDocument();
@@ -129,22 +126,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     private boolean isFileBufferValid(IFileBuffer aBuffer) {
         return ((ITextFileBuffer)aBuffer).getDocument() == document;
-    }
-
-    private static IEditorPart getActiveEditor() {
-
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
-        if (null == activeWorkbenchWindow) {
-            activeWorkbenchWindow = workbench.getWorkbenchWindows()[0];
-        }
-
-        IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-        if (activePage == null) {
-            return null;
-        }
-
-        return activePage.getActiveEditor();
     }
 
     public void bufferContentAboutToBeReplaced(IFileBuffer aBuffer) {

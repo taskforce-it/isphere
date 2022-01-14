@@ -15,13 +15,10 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Version;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.tn5250j.core.tn5250jeditor.TN5250JEditor;
 import biz.isphere.tn5250j.core.tn5250jview.TN5250JView;
@@ -99,7 +96,7 @@ public class ProcessSessionFocus {
                 ITN5250JPart workbenchPart = tn5250jGUI.getTN5250JInfo().getTN5250JPart();
                 if (workbenchPart instanceof TN5250JView || workbenchPart instanceof TN5250JEditor) {
 
-                    IWorkbenchPart activePart = getActivePart();
+                    IWorkbenchPart activePart = UIHelper.getActivePart();
                     if (activePart == null || workbenchPart == activePart) {
                         /*
                          * View is already active. So we do not need to activate
@@ -127,27 +124,6 @@ public class ProcessSessionFocus {
                 }
             }
 
-            private IWorkbenchPart getActivePart() {
-                
-                IWorkbench workbench = PlatformUI.getWorkbench();
-                if (workbench == null) {
-                    return null;
-                }
-                
-                IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
-                if (activeWorkbenchWindow == null) {
-                    return null;
-                }
-                
-                IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-                if (activePage == null) {
-                    return null;
-                }
-                
-                IWorkbenchPart activePart = activePage.getActivePart();
-                
-                return activePart;
-            }
         });
     }
 }

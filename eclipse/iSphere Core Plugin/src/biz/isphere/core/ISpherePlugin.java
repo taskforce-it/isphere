@@ -31,6 +31,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -449,7 +450,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
                     final String ERROR_LOG_VIEW = "org.eclipse.pde.runtime.LogView"; // $NON-NLS-1$
 
-                    IWorkbenchPage activePage = getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    IWorkbenchPage activePage = UIHelper.getActivePage();
                     if (activePage != null) {
                         if (activePage.findView(ERROR_LOG_VIEW) == null) {
                             activePage.showView(ERROR_LOG_VIEW);

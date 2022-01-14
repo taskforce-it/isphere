@@ -10,11 +10,9 @@ package biz.isphere.core.dataspaceeditor;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IEditorPart;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.internal.handler.AbstractCommandHandler;
 
 public class GoToHandler extends AbstractCommandHandler {
@@ -35,22 +33,7 @@ public class GoToHandler extends AbstractCommandHandler {
 
     private AbstractDataSpaceEditor getActiveEditor() {
 
-        IWorkbench workbench = PlatformUI.getWorkbench();
-        if (workbench == null || workbench.isClosing()) {
-            return null;
-        }
-
-        IWorkbenchWindow activeWorkbenchWindow = workbench.getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow == null) {
-            return null;
-        }
-
-        IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-        if (activePage == null) {
-            return null;
-        }
-
-        Object editor = activePage.getActiveEditor();
+        IEditorPart editor = UIHelper.getActiveEditor();
         if (editor instanceof AbstractDataSpaceEditor) {
             return (AbstractDataSpaceEditor)editor;
         }

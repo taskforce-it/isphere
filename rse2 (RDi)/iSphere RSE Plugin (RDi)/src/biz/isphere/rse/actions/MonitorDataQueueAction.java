@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.rse.IDialogView;
@@ -55,13 +55,10 @@ public class MonitorDataQueueAction implements IObjectActionDelegate {
             while (iterator.hasNext()) {
                 Object object = iterator.next();
                 if (matchesType(object, objectType)) {
-                    IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
-                            openMonitorForObject(qsysRemoteObject, page);
-                        }
+                    IWorkbenchPage page = UIHelper.getActivePage();
+                    if (page != null) {
+                        QSYSRemoteObject qsysRemoteObject = (QSYSRemoteObject)object;
+                        openMonitorForObject(qsysRemoteObject, page);
                     }
                 }
             }
