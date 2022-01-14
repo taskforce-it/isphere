@@ -29,6 +29,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -114,7 +115,7 @@ public class CompareAction {
                     }
                 }
 
-                ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
+                UIHelper.getActivePage().addPartListener(new IPartListener() {
                     public void partClosed(IWorkbenchPart part) {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
@@ -125,7 +126,7 @@ public class CompareAction {
                                     fInput.removeIgnoreFile();
                                 }
                                 fInput.cleanup();
-                                IWorkbenchPage workbenchPage = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                                IWorkbenchPage workbenchPage = UIHelper.getActivePage();
                                 if (workbenchPage != null) {
                                     workbenchPage.removePartListener(this);
                                 }
@@ -166,11 +167,11 @@ public class CompareAction {
                 } else {
                     String title;
                     if (cc.isLeftEditable()) {
-                        title = Messages.bind(Messages.CompareEditor_Compare_Edit,
-                            new String[] { getQualifiedMemberName(leftMember), getQualifiedMemberName(rightMember) });
+                        title = Messages.bind(Messages.CompareEditor_Compare_Edit, new String[] { getQualifiedMemberName(leftMember),
+                            getQualifiedMemberName(rightMember) });
                     } else {
-                        title = Messages.bind(Messages.CompareEditor_Compare,
-                            new String[] { getQualifiedMemberName(leftMember), getQualifiedMemberName(rightMember) });
+                        title = Messages.bind(Messages.CompareEditor_Compare, new String[] { getQualifiedMemberName(leftMember),
+                            getQualifiedMemberName(rightMember) });
                     }
                     fInput.setTitle(title);
                 }
@@ -185,11 +186,11 @@ public class CompareAction {
                     // editorPart.getEditorSite().getPage().closeEditor(editorPart,
                     // false);
 
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(editorReference.getPart(false));
+                    UIHelper.getActivePage().activate(editorReference.getPart(false));
                     return;
                 }
 
-                CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
+                CompareUI.openCompareEditorOnPage(fInput, UIHelper.getActivePage());
                 for (int index = 0; index < cleanupListener.size(); index++) {
                     (cleanupListener.get(index)).cleanup();
                 }
@@ -233,8 +234,8 @@ public class CompareAction {
             }
 
             private void displayMemberNotFoundMessage(String library, String file, String member) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
-                    new Object[] { library, file, member });
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
+                    library, file, member });
                 MessageDialog.openError(getShell(), Messages.Compare_source_members, message);
             }
         });

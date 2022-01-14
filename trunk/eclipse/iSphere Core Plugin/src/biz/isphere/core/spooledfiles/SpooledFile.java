@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -36,6 +35,7 @@ import biz.isphere.base.internal.Buffer;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -755,7 +755,7 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
 
             boolean useEditor = Preferences.getInstance().isSpooledFileConversionTextEditAllowed();
             if (useEditor) {
-                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IWorkbenchPage page = UIHelper.getActivePage();
                 org.eclipse.ui.ide.IDE.openEditor(page, file);
             } else {
                 // BrowserEditorInput browserInput = new
@@ -765,26 +765,26 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
                 // PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(browserInput,
                 // BrowserEditor.ID);
                 FileEditorInput editorInput = new SpooledFileEditorInput(file);
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, ReadOnlyEditor.ID);
+                UIHelper.getActivePage().openEditor(editorInput, ReadOnlyEditor.ID);
             }
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_HTML)) {
 
             boolean useEditor = Preferences.getInstance().isSpooledFileConversionHTMLEditAllowed();
             if (useEditor) {
-                IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IWorkbenchPage page = UIHelper.getActivePage();
                 org.eclipse.ui.ide.IDE.openEditor(page, file);
             } else {
                 BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format),
                     image, file.getLocation().toOSString());
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
+                UIHelper.getActivePage().openEditor(editorInput, BrowserEditor.ID);
             }
 
         } else if (format.equals(IPreferences.OUTPUT_FORMAT_PDF)) {
 
             BrowserEditorInput editorInput = new BrowserEditorInput(getTemporaryName(format), getTemporaryName(format), getToolTip(format), image,
                 file.getLocation().toOSString());
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().openEditor(editorInput, BrowserEditor.ID);
+            UIHelper.getActivePage().openEditor(editorInput, BrowserEditor.ID);
         }
     }
 

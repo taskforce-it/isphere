@@ -21,9 +21,9 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.base.internal.KeyHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.viewmanager.IPinableView;
@@ -66,12 +66,9 @@ public class WorkWithSpooledFilesAction implements IObjectActionDelegate, IActio
                 Object object = iterator.next();
                 SystemFilterReference filterReference = (SystemFilterReference)object;
                 if ((object instanceof SystemFilterReference) && (filterReference.getSubSystem() instanceof SpooledFileSubSystem)) {
-                    IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-                    if (window != null) {
-                        IWorkbenchPage page = window.getActivePage();
-                        if (page != null) {
-                            openWorkWithSpooledFilesView(filterReference, page, isPinned);
-                        }
+                    IWorkbenchPage page = UIHelper.getActivePage();
+                    if (page != null) {
+                        openWorkWithSpooledFilesView(filterReference, page, isPinned);
                     }
                 }
             }

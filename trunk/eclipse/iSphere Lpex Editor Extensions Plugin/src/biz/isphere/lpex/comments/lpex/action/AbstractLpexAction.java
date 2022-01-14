@@ -11,11 +11,10 @@ package biz.isphere.lpex.comments.lpex.action;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.lpex.comments.lpex.internal.Position;
 
 import com.ibm.lpex.core.LpexAction;
@@ -47,7 +46,12 @@ public abstract class AbstractLpexAction implements LpexAction {
 
     protected String getMemberType() {
 
-        IEditorInput editorInput = getActiveEditor().getEditorInput();
+        IEditorPart editor = getActiveEditor();
+        if (editor == null) {
+            return null;
+        }
+
+        IEditorInput editorInput = editor.getEditorInput();
         if (editorInput instanceof FileEditorInput) {
             FileEditorInput fileEditorInput = (FileEditorInput)editorInput;
             return fileEditorInput.getFile().getFileExtension();
@@ -83,16 +87,7 @@ public abstract class AbstractLpexAction implements LpexAction {
     }
 
     protected IEditorPart getActiveEditor() {
-
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (window != null) {
-            IWorkbenchPage activePage = window.getActivePage();
-            if (activePage != null) {
-                return activePage.getActiveEditor();
-            }
-        }
-
-        return null;
+        return UIHelper.getActiveEditor();
     }
 
     protected static String getLPEXMenuAction(String label, String id) {

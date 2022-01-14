@@ -21,9 +21,9 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import biz.isphere.base.internal.KeyHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.internal.viewmanager.IPinableView;
@@ -80,12 +80,9 @@ public class WorkWithSpooledFilesRsePopupAction implements IObjectActionDelegate
                     IHost host = remoteJob.getRemoteJobContext().getJobSubsystem().getHost();
                     String connectionName = ConnectionManager.getConnectionName(host);
                     if (connectionName != null) {
-                        IWorkbenchWindow window = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
-                        if (window != null) {
-                            IWorkbenchPage page = window.getActivePage();
-                            if (page != null) {
-                                openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
-                            }
+                        IWorkbenchPage page = UIHelper.getActivePage();
+                        if (page != null) {
+                            openWorkWithSpooledFilesView(connectionName, qualifiedJobName, page, isPinned);
                         }
                     }
                 }

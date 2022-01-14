@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
@@ -114,7 +115,7 @@ public class CompareStreamFileAction {
                     return;
                 }
 
-                ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().addPartListener(new IPartListener() {
+                UIHelper.getActivePage().addPartListener(new IPartListener() {
                     public void partClosed(IWorkbenchPart part) {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
@@ -123,7 +124,7 @@ public class CompareStreamFileAction {
                                     fInput.removeIgnoreFile();
                                 }
                                 fInput.cleanup();
-                                IWorkbenchPage workbenchPage = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                                IWorkbenchPage workbenchPage = UIHelper.getActivePage();
                                 if (workbenchPage != null) {
                                     workbenchPage.removePartListener(this);
                                 }
@@ -181,11 +182,11 @@ public class CompareStreamFileAction {
                     // editorPart.getEditorSite().getPage().closeEditor(editorPart,
                     // false);
 
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().activate(editorReference.getPart(false));
+                    UIHelper.getActivePage().activate(editorReference.getPart(false));
                     return;
                 }
 
-                CompareUI.openCompareEditorOnPage(fInput, ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage());
+                CompareUI.openCompareEditorOnPage(fInput, UIHelper.getActivePage());
                 for (int index = 0; index < cleanupListener.size(); index++) {
                     (cleanupListener.get(index)).cleanup();
                 }

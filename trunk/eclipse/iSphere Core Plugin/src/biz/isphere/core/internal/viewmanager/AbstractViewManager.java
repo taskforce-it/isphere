@@ -29,6 +29,7 @@ import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 
 /**
@@ -185,7 +186,7 @@ public abstract class AbstractViewManager implements IViewManager {
                 }
             }
 
-            IWorkbenchPage page = ISpherePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage page = UIHelper.getActivePage();
             if (view == null) {
                 visible = true;
                 String secondaryId = createSecondaryId();

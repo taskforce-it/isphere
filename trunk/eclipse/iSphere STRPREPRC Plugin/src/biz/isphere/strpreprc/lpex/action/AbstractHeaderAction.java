@@ -10,10 +10,9 @@ package biz.isphere.strpreprc.lpex.action;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
@@ -32,16 +31,7 @@ public abstract class AbstractHeaderAction implements LpexAction {
     }
 
     protected IEditorPart getActiveEditor() {
-
-        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (window != null) {
-            IWorkbenchPage activePage = window.getActivePage();
-            if (activePage != null) {
-                return activePage.getActiveEditor();
-            }
-        }
-
-        return null;
+        return UIHelper.getActiveEditor();
     }
 
     protected String getConnectionName(IEditorPart editor) {
