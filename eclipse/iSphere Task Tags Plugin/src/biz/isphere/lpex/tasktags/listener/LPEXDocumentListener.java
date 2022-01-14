@@ -44,10 +44,6 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
         document = aDocument;
     }
 
-    public IDocument getDocument() {
-        return document;
-    }
-
     /**
      * IDocumentListener: Added as indicator interface to be able to use this
      * class as a FileBufferListener for a given document.
