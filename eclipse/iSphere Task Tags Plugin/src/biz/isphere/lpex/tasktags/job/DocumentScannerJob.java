@@ -22,11 +22,11 @@ import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
  * 
  * @author Thomas Raddatz
  */
-public class DocumentScanner extends Job {
+public class DocumentScannerJob extends Job {
 
     private LPEXTaskManager manager;
 
-    public DocumentScanner(LPEXTaskManager aManager) {
+    public DocumentScannerJob(LPEXTaskManager aManager) {
         super(""); //$NON-NLS-1$
         manager = aManager;
     }
