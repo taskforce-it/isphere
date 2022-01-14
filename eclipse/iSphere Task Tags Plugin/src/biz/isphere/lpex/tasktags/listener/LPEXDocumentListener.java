@@ -111,15 +111,11 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     private void processDocument() {
 
-        LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
-        if (!lpexTaskManager.markerAreEnabled()) {
-            return;
-        }
-
         if (scannerJob != null) {
             scannerJob.cancel();
         }
 
+        LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
         scannerJob = new DocumentScannerJob(lpexTaskManager);
         scannerJob.schedule(250);
     }
