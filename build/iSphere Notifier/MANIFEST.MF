@@ -6,4 +6,4 @@ X-Bundle-Info: Enhanced options "Compare / Load previous values" to let the user
 X-Beta-Version: 4.2.5.b002
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Fixed creating LPEX task tags.\nAdded option to scan for LPEX task tags, when the source member is changed.\nAdded option to remove LPEX task tags, when the source member is closed.
+X-Beta-Info: Fixed creating LPEX task tags.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.
