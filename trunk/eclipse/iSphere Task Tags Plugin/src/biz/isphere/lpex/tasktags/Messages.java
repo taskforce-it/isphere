@@ -40,6 +40,8 @@ public class Messages extends NLS {
 
     public static String PreferencesPage_btnEnableTaskTags;
 
+    public static String PreferencesPage_btnRemoveOnCloseEnableTaskTags;
+
     public static String TaskTagEditor_headline_new;
 
     public static String TaskTagEditor_headline_edit;

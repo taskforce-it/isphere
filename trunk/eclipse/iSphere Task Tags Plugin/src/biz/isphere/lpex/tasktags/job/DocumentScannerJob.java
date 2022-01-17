@@ -25,10 +25,16 @@ import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
 public class DocumentScannerJob extends Job {
 
     private LPEXTaskManager manager;
+    private boolean isRemoveOnly;
 
     public DocumentScannerJob(LPEXTaskManager aManager) {
+        this(aManager, false);
+    }
+
+    public DocumentScannerJob(LPEXTaskManager aManager, boolean isRemoveOnly) {
         super(""); //$NON-NLS-1$
-        manager = aManager;
+        this.manager = aManager;
+        this.isRemoveOnly = isRemoveOnly;
     }
 
     @Override
@@ -43,7 +49,7 @@ public class DocumentScannerJob extends Job {
 
         try {
             manager.removeMarkers();
-            if (manager.markerAreEnabled()) {
+            if (!isRemoveOnly && manager.markerAreEnabled()) {
                 manager.createMarkers();
             }
 

@@ -46,6 +46,8 @@ public final class Preferences {
 
     public static final String LPEX_TASK_TAGS_ENABLED = DOMAIN + "enabled"; //$NON-NLS-1$
 
+    public static final String LPEX_TASK_TAGS_REMOVE_ON_CLOSE = DOMAIN + "removeOnClose"; //$NON-NLS-1$
+
     public static final String LPEX_TASK_TAGS_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
 
     public static final String LPEX_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
@@ -88,6 +90,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(LPEX_TASK_TAGS_ENABLED);
     }
 
+    public boolean isRemoveOnCloseEnabled() {
+        return preferenceStore.getBoolean(LPEX_TASK_TAGS_REMOVE_ON_CLOSE);
+    }
+
     public String[] getFileExtensions() {
         return getFileExtensions(false);
     }
@@ -121,6 +127,10 @@ public final class Preferences {
         saveEnabledState(anEnabledState);
     }
 
+    public void setRemoveOnCloseEnabled(boolean anEnabledState) {
+        saveRemoveOnCloseEnabledState(anEnabledState);
+    }
+
     public void setFileExtensions(String[] anExtensions) {
         saveFileExtensions(anExtensions);
     }
@@ -135,6 +145,7 @@ public final class Preferences {
 
     public void initializeDefaultPreferences() {
         preferenceStore.setDefault(LPEX_TASK_TAGS_ENABLED, getDefaultEnabledState());
+        preferenceStore.setDefault(LPEX_TASK_TAGS_REMOVE_ON_CLOSE, getDefaultRemoveOnCloseEnabledState());
         preferenceStore.setDefault(LPEX_TASK_TAGS_FILE_EXTENSIONS, getDefaultFileExtensionsAsString());
         preferenceStore.setDefault(LPEX_IMPORT_EXPORT_LOCATION, getDefaultImportExportLocation());
     }
@@ -145,6 +156,10 @@ public final class Preferences {
 
     public boolean getDefaultEnabledState() {
         return true;
+    }
+
+    public boolean getDefaultRemoveOnCloseEnabledState() {
+        return false;
     }
 
     private String getDefaultFileExtensionsAsString() {
@@ -161,6 +176,10 @@ public final class Preferences {
 
     private void saveEnabledState(boolean anEnabledState) {
         preferenceStore.setValue(LPEX_TASK_TAGS_ENABLED, anEnabledState);
+    }
+
+    private void saveRemoveOnCloseEnabledState(boolean anEnabledState) {
+        preferenceStore.setValue(LPEX_TASK_TAGS_REMOVE_ON_CLOSE, anEnabledState);
     }
 
     private void saveFileExtensions(String[] anExtensions) {
