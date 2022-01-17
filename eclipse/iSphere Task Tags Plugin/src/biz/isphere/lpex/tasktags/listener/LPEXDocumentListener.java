@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,6 @@ import biz.isphere.lpex.tasktags.preferences.Preferences;
 public class LPEXDocumentListener implements IDocumentListener, IFileBufferListener {
 
     private IDocument document;
-
     private IResource resource;
 
     private Job scannerJob;
@@ -59,10 +58,11 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     public void documentChanged(DocumentEvent anEvent) {
 
-        IEditorPart activeEditor = UIHelper.getActiveEditor();
-
-        if (activeEditor != null) {
-            processDocument();
+        if (isScanOnChangeEnabled()) {
+            IEditorPart activeEditor = UIHelper.getActiveEditor();
+            if (activeEditor != null) {
+                processDocument();
+            }
         }
     }
 
@@ -116,7 +116,7 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
 
         LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
         scannerJob = new DocumentScannerJob(lpexTaskManager);
-        scannerJob.schedule(250);
+        scannerJob.schedule(getScanDelayMSecs());
     }
 
     /**
@@ -132,7 +132,7 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
         LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
         boolean isRemoveOnClose = Preferences.getInstance().isRemoveOnCloseEnabled();
         scannerJob = new DocumentScannerJob(lpexTaskManager, isRemoveOnClose);
-        scannerJob.schedule(250);
+        scannerJob.schedule(getScanDelayMSecs());
     }
 
     /**
@@ -144,6 +144,19 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
      */
     private boolean isFileBufferValid(IFileBuffer aBuffer) {
         return ((ITextFileBuffer)aBuffer).getDocument() == document;
+    }
+
+    private int getScanDelayMSecs() {
+
+        if (isScanOnChangeEnabled()) {
+            return 250;
+        } else {
+            return 0;
+        }
+    }
+
+    private boolean isScanOnChangeEnabled() {
+        return Preferences.getInstance().isScanOnChangeEnabled();
     }
 
     public void bufferContentAboutToBeReplaced(IFileBuffer aBuffer) {

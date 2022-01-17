@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     private Button btnRemove;
 
     private Button chkEnableLPEXTaskTags;
+
+    private Button chkScanOnChangeEnableLPEXTaskTags;
 
     private Button chkRemoveOnCloseEnableLPEXTaskTags;
 
@@ -219,6 +221,10 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnEnableTaskTags);
         new Label(mainPanel, SWT.NONE);
 
+        chkScanOnChangeEnableLPEXTaskTags = WidgetFactory.createCheckbox(mainPanel);
+        chkScanOnChangeEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnScanOnChangeEnableTaskTags);
+        new Label(mainPanel, SWT.NONE);
+
         chkRemoveOnCloseEnableLPEXTaskTags = WidgetFactory.createCheckbox(mainPanel);
         chkRemoveOnCloseEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnRemoveOnCloseEnableTaskTags);
         new Label(mainPanel, SWT.NONE);
@@ -230,6 +236,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private void initializeValues() {
         chkEnableLPEXTaskTags.setSelection(getPreferences().isEnabled());
+        chkScanOnChangeEnableLPEXTaskTags.setSelection(getPreferences().isScanOnChangeEnabled());
         chkRemoveOnCloseEnableLPEXTaskTags.setSelection(getPreferences().isRemoveOnCloseEnabled());
         setFileExtensionsArray(getPreferences().getFileExtensions());
 
@@ -240,6 +247,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     protected void performDefaults() {
         super.performDefaults();
         chkEnableLPEXTaskTags.setSelection(getPreferences().getDefaultEnabledState());
+        chkScanOnChangeEnableLPEXTaskTags.setSelection(getPreferences().getDefaultScanOnChangeEnabledState());
         chkRemoveOnCloseEnableLPEXTaskTags.setSelection(getPreferences().getDefaultRemoveOnCloseEnabledState());
         setFileExtensionsArray(getPreferences().getDefaultFileExtensions());
 
@@ -255,6 +263,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         Preferences tPreferences = getPreferences();
 
         tPreferences.setEnabled(chkEnableLPEXTaskTags.getSelection());
+        tPreferences.setScanOnChangeEnabled(chkScanOnChangeEnableLPEXTaskTags.getSelection());
         tPreferences.setRemoveOnCloseEnabled(chkRemoveOnCloseEnableLPEXTaskTags.getSelection());
         tPreferences.setFileExtensions(getFileExtensionsArray());
 
