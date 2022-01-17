@@ -18,13 +18,12 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.eclipse.osgi.util.ManifestElement;
 import org.junit.Test;
 import org.osgi.framework.BundleException;
 
 import biz.isphere.core.internal.Version;
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -69,6 +68,10 @@ public class CheckNotifier {
 
         String xReleaseInfo = getString(manifest, "X-Bundle-Info", true);
         assertTrue(xReleaseInfo == null || xReleaseInfo.length() > 0);
+
+        assertTrue(xReleaseVersion != null);
+        assertTrue(xReleaseInfo != null);
+        assertTrue(xReleaseUpdateLibrary != null);
 
         System.out.println();
         System.out.println("Release version:        " + xReleaseVersion);
@@ -127,6 +130,10 @@ public class CheckNotifier {
 
         String xBetaInfo = getString(manifest, "X-Beta-Info", true);
         assertTrue(xBetaInfo == null || xBetaInfo.length() > 0);
+
+        assertTrue(xBetaVersion != null);
+        assertTrue(xBetaInfo != null);
+        assertTrue(xBetaUpdateLibrary != null);
 
         System.out.println();
         System.out.println("Beta version:        " + xBetaVersion);
