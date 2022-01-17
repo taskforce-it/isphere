@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,8 @@ public final class Preferences {
     private static final String DOMAIN = ISphereLpexTasksPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
     public static final String LPEX_TASK_TAGS_ENABLED = DOMAIN + "enabled"; //$NON-NLS-1$
+
+    public static final String LPEX_TASK_TAGS_SCAN_ON_CHANGE = DOMAIN + "scanOnChange"; //$NON-NLS-1$
 
     public static final String LPEX_TASK_TAGS_REMOVE_ON_CLOSE = DOMAIN + "removeOnClose"; //$NON-NLS-1$
 
@@ -94,6 +96,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(LPEX_TASK_TAGS_REMOVE_ON_CLOSE);
     }
 
+    public boolean isScanOnChangeEnabled() {
+        return preferenceStore.getBoolean(LPEX_TASK_TAGS_SCAN_ON_CHANGE);
+    }
+
     public String[] getFileExtensions() {
         return getFileExtensions(false);
     }
@@ -131,6 +137,10 @@ public final class Preferences {
         saveRemoveOnCloseEnabledState(anEnabledState);
     }
 
+    public void setScanOnChangeEnabled(boolean anEnabledState) {
+        saveScanOnChangeEnabledState(anEnabledState);
+    }
+
     public void setFileExtensions(String[] anExtensions) {
         saveFileExtensions(anExtensions);
     }
@@ -146,6 +156,7 @@ public final class Preferences {
     public void initializeDefaultPreferences() {
         preferenceStore.setDefault(LPEX_TASK_TAGS_ENABLED, getDefaultEnabledState());
         preferenceStore.setDefault(LPEX_TASK_TAGS_REMOVE_ON_CLOSE, getDefaultRemoveOnCloseEnabledState());
+        preferenceStore.setDefault(LPEX_TASK_TAGS_SCAN_ON_CHANGE, getDefaultScanOnChangeEnabledState());
         preferenceStore.setDefault(LPEX_TASK_TAGS_FILE_EXTENSIONS, getDefaultFileExtensionsAsString());
         preferenceStore.setDefault(LPEX_IMPORT_EXPORT_LOCATION, getDefaultImportExportLocation());
     }
@@ -159,6 +170,10 @@ public final class Preferences {
     }
 
     public boolean getDefaultRemoveOnCloseEnabledState() {
+        return false;
+    }
+
+    public boolean getDefaultScanOnChangeEnabledState() {
         return false;
     }
 
@@ -180,6 +195,10 @@ public final class Preferences {
 
     private void saveRemoveOnCloseEnabledState(boolean anEnabledState) {
         preferenceStore.setValue(LPEX_TASK_TAGS_REMOVE_ON_CLOSE, anEnabledState);
+    }
+
+    private void saveScanOnChangeEnabledState(boolean anEnabledState) {
+        preferenceStore.setValue(LPEX_TASK_TAGS_SCAN_ON_CHANGE, anEnabledState);
     }
 
     private void saveFileExtensions(String[] anExtensions) {

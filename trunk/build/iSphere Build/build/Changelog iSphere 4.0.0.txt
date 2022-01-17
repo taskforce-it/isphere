@@ -3,6 +3,8 @@ Changelog: iSphere 4.2.5.b003
 -----------------------------
  • Added option to remove LPEX task tags, when the source member is
    closed.
+ • Added option to scan for LPEX task tags, when the source member is
+   changed.
  • Introduced class UIHelper and replaced
    'PlatformUI.getWorkbench().getActiveWorkbenchWindow()'.
 
