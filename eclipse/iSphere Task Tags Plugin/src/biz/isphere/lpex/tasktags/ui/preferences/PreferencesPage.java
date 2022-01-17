@@ -67,6 +67,8 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private Button chkEnableLPEXTaskTags;
 
+    private Button chkRemoveOnCloseEnableLPEXTaskTags;
+
     private Composite parent;
 
     private Button btnExport;
@@ -216,9 +218,9 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         chkEnableLPEXTaskTags = WidgetFactory.createCheckbox(mainPanel);
         chkEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnEnableTaskTags);
         new Label(mainPanel, SWT.NONE);
-        new Label(mainPanel, SWT.NONE);
-        new Label(mainPanel, SWT.NONE);
-        new Label(mainPanel, SWT.NONE);
+
+        chkRemoveOnCloseEnableLPEXTaskTags = WidgetFactory.createCheckbox(mainPanel);
+        chkRemoveOnCloseEnableLPEXTaskTags.setText(Messages.PreferencesPage_btnRemoveOnCloseEnableTaskTags);
         new Label(mainPanel, SWT.NONE);
 
         initializeValues();
@@ -228,6 +230,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
 
     private void initializeValues() {
         chkEnableLPEXTaskTags.setSelection(getPreferences().isEnabled());
+        chkRemoveOnCloseEnableLPEXTaskTags.setSelection(getPreferences().isRemoveOnCloseEnabled());
         setFileExtensionsArray(getPreferences().getFileExtensions());
 
         updateControlsEnablement();
@@ -237,6 +240,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     protected void performDefaults() {
         super.performDefaults();
         chkEnableLPEXTaskTags.setSelection(getPreferences().getDefaultEnabledState());
+        chkRemoveOnCloseEnableLPEXTaskTags.setSelection(getPreferences().getDefaultRemoveOnCloseEnabledState());
         setFileExtensionsArray(getPreferences().getDefaultFileExtensions());
 
         updateControlsEnablement();
@@ -251,6 +255,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
         Preferences tPreferences = getPreferences();
 
         tPreferences.setEnabled(chkEnableLPEXTaskTags.getSelection());
+        tPreferences.setRemoveOnCloseEnabled(chkRemoveOnCloseEnableLPEXTaskTags.getSelection());
         tPreferences.setFileExtensions(getFileExtensionsArray());
 
         updateControlsEnablement();

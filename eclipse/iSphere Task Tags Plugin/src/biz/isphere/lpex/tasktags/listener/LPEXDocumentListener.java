@@ -23,6 +23,7 @@ import org.eclipse.ui.IEditorPart;
 import biz.isphere.base.internal.UIHelper;
 import biz.isphere.lpex.tasktags.job.DocumentScannerJob;
 import biz.isphere.lpex.tasktags.model.LPEXTaskManager;
+import biz.isphere.lpex.tasktags.preferences.Preferences;
 
 /**
  * Class, that works as the adapter between the document and the LPEX Task
@@ -85,6 +86,7 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
     public void bufferDisposed(IFileBuffer aBuffer) {
         if (isFileBufferValid(aBuffer)) {
             FileBuffers.getTextFileBufferManager().removeFileBufferListener(this);
+            processDocumentOnClose();
             document = null;
             resource = null;
         }
@@ -114,6 +116,22 @@ public class LPEXDocumentListener implements IDocumentListener, IFileBufferListe
 
         LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
         scannerJob = new DocumentScannerJob(lpexTaskManager);
+        scannerJob.schedule(250);
+    }
+
+    /**
+     * Starts a background job in order to process the document, when the
+     * document is closed.
+     */
+    private void processDocumentOnClose() {
+
+        if (scannerJob != null) {
+            scannerJob.cancel();
+        }
+
+        LPEXTaskManager lpexTaskManager = new LPEXTaskManager(resource, document);
+        boolean isRemoveOnClose = Preferences.getInstance().isRemoveOnCloseEnabled();
+        scannerJob = new DocumentScannerJob(lpexTaskManager, isRemoveOnClose);
         scannerJob.schedule(250);
     }
 
