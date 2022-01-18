@@ -10,12 +10,14 @@ package biz.isphere.core.externalapi;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.bindingdirectoryeditor.BindingDirectoryEditor;
 import biz.isphere.core.dataareaeditor.DataAreaEditor;
@@ -32,7 +34,15 @@ import biz.isphere.core.messagefileeditor.QMHRTVM;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.SearchOptions;
+import biz.isphere.core.spooledfiles.SPLF_build;
+import biz.isphere.core.spooledfiles.SPLF_clear;
+import biz.isphere.core.spooledfiles.SPLF_prepare;
+import biz.isphere.core.spooledfiles.SPLF_setFormType;
+import biz.isphere.core.spooledfiles.SPLF_setOutputQueue;
+import biz.isphere.core.spooledfiles.SPLF_setUser;
+import biz.isphere.core.spooledfiles.SPLF_setUserData;
 import biz.isphere.core.spooledfiles.SpooledFile;
+import biz.isphere.core.spooledfiles.SpooledFileFilter;
 import biz.isphere.core.userspaceeditor.UserSpaceEditor;
 
 import com.ibm.as400.access.AS400;
@@ -485,6 +495,105 @@ public class Access {
 
             }
             
+        }
+        
+    }
+
+    /**
+     * Loads spooled files by directly accessing the file SPLF in the iSphere library.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param spooledFileFilter - Needed to specify which spooled files shall be loaded.
+     * @param spooledFileLoader - The loader, which executes the SQL select statement and processes the result set.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static void loadSpooledFiles(Shell shell, String connectionName, SpooledFileFilter spooledFileFilter, ISpooledFileLoader spooledFileLoader)
+        throws Exception {
+
+        AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (as400 != null) {
+            
+            Connection jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            if (jdbcConnection != null) {
+ 
+                String iSphereLibrary = ISpherePlugin.getISphereLibrary();
+                
+                String currentLibrary = null;
+                try {
+                    currentLibrary = ISphereHelper.getCurrentLibrary(as400);
+                } 
+                catch (Exception e) {
+                }
+            
+                if (currentLibrary != null) {
+
+                    boolean ok = false;
+                    try {
+                        ok = ISphereHelper.setCurrentLibrary(as400, iSphereLibrary);
+                    } 
+                    catch (Exception e1) {
+                    }
+                    
+                    if (ok) {
+                        
+                        new SPLF_prepare().run(as400);
+            
+                        if (spooledFileFilter.getUser() != null) {
+                            new SPLF_setUser().run(as400, spooledFileFilter.getUser());
+                        }
+
+                        if (spooledFileFilter.getOutputQueue() != null) {
+                            String library;
+                            if (spooledFileFilter.getOutputQueueLibrary() != null) {
+                                library = spooledFileFilter.getOutputQueueLibrary();
+                            }
+                            else {
+                                library = "*LIBL";
+                            }
+                            new SPLF_setOutputQueue().run(as400, spooledFileFilter.getOutputQueue(), library);
+                        }
+                        
+                        if (spooledFileFilter.getUserData() != null) {
+                            new SPLF_setUserData().run(as400, spooledFileFilter.getUserData());
+                        }
+
+                        if (spooledFileFilter.getFormType() != null) {
+                            new SPLF_setFormType().run(as400, spooledFileFilter.getFormType());
+                        }
+                        
+                        int handle = new SPLF_build().run(as400);
+                        
+                        if (handle > 0) {
+                            
+                            String _separator;
+                            try {
+                                _separator = jdbcConnection.getMetaData().getCatalogSeparator();
+                            } 
+                            catch (SQLException e) {
+                                _separator = ".";
+                                e.printStackTrace();
+                            }
+                            
+                            spooledFileLoader.load("SELECT * FROM " + ISpherePlugin.getISphereLibrary() + _separator + "SPLF WHERE SFHDL = " + Integer.toString(handle) + " ORDER BY SFHDL, SFCNT");
+                            
+                            new SPLF_clear().run(as400, handle);
+                            
+                        }
+                        
+                        try {
+                            ISphereHelper.setCurrentLibrary(as400, currentLibrary);
+                        } 
+                        catch (Exception e) {
+                        }
+                        
+                    }
+                    
+                }
+                
+            }
+           
         }
         
     }
