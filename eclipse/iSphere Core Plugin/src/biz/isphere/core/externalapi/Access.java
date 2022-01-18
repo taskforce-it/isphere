@@ -25,7 +25,10 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor;
+import biz.isphere.core.messagefileeditor.MessageDescription;
+import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.messagefileeditor.MessageFileEditor;
+import biz.isphere.core.messagefileeditor.QMHRTVM;
 import biz.isphere.core.preferencepages.IPreferences;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.SearchOptions;
@@ -449,5 +452,41 @@ public class Access {
         return new biz.isphere.core.messagefilesearch.SearchResult[0];
         
     }
- 
+    
+    /**
+     * Opens the message description editor for a given message description.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param library - name of the library where the message file is stored.
+     * @param messageFile - name of the message file where the message description is stored.
+     * @param messageId - Id. of the message description whose content is edited.
+     * @param readOnly - specifies whether to open the message description editor in
+     *        <i>display</i> oder <i>edit</i> mode.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static void openMessageDescriptionEditor(Shell shell, String connectionName, String library, String messageFile, String messageId, int mode)
+        throws Exception {
+        
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            
+            QMHRTVM qmhrtvm = new QMHRTVM();
+            MessageDescription[] _messageDescription = qmhrtvm.run(_as400, connectionName, library, messageFile, messageId);
+            if (_messageDescription.length == 1) {
+                
+                MessageDescriptionDetailDialog _messageDescriptionDetailDialog = 
+                        new MessageDescriptionDetailDialog(
+                                shell, 
+                                mode, 
+                                _messageDescription[0]);
+                _messageDescriptionDetailDialog.open();
+
+            }
+            
+        }
+        
+    }
+    
 }
