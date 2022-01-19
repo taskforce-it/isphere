@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -430,7 +432,7 @@ public class Access {
         return new biz.isphere.core.sourcefilesearch.SearchResult[0];
         
     }
-
+    
     /**
      * Searches for strings in message files and returns the search results.
      * 
@@ -595,6 +597,54 @@ public class Access {
             }
            
         }
+        
+    }
+    
+    /**
+     * Searches for strings in source files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchElements - Contains the elements (Source file members) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.sourcefilesearch.ExtendedSearchResult searchStringInSourceFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.sourcefilesearch.SearchElement> _searchElements)
+        throws Exception {
+        
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            
+            if (ISphereHelper.checkISphereLibrary(shell, _as400)) {
+                
+                biz.isphere.core.sourcefilesearch.SearchDialog dialog = new biz.isphere.core.sourcefilesearch.SearchDialog(shell, _searchElements, true);
+                if (dialog.open() == Dialog.OK) {
+
+                    biz.isphere.core.sourcefilesearch.SearchResult[] _searchResults;
+                    try {
+                        _searchResults = Access.searchStringInSourceFile(
+                                shell, 
+                                connectionName, 
+                                dialog.getSearchOptions(), 
+                                new ArrayList<biz.isphere.core.sourcefilesearch.SearchElement>(_searchElements.values()));
+                    } 
+                    catch (Exception e) {
+                        _searchResults = new biz.isphere.core.sourcefilesearch.SearchResult[0];
+                    }
+                    
+                    biz.isphere.core.sourcefilesearch.ExtendedSearchResult extendedSearchResult = new biz.isphere.core.sourcefilesearch.ExtendedSearchResult();
+                    extendedSearchResult.setSearchOptions(dialog.getSearchOptions());
+                    extendedSearchResult.setSearchResults(_searchResults);
+
+                    return extendedSearchResult;
+                    
+                }
+                
+            }
+            
+        }
+        
+        return null;
         
     }
     
