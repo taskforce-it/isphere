@@ -502,16 +502,16 @@ public class Access {
     }
 
     /**
-     * Loads spooled files by directly accessing the file SPLF in the iSphere library.
+     * Loads list of spooled files by directly accessing the file SPLF in the iSphere library.
      * 
      * @param shell - the parent shell.
      * @param connectionName - connection name.
      * @param spooledFileFilter - Needed to specify which spooled files shall be loaded.
-     * @param spooledFileLoader - The loader, which executes the SQL select statement and processes the result set.
+     * @param spooledFileListLoader - The loader, which executes the SQL select statement and processes the result set.
      * @throws Exception
      * @see QualifiedConnectionName
      */
-    public static void loadSpooledFiles(Shell shell, String connectionName, SpooledFileFilter spooledFileFilter, ISpooledFileLoader spooledFileLoader)
+    public static void loadSpooledFileList(Shell shell, String connectionName, SpooledFileFilter spooledFileFilter, ISpooledFileListLoader spooledFileListLoader)
         throws Exception {
 
         AS400 as400 = IBMiHostContributionsHandler.getSystem(connectionName);
@@ -578,7 +578,7 @@ public class Access {
                                 e.printStackTrace();
                             }
                             
-                            spooledFileLoader.load("SELECT * FROM " + ISpherePlugin.getISphereLibrary() + _separator + "SPLF WHERE SFHDL = " + Integer.toString(handle) + " ORDER BY SFHDL, SFCNT");
+                            spooledFileListLoader.load("SELECT * FROM " + ISpherePlugin.getISphereLibrary() + _separator + "SPLF WHERE SFHDL = " + Integer.toString(handle) + " ORDER BY SFHDL, SFCNT");
                             
                             new SPLF_clear().run(as400, handle);
                             
