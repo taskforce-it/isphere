@@ -696,4 +696,13 @@ public class Access {
         
     }
     
+    /**
+     * Disables the "Search for updates" and the "Search for beta versions" feature of iSphere.
+     */
+    
+    public static void disableSearchForFeature() {
+        Preferences.getInstance().setSearchForUpdates(false);
+        Preferences.getInstance().setSearchForBetaVersions(false);
+    }
+    
 }
