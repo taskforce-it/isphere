@@ -648,4 +648,52 @@ public class Access {
         
     }
     
+    /**
+     * Searches for strings in message files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchElements - Contains the elements (Message files) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.messagefilesearch.ExtendedSearchResult searchStringInMessageFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.messagefilesearch.SearchElement> _searchElements)
+        throws Exception {
+        
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            
+            if (ISphereHelper.checkISphereLibrary(shell, _as400)) {
+                
+                biz.isphere.core.messagefilesearch.SearchDialog dialog = new biz.isphere.core.messagefilesearch.SearchDialog(shell, _searchElements, true);
+                if (dialog.open() == Dialog.OK) {
+
+                    biz.isphere.core.messagefilesearch.SearchResult[] _searchResults;
+                    try {
+                        _searchResults = Access.searchStringInMessageFile(
+                                shell, 
+                                connectionName, 
+                                dialog.getSearchOptions(), 
+                                new ArrayList<biz.isphere.core.messagefilesearch.SearchElement>(_searchElements.values()));
+                    } 
+                    catch (Exception e) {
+                        _searchResults = new biz.isphere.core.messagefilesearch.SearchResult[0];
+                    }
+                    
+                    biz.isphere.core.messagefilesearch.ExtendedSearchResult extendedSearchResult = new biz.isphere.core.messagefilesearch.ExtendedSearchResult();
+                    extendedSearchResult.setSearchOptions(dialog.getSearchOptions());
+                    extendedSearchResult.setSearchResults(_searchResults);
+
+                    return extendedSearchResult;
+                    
+                }
+                
+            }
+            
+        }
+        
+        return null;
+        
+    }
+    
 }
