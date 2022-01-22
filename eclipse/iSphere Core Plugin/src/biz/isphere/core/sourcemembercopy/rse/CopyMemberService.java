@@ -145,15 +145,15 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     }
 
     public void setToConnection(String connectionName) {
-        this.toConnectionName = connectionName;
+        this.toConnectionName = connectionName.trim();
     }
 
     public void setToLibrary(String libraryName) {
-        this.toLibrary = libraryName;
+        this.toLibrary = libraryName.trim();
     }
 
     public void setToFile(String fileName) {
-        this.toFile = fileName;
+        this.toFile = fileName.trim();
     }
 
     public CopyMemberItem[] getCopiedItems() {

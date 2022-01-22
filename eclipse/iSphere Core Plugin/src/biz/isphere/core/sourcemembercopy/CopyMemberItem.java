@@ -44,14 +44,14 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     private List<ModifiedListener> modifiedListeners;
 
     public CopyMemberItem(String fromFile, String fromLibrary, String fromMember, String fromSrcType) {
-        this.fromFile = fromFile;
-        this.fromLibrary = fromLibrary;
-        this.fromMember = fromMember;
-        this.fromSrcType = fromSrcType;
-        this.toFile = fromFile;
-        this.toLibrary = fromLibrary;
-        this.toMember = fromMember;
-        this.toSrcType = fromSrcType;
+        this.fromFile = fromFile.trim();
+        this.fromLibrary = fromLibrary.trim();
+        this.fromMember = fromMember.trim();
+        this.fromSrcType = fromSrcType.trim();
+        this.toFile = fromFile.trim();
+        this.toLibrary = fromLibrary.trim();
+        this.toMember = fromMember.trim();
+        this.toSrcType = fromSrcType.trim();
         this.errorMessage = null;
         this.copied = false;
     }
