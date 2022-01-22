@@ -1,4 +1,12 @@
 
+Changelog: iSphere 4.2.5.b003
+-----------------------------
+ • Fixed problem that the record length of the target source file was
+   not always checked, when copying members. Not check, when the
+   target member existed.
+ • Changed the "Copy Members to..." option to disallow copying dirty
+   files at all.
+
 Changelog: iSphere 4.2.5.b002
 -----------------------------
  • Added option to remove LPEX task tags, when the source member is
