@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,8 +213,7 @@ public class CopyMemberValidator extends Thread {
 
             try {
 
-                Set<String> openFiles = getOpenEditors();
-                boolean mustCheckEditors = !fromConnectionName.equals(toConnectionName);
+                Set<String> dirtyFiles = getDirtyFiles();
 
                 for (CopyMemberItem member : jobDescription.getItems()) {
 
@@ -242,24 +241,24 @@ public class CopyMemberValidator extends Thread {
                     String from = member.getFromQSYSName();
                     String to = member.getToQSYSName();
 
-                    if (mustCheckEditors && openFiles.contains(localResourcePath)) {
+                    if (dirtyFiles.contains(localResourcePath)) {
                         member.setErrorMessage(Messages.Member_is_open_in_editor_and_has_unsaved_changes);
                         isError = true;
-                    } else {
+                    } else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
+                        member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
+                        isError = true;
+                    } else if (targetMembers.contains(to)) {
+                        member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
+                        isError = true;
+                    } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
+                        member.getFromFile(), member.getFromMember())) {
+                        member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
+                        isError = true;
+                    }
 
+                    if (!isError) {
                         if (fullErrorCheck) {
-
-                            if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-                                member.setErrorMessage(Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
-                                isError = true;
-                            } else if (targetMembers.contains(to)) {
-                                member.setErrorMessage(Messages.Can_not_copy_member_twice_to_same_target_member);
-                                isError = true;
-                            } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
-                                member.getFromFile(), member.getFromMember())) {
-                                member.setErrorMessage(Messages.bind(Messages.From_member_A_not_found, from));
-                                isError = true;
-                            } else if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
+                            if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(jobDescription.getToConnectionName()),
                                 member.getToLibrary(), member.getToFile(), member.getToMember())) {
 
                                 if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
@@ -280,32 +279,35 @@ public class CopyMemberValidator extends Thread {
                                     member.setErrorMessage(Messages.bind(Messages.Target_member_A_already_exists, to));
                                     isError = true;
                                 }
-                            } else if (!ignoreDataLostError) {
+                            }
+                        }
+                    }
 
-                                RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(),
-                                    member.getFromLibrary());
-                                RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
+                    if (!isError) {
+                        if (!ignoreDataLostError) {
 
-                                FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
-                                if (fromSrcDta == null) {
+                            RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
+                            RecordFormatDescription toRecordFormatDescription = toSourceFiles.get(member.getToFile(), member.getToLibrary());
+
+                            FieldDescription fromSrcDta = fromRecordFormatDescription.getFieldDescription("SRCDTA");
+                            if (fromSrcDta == null) {
+                                member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
+                                    new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
+                                isError = true;
+                                isSeriousError = true;
+                            } else {
+
+                                FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
+                                if (toSrcDta == null) {
                                     member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
-                                        new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
+                                        new String[] { member.getToFile(), member.getToLibrary(), "SRCDTA" }));
                                     isError = true;
                                     isSeriousError = true;
                                 } else {
 
-                                    FieldDescription toSrcDta = toRecordFormatDescription.getFieldDescription("SRCDTA");
-                                    if (toSrcDta == null) {
-                                        member.setErrorMessage(Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
-                                            new String[] { member.getToFile(), member.getToLibrary(), "SRCDTA" }));
+                                    if (fromSrcDta.getLength() > toSrcDta.getLength()) {
+                                        member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
                                         isError = true;
-                                        isSeriousError = true;
-                                    } else {
-
-                                        if (fromSrcDta.getLength() > toSrcDta.getLength()) {
-                                            member.setErrorMessage(Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
-                                            isError = true;
-                                        }
                                     }
                                 }
                             }
@@ -331,7 +333,7 @@ public class CopyMemberValidator extends Thread {
             return !isError;
         }
 
-        private Set<String> getOpenEditors() throws Exception {
+        private Set<String> getDirtyFiles() throws Exception {
 
             Set<String> openFiles = new HashSet<String>();
 
