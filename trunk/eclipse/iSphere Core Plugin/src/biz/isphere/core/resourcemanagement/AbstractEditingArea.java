@@ -126,7 +126,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
         Composite tableArea = new Composite(this, SWT.NONE);
         tableArea.setLayout(new GridLayout(1, false));
-        tableArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        tableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         tableViewerResources = new TableViewer(tableArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         tableViewerResources.setLabelProvider(new LabelProviderResources());
@@ -146,7 +146,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         tableResources = tableViewerResources.getTable();
         tableResources.setLinesVisible(true);
         tableResources.setHeaderVisible(true);
-        tableResources.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        tableResources.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         if (qualifier != null) {
             tableResources.setData(TABLE_RESOURCE_QUALIFIER, qualifier);
@@ -161,7 +161,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
 
         Composite buttonArea = new Composite(this, SWT.NONE);
         buttonArea.setLayout(new GridLayout(1, false));
-        buttonArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true, 1, 1));
+        buttonArea.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 
         Button buttonSelectAll = WidgetFactory.createPushButton(buttonArea);
         buttonSelectAll.setLayoutData(createButtonGridData());
@@ -233,7 +233,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
     }
 
     private GridData createButtonGridData() {
-        return new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        return new GridData(GridData.FILL_HORIZONTAL);
     }
 
     protected void addTablePopupMenu(Table tableResources2) {
