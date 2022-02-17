@@ -69,35 +69,25 @@ public abstract class AbstractEditingDialog extends Dialog {
         container.setLayout(new GridLayout(1, false));
 
         Composite compositeHeader = new Composite(container, SWT.NONE);
-        compositeHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        compositeHeader.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         compositeHeader.setLayout(new GridLayout(2, false));
 
         if (editWorkspace || editBoth) {
 
-            Label labelWorkspace = new Label(compositeHeader, SWT.NONE);
-            labelWorkspace.setText(getWorkspaceText() + ":");
-            labelWorkspace.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-
-            Text textWorkspace = WidgetFactory.createReadOnlyText(compositeHeader);
+            Text textWorkspace = createTextWithLabel(compositeHeader, getWorkspaceText() + ":");
             textWorkspace.setText(workspace);
-            textWorkspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         }
 
         if (editRepository || editBoth) {
 
-            Label labelRepository = new Label(compositeHeader, SWT.NONE);
-            labelRepository.setText(Messages.Repository + ":");
-            labelRepository.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
-
-            Text textRepository = WidgetFactory.createReadOnlyText(compositeHeader);
+            Text textRepository = createTextWithLabel(compositeHeader, Messages.Repository + ":");
             textRepository.setText(repository);
-            textRepository.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         }
 
         CustomExpandBar expandBar = new CustomExpandBar(container, SWT.V_SCROLL);
-        expandBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        expandBar.setLayoutData(new GridData(GridData.FILL_BOTH));
         expandBar.setSpacing(5);
 
         if (isEditingAreaWorkspace()) {
@@ -144,6 +134,18 @@ public abstract class AbstractEditingDialog extends Dialog {
 
         return container;
 
+    }
+
+    private Text createTextWithLabel(Composite compositeHeader, String string) {
+
+        Label label = new Label(compositeHeader, SWT.NONE);
+        label.setText(getWorkspaceText() + ":");
+        label.setLayoutData(new GridData(GridData.BEGINNING));
+
+        Text text = WidgetFactory.createReadOnlyText(compositeHeader);
+        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        return text;
     }
 
     protected void buttonPressed(int buttonId) {
