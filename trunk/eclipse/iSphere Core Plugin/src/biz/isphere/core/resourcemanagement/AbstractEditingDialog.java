@@ -40,13 +40,13 @@ public abstract class AbstractEditingDialog extends Dialog {
     private String repository;
     private AbstractResource[] resourceWorkspace;
     private AbstractResource[] resourceRepository;
-    private AbstractResourceBoth[] resourceBothDifferent;
+    private AbstractResourceBoth<? extends AbstractResource>[] resourceBothDifferent;
     private AbstractResource[] resourceBothEqual;
     private ArrayList<AbstractResource> newRepository;
 
     public AbstractEditingDialog(Shell parentShell, boolean editWorkspace, boolean editRepository, boolean editBoth, String workspace,
-        String repository, AbstractResource[] resourceWorkspace, AbstractResource[] resourceRepository, AbstractResourceBoth[] resourceBothDifferent,
-        AbstractResource[] resourceBothEqual) {
+        String repository, AbstractResource[] resourceWorkspace, AbstractResource[] resourceRepository,
+        AbstractResourceBoth<? extends AbstractResource>[] resourceBothDifferent, AbstractResource[] resourceBothEqual) {
         super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.editWorkspace = editWorkspace;
@@ -263,7 +263,7 @@ public abstract class AbstractEditingDialog extends Dialog {
     }
 
     private boolean hasActions(AbstractResource[] resourceWorkspace, AbstractResource[] resourceRepository,
-        AbstractResourceBoth[] resourceBothDifferent, AbstractResource[] resourceBothEqual) {
+        AbstractResourceBoth<? extends AbstractResource>[] resourceBothDifferent, AbstractResource[] resourceBothEqual) {
 
         if (hasActions(resourceWorkspace)) {
             return true;
