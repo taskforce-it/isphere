@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -103,7 +103,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         }
     }
 
-    private class SorterResources extends ViewerSorter {
+    private class SorterResources extends ViewerComparator {
         @Override
         public int compare(Viewer viewer, Object e1, Object e2) {
             return compareResources(e1, e2);
@@ -131,7 +131,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         tableViewerResources = new TableViewer(tableArea, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
         tableViewerResources.setLabelProvider(new LabelProviderResources());
         tableViewerResources.setContentProvider(new ContentProviderResources());
-        tableViewerResources.setSorter(new SorterResources());
+        tableViewerResources.setComparator(new SorterResources());
         tableViewerResources.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 AbstractResource[] selectedItems = getSelectedResources();
