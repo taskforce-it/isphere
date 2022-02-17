@@ -164,7 +164,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         buttonArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true, 1, 1));
 
         Button buttonSelectAll = WidgetFactory.createPushButton(buttonArea);
-        buttonSelectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        buttonSelectAll.setLayoutData(createButtonGridData());
         buttonSelectAll.setText(Messages.Select_all);
         buttonSelectAll.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -179,7 +179,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         });
 
         buttonDeselectAll = WidgetFactory.createPushButton(buttonArea);
-        buttonDeselectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        buttonDeselectAll.setLayoutData(createButtonGridData());
         buttonDeselectAll.setText(Messages.Deselect_all);
         buttonDeselectAll.setEnabled(false);
         buttonDeselectAll.addSelectionListener(new SelectionAdapter() {
@@ -195,7 +195,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         buttonActions = new Button[actions.length];
         for (int idx = 0; idx < actions.length; idx++) {
             buttonAction = WidgetFactory.createPushButton(buttonArea);
-            buttonAction.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+            buttonAction.setLayoutData(createButtonGridData());
             buttonAction.setText(AbstractResource.getActionText(actions[idx]));
             buttonAction.setEnabled(false);
             buttonAction.setData("Action", actions[idx]);
@@ -215,7 +215,7 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         }
 
         buttonUndoAction = WidgetFactory.createPushButton(buttonArea);
-        buttonUndoAction.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        buttonUndoAction.setLayoutData(createButtonGridData());
         buttonUndoAction.setText(Messages.Undo_action);
         buttonUndoAction.setEnabled(false);
         buttonUndoAction.addSelectionListener(new SelectionAdapter() {
@@ -230,6 +230,10 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
             }
         });
 
+    }
+
+    private GridData createButtonGridData() {
+        return new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
     }
 
     protected void addTablePopupMenu(Table tableResources2) {
