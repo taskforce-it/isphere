@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.swt.widgets.CustomExpandBar;
@@ -63,9 +64,44 @@ public abstract class AbstractEditingDialog extends Dialog {
         }
     }
 
+    protected Control createContents(Composite parent) {
+
+        // changed for dark mode
+        // create the top level composite for the dialog
+        Composite composite;
+        if (!UIHelper.isDarkMode()) {
+            composite = new Composite(parent, 0);
+        } else {
+            composite = parent.getShell();
+        }
+
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.verticalSpacing = 0;
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        applyDialogFont(composite);
+
+        // initialize the dialog units
+        initializeDialogUnits(composite);
+
+        // create the dialog area and button bar
+        dialogArea = createDialogArea(composite);
+        buttonBar = createButtonBar(composite);
+
+        return composite;
+    }
+
     protected Control createDialogArea(Composite parent) {
 
-        Composite container = (Composite)super.createDialogArea(parent);
+        // changed for dark mode
+        Composite container;
+        if (!UIHelper.isDarkMode()) {
+            container = (Composite)super.createDialogArea(parent);
+        } else {
+            container = parent;
+        }
         container.setLayout(new GridLayout(1, false));
 
         Composite compositeHeader = new Composite(container, SWT.NONE);

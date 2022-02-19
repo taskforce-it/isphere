@@ -159,9 +159,16 @@ public abstract class AbstractEditingArea extends Composite implements IEditingA
         columnAction.setWidth(Size.getSize(150));
         columnAction.setText(Messages.Action);
 
-        Composite buttonArea = new Composite(this, SWT.NONE);
+        // added for dark mode
+        Composite buttonAreaBackground = new Composite(this, SWT.NONE);
+        buttonAreaBackground.setLayout(new GridLayout(1, false));
+        buttonAreaBackground.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        Composite buttonArea = new Composite(buttonAreaBackground, SWT.NONE);
         buttonArea.setLayout(new GridLayout(1, false));
-        buttonArea.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
+        GridData gridData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+        gridData.grabExcessVerticalSpace = true;
+        buttonArea.setLayoutData(gridData);
 
         Button buttonSelectAll = WidgetFactory.createPushButton(buttonArea);
         buttonSelectAll.setLayoutData(createButtonGridData());

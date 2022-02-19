@@ -9,7 +9,11 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
- com.ibm.etools.iseries.toolbox
+ com.ibm.etools.iseries.toolbox,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.ui.css.swt,
+ org.eclipse.e4.ui.css.swt.theme
 Export-Package: biz.isphere.base.comparators,
  biz.isphere.base.externalapi,
  biz.isphere.base.internal,
@@ -20,3 +24,4 @@ Export-Package: biz.isphere.base.comparators,
  biz.isphere.base.versioncheck
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true
+Import-Package: org.eclipse.e4.ui.css.swt.theme
