@@ -1,6 +1,7 @@
 
 Changelog: iSphere 4.2.5.b003
 -----------------------------
+ • Fixed iSphere filter manager for dark mode (iSphere ticket #121).
  • Fixed problem that the record length of the target source file was
    not always checked, when copying members. Not check, when the
    target member existed.
