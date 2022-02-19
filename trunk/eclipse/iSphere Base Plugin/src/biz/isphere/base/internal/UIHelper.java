@@ -8,6 +8,10 @@
 
 package biz.isphere.base.internal;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.css.swt.theme.ITheme;
+import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -53,5 +57,17 @@ public final class UIHelper {
         }
 
         return activePage.getActiveEditor();
+    }
+
+    public static boolean isDarkMode() {
+        MApplication application = (MApplication)PlatformUI.getWorkbench().getService(MApplication.class);
+        IEclipseContext context = application.getContext();
+        String defaultTheme = (String)context.get("cssTheme");
+        IThemeEngine engine = (IThemeEngine)context.get(IThemeEngine.class);
+        ITheme activeTheme = engine.getActiveTheme();
+        if (activeTheme == null) {
+            return false;
+        }
+        return "org.eclipse.e4.ui.css.theme.e4_dark".equals(activeTheme.getId());
     }
 }
