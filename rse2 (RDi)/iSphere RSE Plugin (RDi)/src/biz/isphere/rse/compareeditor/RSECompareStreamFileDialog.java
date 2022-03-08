@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
 import biz.isphere.core.internal.StreamFile;
 import biz.isphere.rse.Messages;
@@ -48,11 +49,13 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     private String ancestorDirectory;
     private String ancestorStreamFile;
 
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile,
         RSEStreamFile ancestorStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         this.rseLeftStreamFile = leftStreamFile;
         initializeRightStreamFile(rightStreamFile);
+        setSwitchStreamFileAllowed(false);
     }
 
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile[] selectedStreamFiles) {
@@ -61,10 +64,12 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         initializeRightStreamFile(selectedStreamFiles[0]);
     }
 
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile);
         this.rseLeftStreamFile = leftStreamFile;
         initializeRightStreamFile(rightStreamFile);
+        setSwitchStreamFileAllowed(false);
     }
 
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile) {

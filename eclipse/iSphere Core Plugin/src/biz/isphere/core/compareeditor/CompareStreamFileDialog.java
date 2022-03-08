@@ -56,6 +56,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
     private boolean hasRightStreamFile;
     private boolean hasMultipleRightStreamFiles;
     private boolean hasAncestor;
+    private boolean switchStreamFileAllowed = true;
     private Image switchImage;
     private Text leftConnectionText;
     private Text leftDirectoryText;
@@ -289,20 +290,24 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
                 if (!hasAncestor) {
 
-                    Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
-                    GridLayout middleLayout = new GridLayout();
-                    middleLayout.numColumns = 1;
-                    switchPanel.setLayout(middleLayout);
-                    switchPanel.setLayoutData(getGridData());
-
-                    Button switchStreamFileButton = WidgetFactory.createPushButton(switchPanel);
-                    switchStreamFileButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
-                    switchStreamFileButton.setImage(getSwitchImage());
-                    switchStreamFileButton.addListener(SWT.Selection, new Listener() {
-                        public void handleEvent(Event arg0) {
-                            switchLeftAndRightStreamFile(leftStreamFile, rightStreamFile);
-                        }
-                    });
+                    if (switchStreamFileAllowed) {
+                    
+                        Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
+                        GridLayout middleLayout = new GridLayout();
+                        middleLayout.numColumns = 1;
+                        switchPanel.setLayout(middleLayout);
+                        switchPanel.setLayoutData(getGridData());
+    
+                        Button switchStreamFileButton = WidgetFactory.createPushButton(switchPanel);
+                        switchStreamFileButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
+                        switchStreamFileButton.setImage(getSwitchImage());
+                        switchStreamFileButton.addListener(SWT.Selection, new Listener() {
+                            public void handleEvent(Event arg0) {
+                                switchLeftAndRightStreamFile(leftStreamFile, rightStreamFile);
+                            }
+                        });
+                        
+                    }
 
                 }
 
@@ -527,6 +532,10 @@ public abstract class CompareStreamFileDialog extends XDialog {
     @Override
     protected IDialogSettings getDialogBoundsSettings() {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
+    }
+
+    public void setSwitchStreamFileAllowed(boolean switchStreamFileAllowed) {
+        this.switchStreamFileAllowed = switchStreamFileAllowed;
     }
 
 }
