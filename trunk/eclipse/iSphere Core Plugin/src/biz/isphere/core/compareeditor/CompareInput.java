@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,10 +163,9 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     public void cleanup() {
 
-        // TODO: activate with 4.0 (move from CompareAction)
-        // if (editable) {
-        // removeIgnoreFile();
-        // }
+        if (editable) {
+            removeIgnoreFile();
+        }
 
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);
@@ -227,7 +226,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         ((MyDiffNode)fRoot).fireChange();
     }
 
-    public void addIgnoreFile() {
+    private void addIgnoreFile() {
         leftMember.addIgnoreFile();
         try {
             leftMember.openStream();
@@ -236,7 +235,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
         }
     }
 
-    public void removeIgnoreFile() {
+    private void removeIgnoreFile() {
         leftMember.removeIgnoreFile();
         try {
             leftMember.closeStream();

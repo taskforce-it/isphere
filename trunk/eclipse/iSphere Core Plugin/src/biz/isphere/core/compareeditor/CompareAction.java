@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,11 +120,6 @@ public class CompareAction {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
                             if (editorPart.getEditorInput() == fInput) {
-                                // TODO: remove in 4.0 (move to
-                                // CompareInput.cleanUp()
-                                if (cc.isLeftEditable()) {
-                                    fInput.removeIgnoreFile();
-                                }
                                 fInput.cleanup();
                                 IWorkbenchPage workbenchPage = UIHelper.getActivePage();
                                 if (workbenchPage != null) {
@@ -167,11 +162,11 @@ public class CompareAction {
                 } else {
                     String title;
                     if (cc.isLeftEditable()) {
-                        title = Messages.bind(Messages.CompareEditor_Compare_Edit, new String[] { getQualifiedMemberName(leftMember),
-                            getQualifiedMemberName(rightMember) });
+                        title = Messages.bind(Messages.CompareEditor_Compare_Edit,
+                            new String[] { getQualifiedMemberName(leftMember), getQualifiedMemberName(rightMember) });
                     } else {
-                        title = Messages.bind(Messages.CompareEditor_Compare, new String[] { getQualifiedMemberName(leftMember),
-                            getQualifiedMemberName(rightMember) });
+                        title = Messages.bind(Messages.CompareEditor_Compare,
+                            new String[] { getQualifiedMemberName(leftMember), getQualifiedMemberName(rightMember) });
                     }
                     fInput.setTitle(title);
                 }
@@ -234,8 +229,8 @@ public class CompareAction {
             }
 
             private void displayMemberNotFoundMessage(String library, String file, String member) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
-                    library, file, member });
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
+                    new Object[] { library, file, member });
                 MessageDialog.openError(getShell(), Messages.Compare_source_members, message);
             }
         });
