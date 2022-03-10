@@ -1,4 +1,9 @@
 
+Changelog: iSphere 4.2.5.b004
+-----------------------------
+ • Finished TODO: Moved removeIgnoreFile() from CompareAction to
+   CompareInput.
+
 Changelog: iSphere 4.2.5.b003
 -----------------------------
  • Fixed iSphere filter manager for dark mode (iSphere ticket #121).
