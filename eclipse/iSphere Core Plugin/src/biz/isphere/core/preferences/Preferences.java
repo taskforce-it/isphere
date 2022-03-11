@@ -151,6 +151,8 @@ public final class Preferences {
 
     private static final String MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY = DOMAIN + "MESSAGEFILESEARCH.EXPORT_DIRECTORY"; //$NON-NLS-1$
 
+    private static final String STREAM_FILE_SEARCH_SEARCHSTRING = DOMAIN + "STREAMFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
+
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
 
     private static final String ASP_GROUP = "ASP_GROUP"; //$NON-NLS-1$
@@ -358,6 +360,10 @@ public final class Preferences {
 
     public String getSourceFileSearchExportDirectory() {
         return preferenceStore.getString(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY);
+    }
+
+    public String getStreamFileSearchString() {
+        return preferenceStore.getString(STREAM_FILE_SEARCH_SEARCHSTRING);
     }
 
     public boolean isMergeSpooledFileFilters() {
@@ -768,6 +774,10 @@ public final class Preferences {
 
     public void setSourceFileSearchExportDirectory(String aPath) {
         preferenceStore.setValue(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY, aPath);
+    }
+
+    public void setStreamFileSearchString(String aSearchString) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_SEARCHSTRING, aSearchString.trim());
     }
 
     public void setMergeSpooledFileFilters(boolean mergeFilters) {

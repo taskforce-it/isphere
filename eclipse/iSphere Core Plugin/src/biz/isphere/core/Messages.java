@@ -1736,6 +1736,16 @@ public class Messages extends NLS {
 
     public static String Error_Invalid_value_A_Value_must_be_between_B_and_C;
 
+    public static String iSphere_Stream_File_Search;
+
+    public static String GenericSearchOption_StmF_Type;
+
+    public static String Stream_file_type_colon;
+
+    public static String Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search;
+
+    public static String Enter_or_select_a_simple_or_generic_stream_file_type;
+
     /*
      * Warning messages
      */

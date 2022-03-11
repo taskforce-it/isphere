@@ -35,6 +35,12 @@ public class SearchArgument {
      */
     public static int MAX_MESSAGE_FILE_SEARCH_COLUMN = 132;
 
+    /**
+     * The value specified here must match the maximum line length in ZFNDSTR
+     * (see: LILINE).
+     */
+    public static final int MAX_STREAM_FILE_SEARCH_COLUMN = 512;
+
     public SearchArgument(String aString, int aFromColumn, int aToColumn, String aCaseSensitive) {
         this(aString, aFromColumn, aToColumn, aCaseSensitive, SearchOptions.SEARCH_ARG_STRING, SearchOptions.CONTAINS);
     }

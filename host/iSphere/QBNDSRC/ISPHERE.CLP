@@ -1,70 +1,71 @@
-     /*-----------------------------------------------------------------------*/
-     /*                                                                       */
-     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
-     /* All rights reserved. This program and the accompanying materials      */
-     /* are made available under the terms of the Common Public License v1.0  */
-     /* which accompanies this distribution, and is available at              */
-     /* http://www.eclipse.org/legal/cpl-v10.html                             */
-     /*                                                                       */
-     /*-----------------------------------------------------------------------*/
-     /*                                                                       */
-     /* iSphere Binding Directory                                             */
-     /*                                                                       */
-     /*-----------------------------------------------------------------------*/
-     /* STRPREPRC Compile Options:                                            */
-     /*   >>PRE-COMPILER<<                                                    */
-     /*     >>CRTCMD<<    CRTCLPGM   PGM(QTEMP/&OB) +                         */
-     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
-     /*       >>COMPILE<<                                                     */
-     /*         >>PARM<<  TEXT('Creates: iSphere Binding Directory');         */
-     /*       >>END-COMPILE<<                                                 */
-     /*       >>EXECUTE<<                                                     */
-     /*       >>CMD<<     CALL PGM(QTEMP/&OB) PARM(&LI &OB);                  */
-     /*   >>END-PRE-COMPILER<<                                                */
-     /*-----------------------------------------------------------------------*/
-             PGM        PARM(&LIB &OBJ)
-
-             DCL        VAR(&LIB ) TYPE(*CHAR) LEN(10)
-             DCL        VAR(&OBJ ) TYPE(*CHAR) LEN(10)
-
-             /* ------------------------- Error handler ------------------------- */
-             DCL        VAR(&ERRMSGKEY ) TYPE(*CHAR) LEN( 4)
-             DCL        VAR(&ERRMSGTYPE) TYPE(*CHAR) LEN(10) VALUE('*DIAG')
-             DCL        VAR(&ERRNUMTYPE) TYPE(*CHAR) LEN( 4) VALUE(x'00000001')
-             DCL        VAR(&ERRSTKE   ) TYPE(*CHAR) LEN(10) VALUE('*PGMBDY')
-             DCL        VAR(&ERRSTKCNT ) TYPE(*CHAR) LEN( 4) VALUE(x'00000001')
-             DCL        VAR(&ERRCODE   ) TYPE(*CHAR) LEN( 8) VALUE(x'0000000000000000')
-
-             MONMSG     MSGID(CPF0000) EXEC(GOTO ERRHDLR)
-             /* ----------------------------------------------------------------- */
-
-             DLTBNDDIR BNDDIR(&LIB/&OBJ)
-             MONMSG     MSGID(CPF2105) EXEC(DO)
-                RMVMSG PGMQ(*SAME (*)) CLEAR(*ALL)
-             ENDDO
-
-             CRTBNDDIR BNDDIR(&LIB/&OBJ) TEXT('iSphere Binding Directory')
-
-             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((FNDSTR  *SRVPGM))
-             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((ISTBDIR *SRVPGM))
-             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((NBRRNG  *SRVPGM))
-             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((SPLF    *SRVPGM))
-             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((XFNDSTR *SRVPGM))
-
-             RETURN
-
-             /* --------------------------------------------------- */
-             /*   Error Handler                                     */
-             /* --------------------------------------------------- */
- ERRHDLR:    CALL       PGM(QMHMOVPM) PARM(&ERRMSGKEY  +
-                                           &ERRMSGTYPE +
-                                           &ERRNUMTYPE +
-                                           &ERRSTKE    +
-                                           &ERRSTKCNT  +
-                                           &ERRCODE    )
-             MONMSG     MSGID(CPF0000)
-
-             CALL       PGM(QMHRSNEM) PARM(&ERRMSGKEY  +
-                                           &ERRCODE    )
-
-             ENDPGM
+000100211120     /*-----------------------------------------------------------------------*/
+000200211120     /*                                                                       */
+000300211120     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
+000400211120     /* All rights reserved. This program and the accompanying materials      */
+000500211120     /* are made available under the terms of the Common Public License v1.0  */
+000600211120     /* which accompanies this distribution, and is available at              */
+000700211120     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+000800211120     /*                                                                       */
+000900211120     /*-----------------------------------------------------------------------*/
+001000211120     /*                                                                       */
+001100211120     /* iSphere Binding Directory                                             */
+001200211120     /*                                                                       */
+001300211120     /*-----------------------------------------------------------------------*/
+001400211120     /* STRPREPRC Compile Options:                                            */
+001500211120     /*   >>PRE-COMPILER<<                                                    */
+001600211120     /*     >>CRTCMD<<    CRTCLPGM   PGM(QTEMP/&OB) +                         */
+001700211120     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+001800211120     /*       >>COMPILE<<                                                     */
+001900211120     /*         >>PARM<<  TEXT('Creates: iSphere Binding Directory');         */
+002000211120     /*       >>END-COMPILE<<                                                 */
+002100211120     /*       >>EXECUTE<<                                                     */
+002200211120     /*       >>CMD<<     CALL PGM(QTEMP/&OB) PARM(&LI &OB);                  */
+002300211120     /*   >>END-PRE-COMPILER<<                                                */
+002400211120     /*-----------------------------------------------------------------------*/
+002500211120             PGM        PARM(&LIB &OBJ)
+002600211120
+002700211120             DCL        VAR(&LIB ) TYPE(*CHAR) LEN(10)
+002800211120             DCL        VAR(&OBJ ) TYPE(*CHAR) LEN(10)
+002900211120
+003000211120             /* ------------------------- Error handler ------------------------- */
+003100211120             DCL        VAR(&ERRMSGKEY ) TYPE(*CHAR) LEN( 4)
+003200211120             DCL        VAR(&ERRMSGTYPE) TYPE(*CHAR) LEN(10) VALUE('*DIAG')
+003300211120             DCL        VAR(&ERRNUMTYPE) TYPE(*CHAR) LEN( 4) VALUE(x'00000001')
+003400211120             DCL        VAR(&ERRSTKE   ) TYPE(*CHAR) LEN(10) VALUE('*PGMBDY')
+003500211120             DCL        VAR(&ERRSTKCNT ) TYPE(*CHAR) LEN( 4) VALUE(x'00000001')
+003600211120             DCL        VAR(&ERRCODE   ) TYPE(*CHAR) LEN( 8) VALUE(x'0000000000000000')
+003700211120
+003800211120             MONMSG     MSGID(CPF0000) EXEC(GOTO ERRHDLR)
+003900211120             /* ----------------------------------------------------------------- */
+004000211120
+004100211120             DLTBNDDIR BNDDIR(&LIB/&OBJ)
+004200211120             MONMSG     MSGID(CPF2105) EXEC(DO)
+004300211120                RMVMSG PGMQ(*SAME (*)) CLEAR(*ALL)
+004400211120             ENDDO
+004500211120
+004600211120             CRTBNDDIR BNDDIR(&LIB/&OBJ) TEXT('iSphere Binding Directory')
+004700211120
+004800211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((FNDSTR  *SRVPGM))
+004900211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((ISTBDIR *SRVPGM))
+005000211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((NBRRNG  *SRVPGM))
+005100211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((SPLF    *SRVPGM))
+005200211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((XFNDSTR *SRVPGM))
+005300220310             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((ZFNDSTR *SRVPGM))
+005400211120
+005500211120             RETURN
+005600211120
+005700211120             /* --------------------------------------------------- */
+005800211120             /*   Error Handler                                     */
+005900211120             /* --------------------------------------------------- */
+006000211120 ERRHDLR:    CALL       PGM(QMHMOVPM) PARM(&ERRMSGKEY  +
+006100211120                                           &ERRMSGTYPE +
+006200211120                                           &ERRNUMTYPE +
+006300211120                                           &ERRSTKE    +
+006400211120                                           &ERRSTKCNT  +
+006500211120                                           &ERRCODE    )
+006600211120             MONMSG     MSGID(CPF0000)
+006700211120
+006800211120             CALL       PGM(QMHRSNEM) PARM(&ERRMSGKEY  +
+006900211120                                           &ERRCODE    )
+007000211120
+007100211120             ENDPGM
