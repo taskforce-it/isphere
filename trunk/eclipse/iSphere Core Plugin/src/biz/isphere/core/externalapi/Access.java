@@ -705,4 +705,83 @@ public class Access {
         Preferences.getInstance().setSearchForBetaVersions(false);
     }
     
+    /**
+     * Searches for strings in stream files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchOptions - Contains the strings to search for and other search options.
+     * @param _searchElements - Contains the elements (Stream files) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.streamfilesearch.SearchResult[] searchStringInStreamFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.streamfilesearch.SearchElement> _searchElements)
+        throws Exception {
+
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            Connection _jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+            if (_jdbcConnection != null) {
+                
+                return new biz.isphere.core.streamfilesearch.SearchExec().executeJoin(
+                        _as400,
+                        _jdbcConnection,
+                        _searchOptions,
+                        _searchElements);
+                
+            }
+        }
+        
+        return new biz.isphere.core.streamfilesearch.SearchResult[0];
+        
+    }
+    
+    /**
+     * Searches for strings in stream files and returns the search results.
+     * 
+     * @param shell - the parent shell.
+     * @param connectionName - connection name.
+     * @param _searchElements - Contains the elements (Stream files) to search for strings.
+     * @throws Exception
+     * @see QualifiedConnectionName
+     */
+    public static biz.isphere.core.streamfilesearch.ExtendedSearchResult searchStringInStreamFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.streamfilesearch.SearchElement> _searchElements)
+        throws Exception {
+        
+        AS400 _as400 = IBMiHostContributionsHandler.getSystem(connectionName);
+        if (_as400 != null) {
+            
+            if (ISphereHelper.checkISphereLibrary(shell, _as400)) {
+                
+                biz.isphere.core.streamfilesearch.SearchDialog dialog = new biz.isphere.core.streamfilesearch.SearchDialog(shell, _searchElements, true);
+                if (dialog.open() == Dialog.OK) {
+
+                    biz.isphere.core.streamfilesearch.SearchResult[] _searchResults;
+                    try {
+                        _searchResults = Access.searchStringInStreamFile(
+                                shell, 
+                                connectionName, 
+                                dialog.getSearchOptions(), 
+                                new ArrayList<biz.isphere.core.streamfilesearch.SearchElement>(_searchElements.values()));
+                    } 
+                    catch (Exception e) {
+                        _searchResults = new biz.isphere.core.streamfilesearch.SearchResult[0];
+                    }
+                    
+                    biz.isphere.core.streamfilesearch.ExtendedSearchResult extendedSearchResult = new biz.isphere.core.streamfilesearch.ExtendedSearchResult();
+                    extendedSearchResult.setSearchOptions(dialog.getSearchOptions());
+                    extendedSearchResult.setSearchResults(_searchResults);
+
+                    return extendedSearchResult;
+                    
+                }
+                
+            }
+            
+        }
+        
+        return null;
+        
+    }
+    
 }

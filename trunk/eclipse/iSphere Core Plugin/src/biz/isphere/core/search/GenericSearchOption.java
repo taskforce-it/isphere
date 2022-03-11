@@ -21,6 +21,9 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
     public static final GenericSearchOption.Key MSGF_INCLUDE_MESSAGE_ID = GenericSearchOption.Key.MSGF_INCLUDE_MESSAGE_ID;
     public static final GenericSearchOption.Key MSGF_INCLUDE_SECOND_LEVEL_TEXT = GenericSearchOption.Key.MSGF_INCLUDE_SECOND_LEVEL_TEXT;
     public static final GenericSearchOption.Key MSGF_INCLUDE_FIRST_LEVEL_TEXT = GenericSearchOption.Key.MSGF_INCLUDE_FIRST_LEVEL_TEXT;
+    
+    // Stream file search options
+    public static final GenericSearchOption.Key STMF_TYPE = GenericSearchOption.Key.STMF_TYPE;
 
     private GenericSearchOption.Key key;
     private Object value;
@@ -44,6 +47,8 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
             return Messages.GenericSearchOption_MsgF_IncludeMessageId;
         } else if (GenericSearchOption.SRCMBR_SRC_TYPE.equals(key)) {
             return Messages.GenericSearchOption_SrcMbr_SourceType;
+        } else if (GenericSearchOption.STMF_TYPE.equals(key)) {
+            return Messages.GenericSearchOption_StmF_Type;
         } else {
             return "*ERROR"; //$NON-NLS-1$
         }
@@ -78,7 +83,8 @@ public class GenericSearchOption implements Map.Entry<String, Object> {
         SRCMBR_SRC_TYPE ("SRC_TYPE"),
         MSGF_INCLUDE_MESSAGE_ID ("INCLUDE_MESSAGE_ID"),
         MSGF_INCLUDE_SECOND_LEVEL_TEXT ("INCLUDE_SECOND_LEVEL_TEXT"),
-        MSGF_INCLUDE_FIRST_LEVEL_TEXT ("INCLUDE_FIRST_LEVEL_TEXT");
+        MSGF_INCLUDE_FIRST_LEVEL_TEXT ("INCLUDE_FIRST_LEVEL_TEXT"),
+        STMF_TYPE ("STMF_TYPE");
 
         private String keyValue;
 
