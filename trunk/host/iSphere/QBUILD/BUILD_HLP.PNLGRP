@@ -219,6 +219,29 @@ created by the build process.
 .*
 :EHELP.
 .*
+.*--------------------------------------------------------------------
+.* Help text of keyword DLTTLSSRCF
+.*--------------------------------------------------------------------
+:HELP name='BUILD/DLTUTLSRCF'.
+Delete Utilities Source Files - Help
+:XH3.Delete Utilities Source Files (DLTUTLSRCF)
+:P.
+Specifies whether the source files of additional utilities, such
+as STRPREPRC or WHOAMI are deleted after their installation.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*YES:EPK.
+:PD.Source files of additional utilities are deleted after
+installation.
+:PT.:PV.*NO:EPV.
+:PD.Source files of additional utilities are not deleted after
+installation.
+:EPARML.
+.*
+:EHELP.
+.*
 .*====================================================================
 .*  Textbausteine, die an mehreren Stellen im Helptext
 .*  verwendet werden.

@@ -1,7 +1,10 @@
 
 Changelog: iSphere 5.0.0.b004
 -----------------------------
- • Added iSphere Stream File Search to iSphere library. 
+ • Added iSphere Stream File Search to iSphere library.
+ • Changed iSphere BUILD to delete the source files of the STRPREPRC
+   and WHOAMI utilities after their installation. (New parameter
+   DLTUTLSRCF of command BUILD)
  • Finished TODO: Moved removeIgnoreFile() from CompareAction to
    CompareInput.
 
