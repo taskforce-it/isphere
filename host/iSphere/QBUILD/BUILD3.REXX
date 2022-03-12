@@ -16,7 +16,7 @@
 Signal on Error;
 
 /* Start */
-ARG DEVLIB TGTRLS;
+ARG DEVLIB TGTRLS DLTUTLSRCF;
 
 /* Create XML-Installer */
 "CRTBNDRPG ",
@@ -28,6 +28,18 @@ ARG DEVLIB TGTRLS;
 "CALL ",
 "PGM(XMLINST) ",
 "PARM('WHOAMI' 'QBUILD' &DEVLIB '' '' '*CURRENT')";
+
+/* Need to fix variable DEVLIB after caling XMLINST. Why??? */
+DEVLIB = STRIP(DEVLIB)
+
+/* Delete sotrce files */
+IF DLTUTLSRCF = "*YES" THEN;
+DO;
+
+   /* Delete source files of utility */
+   "DLTF ",
+   "FILE(&DEVLIB/QWHOAMI)";
+END;
 
 "SNDPGMMSG ",
 "MSGID(CPF9897) ",

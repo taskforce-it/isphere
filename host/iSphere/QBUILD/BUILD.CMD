@@ -79,3 +79,8 @@
                           SPCVAL(*SAME) +
                           PROMPT('Object owner')
 
+             PARM       KWD(DLTUTLSRCF) TYPE(*CHAR) LEN(10) DFT(*YES) +
+                          RSTD(*YES) SPCVAL((*YES) (*NO)) +
+                          PMTCTL(*PMTRQS) +
+                          PROMPT('Delete Utilities Source Files')
+
