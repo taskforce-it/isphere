@@ -7,6 +7,8 @@ Changelog: iSphere 5.0.0.b004
    DLTUTLSRCF of command BUILD)
  • Finished TODO: Moved removeIgnoreFile() from CompareAction to
    CompareInput.
+ • Fixed problem that spooled file actions were incorrectly displayed
+   for RSE filters that are not an iSphere spooled file filter.
 
 Changelog: iSphere 4.2.5.b003
 -----------------------------
