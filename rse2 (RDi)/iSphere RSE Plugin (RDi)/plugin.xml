@@ -621,7 +621,15 @@
       	<objectContribution
             objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
             id="biz.isphere.core.menu.wrksplf">
+
             
+            <enablement>
+                <or>
+                    <!-- Rules to detect source members -->
+                    <test property="biz.isphere.adapter.propertytester.systemfilterreference.type" value="spooled file"/>
+                </or>
+            </enablement>
+
 	         <menu
 	               label="%SaveAs"
 	               id="biz.isphere.core.menu.save">             
