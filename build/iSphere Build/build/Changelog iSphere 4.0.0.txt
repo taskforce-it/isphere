@@ -1,6 +1,7 @@
 
-Changelog: iSphere 4.2.5.b004
+Changelog: iSphere 5.0.0.b004
 -----------------------------
+ • Added iSphere Stream File Search to iSphere library. 
  • Finished TODO: Moved removeIgnoreFile() from CompareAction to
    CompareInput.
 

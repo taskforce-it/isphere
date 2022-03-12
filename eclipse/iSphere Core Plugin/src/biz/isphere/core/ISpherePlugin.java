@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.dataspaceeditordesigner.repository.DataSpaceEditorRepository;
@@ -46,8 +48,6 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.ISearchArgumentsListEditorProvider;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-import com.ibm.as400.access.AS400;
-
 public class ISpherePlugin extends AbstractUIPlugin {
 
     // The plug-in ID
@@ -56,7 +56,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // WDSCi 7.0 = Eclipse 3.2
     private static final Version WDSCI70 = new Version(3, 2, 0);
 
-    private static final String MIN_SERVER_VERSION = "3.7.0"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "5.0.0"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;
