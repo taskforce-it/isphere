@@ -160,6 +160,16 @@ public class Messages extends NLS {
 
     public static String Add_library_name_to_objects;
 
+    public static String Title_Browse_For_Folder;
+
+    public static String Title_Browse_For_File;
+
+    public static String Label_Browse;
+
+    public static String Label_Stream_file_colon;
+
+    public static String Label_Folder_colon;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
