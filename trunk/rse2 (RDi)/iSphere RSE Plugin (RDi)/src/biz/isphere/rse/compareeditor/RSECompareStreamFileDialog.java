@@ -36,6 +36,9 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
+    private static final String RIGHT_HISTORY_KEY = "rightStreamFileHistory"; //$NON-NLS-1$
+    private static final String ANCESTOR_HISTORY_KEY = "ancestorStreamFileHistory"; //$NON-NLS-1$
+
     private Group ancestorGroup;
     private RSEStreamFile rseLeftStreamFile;
     private IBMiConnectionCombo rightConnectionCombo;
@@ -105,7 +108,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             }
         });
 
-        rightStreamFilePrompt = new StreamFilePrompt(rightGroup, SWT.NONE);
+        rightStreamFilePrompt = new StreamFilePrompt(rightGroup, RIGHT_HISTORY_KEY, SWT.NONE);
         rightStreamFilePrompt.setConnection(rightConnectionCombo.getHost());
         rightStreamFilePrompt.setDirectoryName(rseLeftStreamFile.getDirectory());
 
@@ -150,7 +153,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             }
         });
 
-        ancestorStreamFilePrompt = new StreamFilePrompt(ancestorGroup, SWT.NONE);
+        ancestorStreamFilePrompt = new StreamFilePrompt(ancestorGroup, ANCESTOR_HISTORY_KEY, SWT.NONE);
         ancestorStreamFilePrompt.setConnection(ancestorConnectionCombo.getHost());
         ancestorStreamFilePrompt.setDirectoryName(rseLeftStreamFile.getDirectory());
         ancestorStreamFilePrompt.setStreamFileName(rseLeftStreamFile.getStreamFile());
