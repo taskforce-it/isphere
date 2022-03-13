@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -467,6 +467,20 @@ public final class WidgetFactory {
      * @param parent a composite control which will be the parent of the new
      *        instance (cannot be null)
      * @return read-only history combo field
+     */
+    public static HistoryCombo createHistoryCombo(Composite parent) {
+
+        HistoryCombo combo = WidgetFactory.getInstance().produceHistoryComboField(parent, SWT.NONE);
+
+        return combo;
+    }
+
+    /**
+     * Produces a name history combo field.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @return read-only name history combo field
      */
     public static HistoryCombo createNameHistoryCombo(Composite parent) {
 
