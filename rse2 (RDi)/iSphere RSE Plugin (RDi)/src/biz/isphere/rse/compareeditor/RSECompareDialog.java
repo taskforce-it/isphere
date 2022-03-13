@@ -734,7 +734,7 @@ public class RSECompareDialog extends CompareDialog {
             boolean hasLoaded = false;
 
             if (isLoadingPreviousValuesOfAncestorMemberEnabled()) {
-                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfAnchestorMember();
+                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfAncestorMember();
                 hasLoaded = loadMemberValues(PREFIX_ANCESTOR, loadPreviousValue, ancestorConnectionCombo, ancestorMemberPrompt);
             }
 

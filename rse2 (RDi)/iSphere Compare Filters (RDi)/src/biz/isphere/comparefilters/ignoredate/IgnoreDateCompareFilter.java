@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,13 +55,13 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
         return !dialogSettings.getBoolean(CompareDialog.CONSIDER_DATE_PROPERTY);
     }
 
-    public void setInput(Object input, Object anchestor, Object left, Object right) {
+    public void setInput(Object input, Object ancestor, Object left, Object right) {
 
-        String anchestorExt = getFileExtension(anchestor);
+        String ancestorExt = getFileExtension(ancestor);
         String leftExt = getFileExtension(left);
         String rightExt = getFileExtension(right);
 
-        if ((anchestorExt == null || isSupportedFileExtension(anchestorExt)) && isSupportedFileExtension(leftExt)
+        if ((ancestorExt == null || isSupportedFileExtension(ancestorExt)) && isSupportedFileExtension(leftExt)
             && isSupportedFileExtension(rightExt)) {
             isEnabled = true;
         } else {

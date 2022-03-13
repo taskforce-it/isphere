@@ -370,7 +370,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled, preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
         setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
-            preferences.getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember());
+            preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
 
         chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
 

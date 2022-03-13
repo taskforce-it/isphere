@@ -266,8 +266,8 @@ public abstract class CompareDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousValues getLoadPreviousValuesOfAnchestorMember() {
-        return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember();
+    public LoadPreviousValues getLoadPreviousValuesOfAncestorMember() {
+        return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
     }
 
     private boolean isLoadedFromMainMenu() {

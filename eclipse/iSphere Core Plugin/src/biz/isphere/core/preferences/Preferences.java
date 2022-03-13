@@ -655,7 +655,7 @@ public final class Preferences {
         }
     }
 
-    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfAnchestorMember() {
+    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfAncestorMember() {
         try {
             String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
             if ("true".equals(value)) {
