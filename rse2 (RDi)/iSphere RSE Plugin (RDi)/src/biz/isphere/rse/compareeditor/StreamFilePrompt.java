@@ -69,7 +69,7 @@ public class StreamFilePrompt extends Composite {
         btnSelectDirectory.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                SystemRemoteFolderDialog dialog = new SystemRemoteFolderDialog(getShell(), Messages.Title_Browse_For_Folder, host);
+                SystemRemoteFolderDialog dialog = new SystemRemoteFolderDialog(getShell(), Messages.Title_Browse_For_Folder);
 
                 dialog.setDefaultSystemConnection(host, true);
                 dialog.setShowNewConnectionPrompt(false);
@@ -102,7 +102,7 @@ public class StreamFilePrompt extends Composite {
         btnSelectStreamFile.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                SystemRemoteFileDialog dialog = new SystemRemoteFileDialog(getShell(), Messages.Title_Browse_For_File, host);
+                SystemRemoteFileDialog dialog = new SystemRemoteFileDialog(getShell(), Messages.Title_Browse_For_File);
 
                 dialog.setDefaultSystemConnection(host, true);
                 dialog.setShowNewConnectionPrompt(false);
