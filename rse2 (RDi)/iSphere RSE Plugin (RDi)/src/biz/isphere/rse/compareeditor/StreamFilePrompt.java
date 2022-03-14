@@ -71,12 +71,14 @@ public class StreamFilePrompt extends Composite {
             public void widgetSelected(SelectionEvent event) {
                 SystemRemoteFolderDialog dialog = new SystemRemoteFolderDialog(getShell(), Messages.Title_Browse_For_Folder, host);
 
+                dialog.setDefaultSystemConnection(host, true);
+                dialog.setShowNewConnectionPrompt(false);
+                dialog.setMultipleSelectionMode(false);
+
                 IFSRemoteFile folder = IFSRemoteFileHelper.getRemoteFolder(host, cboFolder.getText());
                 if (folder != null) {
                     dialog.setPreSelection(folder);
                 }
-
-                dialog.setMultipleSelectionMode(false);
 
                 if (dialog.open() == Dialog.OK) {
                     Object selectedFolder = dialog.getSelectedObject();
@@ -102,12 +104,14 @@ public class StreamFilePrompt extends Composite {
             public void widgetSelected(SelectionEvent event) {
                 SystemRemoteFileDialog dialog = new SystemRemoteFileDialog(getShell(), Messages.Title_Browse_For_File, host);
 
+                dialog.setDefaultSystemConnection(host, true);
+                dialog.setShowNewConnectionPrompt(false);
+                dialog.setMultipleSelectionMode(false);
+
                 IFSRemoteFile file = IFSRemoteFileHelper.getRemoteFile(host, cboFolder.getText(), cboStreamFile.getText());
                 if (file != null) {
                     dialog.setPreSelection(file);
                 }
-
-                dialog.setMultipleSelectionMode(false);
 
                 if (dialog.open() == Dialog.OK) {
                     Object selectedFile = dialog.getSelectedObject();
