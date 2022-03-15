@@ -20,6 +20,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
@@ -28,12 +34,6 @@ import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class RSECompareDialog extends CompareDialog {
 
@@ -75,6 +75,7 @@ public class RSECompareDialog extends CompareDialog {
         setHistoryValuesCategoryKey(null);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
+        // TODO: call this method from CMOne after the dialog has been created
         setSwitchMemberAllowed(false);
     }
 
@@ -96,6 +97,7 @@ public class RSECompareDialog extends CompareDialog {
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
         initializeAncestorMember(ancestorMember);
+        // TODO: call this method from CMOne after the dialog has been created
         setSwitchMemberAllowed(false);
     }
 
@@ -320,7 +322,11 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void setAncestorVisible(boolean visible) {
         ancestorGroup.setVisible(visible);
-        setFocus();
+        if (visible) {
+            ancestorMemberPrompt.getLibraryCombo().setFocus();
+        } else {
+            rightMemberPrompt.getLibraryCombo().setFocus();
+        }
     }
 
     @Override
@@ -498,8 +504,8 @@ public class RSECompareDialog extends CompareDialog {
 
     private void displayMemberNotFoundMessage(String libraryName, String fileName, String memberName, QSYSMemberPrompt qsysMemberPrompt) {
 
-        String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found, new Object[] {
-            libraryName, fileName, memberName });
+        String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
+            new Object[] { libraryName, fileName, memberName });
         MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
         qsysMemberPrompt.getMemberCombo().setFocus();
 
