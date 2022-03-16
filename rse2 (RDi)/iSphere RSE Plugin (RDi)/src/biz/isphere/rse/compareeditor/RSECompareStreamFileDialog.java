@@ -78,9 +78,9 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         RSEStreamFile ancestorStreamFile, boolean switchStreamFileAllowed) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         setHistoryValuesCategoryKey(null);
-        initializeRightStreamFile(leftStreamFile);
+        initializeLeftStreamFile(leftStreamFile);
         initializeRightStreamFile(rightStreamFile);
-        initializeRightStreamFile(ancestorStreamFile);
+        initializeAncestorStreamFile(ancestorStreamFile);
         setSwitchStreamFileAllowed(switchStreamFileAllowed);
     }
 
@@ -99,9 +99,9 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         RSEStreamFile ancestorStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         setHistoryValuesCategoryKey(null);
-        initializeRightStreamFile(leftStreamFile);
+        initializeLeftStreamFile(leftStreamFile);
         initializeRightStreamFile(rightStreamFile);
-        initializeRightStreamFile(ancestorStreamFile);
+        initializeAncestorStreamFile(ancestorStreamFile);
         setSwitchStreamFileAllowed(false);
     }
 
