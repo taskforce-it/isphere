@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -33,8 +34,17 @@ import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareStreamFileDialog extends XDialog {
 
-    protected static final String SPECIAL_MEMBER_NAME_LEFT = "*LEFT"; //$NON-NLS-1$
-    protected static final String SPECIAL_MEMBER_NAME_SELECTED = "*SELECTED"; //$NON-NLS-1$
+    private static final String BASE_SETTINGS_KEY = "biz.isphere.rse.comparestreamfileeditor.ui."; //$NON-NLS-1$
+
+    protected static final String PREFIX_LEFT = "LEFT";
+    protected static final String PREFIX_RIGHT = "RIGHT";
+    protected static final String PREFIX_ANCESTOR = "ANCESTOR";
+    protected static final String CONNECTION = "CONNECTION";
+    protected static final String DIRECTORY = "DIRECTORY";
+    protected static final String STREAM_FILE = "STREAM_FILE";
+
+    protected static final String SPECIAL_STREAM_FILE_NAME_LEFT = "*LEFT"; //$NON-NLS-1$
+    protected static final String SPECIAL_STREAM_FILE_NAME_SELECTED = "*SELECTED"; //$NON-NLS-1$
 
     private static final String EDITABLE_PROPERTY = "EDITABLE_PROPERTY"; //$NON-NLS-1$
     private static final String IGNORE_CASE_PROPERTY = "IGNORE_CASE_PROPERTY"; //$NON-NLS-1$
@@ -53,9 +63,10 @@ public abstract class CompareStreamFileDialog extends XDialog {
     private boolean ignoreCase;
     private boolean threeWay;
     private Button okButton;
+    private boolean hasLeftStreamFile;
     private boolean hasRightStreamFile;
     private boolean hasMultipleRightStreamFiles;
-    private boolean hasAncestor;
+    private boolean hasAncestorStreamFile;
     private boolean switchStreamFileAllowed = true;
     private Image switchImage;
     private Text leftConnectionText;
@@ -64,6 +75,13 @@ public abstract class CompareStreamFileDialog extends XDialog {
     private Text rightConnectionText;
     private Text rightDirectoryText;
     private Text rightStreamFileText;
+
+    /*
+     * Controls whether or not to store/load stream file values. For now stream
+     * files are stored and loaded when the editor has been opened from the
+     * iSphere main menu, when no initial stream files are selected.
+     */
+    private String historyValuesCategoryKey;
 
     public CompareStreamFileDialog(Shell parentShell, boolean selectEditable, StreamFile leftStreamFile) {
         super(parentShell);
@@ -83,19 +101,29 @@ public abstract class CompareStreamFileDialog extends XDialog {
         hasMultipleRightStreamFiles = true;
     }
 
-    public CompareStreamFileDialog(Shell parentShell, boolean selectEditable, StreamFile leftStreamFile, StreamFile rightStreamFile, StreamFile ancestorStreamFile) {
+    public CompareStreamFileDialog(Shell parentShell, boolean selectEditable, StreamFile leftStreamFile, StreamFile rightStreamFile,
+        StreamFile ancestorStreamFile) {
         super(parentShell);
         initialize(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         hasMultipleRightStreamFiles = false;
     }
 
-    private void initialize(Shell parentShell, boolean selectEditable, StreamFile leftStreamFile, StreamFile rightStreamFile, StreamFile ancestorStreamFile) {
+    protected void setHistoryValuesCategoryKey(String historyValuesCategoryKey) {
+        this.historyValuesCategoryKey = historyValuesCategoryKey;
+    }
+
+    private void initialize(Shell parentShell, boolean selectEditable, StreamFile leftStreamFile, StreamFile rightStreamFile,
+        StreamFile ancestorStreamFile) {
         this.selectEditable = selectEditable;
         this.leftStreamFile = leftStreamFile;
         this.rightStreamFile = rightStreamFile;
         this.ancestorStreamFile = ancestorStreamFile;
 
-        loadScreenValues();
+        if (this.leftStreamFile == null) {
+            hasLeftStreamFile = false;
+        } else {
+            hasLeftStreamFile = true;
+        }
 
         if (this.rightStreamFile == null) {
             hasRightStreamFile = false;
@@ -104,12 +132,100 @@ public abstract class CompareStreamFileDialog extends XDialog {
         }
 
         if (this.ancestorStreamFile == null) {
-            hasAncestor = false;
+            hasAncestorStreamFile = false;
             threeWay = false;
         } else {
-            hasAncestor = true;
+            hasAncestorStreamFile = true;
             threeWay = true;
         }
+    }
+
+    protected boolean isLoadingPreviousValuesOfLeftStreamFileEnabled() {
+
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean isLoadingPreviousValuesOfRightStreamFileEnabled() {
+
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        boolean isLoadingPreviousValuesEnabled = false; // Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled();
+
+        return isLoadingPreviousValuesEnabled;
+    }
+
+    public LoadPreviousValues getLoadPreviousValuesOfRightStreamFile() {
+        return LoadPreviousValues.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
+    }
+
+    protected boolean isLoadingPreviousValuesOfAncestorStreamFileEnabled() {
+
+        if (isLoadedFromMainMenu()) {
+            return true;
+        }
+
+        boolean isLoadingPreviousValuesEnabled = false; // Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled();
+
+        return isLoadingPreviousValuesEnabled;
+    }
+
+    public LoadPreviousValues getLoadPreviousValuesOfAncestorStreamFile() {
+        return LoadPreviousValues.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
+    }
+
+    private boolean isLoadedFromMainMenu() {
+
+        /*
+         * Load previous values when called from the main menu.
+         */
+        if (!hasLeftStreamFile() && !hasRightStreamFile() && !hasAncestorStreamFile()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean canStoreHistory() {
+
+        if (!StringHelper.isNullOrEmpty(historyValuesCategoryKey)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected String getStreamFilePromptDialogSettingsKey(String streamFilePromptType, String objectType) {
+
+        if (!canStoreHistory()) {
+            return null;
+        }
+
+        return historyValuesCategoryKey + "_" + streamFilePromptType + "_" + objectType;
+    }
+
+    protected String getStreamFilePromptHistoryKey(String streamFilePromptType, String objectType) {
+
+        if (!canStoreHistory()) {
+            return null;
+        }
+
+        return BASE_SETTINGS_KEY + historyValuesCategoryKey + "." + streamFilePromptType + "." + objectType;
+    }
+
+    @Override
+    protected Control createContents(Composite parent) {
+        Control control = super.createContents(parent);
+
+        loadScreenValues();
+        setFocus();
+
+        return control;
     }
 
     @Override
@@ -129,6 +245,9 @@ public abstract class CompareStreamFileDialog extends XDialog {
         modeGroup.setLayout(modeLayout);
         modeGroup.setLayoutData(getGridData());
 
+        /*
+         * ---------------- Create options area ----------------
+         */
         if (selectEditable) {
 
             Composite editableGroup = new Composite(modeGroup, SWT.NONE);
@@ -139,9 +258,6 @@ public abstract class CompareStreamFileDialog extends XDialog {
             browseButton = WidgetFactory.createRadioButton(editableGroup);
             browseButton.setText(Messages.Open_for_browse);
             browseButton.setLayoutData(getGridData());
-            if (!editable || ignoreCase) {
-                browseButton.setSelection(true);
-            }
 
             editButton = WidgetFactory.createRadioButton(editableGroup);
             editButton.setText(Messages.Open_for_edit);
@@ -154,9 +270,6 @@ public abstract class CompareStreamFileDialog extends XDialog {
                     }
                 }
             });
-            if (editable && !ignoreCase) {
-                editButton.setSelection(true);
-            }
 
         }
 
@@ -168,9 +281,6 @@ public abstract class CompareStreamFileDialog extends XDialog {
         dontIgnoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         dontIgnoreCaseButton.setText(Messages.Don_t_ignore_case);
         dontIgnoreCaseButton.setLayoutData(getGridData());
-        if (!ignoreCase) {
-            dontIgnoreCaseButton.setSelection(true);
-        }
 
         ignoreCaseButton = WidgetFactory.createRadioButton(ignoreCaseGroup);
         ignoreCaseButton.setText(Messages.Ignore_case);
@@ -185,11 +295,8 @@ public abstract class CompareStreamFileDialog extends XDialog {
                 }
             }
         });
-        if (ignoreCase) {
-            ignoreCaseButton.setSelection(true);
-        }
 
-        if (!hasRightStreamFile) {
+        if (!hasRightStreamFile()) {
 
             Composite threeWayGroup = new Composite(modeGroup, SWT.NONE);
             GridLayout threeWayLayout = new GridLayout(2, true);
@@ -228,186 +335,37 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
         }
 
-        Group leftGroup = new Group(rtnGroup, SWT.NONE);
-        leftGroup.setText(Messages.Left);
-        GridLayout leftLayout = new GridLayout(2, false);
-        leftGroup.setLayout(leftLayout);
-        leftGroup.setLayoutData(getGridData());
-
-        Label leftConnectionLabel = new Label(leftGroup, SWT.NONE);
-        leftConnectionLabel.setText(Messages.Connection_colon);
-
-        leftConnectionText = WidgetFactory.createReadOnlyText(leftGroup);
-        leftConnectionText.setLayoutData(getGridData());
-        leftConnectionText.setText(leftStreamFile.getConnection());
-
-        Label leftDirectoryLabel = new Label(leftGroup, SWT.NONE);
-        leftDirectoryLabel.setText(Messages.Directory_colon);
-        leftDirectoryText = WidgetFactory.createReadOnlyText(leftGroup);
-        leftDirectoryText.setLayoutData(getGridData());
-        if (leftStreamFile.isArchive()) {
-            leftDirectoryText.setText(leftStreamFile.getArchiveDirectory());
+        /*
+         * ---------------- Create left area ----------------
+         */
+        if (hasLeftStreamFile()) {
+            createReadOnlyLeftArea(rtnGroup);
         } else {
-            leftDirectoryText.setText(leftStreamFile.getDirectory());
+            createEditableLeftArea(rtnGroup);
         }
 
-        Label leftStreamFileLabel = new Label(leftGroup, SWT.NONE);
-        leftStreamFileLabel.setText(Messages.Stream_file_colon);
-        leftStreamFileText = WidgetFactory.createReadOnlyText(leftGroup);
-        leftStreamFileText.setLayoutData(getGridData());
-
-        if (hasMultipleRightStreamFiles()) {
-            leftStreamFileText.setText(SPECIAL_MEMBER_NAME_SELECTED);
-        } else {
-            if (leftStreamFile.isArchive()) {
-                leftStreamFileText.setText(leftStreamFile.getArchiveStreamFile());
+        /*
+         * -------- Create right and ancestor areas --------
+         */
+        if (hasAncestorStreamFile()) {
+            createReadOnlyRightArea(rtnGroup);
+            createReadOnlyAncestorArea(rtnGroup);
+        } else if (hasRightStreamFile()) {
+            if (!hasMultipleRightStreamFiles()) {
+                if (switchStreamFileAllowed) {
+                    createSwitchStreamFileButton(rtnGroup);
+                }
+                createReadOnlyRightArea(rtnGroup);
             } else {
-                leftStreamFileText.setText(leftStreamFile.getStreamFile());
+                createEditableRightArea(rtnGroup);
             }
-        }
-
-        if (leftStreamFile.isArchive()) {
-            Label leftTimeLabel = new Label(leftGroup, SWT.NONE);
-            leftTimeLabel.setText(Messages.Archive_colon);
-            Text leftTimeText = WidgetFactory.createReadOnlyText(leftGroup);
-            leftTimeText.setLayoutData(getGridData());
-            leftTimeText.setText(leftStreamFile.getArchiveDate() + " - " + leftStreamFile.getArchiveTime()); //$NON-NLS-1$
-        }
-
-        if (hasMultipleRightStreamFiles) {
-
-            createRightArea(rtnGroup);
-
-        } else if (!hasRightStreamFile) {
-
-            createRightArea(rtnGroup);
-
-            createAncestorArea(rtnGroup);
-
         } else {
-
-            if (hasRightStreamFile) {
-
-                if (!hasAncestor) {
-
-                    if (switchStreamFileAllowed) {
-                    
-                        Composite switchPanel = new Composite(rtnGroup, SWT.NONE);
-                        GridLayout middleLayout = new GridLayout();
-                        middleLayout.numColumns = 1;
-                        switchPanel.setLayout(middleLayout);
-                        switchPanel.setLayoutData(getGridData());
-    
-                        Button switchStreamFileButton = WidgetFactory.createPushButton(switchPanel);
-                        switchStreamFileButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
-                        switchStreamFileButton.setImage(getSwitchImage());
-                        switchStreamFileButton.addListener(SWT.Selection, new Listener() {
-                            public void handleEvent(Event arg0) {
-                                switchLeftAndRightStreamFile(leftStreamFile, rightStreamFile);
-                            }
-                        });
-                        
-                    }
-
-                }
-
-                Group rightGroup = new Group(rtnGroup, SWT.NONE);
-                rightGroup.setText(Messages.Right);
-                GridLayout rightLayout = new GridLayout(2, false);
-                rightGroup.setLayout(rightLayout);
-                rightGroup.setLayoutData(getGridData());
-
-                Label rightConnectionLabel = new Label(rightGroup, SWT.NONE);
-                rightConnectionLabel.setText(Messages.Connection_colon);
-
-                rightConnectionText = WidgetFactory.createReadOnlyText(rightGroup);
-                rightConnectionText.setLayoutData(getGridData());
-                rightConnectionText.setText(rightStreamFile.getConnection());
-
-                Label rightDirectoryLabel = new Label(rightGroup, SWT.NONE);
-                rightDirectoryLabel.setText(Messages.Directory_colon);
-                rightDirectoryText = WidgetFactory.createReadOnlyText(rightGroup);
-                rightDirectoryText.setLayoutData(getGridData());
-
-                if (rightStreamFile.isArchive()) {
-                    rightDirectoryText.setText(rightStreamFile.getArchiveDirectory());
-                } else {
-                    rightDirectoryText.setText(rightStreamFile.getDirectory());
-                }
-
-                Label rightStreamFileLabel = new Label(rightGroup, SWT.NONE);
-                rightStreamFileLabel.setText(Messages.Stream_file_colon);
-                rightStreamFileText = WidgetFactory.createReadOnlyText(rightGroup);
-                rightStreamFileText.setLayoutData(getGridData());
-
-                if (rightStreamFile.isArchive()) {
-                    rightStreamFileText.setText(rightStreamFile.getArchiveStreamFile());
-                } else {
-                    rightStreamFileText.setText(rightStreamFile.getStreamFile());
-                }
-
-                if (rightStreamFile.isArchive()) {
-                    Label rightTimeLabel = new Label(rightGroup, SWT.NONE);
-                    rightTimeLabel.setText(Messages.Archive_colon);
-                    Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
-                    rightTimeText.setLayoutData(getGridData());
-                    rightTimeText.setText(rightStreamFile.getArchiveDate() + " - " + rightStreamFile.getArchiveTime()); //$NON-NLS-1$
-                }
-
-            }
-
-            if (hasAncestor) {
-
-                Group ancestorGroup = new Group(rtnGroup, SWT.NONE);
-                ancestorGroup.setText(Messages.Ancestor);
-                GridLayout ancestorLayout = new GridLayout(2, false);
-                ancestorGroup.setLayout(ancestorLayout);
-                ancestorGroup.setLayoutData(getGridData());
-
-                Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
-                ancestorConnectionLabel.setText(Messages.Connection_colon);
-
-                Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
-                ancestorConnectionText.setLayoutData(getGridData());
-                ancestorConnectionText.setText(ancestorStreamFile.getConnection());
-
-                Label ancestorDirectoryLabel = new Label(ancestorGroup, SWT.NONE);
-                ancestorDirectoryLabel.setText(Messages.Directory_colon);
-                Text ancestorDirectoryText = WidgetFactory.createReadOnlyText(ancestorGroup);
-                ancestorDirectoryText.setLayoutData(getGridData());
-                if (ancestorStreamFile.isArchive()) {
-                    ancestorDirectoryText.setText(ancestorStreamFile.getArchiveDirectory());
-                } else {
-                    ancestorDirectoryText.setText(ancestorStreamFile.getDirectory());
-                }
-
-                Label ancestorStreamFileLabel = new Label(ancestorGroup, SWT.NONE);
-                ancestorStreamFileLabel.setText(Messages.Stream_file_colon);
-                Text ancestorStreamFileText = WidgetFactory.createReadOnlyText(ancestorGroup);
-                ancestorStreamFileText.setLayoutData(getGridData());
-                if (ancestorStreamFile.isArchive()) {
-                    ancestorStreamFileText.setText(ancestorStreamFile.getArchiveStreamFile());
-                } else {
-                    ancestorStreamFileText.setText(ancestorStreamFile.getStreamFile());
-                }
-
-                if (ancestorStreamFile.isArchive()) {
-                    Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
-                    ancestorTimeLabel.setText(Messages.Archive_colon);
-                    Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
-                    ancestorTimeText.setLayoutData(getGridData());
-                    ancestorTimeText.setText(ancestorStreamFile.getArchiveDate() + " - " + ancestorStreamFile.getArchiveTime()); //$NON-NLS-1$
-                }
-
-            }
-
-        }
-
-        if (!hasRightStreamFile) {
-            if (!threeWay) {
-                setAncestorVisible(false);
-            } else {
+            createEditableRightArea(rtnGroup);
+            createEditableAncestorArea(rtnGroup);
+            if (isThreeWay()) {
                 setAncestorVisible(true);
+            } else {
+                setAncestorVisible(false);
             }
         }
 
@@ -461,8 +419,10 @@ public abstract class CompareStreamFileDialog extends XDialog {
         } else {
             editable = false;
         }
+
         ignoreCase = ignoreCaseButton.getSelection();
-        if (!hasRightStreamFile) {
+
+        if (!hasRightStreamFile()) {
             threeWay = threeWayButton.getSelection();
         }
 
@@ -476,25 +436,181 @@ public abstract class CompareStreamFileDialog extends XDialog {
         return okButton;
     }
 
-    protected void createRightArea(Composite parent) {
+    protected void createEditableLeftArea(Composite parent) {
     }
 
-    protected void createAncestorArea(Composite parent) {
+    protected void createEditableRightArea(Composite parent) {
+    }
+
+    protected void createEditableAncestorArea(Composite parent) {
     }
 
     protected void setAncestorVisible(boolean visible) {
     }
 
+    private void createReadOnlyLeftArea(Composite parent) {
+
+        Group leftGroup = new Group(parent, SWT.NONE);
+        leftGroup.setText(Messages.Left);
+        GridLayout leftLayout = new GridLayout(2, false);
+        leftGroup.setLayout(leftLayout);
+        leftGroup.setLayoutData(getGridData());
+
+        Label leftConnectionLabel = new Label(leftGroup, SWT.NONE);
+        leftConnectionLabel.setText(Messages.Connection_colon);
+
+        leftConnectionText = WidgetFactory.createReadOnlyText(leftGroup);
+        leftConnectionText.setLayoutData(getGridData());
+        leftConnectionText.setText(leftStreamFile.getConnection());
+
+        Label leftDirectoryLabel = new Label(leftGroup, SWT.NONE);
+        leftDirectoryLabel.setText(Messages.Directory_colon);
+        leftDirectoryText = WidgetFactory.createReadOnlyText(leftGroup);
+        leftDirectoryText.setLayoutData(getGridData());
+        if (leftStreamFile.isArchive()) {
+            leftDirectoryText.setText(leftStreamFile.getArchiveDirectory());
+        } else {
+            leftDirectoryText.setText(leftStreamFile.getDirectory());
+        }
+
+        Label leftStreamFileLabel = new Label(leftGroup, SWT.NONE);
+        leftStreamFileLabel.setText(Messages.Stream_file_colon);
+        leftStreamFileText = WidgetFactory.createReadOnlyText(leftGroup);
+        leftStreamFileText.setLayoutData(getGridData());
+
+        if (hasMultipleRightStreamFiles()) {
+            leftStreamFileText.setText(SPECIAL_STREAM_FILE_NAME_SELECTED);
+        } else {
+            if (leftStreamFile.isArchive()) {
+                leftStreamFileText.setText(leftStreamFile.getArchiveStreamFile());
+            } else {
+                leftStreamFileText.setText(leftStreamFile.getStreamFile());
+            }
+        }
+
+        if (leftStreamFile.isArchive()) {
+            Label leftTimeLabel = new Label(leftGroup, SWT.NONE);
+            leftTimeLabel.setText(Messages.Archive_colon);
+            Text leftTimeText = WidgetFactory.createReadOnlyText(leftGroup);
+            leftTimeText.setLayoutData(getGridData());
+            leftTimeText.setText(leftStreamFile.getArchiveDate() + " - " + leftStreamFile.getArchiveTime()); //$NON-NLS-1$
+        }
+    }
+
+    private void createReadOnlyRightArea(Composite parent) {
+
+        Group rightGroup = new Group(parent, SWT.NONE);
+        rightGroup.setText(Messages.Right);
+        GridLayout rightLayout = new GridLayout(2, false);
+        rightGroup.setLayout(rightLayout);
+        rightGroup.setLayoutData(getGridData());
+
+        Label rightConnectionLabel = new Label(rightGroup, SWT.NONE);
+        rightConnectionLabel.setText(Messages.Connection_colon);
+
+        rightConnectionText = WidgetFactory.createReadOnlyText(rightGroup);
+        rightConnectionText.setLayoutData(getGridData());
+        rightConnectionText.setText(rightStreamFile.getConnection());
+
+        Label rightDirectoryLabel = new Label(rightGroup, SWT.NONE);
+        rightDirectoryLabel.setText(Messages.Directory_colon);
+        rightDirectoryText = WidgetFactory.createReadOnlyText(rightGroup);
+        rightDirectoryText.setLayoutData(getGridData());
+        if (rightStreamFile.isArchive()) {
+            rightDirectoryText.setText(rightStreamFile.getArchiveDirectory());
+        } else {
+            rightDirectoryText.setText(rightStreamFile.getDirectory());
+        }
+
+        Label rightStreamFileLabel = new Label(rightGroup, SWT.NONE);
+        rightStreamFileLabel.setText(Messages.Stream_file_colon);
+        rightStreamFileText = WidgetFactory.createReadOnlyText(rightGroup);
+        rightStreamFileText.setLayoutData(getGridData());
+
+        if (hasMultipleRightStreamFiles()) {
+            rightStreamFileText.setText(SPECIAL_STREAM_FILE_NAME_SELECTED);
+        } else {
+            if (rightStreamFile.isArchive()) {
+                rightStreamFileText.setText(rightStreamFile.getArchiveStreamFile());
+            } else {
+                rightStreamFileText.setText(rightStreamFile.getStreamFile());
+            }
+        }
+
+        if (rightStreamFile.isArchive()) {
+            Label rightTimeLabel = new Label(rightGroup, SWT.NONE);
+            rightTimeLabel.setText(Messages.Archive_colon);
+            Text rightTimeText = WidgetFactory.createReadOnlyText(rightGroup);
+            rightTimeText.setLayoutData(getGridData());
+            rightTimeText.setText(rightStreamFile.getArchiveDate() + " - " + rightStreamFile.getArchiveTime()); //$NON-NLS-1$
+        }
+    }
+
+    private void createReadOnlyAncestorArea(Composite parent) {
+
+        Group ancestorGroup = new Group(parent, SWT.NONE);
+        ancestorGroup.setText(Messages.Ancestor);
+        GridLayout ancestorLayout = new GridLayout(2, false);
+        ancestorGroup.setLayout(ancestorLayout);
+        ancestorGroup.setLayoutData(getGridData());
+
+        Label ancestorConnectionLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorConnectionLabel.setText(Messages.Connection_colon);
+
+        Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorConnectionText.setLayoutData(getGridData());
+        ancestorConnectionText.setText(ancestorStreamFile.getConnection());
+
+        Label ancestorDirectoryLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorDirectoryLabel.setText(Messages.Directory_colon);
+        Text ancestorDirectoryText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorDirectoryText.setLayoutData(getGridData());
+        if (ancestorStreamFile.isArchive()) {
+            ancestorDirectoryText.setText(ancestorStreamFile.getArchiveDirectory());
+        } else {
+            ancestorDirectoryText.setText(ancestorStreamFile.getDirectory());
+        }
+
+        Label ancestorStreamFileLabel = new Label(ancestorGroup, SWT.NONE);
+        ancestorStreamFileLabel.setText(Messages.Stream_file_colon);
+        Text ancestorStreamFileText = WidgetFactory.createReadOnlyText(ancestorGroup);
+        ancestorStreamFileText.setLayoutData(getGridData());
+
+        if (ancestorStreamFile.isArchive()) {
+            ancestorStreamFileText.setText(ancestorStreamFile.getArchiveStreamFile());
+        } else {
+            ancestorStreamFileText.setText(ancestorStreamFile.getStreamFile());
+        }
+
+        if (ancestorStreamFile.isArchive()) {
+            Label ancestorTimeLabel = new Label(ancestorGroup, SWT.NONE);
+            ancestorTimeLabel.setText(Messages.Archive_colon);
+            Text ancestorTimeText = WidgetFactory.createReadOnlyText(ancestorGroup);
+            ancestorTimeText.setLayoutData(getGridData());
+            ancestorTimeText.setText(ancestorStreamFile.getArchiveDate() + " - " + ancestorStreamFile.getArchiveTime()); //$NON-NLS-1$
+        }
+    }
+
+    private void createSwitchStreamFileButton(Composite parent) {
+
+        Composite switchPanel = new Composite(parent, SWT.NONE);
+        GridLayout middleLayout = new GridLayout();
+        middleLayout.numColumns = 1;
+        switchPanel.setLayout(middleLayout);
+        switchPanel.setLayoutData(getGridData());
+
+        Button switchStreamFileButton = WidgetFactory.createPushButton(switchPanel);
+        switchStreamFileButton.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, true, false));
+        switchStreamFileButton.setImage(getSwitchImage());
+        switchStreamFileButton.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event arg0) {
+                switchLeftAndRightStreamFile(leftStreamFile, rightStreamFile);
+            }
+        });
+    }
+
     protected boolean canFinish() {
         return true;
-    }
-
-    public boolean hasRightStreamFile() {
-        return hasRightStreamFile;
-    }
-
-    public boolean hasMultipleRightStreamFiles() {
-        return hasMultipleRightStreamFiles;
     }
 
     public boolean isEditable() {
@@ -509,16 +625,57 @@ public abstract class CompareStreamFileDialog extends XDialog {
         return threeWay;
     }
 
-    private void loadScreenValues() {
+    public boolean hasLeftStreamFile() {
+        return hasLeftStreamFile;
+    }
+
+    public boolean hasRightStreamFile() {
+        return hasRightStreamFile;
+    }
+
+    public boolean hasMultipleRightStreamFiles() {
+        return hasMultipleRightStreamFiles;
+    }
+
+    protected boolean hasAncestorStreamFile() {
+        return hasAncestorStreamFile;
+    }
+
+    protected void loadScreenValues() {
+
         if (selectEditable) {
             editable = getDialogBoundsSettings().getBoolean(EDITABLE_PROPERTY);
         } else {
             editable = false;
         }
+
         ignoreCase = getDialogBoundsSettings().getBoolean(IGNORE_CASE_PROPERTY);
+
+        if (selectEditable) {
+            if (!isEditable() || isIgnoreCase()) {
+                browseButton.setSelection(true);
+            } else {
+                browseButton.setSelection(false);
+            }
+
+            if (isEditable() && !isIgnoreCase()) {
+                editButton.setSelection(true);
+            } else {
+                editButton.setSelection(false);
+            }
+        }
+
+        if (!isIgnoreCase()) {
+            dontIgnoreCaseButton.setSelection(true);
+            ignoreCaseButton.setSelection(false);
+        } else {
+            dontIgnoreCaseButton.setSelection(false);
+            ignoreCaseButton.setSelection(true);
+        }
+
     }
 
-    private void storeScreenValues() {
+    protected void storeScreenValues() {
         if (selectEditable) {
             getDialogBoundsSettings().put(EDITABLE_PROPERTY, editable);
         }
@@ -534,7 +691,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
         return super.getDialogBoundsSettings(ISpherePlugin.getDefault().getDialogSettings());
     }
 
-    public void setSwitchStreamFileAllowed(boolean switchStreamFileAllowed) {
+    protected void setSwitchStreamFileAllowed(boolean switchStreamFileAllowed) {
         this.switchStreamFileAllowed = switchStreamFileAllowed;
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,12 +47,25 @@ public class StreamFilePrompt extends Composite {
 
     private DialogSettingsManager dialogSettingsmanager;
 
+    public StreamFilePrompt(Composite parent, int style) {
+        this(parent, null, style);
+    }
+
     public StreamFilePrompt(Composite parent, String historyKey, int style) {
         super(parent, style);
 
-        this.historyKey = historyKey;
+        setHistoryKey(historyKey);
 
         createContent(this);
+    }
+
+    @Override
+    public boolean setFocus() {
+        return getDirectoryWidget().setFocus();
+    }
+
+    public void setHistoryKey(String historyKey) {
+        this.historyKey = historyKey;
     }
 
     private void createContent(Composite parent) {
