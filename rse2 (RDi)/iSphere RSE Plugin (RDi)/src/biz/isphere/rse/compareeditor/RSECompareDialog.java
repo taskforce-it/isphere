@@ -59,7 +59,26 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorLibrary;
     private String ancestorFile;
     private String ancestorMember;
-
+    
+    /**
+     * Creates the compare dialog, for 2 selected member.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     * @param switchMemberAllowed - Specifies, whether or not the switch button appears.
+     */
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, boolean switchMemberAllowed) {
+        super(parentShell, selectEditable, leftMember, rightMember);
+        setHistoryValuesCategoryKey(null);
+        initializeLeftMember(leftMember);
+        initializeRightMember(rightMember);
+        setSwitchMemberAllowed(switchMemberAllowed);
+    }
+    
     /**
      * Creates the compare dialog, for 2 selected member.
      * 
@@ -75,10 +94,32 @@ public class RSECompareDialog extends CompareDialog {
         setHistoryValuesCategoryKey(null);
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
-        // TODO: call this method from CMOne after the dialog has been created
         setSwitchMemberAllowed(false);
     }
-
+    
+    /**
+     * Creates a three-way compare dialog.<br>
+     * This constructor is used by CMOne.
+     * 
+     * @param parentShell - shell the dialog is associated to
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
+     * @param leftMember - the left selected member
+     * @param rightMember - the right selected member
+     * @param ancestorMember - the ancestor member
+     * @param switchMemberAllowed - Specifies, whether or not the switch button appears.
+     */
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember,
+        boolean switchMemberAllowed) {
+        super(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
+        setHistoryValuesCategoryKey(null);
+        initializeLeftMember(leftMember);
+        initializeRightMember(rightMember);
+        initializeAncestorMember(ancestorMember);
+        setSwitchMemberAllowed(switchMemberAllowed);
+    }
+    
     /**
      * Creates a three-way compare dialog.<br>
      * This constructor is used by CMOne.
@@ -97,7 +138,6 @@ public class RSECompareDialog extends CompareDialog {
         initializeLeftMember(leftMember);
         initializeRightMember(rightMember);
         initializeAncestorMember(ancestorMember);
-        // TODO: call this method from CMOne after the dialog has been created
         setSwitchMemberAllowed(false);
     }
 
