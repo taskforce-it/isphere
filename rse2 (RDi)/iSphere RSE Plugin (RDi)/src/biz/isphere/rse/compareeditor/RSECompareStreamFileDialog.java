@@ -54,6 +54,15 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile,
+        RSEStreamFile ancestorStreamFile, boolean switchStreamFileAllowed) {
+        super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
+        this.rseLeftStreamFile = leftStreamFile;
+        initializeRightStreamFile(rightStreamFile);
+        setSwitchStreamFileAllowed(switchStreamFileAllowed);
+    }
+    
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile,
         RSEStreamFile ancestorStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
         this.rseLeftStreamFile = leftStreamFile;
@@ -67,6 +76,15 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         initializeRightStreamFile(selectedStreamFiles[0]);
     }
 
+    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
+    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile, 
+        boolean switchStreamFileAllowed) {
+        super(parentShell, selectEditable, leftStreamFile, rightStreamFile);
+        this.rseLeftStreamFile = leftStreamFile;
+        initializeRightStreamFile(rightStreamFile);
+        setSwitchStreamFileAllowed(switchStreamFileAllowed);
+    }
+    
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile) {
         super(parentShell, selectEditable, leftStreamFile, rightStreamFile);
