@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,10 @@ public class Messages extends NLS {
     public static String Library_A_not_found;
 
     public static String File_A_in_library_B_not_found;
+
+    public static String Directory_not_found_A;
+
+    public static String StreamFile_B_not_found_in_folder_A;
 
     public static String Select_Message_File;
 

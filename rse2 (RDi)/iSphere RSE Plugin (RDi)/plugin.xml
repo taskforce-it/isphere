@@ -307,6 +307,25 @@
       	
       	<!--
       	  ==========================================
+      	    IFS Stream File Compare Contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile"
+            id="biz.isphere.core.menu.streamfile">
+	         <action
+                class="biz.isphere.rse.actions.CompareStreamFileEditorAction"
+                enablesFor="1+"
+                id="biz.isphere.rse.actions.CompareStreamFileEditorAction"
+                label="%iSphere_Stream_File_Compare_Editor"
+                icon="icons/compare_stream_file.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
       	    Data Area Monitor Contributions
       	  ==========================================
       	-->
@@ -1095,6 +1114,12 @@
 				icon="icons/compare.gif">
 			</command>
 
+			<command
+				id="biz.isphere.core.menu.StreamFileCompare.open"
+				commandId="biz.isphere.core.command.StreamFileCompare.open"
+				icon="icons/compare_stream_file.gif">
+			</command>
+
       </menuContribution>
    </extension>
 
@@ -1249,6 +1274,13 @@
             id="biz.isphere.core.command.SourceMember.copyTo"
             categoryId="biz.isphere.category.Commands"
             name="%command_Copy_Members_To">
+      </command>
+      
+      <command
+      		defaultHandler="biz.isphere.rse.compareeditor.handler.CompareStreamFilesHandler"
+            id="biz.isphere.core.command.StreamFileCompare.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Compare_Stream_Files">
       </command>
    </extension>
   

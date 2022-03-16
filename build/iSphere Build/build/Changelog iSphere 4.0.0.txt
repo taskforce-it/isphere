@@ -1,4 +1,8 @@
 
+Changelog: iSphere 5.0.0.b005
+-----------------------------
+ • Added iSphere Stream File Compare Editor.
+
 Changelog: iSphere 5.0.0.b004
 -----------------------------
  • Added iSphere Stream File Search to iSphere library.
