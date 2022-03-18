@@ -32,11 +32,11 @@ public class CompareStreamFileEditorAction implements IObjectActionDelegate {
 
     private Shell shell;
 
-    private RSEStreamFile[] selectedMembers;
-    private List<RSEStreamFile> selectedMembersList;
+    private RSEStreamFile[] selectedStreamFiles;
+    private List<RSEStreamFile> selectedStreamFilesList;
 
     public CompareStreamFileEditorAction() {
-        selectedMembersList = new ArrayList<RSEStreamFile>();
+        selectedStreamFilesList = new ArrayList<RSEStreamFile>();
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
@@ -47,9 +47,9 @@ public class CompareStreamFileEditorAction implements IObjectActionDelegate {
 
         try {
 
-            if (selectedMembers.length > 0) {
+            if (selectedStreamFiles.length > 0) {
                 CompareStreamFilesHandler handler = new CompareStreamFilesHandler();
-                handler.handleSourceCompare(selectedMembers);
+                handler.handleSourceCompare(selectedStreamFiles);
             }
 
         } catch (Exception e) {
@@ -61,8 +61,8 @@ public class CompareStreamFileEditorAction implements IObjectActionDelegate {
     public void selectionChanged(IAction action, ISelection selection) {
 
         if (selection instanceof IStructuredSelection) {
-            selectedMembers = getMembersFromSelection((IStructuredSelection)selection);
-            if (selectedMembers.length >= 1) {
+            selectedStreamFiles = getStreamFilesFromSelection((IStructuredSelection)selection);
+            if (selectedStreamFiles.length >= 1) {
                 action.setEnabled(true);
             } else {
                 action.setEnabled(false);
@@ -72,16 +72,16 @@ public class CompareStreamFileEditorAction implements IObjectActionDelegate {
         }
     }
 
-    private RSEStreamFile[] getMembersFromSelection(IStructuredSelection structuredSelection) {
+    private RSEStreamFile[] getStreamFilesFromSelection(IStructuredSelection structuredSelection) {
 
-        selectedMembersList.clear();
+        selectedStreamFilesList.clear();
 
         try {
             if (structuredSelection != null && structuredSelection.size() > 0) {
                 Object[] objects = structuredSelection.toArray();
                 for (Object object : objects) {
                     if (object instanceof IFSRemoteFile) {
-                        selectedMembersList.add(new RSEStreamFile((IFSRemoteFile)object));
+                        selectedStreamFilesList.add(new RSEStreamFile((IFSRemoteFile)object));
                     }
                 }
             }
@@ -89,6 +89,6 @@ public class CompareStreamFileEditorAction implements IObjectActionDelegate {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
 
-        return selectedMembersList.toArray(new RSEStreamFile[selectedMembersList.size()]);
+        return selectedStreamFilesList.toArray(new RSEStreamFile[selectedStreamFilesList.size()]);
     }
 }
