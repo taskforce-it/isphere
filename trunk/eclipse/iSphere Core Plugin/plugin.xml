@@ -140,6 +140,12 @@
             name="%iSphere_Source_File_Search"
             id="biz.isphere.core.sourcefilesearch.ViewSearchResults"/>
       <view
+            icon="icons/stream_file_search.gif"
+            class="biz.isphere.core.streamfilesearch.ViewSearchResults"
+            category="biz.isphere.core.views.categories"
+            name="%iSphere_Stream_File_Search"
+            id="biz.isphere.core.streamfilesearch.ViewSearchResults"/>
+      <view
             icon="icons/message_file_search.png"
             class="biz.isphere.core.messagefilesearch.ViewSearchResults"
             category="biz.isphere.core.views.categories"

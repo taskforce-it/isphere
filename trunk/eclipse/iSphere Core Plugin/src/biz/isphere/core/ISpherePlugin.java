@@ -40,6 +40,7 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
+import biz.isphere.core.internal.IStreamFileEditor;
 import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.internal.api.retrieveproductinformation.PRDI0100;
 import biz.isphere.core.internal.api.retrieveproductinformation.PRDR0100;
@@ -63,6 +64,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     private static Set<String> loggedCommand = new HashSet<String>();
 
     public static IEditor editor = null;
+    public static IStreamFileEditor streamFileEditor = null;
     public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
     public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
     private static String ISPHERE_SPOOLED_FILES_PROJECT_NAME = "iSphereSpooledFiles";
@@ -366,6 +368,14 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     public static void setEditor(IEditor _editor) {
         editor = _editor;
+    }
+
+    public static IStreamFileEditor getStreamFileEditor() {
+        return streamFileEditor;
+    }
+
+    public static void setStreamFileEditor(IStreamFileEditor _streamFileEditor) {
+        streamFileEditor = _streamFileEditor;
     }
 
     public static ISourceFileSearchMemberFilterCreator getSourceFileSearchMemberFilterCreator() {

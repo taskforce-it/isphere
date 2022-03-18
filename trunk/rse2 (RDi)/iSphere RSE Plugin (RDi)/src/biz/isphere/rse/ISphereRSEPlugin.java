@@ -30,6 +30,7 @@ import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import biz.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
+import biz.isphere.rse.internal.StreamFileEditor;
 import biz.isphere.rse.internal.ViewManager;
 import biz.isphere.rse.search.SearchArgumentsListEditorProvider;
 import biz.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
@@ -65,6 +66,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
         super.start(context);
         installURL = context.getBundle().getEntry("/");
         ISpherePlugin.setEditor(new Editor());
+        ISpherePlugin.setStreamFileEditor(new StreamFileEditor());
         ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
         ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
         ISpherePlugin.setSearchArgumentsListEditor(true);
