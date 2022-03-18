@@ -487,6 +487,25 @@
 	         </action>
       	</objectContribution>
       	-->
+
+      	<!--
+      	  ==========================================
+      	    IFS Stream File Search Contributions
+      	  ==========================================
+      	-->
+      	
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile"
+            id="biz.isphere.core.menu.streamfilesearch">
+	         <action
+                class="biz.isphere.rse.actions.StreamFileSearchAction"
+                enablesFor="1+"
+                id="biz.isphere.rse.actions.StreamFileSearchAction"
+                label="%iSphere_Stream_File_Search"
+                icon="icons/stream_file_search.gif"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
       	
       	<!--
       	  ==========================================
