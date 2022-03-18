@@ -331,14 +331,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     private Group createStreamFileGroup(Composite parent, String label) {
 
-        Group leftGroup = new Group(parent, SWT.NONE);
-        leftGroup.setText(Messages.Left);
-        GridLayout leftLayout = new GridLayout();
-        leftLayout.numColumns = 1;
-        leftGroup.setLayout(leftLayout);
-        leftGroup.setLayoutData(getGridData());
+        Group streamFileGroup = new Group(parent, SWT.NONE);
+        streamFileGroup.setText(label);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 1;
+        streamFileGroup.setLayout(layout);
+        streamFileGroup.setLayoutData(getGridData());
 
-        return leftGroup;
+        return streamFileGroup;
     }
 
     private IBMiConnectionCombo createConnectionCombo(Group leftGroup, IBMiConnection connection, SelectionListener selectionListener) {
