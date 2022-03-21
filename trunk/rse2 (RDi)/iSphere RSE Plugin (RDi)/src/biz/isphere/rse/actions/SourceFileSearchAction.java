@@ -30,6 +30,12 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
@@ -41,12 +47,10 @@ import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.sourcefilesearch.RSESearchExec;
 import biz.isphere.rse.sourcefilesearch.SourceFileSearchFilterResolver;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
-
+/**
+ * Action that launches the iSphere Source File Search from the Remote Systems
+ * view.
+ */
 public class SourceFileSearchAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
