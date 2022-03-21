@@ -480,7 +480,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     private boolean checkDirectory(IBMiConnection connection, String directory) {
 
-        IFSRemoteFile remoteDirectory = IFSRemoteFileHelper.getRemoteFolder(connection, directory);
+        IFSRemoteFile remoteDirectory = IFSRemoteFileHelper.getRemoteDirectory(connection, directory);
         if (remoteDirectory == null) {
             return false;
         }
@@ -497,7 +497,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     private boolean checkStreamFile(IBMiConnection connection, String directory, String streamFile) {
 
-        IFSRemoteFile remoteStreamFile = IFSRemoteFileHelper.getRemoteFile(connection, directory, streamFile);
+        IFSRemoteFile remoteStreamFile = IFSRemoteFileHelper.getRemoteStreamFile(connection, directory, streamFile);
         if (remoteStreamFile == null) {
             return false;
         }
@@ -507,7 +507,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     private void displayStreamFileNotFoundMessage(String directory, String streamFile, StreamFilePrompt streamFilePrompt) {
 
-        String message = biz.isphere.core.Messages.bind(Messages.StreamFile_B_not_found_in_folder_A, new Object[] { directory, streamFile });
+        String message = biz.isphere.core.Messages.bind(Messages.Stream_file_B_not_found_in_directory_A, new Object[] { directory, streamFile });
         MessageDialog.openError(getShell(), biz.isphere.core.Messages.Error, message);
         streamFilePrompt.getDirectoryWidget().setFocus();
     }
@@ -630,7 +630,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         try {
             IFSFileServiceSubSystem fileServiceSubSystem = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection);
             if (fileServiceSubSystem != null) {
-                IRemoteFile remoteFile = IFSRemoteFileHelper.getRemoteFile(connection, directory, streamFile);
+                IRemoteFile remoteFile = IFSRemoteFileHelper.getRemoteStreamFile(connection, directory, streamFile);
                 if (remoteFile != null) {
                     return new RSEStreamFile(remoteFile); // remoteFile.exists()
                 }

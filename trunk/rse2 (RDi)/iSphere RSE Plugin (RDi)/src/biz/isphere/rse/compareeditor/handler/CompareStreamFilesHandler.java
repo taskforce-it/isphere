@@ -86,7 +86,7 @@ public class CompareStreamFilesHandler extends AbstractCommandHandler {
                     String rightStreamFile = rseSelectedStreamFile.getStreamFile();
                     RSEStreamFile rseRightStreamFile = getStreamFile(shell, rightConnection, rightDirectory, rightStreamFile);
                     if (rseRightStreamFile == null || !rseRightStreamFile.exists()) {
-                        String message = biz.isphere.core.Messages.bind(Messages.StreamFile_B_not_found_in_folder_A,
+                        String message = biz.isphere.core.Messages.bind(Messages.Stream_file_B_not_found_in_directory_A,
                             new Object[] { rightDirectory, rightStreamFile });
                         MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 
@@ -108,8 +108,8 @@ public class CompareStreamFilesHandler extends AbstractCommandHandler {
     private RSEStreamFile getStreamFile(Shell shell, String connectionName, String directory, String streamFile) {
         try {
             IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
-            IFSRemoteFile remoteFile = IFSRemoteFileHelper.getRemoteFile(connection, directory, streamFile);
-            return new RSEStreamFile(remoteFile);
+            IFSRemoteFile remoteStreamFile = IFSRemoteFileHelper.getRemoteStreamFile(connection, directory, streamFile);
+            return new RSEStreamFile(remoteStreamFile);
         } catch (Exception e) {
             MessageDialog.openError(shell, biz.isphere.core.Messages.Error, e.getMessage());
             return null;

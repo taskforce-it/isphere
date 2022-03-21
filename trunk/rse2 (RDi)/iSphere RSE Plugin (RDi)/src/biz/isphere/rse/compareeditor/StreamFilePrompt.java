@@ -34,13 +34,13 @@ import biz.isphere.rse.internal.IFSRemoteFileHelper;
 
 public class StreamFilePrompt extends Composite {
 
-    private static final String COMBO_FOLDER = "FOLDER"; //$NON-NLS-1$
+    private static final String COMBO_DIRECTORY = "DIRECTORY"; //$NON-NLS-1$
     private static final String COMBO_STREAM_FILE = "STREAM_FILE"; //$NON-NLS-1$
 
     private String historyKey;
 
     private IHost host;
-    private HistoryCombo cboFolder;
+    private HistoryCombo cboDirectory;
     private Button btnSelectDirectory;
     private HistoryCombo cboStreamFile;
     private Button btnSelectStreamFile;
@@ -73,32 +73,32 @@ public class StreamFilePrompt extends Composite {
         setLayout(new GridLayout(3, false));
 
         Label lblDirectory = new Label(parent, SWT.NONE);
-        lblDirectory.setText(Messages.Label_Folder_colon);
+        lblDirectory.setText(Messages.Label_Directory_colon);
 
-        cboFolder = WidgetFactory.createHistoryCombo(parent);
-        cboFolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        cboDirectory = WidgetFactory.createHistoryCombo(parent);
+        cboDirectory.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         btnSelectDirectory = WidgetFactory.createPushButton(parent, Messages.Label_Browse);
         btnSelectDirectory.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                SystemRemoteFolderDialog dialog = new SystemRemoteFolderDialog(getShell(), Messages.Title_Browse_For_Folder);
+                SystemRemoteFolderDialog dialog = new SystemRemoteFolderDialog(getShell(), Messages.Title_Browse_For_Directory);
 
                 dialog.setDefaultSystemConnection(host, true);
                 dialog.setShowNewConnectionPrompt(false);
                 dialog.setMultipleSelectionMode(false);
 
-                IFSRemoteFile folder = IFSRemoteFileHelper.getRemoteFolder(host, cboFolder.getText());
-                if (folder != null) {
-                    dialog.setPreSelection(folder);
+                IFSRemoteFile directory = IFSRemoteFileHelper.getRemoteDirectory(host, cboDirectory.getText());
+                if (directory != null) {
+                    dialog.setPreSelection(directory);
                 }
 
                 if (dialog.open() == Dialog.OK) {
-                    Object selectedFolder = dialog.getSelectedObject();
-                    if (selectedFolder instanceof IFSRemoteFile) {
-                        folder = (IFSRemoteFile)selectedFolder;
-                        if (folder.isDirectory()) {
-                            cboFolder.setText(folder.getAbsolutePath());
+                    Object selectedDirectory = dialog.getSelectedObject();
+                    if (selectedDirectory instanceof IFSRemoteFile) {
+                        directory = (IFSRemoteFile)selectedDirectory;
+                        if (directory.isDirectory()) {
+                            cboDirectory.setText(directory.getAbsolutePath());
                         }
                     }
                 }
@@ -115,24 +115,24 @@ public class StreamFilePrompt extends Composite {
         btnSelectStreamFile.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                SystemRemoteFileDialog dialog = new SystemRemoteFileDialog(getShell(), Messages.Title_Browse_For_File);
+                SystemRemoteFileDialog dialog = new SystemRemoteFileDialog(getShell(), Messages.Title_Browse_For_Stream_File);
 
                 dialog.setDefaultSystemConnection(host, true);
                 dialog.setShowNewConnectionPrompt(false);
                 dialog.setMultipleSelectionMode(false);
 
-                IFSRemoteFile file = IFSRemoteFileHelper.getRemoteFile(host, cboFolder.getText(), cboStreamFile.getText());
-                if (file != null) {
-                    dialog.setPreSelection(file);
+                IFSRemoteFile streamFile = IFSRemoteFileHelper.getRemoteStreamFile(host, cboDirectory.getText(), cboStreamFile.getText());
+                if (streamFile != null) {
+                    dialog.setPreSelection(streamFile);
                 }
 
                 if (dialog.open() == Dialog.OK) {
-                    Object selectedFile = dialog.getSelectedObject();
-                    if (selectedFile instanceof IFSRemoteFile) {
-                        file = (IFSRemoteFile)selectedFile;
-                        if (!file.isDirectory()) {
-                            cboFolder.setText(file.getParentPath());
-                            cboStreamFile.setText(file.getName());
+                    Object selectedStreamFile = dialog.getSelectedObject();
+                    if (selectedStreamFile instanceof IFSRemoteFile) {
+                        streamFile = (IFSRemoteFile)selectedStreamFile;
+                        if (!streamFile.isDirectory()) {
+                            cboDirectory.setText(streamFile.getParentPath());
+                            cboStreamFile.setText(streamFile.getName());
                         }
                     }
                 }
@@ -145,15 +145,15 @@ public class StreamFilePrompt extends Composite {
     }
 
     public HistoryCombo getDirectoryWidget() {
-        return cboFolder;
+        return cboDirectory;
     }
 
     public String getDirectoryName() {
-        return cboFolder.getText();
+        return cboDirectory.getText();
     }
 
     public void setDirectoryName(String directory) {
-        cboFolder.setText(directory);
+        cboDirectory.setText(directory);
     }
 
     public HistoryCombo getStreamFileWidget() {
@@ -173,7 +173,7 @@ public class StreamFilePrompt extends Composite {
         this.dialogSettingsmanager = dialogSettingsManager;
 
         if (!StringHelper.isNullOrEmpty(historyKey)) {
-            cboFolder.load(dialogSettingsmanager, createKey(historyKey, COMBO_FOLDER));
+            cboDirectory.load(dialogSettingsmanager, createKey(historyKey, COMBO_DIRECTORY));
             cboStreamFile.load(dialogSettingsmanager, createKey(historyKey, COMBO_STREAM_FILE));
         }
     }
@@ -181,7 +181,7 @@ public class StreamFilePrompt extends Composite {
     public void updateHistory() {
 
         if (!StringHelper.isNullOrEmpty(historyKey)) {
-            cboFolder.updateHistory(cboFolder.getText());
+            cboDirectory.updateHistory(cboDirectory.getText());
             cboStreamFile.updateHistory(cboStreamFile.getText());
         }
     }
@@ -189,7 +189,7 @@ public class StreamFilePrompt extends Composite {
     public void storeHistory() {
 
         if (!StringHelper.isNullOrEmpty(historyKey)) {
-            cboFolder.store();
+            cboDirectory.store();
             cboStreamFile.store();
         }
     }

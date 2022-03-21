@@ -100,7 +100,7 @@ public class Messages extends NLS {
 
     public static String Directory_not_found_A;
 
-    public static String StreamFile_B_not_found_in_folder_A;
+    public static String Stream_file_B_not_found_in_directory_A;
 
     public static String Select_Message_File;
 
@@ -164,16 +164,16 @@ public class Messages extends NLS {
 
     public static String Add_library_name_to_objects;
 
-    public static String Title_Browse_For_Folder;
-
-    public static String Title_Browse_For_File;
+    public static String Title_Browse_For_Stream_File;
 
     public static String Label_Browse;
 
     public static String Label_Stream_file_colon;
 
-    public static String Label_Folder_colon;
+    public static String Label_Directory_colon;
 
+    public static String Title_Browse_For_Directory;
+    
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);
