@@ -24,28 +24,28 @@ public final class IFSRemoteFileHelper {
     }
 
     /**
-     * Returns a remote IFS folder.
+     * Returns a remote IFS directory.
      * 
      * @param connection - Connection where the remote IFS file is stored.
-     * @param folderPath - Path of the remote IFS file.
-     * @return A remote IFS folder.
+     * @param directoryPath - Path of the remote IFS file.
+     * @return A remote IFS directory.
      */
-    public static IFSRemoteFile getRemoteFolder(IBMiConnection connection, String folderPath) {
-        return getRemoteFolder(connection.getHost(), folderPath);
+    public static IFSRemoteFile getRemoteDirectory(IBMiConnection connection, String directoryPath) {
+        return getRemoteDirectory(connection.getHost(), directoryPath);
     }
 
     /**
-     * Returns a remote IFS folder.
+     * Returns a remote IFS directory.
      * 
      * @param host - Host where the remote IFS file is stored.
-     * @param folderPath - Path of the remote IFS file.
-     * @return A remote IFS folder.
+     * @param directoryPath - Path of the remote IFS file.
+     * @return A remote IFS directory.
      */
-    public static IFSRemoteFile getRemoteFolder(IHost host, String folderPath) {
+    public static IFSRemoteFile getRemoteDirectory(IHost host, String directoryPath) {
 
-        IFSRemoteFile remoteFolder = getRemoteFileOrFolder(host, null, folderPath);
-        if (remoteFolder.isDirectory()) {
-            return remoteFolder;
+        IFSRemoteFile remoteDirectory = getRemoteStreamFileOrDirectory(host, null, directoryPath);
+        if (remoteDirectory.isDirectory()) {
+            return remoteDirectory;
         }
 
         return null;
@@ -58,8 +58,8 @@ public final class IFSRemoteFileHelper {
      * @param filePath - Path of the remote IFS file.
      * @return A remote IFS file.
      */
-    public static IFSRemoteFile getRemoteFile(IBMiConnection connection, String filePath) {
-        return getRemoteFile(connection.getHost(), filePath);
+    public static IFSRemoteFile getRemoteStreamFile(IBMiConnection connection, String filePath) {
+        return getRemoteStreamFile(connection.getHost(), filePath);
     }
 
     /**
@@ -69,42 +69,42 @@ public final class IFSRemoteFileHelper {
      * @param filePath - Path of the remote IFS file.
      * @return A remote IFS file.
      */
-    public static IFSRemoteFile getRemoteFile(IHost host, String filePath) {
-        return getRemoteFile(host, null, filePath);
+    public static IFSRemoteFile getRemoteStreamFile(IHost host, String filePath) {
+        return getRemoteStreamFile(host, null, filePath);
     }
 
     /**
      * @param connection - Connection where the remote IFS file is stored.
-     * @param folderName - Parent folder that contains the requested remote IFS
+     * @param directoryName - Parent directory that contains the requested remote IFS
      *        file. Can be set to <code>null</code>.
      * @param fileName
      * @return A remote IFS file.
      */
-    public static IFSRemoteFile getRemoteFile(IBMiConnection connection, String folderName, String fileName) {
-        return getRemoteFile(connection.getHost(), folderName, fileName);
+    public static IFSRemoteFile getRemoteStreamFile(IBMiConnection connection, String directoryName, String fileName) {
+        return getRemoteStreamFile(connection.getHost(), directoryName, fileName);
     }
 
     /**
      * Returns a remote IFS file.
      * 
      * @param host - Host where the remote IFS file is stored.
-     * @param folderName - Parent folder that contains the requested remote IFS
+     * @param directoryName - Parent directory that contains the requested remote IFS
      *        file. Can be set to <code>null</code>.
      * @param fileName
      * @return A remote IFS file.
      */
-    public static IFSRemoteFile getRemoteFile(IHost host, String folderName, String fileName) {
+    public static IFSRemoteFile getRemoteStreamFile(IHost host, String directoryName, String fileName) {
 
         IFSRemoteFile remoteFile = null;
 
-        if (folderName == null) {
-            remoteFile = getRemoteFileOrFolder(host, null, fileName);
+        if (directoryName == null) {
+            remoteFile = getRemoteStreamFileOrDirectory(host, null, fileName);
         } else {
-            IFSRemoteFile remoteFolder = getRemoteFolder(host, folderName);
-            if (remoteFolder == null) {
+            IFSRemoteFile remoteDirectory = getRemoteDirectory(host, directoryName);
+            if (remoteDirectory == null) {
                 return null;
             }
-            remoteFile = getRemoteFileOrFolder(host, remoteFolder, fileName);
+            remoteFile = getRemoteStreamFileOrDirectory(host, remoteDirectory, fileName);
         }
 
         if (!remoteFile.isDirectory()) {
@@ -115,24 +115,24 @@ public final class IFSRemoteFileHelper {
     }
 
     /**
-     * Returns a remote IFS file or folder.
+     * Returns a remote IFS file or directory.
      * 
-     * @param host - Host where the remote IFS file or folder is stored.
-     * @param folder - Parent folder that contains the requested remote IFS file
-     *        or folder. Can be set to <code>null</code>.
-     * @param fileOrFolderName - Requested IFS remote file or folder.
-     * @return A remote IFS file or folder.
+     * @param host - Host where the remote IFS file or directory is stored.
+     * @param directory - Parent directory that contains the requested remote IFS file
+     *        or directory. Can be set to <code>null</code>.
+     * @param fileOrDirectoryName - Requested IFS remote file or directory.
+     * @return A remote IFS file or directory.
      */
-    private static IFSRemoteFile getRemoteFileOrFolder(IHost host, IRemoteFile folder, String fileOrFolderName) {
+    private static IFSRemoteFile getRemoteStreamFileOrDirectory(IHost host, IRemoteFile directory, String fileOrDirectoryName) {
 
         try {
 
             IFSFileServiceSubSystem subSystem = getIFSFileServiceSubsystem(host);
             IRemoteFile remoteObject;
-            if (folder == null) {
-                remoteObject = subSystem.getRemoteFileObject(fileOrFolderName, new NullProgressMonitor());
+            if (directory == null) {
+                remoteObject = subSystem.getRemoteFileObject(fileOrDirectoryName, new NullProgressMonitor());
             } else {
-                remoteObject = subSystem.getRemoteFileObject(folder, fileOrFolderName, new NullProgressMonitor());
+                remoteObject = subSystem.getRemoteFileObject(directory, fileOrDirectoryName, new NullProgressMonitor());
             }
             if (remoteObject instanceof IFSRemoteFile) {
                 return (IFSRemoteFile)remoteObject;
