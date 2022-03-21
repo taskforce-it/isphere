@@ -9,8 +9,9 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
@@ -19,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.services.files.IFileService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -39,6 +41,7 @@ import biz.isphere.core.streamfilesearch.SearchElement;
 import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
+import biz.isphere.rse.internal.IFSRemoteFileHelper;
 import biz.isphere.rse.internal.RSEStreamFile;
 import biz.isphere.rse.streamfilesearch.RSESearchExec;
 
@@ -50,9 +53,9 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
     private List<RSEStreamFile> selectedStreamFilesList;
     private IBMiConnection _connection;
     private boolean _multipleConnection;
-    
+
     public StreamFileSearchAction() {
-        selectedStreamFilesList = new ArrayList<RSEStreamFile>();
+        selectedStreamFilesList = new LinkedList<RSEStreamFile>();
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
@@ -92,33 +95,44 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
         selectedStreamFilesList.clear();
 
-        try {
-            if (structuredSelection != null && structuredSelection.size() > 0) {
-                Object[] objects = structuredSelection.toArray();
-                for (Object object : objects) {
-                    if (object instanceof IFSRemoteFile) {
-                        selectedStreamFilesList.add(new RSEStreamFile((IFSRemoteFile)object));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        if (structuredSelection != null) {
+            addStreamFilesFromList(structuredSelection.toList());
         }
 
         return selectedStreamFilesList.toArray(new RSEStreamFile[selectedStreamFilesList.size()]);
     }
-    
+
+    private void addStreamFilesFromList(List<?> objects) {
+
+        try {
+
+            for (Object object : objects) {
+                if (object instanceof IFSRemoteFile) {
+                    IFSRemoteFile ifsRemoteFile = (IFSRemoteFile)object;
+                    if (ifsRemoteFile.isFile()) {
+                        selectedStreamFilesList.add(new RSEStreamFile(ifsRemoteFile));
+                    } else if (ifsRemoteFile.isDirectory()) {
+                        addStreamFilesFromList(IFSRemoteFileHelper.listFiles(ifsRemoteFile, IFileService.FILE_TYPE_FILES_AND_FOLDERS, true));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
+    }
+
     private void doWork() {
 
         _connection = null;
         _multipleConnection = false;
- 
-        HashMap<String, SearchElement> _searchElements = new HashMap<String, SearchElement>();
-        
+
+        HashMap<String, SearchElement> _searchElements = new LinkedHashMap<String, SearchElement>();
+
         for (int idx = 0; idx < selectedStreamFiles.length; idx++) {
 
             RSEStreamFile element = selectedStreamFiles[idx];
-            
+
             String key = element.getDirectory() + "/" + element.getStreamFile();
 
             if (!_searchElements.containsKey(key)) {
@@ -130,29 +144,26 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
                     int _pos = element.getStreamFile().indexOf(".", _offset);
                     if (_pos == -1) {
                         break;
-                    }
-                    else if (_pos + 1 == _length) {
+                    } else if (_pos + 1 == _length) {
                         _type = "";
                         break;
-                    }
-                    else {
+                    } else {
                         _type = element.getStreamFile().substring(_pos + 1);
                         _offset = _pos + 1;
                     }
-                }
-                while (true);
-                
+                } while (true);
+
                 SearchElement _searchElement = new SearchElement();
                 _searchElement.setDirectory(element.getDirectory());
                 _searchElement.setStreamFile(element.getStreamFile());
                 _searchElement.setType(_type);
 
                 _searchElements.put(key, _searchElement);
-                
+
             }
-            
+
             checkIfMultipleConnections(element.getRSEConnection());
-            
+
         }
 
         if (_multipleConnection) {
@@ -209,5 +220,5 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
             }
         }
     }
-    
+
 }
