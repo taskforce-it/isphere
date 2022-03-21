@@ -45,6 +45,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -72,12 +78,9 @@ import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-
+/**
+ * Source file search page launched by Ctrl+H (Search - Search...).
+ */
 public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
     public static final String ID = "biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"; //$NON-NLS-1$
@@ -827,8 +830,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
                     selectedFilters.add(getFilter());
                     new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(selectedFilters, searchOptions);
                 } else {
-                    new RSESearchExec(workbenchWindow, tConnection)
-                        .resolveAndExecute(sourceFileLibrary, sourceFile, getSourceMember(), searchOptions);
+                    new RSESearchExec(workbenchWindow, tConnection).resolveAndExecute(sourceFileLibrary, sourceFile, getSourceMember(),
+                        searchOptions);
                 }
             } else {
 
