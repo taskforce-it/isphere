@@ -563,6 +563,7 @@
 	         </action>
       	</objectContribution>
       	
+      	<!--
       	<objectContribution
              objectClass="org.eclipse.rse.core.filters.ISystemFilterStringReference"
              id="biz.isphere.core.menu.messagefilesearch.filter">
@@ -582,6 +583,7 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	-->
       	
       	<!--
       	  ==========================================
