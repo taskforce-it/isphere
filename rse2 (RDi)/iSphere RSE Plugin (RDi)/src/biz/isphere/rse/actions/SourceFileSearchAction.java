@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,15 +108,20 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
                     /*
-                     * Started from ???
+                     * Started from ??? Deactivated in plugin.xml with rev. #327
+                     * in 2014.
                      */
 
-                    ISystemFilterStringReference element = (ISystemFilterStringReference)_object;
+                    // TODO:remove obsolete code (also plugin.xml)
 
-                    _selectedElements.add(element);
-
-                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
-                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+                    // ISystemFilterStringReference element =
+                    // (ISystemFilterStringReference)_object;
+                    //
+                    // _selectedElements.add(element);
+                    //
+                    // IHost host =
+                    // ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    // checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 }
 

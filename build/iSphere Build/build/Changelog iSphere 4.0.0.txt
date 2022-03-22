@@ -4,6 +4,8 @@ Changelog: iSphere 5.0.0.r
  • Added iSphere Stream File Search to UI.
  • Fixed NullPointerException, when opening the popup menu of the
    member or stream file search result view, when no tabs are open.
+ • Removed obsolete object contributions from plugin.xml.
+   See: rev. #327, where the first contribution has been removed.
 
 Changelog: iSphere 5.0.0.b005
 -----------------------------

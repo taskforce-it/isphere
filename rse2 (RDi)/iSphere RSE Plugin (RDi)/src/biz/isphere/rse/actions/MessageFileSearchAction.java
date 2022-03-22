@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,14 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
+import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
@@ -41,14 +49,6 @@ import biz.isphere.core.messagefilesearch.SearchPostRun;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 
 public class MessageFileSearchAction implements IObjectActionDelegate {
 
@@ -110,15 +110,20 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
                 } else if ((_object instanceof ISystemFilterStringReference)) {
 
                     /*
-                     * Started from ???
+                     * Started from ??? See:
+                     * biz.isphere.rse.actions.SourceFileSearchAction
                      */
 
-                    ISystemFilterStringReference element = (ISystemFilterStringReference)_object;
+                    // TODO: remove obsolete code (also plugin.xml)
 
-                    _selectedElements.add(element);
-
-                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
-                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+                    // ISystemFilterStringReference element =
+                    // (ISystemFilterStringReference)_object;
+                    //
+                    // _selectedElements.add(element);
+                    //
+                    // IHost host =
+                    // ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    // checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
 
                 }
 
