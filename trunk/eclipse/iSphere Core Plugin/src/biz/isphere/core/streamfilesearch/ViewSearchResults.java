@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionEnableAutoSave;
 
     private CTabFolder tabFolderSearchResults;
+    private Menu tabFolderSearchResultsPopUpMenu;
     private Shell shell;
     private SearchResultManager manager;
 
@@ -112,8 +113,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         tabFolderSearchResults.addMouseListener(new CloseTabOnDoubleClickListener());
 
-        Menu popUpMenu = new Menu(tabFolderSearchResults);
-        MenuItem menuItem = new MenuItem(popUpMenu, SWT.PUSH);
+        tabFolderSearchResultsPopUpMenu = new Menu(tabFolderSearchResults);
+        MenuItem menuItem = new MenuItem(tabFolderSearchResultsPopUpMenu, SWT.PUSH);
         menuItem.setText(Messages.MenuItem_Display_Search_Options);
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -127,8 +128,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 }
             }
         });
-
-        tabFolderSearchResults.setMenu(popUpMenu);
 
         createActions();
         initializeToolBar();
@@ -181,8 +180,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionInvertSelectedItems.setToolTipText(Messages.Tooltip_Invert_selection);
-        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry()
-            .getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
+        actionInvertSelectedItems
+            .setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
         resetColumnSizeAction = new ResetColumnSizeAction();
@@ -326,8 +325,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         SearchResultViewer viewer = getSelectedViewer();
         if (viewer != null) {
             SearchResultTabFolder searchResults = new SearchResultTabFolder();
-            searchResults.addTab(new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer
-                .getSearchOptions()));
+            searchResults.addTab(
+                new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer.getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
             } catch (SaveFileException e) {
@@ -405,9 +404,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(shell, style);
 
-        String[] filterNames = new String[] {
-            "Stream file search result (*." + SearchResultManager.FILE_EXTENSION + ")", FileHelper.getAllFilesText() }; //$NON-NLS-1$ //$NON-NLS-2$
-        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION, FileHelper.getAllFilesFilter() }; //$NON-NLS-1$  //$NON-NLS-2$
+        String[] filterNames = new String[] { "Stream file search result (*." + SearchResultManager.FILE_EXTENSION + ")", //$NON-NLS-1$ //$NON-NLS-2$
+            FileHelper.getAllFilesText() };
+        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION, FileHelper.getAllFilesFilter() }; //$NON-NLS-1$ //$NON-NLS-2$
         String filename = Preferences.getInstance().getSourceFileSearchResultsLastUsedFileName();
 
         dialog.setFilterNames(filterNames);
@@ -462,6 +461,12 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         resetColumnSizeAction.setEnabled(true);
         resetColumnSizeAction.setViewer(getSelectedViewer());
+
+        if (hasItems) {
+            tabFolderSearchResults.setMenu(tabFolderSearchResultsPopUpMenu);
+        } else {
+            tabFolderSearchResults.setMenu(null);
+        }
     }
 
     private SearchResultViewer getSelectedViewer() {
