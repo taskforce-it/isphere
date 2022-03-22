@@ -1,4 +1,9 @@
 
+Changelog: iSphere 5.0.0.r
+--------------------------
+ • Fixed NullPointerException, when opening the popup menu of the
+   member or stream file search result view, when no tabs are open.
+
 Changelog: iSphere 5.0.0.b005
 -----------------------------
  • Added iSphere Stream File Compare Editor.
