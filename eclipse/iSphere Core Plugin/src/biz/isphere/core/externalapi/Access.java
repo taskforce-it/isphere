@@ -626,7 +626,7 @@ public class Access {
                                 shell, 
                                 connectionName, 
                                 dialog.getSearchOptions(), 
-                                new ArrayList<biz.isphere.core.sourcefilesearch.SearchElement>(_searchElements.values()));
+                                dialog.getSelectedElements());
                     } 
                     catch (Exception e) {
                         _searchResults = new biz.isphere.core.sourcefilesearch.SearchResult[0];
@@ -762,7 +762,7 @@ public class Access {
                                 shell, 
                                 connectionName, 
                                 dialog.getSearchOptions(), 
-                                new ArrayList<biz.isphere.core.streamfilesearch.SearchElement>(_searchElements.values()));
+                                dialog.getSelectedElements());
                     } 
                     catch (Exception e) {
                         _searchResults = new biz.isphere.core.streamfilesearch.SearchResult[0];
