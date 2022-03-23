@@ -85,27 +85,6 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     }
 
     /**
-     * CMOne specific constructor that create a 3-way compare dialog.
-     * 
-     * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option "Open for
-     *        browse/edit" is displayed
-     * @param leftStreamFile - the left selected stream file
-     * @param rightStreamFile - the right selected stream file
-     * @param ancestorStreamFile - the ancestor selected stream file
-     */
-    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
-    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile,
-        RSEStreamFile ancestorStreamFile) {
-        super(parentShell, selectEditable, leftStreamFile, rightStreamFile, ancestorStreamFile);
-        setHistoryValuesCategoryKey(null);
-        initializeLeftStreamFile(leftStreamFile);
-        initializeRightStreamFile(rightStreamFile);
-        initializeAncestorStreamFile(ancestorStreamFile);
-        setSwitchStreamFileAllowed(false);
-    }
-
-    /**
      * CMOne specific constructor that create compare dialog for 2 selected
      * stream files.
      * 
@@ -124,25 +103,6 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         initializeLeftStreamFile(leftStreamFile);
         initializeRightStreamFile(rightStreamFile);
         setSwitchStreamFileAllowed(switchStreamFileAllowed);
-    }
-
-    /**
-     * CMOne specific constructor that create compare dialog for 2 selected
-     * stream files.
-     * 
-     * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option "Open for
-     *        browse/edit" is displayed
-     * @param leftStreamFile - the left selected stream file
-     * @param rightStreamFile - the right selected stream file
-     */
-    @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
-    public RSECompareStreamFileDialog(Shell parentShell, boolean selectEditable, RSEStreamFile leftStreamFile, RSEStreamFile rightStreamFile) {
-        super(parentShell, selectEditable, leftStreamFile, rightStreamFile);
-        setHistoryValuesCategoryKey(null);
-        initializeLeftStreamFile(leftStreamFile);
-        initializeRightStreamFile(rightStreamFile);
-        setSwitchStreamFileAllowed(false);
     }
 
     /**
