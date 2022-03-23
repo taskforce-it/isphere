@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 4.2.4.r
-X-Bundle-Update-Library: false
+Bundle-Version: 5.0.0.r
+X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Enhanced options "Compare / Load previous values" to let the user select the values to be preserved for the next compare.\nAdded renaming rule "Numerical Extended".\nMinor bug fix for existing renaming rule "Numeric".
-X-Beta-Version: 4.2.5.b003
-X-Beta-Update-Library: false
+X-Bundle-Info: Added iSphere Stream File Compare Editor.\nAdded iSphere Stream File Search.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.\nBug fixes.
+X-Beta-Version: 5.0.0.r
+X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Fixed iSphere ticket 121 (dark mode).\nFixed creating LPEX task tags.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.
+X-Beta-Info: Added iSphere Stream File Compare Editor.\nAdded iSphere Stream File Search.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.\nBug fixes.
