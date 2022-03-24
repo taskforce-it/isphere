@@ -1,4 +1,8 @@
 
+Changelog: iSphere 5.0.1.r
+--------------------------
+ • Added column Severity to iSphere Message File Editor.
+
 Changelog: iSphere 5.0.0.r
 --------------------------
  • Added iSphere Stream File Search to UI.
