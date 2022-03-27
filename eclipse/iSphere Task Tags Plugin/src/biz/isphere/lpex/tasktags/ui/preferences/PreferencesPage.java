@@ -37,8 +37,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-import biz.isphere.adapter.swt.widgets.XFileDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import biz.isphere.lpex.tasktags.Messages;
 import biz.isphere.lpex.tasktags.preferences.Preferences;
 
@@ -368,7 +368,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     }
 
     private void performExport(SelectionEvent anEvent) {
-        XFileDialog tFileDialog = new XFileDialog(getShell(), SWT.SAVE);
+        IFileDialog tFileDialog = WidgetFactory.getFileDialog(getShell(), SWT.SAVE);
         tFileDialog.setText(Messages.PreferencesPage_ExportDialog_headline);
         tFileDialog.setFileName("LPEXTaskTags"); //$NON-NLS-1$
         tFileDialog.setFilterPath(getPreferences().getImportExportLocation());
@@ -387,7 +387,7 @@ public class PreferencesPage extends PreferencePage implements IWorkbenchPrefere
     }
 
     private void performImport(SelectionEvent anEvent) {
-        XFileDialog fileDialog = new XFileDialog(getShell(), SWT.OPEN);
+        IFileDialog fileDialog = WidgetFactory.getFileDialog(getShell(), SWT.OPEN);
         fileDialog.setText(Messages.PreferencesPage_ImportDialog_headline);
         fileDialog.setFileName(""); //$NON-NLS-1$
         fileDialog.setFilterPath(getPreferences().getImportExportLocation());
