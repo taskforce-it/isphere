@@ -30,7 +30,6 @@ import biz.isphere.core.memberrename.factories.MemberRenamingRuleFactory;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.memberrename.rules.MemberRenamingRuleNumber;
 import biz.isphere.core.preferencepages.IPreferences;
-import biz.isphere.core.sourcefilesearch.SearchResultManager;
 import biz.isphere.core.spooledfiles.SpooledFile;
 import biz.isphere.core.spooledfiles.SpooledFileTransformerPDF.PageSize;
 
@@ -625,7 +624,7 @@ public final class Preferences {
         String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
         if ("true".equals(value)) { //$NON-NLS-1$
             return true;
-        } else if (!LoadPreviousValues.NONE.name().equals(value)) { //$NON-NLS-1$
+        } else if (!LoadPreviousValues.NONE.name().equals(value)) { // $NON-NLS-1$
             return true;
         } else {
             return false;
@@ -648,7 +647,7 @@ public final class Preferences {
         String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
         if ("true".equals(value)) { //$NON-NLS-1$
             return true;
-        } else if (!LoadPreviousValues.NONE.name().equals(value)) { //$NON-NLS-1$
+        } else if (!LoadPreviousValues.NONE.name().equals(value)) { // $NON-NLS-1$
             return true;
         } else {
             return false;
@@ -1524,7 +1523,7 @@ public final class Preferences {
      */
     public String getDefaultSourceFileSearchResultsAutoSaveFileName() {
 
-        return "iSphereSourceFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
+        return "iSphereSourceFileSearchResultAutoSave." + biz.isphere.core.sourcefilesearch.SearchResultManager.FILE_EXTENSION;
     }
 
     /**
@@ -1582,7 +1581,7 @@ public final class Preferences {
      */
     public String getDefaultMessageFileSearchResultsAutoSaveFileName() {
 
-        return "iSphereMessageFileSearchResultAutoSave." + SearchResultManager.FILE_EXTENSION;
+        return "iSphereMessageFileSearchResultAutoSave." + biz.isphere.core.messagefilesearch.SearchResultManager.FILE_EXTENSION;
     }
 
     /**
@@ -1818,9 +1817,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED,
+            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

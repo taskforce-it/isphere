@@ -3,6 +3,7 @@ Changelog: iSphere 5.0.1.r
 --------------------------
  • Added column Severity to iSphere Message File Editor.
  • Removed optional dependency to compare filters compile dummy.
+ • Fix extension of message file search result file name (preferences). 
 
 Changelog: iSphere 5.0.0.r
 --------------------------
