@@ -78,186 +78,102 @@ public final class Preferences {
     private static final String WARNING_BASE_KEY = DOMAIN + "SHOW_WARNING."; //$NON-NLS-1$
 
     private static final String SPOOLED_FILE_NAME_DEFAULT = "*DEFAULT"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILE_NAME_SIMPLE = "*SIMPLE"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILE_NAME_QUALIFIED = "*QUALIFIED"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_MERGE_FILTERS = DOMAIN + "SPOOLED_FILES.MERGE.FILTERS"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_LOAD_ASYNCHRONOUSLY = DOMAIN + "SPOOLED_FILES.LOAD.ASYNCHRONOUSLY"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_SUGGESTED_FILE_NAME = DOMAIN + "SPOOLED_FILES.SUGGESTED.FILE_NAME"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_SAVE_DIRECTORY = DOMAIN + "SPOOLED_FILES.SAVE.DIRECTORY"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_PDF_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_PDF.COMMAND"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_PDF_LIBRARY = DOMAIN + "SPOOLED_FILES.CONVERSION_PDF.LIBRARY"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_PDF = DOMAIN + "SPOOLED_FILES.CONVERSION_PDF"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_HTML_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML.COMMAND"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_HTML_LIBRARY = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML.LIBRARY"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_HTML = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_HTML_EDIT_ALLOWED = DOMAIN + "SPOOLED_FILES.CONVERSION_HTML.EDIT_ALLOWED"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_TEXT_COMMAND = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.COMMAND"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_TEXT_LIBRARY = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.LIBRARY"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_TEXT = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_CONVERSION_TEXT_EDIT_ALLOWED = DOMAIN + "SPOOLED_FILES.CONVERSION_TEXT.EDIT_ALLOWED"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_PAGE_SIZE = DOMAIN + "SPOOLED_FILES.PAGE_SIZE"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_ADJUST_FONT_SIZE = DOMAIN + "SPOOLED_FILES.ADJUST_FONT_SIZE"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_DEFAULT_FORMAT = DOMAIN + "SPOOLED_FILES.DEFAULT_FORMAT"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_MAX_FILES_TO_LOAD = DOMAIN + "MAX_FILES_TO_LOAD"; //$NON-NLS-1$
-
     private static final String SPOOLED_FILES_RSE_DESCRIPTION = DOMAIN + "RSE_DESCRIPTION"; //$NON-NLS-1$
 
     private static final String BACKUP_MEMBER_NAME_CURRENT_RULE = DOMAIN + "BACKUP_MEMBER_NAME.CURRENT_RULE"; //$NON-NLS-1$
-
     private static final String BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK = DOMAIN + "BACKUP_MEMBER_NAME.ENABLE_MEMBER_PRECHECK"; //$NON-NLS-1$
 
-    // Removes with rev. 7363
-    // private static final String SOURCE_FILE_SEARCH_MEMBER_COLUMN_WIDTH =
-    // DOMAIN + "SOURCEFILESEARCH.MEMBER_COLUMN_WIDTH"; //$NON-NLS-1$
-
-    // private static final String SOURCE_FILE_SEARCH_SRC_TYPE_COLUMN_WIDTH =
-    // DOMAIN + "SOURCEFILESEARCH.SRC_TYPE_COLUMN_WIDTH"; //$NON-NLS-1$
-
-    // private static final String
-    // SOURCE_FILE_SEARCH_LAST_CHANGED_DATE_COLUMN_WIDTH = DOMAIN +
-    // "SOURCEFILESEARCH.LAST_CHANGED_DATE_COLUMN_WIDTH"; //$NON-NLS-1$
-
-    // private static final String
-    // SOURCE_FILE_SEARCH_STATEMENTS_COUNT_COLUMN_WIDTH = DOMAIN +
-    // "SOURCEFILESEARCH.STATEMENTS_COUNT_COLUMN_WIDTH"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_SEARCHSTRING = DOMAIN + "SOURCEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_EXPORT_DIRECTORY = DOMAIN + "SOURCEFILESEARCH.EXPORT_DIRECTORY"; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_SEARCH_SEARCHSTRING = DOMAIN + "MESSAGEFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY = DOMAIN + "MESSAGEFILESEARCH.EXPORT_DIRECTORY"; //$NON-NLS-1$
 
     private static final String STREAM_FILE_SEARCH_SEARCHSTRING = DOMAIN + "STREAMFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
 
+    // Upload library properties
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
-
     private static final String ASP_GROUP = "ASP_GROUP"; //$NON-NLS-1$
-
     private static final String CONNECTION_NAME = DOMAIN + "HOST_NAME"; //$NON-NLS-1$
-
     private static final String FTP_PORT_NUMBER = DOMAIN + "FTP_PORT_NUMBER"; //$NON-NLS-1$
 
     private static final String SYSTEM_CCSID = DOMAIN + "SYSTEM_CCSID"; //$NON-NLS-1$
 
     private static final String SEARCH_FOR_UPDATES = DOMAIN + "SEARCH_FOR_UPDATES"; //$NON-NLS-1$
-
     private static final String SEARCH_FOR_BETA_VERSIONS = DOMAIN + "SEARCH_FOR_BETA_VERSIONS"; //$NON-NLS-1$
-
     private static final String URL_FOR_UPDATES = DOMAIN + "URL_FOR_UPDATES"; //$NON-NLS-1$
-
     private static final String LAST_VERSION_FOR_UPDATES = DOMAIN + "LAST_VERSION_FOR_UPDATES"; //$NON-NLS-1$
 
     private static final String MONITOR = DOMAIN + "MONITOR."; //$NON-NLS-1$
-
     private static final String MONITOR_DTAQ = MONITOR + "DTAQ."; //$NON-NLS-1$
-
     public static final String MONITOR_DTAQ_LENGTH = MONITOR_DTAQ + "LENGTH"; //$NON-NLS-1$
-
     public static final String MONITOR_DTAQ_VIEW_IN_HEX = MONITOR_DTAQ + "VIEW_IN_HEX"; //$NON-NLS-1$
-
     public static final String MONITOR_DTAQ_DISPLAY_END_OF_DATA = MONITOR_DTAQ + "DISPLAY_END_OF_DATA"; //$NON-NLS-1$
-
     public static final String MONITOR_DTAQ_REPLACEMENT_CHARACTER = MONITOR_DTAQ + "REPLACEMENT_CHARACTER"; //$NON-NLS-1$
-
     public static final String MONITOR_DTAQ_NUMBER_OF_MESSAGES = MONITOR_DTAQ + "NUMBER_OF_MESSAGES"; //$NON-NLS-1$
 
     private static final String SOURCE_FILE_SEARCH = DOMAIN + "SOURCE_FILE_SEARCH."; //$NON-NLS-1$
-
     public static final String SOURCE_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED = SOURCE_FILE_SEARCH + "IS_BATCH_RESOLVE"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_RESULTS = DOMAIN + "SOURCE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = SOURCE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = SOURCE_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
-
     public static final String SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = SOURCE_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE = SOURCE_FILE_SEARCH_RESULTS + "AUTO_SAVE_FILE"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_DIRECTORY = "sourceFileSearch"; //$NON-NLS-1$
-
     private static final String SOURCE_FILE_SEARCH_FILE_NAME = "SourceFileSearchResult"; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_SEARCH_RESULTS = DOMAIN + "MESSAGE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = MESSAGE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = MESSAGE_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
-
     public static final String MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = MESSAGE_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE = MESSAGE_FILE_SEARCH_RESULTS + "AUTO_SAVE_FILE"; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_DIRECTORY = "messageFileSearch"; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_COMPARE = DOMAIN + "MESSAGE_FILE_COMPARE."; //$NON-NLS-1$
-
     private static final String MESSAGE_FILE_COMPARE_LINE_WIDTH = MESSAGE_FILE_COMPARE + "LINE_WIDTH"; //$NON-NLS-1$
 
     private static final String SOURCE_MEMBER_COMPARE = DOMAIN + "SOURCE_MEMBER_COMPARE."; //$NON-NLS-1$
-
     private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER = SOURCE_MEMBER_COMPARE + "LOAD_PREVIOUS_VALUES_RIGHT_MEMBER"; //$NON-NLS-1$
-
     private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER = SOURCE_MEMBER_COMPARE
         + "LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER"; //$NON-NLS-1$
-
     private static final String SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES = SOURCE_MEMBER_COMPARE + "SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES"; //$NON-NLS-1$
 
     private static final String APPEARANCE = DOMAIN + "APPEARANCE."; //$NON-NLS-1$
-
     private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
-
     private static final String APPEARANCE_TIME_FORMAT = APPEARANCE + "TIME_FORMAT"; //$NON-NLS-1$
-
     private static final String APPEARANCE_FORMAT_RESOURCE_DATES = APPEARANCE + "FORMAT_RESOURCE_DATES"; //$NON-NLS-1$
-
     private static final String APPEARANCE_DATE_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
-
     private static final String APPEARANCE_TIME_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
-
     private static final String APPEARANCE_AUTO_REFRESH = APPEARANCE + "AUTO_REFRESH."; //$NON-NLS-1$
-
     private static final String APPEARANCE_AUTO_REFRESH_DELAY = APPEARANCE_AUTO_REFRESH + "DELAY"; //$NON-NLS-1$
-
     private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
-
     private static final String APPEARANCE_SHOW_ERROR_LOG = APPEARANCE_AUTO_REFRESH + "APPEARANCE_SHOW_ERROR_LOG"; //$NON-NLS-1$
 
-    // TODO: the DECORATION properties has been moved to the rse plugin
-    private static final String DECORATION = DOMAIN + "DECORATION."; //$NON-NLS-1$
-
     private static final String DECORATION_OBJECT_EXTENSION = APPEARANCE + "OBJECT_EXTENSION"; //$NON-NLS-1$
-
     private static final String DECORATION_SOURCE_MEMBER_EXTENSION = APPEARANCE + "SOURCE_MEMBER_EXTENSION"; //$NON-NLS-1$
-
     private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
 
     private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
@@ -694,18 +610,6 @@ public final class Preferences {
         return preferenceStore.getBoolean(APPEARANCE_SHOW_ERROR_LOG);
     }
 
-    public boolean isObjectDecorationExtension() {
-        return preferenceStore.getBoolean(DECORATION_OBJECT_EXTENSION);
-    }
-
-    public boolean isSourceMemberDecorationExtension() {
-        return preferenceStore.getBoolean(DECORATION_SOURCE_MEMBER_EXTENSION);
-    }
-
-    public boolean isDataMemberDecorationExtension() {
-        return preferenceStore.getBoolean(DECORATION_DATA_MEMBER_EXTENSION);
-    }
-
     public boolean isISphereJdbcConnectionManager() {
         return preferenceStore.getBoolean(JDBC_USE_ISPHERE_MANAGER);
     }
@@ -986,18 +890,6 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_SHOW_ERROR_LOG, show);
     }
 
-    public void setObjectDecorationExtension(boolean enabled) {
-        preferenceStore.setValue(DECORATION_OBJECT_EXTENSION, enabled);
-    }
-
-    public void setSourceMemberDecorationExtension(boolean enabled) {
-        preferenceStore.setValue(DECORATION_SOURCE_MEMBER_EXTENSION, enabled);
-    }
-
-    public void setDataMemberDecorationExtension(boolean enabled) {
-        preferenceStore.setValue(DECORATION_DATA_MEMBER_EXTENSION, enabled);
-    }
-
     public void setUseISphereJdbcConnectionManager(boolean enabled) {
         preferenceStore.setValue(JDBC_USE_ISPHERE_MANAGER, enabled);
     }
@@ -1093,10 +985,6 @@ public final class Preferences {
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
         preferenceStore.setDefault(APPEARANCE_SHOW_ERROR_LOG, getDefaultShowErrorLog());
-
-        preferenceStore.setDefault(DECORATION_OBJECT_EXTENSION, getDefaultObjectDecorationExtension());
-        preferenceStore.setDefault(DECORATION_SOURCE_MEMBER_EXTENSION, getDefaultSourceMemberDecorationExtension());
-        preferenceStore.setDefault(DECORATION_DATA_MEMBER_EXTENSION, getDefaultDataMemberDecorationExtension());
 
         preferenceStore.setDefault(JDBC_USE_ISPHERE_MANAGER, getDefaultUseISphereJdbcConnectionManager());
 
