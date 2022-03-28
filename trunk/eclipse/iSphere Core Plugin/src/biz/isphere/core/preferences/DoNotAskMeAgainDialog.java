@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,11 +48,25 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
 
     public static boolean openConfirm(Shell parent, String showWarningKey, String message) {
         if (Preferences.getInstance().isShowWarningMessage(showWarningKey)) {
-            return open(QUESTION, parent, Messages.Confirmation, message, SWT.NONE, showWarningKey, new String[] { IDialogConstants.OK_LABEL,
-                IDialogConstants.CANCEL_LABEL });
+            return open(QUESTION, parent, Messages.Confirmation, message, SWT.NONE, showWarningKey,
+                new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL });
         } else {
             return true;
         }
+    }
+
+    public static boolean openQuestion(Shell parent, String showWarningKey, String message, boolean defaultValue) {
+        if (Preferences.getInstance().isShowWarningMessage(showWarningKey)) {
+            return open(QUESTION, parent, Messages.Question, message, SWT.NONE, showWarningKey,
+                new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL });
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public static boolean openSavedFileQuestion(Shell parent, String showWarningKey) {
+        String message = "File has been saved successfully.\nWould you like to open it?";
+        return DoNotAskMeAgainDialog.openQuestion(parent, showWarningKey, message, false);
     }
 
     public static boolean getDefaultShowWarning() {
@@ -74,6 +88,9 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         keys.add(INFORMATION_USAGE_JOB_LOG_EXPLORER);
         keys.add(TN5250_FAST_CURSOR_MAPPING_CONFLICT);
         keys.add(CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG);
+        keys.add(CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH);
+        keys.add(CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH);
+        keys.add(CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH);
 
         return keys.toArray(new String[keys.size()]);
     }

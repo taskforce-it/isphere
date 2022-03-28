@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,4 +33,11 @@ public interface DoNotAskMeAgain {
     public static final String CONFIRM_REMOVE_STRPREPRC_HEADER = "REMOVE_STRPREPRC_HEADER"; //$NON-NLS-1$
     public static final String TN5250_FAST_CURSOR_MAPPING_CONFLICT = "TN5250_FAST_CURSOR_MAPPING_CONFLICT"; //$NON-NLS-1$
     public static final String CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG = "CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG"; //$NON-NLS-1$
+
+    /*
+     * Question message keys
+     */
+    public static final String CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH = "CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH"; //$NON-NLS-1$
+    public static final String CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH = "CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH"; //$NON-NLS-1$
+    public static final String CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH = "CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH"; //$NON-NLS-1$
 }

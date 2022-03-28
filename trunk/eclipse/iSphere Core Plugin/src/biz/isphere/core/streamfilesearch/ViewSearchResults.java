@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
@@ -45,6 +46,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.internal.filemanager.FileManager;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
 import biz.isphere.core.search.SearchOptions;
@@ -187,7 +190,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         resetColumnSizeAction = new ResetColumnSizeAction();
 
         actionDisableEdit = new DisableEditAction();
-        actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
+        actionDisableEdit.setEditEnabled(Preferences.getInstance().isStreamFileSearchResultsEditEnabled());
         actionDisableEdit.setEnabled(false);
 
         actionLoadSearchResult = new Action(Messages.Load) {
@@ -258,7 +261,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         tabItemSearchResult.setText(connectionName + "/" + searchString); //$NON-NLS-1$
 
         SearchResultViewer _searchResultViewer = new SearchResultViewer(connectionName, searchString, searchResults, searchOptions);
-        _searchResultViewer.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
+        _searchResultViewer.setEditEnabled(Preferences.getInstance().isStreamFileSearchResultsEditEnabled());
         _searchResultViewer.createContents(compositeSearchResult);
         _searchResultViewer.addSelectionChangedListener(this);
 
@@ -329,8 +332,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer.getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
+                FileManager.askAndOpenSavedFile(shell, DoNotAskMeAgainDialog.CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH, file);
             } catch (SaveFileException e) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
     }
@@ -350,7 +354,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         try {
             manager.saveToXml(fileName, searchResultTabFolder);
         } catch (SaveFileException e) {
-            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
@@ -416,7 +420,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         String selectedFileName = dialog.open();
         if (!StringHelper.isNullOrEmpty(selectedFileName) && !filename.equals(selectedFileName)) {
-            Preferences.getInstance().setSourceFileSearchResultsLastUsedFileName(selectedFileName);
+            Preferences.getInstance().setStreamFileSearchResultsLastUsedFileName(selectedFileName);
         }
 
         return selectedFileName;
@@ -439,7 +443,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             hasItems = false;
             hasSelectedItems = false;
             hasMultipleTabItems = false;
-            actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
+            actionDisableEdit.setEditEnabled(Preferences.getInstance().isStreamFileSearchResultsEditEnabled());
         } else {
             hasSelectedViewer = true;
             hasItems = tabFolderSearchResults.getItemCount() > 0;
@@ -499,7 +503,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
             Preferences preferences = Preferences.getInstance();
 
-            if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
+            if (preferences.isStreamFileSearchResultsAutoSaveEnabled()) {
                 String fileName = preferences.getStreamFileSearchResultsAutoSaveDirectory()
                     + preferences.getStreamFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
@@ -520,7 +524,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
             Preferences preferences = Preferences.getInstance();
 
-            if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
+            if (preferences.isStreamFileSearchResultsAutoSaveEnabled()) {
                 String fileName = preferences.getStreamFileSearchResultsAutoSaveDirectory()
                     + preferences.getStreamFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
@@ -580,19 +584,19 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         public EnableAutoSaveAction() {
             super(Messages.Auto_save, SWT.CHECK);
 
-            setChecked(Preferences.getInstance().isSourceFileSearchResultsAutoSaveEnabled());
+            setChecked(Preferences.getInstance().isStreamFileSearchResultsAutoSaveEnabled());
             addPreferencesChangeListener();
         }
 
         public void run() {
-            Preferences.getInstance().setSourceFileSearchResultsAutoSaveEnabled(isChecked());
+            Preferences.getInstance().setStreamFileSearchResultsAutoSaveEnabled(isChecked());
         };
 
         private void addPreferencesChangeListener() {
             IPreferenceStore preferenceStore = ISpherePlugin.getDefault().getPreferenceStore();
             preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent event) {
-                    if (event.getProperty() == Preferences.SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED) {
+                    if (event.getProperty() == Preferences.STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED) {
                         boolean enabled = (Boolean)event.getNewValue();
                         setChecked(enabled);
                     }

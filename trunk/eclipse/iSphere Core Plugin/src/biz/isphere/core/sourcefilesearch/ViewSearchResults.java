@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
@@ -48,6 +49,8 @@ import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.internal.filemanager.FileManager;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
@@ -388,8 +391,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer.getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
+                FileManager.askAndOpenSavedFile(shell, DoNotAskMeAgainDialog.CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH, file);
             } catch (SaveFileException e) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
     }
@@ -409,7 +413,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         try {
             manager.saveToXml(fileName, searchResultTabFolder);
         } catch (SaveFileException e) {
-            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
@@ -561,7 +565,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory()
+                    + preferences.getSourceFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
                 if (file.exists()) {
                     loadSearchResult(fileName, true);
@@ -581,7 +586,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory()
+                    + preferences.getSourceFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
             }
 
