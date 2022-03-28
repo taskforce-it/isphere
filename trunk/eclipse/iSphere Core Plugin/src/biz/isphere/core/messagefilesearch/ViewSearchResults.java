@@ -582,7 +582,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isMessageFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getMessageFileSearchResultsSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
                 if (file.exists()) {
                     loadSearchResult(fileName, true);
@@ -602,7 +602,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isMessageFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getMessageFileSearchResultsSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
             }
 

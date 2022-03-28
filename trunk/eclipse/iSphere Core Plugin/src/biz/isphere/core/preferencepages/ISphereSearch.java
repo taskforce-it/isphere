@@ -358,12 +358,12 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
          buttonBatchResolveEnabled.setSelection(preferences.isSourceFileSearchBatchResolveEnabled());
         setComboSourceFileSearchEditMode(preferences.isSourceFileSearchResultsEditEnabled());
-        textSourceFileSearchSaveDirectory.setText(preferences.getSourceFileSearchResultsSaveDirectory());
+        textSourceFileSearchSaveDirectory.setText(preferences.getSourceFileSearchResultsAutoSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getSourceFileSearchResultsAutoSaveFileName());
 
         if (messageFileSettingsEnabled) {
-            textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsSaveDirectory());
+            textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsAutoSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.isMessageFileSearchResultsAutoSaveEnabled());
             textMessageFileSearchAutoSaveFileName.setText(preferences.getMessageFileSearchResultsAutoSaveFileName());
         }
