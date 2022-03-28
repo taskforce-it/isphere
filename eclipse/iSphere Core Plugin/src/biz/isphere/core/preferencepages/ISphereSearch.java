@@ -47,6 +47,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private Button buttonSourceFileSearchAutoSaveEnabled;
     private Text textSourceFileSearchAutoSaveFileName;
 
+    private Combo comboMessageFileSearchEditMode;
     private Text textMessageFileSearchSaveDirectory;
     private Button buttonMessageFileSearchAutoSaveEnabled;
     private Text textMessageFileSearchAutoSaveFileName;
@@ -117,19 +118,19 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
 
         Label labelSoureFileSearchEditMode = new Label(group, SWT.NONE);
         labelSoureFileSearchEditMode.setLayoutData(createLabelLayoutData());
-        labelSoureFileSearchEditMode.setText(Messages.Lpex_editor_mode_colon);
+        labelSoureFileSearchEditMode.setText(Messages.Double_click_mode_colon);
 
         comboSourceFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
-        comboSourceFileSearchEditMode.setToolTipText(Messages.Tooltip_Lpex_editor_mode);
+        comboSourceFileSearchEditMode.setToolTipText(Messages.Tooltip_Double_click_mode);
         comboSourceFileSearchEditMode.setLayoutData(createTextLayoutData(2));
         comboSourceFileSearchEditMode.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent arg0) {
+            public void modifyText(ModifyEvent event) {
                 if (validateSourceFileSearchEditMode()) {
                     checkAllValues();
                 }
             }
         });
-        fillSourceFileSearchEditModeCombo();
+        fillFileSearchEditModeCombo(comboSourceFileSearchEditMode);
 
         Label labelSoureFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
         labelSoureFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
@@ -229,6 +230,22 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         group.setLayout(new GridLayout(3, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         group.setText(Messages.Message_file_search);
+
+        Label labelMessageFileSearchEditMode = new Label(group, SWT.NONE);
+        labelMessageFileSearchEditMode.setLayoutData(createLabelLayoutData());
+        labelMessageFileSearchEditMode.setText(Messages.Double_click_mode_colon);
+
+        comboMessageFileSearchEditMode = WidgetFactory.createReadOnlyCombo(group);
+        comboMessageFileSearchEditMode.setToolTipText(Messages.Tooltip_Double_click_mode);
+        comboMessageFileSearchEditMode.setLayoutData(createTextLayoutData(2));
+        comboMessageFileSearchEditMode.addModifyListener(new ModifyListener() {
+            public void modifyText(ModifyEvent event) {
+                if (validateMessageFileSearchEditMode()) {
+                    checkAllValues();
+                }
+            }
+        });
+        fillFileSearchEditModeCombo(comboMessageFileSearchEditMode);
 
         Label labelMessageFileSearchResultsSaveDirectory = new Label(group, SWT.NONE);
         labelMessageFileSearchResultsSaveDirectory.setLayoutData(createLabelLayoutData());
@@ -338,7 +355,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         Preferences preferences = Preferences.getInstance();
 
         preferences.setSourceFileSearchBatchResolveEnabled(buttonBatchResolveEnabled.getSelection());
-        preferences.setSourceFileSearchResultsEditEnabled(getComboSourceFileSearchEditMode());
+        preferences.setSourceFileSearchResultsEditEnabled(getComboSourceFileSearchEditMode(comboSourceFileSearchEditMode));
         preferences.setSourceFileSearchResultsSaveDirectory(textSourceFileSearchSaveDirectory.getText());
         preferences.setSourceFileSearchResultsAutoSaveEnabled(buttonSourceFileSearchAutoSaveEnabled.getSelection());
         preferences.setSourceFileSearchResultsAutoSaveFileName(textSourceFileSearchAutoSaveFileName.getText());
@@ -357,12 +374,13 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         Preferences preferences = Preferences.getInstance();
 
         buttonBatchResolveEnabled.setSelection(preferences.isSourceFileSearchBatchResolveEnabled());
-        setComboSourceFileSearchEditMode(preferences.isSourceFileSearchResultsEditEnabled());
+        setComboSourceFileSearchEditMode(comboSourceFileSearchEditMode, preferences.isSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getSourceFileSearchResultsAutoSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.isSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getSourceFileSearchResultsAutoSaveFileName());
 
         if (messageFileSettingsEnabled) {
+            setComboSourceFileSearchEditMode(comboMessageFileSearchEditMode, preferences.isMessageFileSearchResultsEditEnabled());
             textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsAutoSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.isMessageFileSearchResultsAutoSaveEnabled());
             textMessageFileSearchAutoSaveFileName.setText(preferences.getMessageFileSearchResultsAutoSaveFileName());
@@ -377,12 +395,13 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         Preferences preferences = Preferences.getInstance();
 
         buttonBatchResolveEnabled.setSelection(preferences.getDefaultSourceFileSearchBatchResolveEnabled());
-        setComboSourceFileSearchEditMode(preferences.getDefaultSourceFileSearchResultsEditEnabled());
+        setComboSourceFileSearchEditMode(comboSourceFileSearchEditMode, preferences.getDefaultSourceFileSearchResultsEditEnabled());
         textSourceFileSearchSaveDirectory.setText(preferences.getDefaultSourceFileSearchResultsSaveDirectory());
         buttonSourceFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultSourceFileSearchResultsAutoSaveEnabled());
         textSourceFileSearchAutoSaveFileName.setText(preferences.getDefaultSourceFileSearchResultsAutoSaveFileName());
 
         if (messageFileSettingsEnabled) {
+            setComboSourceFileSearchEditMode(comboMessageFileSearchEditMode, preferences.getDefaultMessageFileSearchResultsEditEnabled());
             textMessageFileSearchSaveDirectory.setText(preferences.getDefaultMessageFileSearchResultsSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultMessageFileSearchResultsAutoSaveEnabled());
             textMessageFileSearchAutoSaveFileName.setText(preferences.getDefaultMessageFileSearchResultsAutoSaveFileName());
@@ -392,28 +411,28 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         setControlsEnablement();
     }
 
-    private boolean getComboSourceFileSearchEditMode() {
+    private boolean getComboSourceFileSearchEditMode(Combo combo) {
 
-        if (MODE_EDIT.equals(comboSourceFileSearchEditMode.getText())) {
+        if (MODE_EDIT.equals(combo.getText())) {
             return true;
         } else {
             return false;
         }
     }
 
-    private void setComboSourceFileSearchEditMode(boolean enabled) {
+    private void setComboSourceFileSearchEditMode(Combo combo, boolean enabled) {
 
         if (enabled) {
-            comboSourceFileSearchEditMode.setText(MODE_EDIT);
+            combo.setText(MODE_EDIT);
         } else {
-            comboSourceFileSearchEditMode.setText(MODE_VIEW);
+            combo.setText(MODE_VIEW);
         }
     }
 
-    private void fillSourceFileSearchEditModeCombo() {
+    private void fillFileSearchEditModeCombo(Combo combo) {
 
         String[] textViews = new String[] { MODE_EDIT, MODE_VIEW };
-        comboSourceFileSearchEditMode.setItems(textViews);
+        combo.setItems(textViews);
     }
 
     private boolean validateBatchResolveEnabled() {
@@ -443,6 +462,15 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private boolean validateSourceFileSearchAutoSaveFileName() {
 
         return validateSearchAutoSaveFileName(textSourceFileSearchAutoSaveFileName);
+    }
+
+    private boolean validateMessageFileSearchEditMode() {
+
+        if (comboMessageFileSearchEditMode == null) {
+            return true;
+        }
+
+        return clearError();
     }
 
     private boolean validateMessageFileSearchSaveDirectory() {
@@ -524,6 +552,10 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         }
 
         if (!validateSourceFileSearchAutoSaveFileName()) {
+            return false;
+        }
+
+        if (!validateMessageFileSearchEditMode()) {
             return false;
         }
 

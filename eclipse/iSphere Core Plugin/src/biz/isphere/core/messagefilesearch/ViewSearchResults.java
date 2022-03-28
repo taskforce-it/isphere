@@ -71,6 +71,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
     private ResetColumnSizeAction resetColumnSizeAction;
+    private DisableEditAction actionDisableEdit;
     private Action actionLoadSearchResult;
     private Action actionSaveSearchResult;
     private Action actionSaveAllSearchResults;
@@ -216,6 +217,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         resetColumnSizeAction = new ResetColumnSizeAction();
 
+        actionDisableEdit = new DisableEditAction();
+        actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
+        actionDisableEdit.setEnabled(false);
+
         actionLoadSearchResult = new Action(Messages.Load) {
             @Override
             public void run() {
@@ -249,6 +254,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private void initializeToolBar() {
         IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
         toolbarManager.add(resetColumnSizeAction);
+        toolbarManager.add(actionDisableEdit);
         toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveSelectedItems);
         toolbarManager.add(actionInvertSelectedItems);
@@ -515,28 +521,24 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
     public void selectionChanged(SelectionChangedEvent event) {
 
-        SearchResultViewer viewer;
-        int index = tabFolderSearchResults.getSelectionIndex();
-        if (index < 0) {
-            viewer = null;
-        } else {
-            viewer = (SearchResultViewer)tabFolderSearchResults.getItem(index).getData(TAB_DATA_VIEWER);
-        }
-
         boolean hasSelectedViewer;
         boolean hasItems;
         boolean hasSelectedItems;
         boolean hasMultipleTabItems;
-        if (viewer == null) {
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+
+        if (_searchResultViewer == null) {
             hasSelectedViewer = false;
             hasItems = false;
             hasSelectedItems = false;
             hasMultipleTabItems = false;
+            actionDisableEdit.setEditEnabled(Preferences.getInstance().isSourceFileSearchResultsEditEnabled());
         } else {
             hasSelectedViewer = true;
-            hasItems = viewer.hasItems();
-            hasSelectedItems = viewer.hasSelectedItems();
+            hasItems = _searchResultViewer.hasItems();
+            hasSelectedItems = _searchResultViewer.hasSelectedItems();
             hasMultipleTabItems = tabFolderSearchResults.getItemCount() > 1;
+            actionDisableEdit.setEditEnabled(_searchResultViewer.isEditEnabled());
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
@@ -545,6 +547,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToExcel.setEnabled(hasItems);
         actionRemoveTabItem.setEnabled(hasSelectedViewer);
         actionRemoveAllTabItems.setEnabled(hasMultipleTabItems);
+        actionDisableEdit.setEnabled(hasItems);
 
         actionSaveSearchResult.setEnabled(hasItems);
         actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
@@ -617,6 +620,48 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         }
 
         super.dispose();
+    }
+
+    private class DisableEditAction extends Action {
+
+        private boolean isEditMode;
+
+        public DisableEditAction() {
+            super(Messages.Disable_edit_action, SWT.CHECK);
+
+            setToolTipText(Messages.Tooltip_Disable_edit_action);
+            setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EDIT_DISABLED));
+        }
+
+        @Override
+        public void run() {
+            updateViewer(isEditMode);
+        }
+
+        /**
+         * Sets the edit mode. (Called by the application for easier
+         * understanding.)
+         */
+        public void setEditEnabled(boolean isEditMode) {
+            this.isEditMode = isEditMode;
+            super.setChecked(!isEditMode);
+        }
+
+        /**
+         * Called by the Eclipse Framework when the button is clicked.
+         */
+        public void setChecked(boolean checked) {
+            super.setChecked(checked);
+            this.isEditMode = !checked;
+        };
+
+        public void updateViewer(boolean isEditMode) {
+
+            SearchResultViewer _searchResultViewer = getSelectedViewer();
+            if (_searchResultViewer != null) {
+                _searchResultViewer.setEditEnabled(isEditMode);
+            }
+        }
     }
 
     private class EnableAutoSaveAction extends Action {
