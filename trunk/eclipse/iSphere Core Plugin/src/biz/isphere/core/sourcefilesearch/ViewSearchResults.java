@@ -561,7 +561,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
                 if (file.exists()) {
                     loadSearchResult(fileName, true);
@@ -581,7 +581,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
             }
 
