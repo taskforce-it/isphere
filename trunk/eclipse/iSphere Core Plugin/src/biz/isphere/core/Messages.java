@@ -942,9 +942,9 @@ public class Messages extends NLS {
 
     public static String Source_file_search;
 
-    public static String Lpex_editor_mode_colon;
+    public static String Double_click_mode_colon;
 
-    public static String Tooltip_Lpex_editor_mode;
+    public static String Tooltip_Double_click_mode;
 
     public static String Disable_edit_action;
 

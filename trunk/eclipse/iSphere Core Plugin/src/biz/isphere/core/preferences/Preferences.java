@@ -146,6 +146,7 @@ public final class Preferences {
     private static final String SOURCE_FILE_SEARCH_FILE_NAME = "SourceFileSearchResult"; //$NON-NLS-1$
 
     private static final String MESSAGE_FILE_SEARCH_RESULTS = DOMAIN + "MESSAGE_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
+    private static final String MESSAGE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = MESSAGE_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
     private static final String MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = MESSAGE_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
     private static final String MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = MESSAGE_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
     public static final String MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = MESSAGE_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
@@ -505,6 +506,10 @@ public final class Preferences {
 
     public String getSourceFileSearchResultsAutoSaveFileName() {
         return preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
+    public boolean isMessageFileSearchResultsEditEnabled() {
+        return preferenceStore.getBoolean(MESSAGE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
     public String getMessageFileSearchResultsAutoSaveDirectory() {
@@ -1046,8 +1051,8 @@ public final class Preferences {
         preferenceStore.setDefault(MONITOR_DTAQ_NUMBER_OF_MESSAGES, getDefaultDataQueueNumberOfMessagesToRetrieve());
 
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED, getDefaultSourceFileSearchBatchResolveEnabled());
-        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
 
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultSourceFileSearchResultsSaveDirectory());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultSourceFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultSourceFileSearchResultsAutoSaveEnabled());
@@ -1055,6 +1060,7 @@ public final class Preferences {
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_SEARCHSTRING, getDefaultSourceFileSearchString());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultSourceFileSearchExportDirectory());
 
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultMessageFileSearchResultsEditEnabled());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultMessageFileSearchResultsSaveDirectory());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultMessageFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultMessageFileSearchResultsAutoSaveEnabled());
@@ -1530,6 +1536,15 @@ public final class Preferences {
      */
     public String getDefaultSourceFileSearchExportDirectory() {
         return FileHelper.getDefaultRootDirectory();
+    }
+
+    /**
+     * Returns the default 'is edit mode' flag of the view search results view.
+     * 
+     * @return default 'is edit mode' flag.
+     */
+    public boolean getDefaultMessageFileSearchResultsEditEnabled() {
+        return true;
     }
 
     /**

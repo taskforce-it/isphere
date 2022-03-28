@@ -4,6 +4,9 @@ Changelog: iSphere 5.0.1.r
  • Added column Severity to iSphere Message File Editor.
  • Added option for opening a search result file after it has been
    saved to disk (source/message/stream file search).
+ • Added option to specify whether the iSphere Message Description
+   Editor is started in browse or edit mode, when double-clicking
+   an item in the result view of the iSphere Message File Search.
  • Removed optional dependency to compare filters compile dummy.
  • Fix extension of message file search result file name (preferences).
  • Fixed iSphere Message/Stream File Search preferences.

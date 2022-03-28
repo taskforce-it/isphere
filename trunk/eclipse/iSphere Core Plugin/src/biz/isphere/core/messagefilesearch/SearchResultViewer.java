@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -56,7 +57,6 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.api.retrievemessagedescription.IQMHRTVM;
 import biz.isphere.core.messagefileeditor.MessageDescription;
-import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 
@@ -73,6 +73,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
     private TableViewer tableViewerMessageIds;
     private Table tableMessageIds;
     private SearchResultMessageId[] messageIds;
+    private boolean isEditMode;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -260,14 +261,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
                 IEditor editor = ISpherePlugin.getEditor();
                 if (editor != null) {
-                    String connectionName = _searchResult.getConnectionName();
-                    String messageFile = _searchResult.getMessageFile();
-                    String library = _searchResult.getLibrary();
-                    try {
-                        Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
-                    } catch (Exception e) {
-                        ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
-                    }
+                    openMesssageFileEditor(_searchResult);
                 }
             }
         }
@@ -424,13 +418,25 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     MessageDescription _messageDescription = qmhrtvm.retrieveMessageDescription(_searchResultMessageId.getMessageId());
 
                     if (_messageDescription != null) {
-                        MessageDescriptionDetailDialog _messageDescriptionDetailDialog = new MessageDescriptionDetailDialog(shell,
-                            DialogActionTypes.CHANGE, _messageDescription);
-                        _messageDescriptionDetailDialog.open();
+                        try {
+                            if (isEditEnabled()) {
+                                Access.openMessageDescriptionEditor(shell, _searchResult.getConnectionName(), _searchResult.getLibrary(),
+                                    _searchResult.getMessageFile(), _searchResultMessageId.getMessageId(), DialogActionTypes.CHANGE);
+                                // MessageDescriptionDetailDialog
+                                // _messageDescriptionDetailDialog = new
+                                // MessageDescriptionDetailDialog(shell,
+                                // DialogActionTypes.CHANGE,
+                                // _messageDescription);
+                                // _messageDescriptionDetailDialog.open();
+                            } else {
+                                Access.openMessageDescriptionEditor(shell, _searchResult.getConnectionName(), _searchResult.getLibrary(),
+                                    _searchResult.getMessageFile(), _searchResultMessageId.getMessageId(), DialogActionTypes.DISPLAY);
+                            }
+                        } catch (Throwable e) {
+                            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                        }
                     } else {
-                        MessageDialog.openError(
-                            shell,
-                            Messages.E_R_R_O_R,
+                        MessageDialog.openError(shell, Messages.E_R_R_O_R,
                             Messages.bind(Messages.Message_identifier_A_not_found_in_message_file_B_in_C,
                                 new String[] { _searchResultMessageId.getMessageId(), _searchResult.getMessageFile(), _searchResult.getLibrary() }));
                     }
@@ -539,6 +545,23 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         }
     }
 
+    private void openMesssageFileEditor(SearchResult _searchResult) {
+
+        String connectionName = _searchResult.getConnectionName();
+        String messageFile = _searchResult.getMessageFile();
+        String library = _searchResult.getLibrary();
+
+        try {
+            if (isEditMode) {
+                Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
+            } else {
+                Access.openMessageFileEditor(shell, connectionName, library, messageFile, true);
+            }
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
+        }
+    }
+
     private void executeMenuItemSelectAll() {
 
         Object[] objects = new Object[tableMessageFiles.getItemCount()];
@@ -569,17 +592,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         if (editor != null) {
 
             for (int idx = 0; idx < selectedItemsMessageFiles.length; idx++) {
-
                 SearchResult _searchResult = (SearchResult)selectedItemsMessageFiles[idx];
-
-                String connectionName = _searchResult.getConnectionName();
-                String messageFile = _searchResult.getMessageFile();
-                String library = _searchResult.getLibrary();
-                try {
-                    Access.openMessageFileEditor(shell, connectionName, library, messageFile, false);
-                } catch (Exception e) {
-                    ISpherePlugin.logError("*** Could not open message file editor ***", e); //$NON-NLS-1$
-                }
+                openMesssageFileEditor(_searchResult);
             }
         }
     }
@@ -755,6 +769,14 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
     public void invertSelectedItems() {
         executeMenuItemInvertSelectedItems();
+    }
+
+    public void setEditEnabled(boolean isEditMode) {
+        this.isEditMode = isEditMode;
+    }
+
+    public boolean isEditEnabled() {
+        return this.isEditMode;
     }
 
     public void resetColumnWidths() {
