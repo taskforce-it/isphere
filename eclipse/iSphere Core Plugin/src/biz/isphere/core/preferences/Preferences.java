@@ -531,7 +531,7 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
-    public String getSourceFileSearchResultsSaveDirectory() {
+    public String getSourceFileSearchResultsAutoSaveDirectory() {
         String directory = preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
         if (!directory.endsWith(File.separator)) {
             directory = directory + File.separator;
@@ -578,7 +578,7 @@ public final class Preferences {
         return preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
     }
 
-    public String getMessageFileSearchResultsSaveDirectory() {
+    public String getMessageFileSearchResultsAutoSaveDirectory() {
         String directory = preferenceStore.getString(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
         if (!directory.endsWith(File.separator)) {
             directory = directory + File.separator;
