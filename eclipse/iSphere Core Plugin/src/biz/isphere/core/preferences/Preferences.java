@@ -456,6 +456,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
+    public boolean isStreamFileSearchResultsEditEnabled() {
+        return isSourceFileSearchResultsEditEnabled();
+    }
+
     public String getSourceFileSearchResultsAutoSaveDirectory() {
         String directory = preferenceStore.getString(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
         if (!directory.endsWith(File.separator)) {
@@ -534,6 +538,15 @@ public final class Preferences {
     }
 
     public boolean isStreamFileSearchResultsAutoSaveEnabled() {
+
+        /*
+         * Does not work, because we cannot create an AS400 object, when loading
+         * a search result.
+         */
+        if (!IBMiHostContributionsHandler.hasContribution()) {
+            return false;
+        }
+
         return preferenceStore.getBoolean(STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
     }
 
@@ -572,6 +585,15 @@ public final class Preferences {
     }
 
     public boolean isMessageFileSearchResultsAutoSaveEnabled() {
+
+        /*
+         * Does not work, because we cannot create an AS400 object, when loading
+         * a search result.
+         */
+        if (!IBMiHostContributionsHandler.hasContribution()) {
+            return false;
+        }
+
         return preferenceStore.getBoolean(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
     }
 

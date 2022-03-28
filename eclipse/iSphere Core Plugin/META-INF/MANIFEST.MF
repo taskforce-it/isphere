@@ -8,6 +8,7 @@ Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
+ org.eclipse.core.filesystem,
  com.ibm.etools.iseries.toolbox,
  org.eclipse.compare,
  org.eclipse.ui.ide,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.actions.ResetColumnSizeAction;
@@ -49,6 +50,8 @@ import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
+import biz.isphere.core.internal.filemanager.FileManager;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
@@ -207,8 +210,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
         };
         actionInvertSelectedItems.setToolTipText(Messages.Tooltip_Invert_selection);
-        actionInvertSelectedItems.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry()
-            .getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
+        actionInvertSelectedItems
+            .setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_INVERT_SELECTION));
         actionInvertSelectedItems.setEnabled(false);
 
         resetColumnSizeAction = new ResetColumnSizeAction();
@@ -411,12 +414,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         SearchResultViewer viewer = getSelectedViewer();
         if (viewer != null) {
             SearchResultTabFolder searchResults = new SearchResultTabFolder();
-            searchResults.addTab(new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer
-                .getSearchOptions()));
+            searchResults.addTab(
+                new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer.getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
+                FileManager.askAndOpenSavedFile(shell, DoNotAskMeAgainDialog.CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH, file);
             } catch (SaveFileException e) {
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+                MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
     }
@@ -436,7 +440,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         try {
             manager.saveToXml(fileName, searchResultTabFolder);
         } catch (SaveFileException e) {
-            MessageDialog.openError(shell, Messages.E_R_R_O_R, e.getLocalizedMessage());
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
@@ -487,9 +491,9 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         WidgetFactoryContributionsHandler factory = new WidgetFactoryContributionsHandler();
         IFileDialog dialog = factory.getFileDialog(shell, style);
 
-        String[] filterNames = new String[] {
-            "Search file search result (*." + SearchResultManager.FILE_EXTENSION + ")", FileHelper.getAllFilesText() }; //$NON-NLS-1$ //$NON-NLS-2$
-        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION + ";", FileHelper.getAllFilesFilter() }; //$NON-NLS-1$  //$NON-NLS-2$
+        String[] filterNames = new String[] { "Search file search result (*." + SearchResultManager.FILE_EXTENSION + ")", //$NON-NLS-1$ //$NON-NLS-2$
+            FileHelper.getAllFilesText() };
+        String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION + ";", FileHelper.getAllFilesFilter() }; //$NON-NLS-1$ //$NON-NLS-2$
         String filename = Preferences.getInstance().getMessageFileSearchResultsLastUsedFileName();
 
         dialog.setFilterNames(filterNames);
@@ -582,7 +586,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isMessageFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory()
+                    + preferences.getMessageFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
                 if (file.exists()) {
                     loadSearchResult(fileName, true);
@@ -590,7 +595,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             }
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("Failed to load source file search results.", e); //$NON-NLS-1$
+            ISpherePlugin.logError("Failed to load message file search results.", e); //$NON-NLS-1$
         }
     }
 
@@ -602,12 +607,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isMessageFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory() + preferences.getMessageFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getMessageFileSearchResultsAutoSaveDirectory()
+                    + preferences.getMessageFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
             }
 
         } catch (Throwable e) {
-            ISpherePlugin.logError("Failed to save source file search results.", e); //$NON-NLS-1$
+            ISpherePlugin.logError("Failed to save message file search results.", e); //$NON-NLS-1$
         }
 
         super.dispose();
@@ -630,7 +636,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             IPreferenceStore preferenceStore = ISpherePlugin.getDefault().getPreferenceStore();
             preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent event) {
-                    if (event.getProperty() == Preferences.SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED) {
+                    if (event.getProperty() == Preferences.MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED) {
                         boolean enabled = (Boolean)event.getNewValue();
                         setChecked(enabled);
                     }
