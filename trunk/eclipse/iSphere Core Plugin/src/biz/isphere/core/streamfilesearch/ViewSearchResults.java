@@ -407,7 +407,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         String[] filterNames = new String[] { "Stream file search result (*." + SearchResultManager.FILE_EXTENSION + ")", //$NON-NLS-1$ //$NON-NLS-2$
             FileHelper.getAllFilesText() };
         String[] filterExtensions = new String[] { "*." + SearchResultManager.FILE_EXTENSION, FileHelper.getAllFilesFilter() }; //$NON-NLS-1$ //$NON-NLS-2$
-        String filename = Preferences.getInstance().getSourceFileSearchResultsLastUsedFileName();
+        String filename = Preferences.getInstance().getStreamFileSearchResultsLastUsedFileName();
 
         dialog.setFilterNames(filterNames);
         dialog.setFilterExtensions(filterExtensions);
@@ -500,7 +500,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getStreamFileSearchResultsAutoSaveDirectory()
+                    + preferences.getStreamFileSearchResultsAutoSaveFileName();
                 File file = new File(fileName);
                 if (file.exists()) {
                     loadSearchResult(fileName, true);
@@ -520,7 +521,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             Preferences preferences = Preferences.getInstance();
 
             if (preferences.isSourceFileSearchResultsAutoSaveEnabled()) {
-                String fileName = preferences.getSourceFileSearchResultsAutoSaveDirectory() + preferences.getSourceFileSearchResultsAutoSaveFileName();
+                String fileName = preferences.getStreamFileSearchResultsAutoSaveDirectory()
+                    + preferences.getStreamFileSearchResultsAutoSaveFileName();
                 autoSaveAllSearchResults(fileName);
             }
 

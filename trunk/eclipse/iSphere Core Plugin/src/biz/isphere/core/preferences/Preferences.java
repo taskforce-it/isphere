@@ -111,6 +111,7 @@ public final class Preferences {
     private static final String MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY = DOMAIN + "MESSAGEFILESEARCH.EXPORT_DIRECTORY"; //$NON-NLS-1$
 
     private static final String STREAM_FILE_SEARCH_SEARCHSTRING = DOMAIN + "STREAMFILESEARCH.SEARCHSTRING"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_EXPORT_DIRECTORY = DOMAIN + "STREAMFILESEARCH.STREAM_FILE_SEARCH_EXPORT_DIRECTORY"; //$NON-NLS-1$
 
     // Upload library properties
     private static final String ISPHERE_LIBRARY = DOMAIN + "LIBRARY"; //$NON-NLS-1$
@@ -152,6 +153,14 @@ public final class Preferences {
     private static final String MESSAGE_FILE_SEARCH_DIRECTORY = "messageFileSearch"; //$NON-NLS-1$
     private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
+    private static final String STREAM_FILE_SEARCH_RESULTS = DOMAIN + "STREAM_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = STREAM_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = STREAM_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
+    public static final String STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = STREAM_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE = STREAM_FILE_SEARCH_RESULTS + "AUTO_SAVE_FILE"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_DIRECTORY = "streamFileSearch"; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_FILE_NAME = "StreamFileSearchResult"; //$NON-NLS-1$
+
     private static final String MESSAGE_FILE_COMPARE = DOMAIN + "MESSAGE_FILE_COMPARE."; //$NON-NLS-1$
     private static final String MESSAGE_FILE_COMPARE_LINE_WIDTH = MESSAGE_FILE_COMPARE + "LINE_WIDTH"; //$NON-NLS-1$
 
@@ -171,10 +180,6 @@ public final class Preferences {
     private static final String APPEARANCE_AUTO_REFRESH_DELAY = APPEARANCE_AUTO_REFRESH + "DELAY"; //$NON-NLS-1$
     private static final String APPEARANCE_AUTO_REFRESH_THRESHOLD = APPEARANCE_AUTO_REFRESH + "THRESHOLD"; //$NON-NLS-1$
     private static final String APPEARANCE_SHOW_ERROR_LOG = APPEARANCE_AUTO_REFRESH + "APPEARANCE_SHOW_ERROR_LOG"; //$NON-NLS-1$
-
-    private static final String DECORATION_OBJECT_EXTENSION = APPEARANCE + "OBJECT_EXTENSION"; //$NON-NLS-1$
-    private static final String DECORATION_SOURCE_MEMBER_EXTENSION = APPEARANCE + "SOURCE_MEMBER_EXTENSION"; //$NON-NLS-1$
-    private static final String DECORATION_DATA_MEMBER_EXTENSION = APPEARANCE + "DATA_MEMBER_EXTENSION"; //$NON-NLS-1$
 
     private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
 
@@ -279,6 +284,10 @@ public final class Preferences {
 
     public String getStreamFileSearchString() {
         return preferenceStore.getString(STREAM_FILE_SEARCH_SEARCHSTRING);
+    }
+
+    public String getStreamFileSearchExportDirectory() {
+        return preferenceStore.getString(STREAM_FILE_SEARCH_EXPORT_DIRECTORY);
     }
 
     public boolean isMergeSpooledFileFilters() {
@@ -524,6 +533,44 @@ public final class Preferences {
         return filename;
     }
 
+    public boolean isStreamFileSearchResultsAutoSaveEnabled() {
+        return preferenceStore.getBoolean(STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
+    }
+
+    public String getStreamFileSearchResultsAutoSaveFileName() {
+        return preferenceStore.getString(STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE);
+    }
+
+    public String getStreamFileSearchResultsAutoSaveDirectory() {
+        String directory = preferenceStore.getString(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY);
+        if (!directory.endsWith(File.separator)) {
+            directory = directory + File.separator;
+        }
+        return directory;
+    }
+
+    public String getStreamFileSearchResultsLastUsedFileName() {
+        String filename = preferenceStore.getString(STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME);
+        if (!StringHelper.isNullOrEmpty(filename)) {
+            File file = new File(filename);
+            if (!file.exists()) {
+                filename = null;
+            } else {
+                if (file.isDirectory()) {
+                    filename = filename + STREAM_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
+                }
+            }
+        } else {
+            filename = null;
+        }
+
+        if (filename == null) {
+            return getDefaultStreamFileSearchResultsSaveDirectory() + STREAM_FILE_SEARCH_FILE_NAME; // $NON-NLS-1$
+        }
+
+        return filename;
+    }
+
     public boolean isMessageFileSearchResultsAutoSaveEnabled() {
         return preferenceStore.getBoolean(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED);
     }
@@ -681,6 +728,10 @@ public final class Preferences {
 
     public void setStreamFileSearchString(String aSearchString) {
         preferenceStore.setValue(STREAM_FILE_SEARCH_SEARCHSTRING, aSearchString.trim());
+    }
+
+    public void setStreamFileSearchExportDirectory(String aPath) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_EXPORT_DIRECTORY, aPath);
     }
 
     public void setMergeSpooledFileFilters(boolean mergeFilters) {
@@ -850,6 +901,22 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
     }
 
+    public void setStreamFileSearchResultsSaveDirectory(String directory) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, directory);
+    }
+
+    public void setStreamFileSearchResultsLastUsedFileName(String directory) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, directory);
+    }
+
+    public void setStreamFileSearchResultsAutoSaveEnabled(boolean enabled) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, enabled);
+    }
+
+    public void setStreamFileSearchResultsAutoSaveFileName(String filename) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
+    }
+
     public void setMessageFileCompareLineWidth(int lineWidth) {
         preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
     }
@@ -958,17 +1025,27 @@ public final class Preferences {
 
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_IS_BATCH_RESOLVE_ENABLED, getDefaultSourceFileSearchBatchResolveEnabled());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultSourceFileSearchResultsEditEnabled());
+
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultSourceFileSearchResultsSaveDirectory());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultSourceFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultSourceFileSearchResultsAutoSaveEnabled());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultSourceFileSearchResultsAutoSaveFileName());
+        preferenceStore.setDefault(SOURCE_FILE_SEARCH_SEARCHSTRING, getDefaultSourceFileSearchString());
         preferenceStore.setDefault(SOURCE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultSourceFileSearchExportDirectory());
 
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultMessageFileSearchResultsSaveDirectory());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultMessageFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultMessageFileSearchResultsAutoSaveEnabled());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultMessageFileSearchResultsAutoSaveFileName());
+        preferenceStore.setDefault(MESSAGE_FILE_SEARCH_SEARCHSTRING, getDefaultMessageFileSearchString());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultMessageFileSearchExportDirectory());
+
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultStreamFileSearchResultsSaveDirectory());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultStreamFileSearchResultsLastUsedFileName());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultStreamFileSearchResultsAutoSaveEnabled());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, getDefaultStreamFileSearchResultsAutoSaveFileName());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_SEARCHSTRING, getDefaultStreamFileSearchString());
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultStreamFileSearchExportDirectory());
 
         preferenceStore.setDefault(MESSAGE_FILE_COMPARE_LINE_WIDTH, getDefaultMessageFileCompareMinLineWidth());
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER,
@@ -1415,6 +1492,15 @@ public final class Preferences {
     }
 
     /**
+     * Returns the default 'search string' for the iSphere Source File Search.
+     * 
+     * @return search string
+     */
+    public String getDefaultSourceFileSearchString() {
+        return ""; //$NON-NLS-1$
+    }
+
+    /**
      * Returns the default export directory of the iSphere Source File Search
      * option.
      * 
@@ -1473,12 +1559,88 @@ public final class Preferences {
     }
 
     /**
+     * Returns the default 'search string' for the iSphere Message File Search.
+     * 
+     * @return search string
+     */
+    public String getDefaultMessageFileSearchString() {
+        return ""; //$NON-NLS-1$
+    }
+
+    /**
      * Returns the default export directory of the iSphere Message File Search
      * option.
      * 
      * @return default directory
      */
     public String getDefaultMessageFileSearchExportDirectory() {
+        return FileHelper.getDefaultRootDirectory();
+    }
+
+    /**
+     * Returns the default stream file 'search save path'.
+     * 
+     * @return default path for saving stream file search results
+     */
+    public String getDefaultStreamFileSearchResultsSaveDirectory() {
+
+        String path = ISpherePlugin.getDefault().getStateLocation().toFile().getAbsolutePath();
+        path = path + File.separator + STREAM_FILE_SEARCH_DIRECTORY + File.separator;
+
+        try {
+            FileHelper.ensureDirectory(path);
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to create directory: " + path, e); //$NON-NLS-1$
+        }
+
+        return path;
+    }
+
+    /**
+     * Returns the default 'save path' that was last selected to save stream
+     * file search results.
+     * 
+     * @return default path last used for saving
+     */
+    public String getDefaultStreamFileSearchResultsLastUsedFileName() {
+        return ""; //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the default 'is auto save' flag of the view search results view.
+     * 
+     * @return default 'is auto save' flag.
+     */
+    public boolean getDefaultStreamFileSearchResultsAutoSaveEnabled() {
+        return false;
+    }
+
+    /**
+     * Returns the default stream file search 'auto save file name'.
+     * 
+     * @return default file name for saving search results
+     */
+    public String getDefaultStreamFileSearchResultsAutoSaveFileName() {
+
+        return "iSphereStreamFileSearchResultAutoSave." + biz.isphere.core.streamfilesearch.SearchResultManager.FILE_EXTENSION;
+    }
+
+    /**
+     * Returns the default 'search string' for the iSphere Stream File Search.
+     * 
+     * @return search string
+     */
+    public String getDefaultStreamFileSearchString() {
+        return ""; //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the default export directory of the iSphere Stream File Search
+     * option.
+     * 
+     * @return default directory
+     */
+    public String getDefaultStreamFileSearchExportDirectory() {
         return FileHelper.getDefaultRootDirectory();
     }
 
