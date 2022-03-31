@@ -148,6 +148,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceMemberCompareDialog(Composite parent) {
 
+        if (!sourceFileCompareEnabled) {
+            return;
+        }
+
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -190,6 +194,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceFileCompare(Composite parent) {
 
+        if (!sourceFileCompareEnabled) {
+            return;
+        }
+
         Group group = new Group(parent, SWT.NONE);
         GridLayout groupLayout = new GridLayout(2, false);
         groupLayout.marginBottom = 10;
@@ -216,10 +224,6 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
                 widgetSelected(event);
             }
         });
-
-        if (!sourceFileCompareEnabled) {
-            return;
-        }
 
         Label lblFileExtensions = new Label(options, SWT.NONE);
         lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
@@ -312,7 +316,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private String[] loadPreviousValuesItems() {
         return new String[] { LoadPreviousValues.NONE.label(), LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER.label(),
-            LoadPreviousValues.CONNECTION_LIBRARY_FILE.label(), LoadPreviousValues.CONNECTION_LIBRARY.label(), LoadPreviousValues.CONNECTION.label() };
+            LoadPreviousValues.CONNECTION_LIBRARY_FILE.label(), LoadPreviousValues.CONNECTION_LIBRARY.label(),
+            LoadPreviousValues.CONNECTION.label() };
     }
 
     @Override
@@ -343,17 +348,15 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             preferences.setMessageFileCompareLineWidth(IntHelper.tryParseInt(textMessageFileCompareLineWith.getText(), defaultLineWidth));
         }
 
-        LoadPreviousValues value;
-
-        value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
-        preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(value);
-
-        value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
-        preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(value);
-
-        preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
-
         if (sourceFileCompareEnabled) {
+            LoadPreviousValues value;
+            value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
+            preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(value);
+            value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
+            preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(value);
+
+            preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
+
             CompareFilterContributionsHandler.setFileExtensions(getFileExtensionsArray());
         }
     }
@@ -368,13 +371,14 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getMessageFileCompareLineWidth()));
         }
 
-        setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled, preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
-        setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
-            preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
-
-        chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
-
         if (sourceFileCompareEnabled) {
+            setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+                preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
+            setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+                preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
+
+            chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
+
             String[] fileExtensions = CompareFilterContributionsHandler.getFileExtensions();
             setFileExtensionsArray(fileExtensions);
         }
@@ -402,13 +406,14 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getDefaultMessageFileCompareMinLineWidth()));
         }
 
-        setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled, preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-        setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
-            preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-
-        chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
-
         if (sourceFileCompareEnabled) {
+            setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+                preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+            setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+                preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+
+            chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
+
             setFileExtensionsArray(CompareFilterContributionsHandler.getDefaultFileExtensions());
         }
 
