@@ -1492,7 +1492,7 @@ public class Messages extends NLS {
 
     public static String Menu_Copy_members;
 
-    public static String Menu_Compare_members;
+    public static String Menu_Compare_source_members;
 
     public static String Add_filter_strings;
 
@@ -1745,6 +1745,8 @@ public class Messages extends NLS {
     public static String Specifies_the_generic_type_of_the_stream_files_that_are_included_in_the_search;
 
     public static String Enter_or_select_a_simple_or_generic_stream_file_type;
+
+    public static String Stream_file_search;
 
     /*
      * Warning messages

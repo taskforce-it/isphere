@@ -155,6 +155,7 @@ public final class Preferences {
     private static final String MESSAGE_FILE_SEARCH_FILE_NAME = "MessageFileSearchResult"; //$NON-NLS-1$
 
     private static final String STREAM_FILE_SEARCH_RESULTS = DOMAIN + "STREAM_FILE_SEARCH_RESULTS."; //$NON-NLS-1$
+    private static final String STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED = STREAM_FILE_SEARCH_RESULTS + "IS_EDIT_ENABLED"; //$NON-NLS-1$
     private static final String STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY = STREAM_FILE_SEARCH_RESULTS + "SAVE_DIRECTORY"; //$NON-NLS-1$
     private static final String STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME = STREAM_FILE_SEARCH_RESULTS + "LAST_USED_FILE_NAME"; //$NON-NLS-1$
     public static final String STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED = STREAM_FILE_SEARCH_RESULTS + "IS_AUTO_SAVE_ENABLED"; //$NON-NLS-1$
@@ -458,7 +459,7 @@ public final class Preferences {
     }
 
     public boolean isStreamFileSearchResultsEditEnabled() {
-        return isSourceFileSearchResultsEditEnabled();
+        return preferenceStore.getBoolean(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED);
     }
 
     public String getSourceFileSearchResultsAutoSaveDirectory() {
@@ -928,6 +929,10 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_SEARCH_RESULTS_AUTO_SAVE_FILE, filename);
     }
 
+    public void setStreamFileSearchResultsEditEnabled(boolean editable) {
+        preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, editable);
+    }
+
     public void setStreamFileSearchResultsSaveDirectory(String directory) {
         preferenceStore.setValue(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, directory);
     }
@@ -1068,6 +1073,7 @@ public final class Preferences {
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_SEARCHSTRING, getDefaultMessageFileSearchString());
         preferenceStore.setDefault(MESSAGE_FILE_SEARCH_EXPORT_DIRECTORY, getDefaultMessageFileSearchExportDirectory());
 
+        preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_IS_EDIT_ENABLED, getDefaultStreamFileSearchResultsEditEnabled());
         preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_SAVE_DIRECTORY, getDefaultStreamFileSearchResultsSaveDirectory());
         preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_LAST_USED_FILE_NAME, getDefaultStreamFileSearchResultsLastUsedFileName());
         preferenceStore.setDefault(STREAM_FILE_SEARCH_RESULTS_IS_AUTO_SAVE_ENABLED, getDefaultStreamFileSearchResultsAutoSaveEnabled());
@@ -1612,6 +1618,15 @@ public final class Preferences {
      */
     public String getDefaultMessageFileSearchExportDirectory() {
         return FileHelper.getDefaultRootDirectory();
+    }
+
+    /**
+     * Returns the default 'is edit mode' flag of the view search results view.
+     * 
+     * @return default 'is edit mode' flag.
+     */
+    public boolean getDefaultStreamFileSearchResultsEditEnabled() {
+        return true;
     }
 
     /**

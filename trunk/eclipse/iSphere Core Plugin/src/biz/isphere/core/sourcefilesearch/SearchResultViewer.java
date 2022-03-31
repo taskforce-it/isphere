@@ -484,7 +484,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     });
 
                     menuCompareSelectedMembers = new MenuItem(menuTableMembers, SWT.NONE);
-                    menuCompareSelectedMembers.setText(Messages.Menu_Compare_members);
+                    menuCompareSelectedMembers.setText(Messages.Menu_Compare_source_members);
                     menuCompareSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_COMPARE));
                     menuCompareSelectedMembers.addSelectionListener(new SelectionAdapter() {
                         @Override
