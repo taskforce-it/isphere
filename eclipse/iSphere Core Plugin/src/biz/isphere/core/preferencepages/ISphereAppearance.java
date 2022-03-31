@@ -39,6 +39,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
     private Text textAutoRefreshDelay;
     private Text textAutoRefreshThreshold;
     private Button chkboxResetWarnings;
+    private Button chkboxOpenFilesAfterSaving;
     private Button chkboxShowErrorLog;
     private Label labelResetWarnings;
 
@@ -130,6 +131,12 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         textAutoRefreshThreshold.setToolTipText(Messages.Tooltip_Threshold_items);
         textAutoRefreshThreshold.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
+        // Open files are saving
+        chkboxOpenFilesAfterSaving = WidgetFactory.createCheckbox(main);
+        chkboxOpenFilesAfterSaving.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
+        chkboxOpenFilesAfterSaving.setToolTipText(Messages.Tooltip_Open_files_after_saving);
+        chkboxOpenFilesAfterSaving.setText(Messages.Open_files_after_saving);
+
         // Show error log on error
         chkboxShowErrorLog = WidgetFactory.createCheckbox(main);
         chkboxShowErrorLog.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false, 2, 1));
@@ -184,6 +191,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         preferences.setFormatResourceDates(chkboxFormatResourceDates.getSelection());
         preferences.setAutoRefreshDelay(IntHelper.tryParseInt(textAutoRefreshDelay.getText(), preferences.getDefaultAutoRefreshDelay()));
         preferences.setAutoRefreshThreshold(IntHelper.tryParseInt(textAutoRefreshThreshold.getText(), preferences.getDefaultAutoRefreshThreshold()));
+        preferences.setOpenFilesAfterSaving(chkboxOpenFilesAfterSaving.getSelection());
 
         if (chkboxResetWarnings.getSelection()) {
             DoNotAskMeAgainDialog.resetAllMessages();
@@ -206,6 +214,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         chkboxFormatResourceDates.setSelection(preferences.isFormatResourceDates());
         textAutoRefreshDelay.setText(Integer.toString(preferences.getAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getAutoRefreshThreshold()));
+        chkboxOpenFilesAfterSaving.setSelection(preferences.isOpenFilesAfterSaving());
         chkboxResetWarnings.setSelection(false);
         chkboxShowErrorLog.setSelection(preferences.isShowErrorLog());
 
@@ -222,6 +231,7 @@ public class ISphereAppearance extends PreferencePage implements IWorkbenchPrefe
         chkboxFormatResourceDates.setSelection(preferences.getDefaultFormatResourceDates());
         textAutoRefreshDelay.setText(Integer.toString(preferences.getDefaultAutoRefreshDelay()));
         textAutoRefreshThreshold.setText(Integer.toString(preferences.getDefaultAutoRefreshThreshold()));
+        chkboxOpenFilesAfterSaving.setSelection(preferences.getDefaultOpenFilesAfterSaving());
         chkboxResetWarnings.setSelection(false);
         chkboxResetWarnings.setSelection(preferences.getDefaultShowErrorLog());
 

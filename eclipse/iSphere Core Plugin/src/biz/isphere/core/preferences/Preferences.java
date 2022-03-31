@@ -176,6 +176,7 @@ public final class Preferences {
     private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
     private static final String APPEARANCE_TIME_FORMAT = APPEARANCE + "TIME_FORMAT"; //$NON-NLS-1$
     private static final String APPEARANCE_FORMAT_RESOURCE_DATES = APPEARANCE + "FORMAT_RESOURCE_DATES"; //$NON-NLS-1$
+    private static final String APPEARANCE_OPEN_FILE_AFTER_SAVING = APPEARANCE + "OPEN_FILE_AFTER_SAVING"; //$NON-NLS-1$
     private static final String APPEARANCE_DATE_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
     private static final String APPEARANCE_TIME_FORMAT_LOCALE = "*LOCALE"; //$NON-NLS-1$
     private static final String APPEARANCE_AUTO_REFRESH = APPEARANCE + "AUTO_REFRESH."; //$NON-NLS-1$
@@ -673,6 +674,10 @@ public final class Preferences {
         return preferenceStore.getBoolean(APPEARANCE_FORMAT_RESOURCE_DATES);
     }
 
+    public boolean isOpenFilesAfterSaving() {
+        return preferenceStore.getBoolean(APPEARANCE_OPEN_FILE_AFTER_SAVING);
+    }
+
     public int getAutoRefreshDelay() {
         return preferenceStore.getInt(APPEARANCE_AUTO_REFRESH_DELAY);
     }
@@ -977,6 +982,10 @@ public final class Preferences {
         preferenceStore.setValue(APPEARANCE_FORMAT_RESOURCE_DATES, format);
     }
 
+    public void setOpenFilesAfterSaving(boolean enabled) {
+        preferenceStore.setValue(APPEARANCE_OPEN_FILE_AFTER_SAVING, enabled);
+    }
+
     public void setAutoRefreshDelay(int delayMillis) {
         preferenceStore.setValue(APPEARANCE_AUTO_REFRESH_DELAY, delayMillis);
     }
@@ -1092,6 +1101,7 @@ public final class Preferences {
         preferenceStore.setDefault(APPEARANCE_DATE_FORMAT, getDefaultDateFormatLabel());
         preferenceStore.setDefault(APPEARANCE_TIME_FORMAT, getDefaultTimeFormatLabel());
         preferenceStore.setDefault(APPEARANCE_FORMAT_RESOURCE_DATES, getDefaultFormatResourceDates());
+        preferenceStore.setDefault(APPEARANCE_OPEN_FILE_AFTER_SAVING, getDefaultOpenFilesAfterSaving());
 
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_DELAY, getDefaultAutoRefreshDelay());
         preferenceStore.setDefault(APPEARANCE_AUTO_REFRESH_THRESHOLD, getDefaultAutoRefreshThreshold());
@@ -1723,6 +1733,10 @@ public final class Preferences {
     }
 
     public boolean getDefaultFormatResourceDates() {
+        return false;
+    }
+
+    public boolean getDefaultOpenFilesAfterSaving() {
         return false;
     }
 

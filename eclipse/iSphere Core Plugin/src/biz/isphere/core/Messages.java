@@ -1318,6 +1318,10 @@ public class Messages extends NLS {
 
     public static String Tooltip_Show_error_log;
 
+    public static String Open_files_after_saving;
+
+    public static String Tooltip_Open_files_after_saving;
+
     public static String Spooled_file_name;
 
     public static String ASTERISK_generic_ASTERISK;
@@ -1747,6 +1751,8 @@ public class Messages extends NLS {
     public static String Enter_or_select_a_simple_or_generic_stream_file_type;
 
     public static String Stream_file_search;
+
+    public static String File_has_been_saved_successfully_Would_you_like_to_open_it;
 
     /*
      * Warning messages
