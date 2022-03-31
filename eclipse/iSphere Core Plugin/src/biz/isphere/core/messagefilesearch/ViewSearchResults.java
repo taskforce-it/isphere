@@ -45,7 +45,6 @@ import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.base.swt.widgets.CloseTabOnDoubleClickListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
@@ -267,14 +266,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     }
 
     private void initializeMenu() {
-
-        /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result without the contributions handler.
-         */
-        if (!IBMiHostContributionsHandler.hasContribution()) {
-            return;
-        }
 
         IActionBars actionBars = getViewSite().getActionBars();
         IMenuManager viewMenu = actionBars.getMenuManager();
