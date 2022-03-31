@@ -23,28 +23,42 @@ import org.eclipse.ui.ide.IDE;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
+import biz.isphere.core.preferences.Preferences;
 
 public final class FileManager {
 
     private FileManager() {
     }
 
+    public static void askAndOpenSavedFile(Shell shell, String file) {
+
+        boolean doOpenFile = Preferences.getInstance().isOpenFilesAfterSaving();
+        String message = "File has been saved successfully.\nWould you like to open it?";
+        if (doOpenFile && MessageDialog.openQuestion(shell, Messages.Question, message)) {
+            askAndOpenFileInternally(shell, file);
+        }
+
+    }
+
     public static void askAndOpenSavedFile(Shell shell, String doNotAskMeAgainKey, String file) {
 
         boolean doOpenFile = DoNotAskMeAgainDialog.openSavedFileQuestion(shell, doNotAskMeAgainKey);
         if (doOpenFile) {
+            askAndOpenFileInternally(shell, file);
+        }
+    }
 
-            IFileStore fileStore = EFS.getLocalFileSystem().getStore(new File(file).toURI());
-            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+    private static void askAndOpenFileInternally(Shell shell, String file) {
 
-            try {
-                IEditorPart editor = IDE.openEditorOnFileStore(page, fileStore);
-                System.out.println("editor=" + editor);
-            } catch (PartInitException e) {
-                String message = ExceptionHelper.getLocalizedMessage(e);
-                MessageDialog.openError(shell, Messages.E_R_R_O_R, message);
-            }
+        IFileStore fileStore = EFS.getLocalFileSystem().getStore(new File(file).toURI());
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
+        try {
+            IEditorPart editor = IDE.openEditorOnFileStore(page, fileStore);
+            System.out.println("editor=" + editor);
+        } catch (PartInitException e) {
+            String message = ExceptionHelper.getLocalizedMessage(e);
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, message);
         }
     }
 

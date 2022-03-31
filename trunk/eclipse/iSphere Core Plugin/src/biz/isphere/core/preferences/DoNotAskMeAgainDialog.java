@@ -88,9 +88,9 @@ public class DoNotAskMeAgainDialog extends MessageDialog implements DoNotAskMeAg
         keys.add(INFORMATION_USAGE_JOB_LOG_EXPLORER);
         keys.add(TN5250_FAST_CURSOR_MAPPING_CONFLICT);
         keys.add(CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG);
-        keys.add(CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH);
-        keys.add(CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH);
-        keys.add(CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH);
+        // keys.add(CONFIRM_OPEN_SAVED_FILE_SOURCE_FILE_SEARCH);
+        // keys.add(CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH);
+        // keys.add(CONFIRM_OPEN_SAVED_FILE_STREAM_FILE_SEARCH);
 
         return keys.toArray(new String[keys.size()]);
     }

@@ -50,7 +50,6 @@ import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.internal.filemanager.FileManager;
-import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
@@ -415,7 +414,10 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 new SearchResultTab(viewer.getConnectionName(), viewer.getSearchString(), viewer.getSearchResults(), viewer.getSearchOptions()));
             try {
                 manager.saveToXml(file, searchResults);
-                FileManager.askAndOpenSavedFile(shell, DoNotAskMeAgainDialog.CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH, file);
+                // FileManager.askAndOpenSavedFile(shell,
+                // DoNotAskMeAgainDialog.CONFIRM_OPEN_SAVED_FILE_MESSAGE_FILE_SEARCH,
+                // file);
+                FileManager.askAndOpenSavedFile(shell, file);
             } catch (SaveFileException e) {
                 MessageDialog.openError(shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
