@@ -54,8 +54,8 @@
     <topic label="RSE User Action Management"  href="html/resourcemanagement/useractionmanagement/useractionmanagement.html"> 
     </topic>
   </topic>
-  <topic label="Source File Compare/Merge Editor" href="html/comparemergeeditor/comparemergeeditor.html">
-    <topic label="RDi 9.5 Extensions" href="html/comparemergeeditor/rdi95extensions/rdi95extensions.html" />
+  <topic label="Source File Compare/Merge Editor" href="html/sourcefilecomparemergeeditor/sourcefilecomparemergeeditor.html">
+    <topic label="RDi 9.5 Extensions" href="html/sourcefilecomparemergeeditor/rdi95extensions/rdi95extensions.html" />
     <topic label="Preferences" href="html/compare/preferences/preferences.html" />
   </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
