@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -73,14 +74,12 @@ public class CompareStreamFileAction {
             public void run() {
 
                 if (cc.isThreeWay() && (ancestorStreamFile == null || !ancestorStreamFile.exists())) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files,
-                        Messages.Stream_file_not_found_colon_ANCESTOR);
+                    MessageDialog.openError(getShell(), Messages.Compare_stream_files, Messages.Stream_file_not_found_colon_ANCESTOR);
                     return;
                 }
 
                 if (leftStreamFile == null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files,
-                        Messages.Stream_file_not_found_colon_LEFT);
+                    MessageDialog.openError(getShell(), Messages.Compare_stream_files, Messages.Stream_file_not_found_colon_LEFT);
                     return;
                 } else {
                     // Retrieve name parts before exist(), because the file name
@@ -94,8 +93,7 @@ public class CompareStreamFileAction {
                 }
 
                 if (rightStreamFile == null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files,
-                        Messages.Stream_file_not_found_colon_RIGHT);
+                    MessageDialog.openError(getShell(), Messages.Compare_stream_files, Messages.Stream_file_not_found_colon_RIGHT);
                     return;
                 } else {
                     // Retrieve name parts before exist(), because the file name
@@ -108,11 +106,13 @@ public class CompareStreamFileAction {
                     }
                 }
 
-                IEditorPart editor = findStreamFileInEditor(leftStreamFile);
-                if (editor != null) {
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files,
-                        Messages.bind(Messages.Stream_file_is_already_open_in_an_editor, leftStreamFile.getStreamFile()));
-                    return;
+                if (cc.isLeftEditable()) {
+                    IEditorPart editor = findStreamFileInEditor(leftStreamFile);
+                    if (editor != null) {
+                        MessageDialog.openError(getShell(), Messages.Compare_stream_files,
+                            Messages.bind(Messages.Stream_file_is_already_open_in_an_editor, leftStreamFile.getStreamFile()));
+                        return;
+                    }
                 }
 
                 UIHelper.getActivePage().addPartListener(new IPartListener() {
@@ -146,30 +146,25 @@ public class CompareStreamFileAction {
                 });
 
                 if (cc.isThreeWay()) {
-                    if (ancestorStreamFile.getLabel() != null) {
-                        cc.setAncestorLabel(ancestorStreamFile.getLabel());
-                    } else {
-                        cc.setAncestorLabel(ancestorStreamFile.getDirectory() + "/" + ancestorStreamFile.getStreamFile());
-                    }
+                    cc.setAncestorLabel(createLabel(ancestorStreamFile));
                 }
 
-                if (leftStreamFile.getLabel() != null) {
-                    cc.setLeftLabel(leftStreamFile.getLabel());
-                } else {
-                    cc.setLeftLabel(leftStreamFile.getDirectory() + "/" + leftStreamFile.getStreamFile());
-                }
-
-                if (rightStreamFile.getLabel() != null) {
-                    cc.setRightLabel(rightStreamFile.getLabel());
-                } else {
-                    cc.setRightLabel(rightStreamFile.getDirectory() + "/" + rightStreamFile.getStreamFile());
-                }
+                cc.setLeftLabel(createLabel(leftStreamFile));
+                cc.setRightLabel(createLabel(rightStreamFile));
 
                 fInput = new CompareStreamFileInput(cc, ancestorStreamFile, leftStreamFile, rightStreamFile);
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {
-                    fInput.setTitle(leftStreamFile.getDirectory() + "/" + leftStreamFile.getStreamFile());
+                    String title;
+                    if (cc.isLeftEditable()) {
+                        title = Messages.bind(Messages.CompareEditor_Compare_Edit,
+                            new String[] { getQualifiedStreamFileName(leftStreamFile), getQualifiedStreamFileName(rightStreamFile) });
+                    } else {
+                        title = Messages.bind(Messages.CompareEditor_Compare,
+                            new String[] { getQualifiedStreamFileName(leftStreamFile), getQualifiedStreamFileName(rightStreamFile) });
+                    }
+                    fInput.setTitle(title);
                 }
 
                 IEditorReference editorReference = findCompareEditor(leftStreamFile, rightStreamFile);
@@ -193,10 +188,32 @@ public class CompareStreamFileAction {
 
             }
 
+            private String createLabel(StreamFile streamFile) {
+
+                if (streamFile.getLabel() != null) {
+                    return streamFile.getLabel();
+                } else {
+                    StringBuilder buffer = new StringBuilder();
+                    buffer.append(streamFile.getDirectory());
+                    buffer.append("/");
+                    buffer.append(streamFile.getStreamFile());
+                    return buffer.toString();
+                }
+
+            }
+
+            private Shell getShell() {
+                return Display.getCurrent().getActiveShell();
+            }
+
+            private String getQualifiedStreamFileName(StreamFile streamFile) {
+                return streamFile.getDirectory() + "/" + streamFile.getStreamFile();
+            }
+
             private void displayStreamFileNotFoundMessage(String directory, String streamFile) {
-                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Stream_file_1_in_directory_0_not_found, new Object[] {
-                    directory, streamFile });
-                MessageDialog.openError(Display.getCurrent().getActiveShell(), Messages.Compare_stream_files, message);
+                String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Stream_file_1_in_directory_0_not_found,
+                    new Object[] { directory, streamFile });
+                MessageDialog.openError(getShell(), Messages.Compare_stream_files, message);
             }
         });
     }
