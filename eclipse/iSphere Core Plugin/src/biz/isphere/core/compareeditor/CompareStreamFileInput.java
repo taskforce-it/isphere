@@ -18,8 +18,10 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IFileEditorInput;
 
 import biz.isphere.base.internal.ExceptionHelper;
@@ -55,7 +57,8 @@ public class CompareStreamFileInput extends CompareEditorInput implements IFileE
 
     // private boolean isSaveNeeded = false;
 
-    public CompareStreamFileInput(CompareEditorConfiguration config, StreamFile ancestorStreamFile, StreamFile leftStreamFile, StreamFile rightStreamFile) {
+    public CompareStreamFileInput(CompareEditorConfiguration config, StreamFile ancestorStreamFile, StreamFile leftStreamFile,
+        StreamFile rightStreamFile) {
         super(config);
         this.editable = config.isLeftEditable();
         this.threeWay = config.isThreeWay();
@@ -208,11 +211,33 @@ public class CompareStreamFileInput extends CompareEditorInput implements IFileE
     }
 
     public IFile getFile() {
-        return leftStreamFile.getLocalResource();
+        if (editable) {
+            return leftStreamFile.getLocalResource();
+        } else {
+            /*
+             * Produce an invalid file name, so that Eclipse does not find the
+             * member in any open editor.
+             */
+            return getBrowseModeFile();
+        }
     }
 
     public IStorage getStorage() throws CoreException {
-        return leftStreamFile.getLocalResource();
+        if (editable) {
+            return leftStreamFile.getLocalResource();
+        } else {
+            /*
+             * Produce an invalid file name, so that Eclipse does not find the
+             * member in any open editor.
+             */
+            return getBrowseModeFile();
+        }
+    }
+
+    private IFile getBrowseModeFile() {
+        String osPath = leftStreamFile.getLocalResource().getFullPath().toOSString();
+        Path path = new Path(osPath + "(browse mode)"); //$NON-NLS-1$
+        return ResourcesPlugin.getWorkspace().getRoot().getFile(path);
     }
 
     public CompareEditorConfiguration getConfiguration() {
