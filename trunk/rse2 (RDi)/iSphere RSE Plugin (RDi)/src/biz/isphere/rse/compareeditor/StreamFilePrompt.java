@@ -148,6 +148,10 @@ public class StreamFilePrompt extends Composite {
         return cboDirectory;
     }
 
+    public Button getSelectDirectoryWidget() {
+        return btnSelectDirectory;
+    }
+
     public String getDirectoryName() {
         return cboDirectory.getText();
     }
@@ -158,6 +162,10 @@ public class StreamFilePrompt extends Composite {
 
     public HistoryCombo getStreamFileWidget() {
         return cboStreamFile;
+    }
+
+    public Button getSelectStreamFileWidget() {
+        return btnSelectStreamFile;
     }
 
     public String getStreamFileName() {

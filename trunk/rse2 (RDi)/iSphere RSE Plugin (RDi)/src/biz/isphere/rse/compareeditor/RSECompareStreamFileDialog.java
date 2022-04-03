@@ -262,6 +262,9 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         rightStreamFilePrompt = createStreamFilePrompt(rightGroup, modifyListener, RIGHT_HISTORY_KEY);
         rightStreamFilePrompt.setConnection(rightConnectionCombo.getHost());
         rightStreamFilePrompt.getDirectoryWidget().setFocus();
+
+        rightStreamFilePrompt.getStreamFileWidget().setEnabled(!hasMultipleRightStreamFiles());
+        rightStreamFilePrompt.getSelectStreamFileWidget().setEnabled(!hasMultipleRightStreamFiles());
     }
 
     @Override
