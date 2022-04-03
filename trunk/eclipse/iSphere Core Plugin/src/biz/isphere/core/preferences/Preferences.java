@@ -22,7 +22,7 @@ import biz.isphere.base.internal.FileHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.compareeditor.LoadPreviousValues;
+import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
@@ -616,22 +616,22 @@ public final class Preferences {
         String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
         if ("true".equals(value)) { //$NON-NLS-1$
             return true;
-        } else if (!LoadPreviousValues.NONE.name().equals(value)) { // $NON-NLS-1$
+        } else if (!LoadPreviousMemberValue.NONE.name().equals(value)) { // $NON-NLS-1$
             return true;
         } else {
             return false;
         }
     }
 
-    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfRightMember() {
+    public LoadPreviousMemberValue getSourceMemberCompareLoadingPreviousValuesOfRightMember() {
         try {
             String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER);
             if ("true".equals(value)) {
-                return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+                return LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER;
             }
-            return LoadPreviousValues.valueOf(value);
+            return LoadPreviousMemberValue.valueOf(value);
         } catch (Throwable e) {
-            return LoadPreviousValues.NONE;
+            return LoadPreviousMemberValue.NONE;
         }
     }
 
@@ -639,22 +639,22 @@ public final class Preferences {
         String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
         if ("true".equals(value)) { //$NON-NLS-1$
             return true;
-        } else if (!LoadPreviousValues.NONE.name().equals(value)) { // $NON-NLS-1$
+        } else if (!LoadPreviousMemberValue.NONE.name().equals(value)) { // $NON-NLS-1$
             return true;
         } else {
             return false;
         }
     }
 
-    public LoadPreviousValues getSourceMemberCompareLoadingPreviousValuesOfAncestorMember() {
+    public LoadPreviousMemberValue getSourceMemberCompareLoadingPreviousValuesOfAncestorMember() {
         try {
             String value = preferenceStore.getString(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER);
             if ("true".equals(value)) {
-                return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+                return LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER;
             }
-            return LoadPreviousValues.valueOf(value);
+            return LoadPreviousMemberValue.valueOf(value);
         } catch (Throwable e) {
-            return LoadPreviousValues.NONE;
+            return LoadPreviousMemberValue.NONE;
         }
     }
 
@@ -958,11 +958,11 @@ public final class Preferences {
         preferenceStore.setValue(MESSAGE_FILE_COMPARE_LINE_WIDTH, lineWidth);
     }
 
-    public void setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(LoadPreviousValues value) {
+    public void setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(LoadPreviousMemberValue value) {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_MEMBER, value.name());
     }
 
-    public void setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(LoadPreviousValues value) {
+    public void setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(LoadPreviousMemberValue value) {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, value.name());
     }
 
@@ -1716,8 +1716,8 @@ public final class Preferences {
         return 70;
     }
 
-    public LoadPreviousValues getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
-        return LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+    public LoadPreviousMemberValue getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
+        return LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER;
     }
 
     public boolean getDefaultSourceMemberCompareIgnoreWhiteSpaces() {

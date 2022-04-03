@@ -29,7 +29,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
-import biz.isphere.core.compareeditor.LoadPreviousValues;
+import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
 import biz.isphere.core.internal.Member;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
@@ -709,7 +709,7 @@ public class RSECompareDialog extends CompareDialog {
             // Load left member, when no members has been selected (iSphere
             // search selected from the main menu)
             if (isLoadingPreviousValuesOfLeftMemberEnabled()) {
-                LoadPreviousValues loadPreviousValue = LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
+                LoadPreviousMemberValue loadPreviousValue = LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER;
                 loadMemberValues(PREFIX_LEFT, loadPreviousValue, leftConnectionCombo, leftMemberPrompt);
             }
         }
@@ -720,7 +720,7 @@ public class RSECompareDialog extends CompareDialog {
 
             if (isLoadingPreviousValuesOfRightMemberEnabled()) {
                 // Load previous member values
-                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfRightMember();
+                LoadPreviousMemberValue loadPreviousValue = getLoadPreviousValuesOfRightMember();
                 hasLoaded = loadMemberValues(PREFIX_RIGHT, loadPreviousValue, rightConnectionCombo, rightMemberPrompt);
             }
 
@@ -741,7 +741,7 @@ public class RSECompareDialog extends CompareDialog {
             boolean hasLoaded = false;
 
             if (isLoadingPreviousValuesOfAncestorMemberEnabled()) {
-                LoadPreviousValues loadPreviousValue = getLoadPreviousValuesOfAncestorMember();
+                LoadPreviousMemberValue loadPreviousValue = getLoadPreviousValuesOfAncestorMember();
                 hasLoaded = loadMemberValues(PREFIX_ANCESTOR, loadPreviousValue, ancestorConnectionCombo, ancestorMemberPrompt);
             }
 
@@ -753,7 +753,7 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    private boolean loadMemberValues(String prefix, LoadPreviousValues loadPreviousValue, IBMiConnectionCombo connectionCombo,
+    private boolean loadMemberValues(String prefix, LoadPreviousMemberValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
         QSYSMemberPrompt memberPrompt) {
 
         String connection;
