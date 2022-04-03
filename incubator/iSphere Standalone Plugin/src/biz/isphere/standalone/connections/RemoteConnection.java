@@ -67,6 +67,7 @@ public class RemoteConnection {
         }
 
         system = new AS400(hostName, userName, password);
+        system.setGuiAvailable(false);
         system.connectService(AS400.COMMAND);
         jdbcConnectionManager = new JdbcConnectionManager(this);
         boolean connected = system.isConnected(AS400.COMMAND);
