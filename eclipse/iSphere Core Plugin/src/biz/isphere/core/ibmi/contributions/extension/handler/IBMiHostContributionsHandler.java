@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import com.ibm.as400.access.AS400;
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.StreamFile;
 
 public class IBMiHostContributionsHandler {
 
@@ -360,7 +361,7 @@ public class IBMiHostContributionsHandler {
      * <p>
      * <b>Empty member list</b> <br>
      * Opens the compare dialog to let the user specify the members that are
-     * compares.
+     * compared.
      * <p>
      * <b>One member</b> <br>
      * Opens the compare dialog with that member set as the left (editable)
@@ -382,7 +383,7 @@ public class IBMiHostContributionsHandler {
      * @param enableEditMode - specifies whether edit mode is enabled
      * @throws Exception
      */
-    public static void compareSourceMembers(String connectionName, List<Member> members, boolean enableEditMode) throws Exception {
+    public static void compareSourceMembers(String qualifiedConnectionName, List<Member> members, boolean enableEditMode) throws Exception {
 
         IIBMiHostContributions factory = getContributionsFactory();
 
@@ -390,7 +391,67 @@ public class IBMiHostContributionsHandler {
             return;
         }
 
-        factory.compareSourceMembers(connectionName, members, enableEditMode);
+        factory.compareSourceMembers(qualifiedConnectionName, members, enableEditMode);
+    }
+
+    /**
+     * Returns the stream file identified by a given path name.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param streamFileName - path name of the stream file
+     * @return stream file
+     * @throws Exception
+     */
+    public static StreamFile getStreamFile(String qualifiedConnectionName, String streamFileName) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        return factory.getStreamFile(qualifiedConnectionName, streamFileName);
+    }
+
+    /**
+     * Opens the iSphere compare editor for the given stream files.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty stream file list</b> <br>
+     * Opens the compare dialog to let the user specify the stream files that
+     * are compared.
+     * <p>
+     * <b>One stream file</b> <br>
+     * Opens the compare dialog with that stream file set as the left (editable)
+     * stream file. The right stream file is initialized with the properties of
+     * the left stream file.
+     * <p>
+     * <b>Two stream files</b> <br>
+     * Opens the compare dialog with the first stream file set as the left
+     * (editable) and the second stream file set as the right stream file.
+     * <p>
+     * <b>More than 2 stream files</b> <br>
+     * Opens the compare dialog to let the user specify the source path where
+     * the stream files are stored, which are compared one by one with the
+     * selected stream files.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param streamFiles - stream files that are compared
+     * @param enableEditMode - specifies whether edit mode is enabled
+     * @throws Exception
+     */
+    public static void compareStreamFiles(String qualifiedConnectionName, List<StreamFile> streamFiles, boolean enableEditMode) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return;
+        }
+
+        factory.compareStreamFiles(qualifiedConnectionName, streamFiles, enableEditMode);
     }
 
     /**
