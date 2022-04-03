@@ -62,6 +62,9 @@
     <topic label="Regular Expressions" href="html/search/regularexpressions/regularexpressions.html" />
     <topic label="Preferences" href="html/search/preferences/preferences.html" />
   </topic>
+  <topic label="Stream File Compare/Merge Editor" href="html/streamfilecomparemergeeditor/streamfilecomparemergeeditor.html">
+    <topic label="Preferences" href="html/compare/preferences/preferences.html" />
+  </topic>
   <topic label="Stream File Search"  href="html/streamfilesearch/streamfilesearch.html"> 
     <topic label="Regular Expressions" href="html/search/regularexpressions/regularexpressions.html" />
     <topic label="Preferences" href="html/search/preferences/preferences.html" />
