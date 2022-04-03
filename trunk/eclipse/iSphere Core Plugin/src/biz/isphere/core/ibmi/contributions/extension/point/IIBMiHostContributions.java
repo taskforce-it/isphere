@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import com.ibm.as400.access.AS400;
 
 import biz.isphere.core.clcommands.ICLPrompter;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.internal.StreamFile;
 
 public interface IIBMiHostContributions {
 
@@ -203,6 +204,48 @@ public interface IIBMiHostContributions {
      * @throws Exception
      */
     public void compareSourceMembers(String qualifiedConnectionName, List<Member> members, boolean enableEditMode) throws Exception;
+
+    /**
+     * Returns the stream file identified by a given path name.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param streamFileName - path name of the stream file
+     * @return stream file
+     * @throws Exception
+     */
+    public StreamFile getStreamFile(String qualifiedConnectionName, String streamFileName) throws Exception;
+
+    /**
+     * Opens the iSphere compare editor for the given stream files.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty stream file list</b> <br>
+     * Opens the compare dialog to let the user specify the stream files that
+     * are compared.
+     * <p>
+     * <b>One stream file</b> <br>
+     * Opens the compare dialog with that stream file set as the left (editable)
+     * stream file. The right stream file is initialized with the properties of
+     * the left stream file.
+     * <p>
+     * <b>Two stream files</b> <br>
+     * Opens the compare dialog with the first stream file set as the left
+     * (editable) and the second stream file set as the right stream file.
+     * <p>
+     * <b>More than 2 stream files</b> <br>
+     * Opens the compare dialog to let the user specify the source path where
+     * the stream files are stored, which are compared one by one with the
+     * selected stream files.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param streamFiles - stream files that are compared
+     * @param enableEditMode - specifies whether edit mode is enabled
+     * @throws Exception
+     */
+    public void compareStreamFiles(String qualifiedConnectionName, List<StreamFile> streamFiles, boolean enableEditMode) throws Exception;
 
     /**
      * Returns the local resource of a given remote member.
