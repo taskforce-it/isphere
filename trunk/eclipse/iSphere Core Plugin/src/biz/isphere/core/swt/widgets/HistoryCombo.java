@@ -158,6 +158,7 @@ public class HistoryCombo {
 
     public void setEnabled(boolean enabled) {
         cboHistory.setEnabled(enabled);
+        btnWorkWithHistory.setEnabled(enabled);
     }
 
     public void setToolTipText(String string) {
