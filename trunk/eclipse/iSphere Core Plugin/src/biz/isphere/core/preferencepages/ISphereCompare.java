@@ -42,6 +42,7 @@ import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
+import biz.isphere.core.compareeditor.LoadPreviousStreamFileValue;
 import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
@@ -58,6 +59,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private Combo chkLoadingPreviousValuesRightMemberEnabled;
     private Combo chkLoadingPreviousValuesAncestorMemberEnabled;
+    private Combo chkLoadingPreviousValuesRightStreamFileEnabled;
+    private Combo chkLoadingPreviousValuesAncestorStreamFileEnabled;
     private Button chkIgnoreWhiteSpaces;
 
     private Table tblFileExtensions;
@@ -104,6 +107,8 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         createSectionMessageFileCompare(container);
 
         createSectionSourceMemberCompareDialog(container);
+
+        createSectionSourceStreamFileCompareDialog(container);
 
         createSectionSourceFileCompare(container);
 
@@ -163,7 +168,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         chkLoadingPreviousValuesRightMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
         chkLoadingPreviousValuesRightMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
-        chkLoadingPreviousValuesRightMemberEnabled.setItems(loadPreviousValuesItems());
+        chkLoadingPreviousValuesRightMemberEnabled.setItems(loadPreviousMemberValuesItems());
         chkLoadingPreviousValuesRightMemberEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 checkAllValues();
@@ -180,8 +185,54 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         chkLoadingPreviousValuesAncestorMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
         chkLoadingPreviousValuesAncestorMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
-        chkLoadingPreviousValuesAncestorMemberEnabled.setItems(loadPreviousValuesItems());
+        chkLoadingPreviousValuesAncestorMemberEnabled.setItems(loadPreviousMemberValuesItems());
         chkLoadingPreviousValuesAncestorMemberEnabled.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                checkAllValues();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+    }
+
+    private void createSectionSourceStreamFileCompareDialog(Composite parent) {
+
+        if (!sourceFileCompareEnabled) {
+            return;
+        }
+
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout(2, false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        group.setText(Messages.Source_stream_file_compare_dialog);
+
+        Label labelLoadingPreviousValuesRightStreamFileEnabled = new Label(group, SWT.NONE);
+        labelLoadingPreviousValuesRightStreamFileEnabled.setText(Messages.Load_previous_values_right);
+        labelLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+
+        chkLoadingPreviousValuesRightStreamFileEnabled = WidgetFactory.createReadOnlyCombo(group);
+        chkLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+        chkLoadingPreviousValuesRightStreamFileEnabled.setItems(loadPreviousStreamFileValuesItems());
+        chkLoadingPreviousValuesRightStreamFileEnabled.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                checkAllValues();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
+            }
+        });
+
+        Label labelLoadingPreviousValuesAncestorStreamFileEnabled = new Label(group, SWT.NONE);
+        labelLoadingPreviousValuesAncestorStreamFileEnabled.setText(Messages.Load_previous_values_ancestor);
+        labelLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+
+        chkLoadingPreviousValuesAncestorStreamFileEnabled = WidgetFactory.createReadOnlyCombo(group);
+        chkLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+        chkLoadingPreviousValuesAncestorStreamFileEnabled.setItems(loadPreviousStreamFileValuesItems());
+        chkLoadingPreviousValuesAncestorStreamFileEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
                 checkAllValues();
             }
@@ -314,10 +365,15 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         btnImport.setText(Messages.Button_Import);
     }
 
-    private String[] loadPreviousValuesItems() {
+    private String[] loadPreviousMemberValuesItems() {
         return new String[] { LoadPreviousMemberValue.NONE.label(), LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER.label(),
             LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE.label(), LoadPreviousMemberValue.CONNECTION_LIBRARY.label(),
             LoadPreviousMemberValue.CONNECTION.label() };
+    }
+
+    private String[] loadPreviousStreamFileValuesItems() {
+        return new String[] { LoadPreviousStreamFileValue.NONE.label(), LoadPreviousStreamFileValue.CONNECTION_DIRECTORY_FILE.label(),
+            LoadPreviousStreamFileValue.CONNECTION_DIRECTORY.label(), LoadPreviousStreamFileValue.CONNECTION.label() };
     }
 
     @Override
@@ -349,11 +405,17 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         if (sourceFileCompareEnabled) {
-            LoadPreviousMemberValue value;
-            value = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
-            preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(value);
-            value = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
-            preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(value);
+            LoadPreviousMemberValue previousMemberValue;
+            previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
+            preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(previousMemberValue);
+            previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
+            preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(previousMemberValue);
+
+            LoadPreviousStreamFileValue previousStreamFileValue;
+            previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesRightStreamFileEnabled.getText());
+            preferences.setSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled(previousStreamFileValue);
+            previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesAncestorStreamFileEnabled.getText());
+            preferences.setSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled(previousStreamFileValue);
 
             preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
 
@@ -372,10 +434,15 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         if (sourceFileCompareEnabled) {
-            setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+            setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
                 preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
-            setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
                 preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
+
+            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
+                preferences.getSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFile());
+            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
+                preferences.getSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFile());
 
             chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
 
@@ -387,7 +454,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         setControlsEnablement();
     }
 
-    private void setPreviousValueSelection(Combo combo, LoadPreviousMemberValue value) {
+    private void setPreviousMemberValueSelection(Combo combo, LoadPreviousMemberValue value) {
         String[] items = combo.getItems();
         for (int i = 0; i < items.length; i++) {
             if (value.label().equals(items[i])) {
@@ -395,7 +462,18 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
                 return;
             }
         }
-        setPreviousValueSelection(combo, LoadPreviousMemberValue.NONE);
+        setPreviousMemberValueSelection(combo, LoadPreviousMemberValue.NONE);
+    }
+
+    private void setPreviousStreamFileValueSelection(Combo combo, LoadPreviousStreamFileValue value) {
+        String[] items = combo.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (value.label().equals(items[i])) {
+                combo.select(i);
+                return;
+            }
+        }
+        setPreviousStreamFileValueSelection(combo, LoadPreviousStreamFileValue.NONE);
     }
 
     protected void setScreenToDefaultValues() {
@@ -407,10 +485,15 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         if (sourceFileCompareEnabled) {
-            setPreviousValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+            setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
                 preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-            setPreviousValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
                 preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+
+            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
+                preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
+            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
+                preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
 
             chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 

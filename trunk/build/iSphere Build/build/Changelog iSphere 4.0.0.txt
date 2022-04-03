@@ -1,6 +1,8 @@
 
 Changelog: iSphere 5.0.1.r
 --------------------------
+ • Added options to set the previous values when comparing stream
+   files.
  • Added column Severity to iSphere Message File Editor.
  • Added option for opening a search result or Excel export file
    after it has been saved to disk.
