@@ -251,7 +251,7 @@ public abstract class CompareDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousValues getLoadPreviousValuesOfRightMember() {
+    public LoadPreviousMemberValue getLoadPreviousValuesOfRightMember() {
         return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
     }
 
@@ -266,7 +266,7 @@ public abstract class CompareDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousValues getLoadPreviousValuesOfAncestorMember() {
+    public LoadPreviousMemberValue getLoadPreviousValuesOfAncestorMember() {
         return Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
     }
 

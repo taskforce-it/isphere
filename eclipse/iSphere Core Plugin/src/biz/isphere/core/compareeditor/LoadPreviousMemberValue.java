@@ -10,7 +10,7 @@ package biz.isphere.core.compareeditor;
 
 import biz.isphere.core.Messages;
 
-public enum LoadPreviousValues {
+public enum LoadPreviousMemberValue {
     NONE ("None"),
     CONNECTION_LIBRARY_FILE_MEMBER (Messages.Label_Connection_Library_File_Member),
     CONNECTION_LIBRARY_FILE (Messages.Label_Connection_Library_File),
@@ -19,7 +19,7 @@ public enum LoadPreviousValues {
 
     private String label;
 
-    private LoadPreviousValues(String label) {
+    private LoadPreviousMemberValue(String label) {
         this.label = label;
     }
 
@@ -27,7 +27,7 @@ public enum LoadPreviousValues {
         return label;
     }
 
-    public static LoadPreviousValues valueOfLabel(String label) {
+    public static LoadPreviousMemberValue valueOfLabel(String label) {
         if (NONE.label().equals(label)) {
             return NONE;
         } else if (CONNECTION.label().equals(label)) {

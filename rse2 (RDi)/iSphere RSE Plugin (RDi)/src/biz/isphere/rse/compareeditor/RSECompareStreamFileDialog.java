@@ -30,7 +30,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
-import biz.isphere.core.compareeditor.LoadPreviousValues;
+import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
 import biz.isphere.core.internal.StreamFile;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
@@ -768,7 +768,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         }
     }
 
-    private boolean loadStreamFileValues(String prefix, LoadPreviousValues loadPreviousValue, IBMiConnectionCombo connectionCombo,
+    private boolean loadStreamFileValues(String prefix, LoadPreviousMemberValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
         StreamFilePrompt streamFilePrompt) {
 
         String connection;

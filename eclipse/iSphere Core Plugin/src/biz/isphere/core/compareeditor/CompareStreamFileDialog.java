@@ -160,8 +160,8 @@ public abstract class CompareStreamFileDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousValues getLoadPreviousValuesOfRightStreamFile() {
-        return LoadPreviousValues.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
+    public LoadPreviousMemberValue getLoadPreviousValuesOfRightStreamFile() {
+        return LoadPreviousMemberValue.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
     }
 
     protected boolean isLoadingPreviousValuesOfAncestorStreamFileEnabled() {
@@ -175,8 +175,8 @@ public abstract class CompareStreamFileDialog extends XDialog {
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousValues getLoadPreviousValuesOfAncestorStreamFile() {
-        return LoadPreviousValues.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
+    public LoadPreviousMemberValue getLoadPreviousValuesOfAncestorStreamFile() {
+        return LoadPreviousMemberValue.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
     }
 
     private boolean isLoadedFromMainMenu() {

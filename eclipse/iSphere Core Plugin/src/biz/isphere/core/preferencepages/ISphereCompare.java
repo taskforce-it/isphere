@@ -41,7 +41,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.compareeditor.LoadPreviousValues;
+import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
 import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.preferences.Preferences;
@@ -315,9 +315,9 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     }
 
     private String[] loadPreviousValuesItems() {
-        return new String[] { LoadPreviousValues.NONE.label(), LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER.label(),
-            LoadPreviousValues.CONNECTION_LIBRARY_FILE.label(), LoadPreviousValues.CONNECTION_LIBRARY.label(),
-            LoadPreviousValues.CONNECTION.label() };
+        return new String[] { LoadPreviousMemberValue.NONE.label(), LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER.label(),
+            LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE.label(), LoadPreviousMemberValue.CONNECTION_LIBRARY.label(),
+            LoadPreviousMemberValue.CONNECTION.label() };
     }
 
     @Override
@@ -349,10 +349,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         }
 
         if (sourceFileCompareEnabled) {
-            LoadPreviousValues value;
-            value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
+            LoadPreviousMemberValue value;
+            value = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
             preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(value);
-            value = LoadPreviousValues.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
+            value = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
             preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(value);
 
             preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
@@ -387,7 +387,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         setControlsEnablement();
     }
 
-    private void setPreviousValueSelection(Combo combo, LoadPreviousValues value) {
+    private void setPreviousValueSelection(Combo combo, LoadPreviousMemberValue value) {
         String[] items = combo.getItems();
         for (int i = 0; i < items.length; i++) {
             if (value.label().equals(items[i])) {
@@ -395,7 +395,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
                 return;
             }
         }
-        setPreviousValueSelection(combo, LoadPreviousValues.NONE);
+        setPreviousValueSelection(combo, LoadPreviousMemberValue.NONE);
     }
 
     protected void setScreenToDefaultValues() {
