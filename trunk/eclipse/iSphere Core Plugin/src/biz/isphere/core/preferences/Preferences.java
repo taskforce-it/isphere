@@ -23,6 +23,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
+import biz.isphere.core.compareeditor.LoadPreviousStreamFileValue;
 import biz.isphere.core.dataqueue.action.MessageLengthAction;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.memberrename.adapters.IMemberRenamingRuleAdapter;
@@ -171,6 +172,12 @@ public final class Preferences {
     private static final String SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER = SOURCE_MEMBER_COMPARE
         + "LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER"; //$NON-NLS-1$
     private static final String SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES = SOURCE_MEMBER_COMPARE + "SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES"; //$NON-NLS-1$
+
+    private static final String SOURCE_STREAM_FILE_COMPARE = DOMAIN + "SOURCE_STREAM_FILE_COMPARE."; //$NON-NLS-1$
+    private static final String SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE = SOURCE_STREAM_FILE_COMPARE
+        + "LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE"; //$NON-NLS-1$
+    private static final String SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE = SOURCE_STREAM_FILE_COMPARE
+        + "LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE"; //$NON-NLS-1$
 
     private static final String APPEARANCE = DOMAIN + "APPEARANCE."; //$NON-NLS-1$
     private static final String APPEARANCE_DATE_FORMAT = APPEARANCE + "DATE_FORMAT"; //$NON-NLS-1$
@@ -658,6 +665,52 @@ public final class Preferences {
         }
     }
 
+    public boolean isSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled() {
+        String value = preferenceStore.getString(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE);
+        if ("true".equals(value)) { //$NON-NLS-1$
+            return true;
+        } else if (!LoadPreviousStreamFileValue.NONE.name().equals(value)) { // $NON-NLS-1$
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LoadPreviousStreamFileValue getSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFile() {
+        try {
+            String value = preferenceStore.getString(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE);
+            if ("true".equals(value)) {
+                return LoadPreviousStreamFileValue.CONNECTION_DIRECTORY_FILE;
+            }
+            return LoadPreviousStreamFileValue.valueOf(value);
+        } catch (Throwable e) {
+            return LoadPreviousStreamFileValue.NONE;
+        }
+    }
+
+    public boolean isSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled() {
+        String value = preferenceStore.getString(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE);
+        if ("true".equals(value)) { //$NON-NLS-1$
+            return true;
+        } else if (!LoadPreviousStreamFileValue.NONE.name().equals(value)) { // $NON-NLS-1$
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public LoadPreviousStreamFileValue getSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFile() {
+        try {
+            String value = preferenceStore.getString(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE);
+            if ("true".equals(value)) {
+                return LoadPreviousStreamFileValue.CONNECTION_DIRECTORY_FILE;
+            }
+            return LoadPreviousStreamFileValue.valueOf(value);
+        } catch (Throwable e) {
+            return LoadPreviousStreamFileValue.NONE;
+        }
+    }
+
     public boolean isSourceMemberCompareIgnoreWhiteSpaces() {
         return preferenceStore.getBoolean(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES);
     }
@@ -966,6 +1019,14 @@ public final class Preferences {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER, value.name());
     }
 
+    public void setSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled(LoadPreviousStreamFileValue value) {
+        preferenceStore.setValue(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE, value.name());
+    }
+
+    public void setSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled(LoadPreviousStreamFileValue value) {
+        preferenceStore.setValue(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE, value.name());
+    }
+
     public void setSourceMemberCompareIgnoreWhiteSpaces(boolean enabled) {
         preferenceStore.setValue(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, enabled);
     }
@@ -1095,6 +1156,11 @@ public final class Preferences {
             getDefaultSourceMemberCompareLoadingPreviousValuesEnabled().name());
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_MEMBER,
             getDefaultSourceMemberCompareLoadingPreviousValuesEnabled().name());
+
+        preferenceStore.setDefault(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_RIGHT_STREAM_FILE,
+            getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled().name());
+        preferenceStore.setDefault(SOURCE_STREAM_FILE_COMPARE_LOAD_PREVIOUS_VALUES_ANCESTOR_STREAM_FILE,
+            getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled().name());
 
         preferenceStore.setDefault(SOURCE_MEMBER_COMPARE_IGNORE_WHITE_SPACES, getDefaultSourceMemberCompareIgnoreWhiteSpaces());
 
@@ -1718,6 +1784,10 @@ public final class Preferences {
 
     public LoadPreviousMemberValue getDefaultSourceMemberCompareLoadingPreviousValuesEnabled() {
         return LoadPreviousMemberValue.CONNECTION_LIBRARY_FILE_MEMBER;
+    }
+
+    public LoadPreviousStreamFileValue getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled() {
+        return LoadPreviousStreamFileValue.CONNECTION_DIRECTORY_FILE;
     }
 
     public boolean getDefaultSourceMemberCompareIgnoreWhiteSpaces() {

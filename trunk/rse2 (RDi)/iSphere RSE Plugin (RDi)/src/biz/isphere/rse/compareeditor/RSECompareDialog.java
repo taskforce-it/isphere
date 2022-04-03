@@ -59,7 +59,7 @@ public class RSECompareDialog extends CompareDialog {
     private String ancestorLibrary;
     private String ancestorFile;
     private String ancestorMember;
-    
+
     /**
      * Creates the compare dialog, for 2 selected member.
      * 
@@ -68,7 +68,8 @@ public class RSECompareDialog extends CompareDialog {
      *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
-     * @param switchMemberAllowed - Specifies, whether or not the switch button appears.
+     * @param switchMemberAllowed - Specifies, whether or not the switch button
+     *        appears.
      */
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, boolean switchMemberAllowed) {
@@ -78,7 +79,7 @@ public class RSECompareDialog extends CompareDialog {
         initializeRightMember(rightMember);
         setSwitchMemberAllowed(switchMemberAllowed);
     }
-    
+
     /**
      * Creates a three-way compare dialog.<br>
      * This constructor is used by CMOne.
@@ -89,7 +90,8 @@ public class RSECompareDialog extends CompareDialog {
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      * @param ancestorMember - the ancestor member
-     * @param switchMemberAllowed - Specifies, whether or not the switch button appears.
+     * @param switchMemberAllowed - Specifies, whether or not the switch button
+     *        appears.
      */
     @CMOne(info = "Don`t change this constructor due to CMOne compatibility reasons")
     public RSECompareDialog(Shell parentShell, boolean selectEditable, RSEMember leftMember, RSEMember rightMember, RSEMember ancestorMember,
@@ -859,6 +861,10 @@ public class RSECompareDialog extends CompareDialog {
     private void storeHistory(QSYSMemberPrompt memberPrompt) {
 
         if (!canStoreHistory()) {
+            return;
+        }
+
+        if (isSpecialMemberName(memberPrompt.getMemberName())) {
             return;
         }
 

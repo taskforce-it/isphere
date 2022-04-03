@@ -30,7 +30,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
-import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
+import biz.isphere.core.compareeditor.LoadPreviousStreamFileValue;
 import biz.isphere.core.internal.StreamFile;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
@@ -717,25 +717,21 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         if (hasEditableLeftStreamFile()) {
             // Load left stream file, when no file has been selected (iSphere
             // search selected from the main menu)
-            // if (isLoadingPreviousValuesOfLeftMemberEnabled()) {
-            // LoadPreviousValues loadPreviousValue =
-            // LoadPreviousValues.CONNECTION_LIBRARY_FILE_MEMBER;
-            // loadMemberValues(PREFIX_LEFT, loadPreviousValue,
-            // leftConnectionCombo, leftMemberPrompt);
-            // }
+            if (isLoadingPreviousValuesOfLeftStreamFileEnabled()) {
+                LoadPreviousStreamFileValue loadPreviousValue = LoadPreviousStreamFileValue.CONNECTION_DIRECTORY_FILE;
+                loadStreamFileValues(PREFIX_LEFT, loadPreviousValue, leftConnectionCombo, leftStreamFilePrompt);
+            }
         }
 
         if (hasEditableRightStreamFile()) {
 
             boolean hasLoaded = false;
 
-            // if (isLoadingPreviousValuesOfRightMemberEnabled()) {
-            // Load previous member values
-            // LoadPreviousValues loadPreviousValue =
-            // getLoadPreviousValuesOfRightMember();
-            // hasLoaded = loadMemberValues(PREFIX_RIGHT, loadPreviousValue,
-            // rightConnectionCombo, rightMemberPrompt);
-            // }
+            if (isLoadingPreviousValuesOfRightStreamFileEnabled()) {
+                // Load previous member values
+                LoadPreviousStreamFileValue loadPreviousValue = getLoadPreviousValuesOfRightStreamFile();
+                hasLoaded = loadStreamFileValues(PREFIX_RIGHT, loadPreviousValue, rightConnectionCombo, rightStreamFilePrompt);
+            }
 
             if (!hasLoaded) {
                 // Initialize right stream file with left file prompt
@@ -768,7 +764,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         }
     }
 
-    private boolean loadStreamFileValues(String prefix, LoadPreviousMemberValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
+    private boolean loadStreamFileValues(String prefix, LoadPreviousStreamFileValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
         StreamFilePrompt streamFilePrompt) {
 
         String connection;
@@ -779,14 +775,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         }
 
         String directory;
-        if (loadPreviousValue.isLibrary()) {
+        if (loadPreviousValue.isDirectory()) {
             directory = loadValue(getStreamFilePromptDialogSettingsKey(prefix, DIRECTORY), null);
         } else {
             directory = getCurrentLeftDirectoryName();
         }
 
         String streamFile;
-        if (loadPreviousValue.isMember()) {
+        if (loadPreviousValue.isFile()) {
             streamFile = loadValue(getStreamFilePromptDialogSettingsKey(prefix, STREAM_FILE), null);
         } else {
             streamFile = getCurrentLeftStreamFileName();
@@ -861,6 +857,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     }
 
     private void storeHistory(StreamFilePrompt streamFilePrompt) {
+
+        if (!canStoreHistory()) {
+            return;
+        }
+
+        if (isSpecialStreamFileName(streamFilePrompt.getStreamFileName())) {
+            return;
+        }
 
         streamFilePrompt.updateHistory();
         streamFilePrompt.storeHistory();
