@@ -119,8 +119,8 @@ public abstract class CompareDialog extends XDialog {
      * Creates the compare dialog, for 0 selected members.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      */
     public CompareDialog(Shell parentShell, boolean selectEditable) {
         super(parentShell);
@@ -134,8 +134,8 @@ public abstract class CompareDialog extends XDialog {
      * Creates the compare dialog, for 1 selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      */
     public CompareDialog(Shell parentShell, boolean selectEditable, Member leftMember) {
@@ -150,8 +150,8 @@ public abstract class CompareDialog extends XDialog {
      * Creates the compare dialog, for 2 selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      */
@@ -167,8 +167,8 @@ public abstract class CompareDialog extends XDialog {
      * Creates a three-way compare dialog.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param leftMember - the left selected member
      * @param rightMember - the right selected member
      * @param ancestorMember - the ancestor member
@@ -185,8 +185,8 @@ public abstract class CompareDialog extends XDialog {
      * Creates the compare dialog, for 3 and more selected member.
      * 
      * @param parentShell - shell the dialog is associated to
-     * @param selectEditable - specifies whether or not option
-     *        "Open for browse/edit" is displayed
+     * @param selectEditable - specifies whether or not option "Open for
+     *        browse/edit" is displayed
      * @param selectedMembers - the selected members that go to the right side
      *        of the compare dialog
      */
@@ -285,6 +285,15 @@ public abstract class CompareDialog extends XDialog {
     protected boolean canStoreHistory() {
 
         if (historyValuesCategoryKey != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean isSpecialMemberName(String memberName) {
+
+        if (SPECIAL_MEMBER_NAME_LEFT.equals(memberName) || SPECIAL_MEMBER_NAME_SELECTED.equals(memberName)) {
             return true;
         }
 

@@ -1108,6 +1108,10 @@ public class Messages extends NLS {
 
     public static String Label_Connection;
 
+    public static String Label_Connection_Directory_File;
+
+    public static String Label_Connection_Directory;
+
     public static String Label_None;
 
     public static String Message_descriptions_compare;

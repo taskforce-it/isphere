@@ -30,6 +30,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.StreamFile;
+import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public abstract class CompareStreamFileDialog extends XDialog {
@@ -155,13 +156,13 @@ public abstract class CompareStreamFileDialog extends XDialog {
             return true;
         }
 
-        boolean isLoadingPreviousValuesEnabled = false; // Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled();
+        boolean isLoadingPreviousValuesEnabled = Preferences.getInstance().isSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled();
 
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousMemberValue getLoadPreviousValuesOfRightStreamFile() {
-        return LoadPreviousMemberValue.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfRightMember();
+    public LoadPreviousStreamFileValue getLoadPreviousValuesOfRightStreamFile() {
+        return Preferences.getInstance().getSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFile();
     }
 
     protected boolean isLoadingPreviousValuesOfAncestorStreamFileEnabled() {
@@ -170,13 +171,14 @@ public abstract class CompareStreamFileDialog extends XDialog {
             return true;
         }
 
-        boolean isLoadingPreviousValuesEnabled = false; // Preferences.getInstance().isSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled();
+        boolean isLoadingPreviousValuesEnabled = Preferences.getInstance()
+            .isSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled();
 
         return isLoadingPreviousValuesEnabled;
     }
 
-    public LoadPreviousMemberValue getLoadPreviousValuesOfAncestorStreamFile() {
-        return LoadPreviousMemberValue.NONE; // Preferences.getInstance().getSourceMemberCompareLoadingPreviousValuesOfAncestorMember();
+    public LoadPreviousStreamFileValue getLoadPreviousValuesOfAncestorStreamFile() {
+        return Preferences.getInstance().getSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFile();
     }
 
     private boolean isLoadedFromMainMenu() {
@@ -194,6 +196,15 @@ public abstract class CompareStreamFileDialog extends XDialog {
     protected boolean canStoreHistory() {
 
         if (!StringHelper.isNullOrEmpty(historyValuesCategoryKey)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected boolean isSpecialStreamFileName(String streamFileName) {
+
+        if (SPECIAL_STREAM_FILE_NAME_LEFT.equals(streamFileName) || SPECIAL_STREAM_FILE_NAME_SELECTED.equals(streamFileName)) {
             return true;
         }
 
