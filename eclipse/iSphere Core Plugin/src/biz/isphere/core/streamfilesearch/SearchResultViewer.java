@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -285,8 +285,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 IStreamFileEditor editor = ISpherePlugin.getStreamFileEditor();
 
                 if (editor != null) {
-                    editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), 0,
-                        getEditMode());
+                    editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), 0, getEditMode());
                 }
             }
         }
@@ -302,6 +301,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         private MenuItem menuItemInvertSelection;
         private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
+        private MenuItem menuItemSeparator2;
+        private MenuItem menuExportSelectedStreamFilesToExcel;
 
         public TableStreamFilesMenuAdapter(Menu menuTableStreamFiles) {
             this.menuTableStreamFiles = menuTableStreamFiles;
@@ -322,6 +323,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             dispose(menuItemInvertSelection);
             dispose(menuCopySelected);
             dispose(menuItemRemove);
+            dispose(menuItemSeparator2);
+            dispose(menuExportSelectedStreamFilesToExcel);
         }
 
         private void dispose(MenuItem menuItem) {
@@ -407,6 +410,18 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                     }
                 });
 
+                menuItemSeparator2 = new MenuItem(menuTableStreamFiles, SWT.SEPARATOR);
+
+                menuExportSelectedStreamFilesToExcel = new MenuItem(menuTableStreamFiles, SWT.NONE);
+                menuExportSelectedStreamFilesToExcel.setText(Messages.Export_to_Excel);
+                menuExportSelectedStreamFilesToExcel.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_EXCEL));
+                menuExportSelectedStreamFilesToExcel.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemExportSelectedStreamFilesToExcel();
+                    }
+                });
+
             }
 
         }
@@ -437,8 +452,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
                     IStreamFileEditor editor = ISpherePlugin.getStreamFileEditor();
                     if (editor != null) {
-                        editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(),
-                            statementLine, getEditMode());
+                        editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), statementLine, getEditMode());
                     }
                 }
             }
@@ -544,7 +558,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         menuTableStreamFiles.addMenuListener(new TableStreamFilesMenuAdapter(menuTableStreamFiles));
         tableStreamFiles.setMenu(menuTableStreamFiles);
 
-        final SorterTableViewerStreamFiles sorterTableViewerStreamFiles = new SorterTableViewerStreamFiles(tableViewerStreamFiles, tableColumnDirectory, SWT.UP);
+        final SorterTableViewerStreamFiles sorterTableViewerStreamFiles = new SorterTableViewerStreamFiles(tableViewerStreamFiles,
+            tableColumnDirectory, SWT.UP);
         tableViewerStreamFiles.setSorter(sorterTableViewerStreamFiles);
         sorterTableViewerStreamFiles.setOrder(null);
 
@@ -670,8 +685,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             for (int idx = 0; idx < selectedItemsStreamFiles.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsStreamFiles[idx];
-                editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), statement,
-                    IStreamFileEditor.EDIT);
+                editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), statement, IStreamFileEditor.EDIT);
             }
         }
     }
@@ -685,8 +699,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             for (int idx = 0; idx < selectedItemsStreamFiles.length; idx++) {
 
                 SearchResult _searchResult = (SearchResult)selectedItemsStreamFiles[idx];
-                editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), statement,
-                    IStreamFileEditor.DISPLAY);
+                editor.openEditor(connectionName, _searchResult.getDirectory(), _searchResult.getStreamFile(), statement, IStreamFileEditor.DISPLAY);
             }
         }
     }
@@ -741,6 +754,20 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         return date + " " + time;
     }
 
+    private void executeMenuItemExportSelectedStreamFilesToExcel() {
+
+        SearchResult[] _selectedMembers = new SearchResult[selectedItemsStreamFiles.length];
+        for (int i = 0; i < _selectedMembers.length; i++) {
+            _selectedMembers[i] = (SearchResult)selectedItemsStreamFiles[i];
+        }
+
+        StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(shell, getSearchOptions(), _selectedMembers);
+        if (_selectedMembers.length != getSearchResults().length) {
+            exporter.setPartialExport(true);
+        }
+        exporter.export();
+    }
+
     private void executeMenuItemRemoveSelectedItems() {
 
         List<SearchResult> searchResult = new ArrayList<SearchResult>(Arrays.asList(_searchResults));
@@ -788,7 +815,8 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
     public boolean hasItems() {
 
         if (tableViewerStreamFiles != null && tableViewerStreamFiles.getContentProvider() != null) {
-            ContentProviderTableViewerStreamFiles contentProvider = (ContentProviderTableViewerStreamFiles)tableViewerStreamFiles.getContentProvider();
+            ContentProviderTableViewerStreamFiles contentProvider = (ContentProviderTableViewerStreamFiles)tableViewerStreamFiles
+                .getContentProvider();
             if (contentProvider.getElements(null).length > 0) {
                 return true;
             }

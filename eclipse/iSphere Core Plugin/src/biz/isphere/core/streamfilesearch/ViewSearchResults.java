@@ -58,6 +58,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
 
+    private Action actionExportToExcel;
     private Action actionRemoveTabItem;
     private Action actionRemoveAllTabItems;
     private Action actionRemoveSelectedItems;
@@ -141,6 +142,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     }
 
     private void createActions() {
+
+        actionExportToExcel = new Action("") { //$NON-NLS-1$
+            @Override
+            public void run() {
+                exportToExcel();
+            }
+        };
+        actionExportToExcel.setToolTipText(Messages.Export_to_Excel);
+        actionExportToExcel.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EXCEL));
+        actionExportToExcel.setEnabled(false);
 
         actionRemoveTabItem = new Action("") { //$NON-NLS-1$
             @Override
@@ -230,6 +241,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         toolbarManager.add(actionRemoveSelectedItems);
         toolbarManager.add(actionInvertSelectedItems);
         toolbarManager.add(new Separator());
+        toolbarManager.add(actionExportToExcel);
         toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveTabItem);
         toolbarManager.add(actionRemoveAllTabItems);
@@ -275,6 +287,17 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         searchResultTabFolder.addTab(searchResultTab);
         tabItemSearchResult.setData(TAB_PERSISTENCE_DATA, searchResultTab);
         tabItemSearchResult.setToolTipText(searchResultTab.toText());
+    }
+
+    private void exportToExcel() {
+
+        SearchResultViewer _searchResultViewer = getSelectedViewer();
+        if (_searchResultViewer != null) {
+            SearchOptions _searchOptions = _searchResultViewer.getSearchOptions();
+            SearchResult[] _searchResults = _searchResultViewer.getSearchResults();
+            StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(getSite().getShell(), _searchOptions, _searchResults);
+            exporter.export();
+        }
     }
 
     private void removeAllTabItems() {
@@ -456,6 +479,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
         actionInvertSelectedItems.setEnabled(hasSelectedItems);
+        actionExportToExcel.setEnabled(hasItems);
         actionRemoveTabItem.setEnabled(hasSelectedViewer);
         actionRemoveAllTabItems.setEnabled(hasMultipleTabItems);
         actionDisableEdit.setEnabled(hasItems);

@@ -476,6 +476,10 @@ public class Messages extends NLS {
 
     public static String Members_with_statements;
 
+    public static String Stream_files;
+
+    public static String Stream_files_with_statements;
+
     public static String Line;
 
     public static String Files_with_Id_s;
