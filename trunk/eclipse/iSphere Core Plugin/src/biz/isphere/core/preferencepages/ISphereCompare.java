@@ -167,6 +167,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         labelLoadingPreviousValuesRightMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
 
         chkLoadingPreviousValuesRightMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
+        chkLoadingPreviousValuesRightMemberEnabled.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         chkLoadingPreviousValuesRightMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
         chkLoadingPreviousValuesRightMemberEnabled.setItems(loadPreviousMemberValuesItems());
         chkLoadingPreviousValuesRightMemberEnabled.addSelectionListener(new SelectionListener() {
@@ -184,6 +185,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         labelLoadingPreviousValuesAncestorMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
 
         chkLoadingPreviousValuesAncestorMemberEnabled = WidgetFactory.createReadOnlyCombo(group);
+        chkLoadingPreviousValuesAncestorMemberEnabled.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         chkLoadingPreviousValuesAncestorMemberEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
         chkLoadingPreviousValuesAncestorMemberEnabled.setItems(loadPreviousMemberValuesItems());
         chkLoadingPreviousValuesAncestorMemberEnabled.addSelectionListener(new SelectionListener() {
@@ -210,10 +212,11 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         Label labelLoadingPreviousValuesRightStreamFileEnabled = new Label(group, SWT.NONE);
         labelLoadingPreviousValuesRightStreamFileEnabled.setText(Messages.Load_previous_values_right);
-        labelLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+        labelLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_stream_file_values_right);
 
         chkLoadingPreviousValuesRightStreamFileEnabled = WidgetFactory.createReadOnlyCombo(group);
-        chkLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_right);
+        chkLoadingPreviousValuesRightStreamFileEnabled.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        chkLoadingPreviousValuesRightStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_stream_file_values_right);
         chkLoadingPreviousValuesRightStreamFileEnabled.setItems(loadPreviousStreamFileValuesItems());
         chkLoadingPreviousValuesRightStreamFileEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
@@ -227,10 +230,11 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         Label labelLoadingPreviousValuesAncestorStreamFileEnabled = new Label(group, SWT.NONE);
         labelLoadingPreviousValuesAncestorStreamFileEnabled.setText(Messages.Load_previous_values_ancestor);
-        labelLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+        labelLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_stream_file_values_ancestor);
 
         chkLoadingPreviousValuesAncestorStreamFileEnabled = WidgetFactory.createReadOnlyCombo(group);
-        chkLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_values_ancestor);
+        chkLoadingPreviousValuesAncestorStreamFileEnabled.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        chkLoadingPreviousValuesAncestorStreamFileEnabled.setToolTipText(Messages.Tooltip_Load_previous_stream_file_values_ancestor);
         chkLoadingPreviousValuesAncestorStreamFileEnabled.setItems(loadPreviousStreamFileValuesItems());
         chkLoadingPreviousValuesAncestorStreamFileEnabled.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {

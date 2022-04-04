@@ -1100,6 +1100,10 @@ public class Messages extends NLS {
 
     public static String Tooltip_Load_previous_values_ancestor;
 
+    public static String Tooltip_Load_previous_stream_file_values_right;
+
+    public static String Tooltip_Load_previous_stream_file_values_ancestor;
+
     public static String Source_stream_file_compare_dialog;
 
     public static String Label_Connection_Library_File_Member;
