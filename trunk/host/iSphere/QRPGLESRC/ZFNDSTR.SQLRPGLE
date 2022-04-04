@@ -51,10 +51,19 @@
 005100220309
 005200220310      /Copy QCPYSRC,LOCALE
 005300220310
+005301220404      /Copy QCPYSRC,QGETFILEA
+005302220404
 005400220310      /Copy QCPYSRC,STDIO_H
 005500220310
 005600220310      /Copy QCPYSRC,IFSIO_H
 005700220309
+005703220404      /Copy QCPYSRC,CLIB_H
+005704220404
+005705220404      // Local type templates
+005706220404
+005707220404     D SLASH           C                   '/'
+005708220404     d path_t          S            256A   varying
+005709220404
 005800220309      // Local procedures
 005900220309
 006000220309     d performSearch...
@@ -113,7 +122,20 @@
 011300220309
 011400220310     d freeIconv...
 011500220310     d                 PR                  Extproc('freeIconv')
-011600220309
+011501220404
+011600220404     d getDateLastChanged...
+011601220404     d                 PR              Z   Extproc('getDateLastChanged')
+011603220404     d i_path                              const like(path_t)
+011604220404
+011607220404     d createPath...
+011608220404     d                 PR                  like(path_t)
+011609220404     d                                     Extproc('createPath')
+011611220404     d i_path                              const  likeds(Qlg_Path_Name_t)
+011612220404
+011613220404     d convertEpochToRpg...
+011614220404     d                 PR              Z   Extproc('convertEpochToRpg')
+011616220404     d i_epochTmStmp                 10I 0 value
+011617220404
 011700220310     d cvtCcsid...
 011800220310     d                 PR                        like(searchArgument_t.string)
 011900220309     d                                     Extproc('cvtCcsid')
@@ -932,7 +954,7 @@
 093200220310     d  lastChgData                    Z
 093300220310
 093400220310     d l_pos           S              5S 0
-093500220309
+093500220404     d path            S                   like(path_t) inz
 093600220310      /Free
 093700220309
 093800220310       // Retrieve stream file attributes
@@ -943,8 +965,9 @@
 094300220310         stmfAttrs.srcType = %SubSt(i_stmf : l_pos + 1);
 094400220311         stmfAttrs.srcType = %XLate(g_LO:g_UP: stmfAttrs.srcType);
 094500220310       EndIf;
-094600220310       // TODO: Get the last change date of the stream file
-094700220310       stmfAttrs.lastChgData = *LoVal;
+094600220404
+094601220404       path = %trim(i_dir) + SLASH + %trim(i_stmf);
+094700220404       stmfAttrs.lastChgData = getDateLastChanged(path);
 094800220310
 094900220310       // Write file 'Output'
 095000220310       Exec SQL
@@ -1080,7 +1103,132 @@
 108000220309
 108100220310     p                 E
 108200220309
-108300220309      //*==========================================================================================*
+108202220404      //*==========================================================================================*
+108203220404      //* Get file last changed date.                                                              *
+108204220404      //*==========================================================================================*
+108205220404
+108206220404     P getDateLastChanged...
+108207220404     P                 B
+108208220404     D                 PI              Z
+108211220404     D i_path                              const like(path_t)
+108212220404
+108215220404     D lastChanged     S               Z   inz
+108217220404
+108218220404     D rc              S             10I 0 inz
+108219220404     D bytPrv          S             10U 0 inz
+108220220404     D sizeNeeded      S             10U 0 inz
+108221220404     D bytRet          S             10U 0 inz
+108222220404     D path            DS                  likeds(Qlg_Path_Name_t) inz
+108223220404     D attrArray       DS                  likeds(Qlg_attrArray_t) inz
+108224220404     D rtnAttr         DS                  likeds(Qlg_rtnAttr_t)
+108225220404     D                                     based(pRtnAttr)
+108226220404     D timeEpo         S             10U 0 based(pTimeEpo)
+108227220404      * ---------------------------------------------------------
+108228220404      /free
+108229220404
+108230220404         // Prepare path name
+108231220404         path = createPath(i_path);
+108232220404
+108233220404         // Specify what attributes we want
+108234220404         clear attrArray;
+108235220404         attrArray.numE = 1;
+108236220404         attrArray.attr(1) = QP0L_ATTR_MODIFY_TIME;
+108237220404
+108238220404         // Allocate buffer for result of Qp0lGetAttr
+108239220404         bytPrv = 32;
+108240220404         pRtnAttr = %alloc(bytPrv);
+108241220404         clear rtnAttr;
+108242220404
+108243220404         // Retrieve file attributes
+108244220404         rc = Qp0lGetAttr(path
+108245220404                          : attrArray
+108246220404                          : pRtnAttr
+108247220404                          : bytPrv
+108248220404                          : sizeNeeded
+108249220404                          : bytRet
+108250220404                          : 0);
+108251220404
+108252220404         if rc = 0;
+108253220404            pTimeEpo = pRtnAttr + %size(rtnAttr);
+108254220404            lastChanged = convertEpochToRpg(timeEpo);
+108255220404         else;
+108256220404            lastChanged = *LoVal;
+108257220404         endif;
+108258220404
+108259220404         return lastChanged;
+108260220404
+108261220404      /end-free
+108262220404      *
+108263220404     P                 E
+108265220404
+108266220404      //*==========================================================================================*
+108270220404      //* Initializes the path structure for the Qp0lGetAttr API.                                  *
+108271220404      //*==========================================================================================*
+108272220404
+108273220404     P createPath...
+108274220404     P                 B
+108275220404     D                 PI                  like(path_t)
+108278220404     D i_path                              const  likeds(Qlg_Path_Name_t)
+108279220404
+108280220404     D path            DS                  likeds(Qlg_Path_Name_t) inz
+108281220404      /free
+108284220404
+108285220404         clear path;
+108286220404         path.CCSID               = QLG_PATH_JOB_CCSID;     // Use current job default CCSID
+108287220404         path.Country_ID          = QLG_PATH_JOB_COUNTRYID; // Use the current job country
+108288220404                                                            // or region ID
+108289220404         path.Language_ID         = QLG_PATH_JOB_LANGUAGEID;// Use the current job lang. ID
+108290220404         path.Reserved            = *ALLx'00';
+108291220404         path.Path_Type           = QLG_CHAR_SINGLE;        // 0 = Path is character String,
+108292220404                                                            //     1-byte delimiter.
+108293220404                                                            // 1 = Path is pointer,
+108294220404                                                            //     1-byte delimiter.
+108295220404                                                            // 2 = Path is character String,
+108296220404                                                            //     2-byte delimiter.
+108297220404                                                            // 3 = Path is pointer,
+108298220404                                                            //     2-byte delimiter.
+108299220404         path.Path_Length         = %len(%trimR(i_path));
+108300220404         path.Path_Name_Delimiter = SLASH;
+108301220404         path.Reserved2           = *ALLx'00';
+108302220404         path.Path_Name           = i_path;
+108303220404
+108304220404         return path;
+108305220404
+108306220404      /end-free
+108307220404     P                 E
+108310220404
+108311220404      //*==========================================================================================*
+108316220404      //* Converts a timestamp from Epoch to RPG format.                                           *
+108317220404      //*==========================================================================================*
+108318220404     P convertEpochToRpg...
+108319220404     P                 B
+108320220404     D                 PI              Z
+108323220404     D i_epochTmStmp                 10I 0 value
+108324220404
+108325220404     D tmStmp          S               Z   inz
+108327220404
+108328220404     D ftimef          S             16A   inz('%Y-%m-%d%H.%M.%S')
+108330220404
+108331220404     D ftimest         DS                  qualified
+108332220404     D  date                         10A
+108333220404     D  time                          8A
+108334220404     D  null                          1A   inz(x'00')
+108335220404
+108336220404     D time            DS                  likeds(tm_t)  inz
+108337220404      /free
+108367220404
+108368220404         if (localtime_r(i_epochTmStmp: time) <> *NULL);
+108369220404            if (strftime(%addr(ftimest):%size(ftimest):%trim(ftimef):time) > 0);
+108370220404               tmStmp=%timestamp(ftimest.date + '-' + ftimest.time + '.000000');
+108371220404            endif;
+108372220404         endif;
+108373220404
+108374220404         return tmStmp;
+108375220404
+108376220404      /end-free
+108377220404     P                 E
+108378220404
+108379220309      //*==========================================================================================*
 108400220310      //* Free iconv handle                                                                        *
 108500220309      //*==========================================================================================*
 108600220309
