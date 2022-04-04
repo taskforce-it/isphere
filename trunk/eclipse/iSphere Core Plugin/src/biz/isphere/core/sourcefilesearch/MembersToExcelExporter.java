@@ -10,6 +10,19 @@ package biz.isphere.core.sourcefilesearch;
 
 import java.io.File;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
+
+import biz.isphere.base.internal.FileHelper;
+import biz.isphere.core.Messages;
+import biz.isphere.core.internal.MessageDialogAsync;
+import biz.isphere.core.internal.filemanager.FileManager;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.SearchArgument;
+import biz.isphere.core.search.SearchOptions;
+import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
+import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 import jxl.Workbook;
 import jxl.format.Colour;
 import jxl.format.Font;
@@ -18,19 +31,6 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
-
-import biz.isphere.base.internal.FileHelper;
-import biz.isphere.core.Messages;
-import biz.isphere.core.internal.MessageDialogAsync;
-import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.search.GenericSearchOption;
-import biz.isphere.core.search.SearchArgument;
-import biz.isphere.core.search.SearchOptions;
-import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
-import biz.isphere.core.swt.widgets.extension.point.IFileDialog;
 
 public class MembersToExcelExporter {
 
@@ -97,6 +97,8 @@ public class MembersToExcelExporter {
 
                 workbook.write();
                 workbook.close();
+
+                FileManager.askAndOpenSavedFile(shell, file);
 
             } catch (Exception e) {
                 MessageDialogAsync.displayError(shell, e.getLocalizedMessage());
