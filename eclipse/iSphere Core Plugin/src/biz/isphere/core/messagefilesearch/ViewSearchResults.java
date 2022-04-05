@@ -76,6 +76,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionEnableAutoSave;
 
     private CTabFolder tabFolderSearchResults;
+    private Menu tabFolderSearchResultsPopUpMenu;
     private Shell shell;
     private SearchResultManager manager;
 
@@ -120,8 +121,8 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         tabFolderSearchResults.addMouseListener(new CloseTabOnDoubleClickListener());
 
-        Menu popUpMenu = new Menu(tabFolderSearchResults);
-        MenuItem menuItem = new MenuItem(popUpMenu, SWT.PUSH);
+        tabFolderSearchResultsPopUpMenu = new Menu(tabFolderSearchResults);
+        MenuItem menuItem = new MenuItem(tabFolderSearchResultsPopUpMenu, SWT.PUSH);
         menuItem.setText(Messages.MenuItem_Display_Search_Options);
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -135,8 +136,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 }
             }
         });
-
-        tabFolderSearchResults.setMenu(popUpMenu);
 
         createActions();
         initializeToolBar();
@@ -549,6 +548,12 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         resetColumnSizeAction.setEnabled(true);
         resetColumnSizeAction.setViewer(getSelectedViewer());
+
+        if (hasItems) {
+            tabFolderSearchResults.setMenu(tabFolderSearchResultsPopUpMenu);
+        } else {
+            tabFolderSearchResults.setMenu(null);
+        }
     }
 
     private SearchResultViewer getSelectedViewer() {
