@@ -1,4 +1,5 @@
 package biz.isphere.rse.internal;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,12 +8,12 @@ import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.model.IRSEPersistableContainer;
 import org.eclipse.rse.core.model.ISystemProfile;
 
+import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
+
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
-
-import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 
 /*******************************************************************************
  * Copyright (c) 2012-2017 iSphere Project Owners All rights reserved. This
@@ -23,6 +24,38 @@ import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 
 public abstract class AbstractFilterCreator {
 
+    /**
+     * Returns the filters of the subsystem identified by the specified filter
+     * type of a given connection.
+     * 
+     * @param connectionName - Name of the RSE connection
+     * @param filterType - Filter type, must be one of the filter types defined
+     *        in {@link RSEFilter}.
+     * @return filter pools
+     */
+    public RSEFilterPool[] getFilterPools(String connectionName, String filterType) {
+
+        ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName, filterType);
+
+        List<RSEFilterPool> rseFilterPools = new ArrayList<RSEFilterPool>();
+        for (ISystemFilterPool filterPool : filterPools) {
+            rseFilterPools.add(createRSEFilterPool(filterPool));
+        }
+
+        RSEFilterPool[] sortedFilterPoolNames = rseFilterPools.toArray(new RSEFilterPool[rseFilterPools.size()]);
+        // Arrays.sort(sortedFilterPoolNames);
+
+        return sortedFilterPoolNames;
+    }
+
+    /**
+     * Returns the filters of the object subsystem of a given connection.
+     * 
+     * @param connectionName - Name of the RSE connection
+     * @return filter pools
+     * @deprecated Use {@link #getFilterPools(String, String)} instead.
+     */
+    @Deprecated()
     public RSEFilterPool[] getFilterPools(String connectionName) {
 
         ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
@@ -51,6 +84,8 @@ public abstract class AbstractFilterCreator {
                 rseFilter = createRSEFilter(rseFilterPool, filter);
             } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
                 rseFilter = createRSEFilter(rseFilterPool, filter);
+            } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
+                rseFilter = createRSEFilter(rseFilterPool, filter);
             }
 
             if (rseFilter != null) {
@@ -77,9 +112,11 @@ public abstract class AbstractFilterCreator {
             return RSEFilter.TYPE_OBJECT;
         } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
             return RSEFilter.TYPE_MEMBER;
-        } else
+        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
+            return RSEFilter.TYPE_IFS;
+        }
 
-            return null;
+        return null;
     }
 
     private RSEProfile createRSEProfile(ISystemFilterPool filterPool) {

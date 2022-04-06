@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -49,8 +50,11 @@ import biz.isphere.base.internal.IResizableTableColumnsViewer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.DateTimeHelper;
+import biz.isphere.core.internal.FilterDialog;
 import biz.isphere.core.internal.IStreamFileEditor;
+import biz.isphere.core.internal.IStreamFileSearchIFSFilterCreator;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.SearchOptions;
 
 public class SearchResultViewer implements IResizableTableColumnsViewer {
@@ -302,6 +306,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         private MenuItem menuCopySelected;
         private MenuItem menuItemRemove;
         private MenuItem menuItemSeparator2;
+        private MenuItem menuCreateFilterFromSelectedStreamFiles;
         private MenuItem menuExportSelectedStreamFilesToExcel;
 
         public TableStreamFilesMenuAdapter(Menu menuTableStreamFiles) {
@@ -324,6 +329,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
             dispose(menuCopySelected);
             dispose(menuItemRemove);
             dispose(menuItemSeparator2);
+            dispose(menuCreateFilterFromSelectedStreamFiles);
             dispose(menuExportSelectedStreamFilesToExcel);
         }
 
@@ -411,6 +417,16 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
                 });
 
                 menuItemSeparator2 = new MenuItem(menuTableStreamFiles, SWT.SEPARATOR);
+
+                menuCreateFilterFromSelectedStreamFiles = new MenuItem(menuTableStreamFiles, SWT.NONE);
+                menuCreateFilterFromSelectedStreamFiles.setText(Messages.Export_to_IFS_Filter);
+                menuCreateFilterFromSelectedStreamFiles.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_IFS_FILTER));
+                menuCreateFilterFromSelectedStreamFiles.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        executeMenuItemCreateFilterFromSelectedStreamFiles();
+                    }
+                });
 
                 menuExportSelectedStreamFilesToExcel = new MenuItem(menuTableStreamFiles, SWT.NONE);
                 menuExportSelectedStreamFilesToExcel.setText(Messages.Export_to_Excel);
@@ -754,15 +770,36 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
         return date + " " + time;
     }
 
+    private void executeMenuItemCreateFilterFromSelectedStreamFiles() {
+
+        IStreamFileSearchIFSFilterCreator creator = ISpherePlugin.getStreamFileSearchIFSFilterCreator();
+
+        if (creator != null) {
+
+            SearchResult[] _selectedStreamFiles = new SearchResult[selectedItemsStreamFiles.length];
+            for (int i = 0; i < _selectedStreamFiles.length; i++) {
+                _selectedStreamFiles[i] = (SearchResult)selectedItemsStreamFiles[i];
+            }
+
+            FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_MEMBER);
+            dialog.setFilterPools(creator.getFilterPools(getConnectionName()));
+            if (dialog.open() == Dialog.OK) {
+                if (!creator.createIFSFilter(getConnectionName(), dialog.getFilterPool(), dialog.getFilter(), dialog.getFilterUpdateType(),
+                    _selectedStreamFiles)) {
+                }
+            }
+        }
+    }
+
     private void executeMenuItemExportSelectedStreamFilesToExcel() {
 
-        SearchResult[] _selectedMembers = new SearchResult[selectedItemsStreamFiles.length];
-        for (int i = 0; i < _selectedMembers.length; i++) {
-            _selectedMembers[i] = (SearchResult)selectedItemsStreamFiles[i];
+        SearchResult[] _selectedStreamFiles = new SearchResult[selectedItemsStreamFiles.length];
+        for (int i = 0; i < _selectedStreamFiles.length; i++) {
+            _selectedStreamFiles[i] = (SearchResult)selectedItemsStreamFiles[i];
         }
 
-        StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(shell, getSearchOptions(), _selectedMembers);
-        if (_selectedMembers.length != getSearchResults().length) {
+        StreamFileToExcelExporter exporter = new StreamFileToExcelExporter(shell, getSearchOptions(), _selectedStreamFiles);
+        if (_selectedStreamFiles.length != getSearchResults().length) {
             exporter.setPartialExport(true);
         }
         exporter.export();

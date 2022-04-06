@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import biz.isphere.rse.internal.Editor;
 import biz.isphere.rse.internal.MessageFileSearchObjectFilterCreator;
 import biz.isphere.rse.internal.SourceFileSearchMemberFilterCreator;
 import biz.isphere.rse.internal.StreamFileEditor;
+import biz.isphere.rse.internal.StreamFileSearchIFSFilterCreator;
 import biz.isphere.rse.internal.ViewManager;
 import biz.isphere.rse.search.SearchArgumentsListEditorProvider;
 import biz.isphere.rse.spooledfiles.SpooledFileAdapterFactory;
@@ -69,6 +70,7 @@ public class ISphereRSEPlugin extends AbstractUIPlugin implements LpexMenuExtens
         ISpherePlugin.setStreamFileEditor(new StreamFileEditor());
         ISpherePlugin.setSourceFileSearchMemberFilterCreator(new SourceFileSearchMemberFilterCreator());
         ISpherePlugin.setMessageFileSearchObjectFilterCreator(new MessageFileSearchObjectFilterCreator());
+        ISpherePlugin.setStreamFileSearchIFSFilterCreator(new StreamFileSearchIFSFilterCreator());
         ISpherePlugin.setSearchArgumentsListEditor(true);
         ISpherePlugin.setSearchArgumentsListEditorProvider(new SearchArgumentsListEditorProvider());
         setupAdapters();

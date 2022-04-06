@@ -22,14 +22,14 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
+import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
-
-import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 @SuppressWarnings("restriction")
 public class RSEFilterHelper extends AbstractSystemHelper {
@@ -74,6 +74,7 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         return filters.toArray(new ISystemFilter[filters.size()]);
     }
 
+    // TODO: add support for IFS filters
     public static RSEFilterPool[] getFilterPools(RSEProfile rseProfile) {
 
         ArrayList<RSEFilterPool> allFilterPools = new ArrayList<RSEFilterPool>();
@@ -127,6 +128,8 @@ public class RSEFilterHelper extends AbstractSystemHelper {
                 type = RSEFilter.TYPE_OBJECT;
             } else if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
                 type = RSEFilter.TYPE_MEMBER;
+            } else if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
+                type = RSEFilter.TYPE_IFS;
             } else {
                 type = RSEFilter.TYPE_UNKNOWN;
             }
@@ -179,6 +182,8 @@ public class RSEFilterHelper extends AbstractSystemHelper {
                 newType = IQSYSFilterTypes.FILTERTYPE_OBJECT;
             } else if (type.equals(RSEFilter.TYPE_MEMBER)) {
                 newType = IQSYSFilterTypes.FILTERTYPE_MEMBER;
+            } else if (type.equals(RSEFilter.TYPE_IFS)) {
+                newType = IQSYSFilterTypes.FILTERTYPE_IFS;
             }
             if (newType != null) {
                 try {
@@ -204,6 +209,90 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         }
     }
 
+    /**
+     * Returns the filters of the subsystem identified by the specified filter
+     * type of a given connection.
+     * 
+     * @param connectionName - Name of the RSE connection
+     * @param filterType - Filter type, must be one of the filter types defined
+     *        in {@link RSEFilter}.
+     * @return filter pools
+     */
+    public static ISystemFilterPool[] getFilterPools(String connectionName, String filterType) {
+
+        ISystemFilterPool[] pools = null;
+
+        if (RSEFilter.TYPE_LIBRARY.equals(filterType)) {
+            pools = getQSYSObjectSubsystemFilterPools(connectionName);
+        } else if (RSEFilter.TYPE_OBJECT.equals(filterType)) {
+            pools = getQSYSObjectSubsystemFilterPools(connectionName);
+        } else if (RSEFilter.TYPE_MEMBER.equals(filterType)) {
+            pools = getQSYSObjectSubsystemFilterPools(connectionName);
+        } else if (RSEFilter.TYPE_IFS.equals(filterType)) {
+            pools = getIFSSubsystemFilterPools(connectionName);
+        } else {
+            throw new IllegalArgumentException("Unsupported filter type: " + filterType);
+        }
+
+        return pools;
+    }
+
+    private static ISystemFilterPool[] getQSYSObjectSubsystemFilterPools(String connectionName) {
+
+        IBMiConnection connection = getConnection(connectionName);
+        ISubSystem subSystem = connection.getQSYSObjectSubSystem();
+
+        ISystemFilterPool pools[] = getFilterPoolsBySubsystem(connectionName, subSystem);
+
+        return pools;
+    }
+
+    private static ISystemFilterPool[] getIFSSubsystemFilterPools(String connectionName) {
+
+        ISystemFilterPool pools[] = getFilterPoolsBySubsystemId(connectionName, "com.ibm.etools.iseries.subsystems.ifs.files.ifs");
+
+        return pools;
+    }
+
+    private static ISystemFilterPool[] getFilterPoolsBySubsystemId(String connectionName, String subSystemId) {
+
+        ISystemFilterPool pools[] = null;
+
+        IBMiConnection connection = getConnection(connectionName);
+        ISubSystem subsystem = connection.getSubSystemByClass(subSystemId);
+        if (subsystem != null) {
+            pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
+        }
+
+        if (pools == null) {
+            pools = new ISystemFilterPool[0];
+        }
+
+        return pools;
+    }
+
+    private static ISystemFilterPool[] getFilterPoolsBySubsystem(String connectionName, ISubSystem subSystem) {
+
+        ISystemFilterPool pools[] = null;
+
+        if (subSystem != null) {
+            pools = subSystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
+        }
+
+        if (pools == null) {
+            pools = new ISystemFilterPool[0];
+        }
+
+        return pools;
+    }
+
+    /**
+     * Returns the filters of the object subsystem of a given connection.
+     * 
+     * @param connectionName - Name of the RSE connection
+     * @return filter pools
+     * @deprecated Use {@link #getFilterPools(String, String)} instead.
+     */
     public static ISystemFilterPool[] getFilterPools(String connectionName) {
 
         ISystemFilterPool pools[] = null;
