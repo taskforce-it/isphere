@@ -380,7 +380,7 @@ public class SearchResultViewer implements IResizableTableColumnsViewer {
 
                 menuCreateFilterFromSelectedMembers = new MenuItem(menuTableMessageFiles, SWT.NONE);
                 menuCreateFilterFromSelectedMembers.setText(Messages.Export_to_Object_Filter);
-                menuCreateFilterFromSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_MEMBER_FILTER));
+                menuCreateFilterFromSelectedMembers.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_OBJECT_FILTER));
                 menuCreateFilterFromSelectedMembers.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
