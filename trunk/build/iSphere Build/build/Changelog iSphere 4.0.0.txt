@@ -1,6 +1,9 @@
 
 Changelog: iSphere 5.0.1.r
 --------------------------
+ • Added Excel export to iSphere Stream File Search result view.
+ • Added option for creating an IFS filter to iSphere Stream File
+   Search result view.
  • Added options to set the previous values when comparing stream
    files.
  • Added column Severity to iSphere Message File Editor.

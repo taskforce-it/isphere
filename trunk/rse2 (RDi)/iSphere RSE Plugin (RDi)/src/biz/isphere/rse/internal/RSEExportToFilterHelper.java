@@ -20,18 +20,31 @@ import org.eclipse.rse.core.filters.ISystemFilterPoolManager;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.ui.PlatformUI;
 
-import biz.isphere.core.internal.FilterUpdateType;
-import biz.isphere.rse.Messages;
-import biz.isphere.rse.connection.ConnectionManager;
-import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
-
+import com.ibm.etools.iseries.comm.filters.ISeriesIFSFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesLibraryFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.core.internal.FilterUpdateType;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
+import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
+
 public class RSEExportToFilterHelper {
+
+    public static ISystemFilter createOrUpdateIFSFilter(String connectionName, String filterPoolName, String filterName,
+        FilterUpdateType filterUpdateType, ISeriesIFSFilterString[] filterStrings) {
+
+        Vector<String> _filterStrings = new Vector<String>();
+        for (int idx = 0; idx < filterStrings.length; idx++) {
+            _filterStrings.add(filterStrings[idx].toString());
+        }
+
+        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_IFS, filterName, filterUpdateType, _filterStrings);
+
+    }
 
     public static ISystemFilter createOrUpdateMemberFilter(String connectionName, String filterPoolName, String filterName,
         FilterUpdateType filterUpdateType, ISeriesMemberFilterString[] filterStrings) {
@@ -74,7 +87,8 @@ public class RSEExportToFilterHelper {
 
         ISystemFilterPool filterPool = null;
 
-        ISystemFilterPool[] pools = RSEFilterHelper.getFilterPools(connectionName);
+        ISystemFilterPool[] pools = RSEFilterHelper.getFilterPools(connectionName, filterType);
+
         if (pools != null && pools.length >= 1) {
 
             for (ISystemFilterPool pool : pools) {
@@ -98,16 +112,13 @@ public class RSEExportToFilterHelper {
 
         try {
 
-            ISubSystem subsystem = getSubSystem(getConnection(connectionName));
-            ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
-
             if (filterExists(filterPool, filterName)) {
                 if (filterUpdateType == FilterUpdateType.REPLACE) {
                     removeAllFilterStrings(filterPool, filterName);
                 }
-                updateFilterStrings(dftPoolMgr, filterPool, filterName, filterStrings);
+                updateFilterStrings(getSystemFilterPoolManager(connectionName), filterPool, filterName, filterStrings);
             } else {
-                return dftPoolMgr.createSystemFilter(filterPool, filterName, filterStrings, filterType);
+                return getSystemFilterPoolManager(connectionName).createSystemFilter(filterPool, filterName, filterStrings, filterType);
             }
 
         } catch (Exception e) {
@@ -115,6 +126,14 @@ public class RSEExportToFilterHelper {
         }
 
         return null;
+    }
+
+    private static ISystemFilterPoolManager getSystemFilterPoolManager(String connectionName) {
+
+        ISubSystem subsystem = getSubSystem(getConnection(connectionName));
+        ISystemFilterPoolManager dftPoolMgr = subsystem.getFilterPoolReferenceManager().getDefaultSystemFilterPoolManager();
+
+        return dftPoolMgr;
     }
 
     private static void updateFilterStrings(ISystemFilterPoolManager dftPoolMgr, ISystemFilterPool filterPool, String filterName,

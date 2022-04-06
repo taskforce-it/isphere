@@ -494,6 +494,8 @@ public class Messages extends NLS {
 
     public static String Export_to_Object_Filter;
 
+    public static String Export_to_IFS_Filter;
+
     public static String Specify_a_filter;
 
     public static String The_value_in_field_Filter_is_not_valid;

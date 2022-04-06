@@ -14,6 +14,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -46,10 +47,13 @@ import biz.isphere.base.internal.actions.ResetColumnSizeAction;
 import biz.isphere.base.swt.widgets.CloseTabOnDoubleClickListener;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.internal.FilterDialog;
+import biz.isphere.core.internal.IStreamFileSearchIFSFilterCreator;
 import biz.isphere.core.internal.exception.LoadFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
 import biz.isphere.core.internal.filemanager.FileManager;
 import biz.isphere.core.preferences.Preferences;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.search.DisplaySearchOptionsDialog;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.extension.handler.WidgetFactoryContributionsHandler;
@@ -60,6 +64,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final String TAB_DATA_VIEWER = "Viewer"; //$NON-NLS-1$
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
 
+    private Action actionExportToIFSFilter;
     private Action actionExportToExcel;
     private Action actionRemoveSelectedTabItem;
     private Action actionRemoveAllTabItems;
@@ -136,6 +141,16 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     }
 
     private void createActions() {
+
+        actionExportToIFSFilter = new Action("") { //$NON-NLS-1$
+            @Override
+            public void run() {
+                exportToIFSFilter();
+            }
+        };
+        actionExportToIFSFilter.setToolTipText(Messages.Export_to_IFS_Filter);
+        actionExportToIFSFilter.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_IFS_FILTER));
+        actionExportToIFSFilter.setEnabled(false);
 
         actionExportToExcel = new Action("") { //$NON-NLS-1$
             @Override
@@ -235,6 +250,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         toolbarManager.add(actionRemoveSelectedItems);
         toolbarManager.add(actionInvertSelectedItems);
         toolbarManager.add(new Separator());
+        toolbarManager.add(actionExportToIFSFilter);
         toolbarManager.add(actionExportToExcel);
         toolbarManager.add(new Separator());
         toolbarManager.add(actionRemoveSelectedTabItem);
@@ -281,6 +297,26 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         searchResultTabFolder.addTab(searchResultTab);
         tabItemSearchResult.setData(TAB_PERSISTENCE_DATA, searchResultTab);
         tabItemSearchResult.setToolTipText(searchResultTab.toText());
+    }
+
+    private void exportToIFSFilter() {
+
+        IStreamFileSearchIFSFilterCreator creator = ISpherePlugin.getStreamFileSearchIFSFilterCreator();
+
+        if (creator != null) {
+
+            SearchResultViewer _searchResultViewer = getSelectedViewer();
+            if (_searchResultViewer != null) {
+
+                FilterDialog dialog = new FilterDialog(shell, RSEFilter.TYPE_IFS);
+                dialog.setFilterPools(creator.getFilterPools(_searchResultViewer.getConnectionName()));
+                if (dialog.open() == Dialog.OK) {
+                    if (!creator.createIFSFilter(_searchResultViewer.getConnectionName(), dialog.getFilterPool(), dialog.getFilter(),
+                        dialog.getFilterUpdateType(), _searchResultViewer.getSearchResults())) {
+                    }
+                }
+            }
+        }
     }
 
     private void exportToExcel() {
@@ -476,6 +512,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
         actionInvertSelectedItems.setEnabled(hasSelectedItems);
+        actionExportToIFSFilter.setEnabled(hasItems);
         actionExportToExcel.setEnabled(hasItems);
         actionRemoveSelectedTabItem.setEnabled(hasSelectedViewer);
         actionRemoveAllTabItems.setEnabled(hasMultipleTabItems);

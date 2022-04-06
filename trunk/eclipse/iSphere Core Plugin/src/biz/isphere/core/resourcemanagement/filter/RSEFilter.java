@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ public class RSEFilter extends AbstractResource implements Comparable<RSEFilter>
     public static final String TYPE_LIBRARY = "LIBRARY";
     public static final String TYPE_OBJECT = "OBJECT";
     public static final String TYPE_MEMBER = "MEMBER";
+    public static final String TYPE_IFS = "IFS";
     public static final String TYPE_UNKNOWN = "UNKNOWN";
 
     private RSEFilterPool filterPool;
@@ -118,6 +119,8 @@ public class RSEFilter extends AbstractResource implements Comparable<RSEFilter>
             return Messages.Object;
         } else if (type.equals(TYPE_MEMBER)) {
             return Messages.Member;
+        } else if (type.equals(TYPE_IFS)) {
+            return Messages.Stream_file;
         } else if (type.equals(TYPE_UNKNOWN)) {
             return Messages.Unknown;
         } else {

@@ -41,6 +41,7 @@ import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.IMessageFileSearchObjectFilterCreator;
 import biz.isphere.core.internal.ISourceFileSearchMemberFilterCreator;
 import biz.isphere.core.internal.IStreamFileEditor;
+import biz.isphere.core.internal.IStreamFileSearchIFSFilterCreator;
 import biz.isphere.core.internal.SearchForUpdates;
 import biz.isphere.core.internal.api.retrieveproductinformation.PRDI0100;
 import biz.isphere.core.internal.api.retrieveproductinformation.PRDR0100;
@@ -67,6 +68,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static IStreamFileEditor streamFileEditor = null;
     public static ISourceFileSearchMemberFilterCreator sourceFileSearchMemberFilterCreator = null;
     public static IMessageFileSearchObjectFilterCreator messageFileSearchObjectFilterCreator = null;
+    public static IStreamFileSearchIFSFilterCreator streamFileSearchIFSFilterCreator = null;
     private static String ISPHERE_SPOOLED_FILES_PROJECT_NAME = "iSphereSpooledFiles";
     private static String ECLIPSE_PROJECT_FILE_NAME = ".project";
 
@@ -98,6 +100,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_EXCEL = "excel.png";
     public static final String IMAGE_MEMBER_FILTER = "member_filter.gif";
     public static final String IMAGE_OBJECT_FILTER = "object_filter.gif";
+    public static final String IMAGE_IFS_FILTER = "ifs_filter.gif";
     public static final String IMAGE_SWITCH_MEMBER = "switch_member.gif";
     public static final String IMAGE_EXPAND_ALL = "expandall.gif";
     public static final String IMAGE_COLLAPSE_ALL = "collapseall.gif";
@@ -284,6 +287,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_EXCEL, getImageDescriptor(IMAGE_EXCEL));
         reg.put(IMAGE_MEMBER_FILTER, getImageDescriptor(IMAGE_MEMBER_FILTER));
         reg.put(IMAGE_OBJECT_FILTER, getImageDescriptor(IMAGE_OBJECT_FILTER));
+        reg.put(IMAGE_IFS_FILTER, getImageDescriptor(IMAGE_IFS_FILTER));
         reg.put(IMAGE_SWITCH_MEMBER, getImageDescriptor(IMAGE_SWITCH_MEMBER));
         reg.put(IMAGE_EXPAND_ALL, getImageDescriptor(IMAGE_EXPAND_ALL));
         reg.put(IMAGE_COLLAPSE_ALL, getImageDescriptor(IMAGE_COLLAPSE_ALL));
@@ -392,6 +396,14 @@ public class ISpherePlugin extends AbstractUIPlugin {
 
     public static void setMessageFileSearchObjectFilterCreator(IMessageFileSearchObjectFilterCreator _messageFileSearchObjectFilterCreator) {
         messageFileSearchObjectFilterCreator = _messageFileSearchObjectFilterCreator;
+    }
+
+    public static IStreamFileSearchIFSFilterCreator getStreamFileSearchIFSFilterCreator() {
+        return streamFileSearchIFSFilterCreator;
+    }
+
+    public static void setStreamFileSearchIFSFilterCreator(IStreamFileSearchIFSFilterCreator _streamFileSearchIFSFilterCreator) {
+        streamFileSearchIFSFilterCreator = _streamFileSearchIFSFilterCreator;
     }
 
     public static IWorkspace getWorkspace() {
