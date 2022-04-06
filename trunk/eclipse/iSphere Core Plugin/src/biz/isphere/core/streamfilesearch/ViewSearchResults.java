@@ -27,6 +27,8 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -59,7 +61,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private static final String TAB_PERSISTENCE_DATA = "persistenceData"; //$NON-NLS-1$
 
     private Action actionExportToExcel;
-    private Action actionRemoveTabItem;
+    private Action actionRemoveSelectedTabItem;
     private Action actionRemoveAllTabItems;
     private Action actionRemoveSelectedItems;
     private Action actionInvertSelectedItems;
@@ -71,7 +73,6 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
     private Action actionEnableAutoSave;
 
     private CTabFolder tabFolderSearchResults;
-    private Menu tabFolderSearchResultsPopUpMenu;
     private Shell shell;
     private SearchResultManager manager;
 
@@ -116,21 +117,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
 
         tabFolderSearchResults.addMouseListener(new CloseTabOnDoubleClickListener());
 
-        tabFolderSearchResultsPopUpMenu = new Menu(tabFolderSearchResults);
-        MenuItem menuItem = new MenuItem(tabFolderSearchResultsPopUpMenu, SWT.PUSH);
-        menuItem.setText(Messages.MenuItem_Display_Search_Options);
-        menuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                SearchResultTab searchResultTab = (SearchResultTab)getSelectedTab().getData(TAB_PERSISTENCE_DATA);
-                if (searchResultTab.hasSearchOptions()) {
-                    DisplaySearchOptionsDialog dialog = new DisplaySearchOptionsDialog(shell);
-                    dialog.setInput(searchResultTab);
-                    dialog.open();
-                } else {
-                    MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Error_No_Search_Options_available);
-                }
-            }
-        });
+        createTabFolderSearchResultsPopupMenu(tabFolderSearchResults);
 
         createActions();
         initializeToolBar();
@@ -139,6 +126,13 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         loadAutoSaveSearchResults();
 
         setActionEnablement();
+    }
+
+    private void createTabFolderSearchResultsPopupMenu(CTabFolder parent) {
+
+        Menu menu = new Menu(parent);
+        menu.addMenuListener(new TabFolderPopupMenuAdapter(menu));
+        parent.setMenu(menu);
     }
 
     private void createActions() {
@@ -153,15 +147,15 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         actionExportToExcel.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_EXCEL));
         actionExportToExcel.setEnabled(false);
 
-        actionRemoveTabItem = new Action("") { //$NON-NLS-1$
+        actionRemoveSelectedTabItem = new Action("") { //$NON-NLS-1$
             @Override
             public void run() {
                 removeSelectedTabItem();
             }
         };
-        actionRemoveTabItem.setToolTipText(Messages.Remove_tab_item);
-        actionRemoveTabItem.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS));
-        actionRemoveTabItem.setEnabled(false);
+        actionRemoveSelectedTabItem.setToolTipText(Messages.Remove_tab_item);
+        actionRemoveSelectedTabItem.setImageDescriptor(ISpherePlugin.getDefault().getImageRegistry().getDescriptor(ISpherePlugin.IMAGE_MINUS));
+        actionRemoveSelectedTabItem.setEnabled(false);
 
         actionRemoveAllTabItems = new Action("") { //$NON-NLS-1$
             @Override
@@ -243,7 +237,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         toolbarManager.add(new Separator());
         toolbarManager.add(actionExportToExcel);
         toolbarManager.add(new Separator());
-        toolbarManager.add(actionRemoveTabItem);
+        toolbarManager.add(actionRemoveSelectedTabItem);
         toolbarManager.add(actionRemoveAllTabItems);
     }
 
@@ -403,7 +397,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                 return;
             }
 
-            if (!replace && searchResults.getNumTabs() > 1 && tabFolderSearchResults.getItemCount() > 0) {
+            if (!replace && searchResults.getNumTabs() > 1 && hasTabFolderItems()) {
                 if (MessageDialog.openQuestion(shell, Messages.Question,
                     Messages.bind(Messages.Question_replace_search_results, searchResults.getNumTabs()))) {
                     removeAllTabItems();
@@ -460,6 +454,7 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
         boolean hasSelectedViewer;
         boolean hasItems;
         boolean hasSelectedItems;
+        boolean hasTabItems;
         boolean hasMultipleTabItems;
         SearchResultViewer _searchResultViewer = getSelectedViewer();
 
@@ -467,36 +462,40 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
             hasSelectedViewer = false;
             hasItems = false;
             hasSelectedItems = false;
+            hasTabItems = false;
             hasMultipleTabItems = false;
             actionDisableEdit.setEditEnabled(Preferences.getInstance().isStreamFileSearchResultsEditEnabled());
         } else {
             hasSelectedViewer = true;
-            hasItems = tabFolderSearchResults.getItemCount() > 0;
+            hasItems = _searchResultViewer.hasItems();
             hasSelectedItems = _searchResultViewer.hasSelectedItems();
-            hasMultipleTabItems = tabFolderSearchResults.getItemCount() > 1;
+            hasTabItems = hasTabFolderItems();
+            hasMultipleTabItems = hasMultipleTabFolderItems();
             actionDisableEdit.setEditEnabled(_searchResultViewer.isEditEnabled());
         }
 
         actionRemoveSelectedItems.setEnabled(hasSelectedItems);
         actionInvertSelectedItems.setEnabled(hasSelectedItems);
         actionExportToExcel.setEnabled(hasItems);
-        actionRemoveTabItem.setEnabled(hasSelectedViewer);
+        actionRemoveSelectedTabItem.setEnabled(hasSelectedViewer);
         actionRemoveAllTabItems.setEnabled(hasMultipleTabItems);
         actionDisableEdit.setEnabled(hasItems);
 
-        actionSaveSearchResult.setEnabled(hasItems);
+        actionSaveSearchResult.setEnabled(hasTabItems);
         actionSaveAllSearchResults.setEnabled(hasMultipleTabItems);
         actionLoadSearchResult.setEnabled(true);
         actionEnableAutoSave.setEnabled(true);
 
         resetColumnSizeAction.setEnabled(true);
         resetColumnSizeAction.setViewer(getSelectedViewer());
+    }
 
-        if (hasItems) {
-            tabFolderSearchResults.setMenu(tabFolderSearchResultsPopUpMenu);
-        } else {
-            tabFolderSearchResults.setMenu(null);
-        }
+    private boolean hasTabFolderItems() {
+        return tabFolderSearchResults.getItemCount() > 0;
+    }
+
+    private boolean hasMultipleTabFolderItems() {
+        return tabFolderSearchResults.getItemCount() > 1;
     }
 
     private SearchResultViewer getSelectedViewer() {
@@ -628,6 +627,51 @@ public class ViewSearchResults extends ViewPart implements ISelectionChangedList
                     }
                 }
             });
+        }
+    }
+
+    private class TabFolderPopupMenuAdapter extends MenuAdapter {
+
+        private Menu menuTabFolder;
+        private MenuItem menuDisplaySearchOptions;
+
+        public TabFolderPopupMenuAdapter(Menu menuTableStatements) {
+            this.menuTabFolder = menuTableStatements;
+        }
+
+        @Override
+        public void menuShown(MenuEvent event) {
+            destroyMenuItems();
+            createMenuItems();
+        }
+
+        public void destroyMenuItems() {
+            if (!((menuDisplaySearchOptions == null) || (menuDisplaySearchOptions.isDisposed()))) {
+                menuDisplaySearchOptions.dispose();
+            }
+        }
+
+        public void createMenuItems() {
+
+            if (hasTabFolderItems()) {
+
+                menuDisplaySearchOptions = new MenuItem(menuTabFolder, SWT.NONE);
+                menuDisplaySearchOptions.setText(Messages.MenuItem_Display_Search_Options);
+                menuDisplaySearchOptions.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        SearchResultTab searchResultTab = (SearchResultTab)getSelectedTab().getData(TAB_PERSISTENCE_DATA);
+                        if (searchResultTab.hasSearchOptions()) {
+                            DisplaySearchOptionsDialog dialog = new DisplaySearchOptionsDialog(shell);
+                            dialog.setInput(searchResultTab);
+                            dialog.open();
+                        } else {
+                            MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Error_No_Search_Options_available);
+                        }
+                    }
+                });
+
+            }
         }
     }
 }
