@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+import com.ibm.as400.access.QueuedMessage;
+
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
-
-import com.ibm.as400.access.QueuedMessage;
 
 public class QueuedMessageResourceAdapterDelegate {
 
@@ -174,7 +175,7 @@ public class QueuedMessageResourceAdapterDelegate {
         if (object instanceof IQueuedMessageResource) {
             IQueuedMessageResource queuedMessageResource = (IQueuedMessageResource)object;
             QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
-            QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), new ReceivedMessage(queuedMessage));
+            QueuedMessageDialog dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), new ReceivedMessage(queuedMessage));
             dialog.open();
         }
         return false;
@@ -194,7 +195,7 @@ public class QueuedMessageResourceAdapterDelegate {
     }
 
     public String getRemoteTypeCategory() {
-        return "queued messages"; //$NON-NLS-1$ 
+        return "queued messages"; //$NON-NLS-1$
     }
 
     public String getRemoteType() {

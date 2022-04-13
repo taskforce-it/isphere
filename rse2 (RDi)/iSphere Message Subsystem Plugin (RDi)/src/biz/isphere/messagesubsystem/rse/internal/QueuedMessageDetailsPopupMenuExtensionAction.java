@@ -11,13 +11,12 @@
  *******************************************************************************/
 package biz.isphere.messagesubsystem.rse.internal;
 
-import org.eclipse.swt.widgets.Display;
-
-import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
-import biz.isphere.messagesubsystem.rse.ReceivedMessage;
-
 import com.ibm.as400.access.QueuedMessage;
 import com.ibm.etools.iseries.rse.ui.actions.popupmenu.ISeriesAbstractQSYSPopupMenuAction;
+
+import biz.isphere.base.internal.UIHelper;
+import biz.isphere.messagesubsystem.rse.QueuedMessageDialog;
+import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
 /**
  * This class adds a popup menu extension to queued message resources in order
@@ -36,7 +35,7 @@ public class QueuedMessageDetailsPopupMenuExtensionAction extends ISeriesAbstrac
             if (selection[i] instanceof QueuedMessageResource) {
                 QueuedMessageResource queuedMessageResource = (QueuedMessageResource)selection[i];
                 QueuedMessage queuedMessage = queuedMessageResource.getQueuedMessage();
-                QueuedMessageDialog dialog = new QueuedMessageDialog(Display.getCurrent().getActiveShell(), new ReceivedMessage(queuedMessage));
+                QueuedMessageDialog dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), new ReceivedMessage(queuedMessage));
                 if (dialog.open() == QueuedMessageDialog.CANCEL) {
                     break;
                 }

@@ -12,6 +12,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -69,5 +71,28 @@ public final class UIHelper {
             return false;
         }
         return "org.eclipse.e4.ui.css.theme.e4_dark".equals(activeTheme.getId());
+    }
+
+    public static Shell getActiveShell() {
+
+        Shell shell = null;
+
+        if (PlatformUI.getWorkbench() != null) {
+            if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null) {
+                shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+            }
+        }
+
+        if (shell == null) {
+            if (Display.getCurrent() != null) {
+                shell = Display.getCurrent().getActiveShell();
+            } else {
+                if (Display.getDefault() != null) {
+                    shell = Display.getDefault().getActiveShell();
+                }
+            }
+        }
+
+        return shell;
     }
 }
