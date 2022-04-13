@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.MessageQueueMailMessenger;
 import biz.isphere.messagesubsystem.internal.QueuedMessageListDialog;
@@ -72,8 +73,8 @@ public class MessageHandler implements IMessageHandler {
             }
         }
 
-        Display.getDefault().syncExec(
-            new UIMessageListHandler(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
+        Display.getDefault()
+            .syncExec(new UIMessageListHandler(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
 
         isOKToAll = false;
         createOKToAllButton = false;
@@ -149,7 +150,7 @@ public class MessageHandler implements IMessageHandler {
             if (monitoringAttributes.isEmailHandler(message)) {
 
                 if (!monitoringAttributes.isValid()) {
-                    if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error,
+                    if (MessageDialog.openQuestion(UIHelper.getActiveShell(), Messages.ISeries_Message_Email_Error,
                         Messages.Email_Notification_Error_Message)) {
                         if (message.isInquiryMessage()) {
                             monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
@@ -180,7 +181,7 @@ public class MessageHandler implements IMessageHandler {
 
                         errorMessage = errorMessage + Messages.Email_Notification_Properties_Error_message;
                         Display.getDefault().beep();
-                        if (MessageDialog.openQuestion(Display.getDefault().getActiveShell(), Messages.ISeries_Message_Email_Error, errorMessage)) {
+                        if (MessageDialog.openQuestion(UIHelper.getActiveShell(), Messages.ISeries_Message_Email_Error, errorMessage)) {
                             if (message.isInquiryMessage()) {
                                 monitoringAttributes.setInqueryMessageNotificationType(MonitoringAttributes.NOTIFICATION_TYPE_DIALOG);
                             } else {
@@ -196,9 +197,9 @@ public class MessageHandler implements IMessageHandler {
                 Display.getDefault().beep();
                 QueuedMessageDialog dialog;
                 if (message.isInquiryMessage()) {
-                    dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, false);
+                    dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), message, false, false);
                 } else {
-                    dialog = new QueuedMessageDialog(Display.getDefault().getActiveShell(), message, false, createOKToAllButton);
+                    dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), message, false, createOKToAllButton);
                 }
 
                 int rc = dialog.open();

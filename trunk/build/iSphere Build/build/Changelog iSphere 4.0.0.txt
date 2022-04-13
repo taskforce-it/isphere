@@ -14,6 +14,8 @@ Changelog: iSphere 5.0.1.r
  • Added option to specify whether the iSphere Message Description
    Editor is started in browse or edit mode, when double-clicking
    an item in the result view of the iSphere Message File Search.
+ • Fixed the message popup dialog of the iSphere Messages subsystem
+   to open on the active screen. 
  • Fixed TODO: Get the last change date of the stream file.   
  • Removed optional dependency to compare filters compile dummy.
  • Fixed file extension of auto save file name of the iSphere Message
