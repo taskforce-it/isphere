@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -144,7 +145,13 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         initializeDialogUnits(aParent);
 
-        Composite tMainPanel = new Composite(aParent, SWT.NONE);
+        ScrolledComposite scrollableArea = new ScrolledComposite(aParent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        scrollableArea.setLayout(new GridLayout(1, false));
+        scrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrollableArea.setExpandHorizontal(true);
+        scrollableArea.setExpandVertical(true);
+
+        Composite tMainPanel = new Composite(scrollableArea, SWT.NONE);
         tMainPanel.setLayout(new GridLayout());
         GridData tGridData = new GridData(GridData.FILL_HORIZONTAL);
         tMainPanel.setLayoutData(tGridData);
@@ -154,6 +161,10 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
         createSearchTargetGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
         createOptionsGroup(tMainPanel);
+
+        tMainPanel.layout();
+        scrollableArea.setContent(tMainPanel);
+        scrollableArea.setMinSize(tMainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         addListeners();
 
