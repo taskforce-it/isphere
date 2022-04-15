@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.rse.ui.widgets.SystemHistoryCombo;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -46,6 +47,10 @@ import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.rse.ui.widgets.QSYSMsgFilePrompt;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
@@ -71,10 +76,6 @@ import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 import biz.isphere.rse.search.SearchArgumentEditor;
 import biz.isphere.rse.search.SearchArgumentsListEditor;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.rse.ui.widgets.QSYSMsgFilePrompt;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class MessageFileSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -141,7 +142,13 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
 
         initializeDialogUnits(aParent);
 
-        Composite tMainPanel = new Composite(aParent, SWT.NONE);
+        ScrolledComposite scrollableArea = new ScrolledComposite(aParent, SWT.V_SCROLL | SWT.H_SCROLL);
+        scrollableArea.setLayout(new GridLayout(1, false));
+        scrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+        scrollableArea.setExpandHorizontal(true);
+        scrollableArea.setExpandVertical(true);
+
+        Composite tMainPanel = new Composite(scrollableArea, SWT.NONE);
         tMainPanel.setLayout(new GridLayout());
         GridData tGridData = new GridData(GridData.FILL_HORIZONTAL);
         tMainPanel.setLayoutData(tGridData);
@@ -151,6 +158,10 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
         createSearchTargetGroup(tMainPanel);
         createColumnsGroup(tMainPanel);
         createOptionsGroup(tMainPanel);
+
+        tMainPanel.layout();
+        scrollableArea.setContent(tMainPanel);
+        scrollableArea.setMinSize(tMainPanel.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
         addListeners();
 
