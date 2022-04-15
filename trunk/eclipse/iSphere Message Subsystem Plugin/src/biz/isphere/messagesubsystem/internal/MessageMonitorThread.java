@@ -18,6 +18,11 @@ import java.util.List;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
+import com.ibm.as400.access.AS400Exception;
+import com.ibm.as400.access.MessageQueue;
+import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.QueuedMessage;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -31,11 +36,6 @@ import biz.isphere.messagesubsystem.rse.MonitoredMessageQueue;
 import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.ReceivedMessage;
 
-import com.ibm.as400.access.AS400Exception;
-import com.ibm.as400.access.MessageQueue;
-import com.ibm.as400.access.QSYSObjectPathName;
-import com.ibm.as400.access.QueuedMessage;
-
 public class MessageMonitorThread extends Thread {
 
     private MonitoredMessageQueue messageQueue;
@@ -44,7 +44,7 @@ public class MessageMonitorThread extends Thread {
     private ObjectLockManager objectLockManager;
 
     private boolean monitoring;
-    private boolean collectMessagesAtStartUp;
+    private boolean isCollectMessagesAtStartUp;
 
     private List<ReceivedMessage> receivedMessages;
 
@@ -78,9 +78,9 @@ public class MessageMonitorThread extends Thread {
         } catch (InterruptedException e2) {
         }
 
-        collectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
+        isCollectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
 
-        debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + collectMessagesAtStartUp); //$NON-NLS-1$ //$NON-NLS-2$
+        debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + isCollectMessagesAtStartUp); //$NON-NLS-1$ //$NON-NLS-2$
 
         /*
          * Use a timeout for locking the message queue when starting the message
@@ -104,11 +104,8 @@ public class MessageMonitorThread extends Thread {
                 debugPrint("Thread " + messageQueue.hashCode() + ": Message queue does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
                 Display.getDefault().syncExec(new Runnable() {
                     public void run() {
-                        MessageDialog.openError(
-                            Display.getDefault().getActiveShell(),
-                            Messages.Message_Queue_Monitoring_Error,
-                            Messages.bind(Messages.Message_queue_A_not_found_in_library_B,
-                                new Object[] { messageQueue.getLibrary(), messageQueue.getName() }));
+                        MessageDialog.openError(Display.getDefault().getActiveShell(), Messages.Message_Queue_Monitoring_Error, Messages.bind(
+                            Messages.Message_queue_A_not_found_in_library_B, new Object[] { messageQueue.getLibrary(), messageQueue.getName() }));
                     }
                 });
                 monitoringAttributes.setMonitoring(false);
@@ -148,7 +145,7 @@ public class MessageMonitorThread extends Thread {
             while (monitoring && monitoringAttributes.isMonitoringEnabled()) {
                 try {
                     QueuedMessage message;
-                    if (collectMessagesAtStartUp) {
+                    if (isCollectMessagesAtStartUp) {
                         debugPrint("Thread " + messageQueue.hashCode() + ": receives messages from queue (COLLECT) with object lock: " //$NON-NLS-1$ //$NON-NLS-2$
                             + sharedReadLock.hashCode());
                         message = messageQueue.receive(null, 1, MessageQueue.OLD, MessageQueue.ANY);
@@ -162,13 +159,17 @@ public class MessageMonitorThread extends Thread {
 
                     if (monitoring) {
                         if (message != null) {
-                            handleMessage(message, collectMessagesAtStartUp);
+                            // Message received.
+                            handleMessage(message, isCollectMessagesAtStartUp);
                         } else {
-                            if (receivedMessages != null) {
-                                handleBufferedMessages(receivedMessages);
-                                receivedMessages = null;
+                            // No message received.
+                            if (isCollectMessagesAtStartUp) {
+                                if (receivedMessages != null) {
+                                    handleBufferedMessages(receivedMessages);
+                                    receivedMessages = null;
+                                }
+                                isCollectMessagesAtStartUp = false;
                             }
-                            collectMessagesAtStartUp = false;
                         }
                     }
 
@@ -246,7 +247,7 @@ public class MessageMonitorThread extends Thread {
         }
     }
 
-    private void handleMessage(QueuedMessage message, boolean isStartUp) throws Exception {
+    private void handleMessage(QueuedMessage message, boolean isCollectMessages) throws Exception {
 
         if (REMOVE_ALL.equals(message.getText())) {
             messageQueue.remove();
@@ -256,7 +257,7 @@ public class MessageMonitorThread extends Thread {
             monitoring = false;
         } else {
             if (messageQueue.isIncluded(message)) {
-                if (isStartUp) {
+                if (isCollectMessages) {
                     if (receivedMessages == null) {
                         receivedMessages = new ArrayList<ReceivedMessage>();
                     }
