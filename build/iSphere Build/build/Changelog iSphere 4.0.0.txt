@@ -18,6 +18,8 @@ Changelog: iSphere 5.0.1.r
    pages.
  • Changed layout of iSphere Search/Message file search dialog
    (removed sash form).
+ • Removed workaround for assuring that the first message is received
+   when starting the message monitor.
  • Fixed the message popup dialog of the iSphere Messages subsystem
    to open on the active screen. 
  • Fixed TODO: Get the last change date of the stream file.   
