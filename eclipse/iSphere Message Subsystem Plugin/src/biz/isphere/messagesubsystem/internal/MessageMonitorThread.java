@@ -71,13 +71,6 @@ public class MessageMonitorThread extends Thread {
 
         debugPrint("*** Thread started running: " + messageQueue.hashCode() + " ***"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        // Workaround trying to catch the first message.
-        // Sometimes the first one is lost.
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e2) {
-        }
-
         isCollectMessagesAtStartUp = monitoringAttributes.isCollectMessagesOnStartup();
 
         debugPrint("Thread " + messageQueue.hashCode() + ": Collecting messages at startup: " + isCollectMessagesAtStartUp); //$NON-NLS-1$ //$NON-NLS-2$
@@ -157,21 +150,25 @@ public class MessageMonitorThread extends Thread {
 
                     removeMessagesPendingToBeRemoved();
 
-                    if (monitoring) {
-                        if (message != null) {
-                            // Message received.
-                            handleMessage(message, isCollectMessagesAtStartUp);
-                        } else {
-                            // No message received.
-                            if (isCollectMessagesAtStartUp) {
-                                if (receivedMessages != null) {
-                                    handleBufferedMessages(receivedMessages);
-                                    receivedMessages = null;
-                                }
-                                isCollectMessagesAtStartUp = false;
+                    if (message != null) {
+                        System.out.println("Received: " + message.getText());
+                    }
+
+                    // if (monitoring) {
+                    if (message != null) {
+                        // Message received.
+                        handleMessage(message, isCollectMessagesAtStartUp);
+                    } else {
+                        // No message received.
+                        if (isCollectMessagesAtStartUp) {
+                            if (receivedMessages != null) {
+                                handleBufferedMessages(receivedMessages);
+                                receivedMessages = null;
                             }
+                            isCollectMessagesAtStartUp = false;
                         }
                     }
+                    // }
 
                 } catch (Throwable e) {
                     if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
@@ -200,6 +197,8 @@ public class MessageMonitorThread extends Thread {
             debugPrint("Thread " + messageQueue.hashCode() + ": About to leave thread."); //$NON-NLS-1$ //$NON-NLS-2$
             messageQueue.messageMonitorStopped(messageQueue);
         }
+
+        System.out.println("==> Message monitor ended.");
 
         return;
     }
