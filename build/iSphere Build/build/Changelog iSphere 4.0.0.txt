@@ -16,6 +16,8 @@ Changelog: iSphere 5.0.1.r
    an item in the result view of the iSphere Message File Search.
  • Added vertical scroll bar to iSphere Source/Message file search
    pages.
+ • Changed layout of iSphere Search/Message file search dialog
+   (removed sash form).
  • Fixed the message popup dialog of the iSphere Messages subsystem
    to open on the active screen. 
  • Fixed TODO: Get the last change date of the stream file.   

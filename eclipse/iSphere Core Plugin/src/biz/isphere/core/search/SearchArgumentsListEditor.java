@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -74,9 +73,15 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
     public void createControl(Composite aParent) {
 
+        createMatchOptionsGroup(aParent);
+
+        createSearchArgumentsEditorsGroup(aParent);
+    }
+
+    private void createMatchOptionsGroup(Composite aParent) {
+
         Composite tMatchGroup = new Composite(aParent, SWT.NONE);
-        FillLayout tMatchGroupLayout = new FillLayout(SWT.HORIZONTAL);
-        tMatchGroupLayout.marginHeight = 5;
+        GridLayout tMatchGroupLayout = new GridLayout(3, false);
         tMatchGroup.setLayout(tMatchGroupLayout);
 
         List<SearchOptionConfig> rdoOptions = new ArrayList<SearchOptionConfig>();
@@ -93,24 +98,22 @@ public abstract class SearchArgumentsListEditor implements Listener {
         for (int i = 0; i < rdoOptions.size(); i++) {
             rdoMatchOptions[i] = createSearchOption(tMatchGroup, rdoOptions.get(i));
         }
+    }
 
-        Composite scrollableContainer = new Composite(aParent, SWT.NONE);
-        scrollableContainer.setLayout(new GridLayout(1, false));
-        GridData gd = new GridData(GridData.FILL_BOTH);
-        gd.heightHint = 135;
-        gd.grabExcessHorizontalSpace = true;
-        gd.grabExcessVerticalSpace = true;
-        scrollableContainer.setLayoutData(gd);
+    private void createSearchArgumentsEditorsGroup(Composite aParent) {
 
-        scrollable = new ScrolledComposite(scrollableContainer, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        scrollable = new ScrolledComposite(aParent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         scrollable.setLayout(new GridLayout(1, false));
-        scrollable.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData scrollableLayoutData = new GridData(GridData.FILL_BOTH);
+        scrollableLayoutData.minimumHeight = 130;
+        scrollable.setLayoutData(scrollableLayoutData);
         scrollable.setExpandHorizontal(true);
         scrollable.setExpandVertical(true);
 
         searchStringGroup = new Composite(scrollable, SWT.NONE);
         searchStringGroup.setLayout(new GridLayout(1, false));
-        searchStringGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData searchStringGroupLayoutData = new GridData(GridData.FILL_BOTH);
+        searchStringGroup.setLayoutData(searchStringGroupLayoutData);
         scrollable.setContent(searchStringGroup);
 
         searchArgumentEditors = new ArrayList<AbstractSearchArgumentEditor>();
@@ -242,8 +245,8 @@ public abstract class SearchArgumentsListEditor implements Listener {
     public List<SearchArgument> getSearchArguments(int aStartColumn, int anEndColumn) {
         List<SearchArgument> tSearchArguments = new ArrayList<SearchArgument>();
         for (AbstractSearchArgumentEditor tSearchArgumentEditor : searchArgumentEditors) {
-            tSearchArguments.add(new SearchArgument(tSearchArgumentEditor.getSearchString(), aStartColumn, anEndColumn, tSearchArgumentEditor
-                .isCaseSensitive(), tSearchArgumentEditor.isRegularExpression(), tSearchArgumentEditor.getCompareCondition()));
+            tSearchArguments.add(new SearchArgument(tSearchArgumentEditor.getSearchString(), aStartColumn, anEndColumn,
+                tSearchArgumentEditor.isCaseSensitive(), tSearchArgumentEditor.isRegularExpression(), tSearchArgumentEditor.getCompareCondition()));
         }
         return tSearchArguments;
     }
@@ -302,8 +305,8 @@ public abstract class SearchArgumentsListEditor implements Listener {
         for (int i = 0; i < numConditions; i++) {
             try {
                 addSearchArgumentEditorAndLayout();
-                searchArgumentEditors.get(i).setCompareCondition(
-                    IntHelper.tryParseInt(loadValue(aDialogSettings, COMPARE_CONDITION + "_" + i, ""), SearchOptions.CONTAINS));
+                searchArgumentEditors.get(i)
+                    .setCompareCondition(IntHelper.tryParseInt(loadValue(aDialogSettings, COMPARE_CONDITION + "_" + i, ""), SearchOptions.CONTAINS));
                 searchArgumentEditors.get(i).setSearchString(loadValue(aDialogSettings, SEARCH_STRING + "_" + i, "Enter search string here"));
                 searchArgumentEditors.get(i).setCase(loadBooleanValue(aDialogSettings, CASE_SENSITIVE + "_" + i, false));
                 searchArgumentEditors.get(i).setRegularExpression(loadBooleanValue(aDialogSettings, REGULAR_EXPRESSION + "_" + i, false));
