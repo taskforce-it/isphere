@@ -81,11 +81,6 @@ public class MessageHandler implements IMessageHandler {
      * @param message - message that must be handled
      */
     private void handleMessage(MonitoringAttributes monitoringAttributes, ReceivedMessage message) {
-
-        if (!monitoringAttributes.isMonitoringEnabled()) {
-            return;
-        }
-
         Display.getDefault().syncExec(new UIMessageHandler(monitoringAttributes, message));
     }
 
