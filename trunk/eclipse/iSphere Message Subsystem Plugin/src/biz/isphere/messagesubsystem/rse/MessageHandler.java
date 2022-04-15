@@ -14,7 +14,6 @@ package biz.isphere.messagesubsystem.rse;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 
@@ -30,8 +29,6 @@ import biz.isphere.messagesubsystem.internal.QueuedMessageListDialog;
 public class MessageHandler implements IMessageHandler {
 
     private MonitoringAttributes monitoringAttributes;
-    private boolean createOKToAllButton;
-    private boolean isOKToAll;
 
     /**
      * Produces a MessageHandler object.
@@ -42,8 +39,6 @@ public class MessageHandler implements IMessageHandler {
         super();
 
         this.monitoringAttributes = monitoringAttributes;
-        this.createOKToAllButton = false;
-        this.isOKToAll = false;
     }
 
     /**
@@ -56,13 +51,6 @@ public class MessageHandler implements IMessageHandler {
             return;
         }
 
-        isOKToAll = false;
-        if (messages.size() == 1) {
-            createOKToAllButton = false;
-        } else {
-            createOKToAllButton = true;
-        }
-
         List<ReceivedMessage> dialogMessages = new ArrayList<ReceivedMessage>();
 
         for (ReceivedMessage receivedMessage : messages) {
@@ -73,11 +61,10 @@ public class MessageHandler implements IMessageHandler {
             }
         }
 
-        Display.getDefault()
-            .syncExec(new UIMessageListHandler(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
-
-        isOKToAll = false;
-        createOKToAllButton = false;
+        if (dialogMessages.size() > 0) {
+            Display.getDefault()
+                .syncExec(new UIMessageListHandler(monitoringAttributes, dialogMessages.toArray(new ReceivedMessage[dialogMessages.size()])));
+        }
     }
 
     /**
@@ -145,9 +132,7 @@ public class MessageHandler implements IMessageHandler {
 
             if (monitoringAttributes.isBeepHandler(message)) {
                 Display.getDefault().beep();
-            }
-
-            if (monitoringAttributes.isEmailHandler(message)) {
+            } else if (monitoringAttributes.isEmailHandler(message)) {
 
                 if (!monitoringAttributes.isValid()) {
                     if (MessageDialog.openQuestion(UIHelper.getActiveShell(), Messages.ISeries_Message_Email_Error,
@@ -190,23 +175,12 @@ public class MessageHandler implements IMessageHandler {
                         }
                     }
                 }
-            }
-
-            if (!isOKToAll && monitoringAttributes.isDialogHandler(message)) {
+            } else if (monitoringAttributes.isDialogHandler(message)) {
 
                 Display.getDefault().beep();
-                QueuedMessageDialog dialog;
-                if (message.isInquiryMessage()) {
-                    dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), message, false, false);
-                } else {
-                    dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), message, false, createOKToAllButton);
-                }
+                QueuedMessageDialog dialog = new QueuedMessageDialog(UIHelper.getActiveShell(), message, false, false);
+                dialog.open();
 
-                int rc = dialog.open();
-                if (rc == IDialogConstants.YES_TO_ALL_ID) {
-                    createOKToAllButton = false;
-                    isOKToAll = true;
-                }
             }
 
             removeInformationalMessage(message, monitoringAttributes);
