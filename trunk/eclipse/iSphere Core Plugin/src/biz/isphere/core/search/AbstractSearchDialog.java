@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -58,8 +56,6 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     private int maxColumns;
     private boolean regularExpressionsOption;
     private SearchOptionConfig[] searchOptionConfig;
-    private SashForm sashForm;
-    private int[] sashFormWeights;
     private List listArea;
     private Label labelNumElem;
     private boolean isClosing;
@@ -68,8 +64,6 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     // iSphere settings
     private static final String TO_COLUMN = "toColumn";
     private static final String FROM_COLUMN = "fromColumn";
-    private static final String SASH_FORM_WEIGHTS_UPPER = "sashFormWeights.upper";
-    private static final String SASH_FORM_WEIGHTS_LOWER = "sashFormWeights.lower";
 
     @CMOne(info = "CMOne settings")
     private static final String TEXT_STRING = "textString";
@@ -89,61 +83,56 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         _toColumn = maxColumns;
         if (searchArgumentsListEditor) {
             _editor = ISpherePlugin.isSearchArgumentsListEditor();
+            _editor = false;
         } else {
             _editor = false;
         }
         this.regularExpressionsOption = regularExpressionsOption;
         this.searchOptionConfig = searchOptionConfig;
-        this.sashFormWeights = new int[] { 50, 50 };
 
         this.isClosing = false;
     }
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        Composite container = (Composite)super.createDialogArea(parent);
-        container.setLayout(new FillLayout());
 
-        Composite upperArea;
-        if (hasListBox) {
-            sashForm = new SashForm(container, SWT.VERTICAL);
-            upperArea = new Composite(sashForm, SWT.NONE);
-        } else {
-            upperArea = new Composite(container, SWT.NONE);
-        }
+        Composite dialogArea = (Composite)super.createDialogArea(parent);
+        dialogArea.setLayout(new GridLayout());
+        dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+        Composite upperArea = new Composite(dialogArea, SWT.NONE);
         upperArea.setLayout(new GridLayout(1, false));
+        upperArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         if (_editor) {
             createSearchStringEditorGroup(upperArea);
+        } else {
+            createSearchStringEditorForCMOne(upperArea);
+            createCaseOptionsForCMOne(upperArea);
         }
 
-        createColumnsGroup(upperArea);
-        createOptionsGroup(upperArea);
+        Composite lowerArea = new Composite(dialogArea, SWT.NONE);
+        lowerArea.setLayout(new GridLayout(1, false));
+        lowerArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        createColumnsGroup(lowerArea);
+        createOptionsGroup(lowerArea);
 
         if (hasListBox) {
-            Composite lowerArea = new Composite(sashForm, SWT.NONE);
-            lowerArea.setLayout(new GridLayout(1, false));
             createListArea(lowerArea);
         }
 
         loadScreenValues();
 
-        if (hasListBox) {
-            sashForm.setWeights(sashFormWeights);
-        }
+        dialogArea.layout();
 
-        return container;
+        return parent;
     }
 
     private void createSearchStringEditorGroup(Composite container) {
 
-        Composite _searchArguments = new Composite(container, SWT.NONE);
-        _searchArguments.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        _searchArguments.setLayout(new GridLayout());
-
         _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
-        _listEditor.createControl(_searchArguments);
+        _listEditor.createControl(container);
         _listEditor.setListener(this);
     }
 
@@ -153,10 +142,6 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         groupAttributes.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         groupAttributes.setText(Messages.Columns);
         groupAttributes.setLayout(new GridLayout(2, false));
-
-        if (!_editor) {
-            createDialogForCMOne(groupAttributes);
-        }
 
         labelFromColumn = new Label(groupAttributes, SWT.NONE);
         labelFromColumn.setText(Messages.From_column_colon);
@@ -205,30 +190,33 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     }
 
     private void createListArea(Composite lowerArea) {
+
         Group groupArea = new Group(lowerArea, SWT.NONE);
         groupArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         groupArea.setText(Messages.Area);
         groupArea.setLayout(new GridLayout());
 
         listArea = new List(groupArea, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        listArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        GridData listAreaLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+        listAreaLayoutData.minimumHeight = 150;
+        listArea.setLayoutData(listAreaLayoutData);
         labelNumElem = new Label(groupArea, SWT.NONE);
 
         refreshListArea();
     }
 
     @CMOne(info = "Create dialog for CMOne")
-    private void createDialogForCMOne(Group groupAttributes) {
+    private void createSearchStringEditorForCMOne(Composite parent) {
 
         String searchString = getSearchArgument();
         if (searchString.equals("")) {
             searchString = Messages.Enter_search_string_here;
         }
 
-        Label labelString = new Label(groupAttributes, SWT.NONE);
+        Label labelString = new Label(parent, SWT.NONE);
         labelString.setText(Messages.String_colon);
 
-        textString = WidgetFactory.createText(groupAttributes);
+        textString = WidgetFactory.createText(parent);
         textString.setText(searchString);
         textString.setTextLimit(40);
         textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -237,14 +225,17 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
                 setOKButtonEnablement();
             }
         });
+    }
 
-        Label labelCaseSensitive = new Label(groupAttributes, SWT.NONE);
-        labelCaseSensitive.setText(Messages.Case_sensitive_colon);
+    @CMOne(info = "Create dialog for CMOne")
+    private void createCaseOptionsForCMOne(Composite parent) {
 
-        Composite groupCaseSensitive = new Composite(groupAttributes, SWT.NONE);
+        Group groupCaseSensitive = new Group(parent, SWT.NONE);
         GridLayout editableLayout = new GridLayout();
         editableLayout.numColumns = 2;
         groupCaseSensitive.setLayout(editableLayout);
+        groupCaseSensitive.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupCaseSensitive.setText(Messages.Case_sensitive);
 
         buttonCaseNo = WidgetFactory.createRadioButton(groupCaseSensitive);
         buttonCaseNo.setText(Messages.No);
@@ -453,19 +444,11 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         loadColumnButtonsSelection();
 
         loadElementValues();
-
-        loadSashFormWeights();
     }
 
     private void loadColumnButtonsSelection() {
         textFromColumn.setText(loadValue(FROM_COLUMN, "*START"));
         textToColumn.setText(loadValue(TO_COLUMN, "*END"));
-    }
-
-    private void loadSashFormWeights() {
-        sashFormWeights = new int[2];
-        sashFormWeights[0] = loadIntValue(SASH_FORM_WEIGHTS_UPPER, 50);
-        sashFormWeights[1] = loadIntValue(SASH_FORM_WEIGHTS_LOWER, 50);
     }
 
     /**
@@ -483,21 +466,11 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         saveColumnButtonsSelection();
 
         saveElementValues();
-
-        saveSashFormWeights();
     }
 
     private void saveColumnButtonsSelection() {
         storeValue(FROM_COLUMN, textFromColumn.getText());
         storeValue(TO_COLUMN, textToColumn.getText());
-    }
-
-    private void saveSashFormWeights() {
-        if (sashForm != null) {
-            sashFormWeights = sashForm.getWeights();
-            storeValue(SASH_FORM_WEIGHTS_UPPER, sashFormWeights[0]);
-            storeValue(SASH_FORM_WEIGHTS_LOWER, sashFormWeights[1]);
-        }
     }
 
     protected void refreshListArea() {
