@@ -83,7 +83,6 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
         _toColumn = maxColumns;
         if (searchArgumentsListEditor) {
             _editor = ISpherePlugin.isSearchArgumentsListEditor();
-            _editor = false;
         } else {
             _editor = false;
         }
