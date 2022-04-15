@@ -27,6 +27,14 @@ import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.ui.RSEUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.MessageQueue;
+import com.ibm.as400.access.QueuedMessage;
+import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
+import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.messagesubsystem.rse.IQueuedMessageSubsystem;
@@ -35,14 +43,6 @@ import biz.isphere.messagesubsystem.rse.MonitoringAttributes;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFactory;
 import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 import biz.isphere.rse.connection.ConnectionManager;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.MessageQueue;
-import com.ibm.as400.access.QueuedMessage;
-import com.ibm.etools.iseries.subsystems.qsys.IISeriesSubSystem;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
-import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
 public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSystem, IQueuedMessageSubsystem {
 
@@ -64,8 +64,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
     }
 
     @Override
-    protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor) throws InvocationTargetException,
-        InterruptedException {
+    protected Object[] internalResolveFilterString(String filterString, IProgressMonitor monitor)
+        throws InvocationTargetException, InterruptedException {
 
         QueuedMessageResource[] queuedMessageResources;
         QueuedMessageFilter queuedMessageFilter = new QueuedMessageFilter(filterString);
@@ -212,9 +212,13 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
 
         try {
 
-            isStarting = true;
-
             synchronized (syncObject) {
+
+                if (isStarting) {
+                    return;
+                }
+
+                isStarting = true;
 
                 // Start new message monitor
                 debugPrint("Subsystem: Starting message monitor thread ..."); //$NON-NLS-1$
@@ -257,8 +261,8 @@ public class QueuedMessageSubSystem extends SubSystem implements IISeriesSubSyst
      */
 
     @Override
-    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor) throws InvocationTargetException,
-        InterruptedException {
+    protected Object[] internalResolveFilterString(Object parent, String filterString, IProgressMonitor monitor)
+        throws InvocationTargetException, InterruptedException {
 
         return internalResolveFilterString(filterString, monitor);
     }
