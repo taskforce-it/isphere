@@ -145,7 +145,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
 
         initializeDialogUnits(aParent);
 
-        ScrolledComposite scrollableArea = new ScrolledComposite(aParent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        ScrolledComposite scrollableArea = new ScrolledComposite(aParent, SWT.V_SCROLL | SWT.H_SCROLL);
         scrollableArea.setLayout(new GridLayout(1, false));
         scrollableArea.setLayoutData(new GridData(GridData.FILL_BOTH));
         scrollableArea.setExpandHorizontal(true);
