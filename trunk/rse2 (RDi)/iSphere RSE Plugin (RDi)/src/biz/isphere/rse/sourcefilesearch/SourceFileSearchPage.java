@@ -618,8 +618,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
             betweenColumnsButton.setSelection(true);
             processBetweenColumnsButtonSelected();
         }
-        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN))); // $NON-NLS-1$
-        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN))); // $NON-NLS-1$
+        startColumnText.setText(loadValue(START_COLUMN, Integer.toString(DEFAULT_START_COLUMN)));
+        endColumnText.setText(loadValue(END_COLUMN, Integer.toString(DEFAULT_END_COLUMN)));
     }
 
     /**
@@ -636,7 +636,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
-     * Returns the search string the source files are searched for.
+     * Returns the search string the target objects are searched for.
      * 
      * @return search argument
      */
@@ -680,8 +680,8 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
-     * Returns the simple or generic name of the libraries that are searched for
-     * the source files that contain the source members.
+     * Returns the simple or generic name of the libraries containing the target
+     * objects that will be searched.
      * 
      * @return name of the library
      */
@@ -690,7 +690,7 @@ public class SourceFileSearchPage extends XDialogPage implements ISearchPage, Li
     }
 
     /**
-     * Returns the simple or generic name of the source file(s) that are
+     * Returns the simple or generic name of the target object(s) that are
      * searched for the search string.
      * 
      * @return simple or generic name of the message file

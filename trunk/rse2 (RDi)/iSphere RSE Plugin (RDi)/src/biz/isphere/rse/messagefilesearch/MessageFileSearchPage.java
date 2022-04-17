@@ -229,6 +229,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     private void createColumnsGroup(Composite aMainPanel) {
+
         Group tColumnsGroup = createGroup(aMainPanel, Messages.Columns);
         GridLayout tColumnsGroupLayout = new GridLayout(1, false);
         tColumnsGroupLayout.marginWidth = 0;
@@ -273,6 +274,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     private void createOptionsGroup(Composite aMainPanel) {
+
         Group tOptionsGroup = createGroup(aMainPanel, Messages.Options);
         GridLayout tOptionsGroupLayout = new GridLayout(2, false);
         tOptionsGroupLayout.marginWidth = 5;
@@ -647,7 +649,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
-     * Returns the search string the message files are searched for.
+     * Returns the search string the target objects are searched for.
      * 
      * @return search argument
      */
@@ -691,8 +693,8 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
-     * Returns the simple or generic name of the libraries that are searched for
-     * the message file.
+     * Returns the simple or generic name of the libraries containing the target
+     * objects that will be searched.
      * 
      * @return name of the library
      */
@@ -701,7 +703,7 @@ public class MessageFileSearchPage extends XDialogPage implements ISearchPage, L
     }
 
     /**
-     * Returns the simple or generic name of the message file(s) that are
+     * Returns the simple or generic name of the target object(s) that are
      * searched for the search string.
      * 
      * @return simple or generic name of the message file
