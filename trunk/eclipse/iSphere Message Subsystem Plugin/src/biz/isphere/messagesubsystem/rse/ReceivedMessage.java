@@ -13,13 +13,16 @@ package biz.isphere.messagesubsystem.rse;
 
 import java.util.Calendar;
 
-import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
-
+import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.MessageFile;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.QueuedMessage;
+
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.messagesubsystem.internal.QueuedMessageHelper;
 
 public class ReceivedMessage {
 
@@ -28,7 +31,7 @@ public class ReceivedMessage {
 
     public ReceivedMessage(QueuedMessage message) {
         this.queuedMessage = message;
-        this.inquiryMessageDelegate=new InquiryMessageDelegate(this.queuedMessage);
+        this.inquiryMessageDelegate = new InquiryMessageDelegate(this.queuedMessage);
     }
 
     public String getID() {
@@ -50,11 +53,46 @@ public class ReceivedMessage {
     public String getHelpFormatted() {
 
         try {
-            String messageFilePath = new QSYSObjectPathName(queuedMessage.getLibraryName(), queuedMessage.getFileName(), "MSGF").getPath(); //$NON-NLS-1$
-            MessageFile file = new MessageFile(queuedMessage.getQueue().getSystem(), messageFilePath);
+
+            // Check library and message file names
+            if (StringHelper.isNullOrEmpty(queuedMessage.getLibraryName()) || StringHelper.isNullOrEmpty(queuedMessage.getFileName())) {
+                return queuedMessage.getHelp();
+            }
+
+            String libraryName = queuedMessage.getLibraryName();
+            String fileName = queuedMessage.getFileName();
+
+            // Check system
+            if (queuedMessage.getQueue() == null) {
+                return queuedMessage.getHelp();
+            }
+
+            if (queuedMessage.getQueue().getSystem() == null) {
+                return queuedMessage.getHelp();
+            }
+
+            AS400 system = queuedMessage.getQueue().getSystem();
+
+            if (ISphereHelper.checkLibrary(system, libraryName)) {
+                return queuedMessage.getHelp();
+            }
+
+            if (!ISphereHelper.checkObject(system, libraryName, fileName, "*MSGF")) {
+                return queuedMessage.getHelp();
+            }
+
+            String messageFilePath = new QSYSObjectPathName(libraryName, fileName, "MSGF").getPath(); //$NON-NLS-1$
+            MessageFile file = new MessageFile(system, messageFilePath);
             file.setHelpTextFormatting(MessageFile.RETURN_FORMATTING_CHARACTERS);
-            AS400Message as400Message = file.getMessage(queuedMessage.getID(), queuedMessage.getSubstitutionData());
+            AS400Message as400Message;
+            if (queuedMessage.getSubstitutionData() != null) {
+                as400Message = file.getMessage(queuedMessage.getID(), queuedMessage.getSubstitutionData());
+            } else {
+                as400Message = file.getMessage(queuedMessage.getID());
+            }
+
             return as400Message.getHelp();
+
         } catch (Exception e) {
             return queuedMessage.getHelp();
         }
@@ -103,9 +141,8 @@ public class ReceivedMessage {
     public String getReplyStatus() {
         return inquiryMessageDelegate.getReplyStatus();
     }
-    
+
     public String getReplyStatusAsText() {
-        
         return QueuedMessageHelper.getMessageReplyStatusAsText(queuedMessage);
     }
 
