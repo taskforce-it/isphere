@@ -14,12 +14,12 @@ package biz.isphere.messagesubsystem.internal;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import biz.isphere.base.internal.StringHelper;
-import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QueuedMessage;
+
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.messagesubsystem.rse.QueuedMessageFilter;
 
 public class FilteredMessageQueue extends MessageQueue {
 
@@ -104,9 +104,18 @@ public class FilteredMessageQueue extends MessageQueue {
         }
 
         // Data type: int
-        if (messageFilter.getSeverity() != -1) {
-            if (message.getSeverity() < messageFilter.getSeverity()) {
-                return false;
+        /*
+         * See QMHRCVM API: Message severity. The severity of the message
+         * received. Possible values are 0 through 99. If the message being
+         * received is an immediate message, the message severity is not
+         * returned.
+         * https://www.ibm.com/docs/en/i/7.3?topic=ssw_ibm_i_73/apis/Qmhrcvm.htm
+         */
+        if (!StringHelper.isNullOrEmpty(message.getID())) {
+            if (messageFilter.getSeverity() != -1) {
+                if (message.getSeverity() < messageFilter.getSeverity()) {
+                    return false;
+                }
             }
         }
 

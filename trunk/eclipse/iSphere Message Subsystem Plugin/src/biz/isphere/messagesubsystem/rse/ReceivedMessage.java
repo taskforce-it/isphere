@@ -107,6 +107,17 @@ public class ReceivedMessage {
     }
 
     public int getSeverity() {
+        if (StringHelper.isNullOrEmpty(getID())) {
+            /*
+             * See QMHRCVM API: Message severity. The severity of the message
+             * received. Possible values are 0 through 99. If the message being
+             * received is an immediate message, the message severity is not
+             * returned.
+             * https://www.ibm.com/docs/en/i/7.3?topic=electronic-business-web-
+             * serving
+             */
+            return 0;
+        }
         return queuedMessage.getSeverity();
     }
 
