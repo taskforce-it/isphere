@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 4.2.3.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: Updated STRPREPRC to v1.20.2.
+X-Bundle-Info: Added option for renaming members.\nFixed Log4j2 vulnerability (CVE-2021-44228).\nMinor bug fixes.
+X-Beta-Version: 4.2.3.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: Updated STRPREPRC to v1.20.2.
+X-Beta-Info: Added option for renaming members.\nFixed Log4j2 vulnerability (CVE-2021-44228).\nMinor bug fixes.
