@@ -1,8 +1,0 @@
-<antlib>
-	<!-- typedef the tasks that work for ant less than 1.6 //-->
-	<taskdef resource="biz/isphere/antcontrib/antcontrib.properties" />
-
-	<taskdef name="winword"
-		classname="biz.isphere.antcontrib.taskdef.Winword"
-		onerror="fail" />
-</antlib>

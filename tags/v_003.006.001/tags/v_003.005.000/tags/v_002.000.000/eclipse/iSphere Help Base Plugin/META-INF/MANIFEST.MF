@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: iSphere Help Base (required for other help plugins)
-Bundle-SymbolicName: biz.isphere.base.help;singleton:=true
-Bundle-Version: 2.0.0
-Bundle-Vendor: iSphere Project Owners
-Require-Bundle: org.eclipse.help
