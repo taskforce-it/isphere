@@ -1,4 +1,0 @@
-iSphere TODO List
------------------
-
-* Think about how to ignore comments in iSphere source file search.
