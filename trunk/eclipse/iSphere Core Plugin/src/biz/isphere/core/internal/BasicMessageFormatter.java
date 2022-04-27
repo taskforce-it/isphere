@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,9 @@ public class BasicMessageFormatter {
         int i;
 
         // include leading spaces
-        if (aMessage.startsWith(" ")) {
+        if (p == 0 && aMessage.startsWith(" ")) {
             i = includeSpaces(aMessage, p);
+            return aMessage.substring(0, i);
         } else {
             i = p + 1;
         }
@@ -95,10 +96,7 @@ public class BasicMessageFormatter {
     }
 
     private int includeSpaces(String aMessage, int i) {
-        while (i < aMessage.length() && " ".equals(aMessage.substring(i))) {
-            i++;
-        }
-        if (i + 1 < aMessage.length() && " ".equals(aMessage.substring(i, i + 1))) {
+        while (i < aMessage.length() && " ".equals(aMessage.substring(i, i + 1))) {
             i++;
         }
         return i;
@@ -160,12 +158,17 @@ public class BasicMessageFormatter {
         String tMessage;
 
         tMessage = "&N Cause . . . . . :   The application running requires a later version of CSP/AE. &N Recovery  . . . :   Contact the application developer to generate the application for the level of CSP/AE installed. Or, contact your system administrator to determine the correct level of CSP/AE required to run the generated application. &N Technical description . . . . . . . . :   Consult the Program Directory of your current CSP/AD product to determine the level of CSP/AE required to run the generated application.";
-        System.out.println(main.format(tMessage));
+        System.out.println("[" + main.format(tMessage) + "]");
 
         System.out.println();
 
         tMessage = "&N Cause . . . . . :   A significant part of a number (not the decimal positions) is lost because the field to receive the number is too short. Application processing ends. &N Message CAE0021, issued when the application ended, gives the number of the statement causing the error. &N Recovery  . . . :   Contact the application developer to correct this problem. &N Technical description . . . . . . . . :   Change the application by increasing the size of the target data item to avoid overflow.  Or, have the application handle overflow conditions using the EZEOVER and EZEOVERS special function words.*NONE";
-        System.out.println(main.format(tMessage));
+        System.out.println("[" + main.format(tMessage) + "]");
+
+        System.out.println();
+
+        tMessage = "   &N Cause . . . . . :   A significant part of a number (not the decimal positions) is lost because the field to receive the number is too short. Application processing ends. &N Message CAE0021, issued when the application ended, gives the number of the statement causing the error. &N Recovery  . . . :   Contact the application developer to correct this problem. &N Technical description . . . . . . . . :   Change the application by increasing the size of the target data item to avoid overflow.  Or, have the application handle overflow conditions using the EZEOVER and EZEOVERS special function words.*NONE   ";
+        System.out.println("[" + main.format(tMessage) + "]");
     }
 
 }
