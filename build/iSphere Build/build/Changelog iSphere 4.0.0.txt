@@ -29,6 +29,8 @@ Changelog: iSphere 5.0.1.r
  • Fixed iSphere Message/Stream File Search preferences.
  • Fixed opening the iSphere compare editor from the context menu of
    a stream file editor.
+ • Fixed endless loop in BasicMessageFormatter for messages starting
+   with spaces.
 
 Changelog: iSphere 5.0.0.r
 --------------------------
