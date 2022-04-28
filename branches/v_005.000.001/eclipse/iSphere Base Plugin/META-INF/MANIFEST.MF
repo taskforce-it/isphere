@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Base (required)
 Bundle-SymbolicName: biz.isphere.base;singleton:=true
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Activator: biz.isphere.base.ISphereBasePlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin

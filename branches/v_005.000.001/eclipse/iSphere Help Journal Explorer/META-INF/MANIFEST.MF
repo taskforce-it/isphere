@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISphere Help Journal Explorer
 Bundle-SymbolicName: biz.isphere.journalexplorer.help;singleton:=true
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Vendor: iSphere Team Provider
 Require-Bundle: org.eclipse.help,
  biz.isphere.base.help

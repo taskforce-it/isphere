@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere TN5250J Base (Java 6)
 Bundle-SymbolicName: biz.isphere.tn5250j.base
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Activator: org.tn5250j.TN5250JPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin

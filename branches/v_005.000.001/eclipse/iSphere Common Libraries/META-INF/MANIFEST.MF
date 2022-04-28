@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Commons Libraries
 Bundle-SymbolicName: biz.isphere.common.libraries
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-ClassPath: .,
  commons-codec-1.1.jar,
  commons-lang-2.1.jar,

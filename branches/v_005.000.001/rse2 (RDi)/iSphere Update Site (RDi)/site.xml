@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/biz.isphere.core_5.0.0.r.jar" id="biz.isphere.core" version="5.0.0.r">
+   <feature url="features/biz.isphere.core_5.0.1.r.jar" id="biz.isphere.core" version="5.0.1.r">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.rse_5.0.0.r.jar" id="biz.isphere.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.rse_5.0.1.r.jar" id="biz.isphere.rse" version="5.0.1.r">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.lpex.tasks_5.0.0.r.jar" id="biz.isphere.lpex.tasks" version="5.0.0.r">
+   <feature url="features/biz.isphere.lpex.tasks_5.0.1.r.jar" id="biz.isphere.lpex.tasks" version="5.0.1.r">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.help_5.0.0.r.jar" id="biz.isphere.help" version="5.0.0.r">
+   <feature url="features/biz.isphere.help_5.0.1.r.jar" id="biz.isphere.help" version="5.0.1.r">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.messagesubsystem.rse_5.0.0.r.jar" id="biz.isphere.messagesubsystem.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.messagesubsystem.rse_5.0.1.r.jar" id="biz.isphere.messagesubsystem.rse" version="5.0.1.r">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.comparefilters_5.0.0.r.jar" id="biz.isphere.comparefilters" version="5.0.0.r">
+   <feature url="features/biz.isphere.comparefilters_5.0.1.r.jar" id="biz.isphere.comparefilters" version="5.0.1.r">
       <category name="iSphere Additions for RDi 9.5+ (recommended)"/>
    </feature>
    <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
       <category name="iSphere TN5250J for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.tn5250j.core_5.0.0.r.jar" id="biz.isphere.tn5250j.core" version="5.0.0.r">
+   <feature url="features/biz.isphere.tn5250j.core_5.0.1.r.jar" id="biz.isphere.tn5250j.core" version="5.0.1.r">
       <category name="iSphere TN5250J for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.tn5250j.rse_5.0.0.r.jar" id="biz.isphere.tn5250j.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.tn5250j.rse_5.0.1.r.jar" id="biz.isphere.tn5250j.rse" version="5.0.1.r">
       <category name="iSphere TN5250J for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.strpreprc_5.0.0.r.jar" id="biz.isphere.strpreprc" version="5.0.0.r">
+   <feature url="features/biz.isphere.strpreprc_5.0.1.r.jar" id="biz.isphere.strpreprc" version="5.0.1.r">
       <category name="iSphere STRPREPRC Utility for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.joblogexplorer.rse_5.0.0.r.jar" id="biz.isphere.joblogexplorer.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.joblogexplorer.rse_5.0.1.r.jar" id="biz.isphere.joblogexplorer.rse" version="5.0.1.r">
       <category name="iSphere Job Log Explorer for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.lpex.comments_5.0.0.r.jar" id="biz.isphere.lpex.comments" version="5.0.0.r">
+   <feature url="features/biz.isphere.lpex.comments_5.0.1.r.jar" id="biz.isphere.lpex.comments" version="5.0.1.r">
       <category name="iSphere Additions for RDi 9.5.1.3+ (optional, see description)"/>
    </feature>
-   <feature url="features/biz.isphere.journalexplorer.rse_5.0.0.r.jar" id="biz.isphere.journalexplorer.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.journalexplorer.rse_5.0.1.r.jar" id="biz.isphere.journalexplorer.rse" version="5.0.1.r">
       <category name="iSphere Journal Explorer for RDi 9.5.1.3+"/>
    </feature>
-   <feature url="features/biz.isphere.jobtraceexplorer.rse_5.0.0.r.jar" id="biz.isphere.jobtraceexplorer.rse" version="5.0.0.r">
+   <feature url="features/biz.isphere.jobtraceexplorer.rse_5.0.1.r.jar" id="biz.isphere.jobtraceexplorer.rse" version="5.0.1.r">
       <category name="iSphere Job Trace Explorer for RDi 9.5.1.3+"/>
    </feature>
    <category-def name="iSphere for RDi 9.5.1.3+ (Base Component)" label="iSphere for 9.5.1.3+ (Base Component)">

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 X-Bundle-Update-Library: true
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Added iSphere Stream File Compare Editor.\nAdded iSphere Stream File Search.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.\nBug fixes.
-X-Beta-Version: 5.0.0.r
+X-Bundle-Info: Fixed endless loop in BasicMessageFormatter for messages starting with spaces. Identified with message CPF1241 on 7.4 after applying a PTF.
+X-Beta-Version: 5.0.1.r
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: .
 X-Beta-Info: Added iSphere Stream File Compare Editor.\nAdded iSphere Stream File Search.\nAdded option to scan for LPEX task tags when the source member is changed.\nAdded option to remove LPEX task tags when the source member is closed.\nBug fixes.

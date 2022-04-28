@@ -4,7 +4,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere for RDi 9.5.1.3+
 Bundle-SymbolicName: biz.isphere.rse;singleton:=true
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Activator: biz.isphere.rse.ISphereRSEPlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin

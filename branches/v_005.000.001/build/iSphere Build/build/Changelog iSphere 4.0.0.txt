@@ -1,4 +1,10 @@
 
+Changelog: iSphere 5.0.1.r
+--------------------------
+ • Fixed endless loop in BasicMessageFormatter for messages starting
+   with spaces. Identified with message CPF1241 on 7.4 after applying
+   a PTF.
+
 Changelog: iSphere 5.0.0.r
 --------------------------
  • Added iSphere Stream File Search to UI.

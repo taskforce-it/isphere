@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISphere IDE Plugin
 Bundle-SymbolicName: biz.isphere.ide
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Activator: biz.isphere.ide.ISphereIDEPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,

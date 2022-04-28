@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Adapter for RDi 9.5.1.3+
 Bundle-SymbolicName: biz.isphere.adapter;singleton:=true
-Bundle-Version: 5.0.0.r
+Bundle-Version: 5.0.1.r
 Bundle-Activator: biz.isphere.adapter.ISphereAdapterPlugin
 Bundle-Vendor: iSphere Project Team
 Require-Bundle: org.eclipse.ui,
