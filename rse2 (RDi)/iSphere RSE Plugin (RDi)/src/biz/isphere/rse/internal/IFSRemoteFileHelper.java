@@ -56,6 +56,60 @@ public final class IFSRemoteFileHelper {
     }
 
     /**
+     * Tests if a remote IFS file exists.
+     * 
+     * @param connection - Connection where the remote IFS file is stored.
+     * @param filePath - Path of the remote IFS file.
+     * @return A remote IFS file.
+     */
+    public static boolean checkRemoteStreamFile(IBMiConnection connection, String filePath) {
+        return checkRemoteStreamFile(connection.getHost(), filePath);
+    }
+
+    /**
+     * Tests if a remote IFS file exists.
+     * 
+     * @param host - Host where the remote IFS file is stored.
+     * @param filePath - Path of the remote IFS file.
+     * @return A remote IFS file.
+     */
+    public static boolean checkRemoteStreamFile(IHost host, String filePath) {
+        return checkRemoteStreamFile(host, null, filePath);
+    }
+
+    /**
+     * Tests if a remote IFS file exists.
+     * 
+     * @param connection - Connection where the remote IFS file is stored.
+     * @param directoryName - Parent directory that contains the requested
+     *        remote IFS file. Can be set to <code>null</code>.
+     * @param fileName
+     * @return A remote IFS file.
+     */
+    public static boolean checkRemoteStreamFile(IBMiConnection connection, String directoryName, String fileName) {
+        return checkRemoteStreamFile(connection.getHost(), directoryName, fileName);
+    }
+
+    /**
+     * Tests if a remote IFS file exists.
+     * 
+     * @param host - Host where the remote IFS file is stored.
+     * @param directoryName - Parent directory that contains the requested
+     *        remote IFS file. Can be set to <code>null</code>.
+     * @param fileName
+     * @return A remote IFS file.
+     */
+    public static boolean checkRemoteStreamFile(IHost host, String directoryName, String fileName) {
+
+        IFSRemoteFile remoteFile = getRemoteStreamFile(host, directoryName, fileName);
+        if (remoteFile != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a remote IFS directory.
      * 
      * @param connection - Connection where the remote IFS file is stored.
@@ -106,6 +160,8 @@ public final class IFSRemoteFileHelper {
     }
 
     /**
+     * Returns a remote IFS file.
+     * 
      * @param connection - Connection where the remote IFS file is stored.
      * @param directoryName - Parent directory that contains the requested
      *        remote IFS file. Can be set to <code>null</code>.
