@@ -755,6 +755,26 @@
       	
       	<!--
       	  ==========================================
+      	    iSphere Stream File Search Page
+      	  ==========================================
+      	-->
+      
+   <extension
+         point="org.eclipse.search.searchPages">
+      <page
+            id="biz.isphere.rse.streamfilesearch.StreamFileSearchPage"
+            label="%iSphere_Stream_File_Search"
+            enabled="true"
+            icon="icons/stream_file_search.gif"
+            class="biz.isphere.rse.streamfilesearch.StreamFileSearchPage"
+            sizeHint="250,160"
+            tabPosition="0"
+            >
+      </page>
+   </extension>
+      	
+      	<!--
+      	  ==========================================
       	    iSphere Views
       	  ==========================================
       	-->

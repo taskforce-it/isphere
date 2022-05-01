@@ -28,22 +28,27 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
-import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.AbstractSystemHelper;
 
 @SuppressWarnings("restriction")
 public class RSEFilterHelper extends AbstractSystemHelper {
 
-    public static ISystemFilterPoolReference[] getConnectionFilterPools(String connectionName) {
+    public static ISystemFilterPoolReference[] getConnectionObjectFilterPools(String connectionName) {
+        return getConnectionFilterPools(getObjectSubSystem(connectionName));
+    }
+
+    public static ISystemFilterPoolReference[] getConnectionIFSFilterPools(String connectionName) {
+        return getConnectionFilterPools(getIFSSubSystem(connectionName));
+    }
+
+    private static ISystemFilterPoolReference[] getConnectionFilterPools(ISubSystem subSystem) {
 
         List<ISystemFilterPoolReference> filterPools = new LinkedList<ISystemFilterPoolReference>();
 
-        IBMiConnection connection = getConnection(connectionName);
-        if (connection == null) {
+        if (subSystem == null) {
             return new ISystemFilterPoolReference[0];
         }
 
-        ISubSystem subSystem = getObjectSubSystem(connection);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             filterPools.add(systemFilterPoolReference);
@@ -52,12 +57,12 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         return filterPools.toArray(new ISystemFilterPoolReference[filterPools.size()]);
     }
 
+    @Deprecated
     public static ISystemFilter[] getFilterPoolFilters(String connectionName, String systemFilterPoolName) {
 
         List<ISystemFilter> filters = new LinkedList<ISystemFilter>();
 
-        IBMiConnection connection = getConnection(connectionName);
-        ISubSystem subSystem = getObjectSubSystem(connection);
+        ISubSystem subSystem = getObjectSubSystem(connectionName);
         ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
         for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
             if (systemFilterPoolName == null || systemFilterPoolName.equals(filterPoolReferences)) {
@@ -310,6 +315,7 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         return pools;
     }
 
+    @Deprecated
     public static ISystemFilterPool getDefaultFilterPool(String connectionName) {
 
         ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
@@ -320,13 +326,6 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         }
 
         return null;
-    }
-
-    private static IBMiConnection getConnection(String connectionName) {
-
-        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
-
-        return connection;
     }
 
 }
