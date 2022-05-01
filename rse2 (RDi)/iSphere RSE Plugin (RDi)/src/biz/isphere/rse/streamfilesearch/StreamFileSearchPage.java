@@ -57,7 +57,7 @@ import biz.isphere.rse.search.SearchArgumentsListEditor;
  */
 public class StreamFileSearchPage extends AbstractSearchPage {
 
-    public static final String ID = "biz.isphere.rse.sourcefilesearch.SourceFileSearchPage"; //$NON-NLS-1$
+    public static final String ID = "biz.isphere.rse.streamfilesearch.StreamFileSearchPage"; //$NON-NLS-1$
 
     private static final String STREAM_FILE = "streamFile"; //$NON-NLS-1$
     private static final String DIRECTORY = "directory"; //$NON-NLS-1$
