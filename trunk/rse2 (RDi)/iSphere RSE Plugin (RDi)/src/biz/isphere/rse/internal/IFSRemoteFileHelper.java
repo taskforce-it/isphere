@@ -28,6 +28,34 @@ public final class IFSRemoteFileHelper {
     }
 
     /**
+     * Tests is a remote IFS directory exists.
+     * 
+     * @param connection - Connection where the remote IFS file is stored.
+     * @param directoryPath - Path of the remote IFS file.
+     * @return A remote IFS directory.
+     */
+    public static boolean checkRemoteDirectory(IBMiConnection connection, String directoryPath) {
+        return checkRemoteDirectory(connection.getHost(), directoryPath);
+    }
+
+    /**
+     * Tests is a remote IFS directory exists.
+     * 
+     * @param host - Host where the remote IFS file is stored.
+     * @param directoryPath - Path of the remote IFS file.
+     * @return A remote IFS directory.
+     */
+    public static boolean checkRemoteDirectory(IHost host, String directoryPath) {
+
+        IFSRemoteFile remoteDirectory = getRemoteDirectory(host, directoryPath);
+        if (remoteDirectory != null) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a remote IFS directory.
      * 
      * @param connection - Connection where the remote IFS file is stored.
