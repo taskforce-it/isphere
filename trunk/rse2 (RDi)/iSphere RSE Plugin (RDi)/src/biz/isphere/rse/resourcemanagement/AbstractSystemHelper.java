@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Team
+ * Copyright (c) 2012-2022 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,10 @@ import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.core.subsystems.ISubSystemConfiguration;
 import org.eclipse.rse.internal.core.model.SystemProfileManager;
 
-import biz.isphere.core.resourcemanagement.filter.RSEProfile;
-
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
+import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.internal.IFSRemoteFileHelper;
 
 public abstract class AbstractSystemHelper {
 
@@ -63,6 +64,10 @@ public abstract class AbstractSystemHelper {
 
     protected static ISubSystem getObjectSubSystem(IBMiConnection connection) {
         return connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
+    }
+
+    protected static ISubSystem getIFSSubSystem(IBMiConnection connection) {
+        return IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection);
     }
 
 }
