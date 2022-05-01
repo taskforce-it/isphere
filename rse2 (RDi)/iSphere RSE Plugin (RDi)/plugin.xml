@@ -1185,6 +1185,16 @@
          </menu>
          
          <action
+               class="biz.isphere.rse.actions.OpenStreamFileSearchPageAction"
+               id="biz.isphere.rse.actions.OpenStreamFileSearchPageAction"
+               definitionId="biz.isphere.core.command.StreamFileSearchPage.open"
+               label="%menu_iSphere_Stream_File_Search"
+               icon="icons/stream_file_search.gif"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               tooltip="%menu_Tooltip_iSphere_Stream_File_Search">
+         </action>
+         
+         <action
                class="biz.isphere.rse.actions.OpenMessageFileSearchPageAction"
                id="biz.isphere.rse.actions.OpenMessageFileSearchPageAction"
                definitionId="biz.isphere.core.command.MessageFileSearchPage.open"
