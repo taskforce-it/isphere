@@ -9,11 +9,19 @@
 package biz.isphere.rse.streamfilesearch;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.rse.core.model.SystemMessageObject;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.core.streamfilesearch.AbstractStreamFileSearchDelegate;
-
+import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileFilterString;
+import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileServiceSubSystem;
+import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
+import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.streamfilesearch.AbstractStreamFileSearchDelegate;
+import biz.isphere.rse.internal.IFSRemoteFileHelper;
 
 public class StreamFileSearchDelegate extends AbstractStreamFileSearchDelegate {
 
@@ -29,4 +37,80 @@ public class StreamFileSearchDelegate extends AbstractStreamFileSearchDelegate {
         this.connection = connection;
     }
 
+    @Override
+    protected String produceStreamFileFilterString(String path, String file) {
+
+        IFSFileFilterString streamFileFilterString = new IFSFileFilterString();
+        streamFileFilterString.setPath(path);
+        streamFileFilterString.setFile(file);
+
+        return streamFileFilterString.toString();
+    }
+
+    protected IFSFileFilterString produceStreamFileFilter(String filterString) {
+
+        IRemoteFileSubSystemConfiguration configuration = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection)
+            .getParentRemoteFileSubSystemConfiguration();
+        IFSFileFilterString streamFileFilter = new IFSFileFilterString(configuration, filterString);
+
+        return streamFileFilter;
+    }
+
+    @Override
+    protected Object[] resolveFilterString(String filterString) throws Exception {
+
+        IFSFileServiceSubSystem fileServiceSubSystem = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection);
+        return fileServiceSubSystem.resolveFilterString(filterString, new NullProgressMonitor());
+    }
+
+    protected void throwSystemErrorMessage(final Object message) throws InvalidFilterException {
+        throw new InvalidFilterException(((SystemMessageObject)message).getMessage());
+    }
+
+    protected boolean isSystemMessageObject(Object object) {
+        return (object instanceof SystemMessageObject);
+    }
+
+    protected boolean isDirectory(Object object) {
+        if (object instanceof IFSRemoteFile) {
+            return ((IFSRemoteFile)object).isDirectory();
+        }
+        return false;
+    }
+
+    protected boolean isStreamFile(Object object) {
+        if (object instanceof IFSRemoteFile) {
+            return ((IFSRemoteFile)object).isFile();
+        }
+        return false;
+    }
+
+    protected String getDirectoryFromFilterString(String filterString) {
+
+        IFSFileFilterString streamFileFilter = produceStreamFileFilter(filterString);
+        return streamFileFilter.getPath();
+    }
+
+    protected String getFileFromFilterString(String filterString) {
+
+        IFSFileFilterString streamFileFilter = produceStreamFileFilter(filterString);
+        return streamFileFilter.getFile();
+    }
+
+    protected String getResourcePath(Object resource) {
+        IFSFileServiceSubSystem fileServiceSubSystem = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection);
+        return getResourceDirectory(resource) + fileServiceSubSystem.getSeparator() + getResourceName(resource);
+    }
+
+    protected String getResourceDirectory(Object resource) {
+        return ((IFSRemoteFile)resource).getParentPath();
+    }
+
+    protected String getResourceName(Object resource) {
+        return ((IFSRemoteFile)resource).getName();
+    }
+
+    protected String getResourceType(Object resource) {
+        return ((IFSRemoteFile)resource).getExtension();
+    }
 }

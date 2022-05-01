@@ -19,6 +19,7 @@ import org.eclipse.rse.internal.core.model.SystemProfileManager;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
+import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.IFSRemoteFileHelper;
 
 public abstract class AbstractSystemHelper {
@@ -62,12 +63,30 @@ public abstract class AbstractSystemHelper {
         return RSECorePlugin.getTheSystemRegistry().getSubSystemConfiguration(OBJECT_SUBSYSTEM_ID);
     }
 
-    protected static ISubSystem getObjectSubSystem(IBMiConnection connection) {
+    protected static ISubSystem getObjectSubSystem(String connectionName) {
+
+        IBMiConnection connection = getConnection(connectionName);
+        if (connection == null) {
+            return null;
+        }
+
         return connection.getSubSystemByClass(OBJECT_SUBSYSTEM_ID);
     }
 
-    protected static ISubSystem getIFSSubSystem(IBMiConnection connection) {
+    protected static ISubSystem getIFSSubSystem(String connectionName) {
+
+        IBMiConnection connection = getConnection(connectionName);
+        if (connection == null) {
+            return null;
+        }
+
         return IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection);
     }
 
+    protected static IBMiConnection getConnection(String connectionName) {
+
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(connectionName);
+
+        return connection;
+    }
 }

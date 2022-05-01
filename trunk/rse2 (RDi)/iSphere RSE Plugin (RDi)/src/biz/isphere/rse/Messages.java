@@ -50,6 +50,10 @@ public class Messages extends NLS {
 
     public static String Enter_or_select_a_simple_or_generic_member_type;
 
+    public static String Enter_or_select_an_IFS_directory;
+
+    public static String Enter_or_select_a_simple_or_generic_stream_file_name;
+
     public static String Library;
 
     public static String Message_file;
@@ -173,7 +177,7 @@ public class Messages extends NLS {
     public static String Label_Directory_colon;
 
     public static String Title_Browse_For_Directory;
-    
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

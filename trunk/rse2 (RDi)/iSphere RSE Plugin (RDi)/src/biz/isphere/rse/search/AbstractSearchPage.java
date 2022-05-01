@@ -39,6 +39,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
+import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
@@ -51,9 +54,6 @@ import biz.isphere.core.swt.widgets.WidgetHelper;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public abstract class AbstractSearchPage extends XDialogPage implements ISearchPage, Listener {
 
@@ -541,7 +541,7 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
     }
 
     protected ISystemFilterPoolReference[] loadSystemFilterPoolReferences(String connectionName) {
-        return RSEFilterHelper.getConnectionFilterPools(connectionName);
+        return RSEFilterHelper.getConnectionObjectFilterPools(connectionName);
     }
 
     protected void storeScreenValues() {

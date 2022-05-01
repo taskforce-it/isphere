@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2022 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,29 @@ import biz.isphere.core.search.SearchOptions;
 
 public class StreamFileSearchFilter {
 
+    private SearchOptions searchOptions;
+
     public StreamFileSearchFilter() {
+        this.searchOptions = new SearchOptions();
+    }
+
+    public StreamFileSearchFilter(SearchOptions searchOptions) {
+        this.searchOptions = searchOptions;
+    }
+
+    public ArrayList<SearchElement> applyFilter(Collection<SearchElement> elements) {
+        return applyFilter(elements, searchOptions);
     }
 
     public ArrayList<SearchElement> applyFilter(Collection<SearchElement> elements, SearchOptions searchOptions) {
+
+        this.searchOptions = searchOptions;
 
         ArrayList<SearchElement> selectedSearchElements = new ArrayList<SearchElement>();
 
         Collection<SearchElement> allSearchElements = elements;
         for (SearchElement searchElement : allSearchElements) {
-            if (isItemSelected(searchElement, searchOptions)) {
+            if (isItemSelected(searchElement)) {
                 selectedSearchElements.add(searchElement);
             }
         }
@@ -34,20 +47,20 @@ public class StreamFileSearchFilter {
         return selectedSearchElements;
     }
 
-    private boolean isItemSelected(SearchElement item, SearchOptions searchOptions) {
+    public boolean isItemSelected(SearchElement item) {
 
         if (searchOptions == null) {
             return true;
         }
 
-        if (isTypeSelected(item, searchOptions)) {
+        if (isTypeSelected(item)) {
             return true;
         }
 
         return false;
     }
 
-    private boolean isTypeSelected(SearchElement item, SearchOptions searchOptions) {
+    private boolean isTypeSelected(SearchElement item) {
 
         String type = searchOptions.getGenericStringOption(GenericSearchOption.STMF_TYPE, "*"); //$NON-NLS-1$
 
