@@ -1,5 +1,5 @@
 
-Changelog: iSphere 5.1.0.b002
+Changelog: iSphere 5.1.0.b003
 -----------------------------
  • Added Excel export to iSphere Stream File Search result view.
  • Added option for creating an IFS filter to iSphere Stream File
@@ -16,6 +16,8 @@ Changelog: iSphere 5.1.0.b002
    an item in the result view of the iSphere Message File Search.
  • Added vertical scroll bar to iSphere Source/Message file search
    pages.
+ • Added AbstractSearchPage and refactored source and message file
+   search pages.
  • Changed layout of iSphere Search/Message file search dialog
    (removed sash form).
  • Removed workaround for assuring that the first message is received
