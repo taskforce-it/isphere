@@ -8,9 +8,9 @@
 
 package biz.isphere.rse.sourcefilesearch;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -34,7 +34,7 @@ public class SourceFileSearchFilterResolver {
     private Shell _shell;
     private IBMiConnection _connection;
 
-    private HashMap<String, SearchElement> _searchElements;
+    private Map<String, SearchElement> _searchElements;
     private ISeriesObjectFilterString _objectFilterString;
     private SourceFileSearchDelegate _delegate;
     private IProgressMonitor monitor;
@@ -49,7 +49,7 @@ public class SourceFileSearchFilterResolver {
         this.monitor = monitor;
     }
 
-    public HashMap<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
+    public Map<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
 
         _searchElements = new LinkedHashMap<String, SearchElement>();
 
