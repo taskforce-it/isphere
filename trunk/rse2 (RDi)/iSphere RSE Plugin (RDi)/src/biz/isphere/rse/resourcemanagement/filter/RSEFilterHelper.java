@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,28 +55,6 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         }
 
         return filterPools.toArray(new ISystemFilterPoolReference[filterPools.size()]);
-    }
-
-    @Deprecated
-    public static ISystemFilter[] getFilterPoolFilters(String connectionName, String systemFilterPoolName) {
-
-        List<ISystemFilter> filters = new LinkedList<ISystemFilter>();
-
-        ISubSystem subSystem = getObjectSubSystem(connectionName);
-        ISystemFilterPoolReference[] filterPoolReferences = subSystem.getSystemFilterPoolReferenceManager().getSystemFilterPoolReferences();
-        for (ISystemFilterPoolReference systemFilterPoolReference : filterPoolReferences) {
-            if (systemFilterPoolName == null || systemFilterPoolName.equals(filterPoolReferences)) {
-                ISystemFilter[] poolFilters = systemFilterPoolReference.getReferencedFilterPool().getFilters();
-                for (ISystemFilter poolFilter : poolFilters) {
-                    if (!poolFilter.isPromptable()) {
-                        filters.add(poolFilter);
-                    }
-                }
-                break;
-            }
-        }
-
-        return filters.toArray(new ISystemFilter[filters.size()]);
     }
 
     // TODO: add support for IFS filters
@@ -290,42 +268,4 @@ public class RSEFilterHelper extends AbstractSystemHelper {
 
         return pools;
     }
-
-    /**
-     * Returns the filters of the object subsystem of a given connection.
-     * 
-     * @param connectionName - Name of the RSE connection
-     * @return filter pools
-     * @deprecated Use {@link #getFilterPools(String, String)} instead.
-     */
-    public static ISystemFilterPool[] getFilterPools(String connectionName) {
-
-        ISystemFilterPool pools[] = null;
-
-        IBMiConnection connection = getConnection(connectionName);
-        ISubSystem subsystem = connection.getQSYSObjectSubSystem();
-        if (subsystem != null) {
-            pools = subsystem.getFilterPoolReferenceManager().getReferencedSystemFilterPools();
-        }
-
-        if (pools == null) {
-            pools = new ISystemFilterPool[0];
-        }
-
-        return pools;
-    }
-
-    @Deprecated
-    public static ISystemFilterPool getDefaultFilterPool(String connectionName) {
-
-        ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
-        for (ISystemFilterPool filterPool : filterPools) {
-            if (filterPool.isDefault()) {
-                return filterPool;
-            }
-        }
-
-        return null;
-    }
-
 }
