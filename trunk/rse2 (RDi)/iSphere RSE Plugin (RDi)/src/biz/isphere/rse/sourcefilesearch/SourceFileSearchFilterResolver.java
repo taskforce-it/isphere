@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
 package biz.isphere.rse.sourcefilesearch;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,7 +51,7 @@ public class SourceFileSearchFilterResolver {
 
     public HashMap<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
 
-        _searchElements = new HashMap<String, SearchElement>();
+        _searchElements = new LinkedHashMap<String, SearchElement>();
 
         for (int idx = 0; idx < _selectedElements.size(); idx++) {
 
