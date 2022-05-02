@@ -505,6 +505,28 @@
                 icon="icons/stream_file_search.gif"
                 menubarPath="additions">
 	         </action>
+        </objectContribution>
+        
+        <!-- Right-click: RSE object filter for IFS filters -->
+        <objectContribution
+            objectClass="org.eclipse.rse.core.filters.SystemFilterReference"
+            id="biz.isphere.core.menu.streamfilesearch.filter">
+            
+            <enablement>
+                <and>
+                    <test property="biz.isphere.adapter.propertytester.systemfilterreference.subsystem" 
+                          value="com.ibm.etools.iseries.subsystems.ifs.files.IFSFileServiceSubSystem"/>
+                </and>
+            </enablement>
+             
+             <action
+                class="biz.isphere.rse.actions.StreamFileSearchAction"
+                enablesFor="*"
+                id="biz.isphere.rse.actions.StreamFileSearchAction"
+                label="%iSphere_Stream_File_Search"
+                icon="icons/stream_file_search.gif"
+                menubarPath="additions">
+	         </action>
       	</objectContribution>
       	
       	<!--
@@ -1305,6 +1327,13 @@
             id="biz.isphere.core.command.SourceFileSearchPage.open"
             categoryId="biz.isphere.category.Commands"
             name="%command_Open_iSphere_Source_File_Search_Page">
+      </command>
+      
+      <command
+            defaultHandler="biz.isphere.rse.handler.OpenStreamFileSearchPageHandler"
+            id="biz.isphere.core.command.StreamFileSearchPage.open"
+            categoryId="biz.isphere.category.Commands"
+            name="%command_Open_iSphere_Stream_File_Search_Page">
       </command>
       
       <command

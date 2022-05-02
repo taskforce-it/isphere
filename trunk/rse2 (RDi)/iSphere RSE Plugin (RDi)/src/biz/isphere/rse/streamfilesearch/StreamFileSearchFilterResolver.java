@@ -18,7 +18,6 @@ import org.eclipse.rse.core.filters.ISystemFilterStringReference;
 import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileFilterString;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -67,7 +66,7 @@ public class StreamFileSearchFilterResolver {
 
                 if (element.isDirectory()) {
                     addElementsFromDirectory(element);
-                } else if (ResourceTypeUtil.isMember(element)) {
+                } else if (element.isFile()) {
                     addElement(element);
                 }
 
