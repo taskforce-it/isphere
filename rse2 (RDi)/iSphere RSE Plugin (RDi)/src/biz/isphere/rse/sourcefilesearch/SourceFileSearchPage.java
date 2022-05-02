@@ -10,6 +10,7 @@ package biz.isphere.rse.sourcefilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -356,7 +357,7 @@ public class SourceFileSearchPage extends AbstractSearchPage {
                 }
             } else {
 
-                HashMap<String, SearchElement> searchElements;
+                Map<String, SearchElement> searchElements;
 
                 if (isFilterRadioButtonSelected()) {
                     searchElements = loadFilterSearchElements(tConnection, getFilter());
@@ -412,13 +413,13 @@ public class SourceFileSearchPage extends AbstractSearchPage {
         return searchElements;
     }
 
-    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
+    private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
 
         ArrayList<Object> selectedFilters = new ArrayList<Object>();
         selectedFilters.add(getFilter());
 
         SourceFileSearchFilterResolver filterResolver = new SourceFileSearchFilterResolver(getShell(), connection);
-        HashMap<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
 
         return searchElements;
     }

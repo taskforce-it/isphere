@@ -10,8 +10,8 @@ package biz.isphere.rse.actions;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -143,7 +143,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
                 }
             }
 
-            HashMap<String, SearchElement> _searchElements = null;
+            Map<String, SearchElement> _searchElements = null;
 
             try {
                 if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
