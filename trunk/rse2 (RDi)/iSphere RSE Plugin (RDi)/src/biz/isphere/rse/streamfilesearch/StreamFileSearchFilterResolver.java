@@ -8,8 +8,9 @@
 
 package biz.isphere.rse.streamfilesearch;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -31,7 +32,7 @@ public class StreamFileSearchFilterResolver {
     private IBMiConnection _connection;
     private StreamFileSearchFilter streamFileSearchFilter;
 
-    private HashMap<String, SearchElement> _searchElements;
+    private Map<String, SearchElement> _searchElements;
     private IFSFileFilterString _ifsFileFilterString;
     private StreamFileSearchDelegate _delegate;
     private IProgressMonitor monitor;
@@ -48,9 +49,9 @@ public class StreamFileSearchFilterResolver {
         this.monitor = monitor;
     }
 
-    public HashMap<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
+    public Map<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
 
-        _searchElements = new HashMap<String, SearchElement>();
+        _searchElements = new LinkedHashMap<String, SearchElement>();
 
         for (int idx = 0; idx < _selectedElements.size(); idx++) {
 
