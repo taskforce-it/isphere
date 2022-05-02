@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ package biz.isphere.core.sourcefilesearch;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
@@ -41,7 +42,7 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract String produceMemberFilterString(String library, String sourceFile, String sourceMember, String memberType);
 
-    public boolean addElementsFromFilterString(HashMap<String, SearchElement> searchElements, String... filterStrings) throws Exception {
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, String... filterStrings) throws Exception {
 
         boolean doContinue = true;
         Object[] children = null;
@@ -95,7 +96,7 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract boolean isSourceMember(Object object);
 
-    private boolean addElementsFromLibrary(HashMap<String, SearchElement> searchElements, Object library) throws Exception {
+    private boolean addElementsFromLibrary(Map<String, SearchElement> searchElements, Object library) throws Exception {
 
         Object[] sourceFiles = null;
 
@@ -153,7 +154,7 @@ public abstract class AbstractSourceFileSearchDelegate {
 
     protected abstract Date getMemberLastChangedDate(Object resource);
 
-    private void addElementsFromSourceFile(HashMap<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
+    private void addElementsFromSourceFile(Map<String, SearchElement> searchElements, String library, String sourceFile) throws Exception {
 
         String memberFilterString = produceMemberFilterString(library, sourceFile, "*", "*"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -167,7 +168,7 @@ public abstract class AbstractSourceFileSearchDelegate {
      * @param searchElements - list of elements that are searched
      * @param sourceMember - message file that is added to the list
      */
-    private void addElement(HashMap<String, SearchElement> searchElements, Object sourceMember) {
+    private void addElement(Map<String, SearchElement> searchElements, Object sourceMember) {
 
         String library = getMemberResourceLibrary(sourceMember);
         String file = getMemberResourceFile(sourceMember);
@@ -185,14 +186,14 @@ public abstract class AbstractSourceFileSearchDelegate {
         addSearchElement(searchElements, aSearchElement);
     }
 
-    private void addSearchElement(HashMap<String, SearchElement> searchElements, SearchElement aSearchElement) {
+    private void addSearchElement(Map<String, SearchElement> searchElements, SearchElement aSearchElement) {
         String tKey = aSearchElement.getLibrary() + "-" + aSearchElement.getFile() + "-" + aSearchElement.getMember(); //$NON-NLS-1$ //$NON-NLS-2$
         if (!searchElements.containsKey(tKey)) {
             searchElements.put(tKey, aSearchElement);
         }
     }
 
-    public HashMap<String, SearchElement> createHashMap(ArrayList<SearchElement> filteredElements) {
+    public Map<String, SearchElement> createHashMap(ArrayList<SearchElement> filteredElements) {
 
         HashMap<String, SearchElement> map = new HashMap<String, SearchElement>();
 
