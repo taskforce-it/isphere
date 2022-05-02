@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2022 iSphere Project Owners All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
 package biz.isphere.rse.internal;
 
 import java.util.ArrayList;
@@ -15,13 +22,6 @@ import biz.isphere.core.resourcemanagement.filter.RSEFilterPool;
 import biz.isphere.core.resourcemanagement.filter.RSEProfile;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
 
-/*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners All rights reserved. This
- * program and the accompanying materials are made available under the terms of
- * the Common Public License v1.0 which accompanies this distribution, and is
- * available at http://www.eclipse.org/legal/cpl-v10.html
- *******************************************************************************/
-
 public abstract class AbstractFilterCreator {
 
     /**
@@ -33,7 +33,7 @@ public abstract class AbstractFilterCreator {
      *        in {@link RSEFilter}.
      * @return filter pools
      */
-    public RSEFilterPool[] getFilterPools(String connectionName, String filterType) {
+    protected RSEFilterPool[] getFilterPools(String connectionName, String filterType) {
 
         ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName, filterType);
 
@@ -53,22 +53,10 @@ public abstract class AbstractFilterCreator {
      * 
      * @param connectionName - Name of the RSE connection
      * @return filter pools
-     * @deprecated Use {@link #getFilterPools(String, String)} instead.
      */
-    @Deprecated()
     public RSEFilterPool[] getFilterPools(String connectionName) {
-
-        ISystemFilterPool[] filterPools = RSEFilterHelper.getFilterPools(connectionName);
-
-        List<RSEFilterPool> rseFilterPools = new ArrayList<RSEFilterPool>();
-        for (ISystemFilterPool filterPool : filterPools) {
-            rseFilterPools.add(createRSEFilterPool(filterPool));
-        }
-
-        RSEFilterPool[] sortedFilterPoolNames = rseFilterPools.toArray(new RSEFilterPool[rseFilterPools.size()]);
-        // Arrays.sort(sortedFilterPoolNames);
-
-        return sortedFilterPoolNames;
+        RSEFilterPool[] pools = getFilterPools(connectionName, RSEFilter.TYPE_OBJECT);
+        return pools;
     }
 
     private RSEFilterPool createRSEFilterPool(ISystemFilterPool filterPool) {
