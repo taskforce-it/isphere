@@ -10,6 +10,7 @@ package biz.isphere.core.streamfilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
@@ -48,7 +49,7 @@ public abstract class AbstractStreamFileSearchDelegate {
 
     protected abstract String getResourceType(Object resource);
 
-    public boolean addElementsFromFilterString(HashMap<String, SearchElement> searchElements, StreamFileSearchFilter filter, String... filterStrings)
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, String... filterStrings)
         throws Exception {
 
         boolean doContinue = true;
@@ -113,7 +114,7 @@ public abstract class AbstractStreamFileSearchDelegate {
      * @param searchElements - list of elements that are searched
      * @param streamFile - message file that is added to the list
      */
-    private void addElement(HashMap<String, SearchElement> searchElements, StreamFileSearchFilter filter, Object streamFile) {
+    private void addElement(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, Object streamFile) {
 
         String directory = getResourceDirectory(streamFile);
         String file = getResourceName(streamFile);
@@ -124,12 +125,12 @@ public abstract class AbstractStreamFileSearchDelegate {
         aSearchElement.setStreamFile(file);
         aSearchElement.setType(type);
 
-        if (filter.isItemSelected(aSearchElement)) {
+        if (filter == null || filter.isItemSelected(aSearchElement)) {
             addSearchElement(searchElements, aSearchElement);
         }
     }
 
-    private void addSearchElement(HashMap<String, SearchElement> searchElements, SearchElement aSearchElement) {
+    private void addSearchElement(Map<String, SearchElement> searchElements, SearchElement aSearchElement) {
         String tKey = aSearchElement.getDirectory() + "/" + aSearchElement.getStreamFile(); //$NON-NLS-1$ //$NON-NLS-2$
         if (!searchElements.containsKey(tKey)) {
             searchElements.put(tKey, aSearchElement);

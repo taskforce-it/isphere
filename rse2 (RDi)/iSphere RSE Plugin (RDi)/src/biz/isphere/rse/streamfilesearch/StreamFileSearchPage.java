@@ -10,6 +10,7 @@ package biz.isphere.rse.streamfilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -313,7 +314,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
 
             StreamFileSearchFilter streamFileSearchFilter = new StreamFileSearchFilter(searchOptions);
 
-            HashMap<String, SearchElement> searchElements;
+            Map<String, SearchElement> searchElements;
             if (isFilterRadioButtonSelected()) {
                 searchElements = loadFilterSearchElements(tConnection, streamFileSearchFilter);
             } else {
@@ -350,7 +351,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         return false;
     }
 
-    private HashMap<String, SearchElement> loadStreamFileSearchElements(IBMiConnection connection, String directory, String streamFile,
+    private Map<String, SearchElement> loadStreamFileSearchElements(IBMiConnection connection, String directory, String streamFile,
         StreamFileSearchFilter filter) throws InterruptedException {
 
         HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
@@ -367,13 +368,13 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         return searchElements;
     }
 
-    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, StreamFileSearchFilter filter) throws Exception {
+    private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, StreamFileSearchFilter filter) throws Exception {
 
         ArrayList<Object> selectedFilters = new ArrayList<Object>();
         selectedFilters.add(getFilter());
 
         StreamFileSearchFilterResolver filterResolver = new StreamFileSearchFilterResolver(getShell(), connection, filter);
-        HashMap<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
 
         return searchElements;
     }

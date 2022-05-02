@@ -9,18 +9,21 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.rse.core.filters.SystemFilterReference;
+import org.eclipse.rse.core.model.IHost;
+import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
@@ -42,20 +45,20 @@ import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.IFSRemoteFileHelper;
-import biz.isphere.rse.internal.RSEStreamFile;
 import biz.isphere.rse.streamfilesearch.RSESearchExec;
+import biz.isphere.rse.streamfilesearch.StreamFileSearchFilterResolver;
 
 public class StreamFileSearchAction implements IObjectActionDelegate {
 
     private Shell _shell;
     private IWorkbenchWindow _workbenchWindow;
-    private RSEStreamFile[] selectedStreamFiles;
-    private List<RSEStreamFile> selectedStreamFilesList;
+
+    private List<Object> _selectedElements;
     private IBMiConnection _connection;
     private boolean _multipleConnection;
 
     public StreamFileSearchAction() {
-        selectedStreamFilesList = new LinkedList<RSEStreamFile>();
+        this._selectedElements = new LinkedList<Object>();
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
@@ -67,7 +70,7 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
         try {
 
-            if (selectedStreamFiles.length > 0) {
+            if (_selectedElements.size() > 0) {
                 doWork();
             }
 
@@ -79,30 +82,30 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
     public void selectionChanged(IAction action, ISelection selection) {
 
+        _selectedElements.clear();
+
         if (selection instanceof IStructuredSelection) {
-            selectedStreamFiles = getStreamFilesFromSelection((IStructuredSelection)selection);
-            if (selectedStreamFiles.length >= 1) {
-                action.setEnabled(true);
-            } else {
-                action.setEnabled(false);
-            }
+            getSelectedElemenetsFromSelection((IStructuredSelection)selection);
+        }
+
+        if (_selectedElements.size() >= 1) {
+            action.setEnabled(true);
         } else {
             action.setEnabled(false);
         }
     }
 
-    private RSEStreamFile[] getStreamFilesFromSelection(IStructuredSelection structuredSelection) {
+    private void getSelectedElemenetsFromSelection(IStructuredSelection structuredSelection) {
 
-        selectedStreamFilesList.clear();
+        _connection = null;
+        _multipleConnection = false;
 
         if (structuredSelection != null) {
-            addStreamFilesFromList(structuredSelection.toList());
+            addSelectedElementsFromList(structuredSelection.toList());
         }
-
-        return selectedStreamFilesList.toArray(new RSEStreamFile[selectedStreamFilesList.size()]);
     }
 
-    private void addStreamFilesFromList(List<?> objects) {
+    private void addSelectedElementsFromList(List<?> objects) {
 
         try {
 
@@ -110,10 +113,30 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
                 if (object instanceof IFSRemoteFile) {
                     IFSRemoteFile ifsRemoteFile = (IFSRemoteFile)object;
                     if (ifsRemoteFile.isFile()) {
-                        selectedStreamFilesList.add(new RSEStreamFile(ifsRemoteFile));
+                        /*
+                         * Started for a stream file item.
+                         */
+                        // _selectedElements.add(new
+                        // RSEStreamFile(ifsRemoteFile));
+                        _selectedElements.add(ifsRemoteFile);
+                        IHost host = ifsRemoteFile.getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                     } else if (ifsRemoteFile.isDirectory()) {
-                        addStreamFilesFromList(IFSRemoteFileHelper.listFiles(ifsRemoteFile, IFileService.FILE_TYPE_FILES_AND_FOLDERS, true));
+                        /*
+                         * Started for a directory item.
+                         */
+                        addSelectedElementsFromList(IFSRemoteFileHelper.listFiles(ifsRemoteFile, IFileService.FILE_TYPE_FILES_AND_FOLDERS, true));
+                        IHost host = ifsRemoteFile.getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                     }
+                } else if (object instanceof SystemFilterReference) {
+                    /*
+                     * Started for a filter node
+                     */
+                    SystemFilterReference element = (SystemFilterReference)object;
+                    _selectedElements.add(element);
+                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                 }
             }
 
@@ -123,48 +146,6 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
     }
 
     private void doWork() {
-
-        _connection = null;
-        _multipleConnection = false;
-
-        HashMap<String, SearchElement> _searchElements = new LinkedHashMap<String, SearchElement>();
-
-        for (int idx = 0; idx < selectedStreamFiles.length; idx++) {
-
-            RSEStreamFile element = selectedStreamFiles[idx];
-
-            String key = element.getDirectory() + "/" + element.getStreamFile();
-
-            if (!_searchElements.containsKey(key)) {
-
-                int _offset = 0;
-                int _length = element.getStreamFile().length();
-                String _type = "";
-                do {
-                    int _pos = element.getStreamFile().indexOf(".", _offset);
-                    if (_pos == -1) {
-                        break;
-                    } else if (_pos + 1 == _length) {
-                        _type = "";
-                        break;
-                    } else {
-                        _type = element.getStreamFile().substring(_pos + 1);
-                        _offset = _pos + 1;
-                    }
-                } while (true);
-
-                SearchElement _searchElement = new SearchElement();
-                _searchElement.setDirectory(element.getDirectory());
-                _searchElement.setStreamFile(element.getStreamFile());
-                _searchElement.setType(_type);
-
-                _searchElements.put(key, _searchElement);
-
-            }
-
-            checkIfMultipleConnections(element.getRSEConnection());
-
-        }
 
         if (_multipleConnection) {
             MessageBox errorBox = new MessageBox(_shell, SWT.ICON_ERROR);
@@ -180,6 +161,18 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
             } catch (SystemMessageException e) {
                 return;
             }
+        }
+
+        Map<String, SearchElement> _searchElements = null;
+
+        try {
+            _searchElements = new StreamFileSearchFilterResolver(_shell, _connection, null).resolveFilterStrings(_selectedElements);
+        } catch (InterruptedException e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        } catch (Exception e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
         }
 
         AS400 as400 = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@ package biz.isphere.core.streamfilesearch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -47,7 +48,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
 
-    private HashMap<String, SearchElement> searchElements;
+    private Map<String, SearchElement> searchElements;
     private Button showAllRecordsButton;
     private Combo filterTypeCombo;
     private RefreshJob refreshJob = new RefreshJob();
@@ -55,20 +56,36 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     /**
      * Constructor used by whom? CMOne?
      */
+    @Deprecated
     @CMOne(info = "Do not change the constructor. May be used by CMOne.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
         super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, false);
-        this.searchElements = searchElements;
-        setListBoxEnabled(hasSearchElements());
+        init(searchElements);
     }
 
     /**
      * Constructor used by CMOne.
      */
+    @Deprecated
     @CMOne(info = "Do not change the constructor.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true, SearchOptionConfig
-            .getAdditionalLineModeSearchOptions());
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true,
+            SearchOptionConfig.getAdditionalLineModeSearchOptions());
+        init(searchElements);
+    }
+
+    public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, false);
+        init(searchElements);
+    }
+
+    public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true,
+            SearchOptionConfig.getAdditionalLineModeSearchOptions());
+        init(searchElements);
+    }
+
+    private void init(Map<String, SearchElement> searchElements) {
         this.searchElements = searchElements;
         setListBoxEnabled(hasSearchElements());
     }

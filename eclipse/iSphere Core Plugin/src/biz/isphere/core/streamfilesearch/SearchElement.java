@@ -7,7 +7,7 @@
  *******************************************************************************/
 
 package biz.isphere.core.streamfilesearch;
- 
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,7 +19,7 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.annotations.CMOne;
 
 @CMOne(info = "Be careful, when changing this class! Also test CMOne stream file search.")
-public class SearchElement {
+public class SearchElement implements Comparable<SearchElement> {
 
     private String directory;
     private String streamFile;
@@ -37,7 +37,8 @@ public class SearchElement {
     @CMOne(info = "Deprecated but required for compiling CMOne.")
     public void setLastChangedDate(Date lastChangedDate) {
         // throw new
-        // IllegalAccessError("Don't call setLastChangedDate()! This method has become obsolete with rev. 6056.");
+        // IllegalAccessError("Don't call setLastChangedDate()! This method has
+        // become obsolete with rev. 6056.");
     }
 
     public String getDirectory() {
@@ -79,7 +80,8 @@ public class SearchElement {
         // _separator = jdbcConnection.getMetaData().getCatalogSeparator();
         // } catch (SQLException e) {
         // _separator = ".";
-        // ISpherePlugin.logError("*** Stream file search, setSearchElements(): Could not get JDBC meta data. Using '.' as SQL separator ***",
+        // ISpherePlugin.logError("*** Stream file search, setSearchElements():
+        // Could not get JDBC meta data. Using '.' as SQL separator ***",
         // e);
         // }
 
@@ -114,12 +116,14 @@ public class SearchElement {
                         sqlInsert.append(", ");
                     }
 
+                    //@formatter:off
                     sqlInsert.append("(");
                     sqlInsert.append(
                         "'" + Integer.toString(handle) + "', " + 
                         "'" + _searchElements.get(idx).getDirectory() + "', " + 
                         "'" + _searchElements.get(idx).getStreamFile() + "'");
                     sqlInsert.append(")");
+                    //@formatter:on
                 }
 
                 String _sqlInsert = sqlInsert.toString();
@@ -152,6 +156,24 @@ public class SearchElement {
     @Override
     public String toString() {
         return String.format("%s/%s", getDirectory(), getStreamFile());
+    }
+
+    public int compareTo(SearchElement other) {
+        if (other == null) {
+            return 1;
+        } else {
+            int rc = getDirectory().compareTo(other.getDirectory());
+            if (rc != 0) {
+                return rc;
+            } else {
+                rc = getStreamFile().compareTo(other.getStreamFile());
+                if (rc != 0) {
+                    return rc;
+                } else {
+                    return getType().compareTo(other.getType());
+                }
+            }
+        }
     }
 
 }
