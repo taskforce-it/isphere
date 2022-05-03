@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,11 +47,15 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
         super(parentShell, 132, false, false);
-        this.searchElements = searchElements;
+        init(searchElements);
     }
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
         super(parentShell, 132, searchArgumentsListEditor, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
+        init(searchElements);
+    }
+
+    private void init(Map<String, SearchElement> searchElements) {
         this.searchElements = searchElements;
     }
 
