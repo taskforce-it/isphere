@@ -1,6 +1,6 @@
 
-Changelog: iSphere 5.1.0.b003
------------------------------
+Changelog: iSphere 5.1.0.r
+--------------------------
  • Added Excel export to iSphere Stream File Search result view.
  • Added option for creating an IFS filter to iSphere Stream File
    Search result view.
