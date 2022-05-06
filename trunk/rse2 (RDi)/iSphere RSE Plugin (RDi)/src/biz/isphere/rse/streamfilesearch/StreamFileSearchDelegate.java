@@ -85,16 +85,10 @@ public class StreamFileSearchDelegate extends AbstractStreamFileSearchDelegate {
         return false;
     }
 
-    protected String getDirectoryFromFilterString(String filterString) {
+    protected String getFileOrTypesFromFilterString(String filterString) {
 
         IFSFileFilterString streamFileFilter = produceStreamFileFilter(filterString);
-        return streamFileFilter.getPath();
-    }
-
-    protected String getFileFromFilterString(String filterString) {
-
-        IFSFileFilterString streamFileFilter = produceStreamFileFilter(filterString);
-        return streamFileFilter.getFile();
+        return streamFileFilter.getFileOrTypes();
     }
 
     protected String getResourcePath(Object resource) {

@@ -78,8 +78,8 @@ public abstract class AbstractStreamFileSearchDelegate {
                         if (isDirectory(element)) {
                             if (maxDepth > 0) {
                                 String path = getResourcePath(element);
-                                String file = getFileFromFilterString(filterStrings[idx]);
-                                String filterString = produceStreamFileFilterString(path, file);
+                                String fileOrTypes = getFileOrTypesFromFilterString(filterStrings[idx]);
+                                String filterString = produceStreamFileFilterString(path, fileOrTypes);
                                 doContinue = addElementsFromFilterString(searchElements, filter, maxDepth - 1, filterString);
                             }
                         } else if (isStreamFile(element)) {
@@ -105,9 +105,7 @@ public abstract class AbstractStreamFileSearchDelegate {
 
     protected abstract boolean isStreamFile(Object object);
 
-    protected abstract String getDirectoryFromFilterString(String filterString);
-
-    protected abstract String getFileFromFilterString(String filterString);
+    protected abstract String getFileOrTypesFromFilterString(String filterString);
 
     /**
      * Adds an element to the list of elements that are searched for a given
