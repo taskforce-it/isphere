@@ -9,8 +9,6 @@ Changelog: iSphere 5.1.0.b003
  • Added column Severity to iSphere Message File Editor.
  • Added option for opening a search result or Excel export file
    after it has been saved to disk.
- • Added option to for specifying whether to open files after they
-   have been saved to the iSphere Appearance preferences page.
  • Added option to specify whether the iSphere Message Description
    Editor is started in browse or edit mode, when double-clicking
    an item in the result view of the iSphere Message File Search.
