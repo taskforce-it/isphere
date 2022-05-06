@@ -25,7 +25,7 @@ Changelog: iSphere 5.1.0.b003
  • Fixed IFS file filter, filtering by types.
  • Restricted iSphere stream file search to resolve subdirectories
    down to 1 level.
- • Changed layout of iSphere Search/Message file search dialog
+ • Changed layout of iSphere Source/Message file search dialog
    (removed sash form).
  • Removed workaround for assuring that the first message is received
    when starting the message monitor.
