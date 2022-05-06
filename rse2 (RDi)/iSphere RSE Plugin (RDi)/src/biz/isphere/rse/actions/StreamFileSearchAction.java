@@ -22,7 +22,7 @@ import org.eclipse.rse.core.filters.SystemFilterReference;
 import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.subsystems.SubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
-import org.eclipse.rse.services.files.IFileService;
+import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFileSubSystemConfiguration;
 import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileFilterString;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
@@ -107,6 +108,12 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
     private void addSelectedElementsFromList(List<?> objects) {
 
+        /**
+         * Convert everything to IFSFileFilterString to preserve the file name
+         * filter, e.g. 'DEMO*', for subdirectories.
+         */
+        List<Object> selectedFilters = new LinkedList<Object>();
+
         try {
 
             for (Object object : objects) {
@@ -116,16 +123,18 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
                         /*
                          * Started for a stream file item.
                          */
-                        // _selectedElements.add(new
-                        // RSEStreamFile(ifsRemoteFile));
-                        _selectedElements.add(ifsRemoteFile);
+                        IFSFileFilterString filter = createFileFilter(ifsRemoteFile);
+                        selectedFilters.add(filter);
+
                         IHost host = ifsRemoteFile.getHost();
                         checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                     } else if (ifsRemoteFile.isDirectory()) {
                         /*
                          * Started for a directory item.
                          */
-                        addSelectedElementsFromList(IFSRemoteFileHelper.listFiles(ifsRemoteFile, IFileService.FILE_TYPE_FILES_AND_FOLDERS, true));
+                        IFSFileFilterString filter = createDirectoryFilter(ifsRemoteFile);
+                        selectedFilters.add(filter);
+
                         IHost host = ifsRemoteFile.getHost();
                         checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                     }
@@ -133,9 +142,10 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
                     /*
                      * Started for a filter node
                      */
-                    SystemFilterReference element = (SystemFilterReference)object;
-                    _selectedElements.add(element);
-                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                    SystemFilterReference filterReference = (SystemFilterReference)object;
+                    selectedFilters.add(filterReference);
+
+                    IHost host = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost();
                     checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
                 }
             }
@@ -143,6 +153,40 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         } catch (Exception e) {
             ISpherePlugin.logError(e.getLocalizedMessage(), e);
         }
+
+        _selectedElements = selectedFilters;
+    }
+
+    private IFSFileFilterString createDirectoryFilter(IFSRemoteFile ifsRemoteFile) {
+
+        String pathSeparator = ifsRemoteFile.getParentRemoteFileSubSystem().getSeparator();
+
+        IFSFileFilterString filter = createFilter(ifsRemoteFile);
+        String newPath = filter.getPath() + pathSeparator + ifsRemoteFile.getName();
+        filter.setPath(newPath);
+
+        return filter;
+    }
+
+    private IFSFileFilterString createFileFilter(IFSRemoteFile ifsRemoteFile) {
+
+        IFSFileFilterString filter = createFilter(ifsRemoteFile);
+        filter.setPath(ifsRemoteFile.getParentPath());
+        filter.setFile(ifsRemoteFile.getName());
+
+        return filter;
+    }
+
+    private IFSFileFilterString createFilter(IFSRemoteFile ifsRemoteFile) {
+
+        System.out.println(ifsRemoteFile.getParentRemoteFile().getFilterString());
+
+        IHost host = ifsRemoteFile.getHost();
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(host);
+        IRemoteFileSubSystemConfiguration configuration = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection)
+            .getParentRemoteFileSubSystemConfiguration();
+        IFSFileFilterString streamFileFilter = new IFSFileFilterString(configuration, ifsRemoteFile.getFilterString().toString());
+        return streamFileFilter;
     }
 
     private void doWork() {

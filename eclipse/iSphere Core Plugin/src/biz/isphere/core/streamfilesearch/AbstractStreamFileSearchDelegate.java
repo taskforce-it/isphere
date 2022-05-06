@@ -31,12 +31,12 @@ public abstract class AbstractStreamFileSearchDelegate {
         this.monitor = monitor;
     }
 
-    public boolean addElements(HashMap<String, SearchElement> searchElements, String path, String file, StreamFileSearchFilter filter)
+    public boolean addElements(HashMap<String, SearchElement> searchElements, String path, String file, StreamFileSearchFilter filter, int maxDepth)
         throws Exception {
 
         String streamFileFilterString = produceStreamFileFilterString(path, file); // $NON-NLS-1$
 
-        return addElementsFromFilterString(searchElements, filter, streamFileFilterString);
+        return addElementsFromFilterString(searchElements, filter, maxDepth, streamFileFilterString);
     }
 
     protected abstract String produceStreamFileFilterString(String path, String file);
@@ -49,8 +49,8 @@ public abstract class AbstractStreamFileSearchDelegate {
 
     protected abstract String getResourceType(Object resource);
 
-    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, String... filterStrings)
-        throws Exception {
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, int maxDepth,
+        String... filterStrings) throws Exception {
 
         boolean doContinue = true;
         Object[] children = null;
@@ -76,10 +76,12 @@ public abstract class AbstractStreamFileSearchDelegate {
                         }
                         Object element = children[idx2];
                         if (isDirectory(element)) {
-                            String path = getResourcePath(element);
-                            String file = getFileFromFilterString(filterStrings[idx]);
-                            String filterString = produceStreamFileFilterString(path, file);
-                            doContinue = addElementsFromFilterString(searchElements, filter, filterString);
+                            if (maxDepth > 0) {
+                                String path = getResourcePath(element);
+                                String file = getFileFromFilterString(filterStrings[idx]);
+                                String filterString = produceStreamFileFilterString(path, file);
+                                doContinue = addElementsFromFilterString(searchElements, filter, maxDepth - 1, filterString);
+                            }
                         } else if (isStreamFile(element)) {
                             addElement(searchElements, filter, element);
                         }

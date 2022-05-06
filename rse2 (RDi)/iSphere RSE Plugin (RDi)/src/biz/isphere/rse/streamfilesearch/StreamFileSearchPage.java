@@ -60,6 +60,8 @@ public class StreamFileSearchPage extends AbstractSearchPage {
 
     public static final String ID = "biz.isphere.rse.streamfilesearch.StreamFileSearchPage"; //$NON-NLS-1$
 
+    private static final int MAX_DEPTH = StreamFileSearchFilterResolver.MAX_DEPTH;
+
     private static final String STREAM_FILE = "streamFile"; //$NON-NLS-1$
     private static final String DIRECTORY = "directory"; //$NON-NLS-1$
     private static final String SHOW_RECORDS = "showRecords"; //$NON-NLS-1$
@@ -359,7 +361,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         try {
 
             StreamFileSearchDelegate delegate = new StreamFileSearchDelegate(getShell(), connection);
-            delegate.addElements(searchElements, directory, streamFile, filter);
+            delegate.addElements(searchElements, directory, streamFile, filter, MAX_DEPTH);
 
         } catch (Throwable e) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));

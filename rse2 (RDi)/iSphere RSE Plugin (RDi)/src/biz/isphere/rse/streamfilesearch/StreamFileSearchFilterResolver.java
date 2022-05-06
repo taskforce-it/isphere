@@ -27,6 +27,8 @@ import biz.isphere.core.streamfilesearch.StreamFileSearchFilter;
 
 public class StreamFileSearchFilterResolver {
 
+    public static final int MAX_DEPTH = 1;
+
     private Shell _shell;
     private IBMiConnection _connection;
     private StreamFileSearchFilter streamFileSearchFilter;
@@ -88,6 +90,10 @@ public class StreamFileSearchFilterResolver {
                 for (String filterString : systemFilter.getFilterStrings()) {
                     addElementsFromFilterString(filterString);
                 }
+            } else if ((_object instanceof IFSFileFilterString)) {
+
+                IFSFileFilterString fileFilter = (IFSFileFilterString)_object;
+                addElementsFromFilterString(fileFilter.toString());
             }
 
         }
@@ -119,7 +125,7 @@ public class StreamFileSearchFilterResolver {
 
     private void addElementsFromFilterString(String... filterStrings) throws InterruptedException, Exception {
 
-        getStreamFileSearchDelegate().addElementsFromFilterString(_searchElements, streamFileSearchFilter, filterStrings);
+        getStreamFileSearchDelegate().addElementsFromFilterString(_searchElements, streamFileSearchFilter, MAX_DEPTH, filterStrings);
     }
 
     private IFSFileFilterString getStreamFilterString() {

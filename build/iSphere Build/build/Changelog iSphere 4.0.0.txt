@@ -22,6 +22,8 @@ Changelog: iSphere 5.1.0.b003
  • Added "iSphere Stream File Search" option to "Search" menu.
  • Added "iSphere Stream File Search" option to IFS stream file
    context menu.
+ • Restricted iSphere stream file search to resolve subdirectories
+   down to 1 level.
  • Changed layout of iSphere Search/Message file search dialog
    (removed sash form).
  • Removed workaround for assuring that the first message is received
