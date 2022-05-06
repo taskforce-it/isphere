@@ -162,7 +162,7 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         String pathSeparator = ifsRemoteFile.getParentRemoteFileSubSystem().getSeparator();
 
         IFSFileFilterString filter = createFilter(ifsRemoteFile);
-        String newPath = filter.getPath() + pathSeparator + ifsRemoteFile.getName();
+        String newPath = ifsRemoteFile.getParentPath() + pathSeparator + ifsRemoteFile.getName();
         filter.setPath(newPath);
 
         return filter;
@@ -171,15 +171,12 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
     private IFSFileFilterString createFileFilter(IFSRemoteFile ifsRemoteFile) {
 
         IFSFileFilterString filter = createFilter(ifsRemoteFile);
-        filter.setPath(ifsRemoteFile.getParentPath());
         filter.setFile(ifsRemoteFile.getName());
 
         return filter;
     }
 
     private IFSFileFilterString createFilter(IFSRemoteFile ifsRemoteFile) {
-
-        System.out.println(ifsRemoteFile.getParentRemoteFile().getFilterString());
 
         IHost host = ifsRemoteFile.getHost();
         IBMiConnection connection = ConnectionManager.getIBMiConnection(host);
