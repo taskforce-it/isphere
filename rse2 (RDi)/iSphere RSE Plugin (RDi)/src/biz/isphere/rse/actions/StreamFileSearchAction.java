@@ -83,6 +83,8 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
     public void selectionChanged(IAction action, ISelection selection) {
 
+        // long startTime = TimeHelper.getStartTime();
+
         _selectedElements.clear();
 
         if (selection instanceof IStructuredSelection) {
@@ -94,6 +96,8 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         } else {
             action.setEnabled(false);
         }
+
+        // TimeHelper.printTimeUsed(startTime);
     }
 
     private void getSelectedElemenetsFromSelection(IStructuredSelection structuredSelection) {
