@@ -13,13 +13,14 @@ package biz.isphere.messagesubsystem.rse;
 
 import java.util.Date;
 
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.messagesubsystem.internal.QSYRUSRI;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.MessageQueue;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.data.PcmlException;
+
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.messagesubsystem.internal.QSYRUSRI;
 
 public class QueuedMessageFilter {
 
@@ -164,7 +165,8 @@ public class QueuedMessageFilter {
         if (resolvedMessageQueue.equals(MessageQueue.CURRENT))
             return resolvedMessageQueue;
         else {
-            if (library.equals("QSYS"))return "/QSYS.LIB/" + resolvedMessageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (library.equals("QSYS")) //$NON-NLS-1$
+                return "/QSYS.LIB/" + resolvedMessageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$
             else
                 return "/QSYS.LIB/" + library.trim() + ".LIB/" + resolvedMessageQueue.trim() + ".MSGQ"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
@@ -268,67 +270,71 @@ public class QueuedMessageFilter {
 
     public void setFilterString(String filterString) {
 
+        if (StringHelper.isNullOrEmpty(filterString)) {
+            filterString = getDefaultFilterString();
+        }
+
         int index;
 
         index = filterString.indexOf("/"); //$NON-NLS-1$
         String temp = filterString.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setMessageQueue(temp);
         }
 
         String parseText = filterString.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setLibrary(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setUser(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setId(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setSeverity(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setMessageType(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setFromJobName(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setFromJobNumber(temp);
         }
 
         parseText = parseText.substring(index + 1);
         index = parseText.indexOf("/"); //$NON-NLS-1$
         temp = parseText.substring(0, index);
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setFromProgram(temp);
         }
 
@@ -340,7 +346,7 @@ public class QueuedMessageFilter {
             temp = parseText.substring(0, index);
         }
 
-        if (!temp.equals(ASTERISK)) { //$NON-NLS-1$
+        if (!temp.equals(ASTERISK)) { // $NON-NLS-1$
             setText(temp);
         }
     }
