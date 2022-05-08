@@ -98,9 +98,9 @@ public class MessageFileSearchFilterResolver {
     private void addElement(IQSYSResource element) {
 
         String library = element.getLibrary();
-        String file = ((IQSYSMessageFile)element).getFile();
+        String name = ((IQSYSMessageFile)element).getName();
 
-        String key = library + "-" + file; //$NON-NLS-1$ //$NON-NLS-2$
+        String key = library + "-" + name; //$NON-NLS-1$
 
         if (!_searchElements.containsKey(key)) {
 
