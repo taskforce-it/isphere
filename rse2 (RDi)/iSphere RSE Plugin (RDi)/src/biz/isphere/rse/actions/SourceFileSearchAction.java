@@ -10,11 +10,12 @@ package biz.isphere.rse.actions;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.rse.core.filters.ISystemFilterStringReference;
@@ -36,12 +37,14 @@ import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcefilesearch.SearchDialog;
 import biz.isphere.core.sourcefilesearch.SearchElement;
+import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.sourcefilesearch.RSESearchExec;
@@ -55,135 +58,87 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
     protected IStructuredSelection structuredSelection;
     protected Shell _shell;
-    protected IWorkbenchWindow _workbenchWindow;
     private IBMiConnection _connection;
     private boolean _multipleConnection;
     private ArrayList<Object> _selectedElements;
 
+    protected IWorkbenchWindow _workbenchWindow;
+
+    public SourceFileSearchAction() {
+        this._selectedElements = new ArrayList<Object>();
+    }
+
     public void run(IAction action) {
 
-        if (structuredSelection != null && !structuredSelection.isEmpty()) {
+        try {
 
-            _connection = null;
-            _multipleConnection = false;
-            _selectedElements = new ArrayList<Object>();
-
-            Iterator<?> iterator = structuredSelection.iterator();
-
-            while (iterator.hasNext()) {
-
-                Object _object = iterator.next();
-
-                if ((_object instanceof IQSYSResource)) {
-
-                    /*
-                     * Started for an object, such as a source file or source
-                     * member
-                     */
-
-                    IQSYSResource element = (IQSYSResource)_object;
-
-                    if (ResourceTypeUtil.isLibrary(element) || ResourceTypeUtil.isSourceFile(element) || ResourceTypeUtil.isMember(element)) {
-
-                        _selectedElements.add(element);
-
-                        IHost host = ((IRemoteObjectContextProvider)element).getRemoteObjectContext().getObjectSubsystem().getHost();
-                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-
-                    }
-
-                } else if ((_object instanceof SystemFilterReference)) {
-
-                    /*
-                     * Started for a filter node
-                     */
-
-                    SystemFilterReference element = (SystemFilterReference)_object;
-
-                    _selectedElements.add(element);
-
-                    IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
-                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-
-                } else if ((_object instanceof ISystemFilterStringReference)) {
-
-                    /*
-                     * Started from ??? Deactivated in plugin.xml with rev. #327
-                     * in 2014.
-                     */
-
-                    // TODO:remove obsolete code (also plugin.xml)
-
-                    // ISystemFilterStringReference element =
-                    // (ISystemFilterStringReference)_object;
-                    //
-                    // _selectedElements.add(element);
-                    //
-                    // IHost host =
-                    // ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
-                    // checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-
-                }
-
+            if (_selectedElements.size() > 0) {
+                doWork();
             }
 
-            if (_multipleConnection) {
-                MessageBox errorBox = new MessageBox(_shell, SWT.ICON_ERROR);
-                errorBox.setText(Messages.E_R_R_O_R);
-                errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
-                errorBox.open();
-                return;
-            }
+        } catch (Exception e) {
+            ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            MessageDialog.openError(_shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+        }
+    }
 
-            if (!_connection.isConnected()) {
-                try {
-                    _connection.connect();
-                } catch (SystemMessageException e) {
-                    return;
-                }
-            }
+    private void doWork() {
 
-            Map<String, SearchElement> _searchElements = null;
+        if (_multipleConnection) {
+            MessageBox errorBox = new MessageBox(_shell, SWT.ICON_ERROR);
+            errorBox.setText(Messages.E_R_R_O_R);
+            errorBox.setMessage(Messages.Resources_with_different_connections_have_been_selected);
+            errorBox.open();
+            return;
+        }
 
+        if (!_connection.isConnected()) {
             try {
-                if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
-                    _searchElements = null;
-                } else {
-                    _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
-                }
-            } catch (InterruptedException e) {
-                SystemMessageDialog.displayExceptionMessage(_shell, e);
-                return;
-            } catch (Exception e) {
-                SystemMessageDialog.displayExceptionMessage(_shell, e);
+                _connection.connect();
+            } catch (SystemMessageException e) {
                 return;
             }
+        }
 
-            AS400 as400 = null;
-            Connection jdbcConnection = null;
-            String qualifiedConnectionName = ConnectionManager.getConnectionName(_connection);
+        Map<String, SearchElement> _searchElements = null;
 
-            try {
-                as400 = _connection.getAS400ToolboxObject();
-                jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
+        try {
+            if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
+                _searchElements = null;
+            } else {
+                _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
             }
+        } catch (InterruptedException e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        } catch (Exception e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        }
 
-            if (as400 != null && jdbcConnection != null) {
+        AS400 as400 = null;
+        Connection jdbcConnection = null;
+        String qualifiedConnectionName = ConnectionManager.getConnectionName(_connection);
 
-                if (ISphereHelper.checkISphereLibrary(_shell, qualifiedConnectionName)) {
+        try {
+            as400 = _connection.getAS400ToolboxObject();
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(qualifiedConnectionName);
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not get JDBC connection ***", e); //$NON-NLS-1$
+        }
 
-                    SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
-                    if (dialog.open() == Dialog.OK) {
+        if (as400 != null && jdbcConnection != null) {
 
-                        RSESearchExec searchExec = new RSESearchExec(_workbenchWindow, _connection);
-                        if (_searchElements == null) {
-                            searchExec.resolveAndExecute(_selectedElements, dialog.getSearchOptions());
-                        } else {
-                            searchExec.execute(dialog.getSelectedElements(), dialog.getSearchOptions());
-                        }
+            if (ISphereHelper.checkISphereLibrary(_shell, qualifiedConnectionName)) {
 
+                SearchDialog dialog = new SearchDialog(_shell, _searchElements, true);
+                if (dialog.open() == Dialog.OK) {
+
+                    RSESearchExec searchExec = new RSESearchExec(_workbenchWindow, _connection);
+                    if (_searchElements == null) {
+                        searchExec.resolveAndExecute(_selectedElements, dialog.getSearchOptions());
+                    } else {
+                        searchExec.execute(dialog.getSelectedElements(), dialog.getSearchOptions());
                     }
 
                 }
@@ -191,7 +146,6 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             }
 
         }
-
     }
 
     private void checkIfMultipleConnections(IBMiConnection connection) {
@@ -206,12 +160,83 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
 
     public void selectionChanged(IAction action, ISelection selection) {
 
+        _selectedElements.clear();
+
         if (selection instanceof IStructuredSelection) {
-            structuredSelection = ((IStructuredSelection)selection);
-        } else {
-            structuredSelection = null;
+            getSelectedElemenetsFromSelection((IStructuredSelection)selection);
         }
 
+        if (_selectedElements.size() >= 1) {
+            action.setEnabled(true);
+        } else {
+            action.setEnabled(false);
+        }
+
+    }
+
+    private void getSelectedElemenetsFromSelection(IStructuredSelection structuredSelection) {
+
+        _connection = null;
+        _multipleConnection = false;
+
+        if (structuredSelection != null) {
+            addSelectedElementsFromList(structuredSelection.toList());
+        }
+    }
+
+    private void addSelectedElementsFromList(List<?> objects) {
+
+        for (Object object : objects) {
+            if ((object instanceof IQSYSResource)) {
+
+                /*
+                 * Started for an object, such as a source file or source member
+                 */
+
+                IQSYSResource element = (IQSYSResource)object;
+
+                if (ResourceTypeUtil.isLibrary(element) || ResourceTypeUtil.isSourceFile(element) || ResourceTypeUtil.isMember(element)) {
+
+                    _selectedElements.add(element);
+
+                    IHost host = ((IRemoteObjectContextProvider)element).getRemoteObjectContext().getObjectSubsystem().getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+
+                }
+
+            } else if ((object instanceof SystemFilterReference)) {
+
+                /*
+                 * Started for a filter node
+                 */
+
+                SystemFilterReference element = (SystemFilterReference)object;
+
+                _selectedElements.add(element);
+
+                IHost host = ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+
+            } else if ((object instanceof ISystemFilterStringReference)) {
+
+                /*
+                 * Started from ??? Deactivated in plugin.xml with rev. #327 in
+                 * 2014.
+                 */
+
+                // TODO:remove obsolete code (also plugin.xml)
+
+                // ISystemFilterStringReference element =
+                // (ISystemFilterStringReference)_object;
+                //
+                // _selectedElements.add(element);
+                //
+                // IHost host =
+                // ((SubSystem)element.getFilterPoolReferenceManager().getProvider()).getHost();
+                // checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+
+            }
+        }
     }
 
     public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {

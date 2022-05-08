@@ -49,6 +49,10 @@ import biz.isphere.rse.internal.IFSRemoteFileHelper;
 import biz.isphere.rse.streamfilesearch.RSESearchExec;
 import biz.isphere.rse.streamfilesearch.StreamFileSearchFilterResolver;
 
+/**
+ * Action that launches the iSphere Stream File Search from the Remote Systems
+ * view.
+ */
 public class StreamFileSearchAction implements IObjectActionDelegate {
 
     private Shell _shell;
@@ -60,11 +64,6 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
 
     public StreamFileSearchAction() {
         this._selectedElements = new LinkedList<Object>();
-    }
-
-    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
-        _shell = workbenchPart.getSite().getShell();
-        _workbenchWindow = workbenchPart.getSite().getWorkbenchWindow();
     }
 
     public void run(IAction arg0) {
@@ -79,115 +78,6 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
             ISphereRSEPlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
             MessageDialog.openError(_shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
-    }
-
-    public void selectionChanged(IAction action, ISelection selection) {
-
-        // long startTime = TimeHelper.getStartTime();
-
-        _selectedElements.clear();
-
-        if (selection instanceof IStructuredSelection) {
-            getSelectedElemenetsFromSelection((IStructuredSelection)selection);
-        }
-
-        if (_selectedElements.size() >= 1) {
-            action.setEnabled(true);
-        } else {
-            action.setEnabled(false);
-        }
-
-        // TimeHelper.printTimeUsed(startTime);
-    }
-
-    private void getSelectedElemenetsFromSelection(IStructuredSelection structuredSelection) {
-
-        _connection = null;
-        _multipleConnection = false;
-
-        if (structuredSelection != null) {
-            addSelectedElementsFromList(structuredSelection.toList());
-        }
-    }
-
-    private void addSelectedElementsFromList(List<?> objects) {
-
-        /**
-         * Convert everything to IFSFileFilterString to preserve the file name
-         * filter, e.g. 'DEMO*', for subdirectories.
-         */
-        List<Object> selectedFilters = new LinkedList<Object>();
-
-        try {
-
-            for (Object object : objects) {
-                if (object instanceof IFSRemoteFile) {
-                    IFSRemoteFile ifsRemoteFile = (IFSRemoteFile)object;
-                    if (ifsRemoteFile.isFile()) {
-                        /*
-                         * Started for a stream file item.
-                         */
-                        IFSFileFilterString filter = createFileFilter(ifsRemoteFile);
-                        selectedFilters.add(filter);
-
-                        IHost host = ifsRemoteFile.getHost();
-                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-                    } else if (ifsRemoteFile.isDirectory()) {
-                        /*
-                         * Started for a directory item.
-                         */
-                        IFSFileFilterString filter = createDirectoryFilter(ifsRemoteFile);
-                        selectedFilters.add(filter);
-
-                        IHost host = ifsRemoteFile.getHost();
-                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-                    }
-                } else if (object instanceof SystemFilterReference) {
-                    /*
-                     * Started for a filter node
-                     */
-                    SystemFilterReference filterReference = (SystemFilterReference)object;
-                    selectedFilters.add(filterReference);
-
-                    IHost host = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost();
-                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
-                }
-            }
-
-        } catch (Exception e) {
-            ISpherePlugin.logError(e.getLocalizedMessage(), e);
-        }
-
-        _selectedElements = selectedFilters;
-    }
-
-    private IFSFileFilterString createDirectoryFilter(IFSRemoteFile ifsRemoteFile) {
-
-        String pathSeparator = ifsRemoteFile.getParentRemoteFileSubSystem().getSeparator();
-
-        IFSFileFilterString filter = createFilter(ifsRemoteFile);
-        String newPath = ifsRemoteFile.getParentPath() + pathSeparator + ifsRemoteFile.getName();
-        filter.setPath(newPath);
-
-        return filter;
-    }
-
-    private IFSFileFilterString createFileFilter(IFSRemoteFile ifsRemoteFile) {
-
-        IFSFileFilterString filter = createFilter(ifsRemoteFile);
-        filter.setFile(ifsRemoteFile.getName());
-
-        return filter;
-    }
-
-    private IFSFileFilterString createFilter(IFSRemoteFile ifsRemoteFile) {
-
-        IHost host = ifsRemoteFile.getHost();
-        IBMiConnection connection = ConnectionManager.getIBMiConnection(host);
-        IRemoteFileSubSystemConfiguration configuration = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection)
-            .getParentRemoteFileSubSystemConfiguration();
-        IFSFileFilterString streamFileFilter = new IFSFileFilterString(configuration, ifsRemoteFile.getFilterString().toString());
-        return streamFileFilter;
     }
 
     private void doWork() {
@@ -259,4 +149,114 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         }
     }
 
+    public void selectionChanged(IAction action, ISelection selection) {
+
+        // long startTime = TimeHelper.getStartTime();
+
+        _selectedElements.clear();
+
+        if (selection instanceof IStructuredSelection) {
+            getSelectedElemenetsFromSelection((IStructuredSelection)selection);
+        }
+
+        if (_selectedElements.size() >= 1) {
+            action.setEnabled(true);
+        } else {
+            action.setEnabled(false);
+        }
+
+        // TimeHelper.printTimeUsed(startTime);
+    }
+
+    private void getSelectedElemenetsFromSelection(IStructuredSelection structuredSelection) {
+
+        _connection = null;
+        _multipleConnection = false;
+
+        if (structuredSelection != null) {
+            addSelectedElementsFromList(structuredSelection.toList());
+        }
+    }
+
+    private void addSelectedElementsFromList(List<?> objects) {
+
+        /**
+         * Convert everything to IFSFileFilterString to preserve the file name
+         * filter, e.g. 'DEMO*', for subdirectories.
+         */
+
+        try {
+
+            for (Object object : objects) {
+                if (object instanceof IFSRemoteFile) {
+                    IFSRemoteFile ifsRemoteFile = (IFSRemoteFile)object;
+                    if (ifsRemoteFile.isFile()) {
+                        /*
+                         * Started for a stream file item.
+                         */
+                        IFSFileFilterString filter = createFileFilter(ifsRemoteFile);
+                        _selectedElements.add(filter);
+
+                        IHost host = ifsRemoteFile.getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+                    } else if (ifsRemoteFile.isDirectory()) {
+                        /*
+                         * Started for a directory item.
+                         */
+                        IFSFileFilterString filter = createDirectoryFilter(ifsRemoteFile);
+                        _selectedElements.add(filter);
+
+                        IHost host = ifsRemoteFile.getHost();
+                        checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+                    }
+                } else if (object instanceof SystemFilterReference) {
+                    /*
+                     * Started for a filter node
+                     */
+                    SystemFilterReference filterReference = (SystemFilterReference)object;
+                    _selectedElements.add(filterReference);
+
+                    IHost host = ((SubSystem)filterReference.getFilterPoolReferenceManager().getProvider()).getHost();
+                    checkIfMultipleConnections(ConnectionManager.getIBMiConnection(host));
+                }
+            }
+
+        } catch (Exception e) {
+            ISpherePlugin.logError(e.getLocalizedMessage(), e);
+        }
+    }
+
+    private IFSFileFilterString createDirectoryFilter(IFSRemoteFile ifsRemoteFile) {
+
+        String pathSeparator = ifsRemoteFile.getParentRemoteFileSubSystem().getSeparator();
+
+        IFSFileFilterString filter = createFilter(ifsRemoteFile);
+        String newPath = ifsRemoteFile.getParentPath() + pathSeparator + ifsRemoteFile.getName();
+        filter.setPath(newPath);
+
+        return filter;
+    }
+
+    private IFSFileFilterString createFileFilter(IFSRemoteFile ifsRemoteFile) {
+
+        IFSFileFilterString filter = createFilter(ifsRemoteFile);
+        filter.setFile(ifsRemoteFile.getName());
+
+        return filter;
+    }
+
+    private IFSFileFilterString createFilter(IFSRemoteFile ifsRemoteFile) {
+
+        IHost host = ifsRemoteFile.getHost();
+        IBMiConnection connection = ConnectionManager.getIBMiConnection(host);
+        IRemoteFileSubSystemConfiguration configuration = IFSRemoteFileHelper.getIFSFileServiceSubsystem(connection)
+            .getParentRemoteFileSubSystemConfiguration();
+        IFSFileFilterString streamFileFilter = new IFSFileFilterString(configuration, ifsRemoteFile.getFilterString().toString());
+        return streamFileFilter;
+    }
+
+    public void setActivePart(IAction action, IWorkbenchPart workbenchPart) {
+        _shell = workbenchPart.getSite().getShell();
+        _workbenchWindow = workbenchPart.getSite().getWorkbenchWindow();
+    }
 }
