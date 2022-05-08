@@ -40,6 +40,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.streamfilesearch.SearchDialog;
 import biz.isphere.core.streamfilesearch.SearchElement;
 import biz.isphere.rse.ISphereRSEPlugin;
@@ -104,6 +105,9 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
             _searchElements = new StreamFileSearchFilterResolver(_shell, _connection, null).resolveFilterStrings(_selectedElements);
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        } catch (InvalidFilterException e) {
+            MessageDialog.openError(_shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return;
         } catch (Exception e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);

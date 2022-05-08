@@ -9,9 +9,9 @@
 package biz.isphere.rse.actions;
 
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -32,9 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.as400.access.AS400;
-import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMessageFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvider;
@@ -42,8 +40,8 @@ import com.ibm.etools.iseries.subsystems.qsys.objects.IRemoteObjectContextProvid
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.messagefilesearch.SearchDialog;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
@@ -52,6 +50,7 @@ import biz.isphere.rse.ISphereRSEPlugin;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.messagefilesearch.MessageFileSearchDelegate;
+import biz.isphere.rse.messagefilesearch.MessageFileSearchFilterResolver;
 
 /**
  * Action that launches the iSphere Message File Search from the Remote Systems
@@ -102,45 +101,19 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
             }
         }
 
-        HashMap<String, SearchElement> _searchElements = new HashMap<String, SearchElement>();
+        Map<String, SearchElement> _searchElements = null;
 
-        boolean _continue = true;
-
-        for (int idx = 0; idx < _selectedElements.size(); idx++) {
-
-            Object _object = _selectedElements.get(idx);
-
-            if ((_object instanceof IQSYSResource)) {
-
-                IQSYSResource element = (IQSYSResource)_object;
-
-                if (ResourceTypeUtil.isLibrary(element)) {
-                    _continue = addElementsFromLibrary(_searchElements, element);
-                } else if ((ResourceTypeUtil.isMessageFile(element))) {
-                    addElement(_searchElements, element);
-                }
-                if (!_continue) {
-                    break;
-                }
-
-            } else if ((_object instanceof SystemFilterReference)) {
-
-                SystemFilterReference filterReference = (SystemFilterReference)_object;
-                String[] _filterStrings = filterReference.getReferencedFilter().getFilterStrings();
-                if (!addElementsFromFilterString(_searchElements, _filterStrings)) {
-                    break;
-                }
-
-            } else if ((_object instanceof ISystemFilterStringReference)) {
-
-                ISystemFilterStringReference filterStringReference = (ISystemFilterStringReference)_object;
-                String[] _filterStrings = filterStringReference.getParent().getReferencedFilter().getFilterStrings();
-                if (!addElementsFromFilterString(_searchElements, _filterStrings)) {
-                    break;
-                }
-
-            }
-
+        try {
+            _searchElements = new MessageFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
+        } catch (InterruptedException e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        } catch (InvalidFilterException e) {
+            MessageDialog.openError(_shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            return;
+        } catch (Exception e) {
+            SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
         }
 
         AS400 as400 = null;
@@ -176,56 +149,6 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
             }
 
         }
-    }
-
-    private void addElement(HashMap<String, SearchElement> _searchElements, IQSYSResource element) {
-
-        String library = element.getLibrary();
-        String file = ((IQSYSMessageFile)element).getName();
-
-        String key = library + "-" + file;
-
-        if (!_searchElements.containsKey(key)) {
-
-            SearchElement _searchElement = new SearchElement();
-            _searchElement.setLibrary(element.getLibrary());
-            _searchElement.setMessageFile(element.getName());
-            _searchElement.setDescription(element.getDescription());
-            _searchElements.put(key, _searchElement);
-
-        }
-
-    }
-
-    private boolean addElementsFromLibrary(HashMap<String, SearchElement> _searchElements, IQSYSResource element) {
-
-        ISeriesObjectFilterString _objectFilterString = new ISeriesObjectFilterString();
-        _objectFilterString.setObject("*");
-        _objectFilterString.setObjectType(ISeries.MSGF);
-        _objectFilterString.setLibrary(element.getName());
-
-        return addElementsFromFilterString(_searchElements, _objectFilterString.toString());
-    }
-
-    private boolean addElementsFromFilterString(HashMap<String, SearchElement> _searchElements, String... filterStrings) {
-
-        try {
-            return getMessageFileSearchDelegate().addElementsFromFilterString(_searchElements, filterStrings);
-        } catch (InterruptedException localInterruptedException) {
-            return false;
-        } catch (Exception e) {
-            SystemMessageDialog.displayExceptionMessage(_shell, e);
-            return false;
-        }
-    }
-
-    private MessageFileSearchDelegate getMessageFileSearchDelegate() {
-
-        if (_delegate == null) {
-            _delegate = new MessageFileSearchDelegate(_shell, _connection);
-        }
-
-        return _delegate;
     }
 
     private void checkIfMultipleConnections(IBMiConnection connection) {

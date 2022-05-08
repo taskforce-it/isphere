@@ -41,6 +41,7 @@ import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcefilesearch.SearchDialog;
 import biz.isphere.core.sourcefilesearch.SearchElement;
@@ -110,6 +111,9 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             }
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);
+            return;
+        } catch (InvalidFilterException e) {
+            MessageDialog.openError(_shell, Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return;
         } catch (Exception e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);

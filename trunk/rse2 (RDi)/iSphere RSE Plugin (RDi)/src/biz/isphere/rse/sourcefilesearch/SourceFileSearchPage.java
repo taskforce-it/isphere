@@ -416,7 +416,7 @@ public class SourceFileSearchPage extends AbstractSearchPage {
     private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
 
         ArrayList<Object> selectedFilters = new ArrayList<Object>();
-        selectedFilters.add(getFilter());
+        selectedFilters.add(filter);
 
         SourceFileSearchFilterResolver filterResolver = new SourceFileSearchFilterResolver(getShell(), connection);
         Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);

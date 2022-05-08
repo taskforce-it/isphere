@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,33 +8,41 @@
 
 package biz.isphere.core.messagefilesearch;
 
-import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.exception.InvalidFilterException;
 
 public abstract class AbstractMessageFileSearchDelegate {
 
     private Shell shell;
+    private IProgressMonitor monitor;
 
-    public AbstractMessageFileSearchDelegate(Shell shell) {
+    public AbstractMessageFileSearchDelegate(Shell shell, IProgressMonitor monitor) {
         this.shell = shell;
+        this.monitor = monitor;
     }
 
-    public boolean addElements(HashMap<String, SearchElement> searchElements, String library, String messageFile) throws Exception {
+    public boolean addElements(Map<String, SearchElement> searchElements, String library, String messageFile) throws Exception {
 
         String objectFilterString = produceFilterString(library, messageFile, ISeries.MSGF);
 
         return addElementsFromFilterString(searchElements, objectFilterString);
     }
 
-    public boolean addElementsFromFilterString(HashMap<String, SearchElement> searchElements, String... filterStrings) throws Exception {
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, String... filterStrings) throws Exception {
 
         boolean doContinue = true;
         Object[] children = null;
 
         for (int idx = 0; idx < filterStrings.length; idx++) {
+
+            if (isCanceled()) {
+                break;
+            }
 
             children = resolveFilterString(filterStrings[idx]);
 
@@ -43,9 +51,12 @@ public abstract class AbstractMessageFileSearchDelegate {
                 Object firstObject = children[0];
 
                 if (isSystemMessageObject(firstObject)) {
-                    displaySystemErrorMessage(firstObject);
+                    throwSystemErrorMessage(firstObject);
                 } else {
                     for (int idx2 = 0; idx2 < children.length; idx2++) {
+                        if (isCanceled()) {
+                            break;
+                        }
                         Object element = children[idx2];
                         if (isLibrary(element)) {
                             doContinue = addElementsFromLibrary(searchElements, element);
@@ -67,7 +78,7 @@ public abstract class AbstractMessageFileSearchDelegate {
 
     protected abstract String produceFilterString(String library, String messageFile, String objectType);
 
-    protected abstract void displaySystemErrorMessage(Object object);
+    protected abstract void throwSystemErrorMessage(Object object) throws InvalidFilterException;
 
     protected abstract boolean isSystemMessageObject(Object object);
 
@@ -75,7 +86,7 @@ public abstract class AbstractMessageFileSearchDelegate {
 
     protected abstract boolean isMessageFile(Object object);
 
-    private boolean addElementsFromLibrary(HashMap<String, SearchElement> searchElements, Object library) throws Exception {
+    private boolean addElementsFromLibrary(Map<String, SearchElement> searchElements, Object library) throws Exception {
 
         String filterString = produceFilterString(getResourceName(library), "*", ISeries.MSGF);
 
@@ -86,7 +97,7 @@ public abstract class AbstractMessageFileSearchDelegate {
         } catch (InterruptedException localInterruptedException) {
             return false;
         } catch (Exception e) {
-            displaySystemErrorMessage(e);
+            throwSystemErrorMessage(e);
             return false;
         }
 
@@ -96,11 +107,14 @@ public abstract class AbstractMessageFileSearchDelegate {
 
         Object firstObject = messageFiles[0];
         if (isSystemMessageObject(firstObject)) {
-            displaySystemErrorMessage(firstObject);
+            throwSystemErrorMessage(firstObject);
             return true;
         }
 
         for (int idx2 = 0; idx2 < messageFiles.length; idx2++) {
+            if (isCanceled()) {
+                break;
+            }
             addElement(searchElements, messageFiles[idx2]);
         }
 
@@ -121,7 +135,7 @@ public abstract class AbstractMessageFileSearchDelegate {
      * @param searchElements - list of elements that are searched
      * @param messageFile - message file that is added to the list
      */
-    public void addElement(HashMap<String, SearchElement> searchElements, Object messageFile) {
+    public void addElement(Map<String, SearchElement> searchElements, Object messageFile) {
 
         String library = getResourceLibrary(messageFile);
         String file = getResourceName(messageFile);
@@ -143,4 +157,12 @@ public abstract class AbstractMessageFileSearchDelegate {
 
     protected abstract Object[] resolveFilterString(String filterString) throws Exception;
 
+    private boolean isCanceled() {
+
+        if (monitor == null) {
+            return false;
+        }
+
+        return monitor.isCanceled();
+    }
 }

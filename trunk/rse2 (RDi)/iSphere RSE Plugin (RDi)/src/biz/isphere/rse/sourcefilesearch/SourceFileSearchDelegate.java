@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,9 @@ package biz.isphere.rse.sourcefilesearch;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.SystemMessageObject;
 import org.eclipse.swt.widgets.Shell;
-
-import biz.isphere.core.internal.ISeries;
-import biz.isphere.core.internal.exception.InvalidFilterException;
-import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
@@ -28,12 +25,16 @@ import com.ibm.etools.iseries.services.qsys.api.IQSYSSourceMember;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
+
 public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
     private IBMiConnection connection;
 
     public SourceFileSearchDelegate(Shell shell, IBMiConnection connection) {
-        this(shell, connection, null);
+        this(shell, connection, new NullProgressMonitor());
     }
 
     public SourceFileSearchDelegate(Shell shell, IBMiConnection connection, IProgressMonitor monitor) {
