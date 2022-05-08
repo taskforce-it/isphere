@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,10 @@
 
 package biz.isphere.rse.messagefilesearch;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.rse.core.model.SystemMessageObject;
-import org.eclipse.rse.ui.messages.SystemMessageDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import biz.isphere.core.messagefilesearch.AbstractMessageFileSearchDelegate;
 
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
 import com.ibm.etools.iseries.rse.ui.ResourceTypeUtil;
@@ -21,12 +20,19 @@ import com.ibm.etools.iseries.services.qsys.api.IQSYSResource;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.objects.QSYSObjectSubSystem;
 
+import biz.isphere.core.internal.exception.InvalidFilterException;
+import biz.isphere.core.messagefilesearch.AbstractMessageFileSearchDelegate;
+
 public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate {
 
     private IBMiConnection connection;
 
     public MessageFileSearchDelegate(Shell shell, IBMiConnection connection) {
-        super(shell);
+        this(shell, connection, new NullProgressMonitor());
+    }
+
+    public MessageFileSearchDelegate(Shell shell, IBMiConnection connection, IProgressMonitor monitor) {
+        super(shell, monitor);
 
         this.connection = connection;
     }
@@ -35,7 +41,7 @@ public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate
 
         ISeriesObjectFilterString objectFilterString = new ISeriesObjectFilterString();
         objectFilterString.setObject(messageFile);
-        objectFilterString.setObjectType(objectType); //$NON-NLS-1$
+        objectFilterString.setObjectType(objectType); // $NON-NLS-1$
         objectFilterString.setLibrary(library);
 
         return objectFilterString.toString();
@@ -47,8 +53,8 @@ public class MessageFileSearchDelegate extends AbstractMessageFileSearchDelegate
         return objectSubSystem.resolveFilterString(filterString, null);
     }
 
-    protected void displaySystemErrorMessage(Object message) {
-        SystemMessageDialog.displayErrorMessage(getShell(), ((SystemMessageObject)message).getMessage());
+    protected void throwSystemErrorMessage(final Object message) throws InvalidFilterException {
+        throw new InvalidFilterException(((SystemMessageObject)message).getMessage());
     }
 
     protected boolean isSystemMessageObject(Object object) {

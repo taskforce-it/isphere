@@ -11,6 +11,7 @@ package biz.isphere.rse.messagefilesearch;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilter;
@@ -37,6 +38,7 @@ import biz.isphere.base.jface.dialogs.XDialogPage;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.messagefilesearch.SearchElement;
 import biz.isphere.core.messagefilesearch.SearchExec;
 import biz.isphere.core.messagefilesearch.SearchPostRun;
@@ -306,7 +308,7 @@ public class MessageFileSearchPage extends AbstractSearchPage {
 
             storeScreenValues();
 
-            HashMap<String, SearchElement> searchElements;
+            Map<String, SearchElement> searchElements;
             if (isFilterRadioButtonSelected()) {
                 searchElements = loadFilterSearchElements(tConnection, getFilter());
             } else {
@@ -345,7 +347,9 @@ public class MessageFileSearchPage extends AbstractSearchPage {
                 new ArrayList<SearchElement>(searchElements.values()), postRun);
 
         } catch (Exception e) {
-            ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            if (!(e instanceof InvalidFilterException)) {
+                ISpherePlugin.logError(biz.isphere.core.Messages.Unexpected_Error, e);
+            }
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return false;
         }
@@ -370,18 +374,13 @@ public class MessageFileSearchPage extends AbstractSearchPage {
         return searchElements;
     }
 
-    private HashMap<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws InterruptedException {
+    private Map<String, SearchElement> loadFilterSearchElements(IBMiConnection connection, ISystemFilter filter) throws Exception {
 
-        HashMap<String, SearchElement> searchElements = new HashMap<String, SearchElement>();
+        ArrayList<Object> selectedFilters = new ArrayList<Object>();
+        selectedFilters.add(filter);
 
-        try {
-
-            MessageFileSearchDelegate delegate = new MessageFileSearchDelegate(getShell(), connection);
-            delegate.addElementsFromFilterString(searchElements, filter.getFilterStrings());
-
-        } catch (Throwable e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
-        }
+        MessageFileSearchFilterResolver filterResolver = new MessageFileSearchFilterResolver(getShell(), connection);
+        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
 
         return searchElements;
     }
