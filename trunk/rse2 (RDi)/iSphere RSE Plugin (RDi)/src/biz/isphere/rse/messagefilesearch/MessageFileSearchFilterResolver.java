@@ -99,15 +99,14 @@ public class MessageFileSearchFilterResolver {
 
         String library = element.getLibrary();
         String file = ((IQSYSMessageFile)element).getFile();
-        String member = element.getName();
 
-        String key = library + "-" + file + "-" + member; //$NON-NLS-1$ //$NON-NLS-2$
+        String key = library + "-" + file; //$NON-NLS-1$ //$NON-NLS-2$
 
         if (!_searchElements.containsKey(key)) {
 
             SearchElement _searchElement = new SearchElement();
             _searchElement.setLibrary(element.getLibrary());
-            _searchElement.setMessageFile(((IQSYSMessageFile)element).getFile());
+            _searchElement.setMessageFile(((IQSYSMessageFile)element).getName());
             _searchElement.setDescription(((IQSYSMessageFile)element).getDescription());
             _searchElements.put(key, _searchElement);
 
@@ -133,7 +132,7 @@ public class MessageFileSearchFilterResolver {
             _objectFilterString = new ISeriesObjectFilterString();
             _objectFilterString.setObject("*"); //$NON-NLS-1$
             _objectFilterString.setObjectType(ISeries.FILE);
-            String attributes = "*FILE:PF-SRC *FILE:PF38-SRC"; //$NON-NLS-1$
+            String attributes = "*MSGF"; //$NON-NLS-1$
             _objectFilterString.setObjectTypeAttrList(new ISeriesObjectTypeAttrList(attributes));
         }
 
