@@ -53,6 +53,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.UIHelper;
@@ -76,8 +78,6 @@ import biz.isphere.core.messagefilecompare.TableStatistics;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.MessageDescriptionDetailDialog;
 import biz.isphere.core.swt.widgets.WidgetFactory;
-
-import com.ibm.as400.access.AS400;
 
 public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
@@ -743,7 +743,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             } else {
                 statusMessage = Messages.Please_press_Compare_to_start;
             }
-            numFilteredItems = 0;//$NON-NLS-1$
+            numFilteredItems = 0;// $NON-NLS-1$
         } else {
             TableStatistics tableStatistics = getTableStatistics();
             statusMessage = tableStatistics.toString();
@@ -954,11 +954,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         try {
 
-            if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getRightMessageDescription(),
-                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
+            String errorMessage = MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getRightMessageDescription(),
+                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary());
+            if (errorMessage == null) {
                 compareItem.setLeftMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
                     toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
                 compareItem.clearCompareStatus();
+            } else {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
             }
 
             tableViewer.update(compareItem, null);
@@ -972,11 +975,14 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         try {
 
-            if (MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getLeftMessageDescription(),
-                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary()) == null) {
+            String errorMessage = MessageDescriptionHelper.mergeMessageDescription(getShell(), compareItem.getLeftMessageDescription(),
+                toMessageFile.getConnectionName(), toMessageFile.getName(), toMessageFile.getLibrary());
+            if (errorMessage == null) {
                 compareItem.setRightMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toMessageFile.getConnectionName(),
                     toMessageFile.getName(), toMessageFile.getLibrary(), compareItem.getMessageId()));
                 compareItem.clearCompareStatus();
+            } else {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, errorMessage);
             }
 
             tableViewer.update(compareItem, null);
