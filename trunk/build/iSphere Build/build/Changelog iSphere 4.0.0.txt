@@ -1,5 +1,10 @@
 
-Changelog: iSphere 5.1.0.r
+Changelog: iSphere 5.1.2.b001
+-----------------------------
+ • Fixed setting default values when comparing source members and
+   stream files (iSphere ticket #127).
+
+Changelog: iSphere 5.1.1.r
 --------------------------
  • Added Excel export to iSphere Stream File Search result view.
  • Added option for creating an IFS filter to iSphere Stream File

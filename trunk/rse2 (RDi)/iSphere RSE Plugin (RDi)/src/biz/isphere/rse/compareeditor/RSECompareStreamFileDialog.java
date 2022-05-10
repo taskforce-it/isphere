@@ -769,21 +769,21 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
         String connection;
         if (loadPreviousValue.isConnection()) {
-            connection = loadValue(getStreamFilePromptDialogSettingsKey(prefix, CONNECTION), null);
+            connection = loadValue(getStreamFilePromptDialogSettingsKey(prefix, CONNECTION), getCurrentLeftConnectionName());
         } else {
             connection = getCurrentLeftConnectionName();
         }
 
         String directory;
         if (loadPreviousValue.isDirectory()) {
-            directory = loadValue(getStreamFilePromptDialogSettingsKey(prefix, DIRECTORY), null);
+            directory = loadValue(getStreamFilePromptDialogSettingsKey(prefix, DIRECTORY), getCurrentLeftDirectoryName());
         } else {
             directory = getCurrentLeftDirectoryName();
         }
 
         String streamFile;
         if (loadPreviousValue.isFile()) {
-            streamFile = loadValue(getStreamFilePromptDialogSettingsKey(prefix, STREAM_FILE), null);
+            streamFile = loadValue(getStreamFilePromptDialogSettingsKey(prefix, STREAM_FILE), getCurrentLeftStreamFileName());
         } else {
             streamFile = getCurrentLeftStreamFileName();
         }
