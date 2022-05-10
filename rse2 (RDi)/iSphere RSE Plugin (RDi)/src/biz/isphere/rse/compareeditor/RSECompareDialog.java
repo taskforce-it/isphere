@@ -760,28 +760,28 @@ public class RSECompareDialog extends CompareDialog {
 
         String connection;
         if (loadPreviousValue.isConnection()) {
-            connection = loadValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), null);
+            connection = loadValue(getMemberPromptDialogSettingsKey(prefix, CONNECTION), getCurrentLeftConnectionName());
         } else {
             connection = getCurrentLeftConnectionName();
         }
 
         String library;
         if (loadPreviousValue.isLibrary()) {
-            library = loadValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), null);
+            library = loadValue(getMemberPromptDialogSettingsKey(prefix, LIBRARY), getCurrentLeftLibraryName());
         } else {
             library = getCurrentLeftLibraryName();
         }
 
         String file;
         if (loadPreviousValue.isFile()) {
-            file = loadValue(getMemberPromptDialogSettingsKey(prefix, FILE), null);
+            file = loadValue(getMemberPromptDialogSettingsKey(prefix, FILE), getCurrentLeftMemberName());
         } else {
             file = getCurrentLeftFileName();
         }
 
         String member;
         if (loadPreviousValue.isMember()) {
-            member = loadValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), null);
+            member = loadValue(getMemberPromptDialogSettingsKey(prefix, MEMBER), getCurrentLeftMemberName());
         } else {
             member = getCurrentLeftMemberName();
         }
