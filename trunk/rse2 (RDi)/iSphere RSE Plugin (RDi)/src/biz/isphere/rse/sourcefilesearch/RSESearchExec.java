@@ -126,7 +126,7 @@ public class RSESearchExec extends SearchExec {
                 monitor.beginTask(biz.isphere.core.Messages.Resolving_filters, 0);
 
                 Map<String, SearchElement> searchElements = new SourceFileSearchFilterResolver(getShell(), connection, monitor)
-                    .resolveFilterStrings(selectedElements);
+                    .resolveRSEFilter(selectedElements);
                 final ArrayList<SearchElement> filteredElements = new SourceFileSearchFilter().applyFilter(searchElements.values(), searchOptions);
 
                 postRun.setSearchElements(searchElements);

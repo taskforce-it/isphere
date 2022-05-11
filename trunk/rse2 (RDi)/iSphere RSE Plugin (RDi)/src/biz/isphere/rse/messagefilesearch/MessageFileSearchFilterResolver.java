@@ -28,6 +28,11 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.messagefilesearch.SearchElement;
 
+/**
+ * This class produces a list of {@link SearchElement} elements from a mixed
+ * list of all kind of objects around an filter of the <i>Remote Systems</i>
+ * view.
+ */
 public class MessageFileSearchFilterResolver {
 
     private Shell _shell;
@@ -48,7 +53,7 @@ public class MessageFileSearchFilterResolver {
         this.monitor = monitor;
     }
 
-    public Map<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
+    public Map<String, SearchElement> resolveRSEFilter(List<Object> _selectedElements) throws InterruptedException, Exception {
 
         _searchElements = new LinkedHashMap<String, SearchElement>();
 

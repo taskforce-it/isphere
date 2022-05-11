@@ -104,7 +104,7 @@ public class MessageFileSearchAction implements IObjectActionDelegate {
         Map<String, SearchElement> _searchElements = null;
 
         try {
-            _searchElements = new MessageFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
+            _searchElements = new MessageFileSearchFilterResolver(_shell, _connection).resolveRSEFilter(_selectedElements);
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);
             return;
