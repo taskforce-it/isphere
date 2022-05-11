@@ -23,6 +23,10 @@ import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.streamfilesearch.AbstractStreamFileSearchDelegate;
 import biz.isphere.rse.internal.IFSRemoteFileHelper;
 
+/**
+ * This class adds individual objects or resolves filter strings in order to add
+ * the matching objects to the list of searched objects.
+ */
 public class StreamFileSearchDelegate extends AbstractStreamFileSearchDelegate {
 
     private IBMiConnection connection;
