@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,6 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.Columns;
@@ -60,6 +59,7 @@ import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
 import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
@@ -74,7 +74,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private CopyMemberService copyMemberService;
     private CopyMemberValidator copyMemberValidator;
 
-    private Combo comboToConnection;
+    private ConnectionCombo comboToConnection;
     private Combo comboToFile;
     private Text textToLibrary;
     private TableViewer tableViewer;
@@ -261,20 +261,17 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         Label labelToConnection = new Label(mainArea, SWT.NONE);
         labelToConnection.setText(Messages.To_connection_colon);
 
-        String[] connections = IBMiHostContributionsHandler.getConnectionNames();
-        if (connections != null) {
-            comboToConnection = WidgetFactory.createReadOnlyCombo(mainArea);
-            comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 2, 1));
-            comboToConnection.setItems(connections);
-            comboToConnection.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-                    setControlEnablement();
-                }
-            });
-        } else {
-            comboToConnection = null;
-        }
+        comboToConnection = WidgetFactory.createConnectionCombo(mainArea);
+        comboToConnection.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
+        comboToConnection.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setControlEnablement();
+            }
+        });
+
+        // Create spacer
+        new Label(mainArea, SWT.NONE).setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         Label textInfo = new Label(mainArea, SWT.NONE);
         textInfo.setAlignment(SWT.RIGHT);
@@ -431,7 +428,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     @Override
     public void setFocus() {
 
-        if (StringHelper.isNullOrEmpty(comboToConnection.getText())) {
+        if (!comboToConnection.hasConnection()) {
             comboToConnection.setFocus();
         } else if (StringHelper.isNullOrEmpty(comboToFile.getText())) {
             comboToFile.setFocus();
@@ -451,9 +448,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
      */
     private void loadScreenValues() {
 
-        if (comboToConnection != null) {
-            comboToConnection.setText(copyMemberService.getToConnectionName());
-        }
+        comboToConnection.setQualifiedConnectionName(copyMemberService.getToConnectionName());
 
         if (copyMemberService.getFromLibraryNamesCount() == 1) {
             textToLibrary.setText(copyMemberService.getFromLibraryNames()[0]);
@@ -499,12 +494,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     }
 
     private String getToConnectionName() {
-
-        if (comboToConnection == null) {
-            return copyMemberService.getToConnectionName();
-        }
-
-        return comboToConnection.getText();
+        return comboToConnection.getQualifiedConnectionName();
     }
 
     private void setControlEnablement() {
@@ -569,6 +559,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private void setControlsEnables(boolean enabled) {
 
         if (mainArea == null) {
+            // not yet created
             return;
         }
 

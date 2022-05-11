@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import com.ibm.as400.access.AS400;
 
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
@@ -34,11 +35,10 @@ import biz.isphere.core.clcommands.CLParser;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.swt.widgets.ContentAssistText;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.strpreprc.Messages;
 import biz.isphere.strpreprc.model.StrPrePrcParser;
 import biz.isphere.strpreprc.preferences.Preferences;
-
-import com.ibm.as400.access.AS400;
 
 public class EditHeaderDialog extends XDialog {
 
@@ -61,7 +61,7 @@ public class EditHeaderDialog extends XDialog {
     private String parameters;
 
     private Composite mainArea;
-    private Combo comboConnections;
+    private ConnectionCombo comboConnections;
     private Text textCommand;
     private ContentAssistText textParameters;
 
@@ -88,7 +88,7 @@ public class EditHeaderDialog extends XDialog {
         Label labelConnection = new Label(mainArea, SWT.NONE);
         labelConnection.setText(Messages.Connection_colon);
 
-        comboConnections = WidgetFactory.createReadOnlyCombo(mainArea);
+        comboConnections = WidgetFactory.createConnectionCombo(mainArea);
 
         Label labelCommand = new Label(mainArea, SWT.NONE);
         labelCommand.setText(Messages.Command_colon);
@@ -131,9 +131,9 @@ public class EditHeaderDialog extends XDialog {
 
     @Override
     public void setFocus() {
-        if (comboConnections.getText() == null || comboConnections.getText().trim().length() == 0) {
+        if (!comboConnections.hasConnection()) {
             textCommand.setFocus();
-        } else if (textCommand.getText() == null || textCommand.getText().trim().length() == 0) {
+        } else if (StringHelper.isNullOrEmpty(textCommand.getText())) {
             textCommand.setFocus();
         } else {
             textParameters.setFocus();
@@ -176,7 +176,7 @@ public class EditHeaderDialog extends XDialog {
 
     private boolean validateUserInput() {
 
-        String connectionName = comboConnections.getText();
+        String connectionName = comboConnections.getQualifiedConnectionName();
         if (StringHelper.isNullOrEmpty(connectionName)) {
             setErrorMessage(Messages.Missing_connection_name);
             return false;
@@ -199,19 +199,17 @@ public class EditHeaderDialog extends XDialog {
         if ((offset = validateReplacementVariables(fullCommand)) >= 0) {
             int position = offset + 1;
             String variable = retrieveReplacementVariable(offset, fullCommand);
-            MessageDialog.openError(
-                getShell(),
-                Messages.E_R_R_O_R,
-                Messages.bind(Messages.Invalid_replacement_variable_A_found_at_position_B_command_C, new String[] {
-                    variable.replace("&", "&&"), Integer.toString(position), fullCommand.replaceAll("&", "&&") })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                Messages.bind(Messages.Invalid_replacement_variable_A_found_at_position_B_command_C,
+                    new String[] { variable.replace("&", "&&"), Integer.toString(position), fullCommand.replaceAll("&", "&&") })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             return false;
         }
 
         String errorMessage = null;
         QCAPCMD qcapcmd = new QCAPCMD(system);
         if (!qcapcmd.checkCLCommand(fullCommand)) {
-            errorMessage = Messages.bind(Messages.Command_A_is_invalid_or_could_not_be_found_The_original_error_message_is_B, new String[] { command,
-                qcapcmd.getErrorMessage() });
+            errorMessage = Messages.bind(Messages.Command_A_is_invalid_or_could_not_be_found_The_original_error_message_is_B,
+                new String[] { command, qcapcmd.getErrorMessage() });
         }
 
         if (!StringHelper.isNullOrEmpty(errorMessage)) {
@@ -275,11 +273,10 @@ public class EditHeaderDialog extends XDialog {
 
     private void loadScreenValues() {
 
-        comboConnections.setItems(IBMiHostContributionsHandler.getConnectionNames());
         if (!StringHelper.isNullOrEmpty(connectionName)) {
-            comboConnections.setText(connectionName);
+            comboConnections.setQualifiedConnectionName(connectionName);
         } else {
-            comboConnections.setText(getDialogBoundsSettings().get(connectionName));
+            comboConnections.setQualifiedConnectionName(getDialogBoundsSettings().get(CONNECTION_NAME));
         }
 
         if (!StringHelper.isNullOrEmpty(commandString)) {
@@ -316,7 +313,7 @@ public class EditHeaderDialog extends XDialog {
 
     private void storeScreenValues() {
 
-        connectionName = comboConnections.getText();
+        connectionName = comboConnections.getQualifiedConnectionName();
         commandString = textCommand.getText();
         parameters = textParameters.getText();
 

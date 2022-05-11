@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Team
+ * Copyright (c) 2012-2022 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
 public class ConnectionCombo extends Composite {
 
     private Combo connectionCombo;
-    private String[] connections;
+    private BasicQualifiedConnectionName[] connections;
+    private String[] uiConnections;
 
     public ConnectionCombo(Composite parent, int style) {
         super(parent, SWT.NONE);
@@ -38,8 +40,31 @@ public class ConnectionCombo extends Composite {
         connectionCombo = WidgetFactory.createReadOnlyCombo(this, style | SWT.READ_ONLY | SWT.DROP_DOWN);
         connectionCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        connections = IBMiHostContributionsHandler.getConnectionNames();
-        connectionCombo.setItems(connections);
+        connections = IBMiHostContributionsHandler.getQualifiedConnectionNames();
+    }
+
+    public void loadConnections() {
+
+        if (uiConnections != null) {
+            return;
+        }
+
+        uiConnections = new String[connections.length];
+
+        for (int i = 0; i < connections.length; i++) {
+            BasicQualifiedConnectionName connection = (BasicQualifiedConnectionName)connections[i];
+            if (IBMiHostContributionsHandler.isShowQualifyConnectionNames()) {
+                uiConnections[i] = connection.getProfileName() + "." + connection.getConnectionName();
+            } else {
+                uiConnections[i] = connection.getConnectionName();
+            }
+        }
+
+        connectionCombo.setItems(uiConnections);
+    }
+
+    public void setToolTipText(String tooltip) {
+        connectionCombo.setToolTipText(tooltip);
     }
 
     public void addModifyListener(ModifyListener listener) {
@@ -58,6 +83,10 @@ public class ConnectionCombo extends Composite {
         connectionCombo.removeSelectionListener(listener);
     }
 
+    public int getItemCount() {
+        return connectionCombo.getItemCount();
+    }
+
     @Override
     public void setLayout(Layout layout) {
         throw new IllegalAccessError();
@@ -71,26 +100,49 @@ public class ConnectionCombo extends Composite {
         super.setLayoutData(layoutData);
     }
 
-    public String getText() {
-        return connectionCombo.getText().trim();
+    public boolean hasConnection() {
+
+        int i = connectionCombo.getSelectionIndex();
+        if (i >= 0) {
+            return true;
+        }
+        return false;
     }
 
-    public void setText(String text) {
+    public void setQualifiedConnectionName(String qualifiedConnectionName) {
 
-        if (text == null) {
+        System.out.println("Set: " + qualifiedConnectionName);
+
+        if (qualifiedConnectionName == null) {
             connectionCombo.select(-1);
             connectionCombo.setText(""); //$NON-NLS-1$
             return;
         }
 
         for (int i = 0; i < connections.length; i++) {
-            if (text.trim().equalsIgnoreCase(connections[i].trim())) {
+            if (qualifiedConnectionName.trim().equalsIgnoreCase(connections[i].getQualifiedName())) {
                 connectionCombo.select(i);
                 return;
             }
         }
 
-        setText(null);
+        setQualifiedConnectionName(null);
+    }
+
+    public String getQualifiedConnectionName() {
+
+        String qualifiedConnectionName;
+
+        int i = connectionCombo.getSelectionIndex();
+        if (i >= 0) {
+            qualifiedConnectionName = connections[i].getQualifiedName();
+        } else {
+            qualifiedConnectionName = null;
+        }
+
+        System.out.println("Get: " + qualifiedConnectionName);
+
+        return qualifiedConnectionName;
     }
 
     public int getSelectionIndex() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,11 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+import com.ibm.as400.access.SecureAS400;
+
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
@@ -53,11 +58,6 @@ import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
-import com.ibm.as400.access.SecureAS400;
 
 public class TransferISphereLibrary extends XDialog implements StatusMessageReceiver {
 
@@ -165,10 +165,10 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 
         comboConnections.setLayoutData(gridData);
-        comboConnections.setText(connectionName);
+        comboConnections.setQualifiedConnectionName(connectionName);
         comboConnections.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent arg0) {
-                connectionName = comboConnections.getText();
+                connectionName = comboConnections.getQualifiedConnectionName();
                 clearStatus();
                 // setStatus(Messages.bind(Messages.Connecting_to_A,
                 // connectionName));
@@ -230,7 +230,7 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
         menuTableStatusContextMenu.addMenuListener(new TableContextMenu(tableStatus));
         tableStatus.setMenu(menuTableStatusContextMenu);
 
-        //        new UIJob("Establish connection") { //$NON-NLS-1$
+        // new UIJob("Establish connection") { //$NON-NLS-1$
         // @Override
         // public IStatus runInUIThread(IProgressMonitor arg0) {
         // clearStatus();
@@ -259,8 +259,8 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
         if (as400 == null) {
             // setStatus(Messages.bind(Messages.Not_yet_connected_to_A,
             // connectionName));
-            setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C, new Object[] { iSphereLibrary,
-                connectionName, ftpPort, aspGroup }));
+            setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C,
+                new Object[] { iSphereLibrary, connectionName, ftpPort, aspGroup }));
         } else {
 
             try {
@@ -268,8 +268,8 @@ public class TransferISphereLibrary extends XDialog implements StatusMessageRece
             } catch (Throwable e) {
             }
 
-            setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C, new Object[] { iSphereLibrary,
-                connectionName, ftpPort, aspGroup }));
+            setStatus(Messages.bind(Messages.About_to_transfer_library_A_ASP_group_D_to_host_B_using_port_C,
+                new Object[] { iSphereLibrary, connectionName, ftpPort, aspGroup }));
         }
 
         if (StringHelper.isNullOrEmpty(connectionName)) {

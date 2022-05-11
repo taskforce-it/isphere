@@ -22,6 +22,15 @@ import biz.isphere.core.internal.StreamFile;
 public interface IIBMiHostContributions {
 
     /**
+     * Returns <i>true</i> if the user wants to see qualified connections names
+     * in the UI.
+     * 
+     * @return <i>true</i>, if property <i>Qualify Connection Names</i> of the
+     *         <i>Remote Systems</i> view is selected, else <i>false</i>
+     */
+    public boolean isShowQualifyConnectionNames();
+
+    /**
      * Returns <i>true</i> when the RSE sub-system has been initialized.
      * 
      * @return <i>true</i>, if RSE sub-system has been initialized, else

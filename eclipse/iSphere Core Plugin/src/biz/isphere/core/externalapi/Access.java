@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,7 @@ public class Access {
      * @param readOnly - specifies whether to open the message file in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openMessageFileEditor(Shell shell, String connectionName, String library, String messageFile, boolean readOnly)
         throws Exception {
@@ -99,7 +99,7 @@ public class Access {
      * @param readOnly - specifies whether to open the binding directory in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openBindingDirectoryEditor(Shell shell, String connectionName, String library, String bindingDirectory, boolean readOnly)
         throws Exception {
@@ -127,7 +127,7 @@ public class Access {
      * @param readOnly - specifies whether to open the data area in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openDataAreaEditor(Shell shell, String connectionName, String library, String dataArea, boolean readOnly) throws Exception {
 
@@ -154,7 +154,7 @@ public class Access {
      * @param readOnly - specifies whether to open the user space in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openUserSpaceEditor(Shell shell, String connectionName, String library, String userSpace, boolean readOnly) throws Exception {
 
@@ -185,7 +185,7 @@ public class Access {
      *        right side of the editor.
      * @param configuration - message file editor configuration
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openMessageFileCompareEditor(Shell shell, String leftConnectionName, String leftLibrary, String leftMessageFile,
         String rightConnectionName, String rightLibrary, String rightMessageFile, IMessageFileCompareEditorConfiguration configuration)
@@ -222,7 +222,7 @@ public class Access {
      * @param object - name of the object.
      * @param objectType - type of the object.
      * @return remote object
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     private static RemoteObject createRemoteObject(String connectionName, String library, String object, String objectType) {
 
@@ -252,7 +252,7 @@ public class Access {
      *        retrieved.
      * @param objectType - object type.
      * @return object description (text)
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     private static String getObjectDescription(String connectionName, String library, String object, String objectType) {
 
@@ -301,7 +301,7 @@ public class Access {
      *        IPreferences.OUTPUT_FORMAT_TEXT 
      *        IPreferences.OUTPUT_FORMAT_DFT
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openSpooledFile(Shell shell, String connectionName, String file, int fileNumber, String jobName, String jobUser, String jobNumber, String jobSystem, String creationDate, String creationTime, String format)
         throws Exception {
@@ -362,7 +362,7 @@ public class Access {
      *        IPreferences.OUTPUT_FORMAT_TEXT 
      *        IPreferences.OUTPUT_FORMAT_DFT
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void saveSpooledFile(Shell shell, String connectionName, String file, int fileNumber, String jobName, String jobUser, String jobNumber, String jobSystem, String creationDate, String creationTime, String format)
         throws Exception {
@@ -410,7 +410,7 @@ public class Access {
      * @param _searchOptions - Contains the strings to search for and other search options.
      * @param _searchElements - Contains the elements (Source file members) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.sourcefilesearch.SearchResult[] searchStringInSourceFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.sourcefilesearch.SearchElement> _searchElements)
         throws Exception {
@@ -441,7 +441,7 @@ public class Access {
      * @param _searchOptions - Contains the strings to search for and other search options.
      * @param _searchElements - Contains the elements (Message files) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.messagefilesearch.SearchResult[] searchStringInMessageFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.messagefilesearch.SearchElement> _searchElements)
         throws Exception {
@@ -476,7 +476,7 @@ public class Access {
      * @param readOnly - specifies whether to open the message description editor in
      *        <i>display</i> oder <i>edit</i> mode.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void openMessageDescriptionEditor(Shell shell, String connectionName, String library, String messageFile, String messageId, int mode)
         throws Exception {
@@ -509,7 +509,7 @@ public class Access {
      * @param spooledFileFilter - Needed to specify which spooled files shall be loaded.
      * @param spooledFileListLoader - The loader, which executes the SQL select statement and processes the result set.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static void loadSpooledFileList(Shell shell, String connectionName, SpooledFileFilter spooledFileFilter, ISpooledFileListLoader spooledFileListLoader)
         throws Exception {
@@ -607,7 +607,7 @@ public class Access {
      * @param connectionName - connection name.
      * @param _searchElements - Contains the elements (Source file members) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.sourcefilesearch.ExtendedSearchResult searchStringInSourceFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.sourcefilesearch.SearchElement> _searchElements)
         throws Exception {
@@ -655,7 +655,7 @@ public class Access {
      * @param connectionName - connection name.
      * @param _searchElements - Contains the elements (Message files) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.messagefilesearch.ExtendedSearchResult searchStringInMessageFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.messagefilesearch.SearchElement> _searchElements)
         throws Exception {
@@ -713,7 +713,7 @@ public class Access {
      * @param _searchOptions - Contains the strings to search for and other search options.
      * @param _searchElements - Contains the elements (Stream files) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.streamfilesearch.SearchResult[] searchStringInStreamFile(Shell shell, String connectionName, SearchOptions _searchOptions, ArrayList<biz.isphere.core.streamfilesearch.SearchElement> _searchElements)
         throws Exception {
@@ -743,7 +743,7 @@ public class Access {
      * @param connectionName - connection name.
      * @param _searchElements - Contains the elements (Stream files) to search for strings.
      * @throws Exception
-     * @see QualifiedConnectionName
+     * @see BasicQualifiedConnectionName
      */
     public static biz.isphere.core.streamfilesearch.ExtendedSearchResult searchStringInStreamFile(Shell shell, String connectionName, HashMap<String, biz.isphere.core.streamfilesearch.SearchElement> _searchElements)
         throws Exception {

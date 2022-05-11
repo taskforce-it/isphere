@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
@@ -35,8 +37,6 @@ import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.objectselector.model.SelectedObject;
-
-import com.ibm.as400.access.AS400;
 
 public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemoteQSYSObjectDialog {
 
@@ -128,7 +128,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
     private void setControlsEnablement() {
 
-        if (StringHelper.isNullOrEmpty(cboConnectionName.getText())) {
+        if (!cboConnectionName.hasConnection()) {
             btnSelectLibrary.setEnabled(false);
             btnSelectObject.setEnabled(false);
         } else {
@@ -157,7 +157,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     @Override
     protected void okPressed() {
 
-        connectionName = cboConnectionName.getText();
+        connectionName = cboConnectionName.getQualifiedConnectionName();
         libraryName = cboLibraryName.getText();
         objectName = cboObjectName.getText();
 
@@ -171,11 +171,9 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             }
 
             if (!ISphereHelper.checkObject(system, libraryName, objectName, objectType)) {
-                MessageDialog.openError(
-                    getShell(),
-                    Messages.E_R_R_O_R,
-                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist, new Object[] { objectName, libraryName,
-                        objectType }));
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
+                        new Object[] { objectName, libraryName, objectType }));
                 return;
             }
 
@@ -216,7 +214,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             connectionName = loadValue(CONNECTION_NAME, EMPTY);
         }
         if (!StringHelper.isNullOrEmpty(connectionName)) {
-            cboConnectionName.setText(connectionName);
+            cboConnectionName.setQualifiedConnectionName(connectionName);
         }
 
         if (libraryName == null) {
@@ -239,7 +237,7 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
     private void saveScreenValues() {
 
-        storeValue(CONNECTION_NAME, cboConnectionName.getText());
+        storeValue(CONNECTION_NAME, cboConnectionName.getQualifiedConnectionName());
         storeValue(LIBRARY_NAME, cboLibraryName.getText());
         storeValue(FILE_NAME, cboObjectName.getText());
 
@@ -295,11 +293,11 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         @Override
         public void widgetSelected(SelectionEvent e) {
 
-            if (StringHelper.isNullOrEmpty(comboConnectionName.getText())) {
+            if (!comboConnectionName.hasConnection()) {
                 return;
             }
 
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(getShell(), comboConnectionName.getText());
+            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
             dialog.setLibraryListEnabled(true);
             dialog.setExpandLibraryListsEnabled(true);
             if (dialog.open() == Dialog.OK) {
@@ -332,11 +330,11 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         @Override
         public void widgetSelected(SelectionEvent e) {
 
-            if (StringHelper.isNullOrEmpty(comboConnectionName.getText())) {
+            if (!comboConnectionName.hasConnection()) {
                 return;
             }
 
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(getShell(), comboConnectionName.getText());
+            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
             dialog.setLibraryListEnabled(true);
 
             if (!StringHelper.isNullOrEmpty(comboLibraryName.getText())) {
