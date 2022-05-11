@@ -376,7 +376,7 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         selectedFilters.add(getFilter());
 
         StreamFileSearchFilterResolver filterResolver = new StreamFileSearchFilterResolver(getShell(), connection, filter);
-        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters);
 
         return searchElements;
     }

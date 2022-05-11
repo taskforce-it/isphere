@@ -419,7 +419,7 @@ public class SourceFileSearchPage extends AbstractSearchPage {
         selectedFilters.add(filter);
 
         SourceFileSearchFilterResolver filterResolver = new SourceFileSearchFilterResolver(getShell(), connection);
-        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters);
 
         return searchElements;
     }

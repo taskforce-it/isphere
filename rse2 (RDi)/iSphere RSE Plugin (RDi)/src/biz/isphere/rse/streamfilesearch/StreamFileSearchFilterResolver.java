@@ -25,6 +25,11 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import biz.isphere.core.streamfilesearch.SearchElement;
 import biz.isphere.core.streamfilesearch.StreamFileSearchFilter;
 
+/**
+ * This class produces a list of {@link SearchElement} elements from a mixed
+ * list of all kind of objects around an filter of the <i>Remote Systems</i>
+ * view.
+ */
 public class StreamFileSearchFilterResolver {
 
     public static final int MAX_DEPTH = 1;
@@ -50,7 +55,7 @@ public class StreamFileSearchFilterResolver {
         this.monitor = monitor;
     }
 
-    public Map<String, SearchElement> resolveFilterStrings(List<Object> _selectedElements) throws InterruptedException, Exception {
+    public Map<String, SearchElement> resolveRSEFilter(List<Object> _selectedElements) throws InterruptedException, Exception {
 
         _searchElements = new LinkedHashMap<String, SearchElement>();
 

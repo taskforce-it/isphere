@@ -107,7 +107,7 @@ public class SourceFileSearchAction implements IObjectActionDelegate {
             if (Preferences.getInstance().isSourceFileSearchBatchResolveEnabled()) {
                 _searchElements = null;
             } else {
-                _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveFilterStrings(_selectedElements);
+                _searchElements = new SourceFileSearchFilterResolver(_shell, _connection).resolveRSEFilter(_selectedElements);
             }
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);

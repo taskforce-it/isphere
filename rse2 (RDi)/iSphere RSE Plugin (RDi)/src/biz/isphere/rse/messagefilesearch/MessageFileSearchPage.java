@@ -380,7 +380,7 @@ public class MessageFileSearchPage extends AbstractSearchPage {
         selectedFilters.add(filter);
 
         MessageFileSearchFilterResolver filterResolver = new MessageFileSearchFilterResolver(getShell(), connection);
-        Map<String, SearchElement> searchElements = filterResolver.resolveFilterStrings(selectedFilters);
+        Map<String, SearchElement> searchElements = filterResolver.resolveRSEFilter(selectedFilters);
 
         return searchElements;
     }

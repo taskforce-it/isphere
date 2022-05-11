@@ -102,7 +102,7 @@ public class StreamFileSearchAction implements IObjectActionDelegate {
         Map<String, SearchElement> _searchElements = null;
 
         try {
-            _searchElements = new StreamFileSearchFilterResolver(_shell, _connection, null).resolveFilterStrings(_selectedElements);
+            _searchElements = new StreamFileSearchFilterResolver(_shell, _connection, null).resolveRSEFilter(_selectedElements);
         } catch (InterruptedException e) {
             SystemMessageDialog.displayExceptionMessage(_shell, e);
             return;
