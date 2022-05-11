@@ -22,4 +22,8 @@ public final class TimeHelper {
     public static void printTimeUsed(long startTime) {
         System.out.println("Time used: " + (Calendar.getInstance().getTimeInMillis() - startTime) + "ms");
     }
+
+    public static void printTimeUsed(String text, long startTime) {
+        System.out.println(text + (Calendar.getInstance().getTimeInMillis() - startTime) + "ms");
+    }
 }
