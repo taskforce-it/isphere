@@ -16,6 +16,10 @@ import org.eclipse.swt.widgets.Shell;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.exception.InvalidFilterException;
 
+/**
+ * This class adds individual objects or resolves filter strings in order to add
+ * the matching objects to the list of searched objects.
+ */
 public abstract class AbstractMessageFileSearchDelegate {
 
     private Shell shell;
@@ -129,8 +133,8 @@ public abstract class AbstractMessageFileSearchDelegate {
     protected abstract String getResourceDescription(Object resource);
 
     /**
-     * Adds an element to the list of elements that are searched for a given
-     * search string.
+     * Adds a matching element to the list of elements that are searched for a
+     * given search string.
      * 
      * @param searchElements - list of elements that are searched
      * @param messageFile - message file that is added to the list

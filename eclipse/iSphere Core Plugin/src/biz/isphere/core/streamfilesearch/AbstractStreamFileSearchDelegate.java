@@ -17,6 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.core.internal.exception.InvalidFilterException;
 
+/**
+ * This class adds individual objects or resolves filter strings in order to add
+ * the matching objects to the list of searched objects.
+ */
 public abstract class AbstractStreamFileSearchDelegate {
 
     private Shell shell;
@@ -49,7 +53,7 @@ public abstract class AbstractStreamFileSearchDelegate {
 
     protected abstract String getResourceType(Object resource);
 
-    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, int maxDepth,
+    public boolean addElementsFromFilterString(Map<String, SearchElement> searchElements, StreamFileSearchFilter streamFileSearchFilter, int maxDepth,
         String... filterStrings) throws Exception {
 
         boolean doContinue = true;
@@ -80,10 +84,10 @@ public abstract class AbstractStreamFileSearchDelegate {
                                 String path = getResourcePath(element);
                                 String fileOrTypes = getFileOrTypesFromFilterString(filterStrings[idx]);
                                 String filterString = produceStreamFileFilterString(path, fileOrTypes);
-                                doContinue = addElementsFromFilterString(searchElements, filter, maxDepth - 1, filterString);
+                                doContinue = addElementsFromFilterString(searchElements, streamFileSearchFilter, maxDepth - 1, filterString);
                             }
                         } else if (isStreamFile(element)) {
-                            addElement(searchElements, filter, element);
+                            addElement(searchElements, streamFileSearchFilter, element);
                         }
 
                         if (!doContinue) {
@@ -108,13 +112,13 @@ public abstract class AbstractStreamFileSearchDelegate {
     protected abstract String getFileOrTypesFromFilterString(String filterString);
 
     /**
-     * Adds an element to the list of elements that are searched for a given
-     * search string.
+     * Adds a matching element to the list of elements that are searched for a
+     * given search string.
      * 
      * @param searchElements - list of elements that are searched
-     * @param streamFile - message file that is added to the list
+     * @param streamFile - stream file that is added to the list
      */
-    private void addElement(Map<String, SearchElement> searchElements, StreamFileSearchFilter filter, Object streamFile) {
+    private void addElement(Map<String, SearchElement> searchElements, StreamFileSearchFilter streamFileSearchFilter, Object streamFile) {
 
         String directory = getResourceDirectory(streamFile);
         String file = getResourceName(streamFile);
@@ -125,7 +129,8 @@ public abstract class AbstractStreamFileSearchDelegate {
         aSearchElement.setStreamFile(file);
         aSearchElement.setType(type);
 
-        if (filter == null || filter.isItemSelected(aSearchElement)) {
+        // Check stream file type
+        if (streamFileSearchFilter == null || streamFileSearchFilter.isItemSelected(aSearchElement)) {
             addSearchElement(searchElements, aSearchElement);
         }
     }
