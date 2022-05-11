@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Team
+ * Copyright (c) 2012-2022 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,13 @@ package biz.isphere.joblogexplorer.ui.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
@@ -35,6 +30,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.ClipboardHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
@@ -42,12 +39,11 @@ import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributio
 import biz.isphere.core.internal.QualifiedJobName;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.joblogexplorer.ISphereJobLogExplorerPlugin;
 import biz.isphere.joblogexplorer.Messages;
 import biz.isphere.joblogexplorer.api.retrievejobinformation.JOBI0400;
 import biz.isphere.joblogexplorer.api.retrievejobinformation.QUSRJOBI;
-
-import com.ibm.as400.access.AS400;
 
 public class SelectJobDialog extends XDialog {
 
@@ -57,7 +53,7 @@ public class SelectJobDialog extends XDialog {
     private static final String JOB_NUMBER = "JOB_NUMBER"; //$NON-NLS-1$
     private static final String WATCH_CLIPBOARD = "WATCH_CLIPBOARD"; //$NON-NLS-1$
 
-    private ComboViewer cmbConnections;
+    private ConnectionCombo cmbConnections;
     private HistoryCombo txtJobName;
     private HistoryCombo txtUserName;
     private HistoryCombo txtJobNumber;
@@ -87,9 +83,9 @@ public class SelectJobDialog extends XDialog {
 
         createLabel(container, Messages.SelectJobDialog_Connection, Messages.SelectJobDialog_Connection_Tooltip);
 
-        cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
-        cmbConnections.getControl().setLayoutData(createLayoutData(100));
-        cmbConnections.getControl().setToolTipText(Messages.SelectJobDialog_Connection_Tooltip);
+        cmbConnections = WidgetFactory.createConnectionCombo(container);
+        cmbConnections.setLayoutData(createLayoutData(100));
+        cmbConnections.setToolTipText(Messages.SelectJobDialog_Connection_Tooltip);
 
         createLabel(container, Messages.SelectJobDialog_JobName, Messages.SelectJobDialog_JobName_Tooltip);
         txtJobName = WidgetFactory.createNameHistoryCombo(container);
@@ -123,7 +119,7 @@ public class SelectJobDialog extends XDialog {
 
     public boolean haveConnections() {
 
-        if (cmbConnections.getCombo().getItemCount() > 0) {
+        if (cmbConnections.getItemCount() > 0) {
             return true;
         }
 
@@ -160,13 +156,13 @@ public class SelectJobDialog extends XDialog {
 
         if (!haveConnections()) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
         if (StringHelper.isNullOrEmpty(connectionName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_AllDataRequired);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
@@ -192,7 +188,7 @@ public class SelectJobDialog extends XDialog {
         if (system == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.Error_Connection_A_not_found_or_not_available, connectionName));
-            cmbConnections.getControl().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
@@ -205,7 +201,7 @@ public class SelectJobDialog extends XDialog {
             if (JOBI0400.JOB_NOT_FOUND_MSGID.equals(errorID)) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                     Messages.bind(Messages.Error_Job_not_found, new Object[] { jobName, userName, jobNumber }));
-                cmbConnections.getControl().setFocus();
+                cmbConnections.setFocus();
                 return false;
             }
         }
@@ -237,8 +233,8 @@ public class SelectJobDialog extends XDialog {
     @Override
     public void setFocus() {
 
-        if (cmbConnections.getSelection().isEmpty()) {
-            cmbConnections.getControl().setFocus();
+        if (!cmbConnections.hasConnection()) {
+            cmbConnections.setFocus();
             return;
         }
 
@@ -257,13 +253,8 @@ public class SelectJobDialog extends XDialog {
 
     private void loadValues() {
 
-        cmbConnections.setSelection(null);
-        if (haveConnections()) {
-            String connectionName = loadValue(CONNECTION, null);
-            if (connectionName != null) {
-                cmbConnections.setSelection(new StructuredSelection(connectionName));
-            }
-        }
+        cmbConnections.setQualifiedConnectionName(loadValue(CONNECTION, null));
+        connectionName = cmbConnections.getQualifiedConnectionName();
 
         txtJobName.load(getDialogSettingsManager(), getKey("#jobName")); //$NON-NLS-1$
         txtUserName.load(getDialogSettingsManager(), getKey("#userName")); //$NON-NLS-1$
@@ -302,15 +293,14 @@ public class SelectJobDialog extends XDialog {
 
         container.addListener(SWT.Activate, new QualifiedJobNameListener());
 
-        cmbConnections.setContentProvider(new ArrayContentProvider());
-        cmbConnections.setLabelProvider(new ConnectionLabelProvider());
-        cmbConnections.setInput(IBMiHostContributionsHandler.getConnectionNames());
-        cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-                if (selection.size() > 0) {
-                    connectionName = (String)selection.getFirstElement();
-                }
+        cmbConnections.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                connectionName = cmbConnections.getQualifiedConnectionName();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
             }
         });
 

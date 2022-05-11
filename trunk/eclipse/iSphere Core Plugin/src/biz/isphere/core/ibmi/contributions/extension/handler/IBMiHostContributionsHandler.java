@@ -9,6 +9,7 @@
 package biz.isphere.core.ibmi.contributions.extension.handler;
 
 import java.sql.Connection;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -23,6 +24,7 @@ import org.eclipse.ui.IFileEditorInput;
 import com.ibm.as400.access.AS400;
 
 import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.StreamFile;
@@ -40,6 +42,24 @@ public class IBMiHostContributionsHandler {
         }
 
         return true;
+    }
+
+    /**
+     * Returns <i>true</i> if the user wants to see qualified connections names
+     * in the UI.
+     * 
+     * @return <i>true</i>, if property <i>Qualify Connection Names</i> of the
+     *         <i>Remote Systems</i> view is selected, else <i>false</i>
+     */
+    public static boolean isShowQualifyConnectionNames() {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return false;
+        }
+
+        return factory.isShowQualifyConnectionNames();
     }
 
     /**
@@ -283,7 +303,7 @@ public class IBMiHostContributionsHandler {
     /**
      * Returns a list of configured connections.
      * 
-     * @return names of configured connections
+     * @return qualified names of configured connections
      */
     public static String[] getConnectionNames() {
 
@@ -294,6 +314,35 @@ public class IBMiHostContributionsHandler {
         }
 
         return factory.getConnectionNames();
+    }
+
+    /**
+     * Returns a list of configured connections.
+     * 
+     * @return configured connections
+     */
+    public static BasicQualifiedConnectionName[] getQualifiedConnectionNames() {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return null;
+        }
+
+        String[] qualifiedConnectionNames = factory.getConnectionNames();
+
+        return asQualifiedConnectionNamesAsList(qualifiedConnectionNames);
+    }
+
+    private static BasicQualifiedConnectionName[] asQualifiedConnectionNamesAsList(String[] qualifiedConnectionNames) {
+
+        List<BasicQualifiedConnectionName> connectionNamesList = new LinkedList<BasicQualifiedConnectionName>();
+
+        for (String qualifiedConnectionName : qualifiedConnectionNames) {
+            connectionNamesList.add(new BasicQualifiedConnectionName(qualifiedConnectionName));
+        }
+
+        return connectionNamesList.toArray(new BasicQualifiedConnectionName[connectionNamesList.size()]);
     }
 
     /**

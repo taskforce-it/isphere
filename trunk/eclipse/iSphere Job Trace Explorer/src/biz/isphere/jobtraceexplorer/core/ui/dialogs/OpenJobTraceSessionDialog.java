@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,7 @@ package biz.isphere.jobtraceexplorer.core.ui.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -31,16 +25,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin;
 import biz.isphere.jobtraceexplorer.core.Messages;
-
-import com.ibm.as400.access.AS400;
 
 public class OpenJobTraceSessionDialog extends XDialog {
 
@@ -49,7 +44,7 @@ public class OpenJobTraceSessionDialog extends XDialog {
     private static final String LIBRARY_NAME = "LIBRARY_NAME"; //$NON-NLS-1$
     private static final String EXCLUDE_IBM_DATA = "SQL_WHERE_NO_IBM_DATA"; //$NON-NLS-1$
 
-    private ComboViewer cmbConnections;
+    private ConnectionCombo cmbConnections;
     private HistoryCombo txtSessionID;
     private HistoryCombo txtLibraryName;
     private Button chkExcludeIBMData;
@@ -78,9 +73,9 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
         createLabel(container, Messages.OpenJobTraceSessionDialog_Connection, Messages.Tooltip_OpenJobTraceSessionDialog_Connection);
 
-        cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
-        cmbConnections.getControl().setLayoutData(createLayoutData(100));
-        cmbConnections.getControl().setToolTipText(Messages.Tooltip_OpenJobTraceSessionDialog_Connection);
+        cmbConnections = WidgetFactory.createConnectionCombo(container);
+        cmbConnections.setLayoutData(createLayoutData(100));
+        cmbConnections.setToolTipText(Messages.Tooltip_OpenJobTraceSessionDialog_Connection);
 
         createLabel(container, Messages.OpenJobTraceSessionDialog_SessionID, Messages.Tooltip_OpenJobTraceSessionDialog_SessionID);
         txtSessionID = WidgetFactory.createNameHistoryCombo(container);
@@ -107,7 +102,7 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
     public boolean haveConnections() {
 
-        if (cmbConnections.getCombo().getItemCount() > 0) {
+        if (cmbConnections.getItemCount() > 0) {
             return true;
         }
 
@@ -144,13 +139,13 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
         if (!haveConnections()) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
         if (StringHelper.isNullOrEmpty(connectionName)) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_AllDataRequired);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
@@ -170,7 +165,7 @@ public class OpenJobTraceSessionDialog extends XDialog {
         if (system == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                 Messages.bind(Messages.Error_Connection_A_not_found_or_not_available, connectionName));
-            cmbConnections.getControl().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
@@ -212,8 +207,8 @@ public class OpenJobTraceSessionDialog extends XDialog {
     @Override
     public void setFocus() {
 
-        if (cmbConnections.getSelection().isEmpty()) {
-            cmbConnections.getControl().setFocus();
+        if (!cmbConnections.hasConnection()) {
+            cmbConnections.setFocus();
             return;
         }
 
@@ -232,13 +227,8 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
     private void loadValues() {
 
-        cmbConnections.setSelection(null);
-        if (haveConnections()) {
-            String connectionName = loadValue(CONNECTION, null);
-            if (connectionName != null) {
-                cmbConnections.setSelection(new StructuredSelection(connectionName));
-            }
-        }
+        cmbConnections.setQualifiedConnectionName(loadValue(CONNECTION, null));
+        connectionName = cmbConnections.getQualifiedConnectionName();
 
         txtSessionID.load(getDialogSettingsManager(), getKey("#sessionID")); //$NON-NLS-1$
         txtLibraryName.load(getDialogSettingsManager(), getKey("#libraryName")); //$NON-NLS-1$
@@ -274,15 +264,14 @@ public class OpenJobTraceSessionDialog extends XDialog {
 
     private void configureControls() {
 
-        cmbConnections.setContentProvider(new ArrayContentProvider());
-        cmbConnections.setLabelProvider(new ConnectionLabelProvider());
-        cmbConnections.setInput(IBMiHostContributionsHandler.getConnectionNames());
-        cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-                if (selection.size() > 0) {
-                    connectionName = (String)selection.getFirstElement();
-                }
+        cmbConnections.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                connectionName = cmbConnections.getQualifiedConnectionName();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
             }
         });
 

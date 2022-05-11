@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.SecureAS400;
+
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
@@ -30,10 +34,6 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400SecurityException;
-import com.ibm.as400.access.SecureAS400;
 
 public class SignOn {
 
@@ -67,7 +67,7 @@ public class SignOn {
 
         comboConnections = WidgetFactory.createConnectionCombo(compositeGeneral, SWT.BORDER);
         comboConnections.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-        comboConnections.setText(aConnectionName);
+        comboConnections.setQualifiedConnectionName(aConnectionName);
 
         WidgetFactory.createLineFiller(compositeGeneral);
 
@@ -101,7 +101,7 @@ public class SignOn {
         final GridData gridDataStatusLine = new GridData(SWT.FILL, SWT.CENTER, true, false);
         statusLine.setLayoutData(gridDataStatusLine);
 
-        if (StringHelper.isNullOrEmpty(comboConnections.getText())) {
+        if (!comboConnections.hasConnection()) {
             comboConnections.setFocus();
         } else if (StringHelper.isNullOrEmpty(textUser.getText())) {
             textUser.setFocus();
@@ -116,7 +116,7 @@ public class SignOn {
 
     private void positionCursor() {
 
-        if (StringHelper.isNullOrEmpty(comboConnections.getText())) {
+        if (!comboConnections.hasConnection()) {
             comboConnections.setFocus();
         } else if (!btnOverrideCredentials.getSelection()) {
             comboConnections.setFocus();
@@ -144,7 +144,7 @@ public class SignOn {
         String userId = null;
         String password = null;
 
-        if (comboConnections.getText().equals("")) {
+        if (!comboConnections.hasConnection()) {
             setErrorMessage(Messages.Enter_a_host);
             comboConnections.setFocus();
             return false;
@@ -169,7 +169,7 @@ public class SignOn {
 
         }
 
-        AS400 system = IBMiHostContributionsHandler.getSystem(comboConnections.getText());
+        AS400 system = IBMiHostContributionsHandler.getSystem(comboConnections.getQualifiedConnectionName());
         if (system instanceof SecureAS400) {
             as400 = new SecureAS400(system);
         } else {
@@ -210,7 +210,7 @@ public class SignOn {
         btnOverrideCredentials.setSelection(overrideCredentials);
 
         String host = getDialogSettingsManager().loadValue(HOST, "");
-        comboConnections.setText(host);
+        comboConnections.setQualifiedConnectionName(host);
 
         String user = getDialogSettingsManager().loadValue(USER, "");
         textUser.setText(user);
@@ -221,7 +221,7 @@ public class SignOn {
     private void storeScreenValues() {
 
         getDialogSettingsManager().storeValue(OVERRIDE_CREDENTIALS, btnOverrideCredentials.getSelection());
-        getDialogSettingsManager().storeValue(HOST, comboConnections.getText());
+        getDialogSettingsManager().storeValue(HOST, comboConnections.getQualifiedConnectionName());
         getDialogSettingsManager().storeValue(USER, textUser.getText());
     }
 

@@ -27,6 +27,7 @@ import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.core.model.ISystemRegistry;
 import org.eclipse.rse.core.subsystems.ISubSystem;
 import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
+import org.eclipse.rse.ui.SystemPreferencesManager;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.SecureAS400;
@@ -74,6 +75,17 @@ public class XRDiContributions implements IIBMiHostContributions {
 
     public XRDiContributions() {
         this.jdbcConnectionManagers = new HashMap<String, JdbcConnectionManager>();
+    }
+
+    /**
+     * Returns <i>true</i> if the user wants to see qualified connections names
+     * in the UI.
+     * 
+     * @return <i>true</i>, if property <i>Qualify Connection Names</i> of the
+     *         <i>Remote Systems</i> view is selected, else <i>false</i>
+     */
+    public boolean isShowQualifyConnectionNames() {
+        return SystemPreferencesManager.getQualifyConnectionNames();
     }
 
     /**

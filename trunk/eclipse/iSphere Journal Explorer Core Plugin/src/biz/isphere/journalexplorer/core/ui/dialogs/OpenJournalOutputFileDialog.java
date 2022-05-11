@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -43,6 +37,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.WorkbenchJob;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
@@ -54,15 +50,13 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.ContentAssistProposal;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.sqleditor.SqlEditor;
 import biz.isphere.journalexplorer.core.ISphereJournalExplorerCorePlugin;
 import biz.isphere.journalexplorer.core.Messages;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
-import biz.isphere.journalexplorer.core.ui.labelproviders.IBMiConnectionLabelProvider;
-
-import com.ibm.as400.access.AS400;
 
 public class OpenJournalOutputFileDialog extends XDialog {
 
@@ -72,7 +66,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
     private static final String MEMBER = "MEMBER";
     private static final String WHERE_CLAUSE = "WHERE_CLAUSE";
 
-    private ComboViewer cmbConnections;
+    private ConnectionCombo cmbConnections;
     private HistoryCombo txtLibraryName;
     private HistoryCombo txtFileName;
     private HistoryCombo txtMemberName;
@@ -125,9 +119,9 @@ public class OpenJournalOutputFileDialog extends XDialog {
         lblConnections.setText(Messages.AddJournalDialog_Conection);
         lblConnections.setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
-        cmbConnections = new ComboViewer(container, SWT.READ_ONLY);
-        cmbConnections.getControl().setLayoutData(createLayoutData(100));
-        cmbConnections.getControl().setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
+        cmbConnections = WidgetFactory.createConnectionCombo(container);
+        cmbConnections.setLayoutData(createLayoutData(100));
+        cmbConnections.setToolTipText(Messages.AddJournalDialog_Conection_Tooltip);
 
         Label lblLibrary = new Label(container, SWT.NONE);
         lblLibrary.setText(Messages.AddJournalDialog_Library);
@@ -153,8 +147,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
         txtMemberName.setLayoutData(createLayoutData());
         txtMemberName.setToolTipText(Messages.AddJournalDialog_MemberName_Tooltip);
 
-        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(), SqlEditor.BUTTON_ADD
-            | SqlEditor.BUTTON_CLEAR);
+        sqlEditor = WidgetFactory.createSqlEditor(container, getClass().getSimpleName(), getDialogSettingsManager(),
+            SqlEditor.BUTTON_ADD | SqlEditor.BUTTON_CLEAR);
         GridData sqlEditorLayoutData = new GridData(GridData.FILL_BOTH);
         sqlEditorLayoutData.horizontalSpan = 2;
         sqlEditor.setLayoutData(sqlEditorLayoutData);
@@ -191,7 +185,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
     public void setFocus() {
 
         if (StringHelper.isNullOrEmpty(connectionName)) {
-            cmbConnections.getControl().setFocus();
+            cmbConnections.setFocus();
             return;
         }
 
@@ -210,23 +204,8 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void loadValues() {
 
-        cmbConnections.setSelection(null);
-        if (haveConnections()) {
-
-            String connectionName = loadValue(CONNECTION, null);
-            if (connectionName != null) {
-                if (!IBMiHostContributionsHandler.isAvailable(connectionName)) {
-                    MessageDialogAsync.displayError(getShell(), Messages.E_R_R_O_R,
-                        Messages.bind(Messages.Error_Connection_A_not_found, connectionName));
-                }
-            } else {
-                connectionName = (String)cmbConnections.getElementAt(0);
-            }
-
-            if (connectionName != null) {
-                cmbConnections.setSelection(new StructuredSelection(connectionName));
-            }
-        }
+        cmbConnections.setQualifiedConnectionName(loadValue(CONNECTION, null));
+        connectionName = cmbConnections.getQualifiedConnectionName();
 
         txtLibraryName.load(getDialogSettingsManager(), getClass().getName() + "#library"); //$NON-NLS-1$
         txtFileName.load(getDialogSettingsManager(), getClass().getName() + "#file"); //$NON-NLS-1$
@@ -261,21 +240,20 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     private void configureControls() {
 
-        cmbConnections.setContentProvider(new ArrayContentProvider());
-        cmbConnections.setLabelProvider(new IBMiConnectionLabelProvider());
-        cmbConnections.setInput(IBMiHostContributionsHandler.getConnectionNames());
-        cmbConnections.addSelectionChangedListener(new ISelectionChangedListener() {
-            public void selectionChanged(SelectionChangedEvent event) {
-                IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-                if (selection.size() > 0) {
-                    connectionName = (String)selection.getFirstElement();
-                    if (ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
-                        isContentAssistEnabled = true;
-                    } else {
-                        isContentAssistEnabled = false;
-                    }
-                    updateContentAssistProposals();
+        cmbConnections.addSelectionListener(new SelectionListener() {
+
+            public void widgetSelected(SelectionEvent event) {
+                connectionName = cmbConnections.getQualifiedConnectionName();
+                if (ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
+                    isContentAssistEnabled = true;
+                } else {
+                    isContentAssistEnabled = false;
                 }
+                updateContentAssistProposals();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+                widgetSelected(event);
             }
         });
 
@@ -396,13 +374,13 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
         if (!haveConnections()) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Error_No_connections_available);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
         if (connectionName == null) {
             MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.AddJournalDialog_AllDataRequired);
-            cmbConnections.getCombo().setFocus();
+            cmbConnections.setFocus();
             return false;
         }
 
@@ -410,7 +388,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
             String message = Messages.bind(Messages.Error_Connection_A_is_offline, connectionName);
             if (message != null) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, message);
-                cmbConnections.getCombo().setFocus();
+                cmbConnections.setFocus();
                 return false;
             }
         }
@@ -503,7 +481,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
 
     public boolean haveConnections() {
 
-        if (cmbConnections.getCombo().getItemCount() > 0) {
+        if (cmbConnections.getItemCount() > 0) {
             return true;
         }
 

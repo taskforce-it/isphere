@@ -577,8 +577,22 @@ public final class WidgetFactory {
      *        instance (cannot be null)
      * @return read-only connection combo field
      */
+    public static ConnectionCombo createConnectionCombo(Composite parent) {
+        return createConnectionCombo(parent, SWT.NONE);
+    }
+
+    /**
+     * Produces a read-only connection combo field.
+     * 
+     * @param parent - a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param style - the style of combo to construct
+     * @return read-only connection combo field
+     */
     public static ConnectionCombo createConnectionCombo(Composite parent, int style) {
-        return WidgetFactory.getInstance().produceConnectionComboField(parent, style);
+        ConnectionCombo connectionCombo = WidgetFactory.getInstance().produceConnectionComboField(parent, style);
+        connectionCombo.loadConnections();
+        return connectionCombo;
     }
 
     /**
