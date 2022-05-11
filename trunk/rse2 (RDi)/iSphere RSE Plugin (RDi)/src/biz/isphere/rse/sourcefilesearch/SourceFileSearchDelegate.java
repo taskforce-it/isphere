@@ -29,6 +29,10 @@ import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.exception.InvalidFilterException;
 import biz.isphere.core.sourcefilesearch.AbstractSourceFileSearchDelegate;
 
+/**
+ * This class adds individual objects or resolves filter strings in order to add
+ * the matching objects to the list of searched objects.
+ */
 public class SourceFileSearchDelegate extends AbstractSourceFileSearchDelegate {
 
     private IBMiConnection connection;
