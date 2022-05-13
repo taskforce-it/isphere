@@ -28,6 +28,8 @@ public class ConnectionCombo extends Composite {
     private BasicQualifiedConnectionName[] connections;
     private String[] uiConnections;
 
+    public static final String NO_PROFILE_NAME = "*N"; //$NON-NLS-1$
+
     public ConnectionCombo(Composite parent, int style) {
         super(parent, SWT.NONE);
 
@@ -54,7 +56,8 @@ public class ConnectionCombo extends Composite {
 
         for (int i = 0; i < connections.length; i++) {
             BasicQualifiedConnectionName connection = (BasicQualifiedConnectionName)connections[i];
-            if (IBMiHostContributionsHandler.isShowQualifyConnectionNames() && !StringHelper.isNullOrEmpty(connection.getProfileName())) {
+            if (IBMiHostContributionsHandler.isShowQualifyConnectionNames() && !StringHelper.isNullOrEmpty(connection.getProfileName())
+                && !NO_PROFILE_NAME.equalsIgnoreCase(connection.getProfileName())) {
                 uiConnections[i] = connection.getProfileName() + "." + connection.getConnectionName();
             } else {
                 uiConnections[i] = connection.getConnectionName();
