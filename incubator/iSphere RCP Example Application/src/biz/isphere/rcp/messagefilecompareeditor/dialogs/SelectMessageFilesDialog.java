@@ -146,12 +146,12 @@ public class SelectMessageFilesDialog extends XDialog {
     protected void okPressed() {
 
         // Left message file is required
-        if (StringHelper.isNullOrEmpty(cboLeftConnection.getText())) {
+        if (!cboLeftConnection.hasConnection()) {
             displayErrorMessage(Messages.Error_Please_select_a_connection);
             cboLeftConnection.setFocus();
             return;
-        } else if (!checkConnection(cboLeftConnection.getText())) {
-            displayErrorMessage(Messages.Error_Connection_A_not_available, cboLeftConnection.getText());
+        } else if (!checkConnection(cboLeftConnection.getQualifiedConnectionName())) {
+            displayErrorMessage(Messages.Error_Connection_A_not_available, cboLeftConnection.getQualifiedConnectionName());
             cboLeftConnection.setFocus();
             return;
         }
@@ -160,7 +160,7 @@ public class SelectMessageFilesDialog extends XDialog {
             displayErrorMessage(Messages.Error_Library_name_is_missing);
             cboLeftLibrary.setFocus();
             return;
-        } else if (!checkLibrary(cboLeftConnection.getText(), cboLeftLibrary.getText())) {
+        } else if (!checkLibrary(cboLeftConnection.getQualifiedConnectionName(), cboLeftLibrary.getText())) {
             displayErrorMessage(Messages.Error_Library_A_not_found, cboLeftLibrary.getText());
             cboLeftLibrary.setFocus();
             return;
@@ -172,7 +172,7 @@ public class SelectMessageFilesDialog extends XDialog {
             return;
         }
 
-        if (!checkMessageFile(cboLeftConnection.getText(), cboLeftLibrary.getText(), cboLeftMessageFile.getText())) {
+        if (!checkMessageFile(cboLeftConnection.getQualifiedConnectionName(), cboLeftLibrary.getText(), cboLeftMessageFile.getText())) {
             displayErrorMessage(Messages.Error_Message_file_B_in_library_A_not_found, cboLeftLibrary.getText(), cboLeftMessageFile.getText());
             cboLeftMessageFile.setFocus();
             return;
@@ -180,11 +180,11 @@ public class SelectMessageFilesDialog extends XDialog {
 
         // Right message file is optional
         boolean isRightMessageFile = true;
-        if (StringHelper.isNullOrEmpty(cboRightConnection.getText())) {
+        if (!cboRightConnection.hasConnection()) {
             cboRightConnection.setFocus();
             isRightMessageFile = false;
-        } else if (!checkConnection(cboRightConnection.getText())) {
-            displayErrorMessage(Messages.Error_Connection_A_not_available, cboRightConnection.getText());
+        } else if (!checkConnection(cboRightConnection.getQualifiedConnectionName())) {
+            displayErrorMessage(Messages.Error_Connection_A_not_available, cboRightConnection.getQualifiedConnectionName());
             cboRightConnection.setFocus();
             return;
         }
@@ -192,7 +192,7 @@ public class SelectMessageFilesDialog extends XDialog {
         if (StringHelper.isNullOrEmpty(cboRightLibrary.getText())) {
             cboRightLibrary.setFocus();
             isRightMessageFile = false;
-        } else if (!checkLibrary(cboRightConnection.getText(), cboRightLibrary.getText())) {
+        } else if (!checkLibrary(cboRightConnection.getQualifiedConnectionName(), cboRightLibrary.getText())) {
             displayErrorMessage(Messages.Error_Library_A_not_found, cboRightLibrary.getText());
             cboRightLibrary.setFocus();
             return;
@@ -203,18 +203,19 @@ public class SelectMessageFilesDialog extends XDialog {
             isRightMessageFile = false;
         }
 
-        if (isRightMessageFile && !checkMessageFile(cboRightConnection.getText(), cboRightLibrary.getText(), cboRightMessageFile.getText())) {
+        if (isRightMessageFile
+            && !checkMessageFile(cboRightConnection.getQualifiedConnectionName(), cboRightLibrary.getText(), cboRightMessageFile.getText())) {
             displayErrorMessage(Messages.Error_Message_file_B_in_library_A_not_found, cboRightLibrary.getText(), cboRightMessageFile.getText());
             cboRightMessageFile.setFocus();
             return;
         }
 
         // Set selected message files
-        leftConnectionName = cboLeftConnection.getText();
+        leftConnectionName = cboLeftConnection.getQualifiedConnectionName();
         leftLibraryName = cboLeftLibrary.getText();
         leftMessageFileName = cboLeftMessageFile.getText();
 
-        rightConnectionName = cboRightConnection.getText();
+        rightConnectionName = cboRightConnection.getQualifiedConnectionName();
         rightLibraryName = cboRightLibrary.getText();
         rightMessageFileName = cboRightMessageFile.getText();
 
@@ -253,7 +254,7 @@ public class SelectMessageFilesDialog extends XDialog {
 
     private void setControlsEnablement() {
 
-        if (StringHelper.isNullOrEmpty(cboLeftConnection.getText())) {
+        if (!cboLeftConnection.hasConnection()) {
             btnBrowseLeftLibrary.setEnabled(false);
             btnBrowseLeftMessageFile.setEnabled(false);
         } else {
@@ -261,11 +262,11 @@ public class SelectMessageFilesDialog extends XDialog {
             btnBrowseLeftMessageFile.setEnabled(true);
         }
 
-        if (StringHelper.isNullOrEmpty(cboLeftLibrary.getText())) {
+        if (!StringHelper.isNullOrEmpty(cboLeftLibrary.getText())) {
             btnBrowseLeftMessageFile.setEnabled(false);
         }
 
-        if (StringHelper.isNullOrEmpty(cboRightConnection.getText())) {
+        if (!cboRightConnection.hasConnection()) {
             btnBrowseRightLibrary.setEnabled(false);
             btnBrowseRightMessageFile.setEnabled(false);
         } else {
@@ -303,11 +304,11 @@ public class SelectMessageFilesDialog extends XDialog {
 
     private void loadScreenValues() {
 
-        cboLeftConnection.setText(loadValue(LEFT_CONNECTION_NAME, EMPTY));
+        cboLeftConnection.setQualifiedConnectionName(loadValue(LEFT_CONNECTION_NAME, EMPTY));
         cboLeftLibrary.setText(loadValue(LEFT_LIBRARY_NAME, EMPTY));
         cboLeftMessageFile.setText(loadValue(LEFT_FILE_NAME, EMPTY));
 
-        cboRightConnection.setText(loadValue(RIGHT_CONNECTION_NAME, EMPTY));
+        cboRightConnection.setQualifiedConnectionName(loadValue(RIGHT_CONNECTION_NAME, EMPTY));
         cboRightLibrary.setText(loadValue(RIGHT_LIBRARY_NAME, EMPTY));
         cboRightMessageFile.setText(loadValue(RIGHT_FILE_NAME, EMPTY));
 
@@ -410,7 +411,7 @@ public class SelectMessageFilesDialog extends XDialog {
 
         @Override
         public void widgetSelected(SelectionEvent event) {
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(shell, cboConnection.getText());
+            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(shell, cboConnection.getQualifiedConnectionName());
             dialog.setLibraryListEnabled(true);
             if (dialog.open() == Dialog.OK) {
                 cboLibrary.setText(dialog.getSelectedItem().getName());
@@ -439,7 +440,7 @@ public class SelectMessageFilesDialog extends XDialog {
 
         @Override
         public void widgetSelected(SelectionEvent event) {
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(shell, cboConnection.getText());
+            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(shell, cboConnection.getQualifiedConnectionName());
             dialog.setLibraryListEnabled(true);
             dialog.addLibrary(cboLibrary.getText());
             if (dialog.open() == Dialog.OK) {
