@@ -9,7 +9,6 @@
 package biz.isphere.core.ibmi.contributions.extension.point;
 
 import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 
 /**
  * This class represents a remote system connection name. A connection name
@@ -25,6 +24,8 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
 
     private static final String CONNECTION_NAME_DELIMITER = ":"; //$NON-NLS-1$
     private static final String CONNECTION_NAME_FORMAT = "%s:%s"; //$NON-NLS-1$
+
+    public static final String NO_PROFILE_NAME = "*N"; //$NON-NLS-1$
 
     private String connectionName;
     private String profileName;
@@ -59,10 +60,10 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
             profileName = qualifiedConnectionName.substring(0, x);
             connectionName = qualifiedConnectionName.substring(x + 1);
         } else if (x == 0) {
-            profileName = ConnectionCombo.NO_PROFILE_NAME;
+            profileName = NO_PROFILE_NAME;
             connectionName = qualifiedConnectionName.substring(1);
         } else {
-            profileName = ConnectionCombo.NO_PROFILE_NAME;
+            profileName = NO_PROFILE_NAME;
             connectionName = qualifiedConnectionName;
         }
 
@@ -80,7 +81,7 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
     }
 
     public String getQualifiedName() {
-        if (profileName == ConnectionCombo.NO_PROFILE_NAME) {
+        if (profileName == NO_PROFILE_NAME) {
             return connectionName;
         }
         return String.format(CONNECTION_NAME_FORMAT, profileName, connectionName);
