@@ -4,6 +4,8 @@ Changelog: iSphere 5.2.0.b001
  • Fixed setting default values when comparing source members and
    stream files (iSphere ticket #127).
  • Fixed error reporting of iSphere message file compare editor.
+ • Fixed synchronizing message descriptions between message files on
+   different systems.
  • Changed connection combo to honor the 'Qualify Connection Names'
    property (iSphere ticket #128).
 

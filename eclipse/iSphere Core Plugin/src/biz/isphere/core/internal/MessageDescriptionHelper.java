@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,10 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.CommandCall;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -20,10 +24,6 @@ import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
 import biz.isphere.core.messagefileeditor.ValidReplyEntry;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.CommandCall;
 
 public final class MessageDescriptionHelper {
 
@@ -63,6 +63,7 @@ public final class MessageDescriptionHelper {
         refreshMessageDescription(messageDescription);
 
         MessageDescription remoteMessageDescription = ObjectHelper.cloneVO(messageDescription);
+        remoteMessageDescription.setConnection(toConnectionName);
         remoteMessageDescription.setMessageFile(toMessageFile);
         remoteMessageDescription.setLibrary(toMessageFileLibrary);
 
