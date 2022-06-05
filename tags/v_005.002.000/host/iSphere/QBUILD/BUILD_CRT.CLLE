@@ -1,0 +1,826 @@
+000100211120     /*-----------------------------------------------------------------------*/
+000200211120     /*                                                                       */
+000300211120     /* Copyright (c) 2012-2014 iSphere Project Owners.                       */
+000400211120     /* All rights reserved. This program and the accompanying materials      */
+000500211120     /* are made available under the terms of the Common Public License v1.0  */
+000600211120     /* which accompanies this distribution, and is available at              */
+000700211120     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+000800211120     /*                                                                       */
+000900211120     /* Contributors:                                                         */
+001000211120     /*     Task Force IT-Consulting GmbH - initial API and implementation    */
+001100211120     /*                                                                       */
+001200211120     /*-----------------------------------------------------------------------*/
+001300211120     /*                                                                       */
+001400211120     /* Build iSphere Library - Create objects                                */
+001500211120     /*                                                                       */
+001600211120     /*-----------------------------------------------------------------------*/
+001700211120     /* STRPREPRC Compile Options:                                            */
+001800211120     /*   >>PRE-COMPILER<<                                                    */
+001900211120     /*     >>CRTCMD<<    CRTBNDCL   PGM(&LI/&OB) +                           */
+002000211120     /*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            */
+002100211120     /*       >>COMPILE<<                                                     */
+002200211120     /*         >>PARM<<   DFTACTGRP(*YES);                                   */
+002300211120     /*         >>PARM<<   DBGVIEW(*LIST);                                    */
+002400211120     /*         >>PARM<<   TGTRLS(&TR);                                       */
+002500211120     /*         >>PARM<<   OPTION(*EVENTF);                                   */
+002600211120     /*       >>END-COMPILE<<                                                 */
+002700211120     /*       >>EXECUTE<<                                                     */
+002800211120     /*   >>END-PRE-COMPILER<<                                                */
+002900211120     /*-----------------------------------------------------------------------*/
+003000211120             PGM        PARM(&I_PRDLIB &I_DEVLIB &I_TMPLIB &I_TGTRLS &I_OWNER)
+003100211120
+003200211120             DCL        VAR(&I_PRDLIB ) TYPE(*CHAR) LEN(10)
+003300211120             DCL        VAR(&I_DEVLIB ) TYPE(*CHAR) LEN(10)
+003400211120             DCL        VAR(&I_TMPLIB ) TYPE(*CHAR) LEN(10)
+003500211120             DCL        VAR(&I_TGTRLS ) TYPE(*CHAR) LEN(10)
+003600211120             DCL        VAr(&I_OWNER  ) TYPE(*CHAR) LEN(10)
+003700211120
+003800211120             DCL        VAR(&PRDLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+003900211120             DCL        VAR(&DEVLIB   ) TYPE(*CHAR) LEN(10) VALUE('ISPHEREDVP')
+004000211120             DCL        VAR(&TMPLIB   ) TYPE(*CHAR) LEN(10) VALUE('QTEMP')
+004100211120             DCL        VAR(&TGTRLS   ) TYPE(*CHAR) LEN(10) VALUE('V5R4M0')
+004200211120             DCL        VAR(&OWNER    ) TYPE(*CHAR) LEN(10) VALUE('QPGMR')
+004300211120
+004400211120             DCL        VAR(&BNDSRC   ) TYPE(*CHAR) LEN(10) VALUE('QBNDSRC')
+004500211120             DCL        VAR(&BUILD    ) TYPE(*CHAR) LEN(10) VALUE('QBUILD')
+004600211120             DCL        VAR(&CPYSRC   ) TYPE(*CHAR) LEN(10) VALUE('QCPYSRC')
+004700211120             DCL        VAR(&DTAARASRC) TYPE(*CHAR) LEN(10) VALUE('QDTAARASRC')
+004800211120             DCL        VAR(&DTAQSRC  ) TYPE(*CHAR) LEN(10) VALUE('QDTAQSRC')
+004900211120             DCL        VAR(&USRSPCSRC) TYPE(*CHAR) LEN(10) VALUE('QUSRSPCSRC')
+005000211120             DCL        VAR(&RPGLESRC ) TYPE(*CHAR) LEN(10) VALUE('QRPGLESRC')
+005100211120             DCL        VAR(&RPGUNIT  ) TYPE(*CHAR) LEN(10) VALUE('QRPGUNIT')
+005200211120             DCL        VAR(&SQLSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSQLSRC')
+005300211120             DCL        VAR(&SRVSRC   ) TYPE(*CHAR) LEN(10) VALUE('QSRVSRC')
+005400211120             DCL        VAR(&WCOSRC   ) TYPE(*CHAR) LEN(10) VALUE('QWCOSRC')
+005500211120             DCL        VAR(&SRCTOOLS ) TYPE(*CHAR) LEN(10) VALUE('SRCTOOLS')
+005600211120             DCL        VAR(&DDSSRC   ) TYPE(*CHAR) LEN(10) VALUE('QDDSSRC')
+005700211120             DCL        VAR(&CLSRC    ) TYPE(*CHAR) LEN(10) VALUE('QCLSRC')
+005800211120
+005900211120             DCL        VAR(&SAVF     ) TYPE(*CHAR) LEN(10) VALUE('ISPHERE')
+006000211120             DCL        VAR(&DTACPR   ) TYPE(*CHAR) LEN(10) VALUE('*HIGH')
+006100211120             DCL        VAR(&V_VER    ) TYPE(*CHAR) LEN( 2)
+006200211120             DCL        VAR(&V_RLS    ) TYPE(*CHAR) LEN( 2)
+006300211120             DCL        VAR(&V_MOD    ) TYPE(*CHAR) LEN( 2)
+006400211120             DCL        VAR(&VERSION  ) TYPE(*CHAR) LEN( 8)
+006500211120             DCL        VAR(&PRDTEXT  ) TYPE(*CHAR) LEN(50)
+006600211120             DCL        VAR(&DATE     ) TYPE(*CHAR) LEN(10)
+006700211120             DCL        VAR(&DATE6    ) TYPE(*CHAR) LEN( 6)
+006800211120
+006900211120             DCL        VAR(&TRUE     ) TYPE(*LGL ) VALUE('1')
+007000211120             DCL        VAR(&FALSE    ) TYPE(*LGL ) VALUE('1')
+007100211120
+007200211120             DCL        VAR(&CURLIB   ) TYPE(*CHAR) LEN(10)
+007300211120             DCL        VAR(&USRLIBL  ) TYPE(*CHAR) LEN(2750)
+007400211120             DCL        VAR(&RSTLIBL  ) TYPE(*LGL )
+007500211120
+007600211120             DCL        VAR(&CMD      ) TYPE(*CHAR) LEN(3000)
+007700211120             DCL        VAR(&CMDLEN   ) TYPE(*DEC ) LEN(15 5) VALUE(3000)
+007800211120
+007900211120             CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
+008000211120
+008100211120             CHGVAR     VAR(&PRDLIB) VALUE(&I_PRDLIB)
+008200211120             MONMSG     MSGID(MCH3601) EXEC(DO)
+008300211120                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+008400211120             ENDDO
+008500211120
+008600211120             CHGVAR     VAR(&DEVLIB) VALUE(&I_DEVLIB)
+008700211120             MONMSG     MSGID(MCH3601) EXEC(DO)
+008800211120                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+008900211120             ENDDO
+009000211120
+009100211120             CHGVAR     VAR(&TMPLIB) VALUE(&I_TMPLIB)
+009200211120             MONMSG     MSGID(MCH3601) EXEC(DO)
+009300211120                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+009400211120             ENDDO
+009500211120
+009600211120             CHGVAR     VAR(&TGTRLS) VALUE(&I_TGTRLS)
+009700211120             MONMSG     MSGID(MCH3601) EXEC(DO)
+009800211120                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+009900211120             ENDDO
+010000211120
+010100211120             CHGVAR     VAR(&OWNER) VALUE(&I_OWNER)
+010200211120             MONMSG     MSGID(MCH3601) EXEC(DO)
+010300211120                RMVMSG     PGMQ(*SAME (*)) CLEAR(*ALL)
+010400211120             ENDDO
+010500211120
+010600211120             /* ----------------------------------------------- */
+010700211120             /* Ensure product library is there                 */
+010800211120             /* ----------------------------------------------- */
+010900211120             CHKOBJ     OBJ(&PRDLIB) OBJTYPE(*LIB)
+011000211120             MONMSG     MSGID(CPF9801) EXEC(DO)
+011100211120
+011200211120
+011300211120                /* CRTLIB     LIB(&PRDLIB) */
+011400211120                CHGVAR     VAR(&CMD) +
+011500211120                           VALUE('CRTLIB LIB(' *CAT &PRDLIB *TCAT ')' *BCAT +
+011600211120                                   'TYPE(*PROD)')
+011700211120                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
+011800211120
+011900211120                IF         COND(&OWNER *NE '*SAME') THEN(DO)
+012000211120                   CHGOBJOWN  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) NEWOWN(&OWNER) +
+012100211120                                CUROWNAUT(*REVOKE)
+012200211120                ENDDO
+012300211120
+012400211120                RVKOBJAUT  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) USER(*ALL)
+012500211120
+012600211120                GRTOBJAUT  OBJ(QSYS/&PRDLIB) OBJTYPE(*LIB) USER(*PUBLIC) +
+012700211120                             AUT(*CHANGE)
+012800211120
+012900211120             ENDDO
+013000211120
+013100211120             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+013200211120                CHGVAR     VAR(&CMD) +
+013300211120                             VALUE('CLRLIB LIB(' *CAT &PRDLIB *TCAT ')')
+013400211120                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
+013500211120
+013600211120                CHGLIB     LIB(&PRDLIB) TYPE(*PROD) +
+013700211120                             TEXT('*BUILD_IN_PROGRESS')
+013800211120             ENDDO
+013900211120
+014000211120             /* ----------------------------------------------- */
+014100211120             /* Set up library list                             */
+014200211120             /*    Current library      -  *CRTDFT              */
+014300211120             /*    Product library      -  ISPHERE              */
+014400211120             /*    Development library  -  ISPHEREDVP           */
+014500211120             /* ----------------------------------------------- */
+014600211120             RTVJOBA    CURLIB(&CURLIB) USRLIBL(&USRLIBL)
+014700211120             IF         COND(&CURLIB *EQ '*NONE') THEN(DO)
+014800211120                CHGVAR     VAR(&CURLIB) VALUE('*CRTDFT')
+014900211120             ENDDO
+015000211120
+015100211120             CHGCURLIB  CURLIB(*CRTDFT)
+015200211120             RMVLIBLE   LIB(&PRDLIB)
+015300211120             MONMSG     MSGID(CPF2104)
+015400211120             RMVLIBLE   LIB(&DEVLIB)
+015500211120             MONMSG     MSGID(CPF2104)
+015600211120
+015700211120             ADDLIBLE   LIB(&PRDLIB) POSITION(*FIRST)
+015800211120             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+015900211120                ADDLIBLE   LIB(&DEVLIB) POSITION(*AFTER &PRDLIB)
+016000211120             ENDDO
+016100211120
+016200211120             CHGVAR     VAR(&RSTLIBL) VALUE(&TRUE)
+016300211120
+016400211120             /* ----------------------------------------------- */
+016500211120             /* Create STRPREPRC utility                        */
+016600211120             /* Create BUILD_CLR script                         */
+016700211120             /* ----------------------------------------------- */
+016800211120             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+016900211120                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+017000211120                             TOFILE(&PRDLIB/&BUILD) +
+017100211120                             FROMMBR(BASICS1) TOMBR(BASICS1) +
+017200211120                             MBROPT(*REPLACE) CRTFILE(*YES)
+017300211120                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+017400211120                             TOFILE(&PRDLIB/&BUILD) +
+017500211120                             FROMMBR(JOBLOG) TOMBR(JOBLOG) +
+017600211120                             MBROPT(*REPLACE) CRTFILE(*YES)
+017700211120                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+017800211120                             TOFILE(&PRDLIB/&BUILD) +
+017900211120                             FROMMBR(EVENTF) TOMBR(EVENTF) +
+018000211120                             MBROPT(*REPLACE) CRTFILE(*YES)
+018100211120                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+018200211120                             TOFILE(&PRDLIB/&BUILD) +
+018300211120                             FROMMBR(STRPREPRC) TOMBR(STRPREPRC) +
+018400211120                             MBROPT(*REPLACE) CRTFILE(*YES)
+018500211120                CPYF       FROMFILE(&DEVLIB/&BUILD) +
+018600211120                             TOFILE(&PRDLIB/&BUILD) +
+018700211120                             FROMMBR(BUILD_CLR) TOMBR(BUILD_CLR) +
+018800211120                             MBROPT(*REPLACE) CRTFILE(*YES)
+018900211120
+019000211120                /* Create XML installer */
+019100211120                CRTBNDRPG  PGM(&TMPLIB/XMLINST) +
+019200211120                             SRCFILE(&DEVLIB/&BUILD) SRCMBR(*PGM)
+019300211120
+019400211120                /* Create Tools/400 Runtime service program */
+019500211120                DLTF       FILE(&PRDLIB/QBASICS1)
+019600211120                MONMSG     MSGID(CPF2105)
+019700211120                CRTSRCPF   FILE(&PRDLIB/QBASICS1) RCDLEN(112) +
+019800211120                             TEXT('Tools/400 Runtime Library')
+019900211120                CALL       PGM(&TMPLIB/XMLINST) +
+020000211120                             PARM('BASICS1' &BUILD &PRDLIB '' '&CRTTSTPGM=NO;&C_COMP=C_NO;' &TGTRLS)
+020100211120
+020200211120                /* Create Job Log API */
+020300211120                DLTF       FILE(&PRDLIB/QJOBLOG)
+020400211120                MONMSG     MSGID(CPF2105)
+020500211120                CRTSRCPF   FILE(&PRDLIB/QJOBLOG) RCDLEN(112) +
+020600211120                             TEXT('Tools/400 Job Log API')
+020700211120                CALL       PGM(&TMPLIB/XMLINST) +
+020800211120                             PARM('JOBLOG' &BUILD &PRDLIB '' '&CRTTSTPGM=NO;' &TGTRLS)
+020900211120
+021000211120                /* Create Event File API */
+021100211120                DLTF       FILE(&PRDLIB/QEVENTF)
+021200211120                MONMSG     MSGID(CPF2105)
+021300211120                CRTSRCPF   FILE(&PRDLIB/QEVENTF) RCDLEN(112) +
+021400211120                             TEXT('Tools/400 Event File API')
+021500211120                CALL       PGM(&TMPLIB/XMLINST) +
+021600211120                             PARM('EVENTF' &BUILD &PRDLIB '' '&CRTTSTPGM=NO;' &TGTRLS)
+021700211120
+021800211120                /* Create STRPREPRC utility */
+021900211120                DLTF       FILE(&PRDLIB/QSTRPREPRC)
+022000211120                MONMSG     MSGID(CPF2105)
+022100211120                CRTSRCPF   FILE(&PRDLIB/QSTRPREPRC) RCDLEN(112) +
+022200211120                             TEXT('Tools/400 STRPREPRC Utility')
+022300211120                CALL       PGM(&TMPLIB/XMLINST) +
+022400211120                             PARM('STRPREPRC' &BUILD &PRDLIB '' '&LANG=ENG;&TAGSREQ=NO;' &TGTRLS)
+022500211120             ENDDO
+022600211120
+022700211120             /* ----------------------------------------------- */
+022800211120             /* Delete old objects                              */
+022900211120             /* ----------------------------------------------- */
+023000211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_CLR') +
+023100211120                          LIB(&TMPLIB) OBJ(*DFT) +
+023200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+023300211120
+023400211120             CALL       PGM(&TMPLIB/BUILD_CLR) PARM(&PRDLIB &DEVLIB &TMPLIB &SAVF)
+023500211120
+023600211120             /* ----------------------------------------------- */
+023700211120             /* Duplicate source files                          */
+023800211120             /* ----------------------------------------------- */
+023900211120             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+024000211120                CRTDUPOBJ  OBJ(&BNDSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+024100211120                             TOLIB(&PRDLIB) DATA(*YES)
+024200211120
+024300211120                CRTDUPOBJ  OBJ(&BUILD) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+024400211120                             TOLIB(&PRDLIB) DATA(*YES)
+024500211120
+024600211120                CRTDUPOBJ  OBJ(&CPYSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+024700211120                             TOLIB(&PRDLIB) DATA(*YES)
+024800211120
+024900211120                CRTDUPOBJ  OBJ(&DTAARASRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+025000211120                             TOLIB(&PRDLIB) DATA(*YES)
+025100211120
+025200211120                CRTDUPOBJ  OBJ(&DTAQSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+025300211120                             TOLIB(&PRDLIB) DATA(*YES)
+025400211120
+025500211120                CRTDUPOBJ  OBJ(&USRSPCSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+025600211120                             TOLIB(&PRDLIB) DATA(*YES)
+025700211120
+025800211120                CRTDUPOBJ  OBJ(&RPGLESRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+025900211120                             TOLIB(&PRDLIB) DATA(*YES)
+026000211120
+026100211120                CRTDUPOBJ  OBJ(&RPGUNIT) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+026200211120                             TOLIB(&PRDLIB) DATA(*YES)
+026300211120
+026400211120                CRTDUPOBJ  OBJ(&SQLSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+026500211120                             TOLIB(&PRDLIB) DATA(*YES)
+026600211120
+026700211120                CRTDUPOBJ  OBJ(&SRVSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+026800211120                             TOLIB(&PRDLIB) DATA(*YES)
+026900211120
+027000211120                CRTDUPOBJ  OBJ(&WCOSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+027100211120                             TOLIB(&PRDLIB) DATA(*YES)
+027200211120
+027300211120                CRTDUPOBJ  OBJ(&SRCTOOLS) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+027400211120                             TOLIB(&PRDLIB) DATA(*YES)
+027500211120
+027600211120                CRTDUPOBJ  OBJ(&DDSSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+027700211120                             TOLIB(&PRDLIB) DATA(*YES)
+027800211120
+027900211120                CRTDUPOBJ  OBJ(&CLSRC) FROMLIB(&DEVLIB) OBJTYPE(*FILE) +
+028000211120                             TOLIB(&PRDLIB) DATA(*YES)
+028100211120
+028200211120             ENDDO
+028300211120
+028400211120             /* ----------------------------------------------- */
+028500211120             /* Create iSphere binding directory                */
+028600211120             /* ----------------------------------------------- */
+028700211120
+028800211120             STRPREPRC  USESRCFILE(&PRDLIB/&BNDSRC) USESRCMBR('ISPHERE') +
+028900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+029000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+029100211120
+029200211120             /* ----------------------------------------------- */
+029300211120             /* Update release date in member COPYRIGHT         */
+029400211120             /* ----------------------------------------------- */
+029500211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_RPLC') +
+029600211120                          LIB(&TMPLIB) OBJ(*DFT) +
+029700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+029800211120
+029900211120             CALL       PGM(&TMPLIB/BUILD_RPLC) PARM(&PRDLIB)
+030000211120
+030100211120             /* ----------------------------------------------- */
+030200211120             /* Create data areas                               */
+030300211120             /* ----------------------------------------------- */
+030400211120
+030500211120             /* Create iSphere version data area */
+030600211120             STRPREPRC  USESRCFILE(&PRDLIB/&DTAARASRC) USESRCMBR('ISPHERE') +
+030700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+030800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+030900211120
+031000211120             /* ----------------------------------------------- */
+031100211120             /* Update data area iSphere                        */
+031200211120             /* ----------------------------------------------- */
+031300211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_VER') +
+031400211120                          LIB(&TMPLIB) OBJ(*DFT) +
+031500211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+031600211120
+031700211120             CALL       PGM(&TMPLIB/BUILD_VER) PARM(&PRDLIB)
+031800211120
+031900211120             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE ( 8 2)) RTNVAR(&V_VER)
+032000211120             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (10 2)) RTNVAR(&V_RLS)
+032100211120             RTVDTAARA  DTAARA(&PRDLIB/ISPHERE (12 2)) RTNVAR(&V_MOD)
+032200211120
+032300211120             CHGVAR     VAR(&VERSION) +
+032400211120                        VALUE(&V_VER *TCAT '.' *CAT &V_RLS *TCAT '.' *CAT &V_MOD)
+032500211120
+032600211120             RTVSYSVAL  SYSVAL(QDATE) RTNVAR(&DATE6)
+032700211120             CVTDAT     DATE(&DATE6) TOVAR(&DATE) FROMFMT(*JOB) TOFMT(*ISO) +
+032800211120                          TOSEP(*NONE)
+032900211120             CHGVAR     VAR(&PRDTEXT) VALUE('The iSphere Project v' *CAT &VERSION +
+033000211120                          *CAT ' (' *CAT &DATE *CAT ')')
+033100211120
+033200211120             /* ----------------------------------------------- */
+033300211120             /* Create SQL tables and indexes                   */
+033400211120             /* ----------------------------------------------- */
+033500211120
+033600211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI') +
+033700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+033800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+033900211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRI01') +
+034000211120                          LIB(&PRDLIB) OBJ(*DFT) +
+034100211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+034200211120
+034300211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO') +
+034400211120                          LIB(&PRDLIB) OBJ(*DFT) +
+034500211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+034600211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRO01') +
+034700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+034800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+034900211120
+035000211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS') +
+035100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+035200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+035300211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('FNDSTRS01') +
+035400211120                          LIB(&PRDLIB) OBJ(*DFT) +
+035500211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+035600211120
+035700211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG') +
+035800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+035900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+036000211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('NBRRNG01') +
+036100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+036200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+036300211120
+036400211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF') +
+036500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+036600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+036700211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('SPLF01') +
+036800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+036900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+037000211120
+037100211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI') +
+037200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+037300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+037400211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRI01') +
+037500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+037600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+037700211120
+037800211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO') +
+037900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+038000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+038100211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRO01') +
+038200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+038300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+038400211120
+038500211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS') +
+038600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+038700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+038800211120             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('XFNDSTRS01') +
+038900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+039000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+039100220310
+039200220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRI') +
+039300220310                          LIB(&PRDLIB) OBJ(*DFT) +
+039400220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+039500220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRI01') +
+039600220310                          LIB(&PRDLIB) OBJ(*DFT) +
+039700220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+039800220310
+039900220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRO') +
+040000220310                          LIB(&PRDLIB) OBJ(*DFT) +
+040100220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+040200220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRO01') +
+040300220310                          LIB(&PRDLIB) OBJ(*DFT) +
+040400220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+040500220310
+040600220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRS') +
+040700220310                          LIB(&PRDLIB) OBJ(*DFT) +
+040800220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+040900220310             STRPREPRC  USESRCFILE(&PRDLIB/&SQLSRC) USESRCMBR('ZFNDSTRS01') +
+041000220310                          LIB(&PRDLIB) OBJ(*DFT) +
+041100220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+041200211120
+041300211120             /* ----------------------------------------------- */
+041400211120             /* Create display files                            */
+041500211120             /* ----------------------------------------------- */
+041600211120
+041700211120             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('COMPARE') +
+041800211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+041900211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+042000211120
+042100211120             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('DESIGNER') +
+042200211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+042300211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+042400211120
+042500211120             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('EDITOR') +
+042600211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+042700211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+042800211120
+042900211120             STRPREPRC  USESRCFILE(&PRDLIB/&DDSSRC) USESRCMBR('SETDBGSEP') +
+043000211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+043100211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+043200211120
+043300211120             /* ----------------------------------------------- */
+043400211120             /* Create service programs                         */
+043500211120             /* ----------------------------------------------- */
+043600211120
+043700211120             /* Create service program: Free RPG/i5 Tools */
+043800211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('ISTPRCR') +
+043900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+044000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+044100211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('ISTPRCR') +
+044200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+044300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+044400211120             DLTMOD     MODULE(&PRDLIB/ISTPRCR)
+044500211120
+044600211120             /* Create service program: Number Range */
+044700211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('NBRRNG') +
+044800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+044900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+045000211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('NBRRNG') +
+045100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+045200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+045300211120             DLTMOD     MODULE(&PRDLIB/NBRRNG)
+045400211120
+045500211120             /* Create service program: Find String in Source File */
+045600211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('FNDSTR') +
+045700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+045800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+045900211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('FNDSTR') +
+046000211120                          LIB(&PRDLIB) OBJ(*DFT) +
+046100211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+046200211120             DLTMOD     MODULE(&PRDLIB/FNDSTR)
+046300211120
+046400211120             /* Create service program: Find String in Message File */
+046500211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('XFNDSTR') +
+046600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+046700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+046800211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('XFNDSTR') +
+046900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+047000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+047100211120             DLTMOD     MODULE(&PRDLIB/XFNDSTR)
+047200220310
+047300220310             /* Create service program: Find String in Stream File */
+047400220310             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('ZFNDSTR') +
+047500220310                          LIB(&PRDLIB) OBJ(*DFT) +
+047600220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+047700220310             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('ZFNDSTR') +
+047800220310                          LIB(&PRDLIB) OBJ(*DFT) +
+047900220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+048000220310             DLTMOD     MODULE(&PRDLIB/ZFNDSTR)
+048100220310
+048200211120             /* Create service program: Retrieve Message Description */
+048300211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('RTVMSGD') +
+048400211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+048500211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+048600211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('RTVMSGD') +
+048700211120                          LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+048800211120                          SRCMBR(*DFT) TGTRLS(&TGTRLS)
+048900211120             DLTMOD     MODULE(&PRDLIB/RTVMSGD)
+049000211120
+049100211120             /* Create service program: Spooled File */
+049200211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('SPLF') +
+049300211120                          LIB(&PRDLIB) OBJ(*DFT) +
+049400211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+049500211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRVSRC) USESRCMBR('SPLF') +
+049600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+049700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+049800211120             DLTMOD     MODULE(&PRDLIB/SPLF)
+049900211120
+050000211120             /* ----------------------------------------------- */
+050100211120             /* Create programs: Demo                           */
+050200211120             /* ----------------------------------------------- */
+050300211120
+050400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO1') +
+050500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+050600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+050700211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO2') +
+050800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+050900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+051000211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO3') +
+051100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+051200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+051300211120
+051400211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4P') +
+051500211120                         LIB(&PRDLIB) OBJ(*DFT) +
+051600211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+051700211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4L') +
+051800211120                         LIB(&PRDLIB) OBJ(*DFT) +
+051900211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+052000211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO4') +
+052100211120                         LIB(&PRDLIB) OBJ(*DFT) +
+052200211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+052300211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO5') +
+052400211120                         LIB(&PRDLIB) OBJ(*DFT) +
+052500211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+052600211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO7') +
+052700211120                         LIB(&PRDLIB) OBJ(*DFT) +
+052800211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+052900211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO8') +
+053000211120                         LIB(&PRDLIB) OBJ(*DFT) +
+053100211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+053200211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DEMO9') +
+053300211120                         LIB(&PRDLIB) OBJ(*DFT) +
+053400211120                         SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+053500211120
+053600211120             /* ----------------------------------------------- */
+053700211120             /* Create programs: 5250 Emulator                  */
+053800211120             /* ----------------------------------------------- */
+053900211120
+054000211120            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('COMPARE') +
+054100211120                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+054200211120                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+054300211120
+054400211120            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('DESIGNER') +
+054500211120                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+054600211120                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+054700211120
+054800211120            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('EDITOR') LIB(&PRDLIB) +
+054900211120                         OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
+055000211120                         TGTRLS(&TGTRLS)
+055100211120
+055200211120            STRPREPRC  USESRCFILE(&PRDLIB/&CLSRC) USESRCMBR('SETDBGSEP') +
+055300211120                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+055400211120                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+055500211120
+055600211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('HANDLER') +
+055700211120                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+055800211120                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+055900211120
+056000211120            STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DESIGNERW') +
+056100211120                         LIB(&PRDLIB) OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) +
+056200211120                         SRCMBR(*DFT) TGTRLS(&TGTRLS)
+056300211120
+056400211120             /* ----------------------------------------------- */
+056500211120             /* Create programs: Wrapper FNDSTR                 */
+056600211120             /* ----------------------------------------------- */
+056700211120
+056800211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001001') +
+056900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+057000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+057100211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001002') +
+057200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+057300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+057400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001003') +
+057500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+057600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+057700211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001004') +
+057800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+057900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+058000211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W001005') +
+058100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+058200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+058300211120
+058400211120             /* ----------------------------------------------- */
+058500211120             /* Create programs: Wrapper XFNDSTR                */
+058600211120             /* ----------------------------------------------- */
+058700211120
+058800211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002001') +
+058900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+059000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+059100211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002002') +
+059200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+059300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+059400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002003') +
+059500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+059600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+059700211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W002004') +
+059800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+059900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+060000220310
+060100220310             /* ----------------------------------------------- */
+060200220310             /* Create programs: Wrapper ZFNDSTR                */
+060300220310             /* ----------------------------------------------- */
+060400220310
+060500220310             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W004001') +
+060600220310                          LIB(&PRDLIB) OBJ(*DFT) +
+060700220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+060800220310             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W004002') +
+060900220310                          LIB(&PRDLIB) OBJ(*DFT) +
+061000220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+061100220310             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W004003') +
+061200220310                          LIB(&PRDLIB) OBJ(*DFT) +
+061300220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+061400220310             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W004004') +
+061500220310                          LIB(&PRDLIB) OBJ(*DFT) +
+061600220310                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+061700220311             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W004005') +
+061800220311                          LIB(&PRDLIB) OBJ(*DFT) +
+061900220311                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+062000211120
+062100211120             /* ----------------------------------------------- */
+062200211120             /* Create programs: Wrapper SPLF                   */
+062300211120             /* ----------------------------------------------- */
+062400211120
+062500211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003001') +
+062600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+062700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+062800211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003002') +
+062900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+063000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+063100211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003003') +
+063200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+063300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+063400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003004') +
+063500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+063600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+063700211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003005') +
+063800211120                          LIB(&PRDLIB) OBJ(*DFT) +
+063900211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+064000211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003006') +
+064100211120                          LIB(&PRDLIB) OBJ(*DFT) +
+064200211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+064300211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003007') +
+064400211120                          LIB(&PRDLIB) OBJ(*DFT) +
+064500211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+064600211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003008') +
+064700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+064800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+064900211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003009') +
+065000211120                          LIB(&PRDLIB) OBJ(*DFT) +
+065100211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+065200211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003010') +
+065300211120                          LIB(&PRDLIB) OBJ(*DFT) +
+065400211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+065500211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003011') +
+065600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+065700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+065800211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('W003012') +
+065900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+066000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+066100211120
+066200211120             /* ----------------------------------------------- */
+066300211120             /* Create programs: iSphere Retrieve Message API   */
+066400211120             /* ----------------------------------------------- */
+066500211120
+066600211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQMHRTVM') +
+066700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+066800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+066900211120
+067000211120             /* -------------------------------------------------------------- */
+067100211120             /* Create programs: iSphere Retrieve File Field Description API   */
+067200211120             /* -------------------------------------------------------------- */
+067300211120
+067400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQDBRTVFD') +
+067500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+067600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+067700211120
+067800211120             /* -------------------------------------------------------------- */
+067900211120             /* Create programs: Debugger APIs   */
+068000211120             /* -------------------------------------------------------------- */
+068100211120
+068200211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DBGSSNHDLR') +
+068300211120                          LIB(&PRDLIB) OBJ(*DFT) +
+068400211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+068500211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('DBGSTPHDLR') +
+068600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+068700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+068800211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDREGDV') +
+068900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+069000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+069100211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDRTVMV') +
+069200211120                          LIB(&PRDLIB) OBJ(*DFT) +
+069300211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+069400211120             STRPREPRC  USESRCFILE(&PRDLIB/&RPGLESRC) USESRCMBR('IQSDRTVVT') +
+069500211120                          LIB(&PRDLIB) OBJ(*DFT) +
+069600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+069700211120
+069800211120             /* ----------------------------------------------- */
+069900211120             /* Create workstation customization objects        */
+070000211120             /* ----------------------------------------------- */
+070100211120
+070200211120             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFHTML') +
+070300211120                          LIB(&PRDLIB) OBJ(*DFT) +
+070400211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+070500211120             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFPDF') +
+070600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+070700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+070800211120             STRPREPRC  USESRCFILE(&PRDLIB/&WCOSRC) USESRCMBR('SPLFTXT') +
+070900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+071000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+071100211120
+071200211120             /* ----------------------------------------------- */
+071300211120             /* Create utility: CVTSPLF                         */
+071400211120             /* ----------------------------------------------- */
+071500211120
+071600211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFC') +
+071700211120                          LIB(&PRDLIB) OBJ(*DFT) +
+071800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+071900211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRH') +
+072000211120                          LIB(&PRDLIB) OBJ(*DFT) +
+072100211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+072200211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRP') +
+072300211120                          LIB(&PRDLIB) OBJ(*DFT) +
+072400211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+072500211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLFRT') +
+072600211120                          LIB(&PRDLIB) OBJ(*DFT) +
+072700211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+072800211120             STRPREPRC  USESRCFILE(&PRDLIB/&SRCTOOLS) USESRCMBR('CVTSPLF') +
+072900211120                          LIB(&PRDLIB) OBJ(*DFT) +
+073000211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+073100211120
+073200211120             /* ----------------------------------------------- */
+073300211120             /* Create build command                            */
+073400211120             /* ----------------------------------------------- */
+073500211120
+073600211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD') LIB(&PRDLIB) +
+073700211120                          OBJ(*DFT) SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) +
+073800211120                          TGTRLS(&TGTRLS)
+073900211120
+074000211120             /* ----------------------------------------------- */
+074100211120             /* Change object owner to QPGMR                    */
+074200211120             /* ----------------------------------------------- */
+074300211120
+074400211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_OWN') +
+074500211120                          LIB(&TMPLIB) OBJ(*DFT) +
+074600211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+074700211120
+074800211120             IF         COND(&OWNER *NE '*SAME') THEN(DO)
+074900211120                CALL       PGM(&TMPLIB/BUILD_OWN) PARM(&PRDLIB &TMPLIB &OWNER)
+075000211120             ENDDO
+075100211120
+075200211120             /* ----------------------------------------------- */
+075300211120             /* Remove debug information                        */
+075400211120             /* ----------------------------------------------- */
+075500211120
+075600211120             STRPREPRC  USESRCFILE(&PRDLIB/&BUILD) USESRCMBR('BUILD_DBG') +
+075700211120                          LIB(&TMPLIB) OBJ(*DFT) +
+075800211120                          SRCLIB(*DFT) SRCFILE(*DFT) SRCMBR(*DFT) TGTRLS(&TGTRLS)
+075900211120
+076000211120             CALL       PGM(&TMPLIB/BUILD_DBG) PARM(&PRDLIB &TMPLIB)
+076100211120
+076200211120             /* ----------------------------------------------- */
+076300211120             /* Change description of library ISPHERE           */
+076400211120             /* ----------------------------------------------- */
+076500211120             IF         COND(&PRDLIB *NE &DEVLIB) THEN(DO)
+076600211120                CHGLIB     LIB(&PRDLIB) TEXT(&PRDTEXT)
+076700211120             ENDDO
+076800211120
+076900211120             /* ----------------------------------------------- */
+077000211120             /* Delete temporary objects                        */
+077100211120             /* ----------------------------------------------- */
+077200211120             DLTF       FILE(&PRDLIB/EVFEVENT)
+077300211120             DLTF       FILE(&PRDLIB/EVFTEMPF01)
+077400211120
+077500211120             /* ----------------------------------------------- */
+077600211120             /* Save library ISPHERE                            */
+077700211120             /* ----------------------------------------------- */
+077800211120
+077900211120             IF COND(&I_PRDLIB *NE &I_DEVLIB) THEN(DO)
+078000211120
+078100211120                SNDPGMMSG  MSGID(CPF9897) MSGF(QCPFMSG) +
+078200211120                             MSGDTA('Saving iSphere library ...') +
+078300211120                             TOPGMQ(*EXT) TOMSGQ(*TOPGMQ) +
+078400211120                             MSGTYPE(*STATUS)
+078500211120
+078600211120                CRTSAVF    FILE(&TMPLIB/&SAVF) TEXT(&PRDTEXT)
+078700211120
+078800211120                IF         COND(&OWNER *NE '*SAME') THEN(DO)
+078900211120                   CHGOBJOWN  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) NEWOWN(&OWNER) +
+079000211120                                CUROWNAUT(*REVOKE)
+079100211120                ENDDO
+079200211120
+079300211120                RVKOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*ALL)
+079400211120
+079500211120                GRTOBJAUT  OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) USER(*PUBLIC) +
+079600211120                             AUT(*CHANGE)
+079700211120
+079800211120                SAVLIB     LIB(&PRDLIB) DEV(*SAVF) SAVF(&TMPLIB/&SAVF) +
+079900211120                             OMITOBJ((&PRDLIB/BUILD    *PGM) +
+080000211120                                     (&PRDLIB/XMLINST  *PGM) +
+080100211120                                     (&PRDLIB/EVFEVENT *FILE) +
+080200211120                                     (&PRDLIB/QPF38SRC *FILE)) +
+080300211120                             DTACPR(&DTACPR) TGTRLS(&TGTRLS) OUTPUT(*PRINT)
+080400211120
+080500211120                MOVOBJ     OBJ(&TMPLIB/&SAVF) OBJTYPE(*FILE) TOLIB(&PRDLIB)
+080600211120
+080700211120                SNDPGMMSG  MSG('Created iSphere save file' *BCAT &SAVF *BCAT 'in +
+080800211120                             library' *BCAT &PRDLIB *TCAT '.') TOPGMQ(*PRV (*CTLBDY)) +
+080900211120                             MSGTYPE(*INFO)
+081000211120
+081100211120             ENDDO
+081200211120
+081300211120             /* ----------------------------------------------- */
+081400211120             /* Restore library list                            */
+081500211120             /* ----------------------------------------------- */
+081600211120
+081700211120             IF         COND(&RSTLIBL) THEN(DO)
+081800211120                CHGCURLIB  CURLIB(&CURLIB)
+081900211120                CHGVAR     VAR(&CMD) +
+082000211120                           VALUE('CHGLIBL LIBL(' *CAT &USRLIBL *TCAT ')' *BCAT +
+082100211120                                   'CURLIB(' *CAT &CURLIB *TCAT ')')
+082200211120                CALL       PGM(QCMDEXC) PARM(&CMD &CMDLEN)
+082300211120                CHGVAR     VAR(&RSTLIBL) VALUE(&FALSE)
+082400211120             ENDDO
+082500211120
+082600211120             ENDPGM
