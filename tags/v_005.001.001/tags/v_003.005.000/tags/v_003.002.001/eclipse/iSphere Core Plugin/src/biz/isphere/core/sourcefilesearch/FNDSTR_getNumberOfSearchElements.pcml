@@ -1,0 +1,6 @@
+<pcml version="4.0">
+   <program name="FNDSTR_getNumberOfSearchElements" path="/QSYS.LIB/%LIBL%.LIB/W001004.PGM">
+      <data name="handle" type="zoned" length="10" precision="0" usage="input" />
+      <data name="numberOfSearchElements" type="zoned" length="6" precision="0" usage="output" />
+   </program>
+</pcml>

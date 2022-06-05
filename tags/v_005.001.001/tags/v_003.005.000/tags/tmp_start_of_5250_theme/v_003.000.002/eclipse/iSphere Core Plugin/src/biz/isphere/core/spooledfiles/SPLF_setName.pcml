@@ -1,0 +1,5 @@
+<pcml version="4.0">
+   <program name="SPLF_setName" path="/QSYS.LIB/%LIBL%.LIB/W003010.PGM">
+      <data name="name" type="char" length="10" usage="input" />
+   </program>
+</pcml>

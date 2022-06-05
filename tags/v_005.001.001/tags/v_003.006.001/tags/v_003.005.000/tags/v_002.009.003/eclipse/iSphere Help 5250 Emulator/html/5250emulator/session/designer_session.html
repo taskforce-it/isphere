@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Session</title>
+</head>
+<body>
+	<h1>Designer Session</h1>
+	<p>
+	<ul>
+	<li><a href="#creating_a_designer_session">Creating a Designer Session</a></li>
+	<li><a href="#starting_a_designer_session">Starting a Designer Session</a></li>
+	</ul>
+	<p>
+	A designer session is a special session that let you use SDA and RLU for editing
+	display and printer files from within RDi. 
+	<p>
+	<table>
+		<tr>
+			<td class="notice">System value QRMTSIGN must be set to *VERIFY or *SAMEPRF
+			                   if you want to use designer sessions.</td>
+		</tr>
+	</table>
+	<p>
+	Right-click the "iSphere 5250 Emulator" node of the Remote Systems view and select "New session". 
+	<p>
+	<a id="creating_a_designer_session"></a>
+	<h2>Creating a Designer Session</h2>
+	<p>
+		<img src="assets/new_session_popup.png" align="middle">
+	<p>
+	Specify the required session properties and click [OK] to create a new designer session entry:
+	<p>
+		<img src="assets/new_designer_session.png" align="middle">
+	<p>
+	In comparison to a normal session a designer session requires user and password. The password 
+	will be stored encrypted. Although you can start several designer sessions you have to define 
+	just one designer session.
+	<p>
+	After having created the designer session the view "Remote Systems" looks like this:
+	<p>
+		<img src="assets/designer_session_entry.png" align="middle">
+	<p>
+	<a id="starting_a_designer_session"></a>
+	<h2>Starting a Designer Session</h2>
+	<p>
+	A designer session is started from the context menu of a source member of the "Remote Systems"
+	view. Right click a source member of type "DSPF", "MNUDDS" or "PRTF" and select "iSphere 5250 Designer":
+	<p>
+		<img src="assets/start_designer_session_popup.png" align="middle">
+	<p>
+	The "TN5250j Designer" view/editor appears as shown here:
+	<p>
+		<img src="assets/designer_session.png" align="middle">
+	<p>
+	Every designer session appears in its own tab item. To toggle between the designer sessions click the 
+	specific tab item or press "Ctrl-Arrow-Up" to select the next designer session or press "Ctrl-Arrow-Down" 
+	to select the previous designer session.
+	<p>
+	To close a designer session click on the close icon on the tab item.
+	<p>
+	After designing you can leave SDA/RLU to proceed as normal. The following screen appears:
+	<p>
+		<img src="assets/close_designer_session.png" align="middle">
+	<p>
+	If you press "Enter" SDA/RLU will be started again. If you press "F3" the session will be closed and 
+	the tab item disappears.
+	<p>
+	If you start the designer in browse mode, then the original source will be copied to library QTEMP in 
+	file QTN5250j. After this SDA/RLU will be started with library QTEMP and source file QTN5250j. If you 
+	make now changes with SDA/RLU, then these changes have no effect to the original source.
+	<p>
+		<iframe src="../../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>

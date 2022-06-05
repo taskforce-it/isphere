@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    
+    <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="biz.isphere.tn5250j.core.preferencepages.PreferencePage1"
+            category="biz.isphere.base.preferencepages.General"
+            name="%5250_Emulator"
+            id="biz.isphere.tn5250j.core.preferencepages.PreferencePage1"/>
+      <page
+            class="biz.isphere.tn5250j.core.preferencepages.PreferencePage2"
+            category="biz.isphere.tn5250j.core.preferencepages.PreferencePage1"
+            name="%Session_defaults"
+            id="biz.isphere.tn5250j.core.preferencepages.PreferencePage2"/>
+      <page
+            class="biz.isphere.tn5250j.core.preferencepages.PreferencePage3"
+            category="biz.isphere.tn5250j.core.preferencepages.PreferencePage1"
+            name="%Minimal_session_size"
+            id="biz.isphere.tn5250j.core.preferencepages.PreferencePage3"/>
+      <page
+            class="biz.isphere.tn5250j.core.preferencepages.PreferencePage4"
+            category="biz.isphere.tn5250j.core.preferencepages.PreferencePage1"
+            name="%Key_settings"
+            id="biz.isphere.tn5250j.core.preferencepages.PreferencePage4"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="biz.isphere.tn5250j.core.preferences.PreferencesInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

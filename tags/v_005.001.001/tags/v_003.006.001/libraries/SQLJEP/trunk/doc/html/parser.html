@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+  <title>BNF for Parser.jj</title>
+</head>
+<body>
+<table
+ style="text-align: left; width: 50%; margin-left: auto; margin-right: auto;"
+ border="0" cellpadding="2" cellspacing="2">
+  <tbody>
+    <tr align="center">
+      <td style="vertical-align: top;">
+      <h2>Grammar</h2>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">
+      <h3 style="text-align: center;">This grammar was generated from
+the Parser.jjt file using the jjdoc utility from JavaCC. Operators are
+ordered from lowest to highest precedence (from top to bottom)</h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<table>
+  <tbody>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod1">Start</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( <a href="#prod2">Expression</a>
+&lt;EOF&gt; | &lt;EOF&gt; )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod2">Expression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod3">OrExpression</a></td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod3">OrExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod4">AndExpression</a>
+( ( &lt;OR&gt; <a href="#prod4">AndExpression</a> ) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod4">AndExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod5">EqualExpression</a>
+( ( &lt;AND&gt; <a href="#prod5">EqualExpression</a> ) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod5">EqualExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod6">RelationalExpression</a>
+( ( &lt;NE&gt; <a href="#prod6">RelationalExpression</a> ) | (
+&lt;EQ&gt; <a href="#prod6">RelationalExpression</a> ) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod6">RelationalExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod7">PostfixExpression</a>
+( ( &lt;LT&gt; <a href="#prod7">PostfixExpression</a> ) | ( &lt;GT&gt;
+      <a href="#prod7">PostfixExpression</a> ) | ( &lt;LE&gt; <a
+ href="#prod7">PostfixExpression</a> ) | ( &lt;GE&gt; <a href="#prod7">PostfixExpression</a>
+) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod7">PostfixExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod8">AdditiveExpression</a>
+( ( &lt;IS_NOT_NULL&gt; ) | ( &lt;IS_NULL&gt; ) | ( &lt;IN&gt; <a
+ href="#prod9">Array</a> ) | ( &lt;BETWEEN&gt; <a href="#prod8">AdditiveExpression</a>
+&lt;AND&gt; <a href="#prod8">AdditiveExpression</a> ) | ( &lt;LIKE&gt;
+      <a href="#prod8">AdditiveExpression</a> ) | ( &lt;NOT_LIKE&gt; <a
+ href="#prod8">AdditiveExpression</a> ) )?</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod8">AdditiveExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod10">MultiplicativeExpression</a>
+( ( &lt;CONCAT&gt; <a href="#prod10">MultiplicativeExpression</a> ) |
+( &lt;PLUS&gt; <a href="#prod10">MultiplicativeExpression</a> ) | (
+&lt;MINUS&gt; <a href="#prod10">MultiplicativeExpression</a> ) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod10">MultiplicativeExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod11">UnaryExpression</a>
+( ( &lt;MUL&gt; <a href="#prod11">UnaryExpression</a> ) | (
+&lt;DIV&gt; <a href="#prod11">UnaryExpression</a> ) | ( &lt;DIV2&gt; <a
+ href="#prod11">UnaryExpression</a> ) | ( &lt;MOD&gt; <a href="#prod11">UnaryExpression</a>
+) )*</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod11">UnaryExpression</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( &lt;PLUS&gt; <a
+ href="#prod11">UnaryExpression</a> )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><br>
+      </td>
+      <td align="center" valign="baseline">|</td>
+      <td align="left" valign="baseline">( &lt;MINUS&gt; <a
+ href="#prod11">UnaryExpression</a> )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><br>
+      </td>
+      <td align="center" valign="baseline">|</td>
+      <td align="left" valign="baseline">( &lt;NOT&gt; <a
+ href="#prod11">UnaryExpression</a> )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><br>
+      </td>
+      <td align="center" valign="baseline">|</td>
+      <td align="left" valign="baseline"><a href="#prod12">UnaryExpressionNotPlusMinus</a></td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod12">UnaryExpressionNotPlusMinus</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline"><a href="#prod13">AnyConstant</a></td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><br>
+      </td>
+      <td align="center" valign="baseline">|</td>
+      <td align="left" valign="baseline">( <a href="#prod14">Function</a>
+| <a href="#prod15">Variable</a> )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><br>
+      </td>
+      <td align="center" valign="baseline">|</td>
+      <td align="left" valign="baseline">"(" <a href="#prod2">Expression</a>
+")"</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod15">Variable</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( <a href="#prod16">Identifier</a>
+)</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod14">Function</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( <a href="#prod16">Identifier</a>
+"(" <a href="#prod17">ArgumentList</a> ")" )</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod17">ArgumentList</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( <a href="#prod2">Expression</a>
+( "," <a href="#prod2">Expression</a> )* )?</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod16">Identifier</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">&lt;IDENTIFIER&gt;</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod9">Array</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">"(" <a href="#prod8">AdditiveExpression</a>
+( "," <a href="#prod8">AdditiveExpression</a> )* ")"</td>
+    </tr>
+    <tr>
+      <td align="right" valign="baseline"><a name="prod13">AnyConstant</a></td>
+      <td align="center" valign="baseline">::=</td>
+      <td align="left" valign="baseline">( &lt;NULL_LITERAL&gt; |
+&lt;TRUE_LITERAL&gt; | &lt;FALSE_LITERAL&gt; | &lt;STRING_LITERAL&gt; |
+&lt;INTEGER_LITERAL&gt; | &lt;FLOATING_POINT_LITERAL&gt; )</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

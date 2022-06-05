@@ -1,0 +1,50 @@
+<!--
+ * =====================================================================
+ *
+ * ===================================================================== -->
+<project basedir="." default="build">
+
+	<!-- Include iSphere Ant Contrib tasks -->
+	<taskdef resource="biz/isphere/antcontrib/antlib.xml">
+		<classpath>
+		</classpath>
+	</taskdef>
+	
+	<!-- Set workspace home directory -->
+	<property name="workspace.home" location="${basedir}/.." />
+
+	<!-- Set project home directory -->
+	<property name="project.home" location="${basedir}" />
+
+	<!--
+    * =====================================================================
+    *   Controls the build process:
+    *     - update version number
+    * ===================================================================== -->
+	<target name="build" depends="sourceForge" description="build iSphere update site">
+		<echo>*** Finished ***</echo>
+	</target>
+
+	<!--
+    * =====================================================================
+    *   SourceForge file transfer.
+    * ===================================================================== -->
+	<target name="sourceForge">
+
+		<echo>Workspace home: ${workspace.home}</echo>
+
+		<echo>Testing SF ...</echo>
+
+		<SF user="tools400,isphere" password="${user.password}" trust="true" dryrun="true" 
+			host="frs.sourceforge.net" remoteDir="/home/pfs/project/isphere/ant-test/">
+			<Rmdir dir="." subDirs="false" >
+				<IgnoreFile pattern="*rdi*.zip" ignoreCase="true" />
+			</Rmdir>
+			<!--
+			<Rmdir dir="./eclipse/rdi8.0/" subDirs="true" />
+			-->
+		</SF>
+
+	</target>
+
+</project>

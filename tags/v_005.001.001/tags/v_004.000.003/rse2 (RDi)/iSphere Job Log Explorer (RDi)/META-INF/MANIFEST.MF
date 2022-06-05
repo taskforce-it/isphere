@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Job Log Explorer (WDSCi)
+Bundle-SymbolicName: biz.isphere.joblogexplorer.rse;singleton:=true
+Bundle-Version: 4.0.3.r
+Bundle-Activator: biz.isphere.joblogexplorer.rse.ISphereJobLogExplorerRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.core,
+ org.eclipse.ui.views,
+ org.eclipse.rse.subsystems.files.core,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.toolbox,
+ com.ibm.debug.pdt.core,
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.rse,
+ biz.isphere.joblogexplorer
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true

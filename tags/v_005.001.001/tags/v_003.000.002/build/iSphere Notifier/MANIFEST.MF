@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 3.0.2.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Bugfix WDSC: Fixed broken save action of compare/merge editor.\nBugfix ALL: Fixed broken STRPREPRC installer. 
+X-Beta-Version: 3.0.2.r
+X-Beta-Update-Library: false
+X-Beta-Update-Library-Info: .
+X-Beta-Info: .

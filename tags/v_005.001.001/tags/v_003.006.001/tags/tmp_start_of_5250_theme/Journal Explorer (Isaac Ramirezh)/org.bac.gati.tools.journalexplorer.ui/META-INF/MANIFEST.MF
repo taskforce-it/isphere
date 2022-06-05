@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.bac.gati.tools.journalexplorer.ui; singleton:=true
+Bundle-Version: 1.0.0.6
+Bundle-Activator: org.bac.gati.tools.journalexplorer.ui.Activator
+Bundle-Vendor: %Bundle-Vendor
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.ibm.etools.iseries.subsystems.qsys,
+ org.eclipse.core.resources,
+ org.eclipse.ui.views,
+ org.eclipse.rse.services
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Import-Package: com.ibm.as400.access
+

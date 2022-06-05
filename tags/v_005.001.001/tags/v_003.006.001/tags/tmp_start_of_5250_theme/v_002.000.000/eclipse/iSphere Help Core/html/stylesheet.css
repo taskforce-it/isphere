@@ -1,0 +1,86 @@
+/*
+ *  The fefault font of the help text.
+ */
+
+* { font-family: Verdana, Arial, sans-serif; font-size: 1.0em; font-weight: normal; font-style: normal; }
+
+/*
+ *  Headline of a topic.
+ */
+
+h1 { font-size: 1.8em; color: #f26721; line-height: 1.4em; }
+
+/*
+ *  Headline of a topic.
+ */
+
+body { 
+	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+	background-color: #ffffff; 
+	color: #000000; 
+	font-style: normal;
+	font-size: 0.8em;
+	margin-left: 32px, 16px, 16px, 16px;
+}
+
+/*
+ *  Indention of images that appear between paragraphs.
+ */
+img {
+    margin-left:25px;
+}
+
+/*
+ *  Indention of tables that appear between paragraphs.
+ */
+
+table {
+    margin-left:25px;
+}
+
+/*
+ *  Font of code examples.
+ */
+
+.code {
+    font-family: monospace
+}
+
+/*
+ *  "Messages Boxes":
+ *  
+ *  <table>
+ *  <tr><td class="notice" >Notice: Example message text.</td></tr>
+ *  </table>
+ *
+ */
+
+.info {
+    border: thin; 
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #9FF781;
+}
+
+.notice {
+    border: thin; 
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #F3F781;
+}
+
+.important {
+    border: thin; 
+    border-style: solid;
+    padding:10px;
+    color: #000000;
+    background-color: #FA5858;
+}
+
+/*
+ *  Copyright notice.
+ */
+
+.copyright { font-style:italic; }

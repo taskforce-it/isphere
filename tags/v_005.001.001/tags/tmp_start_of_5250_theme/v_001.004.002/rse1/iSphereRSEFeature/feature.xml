@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="de.taskforce.isphere.rse"
+      label="iSphere for WDSCi 7.0"
+      version="1.4.2"
+      provider-name="Task Force IT-Consulting GmbH">
+
+   <description>
+      iSphere for WDSCi 7.0
+   </description>
+
+   <copyright>
+      (c) Copyright Task Force IT-Consulting GmbH 2008, 2012. All rights reserved.
+   </copyright>
+
+   <license>
+      License agreement.
+   </license>
+
+   <plugin
+         id="de.taskforce.isphere.rse"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

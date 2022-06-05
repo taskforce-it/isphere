@@ -1,0 +1,7 @@
+#Mon Nov 02 11:00:26 CET 2020
+@org.tigris.subversion.subclipse.core=4.3.0.201901172050
+file_export_version=3.0
+/instance/org.tigris.subversion.subclipse.core/repositories/https%%%svn.code.sf.net%p%isphere%code/location=https\://svn.code.sf.net/p/isphere/code
+/instance/org.tigris.subversion.subclipse.core/repositories/https%%%svn.code.sf.net%p%rapid-fire%code/location=https\://svn.code.sf.net/p/rapid-fire/code
+\!/=
+/instance/org.tigris.subversion.subclipse.core/repositories/https%%%svn.code.sf.net%p%irpgunit%code/location=https\://svn.code.sf.net/p/irpgunit/code

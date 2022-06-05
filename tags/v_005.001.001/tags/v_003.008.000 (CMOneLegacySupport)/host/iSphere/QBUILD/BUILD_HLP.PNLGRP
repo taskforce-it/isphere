@@ -1,0 +1,255 @@
+.*-----------------------------------------------------------------------*
+.*                                                                       *
+.* Copyright (c) 2012-2014 iSphere Project Owners.                       *
+.* All rights reserved. This program and the accompanying materials      *
+.* are made available under the terms of the Common Public License v1.0  *
+.* which accompanies this distribution, and is available at              *
+.* http://www.eclipse.org/legal/cpl-v10.html                             *
+.*                                                                       *
+.* Contributors:                                                         *
+.*     Task Force IT-Consulting GmbH - initial API and implementation    *
+.*                                                                       *
+.*-----------------------------------------------------------------------*
+.*                                                                       *
+.* Build iSphere Library - Help                                          *
+.*                                                                       *
+.*-----------------------------------------------------------------------*
+.* STRPREPRC Compile Options:                                            *
+.*   >>PRE-COMPILER<<                                                    *
+.*     >>CRTCMD<<    CRTPNLGRP  PNLGRP(&LI/&OB) +                        *
+.*                              SRCFILE(&SL/&SF) SRCMBR(&SM);            *
+.*       >>COMPILE<<                                                     *
+.*       >>END-COMPILE<<                                                 *
+.*       >>EXECUTE<<                                                     *
+.*   >>END-PRE-COMPILER<<                                                *
+.*-----------------------------------------------------------------------*
+:PNLGRP.
+.*
+:HELP name='BUILD/ALL'.
+:IMHELP name=BUILD.
+:IMHELP name='BUILD/PRDLIB    '.
+:IMHELP name='BUILD/DEVLIB    '.
+:IMHELP name='BUILD/TMPLIB    '.
+:IMHELP name='BUILD/PREPRC    '.
+:IMHELP name='BUILD/WHOAMI    '.
+:IMHELP name='BUILD/ISPHERE   '.
+:IMHELP name='BUILD/TGTRLS    '.
+:EHELP.
+.*--------------------------------------------------------------------
+.* Helptext für den Befehl
+.*--------------------------------------------------------------------
+:HELP NAME='BUILD'.
+iSphere Build (BUILD) - Help
+:P.
+The BUILD command compiles the iSphere development or production
+library.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword PRDLIB
+.*--------------------------------------------------------------------
+:HELP name='BUILD/PRDLIB'.
+Production library - Help
+:XH3.Production library (PRDLIB)
+:P.
+Specifies the name of the iSphere production library. Usually that
+is ISPHERE. It is as possible to specify the development library here,
+in order to compile all objects into the development library, e.g. for
+testing purposes.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PV.library name:EPV.
+:PD.Name of the iSphere production library.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword DEVLIB
+.*--------------------------------------------------------------------
+:HELP name='BUILD/DEVLIB'.
+Development library - Help
+:XH3.Development library (DEVLIB)
+:P.
+Specifies the name of the iSphere development library. Usually that
+is ISPHEREDVP.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PV.library name:EPV.
+:PD.Name of the iSphere production library.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword TMPLIB
+.*--------------------------------------------------------------------
+:HELP name='BUILD/TMPLIB'.
+Temporary library - Help
+:XH3.Temporary library (TMPLIB)
+:P.
+Specifies the name of a library that is used for temporary
+objects during the build process. Usually that is QTEMP.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PV.library name:EPV.
+:PD.Name of a library for temporary object.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword PREPRC
+.*--------------------------------------------------------------------
+:HELP name='BUILD/PREPRC'.
+Create preprocessor - Help
+:XH3.Create preprocessor (PREPRC)
+:P.
+Specifies whether or not to compile the STRPREPRC command in
+the development library. Usually it is sufficient to do that once. You
+need to compile it again, when its source code has been changed.
+The STRPREPRC command is used by the build process to compile the iSphere
+objects.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*NO:EPK.
+:PD.The STRPREPRC command is not created.
+:PT.:PV.*YES:EPV.
+:PD.Compiles the STRPREPRC command.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword WHOAMI
+.*--------------------------------------------------------------------
+:HELP name='BUILD/WHOAMI'.
+Create WHOAMI utility - Help
+:XH3.Create WHOAMI utility (WHOAMI)
+:P.
+Specifies whether or not to compile the WHOAMI utility in the
+development library. The WHOAMI utility requires at least IBM i
+OS 7.2. The TGTRLS (Target release) parameter is ignored when
+compiling WHOAMI.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*NO:EPK.
+:PD.The WHOAMI utility is not created.
+:PT.:PV.*YES:EPV.
+:PD.Compiles the WHOAMI utility.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword ISPHERE
+.*--------------------------------------------------------------------
+:HELP name='BUILD/ISPHERE'.
+Create iSphere - Help
+:XH3.Create iSphere (ISPHERE)
+:P.
+Specifies whether or not to build the objects of the iSphere
+library.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*YES:EPK.
+:PD.Compile the objects of the iSphere production library.
+:PT.:PV.*NO:EPV.
+:PD.The iSphere production library objects are not created.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword TGTRLS
+.*--------------------------------------------------------------------
+:HELP name='BUILD/TGTRLS'.
+Target release - Help
+:XH3.Target release (TGTRLS)
+:P.
+Specifies the target release the objects are compiled for. The format
+of the target release is VxRxMx.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.*CURRENT:EPK.
+:PD.The objects are compiled for the release level of the
+operating system that is currently running on your system.
+:PT.:PV.target release:EPV.
+:PD.The target releasse the objects are compiled for.
+:EPARML.
+.*
+:EHELP.
+.*
+.*--------------------------------------------------------------------
+.* Help text of keyword OWNER
+.*--------------------------------------------------------------------
+:HELP name='BUILD/OWNER'.
+Object owner - Help
+:XH3.Object owner (OWNER)
+:P.
+Specifies the owner of the objects created by the build process.
+.*
+:IMHELP name='COM/OPTPARM'.
+.*
+:PARML.
+:PT.:PK DEF.QPGMR:EPK.
+:PD.The objects created by the build process are owned by
+user profile QPGMR.
+:PT.:PV.*SAME:EPV.
+:PD.The owner of the created objects is not changed.
+:PT.:PV.owner:EPV.
+:PD.Specifies the user profile of the owner of the objects
+created by the build process.
+:EPARML.
+.*
+:EHELP.
+.*
+.*====================================================================
+.*  Textbausteine, die an mehreren Stellen im Helptext
+.*  verwendet werden.
+.*====================================================================
+
+.*=====================================
+.*  Erforderlicher Parameter
+.*=====================================
+:HELP NAME='COM/REQPARM'.
+:P.
+This is a required parameter.
+:P.
+:IMHELP name='COM/VALUES'.
+:EHELP.
+
+.*=====================================
+.*  Optionaler Parameter
+.*=====================================
+:HELP NAME='COM/OPTPARM'.
+:P.
+This is an optional parameter.
+:P.
+:IMHELP name='COM/VALUES'.
+:EHELP.
+
+.*=====================================
+.*  Werteliste
+.*=====================================
+:HELP NAME='COM/VALUES'.
+:P.
+The possible values are:
+:EHELP.
+.*
+:EPNLGRP.

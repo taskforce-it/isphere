@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Journal Explorer for RDi 8.0+
+Bundle-SymbolicName: biz.isphere.journalexplorer.rse;singleton:=true
+Bundle-Version: 3.5.0.r
+Bundle-Activator: biz.isphere.journalexplorer.rse.ISphereJournalExplorerRSEPlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.rse.ui,
+ org.eclipse.rse.core,
+ org.eclipse.rse.services,
+ com.ibm.etools.iseries.services.qsys,
+ com.ibm.etools.iseries.subsystems.qsys,
+ com.ibm.etools.iseries.toolbox,
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.journalexplorer.base
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Export-Package: biz.isphere.journalexplorer.rse.handlers.contributions.extension.point,
+ biz.isphere.journalexplorer.rse.shared.model,
+ biz.isphere.journalexplorer.rse.shared.model.dao,
+ biz.isphere.journalexplorer.rse.shared.ui.perspectives
