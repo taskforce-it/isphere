@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for RDi 9.5.1.3+ (recommended)"
-      version="5.0.1.r"
+      version="5.1.2.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -22,7 +22,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </license>
 
    <requires>
-      <import feature="biz.isphere.core" version="5.0.1.r" match="perfect"/>
+      <import feature="biz.isphere.core" version="5.1.2.r" match="perfect"/>
    </requires>
 
    <plugin

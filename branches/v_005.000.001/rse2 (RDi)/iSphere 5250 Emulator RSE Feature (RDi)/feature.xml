@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.tn5250j.rse"
       label="iSphere TN5250J for RDi 9.5.1.3+"
-      version="5.0.1.r"
+      version="5.1.2.r"
       provider-name="iSphere Project Team">
 
    <description url="https://sourceforge.net/projects/isphere/">

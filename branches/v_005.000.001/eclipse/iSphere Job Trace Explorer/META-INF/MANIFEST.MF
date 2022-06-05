@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Job Trace Explorer Core
 Bundle-SymbolicName: biz.isphere.jobtraceexplorer.core;singleton:=true
-Bundle-Version: 5.0.1.r
+Bundle-Version: 5.1.2.r
 Bundle-Activator: biz.isphere.jobtraceexplorer.core.ISphereJobTraceExplorerCorePlugin
 Bundle-Vendor: iSphere Project Team
 Bundle-Localization: plugin

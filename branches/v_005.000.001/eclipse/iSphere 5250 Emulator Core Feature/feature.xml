@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.tn5250j.core"
       label="iSphere TN5250J Core"
-      version="5.0.1.r"
+      version="5.1.2.r"
       provider-name="iSphere Project Team">
 
    <description url="https://sourceforge.net/projects/isphere/">

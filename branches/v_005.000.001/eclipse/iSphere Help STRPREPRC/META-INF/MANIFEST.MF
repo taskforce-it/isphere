@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ISphere_STRPREPRC_Help
 Bundle-SymbolicName: biz.isphere.strpreprc.help;singleton:=true
-Bundle-Version: 5.0.1.r
+Bundle-Version: 5.1.2.r
 Require-Bundle: org.eclipse.help,
  biz.isphere.base.help
 Bundle-Vendor: iSphere Project Team

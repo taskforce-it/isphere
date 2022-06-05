@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: iSphere Compare Filters for RDi 9.5+ (recommended)
 Bundle-SymbolicName: biz.isphere.comparefilters;singleton:=true
-Bundle-Version: 5.0.1.r
+Bundle-Version: 5.1.2.r
 Bundle-Activator: biz.isphere.comparefilters.ISphereCompareFiltersPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
