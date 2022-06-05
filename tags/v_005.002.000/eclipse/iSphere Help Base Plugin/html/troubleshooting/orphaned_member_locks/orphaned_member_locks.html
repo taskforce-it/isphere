@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Orphaned Member Locks</title>
+</head>
+<body>
+	<h1>Orphaned Member Locks</h1>
+	<p>
+	Sometimes it happens, that source members are locked when you try to
+	open the LPEX editor or the <i>Source File Compare/Merge Editor</i>.
+	<p>
+	For the compare editor, the problem can be reproduced by following
+	these steps:
+	<p>
+	<ol>
+	<li>Open the compare editor, eg. for members DEMO1 (left) and DEMO2.</li>
+	<li>Drop the connection to the IBM i by shutting down the VPN client.</li>
+	<li>Reconnected the VPN client.</li>
+	<li>Closed the compare editor.</li>
+	</ol>
+	<p>
+	Now, when the compare editor is closed, iSphere attempts to close the
+	left-side member. Since that fails with an exception, iSphere appends
+	the following message to the Eclipse error log:
+	<p>
+		<img src="assets/eclipse_error_log_entry.png" align="middle">
+	<p>
+	The only way to clear the error is to end the job on the IBM i server
+	by hand.
+	<p>
+	<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
