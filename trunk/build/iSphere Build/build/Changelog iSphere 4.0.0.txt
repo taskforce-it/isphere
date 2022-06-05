@@ -1,5 +1,5 @@
 
-Changelog: iSphere 5.1.2.r
+Changelog: iSphere 5.2.0.r
 --------------------------
  • Fixed setting default values when comparing source members and
    stream files (iSphere ticket #127).
