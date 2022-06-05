@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Bundle-Version: 5.1.1.r
+Bundle-Version: 5.1.2.r
 X-Bundle-Update-Library: false
 X-Bundle-Update-Library-Info: .
-X-Bundle-Info: Added missing stream file search options.\nFixed endless loop in BasicMessageFormatter for messages starting with spaces.
+X-Bundle-Info: Fixed setting default values when comparing source members and stream files (iSphere ticket #127).\nChanged connection combo to honor the 'Qualify Connection Names' property (iSphere ticket #128).\nFixed synchronizing message descriptions between message files on different systems.
 X-Beta-Version: 5.2.0.b001
 X-Beta-Update-Library: false
 X-Beta-Update-Library-Info: .
-X-Beta-Info: Resolved issues of iSphere tickets 127 and 128.\nFixed error reporting of iSphere message file compare editor.
+X-Beta-Info: Fixed setting default values when comparing source members and stream files (iSphere ticket #127).\nChanged connection combo to honor the 'Qualify Connection Names' property (iSphere ticket #128).\nFixed synchronizing message descriptions between message files on different systems.
