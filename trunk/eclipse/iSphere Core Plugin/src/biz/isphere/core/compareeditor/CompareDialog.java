@@ -34,6 +34,7 @@ import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.preferences.DoNotAskMeAgain;
 import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
@@ -551,14 +552,14 @@ public abstract class CompareDialog extends XDialog {
         Member tempMember = leftMember;
         this.leftMember = rightMember;
 
-        leftConnectionText.setText(this.leftMember.getConnection());
+        leftConnectionText.setText(getUIConnectionName(this.leftMember));
         leftLibraryText.setText(this.leftMember.getLibrary());
         leftFileText.setText(this.leftMember.getSourceFile());
         leftMemberText.setText(this.leftMember.getMember());
 
         this.rightMember = tempMember;
 
-        rightConnectionText.setText(this.rightMember.getConnection());
+        rightConnectionText.setText(getUIConnectionName(this.rightMember));
         rightLibraryText.setText(this.rightMember.getLibrary());
         rightFileText.setText(this.rightMember.getSourceFile());
         rightMemberText.setText(this.rightMember.getMember());
@@ -642,7 +643,7 @@ public abstract class CompareDialog extends XDialog {
 
         leftConnectionText = WidgetFactory.createReadOnlyText(leftGroup);
         leftConnectionText.setLayoutData(getGridData());
-        leftConnectionText.setText(leftMember.getConnection());
+        leftConnectionText.setText(getUIConnectionName(this.leftMember));
 
         Label leftLibraryLabel = new Label(leftGroup, SWT.NONE);
         leftLibraryLabel.setText(Messages.Library_colon);
@@ -701,7 +702,7 @@ public abstract class CompareDialog extends XDialog {
 
         rightConnectionText = WidgetFactory.createReadOnlyText(rightGroup);
         rightConnectionText.setLayoutData(getGridData());
-        rightConnectionText.setText(rightMember.getConnection());
+        rightConnectionText.setText(getUIConnectionName(this.rightMember));
 
         Label rightLibraryLabel = new Label(rightGroup, SWT.NONE);
         rightLibraryLabel.setText(Messages.Library_colon);
@@ -798,6 +799,10 @@ public abstract class CompareDialog extends XDialog {
             ancestorTimeText.setLayoutData(getGridData());
             ancestorTimeText.setText(ancestorMember.getArchiveDate() + " - " + ancestorMember.getArchiveTime()); //$NON-NLS-1$
         }
+    }
+
+    private String getUIConnectionName(Member member) {
+        return new BasicQualifiedConnectionName(member.getConnection()).getUIConnectionName();
     }
 
     private void createSwitchMemberButton(Composite parent) {

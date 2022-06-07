@@ -9,6 +9,7 @@
 package biz.isphere.core.ibmi.contributions.extension.point;
 
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 /**
  * This class represents a remote system connection name. A connection name
@@ -72,19 +73,54 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
         }
     }
 
+    /**
+     * Returns the connection without the profile name.
+     * 
+     * @return connection name.
+     */
     public String getConnectionName() {
         return connectionName;
     }
 
+    /**
+     * Returns the profile name.
+     * 
+     * @return profile name.
+     */
     public String getProfileName() {
         return profileName;
     }
 
+    /**
+     * Returns the qualified connection name in the form of
+     * "[profile]:connection"
+     * 
+     * @return qualified connection name.
+     */
     public String getQualifiedName() {
         if (profileName == NO_PROFILE_NAME) {
             return connectionName;
         }
         return String.format(CONNECTION_NAME_FORMAT, profileName, connectionName);
+    }
+
+    /**
+     * Returns the qualified connection formatted for UI presentation.
+     * 
+     * @return qualified UI connection name.
+     */
+    public String getUIConnectionName() {
+
+        String uiConnectionName;
+
+        if (IBMiHostContributionsHandler.isShowQualifyConnectionNames() && !StringHelper.isNullOrEmpty(getProfileName())
+            && !BasicQualifiedConnectionName.NO_PROFILE_NAME.equalsIgnoreCase(getProfileName())) {
+            uiConnectionName = getProfileName() + "." + getConnectionName();
+        } else {
+            uiConnectionName = getConnectionName();
+        }
+
+        return uiConnectionName;
     }
 
     @Override

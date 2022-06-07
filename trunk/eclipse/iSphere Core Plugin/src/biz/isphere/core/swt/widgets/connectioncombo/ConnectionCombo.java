@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
-import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -54,12 +53,7 @@ public class ConnectionCombo extends Composite {
 
         for (int i = 0; i < connections.length; i++) {
             BasicQualifiedConnectionName connection = (BasicQualifiedConnectionName)connections[i];
-            if (IBMiHostContributionsHandler.isShowQualifyConnectionNames() && !StringHelper.isNullOrEmpty(connection.getProfileName())
-                && !BasicQualifiedConnectionName.NO_PROFILE_NAME.equalsIgnoreCase(connection.getProfileName())) {
-                uiConnections[i] = connection.getProfileName() + "." + connection.getConnectionName();
-            } else {
-                uiConnections[i] = connection.getConnectionName();
-            }
+            uiConnections[i] = connection.getUIConnectionName();
         }
 
         connectionCombo.setItems(uiConnections);
