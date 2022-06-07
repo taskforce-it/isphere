@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.base.internal.IntHelper;
@@ -51,6 +50,7 @@ import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.WidgetHelper;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
@@ -74,7 +74,7 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
 
     private ISearchPageContainer container;
 
-    private IBMiConnectionCombo connectionCombo;
+    private ConnectionCombo connectionCombo;
 
     private Combo filterPoolCombo;
     private Combo filterCombo;
@@ -239,9 +239,20 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
 
     protected abstract SearchArgumentsListEditor createSearchArgumentsListEditor(Composite parent);
 
-    protected void createConnectionGroup(Composite aMainPanel) {
-        connectionCombo = new IBMiConnectionCombo(aMainPanel);
-        connectionCombo.getPromptLabel().setText(Messages.Connection);
+    protected void createConnectionGroup(Composite parent) {
+
+        Composite connectionGroup = new Composite(parent, SWT.NONE);
+        GridLayout connectionGroupLayout = new GridLayout(2, false);
+        connectionGroupLayout.marginHeight = 0;
+        connectionGroupLayout.marginWidth = 0;
+        connectionGroup.setLayout(connectionGroupLayout);
+        connectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label connectionLabel = new Label(connectionGroup, SWT.NONE);
+        connectionLabel.setText(Messages.Connection);
+
+        connectionCombo = WidgetFactory.createConnectionCombo(connectionGroup);
+        connectionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     protected void createSearchTargetGroup(Composite aMainPanel) {
@@ -339,7 +350,22 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
     }
 
     protected IHost getHost() {
-        return connectionCombo.getHost();
+        return getHost(connectionCombo.getQualifiedConnectionName());
+    }
+
+    private IHost getHost(String qualifiedConnectionName) {
+
+        if (qualifiedConnectionName == null) {
+            return null;
+        }
+
+        IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
+        if (ibMiConnection == null) {
+            return null;
+        }
+
+        IHost host = ibMiConnection.getHost();
+        return host;
     }
 
     /**
@@ -348,7 +374,7 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
      * @return name of the RSE connection
      */
     protected String getConnectionName() {
-        return ConnectionManager.getConnectionName(connectionCombo.getHost());
+        return connectionCombo.getQualifiedConnectionName();
     }
 
     protected ISystemFilter getFilter() {
@@ -417,20 +443,26 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
         searchArgumentsListEditor.loadScreenValues(getDialogSettings());
 
         if (loadValue(CONNECTION, null) != null) {
-            IBMiConnection connection = ConnectionManager.getIBMiConnection(loadValue(CONNECTION, null));
-            if (connection != null) {
+            // IBMiConnection connection =
+            // ConnectionManager.getIBMiConnection(loadValue(CONNECTION, null));
+            String qualifiedConnectionName = loadValue(CONNECTION, null);
+            if (qualifiedConnectionName != null) {
                 debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
-                connectionCombo.select(connection);
+                connectionCombo.setQualifiedConnectionName(qualifiedConnectionName);
             } else {
                 debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
             }
         } else {
-            if (connectionCombo.getItems().length > 0) {
+            if (connectionCombo.getItemCount() > 0) {
                 debugPrint("loadScreenValues(): setting connection"); //$NON-NLS-1$
                 connectionCombo.select(0);
             } else {
                 debugPrint("loadScreenValues(): setting connection - FAILED"); //$NON-NLS-1$
             }
+        }
+
+        if (!StringHelper.isNullOrEmpty(connectionCombo.getQualifiedConnectionName())) {
+            loadFilterPoolsOfConnection(connectionCombo.getQualifiedConnectionName());
         }
 
         int i;
@@ -722,7 +754,7 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
             }
         }
 
-        if (IBMiConnection.getConnection(getHost()) == null) {
+        if (getHost() == null || IBMiConnection.getConnection(getHost()) == null) {
             return false;
         }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
 
 package biz.isphere.rse.retrievebindersource;
 
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -19,26 +20,25 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import biz.isphere.base.internal.ExceptionHelper;
-import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.retrievebindersource.AbstractRetrieveBinderSourcePanel;
-import biz.isphere.core.swt.widgets.WidgetFactory;
-import biz.isphere.rse.Messages;
-import biz.isphere.rse.connection.ConnectionManager;
-import biz.isphere.rse.ibmi.contributions.extension.point.QualifiedConnectionName;
-
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSFilePrompt;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.retrievebindersource.AbstractRetrieveBinderSourcePanel;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
+import biz.isphere.rse.Messages;
+import biz.isphere.rse.connection.ConnectionManager;
+
 public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel {
 
     private Composite composite;
 
-    private IBMiConnectionCombo connectionCombo;
+    private ConnectionCombo connectionCombo;
     private QSYSMemberPrompt sourceFilePrompt;
     private Text sourceMemberText;
     private Button copyToClipboardCheckBox;
@@ -66,8 +66,18 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
 
     private void createConnectionGroup(Composite parent) {
 
-        connectionCombo = new IBMiConnectionCombo(parent);
-        connectionCombo.getPromptLabel().setText(Messages.Connection);
+        Composite connectionGroup = new Composite(parent, SWT.NONE);
+        GridLayout connectionGroupLayout = new GridLayout(2, false);
+        connectionGroupLayout.marginHeight = 0;
+        connectionGroupLayout.marginWidth = 0;
+        connectionGroup.setLayout(connectionGroupLayout);
+        connectionGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        Label connectionLabel = new Label(connectionGroup, SWT.NONE);
+        connectionLabel.setText(Messages.Connection);
+
+        connectionCombo = WidgetFactory.createConnectionCombo(connectionGroup);
+        connectionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         setEnableConnectionCombo(true);
     }
@@ -75,7 +85,7 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
     private void createSourceMemberGroup(Composite parent) {
 
         sourceFilePrompt = new QSYSMemberPrompt(parent, SWT.NONE, true, true, QSYSFilePrompt.FILETYPE_SRC);
-        sourceFilePrompt.setSystemConnection(connectionCombo.getHost());
+        sourceFilePrompt.setSystemConnection(getHost(connectionCombo.getQualifiedConnectionName()));
         sourceFilePrompt.getLibraryCombo().setToolTipText(Messages.Enter_or_select_a_library_name);
         sourceFilePrompt.getObjectCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_file_name);
         sourceFilePrompt.getMemberCombo().setToolTipText(Messages.Enter_or_select_a_simple_or_generic_member_name);
@@ -113,6 +123,21 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
                 setFocus();
             }
         });
+    }
+
+    private IHost getHost(String qualifiedConnectionName) {
+
+        if (qualifiedConnectionName == null) {
+            return null;
+        }
+
+        IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
+        if (ibMiConnection == null) {
+            return null;
+        }
+
+        IHost host = ibMiConnection.getHost();
+        return host;
     }
 
     public boolean validate() {
@@ -168,15 +193,7 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
             return;
         }
 
-        String tQualifiedConnectionName = new QualifiedConnectionName(qualifiedConnectionName).getConnectionName();
-
-        String[] connectionNames = connectionCombo.getItems();
-        for (int i = 0; i < connectionNames.length; i++) {
-            if (connectionNames[i].equals(tQualifiedConnectionName)) {
-                connectionCombo.setSelectionIndex(i);
-                return;
-            }
-        }
+        connectionCombo.setQualifiedConnectionName(qualifiedConnectionName);
     }
 
     public void setSourceLibrary(String library) {
@@ -203,7 +220,7 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
     }
 
     public String getConnectionName() {
-        return ConnectionManager.getConnectionName(connectionCombo.getHost());
+        return connectionCombo.getQualifiedConnectionName();
     }
 
     public String getSourceFileLibrary() {

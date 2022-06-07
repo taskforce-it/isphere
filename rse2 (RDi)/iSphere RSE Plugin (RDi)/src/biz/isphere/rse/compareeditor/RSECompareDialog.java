@@ -9,6 +9,7 @@
 package biz.isphere.rse.compareeditor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -20,7 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.rse.ui.widgets.QSYSMemberPrompt;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
@@ -31,6 +31,8 @@ import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
 import biz.isphere.core.internal.Member;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
@@ -39,21 +41,21 @@ public class RSECompareDialog extends CompareDialog {
 
     private Group ancestorGroup;
 
-    private IBMiConnectionCombo leftConnectionCombo;
+    private ConnectionCombo leftConnectionCombo;
     private QSYSMemberPrompt leftMemberPrompt;
     private IBMiConnection leftConnection;
     private String leftLibrary;
     private String leftFile;
     private String leftMember;
 
-    private IBMiConnectionCombo rightConnectionCombo;
+    private ConnectionCombo rightConnectionCombo;
     private QSYSMemberPrompt rightMemberPrompt;
     private IBMiConnection rightConnection;
     private String rightLibrary;
     private String rightFile;
     private String rightMember;
 
-    private IBMiConnectionCombo ancestorConnectionCombo;
+    private ConnectionCombo ancestorConnectionCombo;
     private QSYSMemberPrompt ancestorMemberPrompt;
     private IBMiConnection ancestorConnection;
     private String ancestorLibrary;
@@ -202,7 +204,7 @@ public class RSECompareDialog extends CompareDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                leftMemberPrompt.setSystemConnection(leftConnectionCombo.getHost());
+                leftMemberPrompt.setSystemConnection(getHost(getCurrentLeftConnectionName()));
             }
         };
 
@@ -227,7 +229,7 @@ public class RSECompareDialog extends CompareDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                rightMemberPrompt.setSystemConnection(rightConnectionCombo.getHost());
+                rightMemberPrompt.setSystemConnection(getHost(getCurrentRightConnectionName()));
             }
         };
 
@@ -256,7 +258,7 @@ public class RSECompareDialog extends CompareDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                ancestorMemberPrompt.setSystemConnection(ancestorConnectionCombo.getHost());
+                ancestorMemberPrompt.setSystemConnection(getHost(getCurrentAncestorConnectionName()));
             }
         };
 
@@ -284,11 +286,11 @@ public class RSECompareDialog extends CompareDialog {
         return memberGroup;
     }
 
-    private IBMiConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
+    private ConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
 
-        IBMiConnectionCombo connectionCombo = new IBMiConnectionCombo(group, connection, false);
+        ConnectionCombo connectionCombo = WidgetFactory.createConnectionCombo(group);
+        connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
         connectionCombo.setLayoutData(getGridData());
-        connectionCombo.getCombo().setLayoutData(getGridData());
 
         connectionCombo.addSelectionListener(selectionListener);
 
@@ -565,6 +567,17 @@ public class RSECompareDialog extends CompareDialog {
         return true;
     }
 
+    private IHost getHost(String qualifiedConnectionName) {
+
+        IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
+        if (ibMiConnection == null) {
+            return null;
+        }
+
+        IHost host = ibMiConnection.getHost();
+        return host;
+    }
+
     private IBMiConnection getCurrentLeftConnection() {
         if (leftConnectionCombo == null) {
             // return value for read-only left member
@@ -580,7 +593,7 @@ public class RSECompareDialog extends CompareDialog {
             String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
             return qualifiedConnectionName;
         }
-        return ConnectionManager.getConnectionName(leftConnectionCombo.getHost());
+        return leftConnectionCombo.getQualifiedConnectionName();
     }
 
     private String getCurrentLeftLibraryName() {
@@ -612,7 +625,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     private String getCurrentRightConnectionName() {
-        String qualifiedConnectionName = ConnectionManager.getConnectionName(rightConnectionCombo.getHost());
+        String qualifiedConnectionName = rightConnectionCombo.getQualifiedConnectionName();
         return qualifiedConnectionName;
     }
 
@@ -633,7 +646,7 @@ public class RSECompareDialog extends CompareDialog {
     }
 
     private String getCurrentAncestorConnectionName() {
-        String qualifiedConnectionName = ConnectionManager.getConnectionName(ancestorConnectionCombo.getHost());
+        String qualifiedConnectionName = ancestorConnectionCombo.getQualifiedConnectionName();
         return qualifiedConnectionName;
     }
 
@@ -755,7 +768,7 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    private boolean loadMemberValues(String prefix, LoadPreviousMemberValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
+    private boolean loadMemberValues(String prefix, LoadPreviousMemberValue loadPreviousValue, ConnectionCombo connectionCombo,
         QSYSMemberPrompt memberPrompt) {
 
         String connection;
@@ -789,7 +802,7 @@ public class RSECompareDialog extends CompareDialog {
         return setMemberValues(connectionCombo, memberPrompt, connection, library, file, member);
     }
 
-    private boolean setMemberValues(IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt, String connection, String library,
+    private boolean setMemberValues(ConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt, String qualifiedConnectionName, String library,
         String file, String member) {
 
         memberPrompt.setSystemConnection(null);
@@ -797,19 +810,13 @@ public class RSECompareDialog extends CompareDialog {
         memberPrompt.setFileName(""); //$NON-NLS-1$
         memberPrompt.setMemberName(""); //$NON-NLS-1$
 
-        if (haveMemberValues(connection, library, file, member)) {
-            String[] connections = connectionCombo.getItems();
-            for (int i = 0; i < connections.length; i++) {
-                String connectionItem = connections[i];
-                if (connectionItem.equals(connection)) {
-                    connectionCombo.setSelectionIndex(i);
-                    memberPrompt.getLibraryCombo().setText(library);
-                    memberPrompt.getFileCombo().setText(file);
-                    memberPrompt.getMemberCombo().setText(member);
-                    memberPrompt.setSystemConnection(connectionCombo.getHost());
-                    return true;
-                }
-            }
+        if (haveMemberValues(qualifiedConnectionName, library, file, member)) {
+            connectionCombo.setQualifiedConnectionName(qualifiedConnectionName);
+            memberPrompt.getLibraryCombo().setText(library);
+            memberPrompt.getFileCombo().setText(file);
+            memberPrompt.getMemberCombo().setText(member);
+            memberPrompt.setSystemConnection(getHost(qualifiedConnectionName));
+            return true;
         }
 
         return false;
@@ -843,9 +850,9 @@ public class RSECompareDialog extends CompareDialog {
         }
     }
 
-    private void storeMemberValues(String prefix, IBMiConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
+    private void storeMemberValues(String prefix, ConnectionCombo connectionCombo, QSYSMemberPrompt memberPrompt) {
 
-        String connection = connectionCombo.getText();
+        String connection = connectionCombo.getQualifiedConnectionName();
         String library = memberPrompt.getLibraryName();
         String file = memberPrompt.getFileName();
         String member = memberPrompt.getMemberName();
@@ -871,10 +878,12 @@ public class RSECompareDialog extends CompareDialog {
         memberPrompt.updateHistory();
     }
 
-    private boolean haveMemberValues(String connection, String library, String file, String member) {
+    private boolean haveMemberValues(String qualifiedConnectionName, String library, String file, String member) {
 
-        if (connection != null && library != null & file != null && member != null) {
-            return true;
+        if (qualifiedConnectionName != null && library != null & file != null && member != null) {
+            if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
+                return true;
+            }
         }
 
         return false;

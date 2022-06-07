@@ -9,6 +9,7 @@
 package biz.isphere.rse.compareeditor;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.core.model.IHost;
 import org.eclipse.rse.subsystems.files.core.subsystems.IRemoteFile;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-import com.ibm.etools.iseries.rse.ui.widgets.IBMiConnectionCombo;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileServiceSubSystem;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
@@ -32,6 +32,8 @@ import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
 import biz.isphere.core.compareeditor.LoadPreviousStreamFileValue;
 import biz.isphere.core.internal.StreamFile;
+import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.IFSRemoteFileHelper;
@@ -43,20 +45,20 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     private static final String RIGHT_HISTORY_KEY = "rightStreamFileHistory"; //$NON-NLS-1$
     private static final String ANCESTOR_HISTORY_KEY = "ancestorStreamFileHistory"; //$NON-NLS-1$
 
-    private IBMiConnectionCombo leftConnectionCombo;
+    private ConnectionCombo leftConnectionCombo;
     private StreamFilePrompt leftStreamFilePrompt;
     private IBMiConnection leftConnection;
     private String leftDirectory;
     private String leftStreamFile;
 
-    private IBMiConnectionCombo rightConnectionCombo;
+    private ConnectionCombo rightConnectionCombo;
     private StreamFilePrompt rightStreamFilePrompt;
     private IBMiConnection rightConnection;
     private String rightDirectory;
     private String rightStreamFile;
 
     private Group ancestorGroup;
-    private IBMiConnectionCombo ancestorConnectionCombo;
+    private ConnectionCombo ancestorConnectionCombo;
     private StreamFilePrompt ancestorStreamFilePrompt;
     private IBMiConnection ancestorConnection;
     private String ancestorDirectory;
@@ -221,7 +223,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                leftStreamFilePrompt.setConnection(leftConnectionCombo.getHost());
+                leftStreamFilePrompt.setConnection(getHost(getCurrentLeftConnectionName()));
             }
         };
 
@@ -234,7 +236,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         };
 
         leftStreamFilePrompt = createStreamFilePrompt(leftGroup, modifyListener, LEFT_HISTORY_KEY);
-        leftStreamFilePrompt.setConnection(leftConnectionCombo.getHost());
+        leftStreamFilePrompt.setConnection(getHost(getCurrentLeftConnectionName()));
         leftStreamFilePrompt.getDirectoryWidget().setFocus();
     }
 
@@ -247,7 +249,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                rightStreamFilePrompt.setConnection(rightConnectionCombo.getHost());
+                rightStreamFilePrompt.setConnection(getHost(getCurrentRightConnectionName()));
             }
         };
 
@@ -260,7 +262,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         };
 
         rightStreamFilePrompt = createStreamFilePrompt(rightGroup, modifyListener, RIGHT_HISTORY_KEY);
-        rightStreamFilePrompt.setConnection(rightConnectionCombo.getHost());
+        rightStreamFilePrompt.setConnection(getHost(getCurrentRightConnectionName()));
         rightStreamFilePrompt.getDirectoryWidget().setFocus();
 
         rightStreamFilePrompt.getStreamFileWidget().setEnabled(!hasMultipleRightStreamFiles());
@@ -276,7 +278,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setOKButtonEnablement();
-                ancestorStreamFilePrompt.setConnection(ancestorConnectionCombo.getHost());
+                ancestorStreamFilePrompt.setConnection(getHost(getCurrentAncestorConnectionName()));
             }
         };
 
@@ -289,7 +291,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         };
 
         ancestorStreamFilePrompt = createStreamFilePrompt(ancestorGroup, modifyListener, ANCESTOR_HISTORY_KEY);
-        ancestorStreamFilePrompt.setConnection(ancestorConnectionCombo.getHost());
+        ancestorStreamFilePrompt.setConnection(getHost(getCurrentAncestorConnectionName()));
     }
 
     private Group createStreamFileGroup(Composite parent, String label) {
@@ -304,11 +306,12 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         return streamFileGroup;
     }
 
-    private IBMiConnectionCombo createConnectionCombo(Group leftGroup, IBMiConnection connection, SelectionListener selectionListener) {
+    private ConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
 
-        IBMiConnectionCombo connectionCombo = new IBMiConnectionCombo(leftGroup, connection, false);
+        ConnectionCombo connectionCombo = WidgetFactory.createConnectionCombo(group);
+        connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
         connectionCombo.setLayoutData(getGridData());
-        connectionCombo.getCombo().setLayoutData(getGridData());
+        connectionCombo.setLayoutData(getGridData());
 
         connectionCombo.addSelectionListener(selectionListener);
 
@@ -485,15 +488,15 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             }
             if (getRightStreamFileName().equalsIgnoreCase(getAncestorStreamFileName())
                 && getRightDirectoryName().equalsIgnoreCase(getAncestorDirectoryName())
-                && rightConnectionCombo.getHost().getHostName().equals(ancestorConnectionCombo.getHost().getHostName())) {
+                && getHost(getCurrentRightConnectionName()).getHostName().equals(getHost(getCurrentAncestorConnectionName()).getHostName())) {
                 return false;
             }
             if (getRightDirectoryName().equalsIgnoreCase(leftDirectory) && getRightStreamFileName().equalsIgnoreCase(leftStreamFile)
-                && rightConnectionCombo.getHost().getHostName().equals(leftConnection.getHostName())) {
+                && getHost(getCurrentRightConnectionName()).getHostName().equals(getHost(getCurrentLeftConnectionName()).getHostName())) {
                 return false;
             }
             if (getAncestorDirectoryName().equalsIgnoreCase(leftDirectory) && getAncestorStreamFileName().equalsIgnoreCase(leftStreamFile)
-                && ancestorConnectionCombo.getHost().getHostName().equals(leftConnection.getHostName())) {
+                && getHost(getCurrentAncestorConnectionName()).getHostName().equals(getHost(getCurrentLeftConnectionName()).getHostName())) {
                 return false;
             }
         } else {
@@ -502,11 +505,22 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
                 return false;
             }
             if (rightStreamFile.equalsIgnoreCase(leftStreamFile) && getRightDirectoryName().equalsIgnoreCase(leftDirectory)
-                && rightConnectionCombo.getHost().getHostName().equalsIgnoreCase(leftConnection.getHostName())) {
+                && getHost(getCurrentRightConnectionName()).getHostName().equalsIgnoreCase(getHost(getCurrentLeftConnectionName()).getHostName())) {
                 return false;
             }
         }
         return true;
+    }
+
+    private IHost getHost(String qualifiedConnectionName) {
+
+        IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
+        if (ibMiConnection == null) {
+            return null;
+        }
+
+        IHost host = ibMiConnection.getHost();
+        return host;
     }
 
     private IBMiConnection getCurrentLeftConnection() {
@@ -524,7 +538,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
             String qualifiedConnectionName = ConnectionManager.getConnectionName(connection);
             return qualifiedConnectionName;
         }
-        return ConnectionManager.getConnectionName(leftConnectionCombo.getHost());
+        return leftConnectionCombo.getQualifiedConnectionName();
     }
 
     private String getCurrentLeftDirectoryName() {
@@ -548,7 +562,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     }
 
     private String getCurrentRightConnectionName() {
-        String qualifiedConnectionName = ConnectionManager.getConnectionName(rightConnectionCombo.getHost());
+        String qualifiedConnectionName = rightConnectionCombo.getQualifiedConnectionName();
         return qualifiedConnectionName;
     }
 
@@ -565,7 +579,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     }
 
     private String getCurrentAncestorConnectionName() {
-        String qualifiedConnectionName = ConnectionManager.getConnectionName(ancestorConnectionCombo.getHost());
+        String qualifiedConnectionName = ancestorConnectionCombo.getQualifiedConnectionName();
         return qualifiedConnectionName;
     }
 
@@ -764,7 +778,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         }
     }
 
-    private boolean loadStreamFileValues(String prefix, LoadPreviousStreamFileValue loadPreviousValue, IBMiConnectionCombo connectionCombo,
+    private boolean loadStreamFileValues(String prefix, LoadPreviousStreamFileValue loadPreviousValue, ConnectionCombo connectionCombo,
         StreamFilePrompt streamFilePrompt) {
 
         String connection;
@@ -791,25 +805,19 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         return setStreamFileValues(connectionCombo, streamFilePrompt, connection, directory, streamFile);
     }
 
-    private boolean setStreamFileValues(IBMiConnectionCombo connectionCombo, StreamFilePrompt memberPrompt, String connection, String directory,
-        String streamFile) {
+    private boolean setStreamFileValues(ConnectionCombo connectionCombo, StreamFilePrompt memberPrompt, String qualifiedConnectionName,
+        String directory, String streamFile) {
 
         memberPrompt.setConnection(null);
         memberPrompt.setDirectoryName(""); //$NON-NLS-1$
         memberPrompt.setStreamFileName(""); //$NON-NLS-1$
 
-        if (haveStreamFileValues(connection, directory, streamFile)) {
-            String[] connections = connectionCombo.getItems();
-            for (int i = 0; i < connections.length; i++) {
-                String connectionItem = connections[i];
-                if (connectionItem.equals(connection)) {
-                    connectionCombo.setSelectionIndex(i);
-                    memberPrompt.setDirectoryName(directory);
-                    memberPrompt.setStreamFileName(streamFile);
-                    memberPrompt.setConnection(connectionCombo.getHost());
-                    return true;
-                }
-            }
+        if (haveStreamFileValues(qualifiedConnectionName, directory, streamFile)) {
+            connectionCombo.setQualifiedConnectionName(qualifiedConnectionName);
+            memberPrompt.setDirectoryName(directory);
+            memberPrompt.setStreamFileName(streamFile);
+            memberPrompt.setConnection(getHost(qualifiedConnectionName));
+            return true;
         }
 
         return false;
@@ -843,14 +851,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         }
     }
 
-    private void storeStreamFileValues(String prefix, IBMiConnectionCombo connectionCombo, StreamFilePrompt streamFilePrompt) {
+    private void storeStreamFileValues(String prefix, ConnectionCombo connectionCombo, StreamFilePrompt streamFilePrompt) {
 
-        String connection = connectionCombo.getText();
+        String qualifiedConnectionName = connectionCombo.getQualifiedConnectionName();
         String directory = streamFilePrompt.getDirectoryName();
         String streamFile = streamFilePrompt.getStreamFileName();
 
-        if (haveStreamFileValues(connection, directory, streamFile)) {
-            storeValue(getStreamFilePromptDialogSettingsKey(prefix, CONNECTION), connection);
+        if (haveStreamFileValues(qualifiedConnectionName, directory, streamFile)) {
+            storeValue(getStreamFilePromptDialogSettingsKey(prefix, CONNECTION), qualifiedConnectionName);
             storeValue(getStreamFilePromptDialogSettingsKey(prefix, DIRECTORY), directory);
             storeValue(getStreamFilePromptDialogSettingsKey(prefix, STREAM_FILE), streamFile);
         }
@@ -870,10 +878,12 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         streamFilePrompt.storeHistory();
     }
 
-    private boolean haveStreamFileValues(String connection, String directory, String streamFile) {
+    private boolean haveStreamFileValues(String qualifiedConnectionName, String directory, String streamFile) {
 
-        if (connection != null && directory != null && streamFile != null) {
-            return true;
+        if (qualifiedConnectionName != null && directory != null && streamFile != null) {
+            if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
+                return true;
+            }
         }
 
         return false;
