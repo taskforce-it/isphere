@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 5.2.1.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Fixed setting default values (second attempt) when comparing source members and stream files (iSphere ticket #127).\nReplaced IBMiConnectionCombo with ConnectionCombo to ensure using the same connection names thoroughly.
+X-Beta-Version: 5.2.1.r
+X-Beta-Update-Library: false
+X-Beta-Update-Library-Info: .
+X-Beta-Info: Fixed setting default values (second attempt) when comparing source members and stream files (iSphere ticket #127).\nReplaced IBMiConnectionCombo with ConnectionCombo to ensure using the same connection names thoroughly.
