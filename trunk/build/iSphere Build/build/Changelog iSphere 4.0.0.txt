@@ -2,6 +2,8 @@ Changelog: iSphere 5.2.1.r
 --------------------------
  • Bug fix. Replaced IBMiConnectionCombo with ConnectionCombo to
    ensure using the same connection names thoroughly.
+ • Fixed setting default values (second attempt) when comparing
+   source members and stream files (iSphere ticket #127).
 
 Changelog: iSphere 5.2.0.r
 --------------------------
