@@ -289,7 +289,9 @@ public class RSECompareDialog extends CompareDialog {
     private ConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
 
         ConnectionCombo connectionCombo = WidgetFactory.createConnectionCombo(group);
-        connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
+        if (connection != null) {
+            connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
+        }
         connectionCombo.setLayoutData(getGridData());
 
         connectionCombo.addSelectionListener(selectionListener);

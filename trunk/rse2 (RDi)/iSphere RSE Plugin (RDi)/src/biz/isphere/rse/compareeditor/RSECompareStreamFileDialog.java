@@ -309,7 +309,9 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     private ConnectionCombo createConnectionCombo(Group group, IBMiConnection connection, SelectionListener selectionListener) {
 
         ConnectionCombo connectionCombo = WidgetFactory.createConnectionCombo(group);
-        connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
+        if (connection != null) {
+            connectionCombo.setQualifiedConnectionName(connection.getConnectionName());
+        }
         connectionCombo.setLayoutData(getGridData());
         connectionCombo.setLayoutData(getGridData());
 
@@ -513,6 +515,10 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     }
 
     private IHost getHost(String qualifiedConnectionName) {
+
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
+            return null;
+        }
 
         IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
         if (ibMiConnection == null) {
