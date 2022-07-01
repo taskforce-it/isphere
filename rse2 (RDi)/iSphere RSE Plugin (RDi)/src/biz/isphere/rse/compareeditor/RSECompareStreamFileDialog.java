@@ -482,35 +482,49 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     @Override
     public boolean canFinish() {
+
+        // Check left stream file is specified
+        if (StringHelper.isNullOrEmpty(getCurrentLeftConnectionName()) || StringHelper.isNullOrEmpty(getCurrentLeftDirectoryName())
+            || StringHelper.isNullOrEmpty(getCurrentLeftStreamFileName())) {
+            return false;
+        }
+
+        // Check right stream file is specified
+        if (StringHelper.isNullOrEmpty(getCurrentRightConnectionName()) || StringHelper.isNullOrEmpty(getCurrentRightDirectoryName())
+            || StringHelper.isNullOrEmpty(getCurrentRightStreamFileName())) {
+            return false;
+        }
+
+        // Check ancestor stream file is specified
         if (isThreeWay()) {
-            if (getRightStreamFileName() == null || getRightStreamFileName().length() == 0 || getRightDirectoryName() == null
-                || getRightDirectoryName().length() == 0 || getAncestorStreamFileName() == null || getAncestorStreamFileName().length() == 0
-                || getAncestorDirectoryName() == null || getAncestorDirectoryName().length() == 0) {
-                return false;
-            }
-            if (getRightStreamFileName().equalsIgnoreCase(getAncestorStreamFileName())
-                && getRightDirectoryName().equalsIgnoreCase(getAncestorDirectoryName())
-                && getHost(getCurrentRightConnectionName()).getHostName().equals(getHost(getCurrentAncestorConnectionName()).getHostName())) {
-                return false;
-            }
-            if (getRightDirectoryName().equalsIgnoreCase(leftDirectory) && getRightStreamFileName().equalsIgnoreCase(leftStreamFile)
-                && getHost(getCurrentRightConnectionName()).getHostName().equals(getHost(getCurrentLeftConnectionName()).getHostName())) {
-                return false;
-            }
-            if (getAncestorDirectoryName().equalsIgnoreCase(leftDirectory) && getAncestorStreamFileName().equalsIgnoreCase(leftStreamFile)
-                && getHost(getCurrentAncestorConnectionName()).getHostName().equals(getHost(getCurrentLeftConnectionName()).getHostName())) {
-                return false;
-            }
-        } else {
-            String rightStreamFile = getRightStreamFileName();
-            if (rightStreamFile == null || rightStreamFile.length() == 0) {
-                return false;
-            }
-            if (rightStreamFile.equalsIgnoreCase(leftStreamFile) && getRightDirectoryName().equalsIgnoreCase(leftDirectory)
-                && getHost(getCurrentRightConnectionName()).getHostName().equalsIgnoreCase(getHost(getCurrentLeftConnectionName()).getHostName())) {
+            if (StringHelper.isNullOrEmpty(getCurrentAncestorConnectionName()) || StringHelper.isNullOrEmpty(getCurrentAncestorDirectoryName())
+                || StringHelper.isNullOrEmpty(getCurrentAncestorStreamFileName())) {
                 return false;
             }
         }
+
+        // Ensure right and left stream files are different
+        if (getCurrentRightConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())
+            && getCurrentRightDirectoryName().equalsIgnoreCase(getCurrentLeftDirectoryName())
+            && getCurrentRightStreamFileName().equalsIgnoreCase(getCurrentLeftStreamFileName())) {
+            return false;
+        }
+
+        if (isThreeWay()) {
+            // Ensure ancestor stream file is different from right stream file
+            if (getCurrentAncestorConnectionName().equalsIgnoreCase(getCurrentRightConnectionName())
+                && getCurrentAncestorDirectoryName().equalsIgnoreCase(getCurrentRightDirectoryName())
+                && getCurrentAncestorStreamFileName().equalsIgnoreCase(getCurrentRightStreamFileName())) {
+                return false;
+            }
+            // Ensure ancestor stream file is different from right stream file
+            if (getCurrentAncestorConnectionName().equalsIgnoreCase(getCurrentLeftConnectionName())
+                && getCurrentAncestorDirectoryName().equalsIgnoreCase(getCurrentLeftDirectoryName())
+                && getCurrentAncestorStreamFileName().equalsIgnoreCase(getCurrentLeftStreamFileName())) {
+                return false;
+            }
+        }
+
         return true;
     }
 
