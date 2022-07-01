@@ -1271,7 +1271,6 @@
 
      D from            DS                  likeds(QtqCode_t)
      D to              DS                  likeds(QtqCode_t)
-     D rc              S             10I 0 inz
 
      D DIGITS          C                   const(%len(GIconv.nl_ccsid))
      D DECPOS          C                   const(%decpos(GIconv.nl_ccsid))
