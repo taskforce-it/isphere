@@ -1,3 +1,10 @@
+Changelog: iSphere 5.2.2.r
+--------------------------
+ • Fixed NullPointerException in iSphere Compare Members dialog,
+   when the left member is empty.
+ • Fixed NullPointerException in iSphere Compare Stream Files dialog,
+   when the left stream file is empty.
+
 Changelog: iSphere 5.2.1.r
 --------------------------
  • Bug fix. Replaced IBMiConnectionCombo with ConnectionCombo to
