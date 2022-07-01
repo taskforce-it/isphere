@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -107,7 +108,7 @@ public class ConnectionCombo extends Composite {
 
     public void setQualifiedConnectionName(String qualifiedConnectionName) {
 
-        if (qualifiedConnectionName == null) {
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
             connectionCombo.select(-1);
             connectionCombo.setText(""); //$NON-NLS-1$
             return;
@@ -131,7 +132,7 @@ public class ConnectionCombo extends Composite {
         if (i >= 0) {
             qualifiedConnectionName = connections[i].getQualifiedName();
         } else {
-            qualifiedConnectionName = null;
+            qualifiedConnectionName = ""; //$NON-NLS-1$ ;
         }
 
         return qualifiedConnectionName;
