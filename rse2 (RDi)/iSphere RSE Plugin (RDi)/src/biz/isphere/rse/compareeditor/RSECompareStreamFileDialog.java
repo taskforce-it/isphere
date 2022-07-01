@@ -645,38 +645,6 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
         initializeLeftStreamFile((RSEStreamFile)rightStreamFile);
     }
 
-    private String getRightDirectoryName() {
-        if (rightStreamFilePrompt.getDirectoryName() == null) {
-            return null;
-        }
-        return rightStreamFilePrompt.getDirectoryName().trim();
-    }
-
-    private String getRightStreamFileName() {
-        if (rightStreamFilePrompt.getStreamFileName() == null) {
-            return null;
-        }
-        String streamFileName = rightStreamFilePrompt.getStreamFileName().trim();
-        if (SPECIAL_STREAM_FILE_NAME_LEFT.equalsIgnoreCase(streamFileName)) {
-            streamFileName = leftStreamFile;
-        }
-        return streamFileName;
-    }
-
-    private String getAncestorDirectoryName() {
-        if (ancestorStreamFilePrompt.getDirectoryName() == null) {
-            return null;
-        }
-        return ancestorStreamFilePrompt.getDirectoryName().trim();
-    }
-
-    private String getAncestorStreamFileName() {
-        if (ancestorStreamFilePrompt.getStreamFileName() == null) {
-            return null;
-        }
-        return ancestorStreamFilePrompt.getStreamFileName().trim();
-    }
-
     /*
      * TODO: replace with getLeftRSEStreamFile and set to private
      */
