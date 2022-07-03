@@ -1,5 +1,6 @@
 Changelog: iSphere 5.2.2.r
 --------------------------
+ • Enhanced iSphere Source File Search to work with DDM files.
  • Fixed input validation of iSphere Compare Stream Files dialog.
  • Fixed NullPointerException in iSphere Compare Members dialog,
    when the left member is empty.

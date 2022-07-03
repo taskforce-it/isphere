@@ -85,6 +85,10 @@
 
      d/Copy QCPYSRC,QUSRJOBI
 
+      // Procedure prototype for procedure 'QDBRTVFD'
+
+     d/Copy QCPYSRC,QDBRTVFD
+
       // Data structure for format 'ERRC0100' for error code
 
      d/Copy QCPYSRC,ERRC0100
@@ -155,6 +159,13 @@
      d  handle                             Like(regex_t) inz(*ALLx'00')
       /endif
 
+      // Current file attributes
+
+     dfileAttrs_t      DS                  Qualified Based(pDummy)
+     d  LITYP1                        1A                                        Type 1
+     d  LITYP2                        1A                                        Type 2
+     d  LIRLNG                        5S 0                                      Record length
+
       // Caching of member attributes
 
      d memberAttrs_t   DS                  Qualified Based(pDummy)
@@ -206,9 +217,15 @@
      d  i_lib                        10A   Const
      d  i_mbr                        10A   Const
 
-     d resolveMemberAttrs...
+     d resolveFileAttributes...
+     d                 PR                  Likeds(fileAttrs_t)
+     d                                     Extproc('resolveFileAttributes')
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+
+     d resolveMemberAttributes...
      d                 PR                  Likeds(memberAttrs_t)
-     d                                     Extproc('resolveMemberAttrs')
+     d                                     Extproc('resolveMemberAttributes')
      d  i_file                       10A   Const
      d  i_lib                        10A   Const
      d  i_mbr                        10A   Const
@@ -539,10 +556,7 @@
      d  LILIB                        10A                                        Library
      d  LIFILE                       10A                                        File
 
-     dfileAttrs        DS                  Qualified
-     d  LITYP1                        1A                                        Type 1
-     d  LITYP2                        1A                                        Type 2
-     d  LIRLNG                        5S 0                                      Record length
+     dfileAttrs        DS                  Likeds(fileAttrs_t) inz
 
      dLICNT            S              6S 0                                      Counter
      dLICNL            S             10A                                        Cancel
@@ -568,6 +582,9 @@
        // Initialize control break
        ctrlBreak.LILIB = *LoVal;
        ctrlBreak.LIFILE = *LoVal;
+
+       // Initialize file attributes
+       Clear fileAttrs;
 
        // Declare cursor
        Exec SQL
@@ -644,33 +661,8 @@
            ctrlBreak.LILIB = FNDSTRIRF.XILIB;
            ctrlBreak.LIFILE = FNDSTRIRF.XIFILE;
 
-           // Initialize attributes
-           fileAttrs.LITYP1 = *Blank;
-           fileAttrs.LITYP2 = *Blank;
-           fileAttrs.LIRLNG = *Zero;
-
-           // Get attributes
-           Exec SQL
-              SELECT
-                 TABLE_TYPE,
-                 FILE_TYPE,
-                 ROW_LENGTH
-              INTO
-                 :fileAttrs.LITYP1,
-                 :fileAttrs.LITYP2,
-                 :fileAttrs.LIRLNG
-              FROM
-                 QSYS2/SYSTABLES
-              WHERE
-                 TABLE_SCHEMA = :FNDSTRIRF.XILIB AND
-                 TABLE_NAME = :FNDSTRIRF.XIFILE;
-
-           // Not the right attributes
-           If Not (fileAttrs.LITYP1 = 'P' And
-                 fileAttrs.LITYP2 = 'S' And
-                 fileAttrs.LIRLNG <> *Zero);
-             Iter;
-           EndIf;
+           // Get file attributes
+           fileAttrs = resolveFileAttributes(FNDSTRIRF.XIFILE: FNDSTRIRF.XILIB);
 
            // Get record length
            fileAttrs.LIRLNG = fileAttrs.LIRLNG -
@@ -680,6 +672,13 @@
              fileAttrs.LIRLNG = %Size(QSRCFRF_t.SRCDTA);
            EndIf;
 
+         EndIf;
+
+         // Not the right attributes
+         If Not (fileAttrs.LITYP1 = 'P' And
+                 fileAttrs.LITYP2 = 'S' And
+                 fileAttrs.LIRLNG <> *Zero);
+           Iter;
          EndIf;
 
          performSearch(FNDSTRIRF.XIHDL
@@ -1102,6 +1101,69 @@
              XOLIB = :i_lib and
              XOFILE = :i_file and
              XOMBR = :i_mbr;
+
+      /End-Free
+     p                 E
+
+      //*==========================================================================================*
+      //* Resolves the attributes of a given file.                                                 *
+      //*==========================================================================================*
+
+     p resolveFileAttributes...
+     p                 B                   Export
+     d                 PI                  Likeds(fileAttrs_t)
+     d  i_file                       10A   Const
+     d  i_lib                        10A   Const
+
+     d fileAttrs       DS                  Likeds(fileAttrs_t) inz
+
+     d fild0100        S           1024A
+     d fild0200        S           1024A
+     d Qdb_Qdbfh       DS                  Likeds(Qdb_Qdbfh_t)
+     d Qdb_Qddfmt      DS                  Likeds(Qdb_Qddfmt_t)
+     d qRetFile        DS                  Likeds(qObj_t)
+     d qFile           DS                  Likeds(qObj_t)
+     d errCode         DS                  Likeds(errCode_t)
+
+      //*------------------------------------------------------------------------------------------*
+
+      /Free
+
+           Clear Qdb_Qdbfh;
+           Clear Qdb_Qddfmt;
+           Clear qRetFile;
+           Clear errCode;
+           Clear qFile;
+           qFile.name = i_file;
+           qFile.lib = i_lib;
+
+           // Get file attributes
+           fild0100 = Qdb_Qdbfh;
+           QDBRTVFD(fild0100: %size(fild0100): qRetFile: 'FILD0100': qFile:
+                    '*FIRST': '0': '*FILETYPE': '*EXT': errCode);
+           Qdb_Qdbfh = fild0100;
+
+           if (%bitand(Qdb_Qdbfh.Qdbfhflg: x'2000') = x'2000');
+             fileAttrs.LITYP1 = 'L'; // Logical
+           else;
+             fileAttrs.LITYP1 = 'P'; // Physical
+           endif;
+
+           if (%bitand(Qdb_Qdbfh.Qdbfhflg: x'0800') = x'0800');
+             fileAttrs.LITYP2 = 'S'; // PF-SRC
+           else;
+             fileAttrs.LITYP2 = 'D'; // PF-DTA
+           endif;
+
+           // Get record format attributes
+           fild0200 = Qdb_Qddfmt;
+           QDBRTVFD(fild0200: %size(fild0200): qRetFile: 'FILD0200': qFile:
+                    '*FIRST': '0': '*FILETYPE': '*EXT': errCode);
+           Qdb_Qddfmt = fild0200;
+
+           fileAttrs.LIRLNG = Qdb_Qddfmt.Qddfrlen;
+
+           return fileAttrs;
 
       /End-Free
      p                 E
