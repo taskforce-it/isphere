@@ -18,12 +18,13 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.eclipse.osgi.util.ManifestElement;
 import org.junit.Test;
 import org.osgi.framework.BundleException;
 
 import biz.isphere.core.internal.Version;
-import junit.framework.JUnit4TestAdapter;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -119,18 +120,14 @@ public class CheckNotifier {
         is.close();
 
         String xBetaVersion = getString(manifest, "X-Beta-Version");
-        if (xBetaVersion != null) {
-            new Version(xBetaVersion);
-        }
+        assertTrue(xBetaVersion != null);
+        Version version = new Version(xBetaVersion);
+        assertTrue(version.toString() != null);
 
         String xBetaUpdateLibrary = getString(manifest, "X-Beta-Update-Library");
-        if (xBetaUpdateLibrary != null) {
-            assertTrue("true".equals(xBetaUpdateLibrary) || "false".equals(xBetaUpdateLibrary));
-        }
+        assertTrue("true".equals(xBetaUpdateLibrary) || "false".equals(xBetaUpdateLibrary));
 
         String xBetaInfo = getString(manifest, "X-Beta-Info", true);
-        assertTrue(xBetaInfo == null || xBetaInfo.length() > 0);
-
         assertTrue(xBetaVersion != null);
         assertTrue(xBetaInfo != null);
         assertTrue(xBetaUpdateLibrary != null);
