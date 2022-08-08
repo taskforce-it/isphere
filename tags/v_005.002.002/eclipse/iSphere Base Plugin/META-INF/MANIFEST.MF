@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Base (required)
+Bundle-SymbolicName: biz.isphere.base;singleton:=true
+Bundle-Version: 5.2.2.r
+Bundle-Activator: biz.isphere.base.ISphereBasePlugin
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core,
+ com.ibm.etools.iseries.toolbox,
+ org.eclipse.e4.ui.model.workbench,
+ org.eclipse.e4.core.contexts,
+ org.eclipse.e4.ui.css.swt,
+ org.eclipse.e4.ui.css.swt.theme
+Export-Package: biz.isphere.base.comparators,
+ biz.isphere.base.externalapi,
+ biz.isphere.base.internal,
+ biz.isphere.base.internal.actions,
+ biz.isphere.base.jface.dialogs,
+ biz.isphere.base.swt.events,
+ biz.isphere.base.swt.widgets,
+ biz.isphere.base.versioncheck
+Bundle-ActivationPolicy: lazy
+Eclipse-LazyStart: true
+Import-Package: org.eclipse.e4.ui.css.swt.theme

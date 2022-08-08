@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 5.2.2.r
+X-Bundle-Update-Library: true
+X-Bundle-Update-Library-Info: Optionally update the iSphere library to enable the iSphere Source File Search for DDM files.
+X-Bundle-Info: Fixed NullPointerExceptions in compare members (and stream files) dialogs when called from the iSphere menue.\nEnhanced iSphere Source File Search to work with DDM files.
+X-Beta-Version: 5.2.2.r
+X-Beta-Update-Library: true
+X-Beta-Update-Library-Info: Optionally update the iSphere library to enable the iSphere Source File Search for DDM files.
+X-Beta-Info: Fixed NullPointerExceptions in compare members (and stream files) dialogs when called from the iSphere menue.\nEnhanced iSphere Source File Search to work with DDM files.
