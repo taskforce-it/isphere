@@ -572,6 +572,10 @@ public class RSECompareDialog extends CompareDialog {
 
     private IHost getHost(String qualifiedConnectionName) {
 
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
+            return null;
+        }
+
         IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
         if (ibMiConnection == null) {
             return null;

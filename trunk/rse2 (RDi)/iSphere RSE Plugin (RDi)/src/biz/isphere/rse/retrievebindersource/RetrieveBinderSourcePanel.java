@@ -127,7 +127,7 @@ public class RetrieveBinderSourcePanel extends AbstractRetrieveBinderSourcePanel
 
     private IHost getHost(String qualifiedConnectionName) {
 
-        if (qualifiedConnectionName == null) {
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
             return null;
         }
 
