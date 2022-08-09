@@ -26,6 +26,7 @@ import com.ibm.etools.iseries.services.qsys.api.IQSYSFile;
 import com.ibm.etools.iseries.services.qsys.api.IQSYSLibrary;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
@@ -882,9 +883,14 @@ public class RSECompareDialog extends CompareDialog {
 
     private boolean haveMemberValues(String qualifiedConnectionName, String library, String file, String member) {
 
-        if (qualifiedConnectionName != null && library != null & file != null && member != null) {
-            if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
-                return true;
+        if (!StringHelper.isNullOrEmpty(qualifiedConnectionName) && !StringHelper.isNullOrEmpty(library) && !StringHelper.isNullOrEmpty(file)
+            && !StringHelper.isNullOrEmpty(member)) {
+            try {
+                if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
 
