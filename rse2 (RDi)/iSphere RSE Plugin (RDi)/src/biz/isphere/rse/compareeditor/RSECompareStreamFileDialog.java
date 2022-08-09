@@ -27,6 +27,7 @@ import com.ibm.etools.iseries.subsystems.ifs.files.IFSFileServiceSubSystem;
 import com.ibm.etools.iseries.subsystems.ifs.files.IFSRemoteFile;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareStreamFileDialog;
@@ -868,9 +869,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
     private boolean haveStreamFileValues(String qualifiedConnectionName, String directory, String streamFile) {
 
-        if (qualifiedConnectionName != null && directory != null && streamFile != null) {
-            if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
-                return true;
+        if (!StringHelper.isNullOrEmpty(qualifiedConnectionName) && !StringHelper.isNullOrEmpty(directory)
+            && !StringHelper.isNullOrEmpty(streamFile)) {
+            try {
+                if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
+                    return true;
+                }
+            } catch (IllegalArgumentException e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
 
