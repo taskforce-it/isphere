@@ -1,4 +1,9 @@
 
+Changelog: iSphere 5.2.4.r
+--------------------------
+ • Fixed "Illegal qualified connection name." error message when
+   attempting to use the iSphere Source File search.
+
 Changelog: iSphere 5.2.3.r
 --------------------------
  • Fixed member validation in iSphere Compare Members dialog.

@@ -11,6 +11,7 @@ package biz.isphere.rse.search;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.rse.core.filters.ISystemFilter;
 import org.eclipse.rse.core.filters.ISystemFilterPool;
 import org.eclipse.rse.core.filters.ISystemFilterPoolReference;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Widget;
 
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialogPage;
@@ -355,17 +357,24 @@ public abstract class AbstractSearchPage extends XDialogPage implements ISearchP
 
     private IHost getHost(String qualifiedConnectionName) {
 
-        if (qualifiedConnectionName == null) {
+        if (StringHelper.isNullOrEmpty(qualifiedConnectionName)) {
             return null;
         }
 
-        IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
-        if (ibMiConnection == null) {
+        try {
+            IBMiConnection ibMiConnection = ConnectionManager.getIBMiConnection(qualifiedConnectionName);
+            if (ibMiConnection == null) {
+                return null;
+            }
+
+            IHost host = ibMiConnection.getHost();
+
+            return host;
+
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return null;
         }
-
-        IHost host = ibMiConnection.getHost();
-        return host;
     }
 
     /**
