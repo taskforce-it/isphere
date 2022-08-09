@@ -889,7 +889,7 @@ public class RSECompareDialog extends CompareDialog {
                 if (ConnectionManager.getIBMiConnection(qualifiedConnectionName) != null) {
                     return true;
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
         }
