@@ -277,6 +277,11 @@ public class StreamFileSearchPage extends AbstractSearchPage {
         }
 
         IHost tHost = getHost();
+        if (tHost == null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Connection_not_found_A, "")); //$NON-NLS-1$
+            return false;
+        }
+
         IBMiConnection tConnection = ConnectionManager.getIBMiConnection(tHost);
 
         if (!isFilterRadioButtonSelected()) {
