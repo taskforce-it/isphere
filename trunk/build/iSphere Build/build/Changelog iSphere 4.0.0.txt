@@ -1,3 +1,9 @@
+
+Changelog: iSphere 5.2.3.r
+--------------------------
+ • Fixed member validation in iSphere Compare Members dialog.
+ • Fixed stream file validation in iSphere Compare Stream Files dialog.
+
 Changelog: iSphere 5.2.2.r
 --------------------------
  • Enhanced iSphere Source File Search to work with DDM files.
