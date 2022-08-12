@@ -10,7 +10,6 @@ package org.medfoster.sqljep.junit;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 
 import org.junit.Test;
