@@ -9,10 +9,9 @@
 package org.medfoster.sqljep.junit.functions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
-
-import junit.framework.Assert;
 
 import org.junit.Test;
 import org.medfoster.sqljep.ParseException;
@@ -93,7 +92,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Add", "Time", "Microseconds"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -102,7 +101,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long", "ComparativeEQ"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -133,7 +132,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Subtract", "Time", "Microseconds"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -142,7 +141,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(COMPARE_EXCEPTION, "Time", "Long", "ComparativeEQ"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -159,7 +158,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Multiply", "BigDecimal", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -176,7 +175,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Divide", "Long", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -197,7 +196,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -206,7 +205,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Time"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -215,7 +214,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -224,7 +223,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Round", "Timestamp"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -254,7 +253,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -277,7 +276,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "DD"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         /*
@@ -290,7 +289,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "HH12"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -299,7 +298,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "HH24"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -308,7 +307,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "MI"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -317,7 +316,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "SS"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -326,7 +325,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Date", "NNN"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -354,7 +353,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "YYYY"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -363,7 +362,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "MM"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -372,7 +371,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "DD"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -381,7 +380,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "SS"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -390,7 +389,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Time", "NNN"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -432,7 +431,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Round", "Timestamp", "NNN"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -638,7 +637,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -648,7 +647,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNKNOWN_DATE_FORMAT_EXCEPTION, "2018:12:05"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -658,7 +657,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Date", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -687,7 +686,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Time"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -697,7 +696,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNKNOWN_TIME_FORMAT_EXCEPTION, "12.00:00"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -707,7 +706,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Time", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -726,7 +725,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Subtract", "Date", "Time"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         // Test with milliseconds ISO
@@ -778,7 +777,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Timestamp"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -788,7 +787,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNKNOWN_TIMESTAMP_FORMAT_EXCEPTION, "2018-12-05-12.00:00.123"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
     
@@ -834,7 +833,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Trim"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -851,7 +850,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Ltrim"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -868,7 +867,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 3, "Rtrim"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -899,7 +898,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Length", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -919,7 +918,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Like", "String", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -939,7 +938,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "NotLike", "String", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -956,7 +955,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Regexp_Like", "String", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -973,7 +972,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "NotRegexp_Like", "String", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -994,7 +993,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Modulus", "Date", "Long"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1003,7 +1002,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_2, "Modulus", "Long", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1018,7 +1017,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "UMinus", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1044,7 +1043,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Lpad"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1053,7 +1052,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Lpad", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1079,7 +1078,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Rpad"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1088,7 +1087,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_TYPE_EXCEPTION_1, "Rpad", "Date"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1110,7 +1109,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_VALUE_EXCEPTION, "-1", "start", "Substring"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1119,7 +1118,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_VALUE_EXCEPTION, "-1", "length", "Substring"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1128,7 +1127,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "start", "Substring", "Integer"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1137,7 +1136,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "length", "Substring", "Integer"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1146,7 +1145,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Substring"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1162,7 +1161,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "expression", "Lower", "String|Number"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1178,7 +1177,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(UNEXPECTED_TYPE_EXCEPTION, "expression", "Upper", "String|Number"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 
@@ -1194,7 +1193,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 1, "Replace"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
 
         try {
@@ -1203,7 +1202,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             String message = e.getLocalizedMessage();
             assertEquals(String.format(WRONG_NUMBER_OF_PARAMETERS_EXCEPTION, 4, "Replace"), message);
         } catch (Throwable e) {
-            Assert.fail("Wrong exception: " + e.getClass());
+            fail("Wrong exception: " + e.getClass());
         }
     }
 }
