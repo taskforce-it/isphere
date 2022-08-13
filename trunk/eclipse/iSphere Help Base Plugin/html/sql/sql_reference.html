@@ -13,6 +13,34 @@ The SQL language that is used for filtering journal entries is very similar to t
 most cases it should be possible to use the same SQL statements that would be used on the host
 system.
 <p>
+<h2>Field Names</h2>
+<p>
+Field names must start with a letter, followed by any number of digits or letters.
+<p>
+<table  cellspacing="10">
+<tr><td nowrap>VALUES_WITH_TAX = 47.50</td></tr>
+</table>
+<p>
+<h3>Special Letters</h3>
+<p>
+Field name may include the following special letters:
+<p>
+<ul>
+<li>_ : underscore</li>
+<li>. : dot</li>
+<li># : hash</li>
+<li>&amp; : ampersand</li>
+<li>$ : dollar</li>
+<li>§ : paragraph</li>
+<li>@ : at-sign</li>
+</ul>
+<p>
+For any other special letters, such as letter £ (pound), field names be be encapsulated in double quotes. 
+<p>
+<table  cellspacing="10">
+<tr><td nowrap>"VALUES_IN_£" = 47.50</td></tr>
+</table>
+<p>
 <h2>Type Casting</h2>
 <p>
 Strings are automatically casted into <i>Number</i>, <i>Date</i>, <i>Time</i> and <i>Timestamp</i> values.
