@@ -1,4 +1,11 @@
 
+Changelog: iSphere 5.2.5.b001
+-----------------------------
+ • Fixed setting the library name when starting source compare from an
+   i Project source member.
+ • Enhanced the SQL editor to support quoted field names and some more
+   special characters in field names.
+
 Changelog: iSphere 5.2.4.r
 --------------------------
  • Fixed "Illegal qualified connection name." error message when
