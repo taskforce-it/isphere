@@ -41,7 +41,10 @@ public interface ParserConstants {
   int IDENTIFIER = 39;
   int LETTER = 40;
   int DIGIT = 41;
-  int OTHER_LETTER = 42;
+  int DOUBLE_QUOTES = 42;
+  int OTHER_LETTER = 43;
+  int SPECIAL_LETTER_IBM_I = 44;
+  int ANY_CHARACTER = 45;
 
   int DEFAULT = 0;
 
@@ -88,7 +91,10 @@ public interface ParserConstants {
     "<IDENTIFIER>",
     "<LETTER>",
     "<DIGIT>",
+    "<DOUBLE_QUOTES>",
     "<OTHER_LETTER>",
+    "<SPECIAL_LETTER_IBM_I>",
+    "<ANY_CHARACTER>",
     "\"(\"",
     "\")\"",
     "\",\"",

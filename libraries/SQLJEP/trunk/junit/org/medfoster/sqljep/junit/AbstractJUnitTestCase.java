@@ -36,6 +36,14 @@ public abstract class AbstractJUnitTestCase {
     private static final int JOTIME3 = 11;
     private static final int JOTSTP = 12;
     private static final int JOSEQN = 13;
+    private static final int ID_DOT = 14;
+    private static final int ID_UNDERSCORE = 15;
+    private static final int ID_HASH = 16;
+    private static final int ID_AMPERSAND = 17;
+    private static final int ID_DOLLAR = 18;
+    private static final int ID_PARAGRAPH = 19;
+    private static final int ID_AT = 20;
+    private static final int ID_POUND = 21;
     
     private static HashMap<String, Integer> columnMappings;
     static {
@@ -54,6 +62,14 @@ public abstract class AbstractJUnitTestCase {
         columnMappings.put("JOTIME3", JOTIME3);
         columnMappings.put("JOTSTP", JOTSTP);
         columnMappings.put("JOSEQN", JOSEQN);
+        columnMappings.put("ID.X", ID_DOT);
+        columnMappings.put("ID_X", ID_UNDERSCORE);
+        columnMappings.put("ID_#_X", ID_HASH);
+        columnMappings.put("ID_&_X", ID_AMPERSAND);
+        columnMappings.put("ID_$_X", ID_DOLLAR);
+        columnMappings.put("ID_§_X", ID_PARAGRAPH);
+        columnMappings.put("ID_@_X", ID_AT);
+        columnMappings.put("ID_£_X", ID_POUND);
     }
 
     private static HashMap<String, Integer> emptyColumnMappings;
@@ -120,6 +136,14 @@ public abstract class AbstractJUnitTestCase {
         row[JOTIME] = getTime(3, 5, "pm");
         row[JOTSTP] = getTimestamp(2018, 10, 22, 15, 5, 0);
         row[JOSEQN] = getBigInteger();
+        row[ID_DOT] = "ID.1";
+        row[ID_UNDERSCORE] = "ID_1";
+        row[ID_HASH] = "ID#1";
+        row[ID_AMPERSAND] = "ID&1";
+        row[ID_DOLLAR] = "ID$1";
+        row[ID_PARAGRAPH] = "ID§1";
+        row[ID_AT] = "ID@1";
+        row[ID_POUND] = "ID£1";
 
         try {
             // Different mSecs

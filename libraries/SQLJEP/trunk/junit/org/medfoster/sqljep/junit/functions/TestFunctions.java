@@ -465,9 +465,8 @@ public class TestFunctions extends AbstractJUnitTestCase {
         assertEquals(true, parseExpression("'2018-12-21-15.10.30' BETWEEN TIMESTAMP('2018-12-21-15.10.29') AND '2018-12-21-15.10.31'"));
         assertEquals(true, parseExpression("'2018-12-21-15.10.30' BETWEEN '2018-12-21-15.10.29' AND TIMESTAMP('2018-12-21-15.10.31')"));
 
-        assertEquals(
-            true,
-            parseExpression("TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
+        assertEquals(true, parseExpression(
+            "TIMESTAMP('2018-12-21-15.10.30.123') BETWEEN TIMESTAMP('2018-12-21-15.10.30.122') AND TIMESTAMP('2018-12-21-15.10.30.124')"));
 
         // Test Date and Timestamp
         assertEquals(true, parseExpression("DATE('2018-12-21') BETWEEN TIMESTAMP('2018-12-20-23.59.59') AND TIMESTAMP('2018-12-22-00.00.00')"));
@@ -718,7 +717,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
 
         // Compose Timestamp from Date and Time
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:15:25') = Date('2018-12-05') + Time('12:15:25')"));
-        
+
         try {
             assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:15:25') = Date('2018-12-05') - Time('12:15:25')"));
         } catch (WrongTypeException e) {
@@ -790,7 +789,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
             fail("Wrong exception: " + e.getClass());
         }
     }
-    
+
     @Test
     public void testTimestampCompare() throws ParseException {
 
@@ -804,7 +803,7 @@ public class TestFunctions extends AbstractJUnitTestCase {
         formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         expected = formatter.format(getTimestamp(2018, 12, 5, 12, 0, 0));
         assertEquals(true, parseExpression("TIMESTAMP('2018-12-05 12:00:00.456') > '" + expected + "'"));
-        
+
     }
 
     @Test
@@ -1204,5 +1203,45 @@ public class TestFunctions extends AbstractJUnitTestCase {
         } catch (Throwable e) {
             fail("Wrong exception: " + e.getClass());
         }
+    }
+
+    @Test
+    public void testFieldNames() throws ParseException {
+
+        assertEquals(true, parseExpression("ID.X = 'ID.1'", getColumnMapping()));
+        assertEquals(true, parseExpression("ID_X = 'ID_1'", getColumnMapping()));
+
+    }
+
+    @Test
+    public void testSpecialFieldNamesIBMi() throws ParseException {
+
+        assertEquals(true, parseExpression("ID_#_X = 'ID#1'", getColumnMapping())); // # Hash
+        assertEquals(true, parseExpression("ID_&_X = 'ID&1'", getColumnMapping())); // & Ampersand
+        assertEquals(true, parseExpression("ID_$_X = 'ID$1'", getColumnMapping())); // § Dollar
+        assertEquals(true, parseExpression("ID_§_X = 'ID§1'", getColumnMapping())); // § Paragraph
+        assertEquals(true, parseExpression("ID_@_X = 'ID@1'", getColumnMapping())); // @  AT-Sign
+
+    }
+        
+        @Test
+        public void testSpecialFieldNamesQuoted() throws ParseException {
+        
+        assertEquals(true, parseExpression("\"ID_£_X\" = 'ID£1'", getColumnMapping())); // £ Pound
+
+    }
+
+    @Test
+    public void testSpecialFieldNamesWithoutQuotes() throws ParseException {
+
+        try {
+            assertEquals(true, parseExpression("ID_£_X = 'ID£1'", getColumnMapping())); // £ Pound
+            fail("Expected to see a ParseExecption due to missing quotes.");
+        } catch (ParseException e) {
+            // exception seen
+        } catch (Throwable e) {
+            fail("Wrong exception: " + e.getClass());
+        }
+
     }
 }

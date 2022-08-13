@@ -26,7 +26,7 @@
 	<property name="build.javadoc"  location="${build.doc}/javadoc"/>
 	<property name="build.temp"     location="${build}/temp"/>
 	
-	<property name="version"     value="0.2.3.r"/>
+	<property name="version"     value="0.2.4.r"/>
 	<property name="jar"         value="${app.name}-${version}.jar"/>
 	<property name="src.zip"     value="${app.name}-${version}-src.zip"/>
 	<property name="src.tar.gz"  value="${app.name}-${version}-src.tar.gz"/>
@@ -97,10 +97,11 @@
 		<!-- Compile the java code from ${src} into ${build.compile} -->
 		<javac srcdir="${src}"
 		       destdir="${build.compile}"
-		       source="1.5"
-		       target="1.5"
+		       source="1.8"
+		       target="1.8"
 			   debug="${javac.debug}"
-			   debuglevel="lines,vars,source">
+			   debuglevel="lines,vars,source"
+			   encoding="utf8">
 			<!--
 			<exclude name="org/medfoster/sqljep/junit/**"/>
 			-->
@@ -109,14 +110,15 @@
 		<!-- Compile the JUnit tests from ${junit} into ${build.junit} -->
 		<javac srcdir="${junit}"
 		       destdir="${build.junit}"
-		       source="1.5"
-		       target="1.5"
+		       source="1.8"
+		       target="1.8"
 			   debug="${javac.debug}"
-			   debuglevel="lines,vars,source">
+			   debuglevel="lines,vars,source"
+			   encoding="utf8">
 			<classpath>
 				<path location="${build.compile}" />
 				<path location="${junit.lib}/junit.jar" />
-				<path location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+				<path location="${junit.lib}/org.hamcrest.core_1.3.0.v201303031735.jar" />
 			</classpath>
 		</javac>
 	</target>
@@ -147,13 +149,14 @@
 				<classpath>
 					<!-- JUnit4 -->
 					<pathelement location="${junit.lib}/junit.jar" />
-					<pathelement location="${junit.lib}/org.hamcrest.core_1.1.0.v20090501071000.jar" />
+					<pathelement location="${junit.lib}/org.hamcrest.core_1.3.0.v201303031735.jar" />
 					<!-- SQLJEP -->
 					<pathelement location="${build.compile}" />
+					<pathelement location="${build.junit}" />
 				</classpath>
 				<batchtest>
 					<fileset dir="${build.junit}" id="id">
-	    				<include name="**/TestDummy.class"/>
+						<include name="**/Test*.class"/>
 					</fileset>
 				</batchtest>
 			</junit>
@@ -161,7 +164,7 @@
 
 <!--======================================================================-->
 <!-- DIST -->
-	<target name="dist" depends="compile,javadoc">
+	<target name="dist" depends="compile,junit,javadoc">
 		<echo>Creating distribution package ...</echo>
 		
 		<!-- Create the distribution directory -->
