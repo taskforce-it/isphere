@@ -9,7 +9,7 @@ Bundle-ClassPath: .,
  activation.jar,
  mail.jar,
  jxl.jar,
- sqljep-0.2.3.r.jar,
+ sqljep-0.2.4.r.jar,
  gson-2.4.jar
 Bundle-Vendor: iSphere Project Team
 Export-Package: com.google.gson,
