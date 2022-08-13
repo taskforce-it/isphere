@@ -126,6 +126,7 @@ public class CompareEditorLpexAction implements LpexAction {
                 IFile file = editorInput.getFile();
                 LocalSourceLocation localSourceLocation = new LocalSourceLocation(file.getFullPath().toString());
                 fileName = localSourceLocation.getFileName();
+                libraryName = localSourceLocation.getLibraryName();
                 memberName = localSourceLocation.getMemberName();
                 String connectionName = IBMiHostContributionsHandler.getConnectionName(editor);
 
