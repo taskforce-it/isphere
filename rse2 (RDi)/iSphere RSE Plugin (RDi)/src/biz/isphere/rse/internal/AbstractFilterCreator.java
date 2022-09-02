@@ -86,25 +86,11 @@ public abstract class AbstractFilterCreator {
 
     private RSEFilter createRSEFilter(RSEFilterPool rseFilterPool, ISystemFilter filter) {
 
-        RSEFilter rseFilter = new RSEFilter(rseFilterPool, filter.getName(), getRSEFilterType(filter), filter.getFilterStrings(), false, filter);
+        RSEFilter rseFilter = new RSEFilter(rseFilterPool, filter.getName(), RSEFilterHelper.getRSEFilterType(filter), filter.getFilterStrings(),
+            false, filter);
         rseFilter.setFilterStrings(filter.getFilterStrings());
 
         return rseFilter;
-    }
-
-    private String getRSEFilterType(ISystemFilter filter) {
-
-        if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_LIBRARY)) {
-            return RSEFilter.TYPE_LIBRARY;
-        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_OBJECT)) {
-            return RSEFilter.TYPE_OBJECT;
-        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
-            return RSEFilter.TYPE_MEMBER;
-        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
-            return RSEFilter.TYPE_IFS;
-        }
-
-        return null;
     }
 
     private RSEProfile createRSEProfile(ISystemFilterPool filterPool) {
