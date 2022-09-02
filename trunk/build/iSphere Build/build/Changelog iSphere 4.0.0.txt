@@ -1,6 +1,8 @@
 
-Changelog: iSphere 5.2.5.b001
+Changelog: iSphere 5.2.5.b002
 -----------------------------
+ • Changed export filter dialog to not show a confirmation message if
+   a filter does not exist.
  • Fixed setting the library name when starting source compare from an
    i Project source member.
  • Enhanced the SQL editor to support quoted field names and some more
