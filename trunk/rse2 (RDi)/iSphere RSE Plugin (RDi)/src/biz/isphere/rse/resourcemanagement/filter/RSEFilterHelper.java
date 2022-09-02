@@ -104,22 +104,11 @@ public class RSEFilterHelper extends AbstractSystemHelper {
 
         for (int idx = 0; idx < filters.length; idx++) {
 
-            String type;
-            if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_LIBRARY)) {
-                type = RSEFilter.TYPE_LIBRARY;
-            } else if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_OBJECT)) {
-                type = RSEFilter.TYPE_OBJECT;
-            } else if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
-                type = RSEFilter.TYPE_MEMBER;
-            } else if (filters[idx].getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
-                type = RSEFilter.TYPE_IFS;
-            } else {
-                type = RSEFilter.TYPE_UNKNOWN;
-            }
+            String rseFilterType = RSEFilterHelper.getRSEFilterType(filters[idx]);
+            if (rseFilterType != null) {
 
-            if (!type.equals(RSEFilter.TYPE_UNKNOWN)) {
-
-                RSEFilter rseFilter = new RSEFilter(rseFilterPool, filters[idx].getName(), type, filters[idx].getFilterStrings(), true, filters[idx]);
+                RSEFilter rseFilter = new RSEFilter(rseFilterPool, filters[idx].getName(), rseFilterType, filters[idx].getFilterStrings(), true,
+                    filters[idx]);
 
                 rseFilters.add(rseFilter);
 
@@ -158,16 +147,7 @@ public class RSEFilterHelper extends AbstractSystemHelper {
         }
 
         if (pool != null) {
-            String newType = null;
-            if (type.equals(RSEFilter.TYPE_LIBRARY)) {
-                newType = IQSYSFilterTypes.FILTERTYPE_LIBRARY;
-            } else if (type.equals(RSEFilter.TYPE_OBJECT)) {
-                newType = IQSYSFilterTypes.FILTERTYPE_OBJECT;
-            } else if (type.equals(RSEFilter.TYPE_MEMBER)) {
-                newType = IQSYSFilterTypes.FILTERTYPE_MEMBER;
-            } else if (type.equals(RSEFilter.TYPE_IFS)) {
-                newType = IQSYSFilterTypes.FILTERTYPE_IFS;
-            }
+            String newType = RSEFilterHelper.getQSYSFilterType(type);
             if (newType != null) {
                 try {
                     pool.getSystemFilterPoolManager().createSystemFilter(pool, name, filterStrings, newType);
@@ -177,6 +157,36 @@ public class RSEFilterHelper extends AbstractSystemHelper {
             }
         }
 
+    }
+
+    public static String getQSYSFilterType(String rseFilterType) {
+
+        if (rseFilterType.equals(RSEFilter.TYPE_LIBRARY)) {
+            return IQSYSFilterTypes.FILTERTYPE_LIBRARY;
+        } else if (rseFilterType.equals(RSEFilter.TYPE_OBJECT)) {
+            return IQSYSFilterTypes.FILTERTYPE_OBJECT;
+        } else if (rseFilterType.equals(RSEFilter.TYPE_MEMBER)) {
+            return IQSYSFilterTypes.FILTERTYPE_MEMBER;
+        } else if (rseFilterType.equals(RSEFilter.TYPE_IFS)) {
+            return IQSYSFilterTypes.FILTERTYPE_IFS;
+        }
+
+        return null;
+    }
+
+    public static String getRSEFilterType(ISystemFilter filter) {
+
+        if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_LIBRARY)) {
+            return RSEFilter.TYPE_LIBRARY;
+        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_OBJECT)) {
+            return RSEFilter.TYPE_OBJECT;
+        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_MEMBER)) {
+            return RSEFilter.TYPE_MEMBER;
+        } else if (filter.getType().equals(IQSYSFilterTypes.FILTERTYPE_IFS)) {
+            return RSEFilter.TYPE_IFS;
+        }
+
+        return null;
     }
 
     public static void deleteFilter(RSEFilterPool filterPool, String name) {
@@ -197,24 +207,24 @@ public class RSEFilterHelper extends AbstractSystemHelper {
      * type of a given connection.
      * 
      * @param connectionName - Name of the RSE connection
-     * @param filterType - Filter type, must be one of the filter types defined
-     *        in {@link RSEFilter}.
+     * @param rseFilterType - Filter type, must be one of the filter types
+     *        defined in {@link RSEFilter}.
      * @return filter pools
      */
-    public static ISystemFilterPool[] getFilterPools(String connectionName, String filterType) {
+    public static ISystemFilterPool[] getFilterPools(String connectionName, String rseFilterType) {
 
         ISystemFilterPool[] pools = null;
 
-        if (RSEFilter.TYPE_LIBRARY.equals(filterType)) {
+        if (RSEFilter.TYPE_LIBRARY.equals(rseFilterType)) {
             pools = getQSYSObjectSubsystemFilterPools(connectionName);
-        } else if (RSEFilter.TYPE_OBJECT.equals(filterType)) {
+        } else if (RSEFilter.TYPE_OBJECT.equals(rseFilterType)) {
             pools = getQSYSObjectSubsystemFilterPools(connectionName);
-        } else if (RSEFilter.TYPE_MEMBER.equals(filterType)) {
+        } else if (RSEFilter.TYPE_MEMBER.equals(rseFilterType)) {
             pools = getQSYSObjectSubsystemFilterPools(connectionName);
-        } else if (RSEFilter.TYPE_IFS.equals(filterType)) {
+        } else if (RSEFilter.TYPE_IFS.equals(rseFilterType)) {
             pools = getIFSSubsystemFilterPools(connectionName);
         } else {
-            throw new IllegalArgumentException("Unsupported filter type: " + filterType);
+            throw new IllegalArgumentException("Unsupported filter type: " + rseFilterType);
         }
 
         return pools;

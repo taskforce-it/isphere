@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,10 @@ import com.ibm.etools.iseries.comm.filters.ISeriesIFSFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesLibraryFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesMemberFilterString;
 import com.ibm.etools.iseries.comm.filters.ISeriesObjectFilterString;
-import com.ibm.etools.iseries.subsystems.qsys.IQSYSFilterTypes;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.core.internal.FilterUpdateType;
+import biz.isphere.core.resourcemanagement.filter.RSEFilter;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.resourcemanagement.filter.RSEFilterHelper;
@@ -42,7 +42,7 @@ public class RSEExportToFilterHelper {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_IFS, filterName, filterUpdateType, _filterStrings);
+        return createFilter(connectionName, filterPoolName, RSEFilter.TYPE_IFS, filterName, filterUpdateType, _filterStrings);
 
     }
 
@@ -54,7 +54,7 @@ public class RSEExportToFilterHelper {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_MEMBER, filterName, filterUpdateType, _filterStrings);
+        return createFilter(connectionName, filterPoolName, RSEFilter.TYPE_MEMBER, filterName, filterUpdateType, _filterStrings);
 
     }
 
@@ -66,7 +66,7 @@ public class RSEExportToFilterHelper {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_OBJECT, filterName, filterUpdateType, _filterStrings);
+        return createFilter(connectionName, filterPoolName, RSEFilter.TYPE_OBJECT, filterName, filterUpdateType, _filterStrings);
 
     }
 
@@ -78,16 +78,16 @@ public class RSEExportToFilterHelper {
             _filterStrings.add(filterStrings[idx].toString());
         }
 
-        return createFilter(connectionName, filterPoolName, IQSYSFilterTypes.FILTERTYPE_LIBRARY, filterName, filterUpdateType, _filterStrings);
+        return createFilter(connectionName, filterPoolName, RSEFilter.TYPE_LIBRARY, filterName, filterUpdateType, _filterStrings);
 
     }
 
-    private static ISystemFilter createFilter(String connectionName, String filterPoolName, String filterType, String filterName,
+    private static ISystemFilter createFilter(String connectionName, String filterPoolName, String rseFilterType, String filterName,
         FilterUpdateType filterUpdateType, Vector<String> filterStrings) {
 
         ISystemFilterPool filterPool = null;
 
-        ISystemFilterPool[] pools = RSEFilterHelper.getFilterPools(connectionName, filterType);
+        ISystemFilterPool[] pools = RSEFilterHelper.getFilterPools(connectionName, rseFilterType);
 
         if (pools != null && pools.length >= 1) {
 
@@ -118,7 +118,8 @@ public class RSEExportToFilterHelper {
                 }
                 updateFilterStrings(getSystemFilterPoolManager(connectionName), filterPool, filterName, filterStrings);
             } else {
-                return getSystemFilterPoolManager(connectionName).createSystemFilter(filterPool, filterName, filterStrings, filterType);
+                return getSystemFilterPoolManager(connectionName).createSystemFilter(filterPool, filterName, filterStrings,
+                    RSEFilterHelper.getQSYSFilterType(rseFilterType));
             }
 
         } catch (Exception e) {

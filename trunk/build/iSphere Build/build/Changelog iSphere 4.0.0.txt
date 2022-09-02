@@ -1,6 +1,7 @@
 
 Changelog: iSphere 5.2.5.b002
 -----------------------------
+ • Fixed filter type when exporting a search result to a filter.
  • Changed export filter dialog to not show a confirmation message if
    a filter does not exist.
  • Fixed setting the library name when starting source compare from an
