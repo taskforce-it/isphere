@@ -220,11 +220,14 @@ public class FilterDialog extends XDialog {
             }
         }
 
-        if (!Validator.validateFile(cbFilter.getText())) {
-            setErrorMessage(Messages.The_value_in_field_Filter_is_not_valid);
-            cbFilter.setFocus();
-            return;
-        }
+        // No longer required in RDi 9.x
+        // All characters are allowed.
+        // Renaming a filter does not check the name, too.
+        // if (!Validator.validateFile(cbFilter.getText())) {
+        // setErrorMessage(Messages.The_value_in_field_Filter_is_not_valid);
+        // cbFilter.setFocus();
+        // return;
+        // }
 
         filterPool = cbFilterPool.getText();
         filter = cbFilter.getText();
