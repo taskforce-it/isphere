@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="BASICS1"  appauthor="Thomas Raddatz"  appblddate=" 8/11/2019">
+<upload  appname="BASICS1"  appauthor="Thomas Raddatz"  appblddate=" 9/17/2022">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -1295,7 +1295,7 @@ mbrtext =  "BASICS1 - Installer                               "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* =================================================================== */
      /*                                                                     */
@@ -3022,8 +3022,9 @@ mbrtext =  "History BASICS1 Service Program                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
+
 BASICS1 - A Tools/400 Service Program
 -------------------------------------
 
@@ -3046,14 +3047,83 @@ and service programs (BND).
 -----------------------
 
 
-Version 1.14.5
+Version 1.16.1
 --------------
 
+Fixed:   Fixed handling optional parameter i_wildcard in f_genStrCmp().
+Changed: Replaced RPG memory functions with xalloc(), xrealloc() and
+         xdealloc() to get a single point of control.
+
+
+Version 1.16.0
+--------------
+
+Added:   Test program TEST_R8_02.
+Fixed:   Fixed exports of:
+            BASICS1RF_f_rtvSysVal_char()
+            BASICS1RF_f_rtvSysVal_num()
+Fixed:   Fixed 'index out of range' check in:
+            BasicMap_getSizeByIndex()
+            BasicMap_getKeyByIndex()
+            BasicMap_getValueByIndex()
+Fixed:   Reference fields in BasicProperties_remove().
+Fixed:   Upper case key in BasicProperties_remove().
+         Now the key is lower case.
+Added:   Test cases to program TEST_RC_01.
+
+
+Changed: Target release to 7.1.
+
+
+Version 1.15.3
+--------------
+
+Fixed:   Broken member BASICS1R7. (broken with v1.15.1)
+
+
+Version 1.15.2
+--------------
+
+Changed: Added installation program A_INSTALL.
+
+
+Version 1.15.1
+--------------
+
+Changed: Added installation program A_INSTALL.
+Bug:     Broke member BASICS1R7 because of a bug in the source code
+         formatter.
+
+
+Version 1.15
+------------
+
 Added:   Procedures:
+            f_mid()
             f_cvtEpochTS()
             f_cvtTSEpoch()
             f_cvtMiTimeTS()
             f_cvtTSMiTime()
+            f_cvtQSYSObjNameToPath()
+            f_cvtPathToQSYSObjName()
+Fixed:   Replaced f_genStrCmp() with a more reliable approach.
+Changed: Removed if/endif markers.
+
+
+Version 1.14.4
+--------------
+
+Fixed:   Fixed compile errors because of usage of '*' instead of
+         '*omit'.
+
+
+Version 1.14.3
+--------------
+
+Changed: Changed Signature_new() to use ftime() instead of time().
+Changed: Removed if/endif markers.
+Changed: Changed compiler directives to keep the custom lf_bit*
+         functions for V5R3 instead of V5R2.
 
 
 Version 1.14.2
@@ -3610,7 +3680,7 @@ mbrtext =  "Tools/400: Runtime Library                        "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /* ====================================================================== */
      /* >>PRE-COMPILER<<                                                       */
@@ -3970,8 +4040,8 @@ STRPGMEXP PGMLVL(*CURRENT) SIGNATURE('Version 1.14')
 
   EXPORT SYMBOL('BASICS1R1_f_getSndInfOfRcvMsg')
 
-  EXPORT SYMBOL('BASICS1RE_f_rtvSysVal_char')
-  EXPORT SYMBOL('BASICS1RE_f_rtvSysVal_num')
+  EXPORT SYMBOL('BASICS1RF_f_rtvSysVal_char')
+  EXPORT SYMBOL('BASICS1RF_f_rtvSysVal_num')
 
   EXPORT SYMBOL('BASICS1R3_f_cvtPtrToHexString')
 
@@ -6770,7 +6840,7 @@ mbrtext =  "SrvPgm: Basic Routines - C-Helpers                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      /*=====================================================================*/
      /*  BASICS1C7  - SrvPgm: Basic Routines - C-Helper                     */
@@ -6814,7 +6884,7 @@ srccssid=  "00273">
      /*        >>PARM<< DBGVIEW(*ALL );                                     */
      /*        >>PARM<< DEFINE(DYNAMIC_CRC_TABLE);                          */
      /*        >>PARM<< OPTIMIZE(40);                                       */
-     /*        >>PARM<< TGTRLS(V6R1M0);                                     */
+     /*        >>PARM<< TGTRLS(V7R1M0);                                     */
      /*      >>END-COMPILE<<                                                */
      /*                                                                     */
      /*      >>EXECUTE<<                                                    */
@@ -6996,7 +7066,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicList                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RA  - SrvPgm: Basic Routines - BasicList                    *
@@ -7059,7 +7129,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -9975,7 +10045,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicStack               "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RB  - SrvPgm: Basic Routines - BasicStack                   *
@@ -10014,7 +10084,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -10710,7 +10780,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicMap                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RC  - SrvPgm: Basic Routines - BasicMap                     *
@@ -10795,7 +10865,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -11412,7 +11482,6 @@ srccssid=  "00273">
      D key             S                   like(BasicMap_key_t    ) inz
       *
       *  Local fields
-     D x               S             10I 0                       inz
      D mapE_key        S                   like(BasicMap_key_t )
      D                                     based(mapE.pKey)
      D mapE            DS                  likeds(mapE_t       )
@@ -11425,20 +11494,14 @@ srccssid=  "00273">
 
          checkMapHandle(i_pMap);
 
-         // Locate element by index
-         x = i_index;
-         if (x < 1 or x > BasicList_getNumE(hMap.pList));
-            return key;
-         endif;
-
          // Sort list, to keep order stable in case the user performs
          // a BasicMap_get() once that he got the key.
          sortMap(i_pMap);
 
          // Get element from underlaying list
-         pMapE = BasicList_get(hMap.pList: x);
+         pMapE = BasicList_get(hMap.pList: i_index);
          if pMapE = *NULL;
-            return key;
+            return '';
          endif;
 
          key = %subst(mapE_key: 1: %len(mapE_key));
@@ -11484,7 +11547,6 @@ srccssid=  "00273">
      D length          S                   like(i_length     ) inz
       *
       *  Local fields
-     D x               S             10I 0                       inz
      D maxSize         S             10I 0                       inz
      D mapE            DS                  likeds(mapE_t       )
      D                                     based(pMapE         )
@@ -11510,20 +11572,14 @@ srccssid=  "00273">
             length = 0;
          endif;
 
-         // Locate element by index
-         x = i_index;
-         if (x < 1 or x > BasicList_getNumE(hMap.pList));
-            return pElemData;
-         endif;
-
          // Sort list, to keep order stable in case the user performs
          // a BasicMap_get() once that he got the key.
          sortMap(i_pMap);
 
          // Get element from underlaying list
-         pMapE = BasicList_get(hMap.pList: x);
+         pMapE = BasicList_get(hMap.pList: i_index);
          if pMapE = *NULL;
-            return pElemData;
+            return *NULL;
          endif;
 
          // Determine number of bytes to copy
@@ -11827,7 +11883,6 @@ srccssid=  "00273">
      D size            S             10I 0 inz(-1)
       *
       *  Local fields
-     D x               S             10I 0 inz
      D mapE            DS                  likeds(mapE_t       ) inz
       *
       *  Map handle
@@ -11837,15 +11892,9 @@ srccssid=  "00273">
 
          checkMapHandle(i_pMap);
 
-         // Locate element by index
-         x = i_index;
-         if (x < 1 or x > BasicList_getNumE(hMap.pList));
-            return size;
-         endif;
-
          // Get element from underlaying list
-         if BasicList_get(hMap.pList: x: %addr(mapE): %size(mapE)) = *NULL;
-            return size;
+         if BasicList_get(hMap.pList: i_index: %addr(mapE): %size(mapE))= *NULL;
+            return -1;
          endif;
 
          size = mapE.size;
@@ -13027,7 +13076,7 @@ mbrtext =  "SrvPgm: Basic Routines - URL                      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RC  - SrvPgm: Basic Routines - URL                          *
@@ -13062,7 +13111,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -14720,7 +14769,7 @@ mbrtext =  "SrvPgm: Basic Routines - Date and Time            "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       // -------------------------------------------------------------------
       //  BASICS1RC  - SrvPgm: Basic Routines - Date and Time
@@ -14755,7 +14804,7 @@ srccssid=  "00273">
       //     >>COMPILE<<
       //       >>PARM<< TRUNCNBR(*NO);
       //       >>PARM<< DBGVIEW(*LIST);
-      //       >>PARM<< TGTRLS(V6R1M0);
+      //       >>PARM<< TGTRLS(V7R1M0);
       //     >>END-COMPILE<<
       //
       //     >>EXECUTE<<
@@ -15080,7 +15129,7 @@ mbrtext =  "SrvPgm: Basic Routines - System Values            "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RF  - SrvPgm: Basic Routines - System Values                *
@@ -15115,7 +15164,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -15478,7 +15527,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicProperties          "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RG  - SrvPgm: Basic Routines - BasicProperties              *
@@ -16031,8 +16080,8 @@ srccssid=  "00273">
       *
      D BasicProperties_remove...
      D                 PI            10I 0
-     D  i_pProperties                      const  like(BasicMap_handle_t )
-     D  i_key                              const  like(BasicMap_key_t    )
+     D  i_pProperties                      const  like(BasicProperties_handle_t)
+     D  i_key                              const  like(BasicMap_key_t          )
      D                                            options(*varsize)
       *
       *  Return value
@@ -16505,6 +16554,9 @@ srccssid=  "00273">
      P BasicProperties_putDecimal...
      P                 B                   export
       *
+      * TODO: think about how to change the return value to int(10)
+      *       for know I think that is impossible without breaking
+      *       backward compatibility
      D BasicProperties_putDecimal...
      D                 PI                         like(BasicProperties_decVal_t)
      D  i_pProperties                      const  like(BasicProperties_handle_t)
@@ -17121,7 +17173,7 @@ mbrtext =  "SrvPgm: Basic Routines - MemoryBufferRdrWtr       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1RH  - SrvPgm: Basic Routines - MemoryBufferRdrWtr           *
@@ -17156,7 +17208,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -17576,7 +17628,7 @@ mbrtext =  "SrvPgm: Basic Routines - Declarations        cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICR0)
       /DEFINE BASICR0
@@ -17785,7 +17837,7 @@ mbrtext =  "SrvPgm: Basic Routines - Messages                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R1  - SrvPgm: Basic Routines - Messages                     *
@@ -17828,6 +17880,10 @@ srccssid=  "00273">
       *                            message type from the rcvm0200 format    *
       *                            if the message type has not been passed. *
       *                                                                     *
+      *  17.09.2022  Th.Raddatz    Changed module to use:  xalloc()         *
+      *                                                    xrealloc()       *
+      *                                                    xdealloc()       *
+      *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
       *                                                                     *
@@ -17838,7 +17894,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -17860,6 +17916,13 @@ srccssid=  "00273">
       *  Reference fields
       * -----------------------------------------
       /COPY QBASICS1,BASICS1R0
+      *
+      * -----------------------------------------
+      *  Imported prototypes
+      * -----------------------------------------
+      /DEFINE INCLUDE_INTERNAL_PROCDURES
+      /COPY QBASICS1,PBASICS1R8
+      /UNDEFINE INCLUDE_INTERNAL_PROCDURES
       *
       * -----------------------------------------
       *  Private prototypes
@@ -19094,7 +19157,7 @@ srccssid=  "00273">
          if   pRtvm0100 <> *NULL;
             if   rtvm0100.lenMsgRet > 0;
                msgText = %subst(rtvm0100: 25: rtvm0100.lenMsgRet);
-               dealloc(N) pRtvm0100;
+               xdealloc(pRtvm0100);
             else;
                msgText = '';
             endif;
@@ -19194,7 +19257,7 @@ srccssid=  "00273">
             if   rtvm0100.lenHlpRet > 0;
                msgHelpText = %subst(rtvm0100: 25 + rtvm0100.lenMsgRet:
                                     rtvm0100.lenHlpRet);
-               dealloc(N) pRtvm0100;
+               xdealloc(pRtvm0100);
             else;
                msgHelpText = '';
             endif;
@@ -19272,7 +19335,7 @@ srccssid=  "00273">
          if   pRtvm0100 <> *NULL;
             if   rtvm0100.lenMsgRet > 0;
                msgText = %subst(rtvm0100: 25: rtvm0100.lenMsgRet);
-               dealloc(N) pRtvm0100;
+               xdealloc(pRtvm0100);
             else;
                msgText = '';
             endif;
@@ -19372,7 +19435,7 @@ srccssid=  "00273">
             if   rtvm0100.lenHlpRet > 0;
                msgHelpText = %subst(rtvm0100: 25 + rtvm0100.lenMsgRet:
                                     rtvm0100.lenHlpRet);
-               dealloc(N) pRtvm0100;
+               xdealloc(pRtvm0100);
             else;
                msgHelpText = '';
             endif;
@@ -19557,7 +19620,7 @@ srccssid=  "00273">
       /FREE
 
          memSize   = %size(rcvm0300) + 1024;
-         pRcvm0300 = %alloc(memSize);
+         pRcvm0300 = xalloc(memSize);
          errCode   = f_newApiErrCode(cFalse);
 
          dou (rcvm0300.bytRet >= rcvm0300.bytAvl or f_isApiError(errCode));
@@ -19565,7 +19628,7 @@ srccssid=  "00273">
                      cMsg_Any: i_rcvm0200.msgKey: 0: cMsg_Act_Same: errCode);
             if (rcvm0300.bytRet < rcvm0300.bytAvl);
                memSize   = rcvm0300.bytAvl;
-               pRcvm0300 = %realloc(pRcvm0300: memSize);
+               pRcvm0300 = xrealloc(pRcvm0300: memSize);
             endif;
          enddo;
 
@@ -19589,7 +19652,7 @@ srccssid=  "00273">
             longSndPrc = %subst(tmpLongSndPrc: 1: tmpSndInf.lenSndPrcLName);
          endif;
 
-         dealloc(N) pRcvm0300;
+         xdealloc(pRcvm0300);
 
          // Set optional output parameters
          if (%parms() >= p_longSndPgm and %addr(o_longSndPgm) <> *NULL);
@@ -19778,7 +19841,7 @@ srccssid=  "00273">
 
          // Allocate memory and set initial parameter values
          memSize = 8;
-         pMsgInf = %alloc(memSize);
+         pMsgInf = xalloc(memSize);
          errCode = f_newApiErrCode(cTrue);
 
          // Loop until complete message information is received ...
@@ -19789,14 +19852,14 @@ srccssid=  "00273">
 
             // ... check for errors
             if  f_isApiError(errCode);
-               dealloc(N) pMsgInf;
+               xdealloc(pMsgInf);
                o_msg = f_cvtApiErrCodeToMsg(errCode);
                leave;
             else;
                // ... get more memory
                if   memSize < msgInf.bytAvl;
                   memSize = msgInf.bytAvl;
-                  pMsgInf = %realloc(pMsgInf: memSize);
+                  pMsgInf = xrealloc(pMsgInf: memSize);
                else;
                   o_msg = f_newMsg(cMsg_ID_OK);
                endif;
@@ -19824,7 +19887,7 @@ mbrtext =  "SrvPgm: Basic Routines - API Error Handling       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R2  - SrvPgm: Basic Routines - API Error Handling           *
@@ -19873,7 +19936,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -20249,7 +20312,7 @@ mbrtext =  "SrvPgm: Basic Routines - Strings                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R3  - SrvPgm: Basic Routines - Strings                      *
@@ -20350,6 +20413,9 @@ srccssid=  "00273">
       *  07.04.2015  Th.Raddatz    Replaced f_genStrCmp() with a more       *
       *                            reliable approach.                       *
       *                                                                     *
+      *  17.09.2022  Th.Raddatz    Fixed handling optional parameter        *
+      *                            i_wildcard in f_genStrCmp().             *
+      *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
       *                                                                     *
@@ -20360,7 +20426,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -22124,7 +22190,12 @@ srccssid=  "00273">
             return cEQUAL_TRUE;
          endif;
 
-         return lf_genStrCmpInternal(i_string: i_pattern: i_wildcard);
+         // Call generic string compare procedure
+         if (%parms() >= %parmNum(i_wildcard));
+            return lf_genStrCmpInternal(i_string: i_pattern: i_wildcard);
+         else;
+            return lf_genStrCmpInternal(i_string: i_pattern);
+         endif;
 
       /END-FREE
       *
@@ -22170,7 +22241,7 @@ srccssid=  "00273">
          string = f_lcase(i_string);
 
          // Call generic string compare procedure
-         if   %parms >= p_wildcard;
+         if (%parms() >= %parmNum(i_wildcard));
             isEqual = f_genStrCmp(string: mask: i_wildcard);
          else;
             isEqual = f_genStrCmp(string: mask);
@@ -22210,7 +22281,7 @@ srccssid=  "00273">
       /FREE
 
          // Process optional parameter values ...
-         // ... decimal point
+         // ... wildcard
          if (%parms() >= p_wildcard and %addr(i_wildcard) <> *NULL);
             wildcard = i_wildcard;
          else;
@@ -22922,7 +22993,7 @@ mbrtext =  "SrvPgm: Basic Routines - Assert/This/Caller       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R4  - SrvPgm: Basic Routines - Assert/This/Caller           *
@@ -22957,6 +23028,10 @@ srccssid=  "00273">
       *                                                                     *
       *  13.06.2008  Th.Raddatz    Added parameter 'offset' to f_caller().  *
       *                                                                     *
+      *  17.09.2022  Th.Raddatz    Changed module to use:  xalloc()         *
+      *                                                    xrealloc()       *
+      *                                                    xdealloc()       *
+      *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
       *                                                                     *
@@ -22967,7 +23042,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -22984,6 +23059,13 @@ srccssid=  "00273">
       *  Exported functions
       * -----------------------------------------
       /COPY QBASICS1,PBASICS1R4
+      *
+      * -----------------------------------------
+      *  Imported prototypes
+      * -----------------------------------------
+      /DEFINE INCLUDE_INTERNAL_PROCDURES
+      /COPY QBASICS1,PBASICS1R8
+      /UNDEFINE INCLUDE_INTERNAL_PROCDURES
       *
       * -----------------------------------------
       *  Reference fields
@@ -23016,8 +23098,6 @@ srccssid=  "00273">
       *=========================================================================
      P p_assert...
      P                 B                   export
-      *
-     D p_assert...
      D                 PI
      D  i_condition                    N   const
      D  i_msgText                   128A   const  options(*nopass)
@@ -23035,6 +23115,12 @@ srccssid=  "00273">
       *
       *  Local constants
      D cTEXT_MSG       C                   const('Who is before me?')
+      *
+      *  Fields for sender information
+     D procedure       S            256A   inz varying
+     D module          S             10A   inz
+     D program         S             10A   inz
+     D stmtID          S             10A   inz
       *
       *  Helper fields QMHSNDPM/QMHRCVPM
      D qMsgF           DS                  likeds(qObj_t     )  inz
@@ -23072,7 +23158,7 @@ srccssid=  "00273">
 
             if   not f_isApiError(errCode);
                memSize   = 2048;
-               pRcvm0300 = %alloc(memSize);
+               pRcvm0300 = xalloc(memSize);
                errCode   = f_newApiErrCode(cTrue);
                callStkEQ.module  = '*NONE';
                callStkEQ.program = '*NONE';
@@ -23089,31 +23175,29 @@ srccssid=  "00273">
                                    + rcvm0300.lenRplDataR
                                    + rcvm0300.lenMsgR
                                    + rcvm0300.lenMsgHlpR;
+               procedure = %trimR(sndInf.rcvProc);
+               module    = sndInf.rcvModule;
+               program   = sndInf.rcvPgm;
+               stmtID    = sndInf.rcvPgmStmtNbr(1);
             else;
                // ... else set sender information to "not available"
-               pSndInf = %alloc(%size(sndInf));
-               clear   sndInf;
-               sndInf.rcvPgm     = '*N';
-               sndInf.rcvModule  = '*N';
-               sndInf.rcvProc    = '*N';
-               sndInf.rcvPgmStmtNbr(1) = '*N';
+               procedure = '*N';
+               module    = '*N';
+               program   = '*N';
+               stmtID    = '*N';
             endif;
 
             // Create "assert" message
-            msgText = %trimr(sndInf.rcvPgm    ) + '/'  +
-                      %trimr(sndInf.rcvModule ) + '.'  +
-                      %trimr(sndInf.rcvProc   ) + ' (' +
+            msgText = %trimr(program)   + '/'  +
+                      %trimr(module )   + '.'  +
+                      %trimr(procedure) + ' (' +
                       'Stmt: '                         +
-                      %trimr(sndInf.rcvPgmStmtNbr(1)) + ') ' +
+                      %trimr(stmtID)    + ') ' +
                       ': ' + %trim(msgText);
 
             // Free memory
-            if   pRcvm0300 <> *NULL;
-               dealloc(N)   pRcvm0300;
-            else;
-               if   pSndInf <> *NULL;
-                  dealloc(N) pSndInf;
-               endif;
+            if (pRcvm0300 <> *NULL);
+               xdealloc(pRcvm0300);
             endif;
 
             // Send "assert" *ESCAPE message
@@ -23128,10 +23212,6 @@ srccssid=  "00273">
 
       /END-FREE
       /ENDIF
-      *
-     C                   return
-      *
-     P p_assert...
      P                 E
       *
       *=========================================================================
@@ -23147,8 +23227,6 @@ srccssid=  "00273">
       *=========================================================================
      P f_this...
      P                 B                   export
-      *
-     D f_this...
      D                 PI           256A          varying
      D  o_module                     10A          options(*nopass: *omit)
      D  o_program                    10A          options(*nopass: *omit)
@@ -23200,7 +23278,7 @@ srccssid=  "00273">
 
          if   not f_isApiError(errCode);
             memSize   = 2048;
-            pRcvm0300 = %alloc(memSize);
+            pRcvm0300 = xalloc(memSize);
             errCode   = f_newApiErrCode(cTrue);
             callStkEQ.module  = '*NONE';
             callStkEQ.program = '*NONE';
@@ -23230,7 +23308,7 @@ srccssid=  "00273">
 
          // Free memory
          if   pRcvm0300 <> *NULL;
-            dealloc(N)   pRcvm0300;
+            xdealloc(pRcvm0300);
          endif;
 
          // Process optional output parameters ...
@@ -23270,8 +23348,6 @@ srccssid=  "00273">
          return   procedure;
 
       /END-FREE
-      *
-     P f_this...
      P                 E
       *
       *=========================================================================
@@ -23288,8 +23364,6 @@ srccssid=  "00273">
       *=========================================================================
      P f_caller...
      P                 B                   export
-      *
-     D f_caller...
      D                 PI           256A          varying
      D  o_module                     10A          options(*nopass: *omit)
      D  o_program                    10A          options(*nopass: *omit)
@@ -23351,7 +23425,7 @@ srccssid=  "00273">
          if   not f_isApiError(errCode);
             // Receive and remove test message
             memSize   = 2048;
-            pRcvm0300 = %alloc(memSize);
+            pRcvm0300 = xalloc(memSize);
             errCode   = f_newApiErrCode(cTrue);
             callStkEQ.module  = '*NONE';
             callStkEQ.program = '*NONE';
@@ -23381,7 +23455,7 @@ srccssid=  "00273">
 
          // Free memory
          if   pRcvm0300 <> *NULL;
-            dealloc(N)   pRcvm0300;
+            xdealloc(pRcvm0300);
          endif;
 
          // Process optional output parameters ...
@@ -23421,8 +23495,6 @@ srccssid=  "00273">
          return   procedure;
 
       /END-FREE
-      *
-     P f_caller...
      P                 E
       *
 ]]>  </copysrc>
@@ -23438,7 +23510,7 @@ mbrtext =  "SrvPgm: Basic Routines - Objects                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R5  - SrvPgm: Basic Routines - Objects                      *
@@ -23488,7 +23560,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -25631,7 +25703,7 @@ mbrtext =  "SrvPgm: Basic Routines - Commands/Environment     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R6  - SrvPgm: Basic Routines - Commands                     *
@@ -25677,7 +25749,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -26170,7 +26242,7 @@ mbrtext =  "SrvPgm: Basic Routines - Mathematics              "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R7  - SrvPgm: Basic Routines - Mathematics                  *
@@ -26216,7 +26288,7 @@ srccssid=  "00273">
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
       *       >>PARM<< OPTIMIZE(*FULL );                                    *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -27271,7 +27343,7 @@ mbrtext =  "SrvPgm: Basic Routines - Handle/Memory            "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R8  - SrvPgm: Basic Routines - Handle/Memory                *
@@ -27309,6 +27381,10 @@ srccssid=  "00273">
       *                            'invalid handle' in case the handle      *
       *                            is *NULL.                                *
       *                                                                     *
+      *  17.09.2022  Th.Raddatz    Added procedures:  xalloc()              *
+      *                                               xrealloc()            *
+      *                                               xdealloc()            *
+      *                                                                     *
       *=====================================================================*
       *   >>PRE-COMPILER<<                                                  *
       *                                                                     *
@@ -27319,7 +27395,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -27336,7 +27412,9 @@ srccssid=  "00273">
       * -----------------------------------------
       *  Exported functions
       * -----------------------------------------
+      /DEFINE INCLUDE_INTERNAL_PROCDURES
       /COPY QBASICS1,PBASICS1R8
+      /UNDEFINE INCLUDE_INTERNAL_PROCDURES
       *
       * -----------------------------------------
       *  Reference fields
@@ -27390,8 +27468,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_new...
      P                 B                   export
-      *
-     D HANDLE_new...
      D                 PI                         like(HANDLE_handle_t)
      D  i_type                             value  like(HANDLE_type_t  )
      D  i_size                       10U 0 value
@@ -27417,28 +27493,26 @@ srccssid=  "00273">
          else;
             // else allocate memory for a base handle
             // and the size of memory requested.
-            pHandle = %alloc(%size(baseHandle_t) + i_size);
+            pHandle = xalloc(%size(baseHandle_t) + i_size);
             g_handleList(aHandle) = pHandle;
 
             // Initialize handle - V5R3
             // handle.baseHandle.type = i_type;
             // handle.baseHandle.size = i_size;
-            // handle.pUserHandle = %alloc(baseHandle.size);
+            // handle.pUserHandle = xalloc(baseHandle.size);
             // memset(handle.pUserHandle: x'00': baseHandle.size);
 
             // Initialize handle - V5R1
             baseHandle.type = i_type;
             baseHandle.size = i_size;
             handle.baseHandle = baseHandle;
-            handle.pUserHandle = %alloc(baseHandle.size);
+            handle.pUserHandle = xalloc(baseHandle.size);
             memset(handle.pUserHandle: x'00': baseHandle.size);
          endif;
 
          return   aHandle;
 
       /END-FREE
-      *
-     P HANDLE_new...
      P                 E
       *
       *=========================================================================
@@ -27452,8 +27526,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_null...
      P                 B                   export
-      *
-     D HANDLE_null...
      D                 PI                         like(HANDLE_handle_t)
       *
       *  Return value
@@ -27467,8 +27539,6 @@ srccssid=  "00273">
          return   aHandle;
 
       /END-FREE
-      *
-     P HANDLE_null...
      P                 E
       *
       *=========================================================================
@@ -27482,8 +27552,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_isNull...
      P                 B                   export
-      *
-     D HANDLE_isNull...
      D                 PI              N
      D  i_handle                           value  like(HANDLE_handle_t)
       *
@@ -27516,8 +27584,6 @@ srccssid=  "00273">
          return   isNull;
 
       /END-FREE
-      *
-     P HANDLE_isNull...
      P                 E
       *
       *=========================================================================
@@ -27532,8 +27598,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_isTypeOf...
      P                 B                   export
-      *
-     D HANDLE_isTypeOf...
      D                 PI              N
      D  i_handle                           value  like(HANDLE_handle_t)
      D  i_type                             value  like(HANDLE_type_t  )
@@ -27581,8 +27645,6 @@ srccssid=  "00273">
          return   isValid;
 
       /END-FREE
-      *
-     P HANDLE_isTypeOf...
      P                 E
       *
       *=========================================================================
@@ -27596,8 +27658,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_getPointer...
      P                 B                   export
-      *
-     D HANDLE_getPointer...
      D                 PI              *
      D  i_handle                           value  like(HANDLE_handle_t)
       *
@@ -27621,8 +27681,6 @@ srccssid=  "00273">
          return   pUserHandle;
 
       /END-FREE
-      *
-     P HANDLE_getPointer...
      P                 E
       *
       *=========================================================================
@@ -27636,8 +27694,6 @@ srccssid=  "00273">
       *=========================================================================
      P HANDLE_delete...
      P                 B                   export
-      *
-     D HANDLE_delete...
      D                 PI
      D  io_handle                                 like(HANDLE_handle_t)
       *
@@ -27666,13 +27722,13 @@ srccssid=  "00273">
          // Initialize handle memory - V5R1
          baseHandle = handle.baseHandle;
          memset(handle.pUserHandle: x'00': baseHandle.size);
-         dealloc(N) handle.pUserHandle;
+         xdealloc(handle.pUserHandle);
          baseHandle.size = 0;
          baseHandle.type = *ALLx'00';
          handle.baseHandle = baseHandle;
 
          // Free handle memory
-         dealloc(N) pHandle;
+         xdealloc(pHandle);
 
          // Free index in handle list
          g_handleList(io_handle) = *NULL;
@@ -27683,8 +27739,6 @@ srccssid=  "00273">
          return;
 
       /END-FREE
-      *
-     P HANDLE_delete...
      P                 E
       *
       *=========================================================================
@@ -27699,8 +27753,6 @@ srccssid=  "00273">
       *=========================================================================
      P MEMORY_allocate...
      P                 B                   export
-      *
-     D MEMORY_allocate...
      D                 PI              *
      D  io_aMemList                    *
      D  i_size                       10I 0 value
@@ -27722,7 +27774,7 @@ srccssid=  "00273">
          if (i_size = 0);
             pMemory = *NULL;
          else;
-            pMemory = %alloc(i_size + %size(cell));
+            pMemory = xalloc(i_size + %size(cell));
             pCell   = pMemory + i_size;            // Position cell right after payload
             cell.pPrvCell    = io_aMemList;        // Remember the address of the prv. cell
             cell.size        = i_size;             // Remember the size of the current cell
@@ -27732,8 +27784,6 @@ srccssid=  "00273">
          return pMemory;
 
       /END-FREE
-      *
-     P MEMORY_allocate...
      P                 E
       *
       *=========================================================================
@@ -27748,8 +27798,6 @@ srccssid=  "00273">
       *=========================================================================
      P MEMORY_freeAll...
      P                 B                   export
-      *
-     D MEMORY_freeAll...
      D                 PI
      D  io_aMemList                    *
       *
@@ -27774,8 +27822,6 @@ srccssid=  "00273">
          return;
 
       /END-FREE
-      *
-     P MEMORY_freeAll...
      P                 E
       *
       *=========================================================================
@@ -27789,8 +27835,6 @@ srccssid=  "00273">
       *=========================================================================
      P MEMORY_free...
      P                 B                   export
-      *
-     D MEMORY_free...
      D                 PI
      D  io_aMemList                    *
      D  io_pMem                        *
@@ -27862,8 +27906,6 @@ srccssid=  "00273">
          return;
 
       /END-FREE
-      *
-     P MEMORY_free...
      P                 E
       *
       *=========================================================================
@@ -27876,8 +27918,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_getDefaultManager...
      P                 B                   export
-      *
-     D MemoryManager_getDefaultManager...
      D                 PI                        likeds(MemoryManager_manager_t)
       *
       *  Return value
@@ -27892,8 +27932,6 @@ srccssid=  "00273">
          return memMgr;
 
       /END-FREE
-      *
-     P MemoryManager_getDefaultManager...
      P                 E
       *
       *=========================================================================
@@ -27907,8 +27945,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_allocate...
      P                 B                   export
-      *
-     D MemoryManager_allocate...
      D                 PI              *
      D  i_size                       10U 0 value
      D  i_heapID                     10I 0 value  options(*nopass)
@@ -27946,8 +27982,6 @@ srccssid=  "00273">
          return pMemory;
 
       /END-FREE
-      *
-     P MemoryManager_allocate...
      P                 E
       *
       *=========================================================================
@@ -27963,8 +27997,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_reallocate...
      P                 B                   export
-      *
-     D MemoryManager_reallocate...
      D                 PI              *
      D  i_pMem                         *   value
      D  i_size                       10U 0 value
@@ -27979,8 +28011,6 @@ srccssid=  "00273">
          return pMemory;
 
       /END-FREE
-      *
-     P MemoryManager_reallocate...
      P                 E
       *
       *=========================================================================
@@ -27994,8 +28024,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_free...
      P                 B                   export
-      *
-     D MemoryManager_free...
      D                 PI
      D  io_pMem                        *
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28011,8 +28039,6 @@ srccssid=  "00273">
          return;
 
       /END-FREE
-      *
-     P MemoryManager_free...
      P                 E
       *
       *=========================================================================
@@ -28031,8 +28057,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_createHeap...
      P                 B                   export
-      *
-     D MemoryManager_createHeap...
      D                 PI            10I 0
      D  i_initialSize                10I 0 const  options(*nopass: *omit)
      D  i_increment                  10I 0 const  options(*nopass: *omit)
@@ -28076,8 +28100,6 @@ srccssid=  "00273">
          return heapID;
 
       /END-FREE
-      *
-     P MemoryManager_createHeap...
      P                 E
       *
       *=========================================================================
@@ -28091,8 +28113,6 @@ srccssid=  "00273">
       *=========================================================================
      P MemoryManager_deleteHeap...
      P                 B                   export
-      *
-     D MemoryManager_deleteHeap...
      D                 PI
      D  io_heapID                    10I 0
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -28104,8 +28124,88 @@ srccssid=  "00273">
          return;
 
       /END-FREE
+     P                 E
       *
-     P MemoryManager_deleteHeap...
+      *=========================================================================
+      *  *** Internal use only. ***
+      *  Returns a pointer to newly allocated heap storage of the length
+      *  specified. Replacement for RPG %alloc().
+      *=========================================================================
+      *  Parameters:
+      *   i_size        - Size of the newly allocated storage.
+      *
+      *  Returns:
+      *   pMem          - Pointer to the newly allocated storage.
+      *=========================================================================
+     P xalloc...
+     P                 B                   export
+     D                 PI              *
+     D  i_size                       10I 0 const
+      *
+      *  Return value
+     D pMem            S               *   inz
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /FREE
+
+         pMem = %alloc(i_size);
+
+         return pMem;
+
+      /END-FREE
+     P                 E
+      *
+      *=========================================================================
+      *  *** Internal use only. ***
+      *  Changes the heap storage pointed to by the first parameter to be the
+      *  length specified in the second parameter. Replacement for RPG
+      *  %realloc().
+      *=========================================================================
+      *  Parameters:
+      *   i_pMem        - Pointer to the heap storage that is reallocated.
+      *   i_size        - New size of the heap storage.
+      *
+      *  Returns:
+      *   pMem          - Pointer to the resized heap storage.
+      *=========================================================================
+     P xrealloc...
+     P                 B                   export
+     D                 PI              *
+     D  i_pMem                         *   const
+     D  i_size                       10I 0 const
+      *
+      *  Return value
+     D pMem            S               *   inz
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /FREE
+
+         pMem = %realloc(i_pMem: i_size);
+
+         return pMem;
+
+      /END-FREE
+     P                 E
+      *
+      *=========================================================================
+      *  *** Internal use only. ***
+      *  Frees one previous allocation of heap storage.
+      *  Replacement for RPG dealloc.
+      *=========================================================================
+      *  Parameters:
+      *   i_pMem        - Pointer to the heap storage that is reallocated.
+      *
+      *  Returns:
+      *   void
+      *=========================================================================
+     P xdealloc...
+     P                 B                   export
+     D                 PI
+     D  io_pMem                        *
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /FREE
+
+         dealloc(N) io_pMem;
+
+      /END-FREE
      P                 E
       *
 ]]>  </copysrc>
@@ -28121,7 +28221,7 @@ mbrtext =  "SrvPgm: Basic Routines - Display Information      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *=====================================================================*
       *  BASICS1R9  - SrvPgm: Basic Routines - Display Information          *
@@ -28162,7 +28262,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                                     *
       *       >>PARM<< TRUNCNBR(*NO);                                       *
       *       >>PARM<< DBGVIEW(*LIST);                                      *
-      *       >>PARM<< TGTRLS(V6R1M0);                                      *
+      *       >>PARM<< TGTRLS(V7R1M0);                                      *
       *     >>END-COMPILE<<                                                 *
       *                                                                     *
       *     >>EXECUTE<<                                                     *
@@ -28488,7 +28588,7 @@ mbrtext =  "Prototypes of CEE APIs                   (include)"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  DEF  /IF NOT DEFINED(CEELIB)
  DEF  /DEFINE CEELIB
@@ -28680,7 +28780,7 @@ mbrtext =  "Prototypes of C-Library                  (include)"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  DEF  /IF NOT DEFINED(CLIB)
  DEF  /DEFINE CLIB
@@ -29694,16 +29794,16 @@ mbrtext =  "Copyright information                             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     H COPYRIGHT('V1.15.3 - 11.08.2019 - mailto:thomas.raddatz@tools400.de')
+     H COPYRIGHT('V1.16.1 - 17.09.2022 - mailto:thomas.raddatz@tools400.de')
       /eof
       /endif
      D BASICS1_VERSION...
-     D                 C                   '1.15.3'
+     D                 C                   '1.16.1'
      D BASICS1_DATE...
-     D                 C                   '11.08.2019'
+     D                 C                   '17.09.2022'
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
@@ -29717,7 +29817,7 @@ mbrtext =  "cpybk   : Environment variable                    "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(envVar_t  )
       /DEFINE envVar_t
@@ -29743,7 +29843,7 @@ mbrtext =  "cpybk   : API error code                          "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(errCode_t )
       /DEFINE errCode_t
@@ -29771,7 +29871,7 @@ mbrtext =  "cpybk   : File information data structure         "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(fileInfDS_t)
       /DEFINE fileInfDS_t
@@ -30018,7 +30118,7 @@ mbrtext =  "cpybk   : QUSRMBRD API - MBRD0100                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(mbrd0100_t)
       /DEFINE mbrd0100_t
@@ -30052,7 +30152,7 @@ mbrtext =  "cpybk   : QUSRMBRD API - MBRD0200                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(mbrd0200_t)
       /DEFINE mbrd0200_t
@@ -30113,7 +30213,7 @@ mbrtext =  "cpybk   : Message                                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(msg_t     )
       /DEFINE msg_t
@@ -30152,7 +30252,7 @@ mbrtext =  "cpybk   : QUSROBJD API - OBJD0100                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(objd0100_t)
       /DEFINE objd0100_t
@@ -30187,7 +30287,7 @@ mbrtext =  "cpybk   : Qualified file name                     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(qFile_t   )
       /DEFINE qFile_t
@@ -30214,7 +30314,7 @@ mbrtext =  "cpybk   : Qualified object name                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(qObj_t    )
       /DEFINE qObj_t
@@ -30240,7 +30340,7 @@ mbrtext =  "cpybk   : Qualified QSYS object name              "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(qQSYSObj_t)
       /DEFINE qQSYSObj_t
@@ -30268,7 +30368,7 @@ mbrtext =  "cpybk   : QMHRCVM  API - RCVM0200                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(rcvm0200_t)
       /DEFINE rcvm0200_t
@@ -30358,7 +30458,7 @@ mbrtext =  "cpybk   : QMHRCVM  API - RCVM0300                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(rcvm0300_t)
       /DEFINE rcvm0300_t
@@ -30556,7 +30656,7 @@ mbrtext =  "cpybk   : QMHRTVM  API - RTVM0100                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(rtvm0100_t)
       /DEFINE rtvm0100_t
@@ -30594,7 +30694,7 @@ mbrtext =  "cpybk   : QMHRTVM  API - RTVM0300                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(rtvm0300_t)
       /DEFINE rtvm0300_t
@@ -30674,7 +30774,7 @@ mbrtext =  "cpybk   : QMHRTVM  API - RTVM0400                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(rtvm0400_t)
       /DEFINE rtvm0400_t
@@ -30832,7 +30932,7 @@ mbrtext =  "cpybk   : URL                                     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(url_t)
       /DEFINE url_t
@@ -30854,7 +30954,7 @@ mbrtext =  "H-Specifications                                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
      H DEBUG
      H OPTION(*SRCSTMT : *NODEBUGIO)
@@ -30879,7 +30979,7 @@ mbrtext =  "Storage Management APIs                           "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  DEF  /IF NOT DEFINED(HEAPAPI)
  DEF  /DEFINE HEAPAPI
@@ -30980,7 +31080,7 @@ mbrtext =  "BasicList - Memory Manager Prototypes             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *
      D mm_memMgr       DS                  likeds(MemoryManager...
@@ -31013,7 +31113,7 @@ mbrtext =  "Prototypes for MI-Library                (include)"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  DEF  /IF NOT DEFINED(MILIB)
  DEF  /DEFINE MILIB
@@ -31319,7 +31419,7 @@ mbrtext =  "SrvPgm: Basic Routines - Include             cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(D_BASIC)
       /DEFINE D_BASIC
@@ -31376,7 +31476,7 @@ mbrtext =  "SrvPgm: Basic Routines - C-Helpers           cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1C7)
       /DEFINE BASICS1C7
@@ -31413,7 +31513,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicList           cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RA)
       /DEFINE BASICS1RA
@@ -31750,7 +31850,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicStack          cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RB)
       /DEFINE BASICS1RB
@@ -31881,7 +31981,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicMap            cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RC)
       /DEFINE BASICS1RC
@@ -32162,7 +32262,7 @@ mbrtext =  "SrvPgm: Basic Routines - URL                 cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RD)
       /DEFINE BASICS1RD
@@ -32345,7 +32445,7 @@ mbrtext =  "SrvPgm: Basic Routines - Date and Time       cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RE)
       /DEFINE BASICS1RE
@@ -32414,7 +32514,7 @@ mbrtext =  "SrvPgm: Basic Routines - System Values       cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RF)
       /DEFINE BASICS1RF
@@ -32422,7 +32522,7 @@ srccssid=  "00273">
       *  Retrieves an alpha-numeric system value.
      D f_rtvSysVal_char...
      D                 PR          4096A          varying
-     D                                     extproc('BASICS1RE+
+     D                                     extproc('BASICS1RF+
      D                                     _f_rtvSysVal_char+
      D                                     ')
      D  i_name                       10A   const
@@ -32432,7 +32532,7 @@ srccssid=  "00273">
       *  Retrieves a numeric system value.
      D f_rtvSysVal_num...
      D                 PR            15P 5
-     D                                     extproc('BASICS1RE+
+     D                                     extproc('BASICS1RF+
      D                                     _f_rtvSysVal_num+
      D                                     ')
      D  i_name                       10A   const
@@ -32457,7 +32557,7 @@ mbrtext =  "SrvPgm: Basic Routines - BasicProperties     cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RG)
       /DEFINE BASICS1RG
@@ -32693,7 +32793,7 @@ mbrtext =  "SrvPgm: Basic Routines - MemoryBufferRdrWtr  cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1RH)
       /DEFINE BASICS1RH
@@ -32791,7 +32891,7 @@ mbrtext =  "SrvPgm: Basic Routines - Messages            cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(PBASICSR1)
       /DEFINE PBASICSR1
@@ -33037,7 +33137,7 @@ mbrtext =  "SrvPgm: Basic Routines - API Error Handling  cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R2)
       /DEFINE BASICS1R2
@@ -33126,7 +33226,7 @@ mbrtext =  "SrvPgm: Basic Routines - Strings             cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R3)
       /DEFINE BASICS1R3
@@ -33521,7 +33621,7 @@ mbrtext =  "SrvPgm: Basic Routines - Assert/This/Caller  cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R4)
       /DEFINE BASICS1R4
@@ -33578,7 +33678,7 @@ mbrtext =  "SrvPgm: Basic Routines - Objects             cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R5)
       /DEFINE BASICS1R5
@@ -33842,7 +33942,7 @@ mbrtext =  "SrvPgm: Basic Routines - Commands/Environmentcpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R6)
       /DEFINE BASICS1R6
@@ -33961,7 +34061,7 @@ mbrtext =  "SrvPgm: Basic Routines - Mathematics         cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R7)
       /DEFINE BASICS1R7
@@ -34115,7 +34215,7 @@ mbrtext =  "SrvPgm: Basic Routines - Handle/Memory       cpybk"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R8)
       /DEFINE BASICS1R8
@@ -34254,6 +34354,35 @@ srccssid=  "00273">
      D                                     ')
      D  io_heapID                    10I 0
       *
+      /IF DEFINED(INCLUDE_INTERNAL_PROCDURES)
+      *
+      *  Returns a pointer to newly allocated heap storage of the length
+      *  specified.
+     D xalloc...
+     D                 PR              *
+     D                                     extproc('BASICS1R8+
+     D                                     _xalloc+
+     D                                     ')
+     D  i_size                       10I 0 const
+      *
+      *  Changes the heap storage pointed to by the first parameter to be the
+      *  length specified in the second parameter.
+     D xrealloc...
+     D                 PR              *
+     D                                     extproc('BASICS1R8+
+     D                                     _xrealloc+
+     D                                     ')
+     D  i_pMem                         *   const
+     D  i_size                       10I 0 const
+      *
+      *  Frees one previous allocation of heap storage.
+     D xdealloc...
+     D                 PR
+     D                                     extproc('BASICS1R8+
+     D                                     _xdealloc+
+     D                                     ')
+     D  io_pMem                        *
+      /ENDIF
       * -----------------------------------------
       *  Imported prototypes
       * -----------------------------------------
@@ -34273,7 +34402,7 @@ mbrtext =  "SrvPgm: Basic Routines - Display Information      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(BASICS1R9)
       /DEFINE BASICS1R9
@@ -34356,7 +34485,7 @@ mbrtext =  "Qp0lCvtPathToQSYSObjName()--Resolve Path          "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  DEF  /IF NOT DEFINED(Qp0lCvtPathToQSYSObjName)
  DEF  /DEFINE Qp0lCvtPathToQSYSObjName
@@ -34438,7 +34567,7 @@ mbrtext =  "User Space APIs                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QUSRSPC)
       /DEFINE QUSRSPC
@@ -34563,7 +34692,7 @@ mbrtext =  "Convert Date and Time Format (QWCCVTDT) API       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QWCCVTDT)
       /DEFINE QWCCVTDT
@@ -34650,7 +34779,7 @@ mbrtext =  "Retrieve System Values (QWCRSVAL) API             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       /IF NOT DEFINED(QWCRSVAL)
       /DEFINE QWCRSVAL
@@ -34849,7 +34978,7 @@ mbrtext =  "Test: Template für Testprogramme                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
  RAD  *===============================================================*
  RAD  *   >>PRE-COMPILER<<                                            *
@@ -34961,7 +35090,7 @@ mbrtext =  "Test: BasicList_*                                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RA_01)                                       *
@@ -35348,7 +35477,7 @@ mbrtext =  "Test: BasicList_*  (NULL)                         "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RA_02)                                       *
@@ -35552,7 +35681,7 @@ mbrtext =  "Test: BasicList_clone                             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RA_03)                                       *
@@ -35787,7 +35916,7 @@ mbrtext =  "Test: BasicStack_*                                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RB_01)                                       *
@@ -36009,7 +36138,7 @@ mbrtext =  "Test: BasicMap_*                                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RC_01)                                       *
@@ -36023,6 +36152,7 @@ srccssid=  "00273">
       *     >>COMPILE<<                                               *
       *       >>PARM<< TRUNCNBR(*NO);                                 *
       *       >>PARM<< DBGVIEW(*LIST);                                *
+      *       >>PARM<< OPTION(*EVENTF);                               *
       *       >>PARM<< TGTRLS(*CURRENT);                              *
       *     >>END-COMPILE<<                                           *
       *                                                               *
@@ -36102,6 +36232,9 @@ srccssid=  "00273">
       *  Helper fields
      D x               S             10I 0                           inz
      D y               S             10I 0                           inz
+     D size            S             10I 0                           inz
+     D key             S                   like(BasicMap_key_t     ) inz
+     D pValue          S               *                             inz
      D hMap            S                   like(BasicMap_handle_t  ) inz
      D nbrOfElm        S             10I 0                      inz
      D aSize           S             10I 0                      inz
@@ -36114,6 +36247,8 @@ srccssid=  "00273">
      D  data                               like(aField       )       inz
       *
      D msg             DS                  likeds(msg_t      )  inz
+      *
+     D MAX_INT_VALUE   C                   2147483647
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
@@ -36187,7 +36322,37 @@ srccssid=  "00273">
                      : 'Entry not found: ' + 'index=4');
             p_assert(%str(aPointer) = anArray(y).data
                      : 'Element contains invalid data');
+
+            size = BasicMap_getSizeByIndex(hMap: x);
+
+            p_assert(size = anArray(y).trimSize
+                     : 'Element contains invalid data');
          endfor;
+
+         // Test index out of bounds
+         size = BasicMap_getSizeByIndex(hMap: 0);
+         p_assert(size = -1
+                  : 'Expected -1 for out of bounds condition');
+
+         size = BasicMap_getSizeByIndex(hMap: MAX_INT_VALUE);
+         p_assert(size = -1
+                  : 'Expected -1 for out of bounds condition');
+
+         pValue = BasicMap_getValueByIndex(hMap: 0);
+         p_assert(pValue = *NULL
+                  : 'Expected -1 for out of bounds condition');
+
+         pValue = BasicMap_getValueByIndex(hMap: MAX_INT_VALUE);
+         p_assert(pValue = *NULL
+                  : 'Expected -1 for out of bounds condition');
+
+         key = BasicMap_getKeyByIndex(hMap: 0);
+         p_assert(key = ''
+                  : 'Expected empty string for out of bounds condition');
+
+         key = BasicMap_getKeyByIndex(hMap: MAX_INT_VALUE);
+         p_assert(key = ''
+                  : 'Expected empty string for out of bounds condition');
 
          // Change size of data
          BasicMap_put(hMap: 'ChangeSize': 'HelloWorld');
@@ -36222,7 +36387,7 @@ mbrtext =  "Test: BasicMap - Memory Leaks                     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RC_01)                                       *
@@ -36508,7 +36673,7 @@ mbrtext =  "Test: BasicMap - KeySet                           "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RC_03)                                       *
@@ -36847,7 +37012,7 @@ mbrtext =  "Test: BasicMap_clone                              "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RC_04)                                       *
@@ -37017,7 +37182,7 @@ mbrtext =  "Test: BasicMap_getKeys/getValues                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RC_05)                                       *
@@ -37301,7 +37466,7 @@ mbrtext =  "Test: Url_*                                       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RD_01)                                       *
@@ -37639,7 +37804,7 @@ mbrtext =  "Test: dateSerial()                                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RE_01)                                       *
@@ -37939,6 +38104,184 @@ srccssid=  "00273">
 ]]>  </copysrc>
 </mbr>
 <sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
+Installing TEST_RG_01  type RPGLE - in progress.
+]]>  </sendmsg>
+<!-- START OF MEMBER  -->
+<mbr
+mbrname =  "TEST_RG_01"
+mbrtype =  "RPGLE     "
+mbrtext =  "Test: BasicProperties_*                           "
+srcfile =  "QBASICS1  "
+srclib  =  "selected  "
+srclen  =  "00112"
+srccssid=  "01141">
+<copysrc><![CDATA[
+      *===============================================================*
+      *    CALL PGM(TEST_RG_01)                                       *
+      *===============================================================*
+      *   >>PRE-COMPILER<<                                            *
+      *                                                               *
+      *     >>CRTCMD<<  CRTRPGMOD    MODULE(&LI/&OB) +                *
+      *                              SRCFILE(&SL/&SF) +               *
+      *                              SRCMBR(&SM);                     *
+      *                                                               *
+      *     >>COMPILE<<                                               *
+      *       >>PARM<< TRUNCNBR(*NO);                                 *
+      *       >>PARM<< DBGVIEW(*LIST);                                *
+      *       >>PARM<< TGTRLS(*CURRENT);                              *
+      *     >>END-COMPILE<<                                           *
+      *                                                               *
+      *     >>EXECUTE<<                                               *
+      *                                                               *
+      *     >>CMD<<     CRTPGM       PGM(&LI/&OB) +                   *
+      *                              MODULE(&LI/&OB) +                *
+      *                              ACTGRP(*NEW) +                   *
+      *                              BNDSRVPGM(&LI/BASICS1) +         *
+      *                              BNDDIR(QC2LE) +                  *
+      *                              TGTRLS(*CURRENT) +               *
+      *                              DETAIL(*BASIC);                  *
+      *                                                               *
+      *   >>END-PRE-COMPILER<<                                        *
+      *===============================================================*
+     H DEBUG
+     H OPTION(*SRCSTMT : *NODEBUGIO)
+     H DECEDIT('0,') DATEDIT(*DMY.)
+     H DATFMT(*ISO )  TIMFMT(*ISO )
+     H EXPROPTS(*RESDECPOS)
+     H EXTBININT(*YES)
+      *===============================================================*
+      *
+      * ------------------------------------
+      *  External Prototypes
+      * ------------------------------------
+      /COPY QBASICS1,PBASICS1
+      *
+      * ------------------------------------
+      *  Prototypes
+      * ------------------------------------
+      *
+     D PGM_ENTRY_POINT...
+     D                 PR                         extpgm('TEST_RA_01')
+      *
+     D main...
+     D                 PR
+      *
+      *===============================================================*
+      *  Program Entry Point
+      *===============================================================*
+      *
+     D PGM_ENTRY_POINT...
+     D                 PI
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /FREE
+
+         main();
+
+         *inlr = *on;
+
+      /END-FREE
+      *
+      *===============================================================*
+      *  Main procedure
+      *===============================================================*
+     P main...
+     P                 B
+     D                 PI
+      *
+      *  Helper fields
+     D x               S             10I 0 inz
+     D hProperties     S                   like(BasicProperties_handle_t) inz
+      *
+     D bValue          S               N
+     D dValue          S                   like(BasicProperties_decVal_t)
+     D iValue          S             10I 0
+     D sValue          S           4096A   varying
+      *
+     D size            S             10I 0
+     D rc              S             10I 0
+     D hKeySet         S                   like(BasicKeySet_handle_t)
+     D keys            S            100A   varying dim(4)
+     D i               S             10I 0
+     D count           S             10I 0
+      *
+     D BOOLEAN         C                   '*BOOLEAN'
+     D DECIMAL         C                   '*DECIMAL'
+     D INTEGER         C                   '*INTEGER'
+     D STRING          C                   '*STRING'
+      * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      /FREE
+
+         // Create BasicProperties
+         hProperties = BasicProperties_new();
+
+         // Add elements
+         BasicProperties_putBoolean(hProperties: BOOLEAN: cTrue);
+         BasicProperties_putDecimal(hProperties: DECIMAL: 123.45);
+         BasicProperties_putInteger(hProperties: INTEGER: 678);
+         BasicProperties_putString(hProperties: STRING: 'Donald Duck');
+
+         // Verify number of items
+         size = BasicProperties_getNumE(hProperties);
+         p_assert(size = 4: 'Properties must contain 4 items');
+
+         // Verify property entries
+         bValue = BasicProperties_getBoolean(hProperties: BOOLEAN);
+         p_assert(bValue = cTrue: 'bValue must be TRUE');
+
+         dValue = BasicProperties_getDecimal(hProperties: DECIMAL);
+         p_assert(dValue = 123.45: 'dValue must equal 123.45');
+
+         iValue = BasicProperties_getInteger(hProperties: INTEGER);
+         p_assert(iValue = 678: 'iValue must equal 678');
+
+         sValue = BasicProperties_getString(hProperties: STRING);
+         p_assert(bValue = cTrue: 'bValue must match ''Donald Duck''');
+
+         // Remove items
+         rc = BasicProperties_remove(hProperties: DECIMAL + '_NO_ENTRY');
+         p_assert(rc = -1: 'Key not found! ''rc'' must equal -1');
+
+         rc = BasicProperties_remove(hProperties: DECIMAL);
+         p_assert(rc = 0: 'Key exists! ''rc'' must equal 0');
+
+         size = BasicProperties_getNumE(hProperties);
+         p_assert(size = 3: 'Properties must contain 3 items');
+
+         // Check keySet
+         hKeySet = BasicProperties_newKeySet(hProperties);
+         keys(1) = BasicKeySet_getFirst(hKeySet);
+         keys(2) = BasicKeySet_getNext(hKeySet);
+         keys(3) = BasicKeySet_getNext(hKeySet);
+         keys(4) = BasicKeySet_getNext(hKeySet);
+         BasicKeySet_delete(hKeySet);
+
+         for i = 1 to %elem(keys);
+           if (keys(i) <> '');
+             rc = BasicProperties_remove(hProperties : keys(i));
+             p_assert(rc = 0: 'Key must exist and ''rc'' must equal 0');
+             count += 1;
+           endif;
+         endfor;
+
+         p_assert(count = 3: '3 items must have been removed from properties');
+
+         size = BasicProperties_getNumE(hProperties);
+         p_assert(size = 0: 'Properties must be empty, now');
+
+         // Delete properties
+         BasicProperties_delete(hProperties);
+
+         p_assert(hProperties = BasicProperties_null()
+                  : 'Properties handle not set to NULL');
+
+         return;
+
+      /END-FREE
+     P                 E
+      *
+]]>  </copysrc>
+</mbr>
+<sendmsg  sendmsgid="CPF9897" sendmsgtype = "*STATUS   "><![CDATA[
 Installing TEST_RH_01  type RPGLE - in progress.
 ]]>  </sendmsg>
 <!-- START OF MEMBER  -->
@@ -37949,7 +38292,7 @@ mbrtext =  "Test: MemoryReader / MemoryWriter                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_RH_01)                                       *
@@ -38172,7 +38515,7 @@ mbrtext =  "Test: f_rtvMsgText/f_rtvMsgHelpText/f_newMsg      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R1_01) PARM('CPF9897' 'Hello World!' '0')    *
@@ -38368,7 +38711,7 @@ mbrtext =  "Test: f_newMsg/f_sndPgmMsg/f_rcvPgmMsg/f_rmvPgmMsg"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R1_02)                                       *
@@ -38566,7 +38909,7 @@ mbrtext =  "Test: f_rcvPgmMsgObj                              "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R1_03)                                       *
@@ -38747,7 +39090,7 @@ mbrtext =  "Test: f_errno/f_strerror/f_cvtErrnoToMsg          "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R2_01)                                       *
@@ -38874,7 +39217,7 @@ mbrtext =  "Test: f_val                                       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_01) PARM('-123.456,789')                  *
@@ -38933,7 +39276,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_01')
-     D  gi_strVal                    32A   const
+     D  gi_strVal                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -38945,11 +39288,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_strVal                    32A   const
+     D  gi_strVal                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_strVal);
+         if (%parms() >= %parmNum(gi_strVal));
+            main(gi_strVal);
+         else;
+            main('');
+         endif;
 
          *inlr = *on;
 
@@ -38985,9 +39332,11 @@ srccssid=  "00273">
          msg = f_newMsg('': %editc(%dec(numVal: 20: 5): 'N'));
          f_sndPgmMsg(msg: cMsg_Prv: cMsg_ToCtlBdy);
 
-         numVal = f_val(i_strVal);
-         msg = f_newMsg('': %editc(%dec(numVal: 30: 9): 'N'));
-         f_sndPgmMsg(msg: cMsg_Prv: cMsg_ToCtlBdy);
+         if (i_strVal <> '');
+            numVal = f_val(i_strVal);
+            msg = f_newMsg('': %editc(%dec(numVal: 30: 9): 'N'));
+            f_sndPgmMsg(msg: cMsg_Prv: cMsg_ToCtlBdy);
+         endif;
 
          return;
 
@@ -39009,7 +39358,7 @@ mbrtext =  "Test: f_wordWrap                                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_02) PARM(65)                              *
@@ -39068,7 +39417,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_02')
-     D  gi_width                     15P 5 const
+     D  gi_width                     15P 5 const  options(*nopass)
       *
      D main...
      D                 PR
@@ -39080,11 +39429,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_width                     15P 5 const
+     D  gi_width                     15P 5 const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_width);
+         if (%parms() >= %parmNum(gi_width));
+            main(gi_width);
+         else;
+            main(60);
+         endif;
 
          *inlr = *on;
 
@@ -39192,7 +39545,7 @@ mbrtext =  "Test: f_left/f_right/f_space                      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_03) PARM('Hello World!')                  *
@@ -39251,7 +39604,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_03')
-     D  gi_text                      32A   const
+     D  gi_text                      32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -39263,11 +39616,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_text                      32A   const
+     D  gi_text                      32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_text);
+         if (%parms() >= %parmNum(gi_text));
+            main(gi_text);
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -39335,7 +39692,7 @@ mbrtext =  "Test: f_replace                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_04) PARM('CR+LF')                         *
@@ -39394,7 +39751,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_04')
-     D  gi_rplStr                    32A   const
+     D  gi_rplStr                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -39406,11 +39763,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_rplStr                    32A   const
+     D  gi_rplStr                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_rplStr);
+         if (%parms() >= %parmNum(gi_rplStr));
+            main(gi_rplStr);
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -39464,7 +39825,7 @@ mbrtext =  "Test: f_lcase/f_ucase                             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_05) PARM('Hello World! öäüÖÄÜ')           *
@@ -39523,7 +39884,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_05')
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -39535,11 +39896,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_string);
+         if (%parms() >= %parmNum(gi_string));
+            main(gi_string);
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -39596,7 +39961,7 @@ mbrtext =  "Test: f_getLengthEditCode/f_getLengthEditWord     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_06)                                       *
@@ -39790,7 +40155,7 @@ mbrtext =  "Test: f_rmvKeyword                                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_07)                                       *
@@ -39916,7 +40281,7 @@ mbrtext =  "Test: f_center/f_alignR                           "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_08)                                       *
@@ -40068,7 +40433,7 @@ mbrtext =  "Test: f_genStrCmp/f_genStrCmpIgnCase              "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_09)                                       *
@@ -40372,7 +40737,7 @@ mbrtext =  "Test: f_scanR                                     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_09)                                       *
@@ -40562,7 +40927,7 @@ mbrtext =  "Test: f_cvtBufferToHexString/f_cvtHexStringToBuffe"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_11) PARM(x'C88593939640E696999384')       *
@@ -40621,7 +40986,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R3_11')
-     D  gi_buffer                    32A   const
+     D  gi_buffer                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -40633,11 +40998,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_buffer                    32A   const
+     D  gi_buffer                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_buffer);
+         if (%parms() >= %parmNum(gi_buffer));
+            main(gi_buffer);
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -40703,7 +41072,7 @@ mbrtext =  "Test: f_objName                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_12) PARM('SYSPROCS' 'QSYS2')              *
@@ -40849,7 +41218,7 @@ mbrtext =  "Test: f_parseDate / f_formatDate                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_13)                                       *
@@ -40991,7 +41360,7 @@ mbrtext =  "Test: f_formatMemSize                             "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R3_14)                                       *
@@ -41175,7 +41544,7 @@ mbrtext =  "Test: p_assert/f_this/f_caller                    "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R4_01) PARM('1')                             *
@@ -41234,7 +41603,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R4_01')
-     D  gi_boolean                    1A   const
+     D  gi_boolean                    1A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -41246,7 +41615,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_boolean                    1A   const
+     D  gi_boolean                    1A   const  options(*nopass)
       *
       *  Local helper fields
      D msg             DS                  likeds(msg_t     ) inz
@@ -41260,7 +41629,11 @@ srccssid=  "00273">
                                             + %trimR(procedure));
          f_sndPgmMsg(msg: cMsg_Prv: cMsg_ToCtlBdy);
 
-         main(gi_boolean);
+         if (%parms() >= %parmNum(gi_boolean));
+            main(gi_boolean);
+         else;
+            main(*on);
+         endif;
 
          *inlr = *on;
 
@@ -41333,7 +41706,7 @@ mbrtext =  "Test: f_exist  (object)                           "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R5_01) PARM('CHKOB' 'QSYS' '*CMD')           *
@@ -41392,9 +41765,9 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R5_01')
-     D  gi_obj                       10A   const
-     D  gi_lib                       10A   const
-     D  gi_type                      10A   const
+     D  gi_obj                       10A   const  options(*nopass)
+     D  gi_lib                       10A   const  options(*nopass)
+     D  gi_type                      10A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -41408,13 +41781,17 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_obj                       10A   const
-     D  gi_lib                       10A   const
-     D  gi_type                      10A   const
+     D  gi_obj                       10A   const  options(*nopass)
+     D  gi_lib                       10A   const  options(*nopass)
+     D  gi_type                      10A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_obj: gi_lib: gi_type);
+         if (%parms() >= %parmNum(gi_type));
+            main(gi_obj: gi_lib: gi_type);
+         else;
+            main('QCPFMSG': 'QSYS': '*MSGF');
+         endif;
 
          *inlr = *on;
 
@@ -41475,7 +41852,7 @@ mbrtext =  "Test: f_exist  (member)                           "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *  CALL PGM(TEST_R5_02) PARM('QRPGSRC' 'QGPL' '*FILE' '*FIRST') *
@@ -41534,9 +41911,9 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R5_02')
-     D  gi_file                      10A   const
-     D  gi_lib                       10A   const
-     D  gi_mbr                       10A   const
+     D  gi_file                      10A   const  options(*nopass)
+     D  gi_lib                       10A   const  options(*nopass)
+     D  gi_mbr                       10A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -41550,13 +41927,17 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_file                      10A   const
-     D  gi_lib                       10A   const
-     D  gi_mbr                       10A   const
+     D  gi_file                      10A   const  options(*nopass)
+     D  gi_lib                       10A   const  options(*nopass)
+     D  gi_mbr                       10A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_file: gi_lib: gi_mbr);
+         if (%parms() >= %parmNum(gi_mbr));
+            main(gi_file: gi_lib: gi_mbr);
+         else;
+            main('QBASICS1': '*LIBL': 'TEST_R5_02');
+         endif;
 
          *inlr = *on;
 
@@ -41581,7 +41962,8 @@ srccssid=  "00273">
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         if   not f_exist(i_lib: *omit: '*LIB');
+         if (not f_startsWith('*': i_lib) and
+             not f_exist(i_lib: *omit: '*LIB'));
             msg = f_newMsg('CPF9898': 'Library ' + %trim(i_lib)
                                       + ' does not exist');
             f_sndPgmMsg(msg: cMsg_Prv: cMsg_ToCtlBdy);
@@ -41617,7 +41999,7 @@ mbrtext =  "Test: f_getTmpName/f_getUniqueName                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *  CALL PGM(TEST_R5_03)                                         *
@@ -41743,7 +42125,7 @@ mbrtext =  "Test: user space procedures                       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *  CALL PGM(TEST_R5_04)                                         *
@@ -41854,7 +42236,8 @@ srccssid=  "00273">
             size = size + cPAGE_SIZE;
          endif;
 
-         size = size - 512;   // User space administration attributes
+         // Not valid on 7.3
+         // size = size - 512;   // User space administration attributes
 
          return size;
 
@@ -42031,7 +42414,7 @@ mbrtext =  "Test: f_cvtQSYSObjNameToPath/f_cvtPathToQSYSObjNam"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *  CALL PGM(TEST_R5_05)                                         *
@@ -42355,7 +42738,7 @@ mbrtext =  "Test: f_execute                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R6_01) PARM('CHKOBJ QSY *LIB')               *
@@ -42414,7 +42797,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R6_01')
-     D  gi_cmd                       32A   const
+     D  gi_cmd                       32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -42426,11 +42809,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_cmd                       32A   const
+     D  gi_cmd                       32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(gi_cmd);
+         if (%parms() >= %parmNum(gi_cmd));
+            main(gi_cmd);
+         else;
+            main('DLYJOB DLY(1)');
+         endif;
 
          *inlr = *on;
 
@@ -42495,7 +42882,7 @@ mbrtext =  "Test: f_getNumEnvVar, f_getEnvVarByIndex ...      "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R6_02) PARM('de.tools400.test_r6_02.')       *
@@ -42554,7 +42941,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R6_02')
-     D  gi_prefix                    32A   const
+     D  gi_prefix                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -42566,11 +42953,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_prefix                    32A   const
+     D  gi_prefix                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(%trim(gi_prefix));
+         if (%parms() >= %parmNum(gi_prefix));
+            main(%trim(gi_prefix));
+         else;
+            main('TEST_R6_02_');
+         endif;
 
          *inlr = *on;
 
@@ -42665,7 +43056,7 @@ mbrtext =  "Test: f_isBitOn                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_01)                                       *
@@ -42867,7 +43258,7 @@ mbrtext =  "Test: f_log10, f_clcLengthOfRPGIntFieldFromBufSize"
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_02)                                       *
@@ -43014,7 +43405,7 @@ mbrtext =  "Test: f_genUUID                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_03)                                       *
@@ -43148,7 +43539,7 @@ mbrtext =  "Test: f_genMD5                                    "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_04) PARM('Hello World')                   *
@@ -43207,7 +43598,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R7_04')
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -43219,11 +43610,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(%trimR(gi_string));
+         if (%parms() >= %parmNum(gi_string));
+            main(%trimR(gi_string));
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -43296,7 +43691,7 @@ mbrtext =  "Test: f_genSHA1                                   "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_05) PARM('Hello World')                   *
@@ -43355,7 +43750,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R7_05')
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -43367,11 +43762,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(%trimR(gi_string));
+         if (%parms() >= %parmNum(gi_string));
+            main(%trimR(gi_string));
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -43444,7 +43843,7 @@ mbrtext =  "Test: f_genMD5 of IFS stream file                 "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_06) PARM('Hello World.txt')               *
@@ -43632,7 +44031,7 @@ mbrtext =  "Test: f_genSHA1 of IFS stream file                "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_07) PARM('Hello World.txt')               *
@@ -43820,7 +44219,7 @@ mbrtext =  "Test: f_genCRC32                                  "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_08) PARM('Hello World!')                  *
@@ -43880,7 +44279,7 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PR                         extpgm('TEST_R7_08')
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       *
      D main...
      D                 PR
@@ -43892,11 +44291,15 @@ srccssid=  "00273">
       *
      D PGM_ENTRY_POINT...
      D                 PI
-     D  gi_string                    32A   const
+     D  gi_string                    32A   const  options(*nopass)
       * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
       /FREE
 
-         main(%trimR(gi_string));
+         if (%parms() >= %parmNum(gi_string));
+            main(%trimR(gi_string));
+         else;
+            main('Hello World!');
+         endif;
 
          *inlr = *on;
 
@@ -43948,7 +44351,7 @@ mbrtext =  "Test: f_genCRC32 of IFS stream file               "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R7_09) PARM('Hello World.txt')               *
@@ -44145,7 +44548,7 @@ mbrtext =  "Test: HANDLE_*                                    "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R8_01)                                       *
@@ -44330,7 +44733,7 @@ mbrtext =  "Test: MEMORY_*                                    "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
       *===============================================================*
       *    CALL PGM(TEST_R8_02)                                       *
@@ -44556,7 +44959,7 @@ mbrtext =  "Configuration of the zlib compression library     "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 /* zconf.h -- configuration of the zlib compression library
  * Copyright (C) 1995-2003 Jean-loup Gailly.
@@ -44895,7 +45298,7 @@ mbrtext =  "Interface of the  zlib  compression library       "
 srcfile =  "QBASICS1  "
 srclib  =  "selected  "
 srclen  =  "00112"
-srccssid=  "00273">
+srccssid=  "01141">
 <copysrc><![CDATA[
 /* zlib.h -- interface of the 'zlib' general purpose compression library
   version 1.2.1, November 17th, 2003
