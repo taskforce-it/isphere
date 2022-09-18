@@ -1,5 +1,5 @@
 
-Changelog: iSphere 5.2.5.b002
+Changelog: iSphere 5.2.5.b003
 -----------------------------
  • Updated STRPREPRC to v1.20.2 to add the ability to process stream
    files.
