@@ -1,6 +1,8 @@
 
 Changelog: iSphere 5.2.5.b002
 -----------------------------
+ • Updated STRPREPRC to v1.20.2 to add the ability to process stream
+   files.
  • Removed checking the filter name when creating a filter from an
    iSphere search result (export filter option).
  • Changed export filter dialog to not show a confirmation message if
