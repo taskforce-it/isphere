@@ -51,7 +51,7 @@
       appblddate CDATA #REQUIRED
      >
      ]>
-<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 3/26/2022">
+<upload  appname="STRPREPRC"  appauthor="Thomas Raddatz"  appblddate=" 9/19/2022">
 <install_instructions><![CDATA[
      *----------------------------------------------------------------      ------
      *  1. Upload entire XML to your AS/400 to a source file 112 long, into any mbr
@@ -3827,13 +3827,13 @@ srclen  =  "00112"
 srccssid=  "01141">
 <copysrc><![CDATA[
       /if not defined(COPYRIGHT_DSPEC)
-     h COPYRIGHT('V2.0 - 26.03.2022 - mailto: thomas.raddatz@tools400.de')
+     h COPYRIGHT('V2.1 - 19.09.2022 - mailto: thomas.raddatz@tools400.de')
       /eof
       /endif
      d STRPREPRC_VERSION...
-     d                 C                   '2.0'
+     d                 C                   '2.1'
      d STRPREPRC_DATE...
-     d                 C                   '26.03.2022'
+     d                 C                   '19.09.2022'
       *
 ]]>  </copysrc>
 </mbr>
@@ -17260,7 +17260,9 @@ srccssid=  "01141">
       /COPY QSTRPREPRC,PRZ0012
       /free
 
-         Member_exists(i_file: i_lib: i_mbr);
+         // Does not work, because CHKOBJ does not resolve members
+         // as 'open' does.
+         // Member_exists(i_file: i_lib: i_mbr);
 
          g_useSrcFile.name = %trim(i_lib) + '/' + %trim(i_file);
          g_useSrcFile.member = %trim(i_mbr);
@@ -17999,7 +18001,9 @@ srccssid=  "01141">
       /COPY QSTRPREPRC,PRZ0012
       /free
 
-         Member_exists(i_file: i_lib: i_mbr);
+         // Does not work, because CHKOBJ does not resolve members
+         // as 'open' does.
+         // Member_exists(i_file: i_lib: i_mbr);
 
          g_useSrcFile.name = %trim(i_lib) + '/' + %trim(i_file);
          g_useSrcFile.member = %trim(i_mbr);

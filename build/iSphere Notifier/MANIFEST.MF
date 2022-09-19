@@ -6,4 +6,4 @@ X-Bundle-Info: Fixed "Illegal qualified connection name" error message when atte
 X-Beta-Version: 5.2.5.b003
 X-Beta-Update-Library: true
 X-Beta-Update-Library-Info: Optionally update the iSphere library to get STRPREPRC v2.0.
-X-Beta-Info: Updated STRPREPRC utility to v2.0.\nRemoved checking the filter name when creating a filter from an iSphere search result.\nFixed filter type when exporting a search result to a filter.\nChanged SQL editor to allowed additional special letters (# & $ § and @) in field names.\nFor other special letters field names must be enclosed in double quotes.
+X-Beta-Info: Updated STRPREPRC utility to v2.1.\nRemoved checking the filter name when creating a filter from an iSphere search result.\nFixed filter type when exporting a search result to a filter.\nChanged SQL editor to allowed additional special letters (# & $ § and @) in field names.\nFor other special letters field names must be enclosed in double quotes.
