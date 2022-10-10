@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<title>Mysterious Problems</title>
+</head>
+<body>
+	<h1>Mysterious Problems</h1>
+	<p>
+	Sometimes it is not quit clear, what the problem is, e.g. you start an iSphere Source File
+	search and nothing obvious happens:
+	<p>
+	<ul>
+	<li>No exception dialog.</li>
+	<li>Nothing in the Eclipse error log.</li>
+	</ul>
+	<p>
+	In that case you should check the iSphere server jobs, because it might be a problem with
+	the iSphere library. Use the <i>Job Log Explorer</i> option to check the job log of each
+	server job for errors: 
+	<p>
+		<img src="assets/select_job_log_explorer.png" align="middle">
+	<p>
+	Use the SQL filter option to exclude information messages with a severity of zero:
+	<p>
+		<img src="assets/job_log_explorer_with_error_messages.png" align="middle">
+	<p>
+	In the example above it is almost clear that updating the iSphere library will resolve the
+	problem.
+	<p>
+	However you may consider to upload the library with a different name in order to keep
+	the existing library untouched. For example you can add the version number to the library
+	name, such as: <i>ISPHERE4</i>.
+	<p>
+	Then change the library name on the iSphere <i>Library</i> preferences page accordingly.
+	<p>
+	See: <a href="/help/topic/biz.isphere.base.help/html/install/install_library.html">Install iSphere Library</a>
+	<p>
+	<iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
