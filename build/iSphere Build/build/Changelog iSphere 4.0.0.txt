@@ -1,6 +1,6 @@
 
-Changelog: iSphere 5.2.5.b003
------------------------------
+Changelog: iSphere 5.2.5.r
+--------------------------
  • Updated STRPREPRC to v1.20.2 to add the ability to process stream
    files.
  • Removed checking the filter name when creating a filter from an
