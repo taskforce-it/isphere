@@ -26,7 +26,7 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
     private static final String CONNECTION_NAME_DELIMITER = ":"; //$NON-NLS-1$
     private static final String CONNECTION_NAME_FORMAT = "%s:%s"; //$NON-NLS-1$
 
-    public static final String NO_PROFILE_NAME = "*N"; //$NON-NLS-1$
+    private static final String NO_PROFILE_NAME = "*N"; //$NON-NLS-1$
 
     private String connectionName;
     private String profileName;
@@ -46,8 +46,7 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
     /**
      * Constructs a qualified connection name object from a qualified connection
      * name string, which must be formatted as
-     * <code>'profileName:connectionName'</code>. The profile name is
-     * optional.<br>
+     * <code>'profileName:connectionName'</code>. The profile name is optional.<br>
      * When the profile name is missing, the constructor falls back to the
      * default system profile name.
      * 
@@ -88,6 +87,9 @@ public class BasicQualifiedConnectionName implements Comparable<BasicQualifiedCo
      * @return profile name.
      */
     public String getProfileName() {
+        if (profileName == NO_PROFILE_NAME) {
+            return null;
+        }
         return profileName;
     }
 
