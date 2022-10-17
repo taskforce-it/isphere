@@ -1,4 +1,9 @@
 
+Changelog: iSphere 5.2.6.r
+--------------------------
+ • Fixed IBMiHostContributionsHandler to return a system, when the
+   profile name is not provided.
+
 Changelog: iSphere 5.2.5.r
 --------------------------
  • Updated STRPREPRC to v1.20.2 to add the ability to process stream
