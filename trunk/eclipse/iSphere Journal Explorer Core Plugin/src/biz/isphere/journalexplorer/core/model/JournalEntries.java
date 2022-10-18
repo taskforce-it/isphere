@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.medfoster.sqljep.ParseException;
 import org.medfoster.sqljep.RowJEP;
 
+import com.google.gson.annotations.Expose;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.json.JsonSerializable;
@@ -28,8 +30,6 @@ import biz.isphere.journalexplorer.core.model.adapters.JournalProperty;
 import biz.isphere.journalexplorer.core.model.api.IBMiMessage;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
-
-import com.google.gson.annotations.Expose;
 
 /**
  * Class to hold the {@link JournalEntry} as received from a journal or a
@@ -117,7 +117,8 @@ public class JournalEntries implements JsonSerializable {
      */
     public OutputFile getOutputFile() {
 
-        if (outputFile == null && (connectionName != null && outputFileLibraryName != null && outputFileName != null && outputFileMemberName != null)) {
+        if (outputFile == null
+            && (connectionName != null && outputFileLibraryName != null && outputFileName != null && outputFileMemberName != null)) {
             outputFile = new OutputFile(connectionName, outputFileLibraryName, outputFileName, outputFileMemberName);
         }
 
@@ -168,25 +169,15 @@ public class JournalEntries implements JsonSerializable {
                 monitor.setTaskName(Messages.Status_Filtering_journal_entries + "(" + count + ")"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
-            RowJEP sqljep = null;
-            Comparable<?>[] row = null;
-            if (whereClause.hasClause()) {
-                if (whereClause.hasSpecificFields() && tableDoesNotMatch(whereClause, journalEntry)) {
-                    // Always not found, when the where clause includes record
-                    // specific fields and the table does not match.
-                    isFound = false;
-                } else {
-                    // Compare JO* and record specific fields
-                    sqljep = new RowJEP(whereClause.getClause());
-                    sqljep.parseExpression(journalEntry.getColumnMapping());
-                    row = journalEntry.getRow();
-                    isFound = (Boolean)sqljep.getValue(row);
-                }
+            RowJEP sqljep = new RowJEP(whereClause.getClause());
+            if (whereClause.hasSpecificFields() && tableDoesNotMatch(whereClause, journalEntry)) {
+                // Always not found, when the where clause includes record
+                // specific fields and the table does not match.
+                isFound = false;
             } else {
-                // Compare only JO* fields.
-                sqljep = new RowJEP(whereClause.getClause());
-                sqljep.parseExpression(JournalEntry.getBasicColumnMapping());
-                row = journalEntry.getBasicRow();
+                // Compare JO* and record specific fields
+                sqljep.parseExpression(journalEntry.getColumnMapping());
+                Comparable<?>[] row = journalEntry.getRow();
                 isFound = (Boolean)sqljep.getValue(row);
             }
 
