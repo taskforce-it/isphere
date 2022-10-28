@@ -83,6 +83,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private Button chkBoxRename;
     private Link lnkPreferences;
     private Button chkBoxIgnoreDataLostError;
+    private Button chkBoxIgnoreDirtyFilesError;
     private Label labelNumElem;
 
     private Composite mainArea;
@@ -184,7 +185,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
 
         copyMemberValidator = new CopyMemberValidator(copyMemberService, getExistingMemberAction(), chkBoxIgnoreDataLostError.getSelection(),
-            fullErrorCheck, this);
+            chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
 
         setControlEnablement();
         copyMemberValidator.start();
@@ -363,6 +364,10 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxIgnoreDataLostError = WidgetFactory.createCheckbox(mainArea);
         chkBoxIgnoreDataLostError.setText(Messages.Ignore_data_lost_error);
         chkBoxIgnoreDataLostError.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
+
+        chkBoxIgnoreDirtyFilesError = WidgetFactory.createCheckbox(mainArea);
+        chkBoxIgnoreDirtyFilesError.setText(Messages.Ignore_unsaved_changes_error);
+        chkBoxIgnoreDirtyFilesError.setLayoutData(new GridData(SWT.DEFAULT, SWT.DEFAULT, false, false, getNumberOfLayoutColumns(mainArea), 1));
 
         createStatusLine(mainArea);
 
@@ -571,6 +576,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         chkBoxReplace.setEnabled(enabled);
         chkBoxRename.setEnabled(enabled);
         chkBoxIgnoreDataLostError.setEnabled(enabled);
+        chkBoxIgnoreDirtyFilesError.setEnabled(enabled);
     }
 
     private void setButtonEnablement(Button button, boolean enabled) {

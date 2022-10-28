@@ -1290,6 +1290,8 @@ public class Messages extends NLS {
 
     public static String Ignore_data_lost_error;
 
+    public static String Ignore_unsaved_changes_error;
+
     public static String Data_lost_error_From_source_line_is_longer_than_target_source_line;
 
     public static String C_O_P_I_E_D;
