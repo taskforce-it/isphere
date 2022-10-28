@@ -1,7 +1,8 @@
 
 Changelog: iSphere 5.2.7.r
 --------------------------
- • Added 'Ignore unsaved changes error' to 'Copy Members' dialog.
+ • Added option 'Ignore unsaved changes error' to 'Copy Members'
+   dialog.
 
 Changelog: iSphere 5.2.6.r
 --------------------------
