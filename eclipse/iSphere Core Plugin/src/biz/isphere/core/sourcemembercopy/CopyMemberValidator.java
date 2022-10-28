@@ -58,8 +58,9 @@ public class CopyMemberValidator extends Thread {
     private boolean isActive;
 
     public CopyMemberValidator(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError,
-        boolean fullErrorCheck, IValidateMembersPostRun postRun) {
-        doValidateMembers = new DoValidateMembers(jobDescription, existingMemberAction, ignoreDataLostError, fullErrorCheck);
+        boolean ignoreUnsavedChangesError, boolean fullErrorCheck, IValidateMembersPostRun postRun) {
+        doValidateMembers = new DoValidateMembers(jobDescription, existingMemberAction, ignoreDataLostError, ignoreUnsavedChangesError,
+            fullErrorCheck);
         this.postRun = postRun;
     }
 
@@ -109,14 +110,16 @@ public class CopyMemberValidator extends Thread {
         private CopyMemberService jobDescription;
         private ExistingMemberAction existingMemberAction;
         private boolean ignoreDataLostError;
+        private boolean ignoreUnsavedChangesError;
         private boolean fullErrorCheck;
         private boolean isCanceled;
 
         public DoValidateMembers(CopyMemberService jobDescription, ExistingMemberAction existingMemberAction, boolean ignoreDataLostError,
-            boolean fullErrorCheck) {
+            boolean ignoreUnsavedChangesError, boolean fullErrorCheck) {
             this.jobDescription = jobDescription;
             this.existingMemberAction = existingMemberAction;
             this.ignoreDataLostError = ignoreDataLostError;
+            this.ignoreUnsavedChangesError = ignoreUnsavedChangesError;
             this.fullErrorCheck = fullErrorCheck;
             this.isCanceled = false;
         }
@@ -135,7 +138,7 @@ public class CopyMemberValidator extends Thread {
 
             if (!isCanceled && errorItem == ERROR_NONE) {
                 validateMembers(jobDescription.getFromConnectionName(), jobDescription.getToConnectionName(), existingMemberAction,
-                    ignoreDataLostError, fullErrorCheck);
+                    ignoreDataLostError, ignoreUnsavedChangesError, fullErrorCheck);
             }
 
             if (isCanceled) {
@@ -195,7 +198,7 @@ public class CopyMemberValidator extends Thread {
         }
 
         private boolean validateMembers(String fromConnectionName, String toConnectionName, ExistingMemberAction existingMemberAction,
-            boolean ignoreDataLostError, boolean fullErrorCheck) {
+            boolean ignoreDataLostError, boolean ignoreUnsavedChangesError, boolean fullErrorCheck) {
 
             boolean isError = false;
             boolean isSeriousError = false;
@@ -213,7 +216,12 @@ public class CopyMemberValidator extends Thread {
 
             try {
 
-                Set<String> dirtyFiles = getDirtyFiles();
+                Set<String> dirtyFiles;
+                if (!ignoreUnsavedChangesError) {
+                    dirtyFiles = getDirtyFiles();
+                } else {
+                    dirtyFiles = new HashSet<String>();
+                }
 
                 for (CopyMemberItem member : jobDescription.getItems()) {
 
