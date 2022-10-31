@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2022 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -130,7 +129,6 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
 
         ISelectedObject object = objects[0];
-
         if (object instanceof ISelectedFile) {
             ISelectedFile file = (ISelectedFile)object;
             return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember());
@@ -288,8 +286,8 @@ public class LoadJournalEntriesDialog extends XDialog {
         lblCmdInsert = new Label(cmdPanel, SWT.NONE);
         lblCmdInsert.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Insert);
         lblCmdInsert.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_Insert);
-        lblCmdInsert.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.PT.label(),
-            JournalEntryType.PX.label()));
+        lblCmdInsert.addMouseListener(
+            new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.PT.label(), JournalEntryType.PX.label()));
 
         lblCmdUpdate = new Label(cmdPanel, SWT.NONE);
         lblCmdUpdate.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Update);
@@ -300,8 +298,8 @@ public class LoadJournalEntriesDialog extends XDialog {
         lblCmdDelete = new Label(cmdPanel, SWT.NONE);
         lblCmdDelete.setText(Messages.DisplayJournalEntriesDialog_Label_cmd_Delete);
         lblCmdDelete.setToolTipText(Messages.DisplayJournalEntriesDialog_Tooltip_cmd_Delete);
-        lblCmdDelete.addMouseListener(new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.DL.label(),
-            JournalEntryType.DR.label()));
+        lblCmdDelete.addMouseListener(
+            new JournalEntryTypeCmdLabelsMouseAdapter(tableViewer, true, true, JournalEntryType.DL.label(), JournalEntryType.DR.label()));
 
         tableViewer.setInput(journalEntryTypes.toArray(new SelectableJournalEntryType[journalEntryTypes.size()]));
     }
@@ -583,24 +581,9 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private class JournalTypesContentProvider implements IStructuredContentProvider {
 
-        private SelectableJournalEntryType[] inputData;
-
-        public void dispose() {
-        }
-
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-
-            if (newInput != null) {
-                inputData = (SelectableJournalEntryType[])newInput;
-            } else {
-                inputData = null;
-            }
-        }
-
         public Object[] getElements(Object inputData) {
             return (SelectableJournalEntryType[])inputData;
         }
-
     }
 
     private class JournalTypesLabelProvider extends LabelProvider implements ITableLabelProvider {
