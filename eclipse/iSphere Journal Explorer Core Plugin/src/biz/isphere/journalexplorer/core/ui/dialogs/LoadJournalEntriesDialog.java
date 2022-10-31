@@ -124,16 +124,18 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private String addJournaledObjects() {
 
-        if (objects == null || objects.length != 1) {
+        if (objects == null) {
             return ""; //$NON-NLS-1$
-        }
-
-        ISelectedObject object = objects[0];
-        if (object instanceof ISelectedFile) {
-            ISelectedFile file = (ISelectedFile)object;
-            return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember());
+        } else if (objects.length != 1) {
+            return Messages.bind(Messages.DisplayJournalEntriesDialog_Title_of_A_files, objects.length); // $NON-NLS-1$
         } else {
-            return ": " + QualifiedName.getName(object.getLibrary(), object.getName());
+            ISelectedObject object = objects[0];
+            if (object instanceof ISelectedFile) {
+                ISelectedFile file = (ISelectedFile)object;
+                return ": " + QualifiedName.getMemberName(file.getLibrary(), file.getName(), file.getMember());
+            } else {
+                return ": " + QualifiedName.getName(object.getLibrary(), object.getName());
+            }
         }
     }
 
