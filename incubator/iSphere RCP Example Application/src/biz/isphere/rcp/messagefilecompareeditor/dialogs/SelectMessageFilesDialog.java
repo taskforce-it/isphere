@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
 
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
@@ -236,6 +237,15 @@ public class SelectMessageFilesDialog extends XDialog {
         }
 
         if (IBMiHostContributionsHandler.isOffline(connectionName)) {
+            return false;
+        }
+
+        try {
+            if (!IBMiHostContributionsHandler.isConnected(connectionName)) {
+                IBMiHostContributionsHandler.connect(connectionName);
+            }
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.Title_E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             return false;
         }
 
