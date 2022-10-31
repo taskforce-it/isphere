@@ -130,7 +130,7 @@ public class Messages extends NLS {
     public static String CompareSideBySideDialog_Tooltip_Changed_records_only;
 
     public static String DisplayJournalEntriesDialog_Title;
-    public static String DisplayJournalEntriesDialog_Title_of_A_files;
+    public static String DisplayJournalEntriesDialog_Title_of_A_objects;
     public static String DisplayJournalEntriesDialog_From_date_colon;
     public static String DisplayJournalEntriesDialog_From_time_colon;
     public static String DisplayJournalEntriesDialog_To_date_colon;

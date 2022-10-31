@@ -127,7 +127,11 @@ public class LoadJournalEntriesDialog extends XDialog {
         if (objects == null) {
             return ""; //$NON-NLS-1$
         } else if (objects.length != 1) {
-            return Messages.bind(Messages.DisplayJournalEntriesDialog_Title_of_A_files, objects.length); // $NON-NLS-1$
+            if (objects[0] instanceof ISelectedObject) {
+                return Messages.bind(Messages.DisplayJournalEntriesDialog_Title_of_A_objects, objects.length); // $NON-NLS-1$
+            } else {
+                return ""; // //$NON-NLS-1$
+            }
         } else {
             ISelectedObject object = objects[0];
             if (object instanceof ISelectedFile) {
@@ -166,6 +170,11 @@ public class LoadJournalEntriesDialog extends XDialog {
         Composite leftPanel = new Composite(mainArea, SWT.NONE);
         leftPanel.setLayout(new GridLayout(2, false));
         leftPanel.setLayoutData(new GridData());
+
+        // Select file (if not yet specified)
+        if (objects == null || objects.length == 0) {
+
+        }
 
         // From date and time
 
