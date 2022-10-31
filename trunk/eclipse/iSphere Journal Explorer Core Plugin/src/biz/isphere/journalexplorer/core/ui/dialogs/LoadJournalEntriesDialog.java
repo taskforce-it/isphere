@@ -171,11 +171,6 @@ public class LoadJournalEntriesDialog extends XDialog {
         leftPanel.setLayout(new GridLayout(2, false));
         leftPanel.setLayoutData(new GridData());
 
-        // Select file (if not yet specified)
-        if (objects == null || objects.length == 0) {
-
-        }
-
         // From date and time
 
         Label lblStartingDateDateTime = new Label(leftPanel, SWT.NONE);
