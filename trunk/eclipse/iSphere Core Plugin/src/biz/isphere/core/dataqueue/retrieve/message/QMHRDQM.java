@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,19 @@ package biz.isphere.core.dataqueue.retrieve.message;
 
 import java.beans.PropertyVetoException;
 
-import biz.isphere.core.internal.api.APIErrorCode;
-import biz.isphere.core.internal.api.APIFormat;
-import biz.isphere.core.internal.api.APIProgramCallDocument;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.ProgramParameter;
 
+import biz.isphere.core.internal.api.APIErrorCode;
+import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.internal.api.APIProgramCallDocument;
+
 /**
- * This class retrieves the messages of a given data queue. The messages are
- * retrieved but not removed from the queue.
+ * The Retrieve Data Queue Message (QMHRDQM) API retrieves one or more messages
+ * from a data queue.
+ * <p>
+ * The messages are retrieved but not removed from the queue.
  * 
  * @author Thomas Raddatz
  */

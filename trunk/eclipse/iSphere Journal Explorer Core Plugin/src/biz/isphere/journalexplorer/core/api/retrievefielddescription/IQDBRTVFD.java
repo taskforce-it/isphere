@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -21,11 +24,17 @@ import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 /**
- * This class retrieves the messages descriptions of a given message file.
+ * The Retrieve Database File Description (QDBRTVFD) API allows you to get
+ * complete and specific information about a file on a local or remote system.
+ * The information is returned to a receiver variable in either a file
+ * definition template or a format definition mapping. The file definition
+ * template provides more complete information about a database file than the
+ * Display File Description (DSPFD) command. The format definition provides
+ * complete information about the record formats of the file.
+ * <p>
+ * This class uses the QDBRTVFD API to create a list of field descriptions of a
+ * given file.
  * 
  * @author Thomas Raddatz
  */

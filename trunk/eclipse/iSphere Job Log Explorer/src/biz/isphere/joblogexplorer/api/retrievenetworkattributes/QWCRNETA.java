@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,8 @@ import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
 /**
- * Retrieve Network Attributes (QWCRNETA) API
+ * The Retrieve Network Attributes (QWCRNETA) API lets you retrieve network
+ * attributes.
  */
 public class QWCRNETA extends APIProgramCallDocument {
 

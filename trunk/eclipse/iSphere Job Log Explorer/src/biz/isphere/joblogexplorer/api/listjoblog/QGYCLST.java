@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,17 @@
 
 package biz.isphere.joblogexplorer.api.listjoblog;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 /**
- * Close List (QGYCLST) API
+ * The Close List (QGYCLST) API closes a previously opened list. Any internal
+ * storage associated with that list is freed. The handle specified on the call
+ * to this API is no longer valid after the call completes.
  */
 public class QGYCLST extends APIProgramCallDocument {
 
