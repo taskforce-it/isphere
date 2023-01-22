@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -51,8 +53,10 @@ import biz.isphere.core.swt.widgets.objectselector.model.QSYSObjectTypes;
 import biz.isphere.core.swt.widgets.objectselector.model.SelectedObject;
 import biz.isphere.core.swt.widgets.objectselector.model.SystemItem;
 
-import com.ibm.as400.access.AS400;
-
+/**
+ * This class produces a tree browser for selecting an object of a given object
+ * type.
+ */
 public class SelectQSYSObjectDialog extends XDialog implements ISelectQSYSObjectDialog {
 
     private String connectionName;
@@ -358,9 +362,10 @@ public class SelectQSYSObjectDialog extends XDialog implements ISelectQSYSObject
             if (element instanceof ObjectItem) {
                 ObjectItem objectItem = (ObjectItem)element;
                 selectedObject = (ObjectItem)objectItem;
-                if (isValidated()) {
+                if (selectedObject instanceof ObjectItem) {
                     objectDescription.setText(String.format("%s - %s", selectedObject.getName(), selectedObject.getDescription())); //$NON-NLS-1$
                 }
+                isValidated(); // Validate selected object
             }
         }
     }
