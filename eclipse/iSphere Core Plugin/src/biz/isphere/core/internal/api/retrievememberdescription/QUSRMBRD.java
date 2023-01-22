@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,25 @@ package biz.isphere.core.internal.api.retrievememberdescription;
 
 import java.beans.PropertyVetoException;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
+/**
+ * The Retrieve Member Description (QUSRMBRD) API retrieves specific information
+ * about a single database file member and returns the information to the
+ * calling program in a receiver variable. The length of the receiver variable
+ * determines the amount of data returned. You can only use the QUSRMBRD API
+ * with database file types *PF, *LF, and *DDMF.
+ */
 public class QUSRMBRD extends APIProgramCallDocument {
 
     private static final String OVERRIDES_ARE_NOT_PROCESSED = "0";
     private static final String OVERRIDES_ARE_PROCESSED = "1";
-    
+
     private String file;
     private String library;
     private String member;
@@ -29,7 +36,7 @@ public class QUSRMBRD extends APIProgramCallDocument {
 
     public QUSRMBRD(AS400 system) throws PropertyVetoException {
         super(system, "QUSRMBRD", "QSYS");
-        
+
         this.overrideProcessing = OVERRIDES_ARE_NOT_PROCESSED;
     }
 

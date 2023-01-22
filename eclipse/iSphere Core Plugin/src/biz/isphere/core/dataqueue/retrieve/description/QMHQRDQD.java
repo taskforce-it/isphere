@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,19 @@ package biz.isphere.core.dataqueue.retrieve.description;
 
 import java.beans.PropertyVetoException;
 
-import biz.isphere.core.internal.api.APIFormat;
-import biz.isphere.core.internal.api.APIProgramCallDocument;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.ProgramParameter;
 
+import biz.isphere.core.internal.api.APIFormat;
+import biz.isphere.core.internal.api.APIProgramCallDocument;
+
 /**
- * This class retrieves the description of a given data queue.
+ * The Retrieve Data Queue Description (QMHQRDQD) API retrieves the description
+ * and attributes of a data queue. Examples include the number of entries
+ * currently on the data queue, the text description of the data queue, whether
+ * the queue includes sender ID information, and whether the data queue is
+ * keyed.
  * 
  * @author Thomas Raddatz
  */

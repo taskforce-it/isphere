@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,21 @@ package biz.isphere.core.internal.api.retrieveproductinformation;
 
 import java.beans.PropertyVetoException;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
+/**
+ * The Retrieve Product Information (QSZRTVPR) API returns information about a
+ * software product. The information is requested by specifying a product ID,
+ * release level, option number, and load ID; not by specifying an object name.
+ * The Display Software Resources (DSPSFWRSC) command and the Select Product
+ * (QSZSLTPR) API will obtain a list of installed products about which you can
+ * retrieve information.
+ */
 public class QSZRTVPR extends APIProgramCallDocument {
 
     public QSZRTVPR(AS400 system) throws PropertyVetoException {
@@ -55,5 +63,5 @@ public class QSZRTVPR extends APIProgramCallDocument {
 
         return parameterList;
     }
-    
+
 }

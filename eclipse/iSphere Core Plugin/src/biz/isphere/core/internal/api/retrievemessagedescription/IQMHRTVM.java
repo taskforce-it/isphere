@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.base.internal.Buffer;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -21,11 +24,13 @@ import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 /**
- * This class retrieves the messages descriptions of a given message file.
+ * The Retrieve Message (QMHRTVM) API retrieves the message description of a
+ * predefined message. The message description is created with the Add Message
+ * Description (ADDMSGD) command. It consists of the text of the message and
+ * other information, such as the message help and the default reply for the
+ * message. You can use the QMHRTVM API to copy the text of predefined messages
+ * into a program.
  * 
  * @author Thomas Raddatz
  */
@@ -196,7 +201,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * 
      * @param retrieveOption - specifies the starting point. Must be one of
      *        {@link #RETRIEVE_FIRST}, {@link #RETRIEVE_NEXT} or
-     *        {@link #RETRIEVE_MSGID    }.
+     *        {@link #RETRIEVE_MSGID }.
      * @param messageID - message that defines the starting point. This
      *        parameter is ignored when <i>retrieveOption</i> is set to
      *        {@link #RETRIEVE_FIRST}.
@@ -226,7 +231,7 @@ public class IQMHRTVM extends APIProgramCallDocument {
      * 
      * @param retrieveOption - specifies the starting point. Must be one of
      *        {@link #RETRIEVE_FIRST}, {@link #RETRIEVE_NEXT} or
-     *        {@link #RETRIEVE_MSGID    }.
+     *        {@link #RETRIEVE_MSGID }.
      * @param messageID - message that defines the starting point. This
      *        parameter is ignored when <i>retrieveOption</i> is set to
      *        {@link #RETRIEVE_FIRST}.

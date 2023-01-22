@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,15 +15,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.ProgramParameter;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIErrorCode;
 import biz.isphere.core.internal.api.APIProgramCallDocument;
 
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.ProgramParameter;
-
 /**
- * Open List of Job Log Messages (QGYOLJBL) API
+ * The Open List of Job Log Messages (QGYOLJBL) API lists messages from a job
+ * log. The returned messages are sorted by their sending date and time unless
+ * the message being listed is a reply message to an inquiry, a sender's copy,
+ * or a notify type message. When a reply message exists for one of these
+ * messages, the reply message is not positioned according to the sending date
+ * and time of the reply. The reply message is, instead, listed immediately
+ * following the inquiry, the sender's copy, or the notify message that it is
+ * associated with.
  */
 public class QGYOLJBL extends APIProgramCallDocument {
 
