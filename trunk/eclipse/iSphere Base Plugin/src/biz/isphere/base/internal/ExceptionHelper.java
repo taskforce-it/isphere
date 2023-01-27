@@ -8,11 +8,19 @@
 
 package biz.isphere.base.internal;
 
+import java.net.UnknownHostException;
+
 public final class ExceptionHelper {
 
     public static String getLocalizedMessage(Throwable throwable) {
 
-        String exceptionMessage = throwable.getLocalizedMessage();
+        String exceptionMessage;
+        if (throwable instanceof UnknownHostException) {
+            exceptionMessage = throwable.toString();
+        } else {
+            exceptionMessage = throwable.getLocalizedMessage();
+        }
+
         if (StringHelper.isNullOrEmpty(exceptionMessage)) {
             return throwable.getClass().getName();
         } else {
