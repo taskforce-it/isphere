@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -47,6 +48,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 import biz.isphere.base.jface.dialogs.XDialog;
+import biz.isphere.core.annotations.RDi95Compatibility;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.extension.point.IDateEdit;
@@ -587,8 +589,24 @@ public class LoadJournalEntriesDialog extends XDialog {
 
     private class JournalTypesContentProvider implements IStructuredContentProvider {
 
+        private SelectableJournalEntryType[] inputData;
+
+        @RDi95Compatibility
+        public void dispose() {
+        }
+
+        @RDi95Compatibility
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+
+            if (newInput != null) {
+                inputData = (SelectableJournalEntryType[])newInput;
+            } else {
+                inputData = null;
+            }
+        }
+
         public Object[] getElements(Object inputData) {
-            return (SelectableJournalEntryType[])inputData;
+            return this.inputData;
         }
     }
 
