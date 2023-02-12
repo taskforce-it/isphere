@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Class to hold the result of the IQMHRTVM API.
@@ -69,7 +69,7 @@ public class IQMHRTVMResult extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -78,7 +78,7 @@ public class IQMHRTVMResult extends APIFormat {
      * @return bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -87,7 +87,7 @@ public class IQMHRTVMResult extends APIFormat {
      * @return number of messages returned
      */
     public int getNumberOfMessagesReturned() {
-        return getInt4Value(NUMBER_OF_MESSAGES_RETURNED);
+        return getIntValue(NUMBER_OF_MESSAGES_RETURNED);
     }
 
     /**
@@ -148,7 +148,7 @@ public class IQMHRTVMResult extends APIFormat {
      * @return offset of first message description
      */
     private int getOffsetFirstMessage() {
-        return getInt4Value(OFFSET_TO_FIRST_MESSAGE);
+        return getIntValue(OFFSET_TO_FIRST_MESSAGE);
     }
 
     /**

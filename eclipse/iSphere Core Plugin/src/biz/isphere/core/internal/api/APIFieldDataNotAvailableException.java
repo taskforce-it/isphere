@@ -8,14 +8,14 @@
 
 package biz.isphere.core.internal.api;
 
-public class APIFieldTypeMismatchException extends RuntimeException {
+public class APIFieldDataNotAvailableException extends RuntimeException {
 
-    private static final long serialVersionUID = 1232870384850444139L;
+    private static final long serialVersionUID = -3071207435207951760L;
 
     private String message;
 
-    public APIFieldTypeMismatchException(String name) {
-        this.message = "Field " + name + " does not match expected field type."; //$NON-NLS-1$ //$NON-NLS-2$
+    public APIFieldDataNotAvailableException(String name) {
+        this.message = "Data of field " + name + " is not available."; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override

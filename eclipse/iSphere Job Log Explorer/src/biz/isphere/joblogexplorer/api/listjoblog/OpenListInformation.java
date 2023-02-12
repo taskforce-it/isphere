@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@ package biz.isphere.joblogexplorer.api.listjoblog;
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 public class OpenListInformation extends APIFormat {
 
@@ -47,11 +47,11 @@ public class OpenListInformation extends APIFormat {
     }
 
     public int getTotalRecords() {
-        return getInt4Value(TOTAL_RECORDS);
+        return getIntValue(TOTAL_RECORDS);
     }
 
     public int getRecordsReturned() {
-        return getInt4Value(RECORDS_RETURNED);
+        return getIntValue(RECORDS_RETURNED);
     }
 
     public String getRequestHandle() throws UnsupportedEncodingException {
@@ -59,7 +59,7 @@ public class OpenListInformation extends APIFormat {
     }
 
     public int getRecordLength() {
-        return getInt4Value(RECORD_LENGTH);
+        return getIntValue(RECORD_LENGTH);
     }
 
     public String getInformationCompleteIndicator() throws UnsupportedEncodingException {
@@ -75,11 +75,11 @@ public class OpenListInformation extends APIFormat {
     }
 
     public int getLengthOfInformationReturned() {
-        return getInt4Value(LENGTH_OF_INFORMATION_RETURNED);
+        return getIntValue(LENGTH_OF_INFORMATION_RETURNED);
     }
 
     public int getFirstRecordInReceiverVariable() {
-        return getInt4Value(FIRST_RECORD_IN_RECEIVER_VARIABLE);
+        return getIntValue(FIRST_RECORD_IN_RECEIVER_VARIABLE);
     }
 
     /**

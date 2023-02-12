@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,12 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.FieldFormat;
 import biz.isphere.core.messagefileeditor.MessageDescription;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Format RTVM0300 of the Retrieve Message (QMHRTVM) API.
@@ -88,7 +88,7 @@ public class RTVM0300 extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -97,7 +97,7 @@ public class RTVM0300 extends APIFormat {
      * @return number of bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -106,7 +106,7 @@ public class RTVM0300 extends APIFormat {
      * @return severity
      */
     public int getMessageSeverity() {
-        return getInt4Value(MESSAGE_SEVERITY);
+        return getIntValue(MESSAGE_SEVERITY);
     }
 
     /**
@@ -125,7 +125,7 @@ public class RTVM0300 extends APIFormat {
      * @return number of substitution variables
      */
     public int getNumberOfSubstitutionVariables() {
-        return getInt4Value(NUMBER_OF_SUBSTITUTION_VARIABLE_FORMATS);
+        return getIntValue(NUMBER_OF_SUBSTITUTION_VARIABLE_FORMATS);
     }
 
     /**
@@ -136,8 +136,8 @@ public class RTVM0300 extends APIFormat {
      */
     public String getMessage() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_MESSAGE);
-        int length = getInt4Value(LENGTH_OF_MESSAGE_RETURNED);
+        int offset = getIntValue(OFFSET_MESSAGE);
+        int length = getIntValue(LENGTH_OF_MESSAGE_RETURNED);
         if (length > 0) {
             return convertToText(getBytesAt(offset, length));
         }
@@ -154,8 +154,8 @@ public class RTVM0300 extends APIFormat {
      */
     public String getMessageHelp() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_OF_MESSAGE_HELP);
-        int length = getInt4Value(LENGTH_OF_MESSAGE_HELP_RETURNED);
+        int offset = getIntValue(OFFSET_OF_MESSAGE_HELP);
+        int length = getIntValue(LENGTH_OF_MESSAGE_HELP_RETURNED);
         if (length > 0) {
             return convertToText(getBytesAt(offset, length));
         }
@@ -169,7 +169,7 @@ public class RTVM0300 extends APIFormat {
      * @return CCSID of message text
      */
     public int getCcsid() {
-        return getInt4Value(CCSID_OF_TEXT_RETURNED);
+        return getIntValue(CCSID_OF_TEXT_RETURNED);
     }
 
     /**
@@ -179,7 +179,7 @@ public class RTVM0300 extends APIFormat {
      * @return offset to substitution variables
      */
     public int getOffsetSubstitutionVariables() {
-        return getInt4Value(OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS);
+        return getIntValue(OFFSET_OF_SUBSTITUTION_VARIABLE_FORMATS);
     }
 
     /**
@@ -188,7 +188,7 @@ public class RTVM0300 extends APIFormat {
      * @return length of substitution variable format
      */
     public int getLengthOfSubstitutionVariableFormatElement() {
-        return getInt4Value(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMAT_ELEMENT);
+        return getIntValue(LENGTH_OF_SUBSTITUTION_VARIABLE_FORMAT_ELEMENT);
     }
 
     /**
@@ -199,8 +199,8 @@ public class RTVM0300 extends APIFormat {
      */
     public String getDefaultReplyValue() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_OF_DEFAULT_REPLY);
-        int length = getInt4Value(LENGTH_OF_DEFAULT_REPLY_RETURNED);
+        int offset = getIntValue(OFFSET_OF_DEFAULT_REPLY);
+        int length = getIntValue(LENGTH_OF_DEFAULT_REPLY_RETURNED);
         if (length > 0) {
             return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
         }
@@ -217,7 +217,8 @@ public class RTVM0300 extends APIFormat {
      * @return message description
      * @throws UnsupportedEncodingException
      */
-    public MessageDescription createMessageDescription(String connectionName, String messageFile, String library) throws UnsupportedEncodingException {
+    public MessageDescription createMessageDescription(String connectionName, String messageFile, String library)
+        throws UnsupportedEncodingException {
 
         String helpText = getMessageHelp();
         if (helpText == null || helpText.trim().length() == 0) {

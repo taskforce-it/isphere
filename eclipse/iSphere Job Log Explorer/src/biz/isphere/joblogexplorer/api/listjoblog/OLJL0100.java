@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,14 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.DateTimeHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.joblogexplorer.Messages;
-
-import com.ibm.as400.access.AS400;
 
 public class OLJL0100 extends APIFormat {
 
@@ -117,20 +117,20 @@ public class OLJL0100 extends APIFormat {
     }
 
     public int getOffsetToNextEntry() {
-        return getInt4Value(OFFSET_TO_NEXT_ENTRY);
+        return getIntValue(OFFSET_TO_NEXT_ENTRY);
     }
 
     public int getOffsetToFieldsReturned() {
-        return getInt4Value(OFFSET_TO_FIELDS_RETURNED);
+        return getIntValue(OFFSET_TO_FIELDS_RETURNED);
     }
 
     public int getNumberOfFieldsReturned() {
-        return getInt4Value(NUMBER_OF_FIELDS_RETURNED);
+        return getIntValue(NUMBER_OF_FIELDS_RETURNED);
     }
 
     public String getMessageSeverity() {
 
-        String severity = Integer.toString(getInt4Value(MESSAGE_SVERITY));
+        String severity = Integer.toString(getIntValue(MESSAGE_SVERITY));
         if ("0".equals(severity)) { //$NON-NLS-1$
             severity = "00"; //$NON-NLS-1$
         }

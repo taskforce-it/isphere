@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,16 +92,16 @@ public class RDQS0200 extends RDQS0100 {
      * @throws CharConversionException
      * @throws UnsupportedEncodingException
      */
-    public RDQS0200(AS400 system, String key, int keyLengthToRetrieve, int messageLengthToRetrieve) throws CharConversionException,
-        UnsupportedEncodingException {
+    public RDQS0200(AS400 system, String key, int keyLengthToRetrieve, int messageLengthToRetrieve)
+        throws CharConversionException, UnsupportedEncodingException {
         super(system, "RDQS0200"); //$NON-NLS-1$
 
         createStructure();
 
         setCharValue(SELECTION_TYPE, SELECT_KEYED);
-        setInt4Value(NUMBER_OF_MESSAGE_TEXT_BYTES_TO_RETRIEVE, messageLengthToRetrieve);
-        setInt4Value(NUMBER_OF_MESSAGE_KEY_BYTES_TO_RETRIEVE, keyLengthToRetrieve);
-        setInt4Value(LENGTH_OF_KEY, key.length());
+        setIntValue(NUMBER_OF_MESSAGE_TEXT_BYTES_TO_RETRIEVE, messageLengthToRetrieve);
+        setIntValue(NUMBER_OF_MESSAGE_KEY_BYTES_TO_RETRIEVE, keyLengthToRetrieve);
+        setIntValue(LENGTH_OF_KEY, key.length());
         setCharValue(KEY, key);
     }
 

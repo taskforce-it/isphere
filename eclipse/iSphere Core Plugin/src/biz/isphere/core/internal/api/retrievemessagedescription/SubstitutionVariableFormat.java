@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 
 import java.io.UnsupportedEncodingException;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.FieldFormat;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Substitution variable format of the QMHRTVM API.
@@ -65,7 +65,7 @@ public class SubstitutionVariableFormat extends APIFormat {
      * @return length of the substitution variable
      */
     public int getLengthOfReplacementData() {
-        return getInt4Value(LENGTH_OF_REPLACEMENT_DATA);
+        return getIntValue(LENGTH_OF_REPLACEMENT_DATA);
     }
 
     /**
@@ -86,7 +86,7 @@ public class SubstitutionVariableFormat extends APIFormat {
      *         replacement data
      */
     public int getDecimalPositions() {
-        return getInt4Value(FIELD_SIZE_OR_DECIMAL_POSITIONS);
+        return getIntValue(FIELD_SIZE_OR_DECIMAL_POSITIONS);
     }
 
     /**
@@ -106,7 +106,7 @@ public class SubstitutionVariableFormat extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public FieldFormat createFieldFormat() throws UnsupportedEncodingException {
-        
+
         FieldFormat fieldFormat = new FieldFormat();
 
         fieldFormat.setType(getType());
@@ -118,7 +118,7 @@ public class SubstitutionVariableFormat extends APIFormat {
             fieldFormat.setLength(getLengthOfReplacementData());
             fieldFormat.setDecimalPositions(getDecimalPositions());
         }
-        
+
         return fieldFormat;
     }
 

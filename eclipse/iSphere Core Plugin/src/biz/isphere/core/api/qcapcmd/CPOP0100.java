@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@ package biz.isphere.core.api.qcapcmd;
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 public class CPOP0100 extends APIFormat {
 
@@ -247,12 +247,12 @@ public class CPOP0100 extends APIFormat {
 
         createStructure();
 
-        setInt4Value(TYPE_OF_COMMAND_PROCESSING, CMD_CHECK);
+        setIntValue(TYPE_OF_COMMAND_PROCESSING, CMD_CHECK);
         setCharValue(DBCS_DATA_HANDLING, DBCS_IGNORE);
         setCharValue(PROMPTER_ACTION, PROMPT_NEVER);
         setCharValue(COMMAND_STRING_SYNTAX, SYNTAX_SYSTEM);
         setByteValue(MESSAGE_RETRIEVE_KEY, new byte[] { 0x00 });
-        setInt4Value(CCSID_OF_COMMAND_STRING, CCSID_JOB);
+        setIntValue(CCSID_OF_COMMAND_STRING, CCSID_JOB);
         setByteValue(RESERVED, new byte[] { 0x00 });
     }
 
@@ -269,7 +269,7 @@ public class CPOP0100 extends APIFormat {
     public void setTypeOfCommandProcessing(int typeOfCommandProcessing) {
 
         checkTypeOfCommandProcessing(typeOfCommandProcessing);
-        setInt4Value(TYPE_OF_COMMAND_PROCESSING, typeOfCommandProcessing);
+        setIntValue(TYPE_OF_COMMAND_PROCESSING, typeOfCommandProcessing);
     }
 
     public void setPrompterAction(String prompterAction) throws CharConversionException, UnsupportedEncodingException {

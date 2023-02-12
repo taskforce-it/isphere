@@ -2,6 +2,7 @@
 Changelog: iSphere 5.2.8.r
 --------------------------
  • Updated STRPREPRC to v2.2 to fix a bug.
+ • Added support for int2 fields when calling IBM APIs.
 
 Changelog: iSphere 5.2.7.r
 --------------------------
@@ -22,10 +23,10 @@ Changelog: iSphere 5.2.5.r
  • Changed export filter dialog to not show a confirmation message if
    a filter does not exist.
  • Fixed filter type when exporting a search result to a filter.
- • Enhanced the SQL editor to support quoted field names and some more
-   special characters in field names.
- • Fixed setting the library name when starting source compare from an
-   i Project source member.
+ • Enhanced the SQL editor to support quoted field names and some
+   more special characters in field names.
+ • Fixed setting the library name when starting source compare from
+   an i Project source member.
 
 Changelog: iSphere 5.2.4.r
 --------------------------
@@ -35,7 +36,8 @@ Changelog: iSphere 5.2.4.r
 Changelog: iSphere 5.2.3.r
 --------------------------
  • Fixed member validation in iSphere Compare Members dialog.
- • Fixed stream file validation in iSphere Compare Stream Files dialog.
+ • Fixed stream file validation in iSphere Compare Stream Files
+   dialog.
 
 Changelog: iSphere 5.2.2.r
 --------------------------
