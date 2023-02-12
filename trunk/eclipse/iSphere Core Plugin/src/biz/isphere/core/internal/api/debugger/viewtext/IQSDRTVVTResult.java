@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.internal.api.debugger.moduleviews.IQSDRTVMV;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Class to hold the result of the IQSDRTVMV API.
@@ -64,7 +64,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -73,7 +73,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -82,7 +82,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return number of lines returned
      */
     public int getNumberOfLinesReturned() {
-        return getInt4Value(NUMBER_OF_LINES_RETURNED);
+        return getIntValue(NUMBER_OF_LINES_RETURNED);
     }
 
     /**
@@ -91,7 +91,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return number of lines available
      */
     public int getNumberOfLinesAvailable() {
-        return getInt4Value(NUMBER_OF_LINES_AVAILABLE);
+        return getIntValue(NUMBER_OF_LINES_AVAILABLE);
     }
 
     /**
@@ -100,7 +100,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return line length
      */
     public int getLineLength() {
-        return getInt4Value(LENGTH_OF_LINE);
+        return getIntValue(LENGTH_OF_LINE);
     }
 
     /**
@@ -109,7 +109,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return index first line
      */
     public int getFirstLine() {
-        return getInt4Value(FIRST_LINE);
+        return getIntValue(FIRST_LINE);
     }
 
     /**
@@ -118,7 +118,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return index last line
      */
     public int getLastLine() {
-        return getInt4Value(LAST_LINE);
+        return getIntValue(LAST_LINE);
     }
 
     /**
@@ -127,7 +127,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return length of line entry
      */
     public int getLengthOfLineEntry() {
-        return getInt4Value(LENGTH_OF_LINE_ENTRY);
+        return getIntValue(LENGTH_OF_LINE_ENTRY);
     }
 
     /**
@@ -166,7 +166,7 @@ public class IQSDRTVVTResult extends APIFormat {
      * @return offset of first line
      */
     public int getOffsetFirstLine() {
-        return getInt4Value(OFFSET_FIRST_LINE);
+        return getIntValue(OFFSET_FIRST_LINE);
     }
 
     /**

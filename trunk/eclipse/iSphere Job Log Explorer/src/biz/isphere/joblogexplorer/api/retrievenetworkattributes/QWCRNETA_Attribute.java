@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@ package biz.isphere.joblogexplorer.api.retrievenetworkattributes;
 
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 public class QWCRNETA_Attribute extends APIFormat {
 
@@ -47,7 +47,7 @@ public class QWCRNETA_Attribute extends APIFormat {
     }
 
     public int getLengthOfData() {
-        return getInt4Value(LENGTH_OF_DATA);
+        return getIntValue(LENGTH_OF_DATA);
     }
 
     /**

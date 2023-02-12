@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@ package biz.isphere.core.dataqueue.retrieve.message;
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Format RDQS0100 of the <i>Retrieve Data Queue Message</i> (QMHRDQM) API. This
@@ -90,7 +90,7 @@ public class RDQS0100 extends APIFormat {
         createStructure();
 
         setCharValue(SELECTION_TYPE, selectionType);
-        setInt4Value(NUMBER_OF_MESSAGE_TEXT_BYTES_TO_RETRIEVE, messageLengthToRetrieve);
+        setIntValue(NUMBER_OF_MESSAGE_TEXT_BYTES_TO_RETRIEVE, messageLengthToRetrieve);
     }
 
     protected RDQS0100(AS400 system, String formatName) throws UnsupportedEncodingException {

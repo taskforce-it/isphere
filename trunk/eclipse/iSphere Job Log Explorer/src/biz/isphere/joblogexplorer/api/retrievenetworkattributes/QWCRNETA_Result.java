@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@ package biz.isphere.joblogexplorer.api.retrievenetworkattributes;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.api.APIFormat;
-
-import com.ibm.as400.access.AS400;
 
 public class QWCRNETA_Result extends APIFormat {
 
@@ -46,7 +46,7 @@ public class QWCRNETA_Result extends APIFormat {
             QWCRNETA_Attribute attribute = new QWCRNETA_Attribute(getSystem());
             attribute.setBytes(getBytes());
 
-            int numAttrs = getInt4Value(NUM_ATTRS_RETURNED);
+            int numAttrs = getIntValue(NUM_ATTRS_RETURNED);
             int[] offsAttrs = getInt4Array(OFFSET_ATTRS_TABLE, numAttrs);
             for (int i = 0; i < offsAttrs.length; i++) {
                 attribute.setOffset(offsAttrs[i]);

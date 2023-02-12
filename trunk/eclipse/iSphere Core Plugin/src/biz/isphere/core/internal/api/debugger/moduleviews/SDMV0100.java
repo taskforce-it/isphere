@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,10 @@ package biz.isphere.core.internal.api.debugger.moduleviews;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.internal.api.APIFormat;
-
-import com.ibm.as400.access.AS400;
 
 public class SDMV0100 extends APIFormat {
 
@@ -112,7 +112,7 @@ public class SDMV0100 extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public int getViewNumber() {
-        return getInt4Value(VIEW_NUMBER);
+        return getIntValue(VIEW_NUMBER);
     }
 
     /**

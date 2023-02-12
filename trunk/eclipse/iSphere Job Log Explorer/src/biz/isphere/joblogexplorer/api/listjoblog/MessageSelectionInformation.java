@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,9 @@ package biz.isphere.joblogexplorer.api.listjoblog;
 import java.io.CharConversionException;
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 public class MessageSelectionInformation extends APIFormat {
 
@@ -89,12 +89,12 @@ public class MessageSelectionInformation extends APIFormat {
         setCharValue(JOB_NUMBER, ""); //$NON-NLS-1$
         setCharValue(INTERNAL_JOB_IDENTIFIER, ""); //$NON-NLS-1$
         setCharValue(STARTING_MESSAGE_KEY, MESSAGE_KEY_OLDEST);
-        setInt4Value(MAXIMUM_MESSAGE_LENGTH, 200);
-        setInt4Value(MAXIMUM_MESSAGE_HELP_LENGTH, 500);
-        setInt4Value(OFFSET_TO_IDENTIFIERS_OF_FIELDS_TO_RETURN, offsetFieldIdentifiers);
-        setInt4Value(NUMBER_OF_FIELDS_TO_RETURN, 0);
-        setInt4Value(OFFSET_TO_CALL_MESSAGE_QUEUE_NAME, offsetCallMessageQueueName);
-        setInt4Value(SIZE_OF_CALL_MESSAGE_QUEUE_NAME, 1);
+        setIntValue(MAXIMUM_MESSAGE_LENGTH, 200);
+        setIntValue(MAXIMUM_MESSAGE_HELP_LENGTH, 500);
+        setIntValue(OFFSET_TO_IDENTIFIERS_OF_FIELDS_TO_RETURN, offsetFieldIdentifiers);
+        setIntValue(NUMBER_OF_FIELDS_TO_RETURN, 0);
+        setIntValue(OFFSET_TO_CALL_MESSAGE_QUEUE_NAME, offsetCallMessageQueueName);
+        setIntValue(SIZE_OF_CALL_MESSAGE_QUEUE_NAME, 1);
         setCharValue(CALL_MESSAGE_QUEUE_NAME, "*"); //$NON-NLS-1$
     }
 
@@ -108,9 +108,9 @@ public class MessageSelectionInformation extends APIFormat {
 
         numKeys++;
         String fieldName = KEY + numKeys;
-        setInt4Value(fieldName, key);
+        setIntValue(fieldName, key);
 
-        setInt4Value(NUMBER_OF_FIELDS_TO_RETURN, numKeys);
+        setIntValue(NUMBER_OF_FIELDS_TO_RETURN, numKeys);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@ package biz.isphere.core.internal.api.retrieveproductinformation;
 
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Format PRD00000 of the Retrieve Product Information (QSZRTVPR) API.
@@ -23,7 +23,7 @@ public abstract class PRDR0000 extends APIFormat {
 
     protected PRDR0000(AS400 system, String formatName) throws UnsupportedEncodingException {
         super(system, formatName);
-        
+
         createStructure();
     }
 
@@ -36,7 +36,7 @@ public abstract class PRDR0000 extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class PRDR0000 extends APIFormat {
      * @return number of bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**

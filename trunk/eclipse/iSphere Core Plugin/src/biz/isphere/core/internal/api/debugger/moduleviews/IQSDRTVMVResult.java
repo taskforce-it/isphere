@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Class to hold the result of the IQSDRTVMV API.
@@ -90,7 +90,7 @@ public class IQSDRTVMVResult extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -99,7 +99,7 @@ public class IQSDRTVMVResult extends APIFormat {
      * @return bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -108,7 +108,7 @@ public class IQSDRTVMVResult extends APIFormat {
      * @return number of messages returned
      */
     public int getNumberOfViewsReturned() {
-        return getInt4Value(NUMBER_OF_VIEWS_RETURNED);
+        return getIntValue(NUMBER_OF_VIEWS_RETURNED);
     }
 
     /**
@@ -117,7 +117,7 @@ public class IQSDRTVMVResult extends APIFormat {
      * @return length of view entry
      */
     public int getLengthOfViewEntry() {
-        return getInt4Value(LENGTH_OF_VIEW_ENTRY);
+        return getIntValue(LENGTH_OF_VIEW_ENTRY);
     }
 
     /**
@@ -156,7 +156,7 @@ public class IQSDRTVMVResult extends APIFormat {
      * @return offset of first view
      */
     private int getOffsetFirstView() {
-        return getInt4Value(OFFSET_FIRST_VIEW);
+        return getIntValue(OFFSET_FIRST_VIEW);
     }
 
     /**

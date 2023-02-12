@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,13 @@ import java.util.Date;
 
 import org.eclipse.swt.SWT;
 
-import biz.isphere.core.internal.api.APIDateTimeFieldDescription;
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+
+import biz.isphere.core.internal.api.APIDateTimeFieldDescription;
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Message entry, that is returned by the QMHRDQM API.
@@ -64,7 +64,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      * @return offset to the next message entry
      */
     public int getOffsetToNextMessageEntry() {
-        return getInt4Value(OFFSET_TO_NEXT_MESSAGE_ENTRY);
+        return getIntValue(OFFSET_TO_NEXT_MESSAGE_ENTRY);
     }
 
     /**
@@ -80,8 +80,8 @@ public class RDQM0200MessageEntry extends APIFormat {
      * @throws IOException
      * @throws ObjectDoesNotExistException
      */
-    public Date getMessageEnqueueDateAndTime() throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException,
-        ObjectDoesNotExistException {
+    public Date getMessageEnqueueDateAndTime()
+        throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException {
         return getDateTimeValue(MESSAGE_ENQUEUE_DATE_AND_TIME);
     }
 
@@ -97,7 +97,7 @@ public class RDQM0200MessageEntry extends APIFormat {
      * @return length of message text
      */
     public int getEnqueuedMesageEntryLength() {
-        return getInt4Value(ENQUEUED_MESSAGE_ENTRY_LENGTH);
+        return getIntValue(ENQUEUED_MESSAGE_ENTRY_LENGTH);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,14 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.messagefileeditor.MessageDescription;
 import biz.isphere.core.messagefileeditor.RangeOfReplyValues;
 import biz.isphere.core.messagefileeditor.RelationalTestEntry;
 import biz.isphere.core.messagefileeditor.SpecialReplyValueEntry;
 import biz.isphere.core.messagefileeditor.ValidReplyEntry;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Format RTVM0400 of the Retrieve Message (QMHRTVM) API.
@@ -98,7 +98,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return reply length
      */
     public int getReplyLength() {
-        return getInt4Value(MAXIMUM_REPLY_LENGTH);
+        return getIntValue(MAXIMUM_REPLY_LENGTH);
     }
 
     /**
@@ -107,7 +107,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return decimal positions
      */
     public int getReplyDecimalPositions() {
-        return getInt4Value(MAXIMUM_REPLY_DECIMAL_POSITIONS);
+        return getIntValue(MAXIMUM_REPLY_DECIMAL_POSITIONS);
     }
 
     /**
@@ -116,7 +116,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return offset to reply entries
      */
     public int getOffsetValidReplyEntries() {
-        return getInt4Value(OFFSET_OF_VALID_REPLY_VALUE_ENTRIES);
+        return getIntValue(OFFSET_OF_VALID_REPLY_VALUE_ENTRIES);
     }
 
     /**
@@ -125,7 +125,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return number of reply entries
      */
     public int getNumberOfValidReplyEntries() {
-        return getInt4Value(NUMBER_OF_VALID_REPLY_VALUE_ENTRIES_RETRUEND);
+        return getIntValue(NUMBER_OF_VALID_REPLY_VALUE_ENTRIES_RETRUEND);
     }
 
     /**
@@ -134,7 +134,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return length of reply entry
      */
     public int getLengthOfValidReplyEntry() {
-        return getInt4Value(LENGTH_OF_VALID_REPLY_VALUE_ENTRY);
+        return getIntValue(LENGTH_OF_VALID_REPLY_VALUE_ENTRY);
     }
 
     /**
@@ -143,7 +143,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return offset to reply entries
      */
     public int getOffsetSpecialReplyValueEntries() {
-        return getInt4Value(OFFSET_OF_SPECIAL_REPLY_VALUE_ENTRIES);
+        return getIntValue(OFFSET_OF_SPECIAL_REPLY_VALUE_ENTRIES);
     }
 
     /**
@@ -152,7 +152,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return number of reply entries
      */
     public int getNumberOfSpecialReplyValueEntries() {
-        return getInt4Value(NUMBER_OF_SPECIAL_REPLY_VALUES_RETURNED);
+        return getIntValue(NUMBER_OF_SPECIAL_REPLY_VALUES_RETURNED);
     }
 
     /**
@@ -161,7 +161,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return length of reply entry
      */
     public int getLengthOfSpecialReplyValueEntry() {
-        return getInt4Value(LENGTH_OF_SPECIAL_REPLY_VALUE_ENTRY);
+        return getIntValue(LENGTH_OF_SPECIAL_REPLY_VALUE_ENTRY);
     }
 
     /**
@@ -170,18 +170,18 @@ public class RTVM0400 extends RTVM0300 {
      * @return length of reply entry
      */
     public int getStoredCcsid() {
-        return getInt4Value(STORED_CCSID_OF_MESSAGE);
+        return getIntValue(STORED_CCSID_OF_MESSAGE);
     }
 
     public RangeOfReplyValues getRangeOfReplyValue() throws UnsupportedEncodingException {
-        
+
         RangeOfReplyValues rangeOfReplyValue = new RangeOfReplyValues();
         rangeOfReplyValue.setLowerValue(getLowerRangeReplyValue());
         rangeOfReplyValue.setUpperValue(getUpperRangeReplyValue());
-        
+
         return rangeOfReplyValue;
     }
-    
+
     /**
      * Returns the 'lower range reply value.
      * 
@@ -190,8 +190,8 @@ public class RTVM0400 extends RTVM0300 {
      */
     private String getLowerRangeReplyValue() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_OF_LOWER_RANGE_REPLY_VALUE);
-        int length = getInt4Value(LENGTH_OF_LOWER_RANGE_REPLY_VALUE_RETURNED);
+        int offset = getIntValue(OFFSET_OF_LOWER_RANGE_REPLY_VALUE);
+        int length = getIntValue(LENGTH_OF_LOWER_RANGE_REPLY_VALUE_RETURNED);
         if (length > 0) {
             return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
         }
@@ -207,8 +207,8 @@ public class RTVM0400 extends RTVM0300 {
      */
     private String getUpperRangeReplyValue() throws UnsupportedEncodingException {
 
-        int offset = getInt4Value(OFFSET_OF_UPPER_RANGE_REPLY_VALUE);
-        int length = getInt4Value(LENGTH_OF_UPPER_RANGE_REPLY_VALUE_RETURNED);
+        int offset = getIntValue(OFFSET_OF_UPPER_RANGE_REPLY_VALUE);
+        int length = getIntValue(LENGTH_OF_UPPER_RANGE_REPLY_VALUE_RETURNED);
         if (length > 0) {
             return StringHelper.trimR(convertToText(getBytesAt(offset, length)));
         }
@@ -222,7 +222,7 @@ public class RTVM0400 extends RTVM0300 {
      * @return offset to relational test entry
      */
     public int getOffsetRelationalTestEntry() {
-        return getInt4Value(OFFSET_OF_RELATIONAL_TEST_ENTRY);
+        return getIntValue(OFFSET_OF_RELATIONAL_TEST_ENTRY);
     }
 
     /**
@@ -231,10 +231,11 @@ public class RTVM0400 extends RTVM0300 {
      * @return length of relational test entry
      */
     public int getLengthOfRelationalTestEntry() {
-        return getInt4Value(LENGTH_OF_RELATIONAL_TEST_ENTRY_RETURNED);
+        return getIntValue(LENGTH_OF_RELATIONAL_TEST_ENTRY_RETURNED);
     }
 
-    public MessageDescription createMessageDescription(String connectionName, String messageFile, String library) throws UnsupportedEncodingException {
+    public MessageDescription createMessageDescription(String connectionName, String messageFile, String library)
+        throws UnsupportedEncodingException {
 
         MessageDescription messageDescription = super.createMessageDescription(connectionName, messageFile, library);
 
@@ -246,7 +247,7 @@ public class RTVM0400 extends RTVM0300 {
         messageDescription.setRangeOfReplyValue(getRangeOfReplyValue());
         messageDescription.setRelationalTestEntry(getRelationalTestEntry());
 
-        return messageDescription;  
+        return messageDescription;
     }
 
     /**
@@ -316,7 +317,7 @@ public class RTVM0400 extends RTVM0300 {
         if (getLengthOfRelationalTestEntry() == 0) {
             return new RelationalTestEntry();
         }
-        
+
         RelationalTestEntryFormat relationalTestEntryFormat = new RelationalTestEntryFormat(getSystem(), getBytes());
         relationalTestEntryFormat.setOffset(getOffset() + getOffsetRelationalTestEntry());
 

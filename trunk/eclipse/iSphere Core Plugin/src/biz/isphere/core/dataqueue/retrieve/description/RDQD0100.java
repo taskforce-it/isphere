@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import biz.isphere.core.internal.api.APIDateTimeFieldDescription;
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+
+import biz.isphere.core.internal.api.APIDateTimeFieldDescription;
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Format RDQD0100 of the <i>Retrieve Data Queue Description</i> (QMHQRDQD) API.
@@ -87,7 +87,7 @@ public class RDQD0100 extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -97,7 +97,7 @@ public class RDQD0100 extends APIFormat {
      * @return number of bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -108,7 +108,7 @@ public class RDQD0100 extends APIFormat {
      * @return message length
      */
     public int getMessageLength() {
-        return getInt4Value(MESSAGE_LENGTH);
+        return getIntValue(MESSAGE_LENGTH);
     }
 
     /**
@@ -120,7 +120,7 @@ public class RDQD0100 extends APIFormat {
      * @return key length
      */
     public int getKeyLength() {
-        return getInt4Value(KEY_LENGTH);
+        return getIntValue(KEY_LENGTH);
     }
 
     /**
@@ -288,7 +288,7 @@ public class RDQD0100 extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public int getNumberOfMessages() {
-        return getInt4Value(NUMBER_OF_MESSAGES);
+        return getIntValue(NUMBER_OF_MESSAGES);
     }
 
     /**
@@ -301,7 +301,7 @@ public class RDQD0100 extends APIFormat {
      * @return number of allocated entries
      */
     public int getNumberOfEntriesCurrentlyAllocated() {
-        return getInt4Value(NUMBER_OF_ENTRIES_CURRENTLY_ALLOCATED);
+        return getIntValue(NUMBER_OF_ENTRIES_CURRENTLY_ALLOCATED);
     }
 
     /**
@@ -339,7 +339,7 @@ public class RDQD0100 extends APIFormat {
      * @return number of entries allowed
      */
     public int getMaximumNumberOfEntriesAllowed() {
-        return getInt4Value(MAXIMUM_NUMBER_OF_ENTRIES_ALLOWED);
+        return getIntValue(MAXIMUM_NUMBER_OF_ENTRIES_ALLOWED);
     }
 
     /**
@@ -350,7 +350,7 @@ public class RDQD0100 extends APIFormat {
      * @return initial number of entries
      */
     public int getInitialNumberOfEntries() {
-        return getInt4Value(INITIAL_NUMBER_OF_ENTRIES);
+        return getIntValue(INITIAL_NUMBER_OF_ENTRIES);
     }
 
     /**
@@ -372,7 +372,7 @@ public class RDQD0100 extends APIFormat {
      * @throws UnsupportedEncodingException
      */
     public int getMaximumNumberOfEntriesSpecified() {
-        return getInt4Value(MAXIMUM_NUMBER_OF_ENTRIES_SPECIFIED);
+        return getIntValue(MAXIMUM_NUMBER_OF_ENTRIES_SPECIFIED);
     }
 
     /**
@@ -389,8 +389,8 @@ public class RDQD0100 extends APIFormat {
      * @throws IOException
      * @throws ObjectDoesNotExistException
      */
-    public Date getLastReclaimDateAndTime() throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException,
-        ObjectDoesNotExistException {
+    public Date getLastReclaimDateAndTime()
+        throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException {
         return getDateTimeValue(LAST_RECLAIM_DATE_AND_TIME);
     }
 

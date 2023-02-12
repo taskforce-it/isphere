@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@ package biz.isphere.journalexplorer.core.api.retrievefielddescription;
 
 import java.io.UnsupportedEncodingException;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Format RVFD0100 of the iSphere Retrieve OutputFile Field Description
@@ -207,7 +207,7 @@ public class RVFD0100 extends APIFormat {
      * @return length
      */
     public int getFieldLength() {
-        return getInt4Value(LENGTH);
+        return getIntValue(LENGTH);
     }
 
     /**
@@ -216,7 +216,7 @@ public class RVFD0100 extends APIFormat {
      * @return decimal positions
      */
     public int getDecimalPositions() {
-        return getInt4Value(DECIMAL_POSITIONS);
+        return getIntValue(DECIMAL_POSITIONS);
     }
 
     /**
@@ -235,7 +235,7 @@ public class RVFD0100 extends APIFormat {
      * @return input buffer offset
      */
     public int getInputBufferOffset() {
-        return getInt4Value(IN_BUFFER_OFFSET);
+        return getIntValue(IN_BUFFER_OFFSET);
     }
 
     /**
@@ -244,7 +244,7 @@ public class RVFD0100 extends APIFormat {
      * @return output buffer offset
      */
     public int getOutputBufferOffset() {
-        return getInt4Value(OUT_BUFFER_OFFSET);
+        return getIntValue(OUT_BUFFER_OFFSET);
     }
 
     /**
@@ -253,7 +253,7 @@ public class RVFD0100 extends APIFormat {
      * @return buffer length
      */
     public int getBufferLength() {
-        return getInt4Value(BUFFER_LENGTH);
+        return getIntValue(BUFFER_LENGTH);
     }
 
     /**
@@ -262,7 +262,7 @@ public class RVFD0100 extends APIFormat {
      * @return allocated length
      */
     public int getAllocatedLength() {
-        return getInt4Value(ALLOCATED_LENGTH);
+        return getIntValue(ALLOCATED_LENGTH);
     }
 
     /**
@@ -335,7 +335,8 @@ public class RVFD0100 extends APIFormat {
      */
     public boolean isDateTimeFieldType() throws Exception {
 
-        if (IQDBRTVFD.TYPE_API_DATE.equals(getType()) || IQDBRTVFD.TYPE_API_TIME.equals(getType()) || IQDBRTVFD.TYPE_API_TIMESTAMP.equals(getType())) {
+        if (IQDBRTVFD.TYPE_API_DATE.equals(getType()) || IQDBRTVFD.TYPE_API_TIME.equals(getType())
+            || IQDBRTVFD.TYPE_API_TIMESTAMP.equals(getType())) {
             return true;
         }
 
@@ -349,7 +350,7 @@ public class RVFD0100 extends APIFormat {
      */
     public int getCcsid() {
 
-        return getInt4Value(CCSID);
+        return getIntValue(CCSID);
     }
 
     /**

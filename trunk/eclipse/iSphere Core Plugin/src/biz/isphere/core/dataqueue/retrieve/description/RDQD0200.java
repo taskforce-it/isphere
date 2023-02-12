@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@ package biz.isphere.core.dataqueue.retrieve.description;
 
 import java.io.UnsupportedEncodingException;
 
-import biz.isphere.core.internal.api.APIFormat;
-
 import com.ibm.as400.access.AS400;
+
+import biz.isphere.core.internal.api.APIFormat;
 
 /**
  * Format RDQD0200 of the <i>Retrieve Data Queue Description</i> (QMHQRDQD) API.
@@ -67,7 +67,7 @@ public class RDQD0200 extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -77,7 +77,7 @@ public class RDQD0200 extends APIFormat {
      * @return number of bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**

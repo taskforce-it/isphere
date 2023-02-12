@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@ package biz.isphere.core.internal.api.retrievemessagedescription;
 
 import java.io.UnsupportedEncodingException;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.core.messagefileeditor.RelationalTestEntry;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Special reply value entry format of the QMHRTVM API.
@@ -70,9 +70,9 @@ public class RelationalTestEntryFormat extends APIFormat {
     }
 
     private int getLengthOfRelationalValue() {
-        return getInt4Value(LENGTH_OF_RELATIONAL_VALUE);
+        return getIntValue(LENGTH_OF_RELATIONAL_VALUE);
     }
-    
+
     /**
      * Factory methods to create a relational test entry.
      * 

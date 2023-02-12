@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.internal.api.APIFormat;
 import biz.isphere.journalexplorer.core.model.MetaColumn;
-
-import com.ibm.as400.access.AS400;
 
 /**
  * Class to hold the result of the IQDBRTVFD API.
@@ -57,7 +57,7 @@ public class IQDBRTVFDResult extends APIFormat {
      * @return number of bytes returned
      */
     public int getBytesReturned() {
-        return getInt4Value(BYTES_RETURNED);
+        return getIntValue(BYTES_RETURNED);
     }
 
     /**
@@ -66,7 +66,7 @@ public class IQDBRTVFDResult extends APIFormat {
      * @return bytes available
      */
     public int getBytesAvailable() {
-        return getInt4Value(BYTES_AVAILABLE);
+        return getIntValue(BYTES_AVAILABLE);
     }
 
     /**
@@ -75,7 +75,7 @@ public class IQDBRTVFDResult extends APIFormat {
      * @return number of field descriptions returned
      */
     public int getNumberOfFieldsReturned() {
-        return getInt4Value(NUMBER_OF_FIELDS_RETURNED);
+        return getIntValue(NUMBER_OF_FIELDS_RETURNED);
     }
 
     /**
@@ -134,7 +134,7 @@ public class IQDBRTVFDResult extends APIFormat {
      * @return offset of first field description
      */
     private int getOffsetFirstField() {
-        return getInt4Value(OFFSET_TO_FIRST_FIELD);
+        return getIntValue(OFFSET_TO_FIRST_FIELD);
     }
 
     /**
