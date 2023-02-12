@@ -12,12 +12,10 @@ import java.io.CharConversionException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import biz.isphere.base.internal.StringHelper;
-import biz.isphere.core.preferences.Preferences;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Bin2;
@@ -27,6 +25,9 @@ import com.ibm.as400.access.CharConverter;
 import com.ibm.as400.access.DateTimeConverter;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.preferences.Preferences;
 
 /**
  * Defines the structure of a, so called, "format" used for an API call on the
@@ -131,6 +132,28 @@ public class APIFormat extends AbstractAPIFieldDescription {
     // return true;
     // }
     // }
+
+    /**
+     * Returns the value of a given bit field.
+     * 
+     * @param name - field name
+     * @return array of bytes
+     */
+    protected boolean getBitValue(String name, String bitName) {
+
+        AbstractAPIFieldDescription field = getFieldDescription(name);
+        checkFieldDescription(field, APIBitFieldDescription.class);
+        checkDataAvailable(field);
+
+        int offset = getAbsoluteFieldOffset(field);
+        int length = field.getLength();
+        byte[] tBytes = Arrays.copyOfRange(bytes, offset, offset + length);
+
+        APIBitFieldDescription bitField = (APIBitFieldDescription)field;
+        boolean isSet = bitField.getBit(bitName, tBytes);
+
+        return isSet;
+    }
 
     /**
      * Returns the value of a given integer field.
@@ -263,8 +286,8 @@ public class APIFormat extends AbstractAPIFieldDescription {
      * @throws IOException
      * @throws ObjectDoesNotExistException
      */
-    protected Date getDateTimeValue(String name) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException,
-        ObjectDoesNotExistException {
+    protected Date getDateTimeValue(String name)
+        throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException {
 
         AbstractAPIFieldDescription field = getFieldDescription(name);
         checkFieldDescription(field, APIDateTimeFieldDescription.class);
@@ -291,8 +314,8 @@ public class APIFormat extends AbstractAPIFieldDescription {
      * @throws IOException
      * @throws ObjectDoesNotExistException
      */
-    protected void setDateTime(String name, Date value) throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException,
-        IOException, ObjectDoesNotExistException {
+    protected void setDateTime(String name, Date value)
+        throws AS400SecurityException, ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException {
 
         AbstractAPIFieldDescription field = getFieldDescription(name);
         checkFieldDescription(field, APIDateTimeFieldDescription.class);
@@ -389,6 +412,10 @@ public class APIFormat extends AbstractAPIFieldDescription {
 
     protected APICharFieldDescription addCharField(String name, int offset, int length) {
         return (APICharFieldDescription)addField(new APICharFieldDescription(name, offset, length));
+    }
+
+    protected APIBitFieldDescription addBitField(String name, int offset, int numBits) {
+        return (APIBitFieldDescription)addField(new APIBitFieldDescription(name, offset, numBits));
     }
 
     protected APIInt2FieldDescription addInt2Field(String name, int offset) {
