@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ * =====================================================================
+ *   This Ant script helps you to create an update site for the
+ *   iSphere Ant Plugin.
+ *
+ *   Here are the steps to create an update site:
+ *
+ *     - Open 'build.properties' of project 'iSphere Ant Contribution'
+ *       and set the new version number.
+ *     - Open 'projectBuilder.xml' and execute the 'build' task.
+ *     - Right click 'site.xml' of project 'iSphere Ant Update Site'
+ *       and select 'Plug-in Tools -> Build Site'.
+ *     - Open 'projectBuilder.xml' and execute the
+ *       'createSourceForgeFiles' task.
+ *
+ *   The last step automatically updates the 'plug-ins' folder of
+ *   of project 'iSphere Eclipse Setup'.
+ *
+ * =====================================================================
+ -->
 <project name="iSphere-ant-contrib" basedir="../." default="build">
 
 	<!-- Include Ant Contrib tasks -->
@@ -592,7 +612,7 @@
     * ===================================================================== -->
 	<target name="copyUpdateSiteToEclipseSetup" >
 
-		<copy includeemptydirs="false" toFile="${eclipse.plugin.dir}/iSphere Ant Contribution.zip">
+		<copy includeemptydirs="false" toFile="${eclipse.plugin.dir}/iSphere_Ant_Contribution.zip">
 			<fileset dir="${build.upload.dir}">
 				<include name="${zip.file.name}"/>
 			</fileset>
