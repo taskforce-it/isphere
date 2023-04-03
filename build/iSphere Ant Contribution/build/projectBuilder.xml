@@ -135,9 +135,10 @@
 		<patternset refid="lib-files-sf-patternset" />
 	</fileset>
 
+	<!-- jar files of RDi 9.5.1.3 -->
 	<path id="Plug-in Dependencies.libraryclasspath">
-		<pathelement location="../../../../IBM/SDPShared/plugins/org.eclipse.equinox.common_3.6.0.v20100503.jar" />
-		<pathelement location="../../../../IBM/SDPShared/plugins/org.eclipse.osgi_3.6.3.R36x_v20110629.jar" />
+		<pathelement location="../../../../IBM/SDPShared/plugins/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" />
+		<pathelement location="../../../../IBM/SDPShared/plugins/org.eclipse.osgi_3.10.2.v20150203-1939.jar" />
 		<pathelement location="../../../../IBM/SDPShared/plugins/org.apache.ant_1.9.2.v201404171502/lib/ant.jar" />
 	</path>
 
