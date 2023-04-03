@@ -17,34 +17,40 @@ import biz.isphere.antcontrib.winword.WdSaveFormat;
 
 public class WinwordTest {
 
-    public static void main(String[] args) {
-        WinwordTest main = new WinwordTest();
-        main.run(args);
-    }
+	public static final String PROJECT_HOME = "C:\\Workspaces\\rdp_095\\workspace\\iSphere Ant Contribution";
 
-    private void run(String[] args) {
+	public static void main(String[] args) {
+		WinwordTest main = new WinwordTest();
+		main.run(args);
+	}
 
-        String jacobLib = "C:\\Temp\\Jacob";
-        Properties props = System.getProperties();
-        props.setProperty("java.library.path", props.getProperty("java.library.path") + File.pathSeparator + jacobLib);
+	private void run(String[] args) {
 
-        WdApplication winword = new WdApplication(true);
+		String jacobLib = new File(PROJECT_HOME, "lib").getPath();
+		Properties props = System.getProperties();
+		props.setProperty("java.library.path",
+				props.getProperty("java.library.path") + File.pathSeparator
+						+ jacobLib);
 
-        try {
+		WdApplication winword = new WdApplication(true);
 
-            WdDocument document = winword.getDocuments().open("C:\\workspaces\\rdp_080\\workspace\\iSphere Ant Contribution\\Test.doc");
+		try {
 
-            document.saveAs("Test.doc.txt", WdSaveFormat.TEXT);
+			String wordDocument = new File(PROJECT_HOME, "Test.doc").getPath();
 
-            // winword.closeDocument(document, false);
+			WdDocument document = winword.getDocuments().open(wordDocument);
 
-        } catch (Throwable e) {
-            e.printStackTrace();
-        } finally {
-            if (winword != null) {
-                winword.quit();
-            }
-        }
-    }
+			document.saveAs("Test.doc.txt", WdSaveFormat.TEXT);
+
+			// winword.closeDocument(document, false);
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+		} finally {
+			if (winword != null) {
+				winword.quit();
+			}
+		}
+	}
 
 }
