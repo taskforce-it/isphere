@@ -168,6 +168,8 @@ public class Messages extends NLS {
 
     public static String Message_file_colon;
 
+    public static String Message_files;
+
     public static String Mode;
 
     public static String Multiple_selection;
@@ -1096,6 +1098,8 @@ public class Messages extends NLS {
 
     public static String Message_data_fields_formats_colon;
 
+    public static String Source_Files;
+
     public static String Source_member_compare_dialog;
 
     public static String Load_previous_values_right;
@@ -1109,6 +1113,8 @@ public class Messages extends NLS {
     public static String Tooltip_Load_previous_stream_file_values_right;
 
     public static String Tooltip_Load_previous_stream_file_values_ancestor;
+
+    public static String Stream_Files;
 
     public static String Source_stream_file_compare_dialog;
 
