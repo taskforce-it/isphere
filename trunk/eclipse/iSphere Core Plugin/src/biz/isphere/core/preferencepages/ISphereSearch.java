@@ -25,6 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -82,15 +84,54 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     @Override
     public Control createContents(Composite parent) {
 
-        Composite container = new Composite(parent, SWT.NONE);
-        final GridLayout gridLayout = new GridLayout();
-        container.setLayout(gridLayout);
+        TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 
-        createSectionSourceFileSearch(container);
-        createSectionStreamFileSearch(container);
-        createSectionMessageFileSearch(container);
+        TabItem tabSourceFiles = new TabItem(tabFolder, SWT.NONE);
+        tabSourceFiles.setText(Messages.Source_Files);
+        tabSourceFiles.setControl(createTabSourceFiles(tabFolder));
+
+        TabItem tabStreamFiles = new TabItem(tabFolder, SWT.NONE);
+        tabStreamFiles.setText(Messages.Stream_Files);
+        tabStreamFiles.setControl(createTabStreamFiles(tabFolder));
+
+        TabItem tabMessageFiles = new TabItem(tabFolder, SWT.NONE);
+        tabMessageFiles.setText(Messages.Message_files);
+        tabMessageFiles.setControl(createTabMessageFiles(tabFolder));
 
         setScreenToValues();
+
+        return tabFolder;
+    }
+
+    private Composite createTabSourceFiles(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+        createSectionSourceFileSearch(container);
+
+        return container;
+    }
+
+    private Composite createTabStreamFiles(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+        createSectionStreamFileSearch(container);
+
+        return container;
+    }
+
+    private Composite createTabMessageFiles(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+        createSectionMessageFileSearch(container);
 
         return container;
     }

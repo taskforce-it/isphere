@@ -5,6 +5,7 @@ Changelog: iSphere 5.2.8.r
  • Added support for int2 fields when calling IBM APIs.
  • Added support for bit-fields fields when calling IBM APIs.
  • Refactored GUI of iSphere "Compare" preferences page.
+ • Refactored GUI of iSphere "Search" preferences page.
  • Fixed default setting of option "Ignore white spaces".
 
 Changelog: iSphere 5.2.7.r

@@ -42,7 +42,7 @@
   <topic label="Message File Editor"  href="html/messagefileeditor/messagefileeditor.html"> 
   </topic>
   <topic label="Message File Search"  href="html/messagefilesearch/messagefilesearch.html"> 
-    <topic label="Preferences" href="html/search/preferences/preferences.html" />
+    <topic label="Preferences" href="html/messagefilesearch/preferences/preferences.html" />
   </topic>
   <topic label="Retrieve Binder Source"  href="html/retrievebindersource/retrievebindersource.html"> 
   </topic>
@@ -60,14 +60,14 @@
   </topic>
   <topic label="Source File Search"  href="html/sourcefilesearch/sourcefilesearch.html"> 
     <topic label="Regular Expressions" href="html/search/regularexpressions/regularexpressions.html" />
-    <topic label="Preferences" href="html/search/preferences/preferences.html" />
+    <topic label="Preferences" href="html/sourcefilesearch/preferences/preferences.html" />
   </topic>
   <topic label="Stream File Compare/Merge Editor" href="html/streamfilecomparemergeeditor/streamfilecomparemergeeditor.html">
     <topic label="Preferences" href="html/streamfilecomparemergeeditor/preferences/preferences.html" />
   </topic>
   <topic label="Stream File Search"  href="html/streamfilesearch/streamfilesearch.html"> 
     <topic label="Regular Expressions" href="html/search/regularexpressions/regularexpressions.html" />
-    <topic label="Preferences" href="html/search/preferences/preferences.html" />
+    <topic label="Preferences" href="html/streamfilesearch/preferences/preferences.html" />
   </topic>
   <topic label="Spooled File Subsystem" href="html/spooledfilesubsystem/spooledfilesubsystem.html" >
   	<topic label="Work With Spooled Files" href="html/spooledfilesubsystem/workwithspooledfiles/workwithspooledfiles.html" />
