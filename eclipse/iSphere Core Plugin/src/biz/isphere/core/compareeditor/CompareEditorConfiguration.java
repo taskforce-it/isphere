@@ -15,6 +15,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 
 import biz.isphere.core.comparefilter.contributions.extension.handler.CompareFilterContributionsHandler;
+import biz.isphere.core.preferences.Preferences;
 
 /**
  * Class to store the compare configuration values of the Source Compare Dialog
@@ -45,7 +46,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
         setLeftEditable(false);
         setRightEditable(false);
 
-        setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
+        setProperty(CompareConfiguration.IGNORE_WHITESPACE, Preferences.getInstance().isSourceMemberCompareIgnoreWhiteSpaces());
 
         hasCompareFilterContribution = CompareFilterContributionsHandler.hasContribution();
     }
