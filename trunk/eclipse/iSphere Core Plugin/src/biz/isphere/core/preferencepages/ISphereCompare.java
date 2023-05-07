@@ -261,7 +261,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         groupLayout.verticalSpacing = 4;
         group.setLayout(groupLayout);
         group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        group.setText(Messages.Source_member);
+        group.setText(Messages.Source_member_compare_editor);
 
         Composite options = new Composite(group, SWT.NONE);
         options.setLayout(new GridLayout());

@@ -1198,7 +1198,7 @@ public class Messages extends NLS {
 
     public static String not_found;
 
-    public static String Source_member;
+    public static String Source_member_compare_editor;
 
     public static String Ignore_white_spaces;
 
