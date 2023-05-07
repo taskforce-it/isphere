@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -100,19 +102,58 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     @Override
     public Control createContents(Composite parent) {
 
+        TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
+
+        TabItem tabMessageFiles = new TabItem(tabFolder, SWT.NONE);
+        tabMessageFiles.setText(Messages.Message_files);
+        tabMessageFiles.setControl(createTabMessageFiles(tabFolder));
+
+        TabItem tabSourceMembers = new TabItem(tabFolder, SWT.NONE);
+        tabSourceMembers.setText(Messages.Source_Files);
+        tabSourceMembers.setControl(createTabSourceMembers(tabFolder));
+
+        TabItem tabStreamFiles = new TabItem(tabFolder, SWT.NONE);
+        tabStreamFiles.setText(Messages.Stream_Files);
+        tabStreamFiles.setControl(createTabStreamFiles(tabFolder));
+
+        setScreenToValues();
+
+        tabFolder.pack(true);
+
+        return tabFolder;
+    }
+
+    private Composite createTabMessageFiles(Composite parent) {
+
         Composite container = new Composite(parent, SWT.NONE);
-        final GridLayout gridLayout = new GridLayout();
-        container.setLayout(gridLayout);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
         createSectionMessageFileCompare(container);
 
+        return container;
+    }
+
+    private Composite createTabSourceMembers(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
         createSectionSourceMemberCompareDialog(container);
 
+        createSectionSourceMemberCompareEditor(container);
+
+        return container;
+    }
+
+    private Composite createTabStreamFiles(Composite parent) {
+
+        Composite container = new Composite(parent, SWT.NONE);
+        container.setLayout(new GridLayout());
+        container.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
         createSectionSourceStreamFileCompareDialog(container);
-
-        createSectionSourceFileCompare(container);
-
-        setScreenToValues();
 
         return container;
     }
@@ -152,10 +193,6 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     }
 
     private void createSectionSourceMemberCompareDialog(Composite parent) {
-
-        if (!hasCompareFilterContribution) {
-            return;
-        }
 
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
@@ -201,10 +238,6 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceStreamFileCompareDialog(Composite parent) {
 
-        if (!hasCompareFilterContribution) {
-            return;
-        }
-
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout(2, false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -247,11 +280,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         });
     }
 
-    private void createSectionSourceFileCompare(Composite parent) {
-
-        if (!hasCompareFilterContribution) {
-            return;
-        }
+    private void createSectionSourceMemberCompareEditor(Composite parent) {
 
         Group group = new Group(parent, SWT.NONE);
         GridLayout groupLayout = new GridLayout(2, false);
@@ -260,7 +289,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
         groupLayout.horizontalSpacing = 2;
         groupLayout.verticalSpacing = 4;
         group.setLayout(groupLayout);
-        group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
         group.setText(Messages.Source_member_compare_editor);
 
         Composite options = new Composite(group, SWT.NONE);
@@ -280,93 +309,96 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             }
         });
 
-        Label lblFileExtensions = new Label(options, SWT.NONE);
-        lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
-        lblFileExtensions.setToolTipText(Messages.Tooltip_Compare_Filter_File_extensions);
-        lblFileExtensions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        if (hasCompareFilterContribution) {
 
-        Composite tblComposite = new Composite(group, SWT.NONE);
-        tblComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        tblComposite.setLayout(new GridLayout(1, false));
+            Label lblFileExtensions = new Label(options, SWT.NONE);
+            lblFileExtensions.setText(Messages.Compare_Filter_File_extensions);
+            lblFileExtensions.setToolTipText(Messages.Tooltip_Compare_Filter_File_extensions);
+            lblFileExtensions.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        tblFileExtensions = new Table(tblComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
-        GridData gd_tblFileExtensions = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-        gd_tblFileExtensions.heightHint = 0;
-        tblFileExtensions.setLayoutData(gd_tblFileExtensions);
-        tblFileExtensions.setHeaderVisible(false);
-        tblFileExtensions.setLinesVisible(true);
-        tblFileExtensions.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent anEvent) {
-                setControlsEnablement();
-            }
+            Composite tblComposite = new Composite(group, SWT.NONE);
+            tblComposite.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1));
+            tblComposite.setLayout(new GridLayout(1, false));
 
-            public void widgetDefaultSelected(SelectionEvent anEvent) {
-                performEdit(anEvent);
-            }
-        });
+            tblFileExtensions = new Table(tblComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+            GridData gd_tblFileExtensions = new GridData(SWT.FILL, SWT.BEGINNING, true, false, 1, 1);
+            gd_tblFileExtensions.heightHint = 250;
+            tblFileExtensions.setLayoutData(gd_tblFileExtensions);
+            tblFileExtensions.setHeaderVisible(false);
+            tblFileExtensions.setLinesVisible(true);
+            tblFileExtensions.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent anEvent) {
+                    setControlsEnablement();
+                }
 
-        TableColumn tblclmnFileExtension = new TableColumn(tblFileExtensions, SWT.NONE);
-        tblclmnFileExtension.setWidth(220);
-        tblclmnFileExtension.setText(Messages.Compare_Filter_File_extensions);
+                public void widgetDefaultSelected(SelectionEvent anEvent) {
+                    performEdit(anEvent);
+                }
+            });
 
-        Composite btnComposite = new Composite(group, SWT.NONE);
-        RowLayout rl_btnComposite = new RowLayout(SWT.VERTICAL);
-        rl_btnComposite.wrap = false;
-        rl_btnComposite.fill = true;
-        rl_btnComposite.pack = false;
-        rl_btnComposite.marginBottom = 0;
-        rl_btnComposite.marginTop = 0;
-        rl_btnComposite.marginRight = 0;
-        btnComposite.setLayout(rl_btnComposite);
-        btnComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+            TableColumn tblclmnFileExtension = new TableColumn(tblFileExtensions, SWT.NONE);
+            tblclmnFileExtension.setWidth(220);
+            tblclmnFileExtension.setText(Messages.Compare_Filter_File_extensions);
 
-        btnNew = WidgetFactory.createPushButton(btnComposite);
-        btnNew.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent anEvent) {
-                performNew(anEvent);
-            }
-        });
-        btnNew.setText(Messages.Button_New);
+            Composite btnComposite = new Composite(group, SWT.NONE);
+            RowLayout rl_btnComposite = new RowLayout(SWT.VERTICAL);
+            rl_btnComposite.wrap = false;
+            rl_btnComposite.fill = true;
+            rl_btnComposite.pack = false;
+            rl_btnComposite.marginBottom = 0;
+            rl_btnComposite.marginTop = 0;
+            rl_btnComposite.marginRight = 0;
+            btnComposite.setLayout(rl_btnComposite);
+            btnComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 
-        btnEdit = WidgetFactory.createPushButton(btnComposite);
-        btnEdit.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent anEvent) {
-                performEdit(anEvent);
-            }
-        });
-        btnEdit.setText(Messages.Button_Edit);
+            btnNew = WidgetFactory.createPushButton(btnComposite);
+            btnNew.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent anEvent) {
+                    performNew(anEvent);
+                }
+            });
+            btnNew.setText(Messages.Button_New);
 
-        btnRemove = WidgetFactory.createPushButton(btnComposite);
-        btnRemove.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent anEvent) {
-                performRemove(anEvent);
-            }
-        });
-        btnRemove.setText(Messages.Button_Remove);
-        btnRemove.setLayoutData(new RowData(76, SWT.DEFAULT));
+            btnEdit = WidgetFactory.createPushButton(btnComposite);
+            btnEdit.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent anEvent) {
+                    performEdit(anEvent);
+                }
+            });
+            btnEdit.setText(Messages.Button_Edit);
 
-        new Label(btnComposite, SWT.HORIZONTAL);
+            btnRemove = WidgetFactory.createPushButton(btnComposite);
+            btnRemove.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent anEvent) {
+                    performRemove(anEvent);
+                }
+            });
+            btnRemove.setText(Messages.Button_Remove);
+            btnRemove.setLayoutData(new RowData(76, SWT.DEFAULT));
 
-        btnExport = WidgetFactory.createPushButton(btnComposite);
-        btnExport.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent anEvent) {
-                performExport(anEvent);
-            }
-        });
-        btnExport.setText(Messages.Button_Export);
+            new Label(btnComposite, SWT.HORIZONTAL);
 
-        btnImport = WidgetFactory.createPushButton(btnComposite);
-        btnImport.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent anEvent) {
-                performImport(anEvent);
-            }
-        });
-        btnImport.setText(Messages.Button_Import);
+            btnExport = WidgetFactory.createPushButton(btnComposite);
+            btnExport.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent anEvent) {
+                    performExport(anEvent);
+                }
+            });
+            btnExport.setText(Messages.Button_Export);
+
+            btnImport = WidgetFactory.createPushButton(btnComposite);
+            btnImport.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent anEvent) {
+                    performImport(anEvent);
+                }
+            });
+            btnImport.setText(Messages.Button_Import);
+        }
     }
 
     private String[] loadPreviousMemberValuesItems() {
@@ -408,21 +440,21 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             preferences.setMessageFileCompareLineWidth(IntHelper.tryParseInt(textMessageFileCompareLineWith.getText(), defaultLineWidth));
         }
 
+        preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
+
+        LoadPreviousMemberValue previousMemberValue;
+        previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
+        preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(previousMemberValue);
+        previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
+        preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(previousMemberValue);
+
+        LoadPreviousStreamFileValue previousStreamFileValue;
+        previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesRightStreamFileEnabled.getText());
+        preferences.setSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled(previousStreamFileValue);
+        previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesAncestorStreamFileEnabled.getText());
+        preferences.setSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled(previousStreamFileValue);
+
         if (hasCompareFilterContribution) {
-            LoadPreviousMemberValue previousMemberValue;
-            previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
-            preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(previousMemberValue);
-            previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesAncestorMemberEnabled.getText());
-            preferences.setSourceMemberCompareLoadingPreviousValuesOfAncestorMemberEnabled(previousMemberValue);
-
-            LoadPreviousStreamFileValue previousStreamFileValue;
-            previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesRightStreamFileEnabled.getText());
-            preferences.setSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFileEnabled(previousStreamFileValue);
-            previousStreamFileValue = LoadPreviousStreamFileValue.valueOfLabel(chkLoadingPreviousValuesAncestorStreamFileEnabled.getText());
-            preferences.setSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFileEnabled(previousStreamFileValue);
-
-            preferences.setSourceMemberCompareIgnoreWhiteSpaces(chkIgnoreWhiteSpaces.getSelection());
-
             CompareFilterContributionsHandler.setFileExtensions(getFileExtensionsArray());
         }
     }
@@ -437,19 +469,19 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getMessageFileCompareLineWidth()));
         }
 
+        chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
+
+        setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+            preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
+        setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
+
+        setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
+            preferences.getSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFile());
+        setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
+            preferences.getSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFile());
+
         if (hasCompareFilterContribution) {
-            setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
-                preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
-            setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
-                preferences.getSourceMemberCompareLoadingPreviousValuesOfAncestorMember());
-
-            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
-                preferences.getSourceStreamFileCompareLoadingPreviousValuesOfRightStreamFile());
-            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
-                preferences.getSourceStreamFileCompareLoadingPreviousValuesOfAncestorStreamFile());
-
-            chkIgnoreWhiteSpaces.setSelection(preferences.isSourceMemberCompareIgnoreWhiteSpaces());
-
             String[] fileExtensions = CompareFilterContributionsHandler.getFileExtensions();
             setFileExtensionsArray(fileExtensions);
         }
@@ -488,19 +520,19 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getDefaultMessageFileCompareMinLineWidth()));
         }
 
+        chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
+
+        setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
+            preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+        setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
+            preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
+
+        setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
+            preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
+        setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
+            preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
+
         if (hasCompareFilterContribution) {
-            setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
-                preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-            setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
-                preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
-
-            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesRightStreamFileEnabled,
-                preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
-            setPreviousStreamFileValueSelection(chkLoadingPreviousValuesAncestorStreamFileEnabled,
-                preferences.getDefaultSourceStreamFileCompareLoadingPreviousValuesEnabled());
-
-            chkIgnoreWhiteSpaces.setSelection(preferences.getDefaultSourceMemberCompareIgnoreWhiteSpaces());
-
             setFileExtensionsArray(CompareFilterContributionsHandler.getDefaultFileExtensions());
         }
 
@@ -558,7 +590,6 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
             } else {
                 btnExport.setEnabled(false);
             }
-
         }
     }
 
