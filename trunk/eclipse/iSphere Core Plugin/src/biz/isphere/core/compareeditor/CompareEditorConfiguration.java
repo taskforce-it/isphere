@@ -34,7 +34,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
     private static String SEQUENCE_NUMBERS_AND_DATE_FIELDS = "biz.isphere.core.compareeditor.sequenceNumbersAndDates"; //$NON-NLS-1$
 
-    private boolean hasCompareFilters;
+    private boolean hasCompareFilterContribution;
 
     public CompareEditorConfiguration() {
         setIgnoreCase(false);
@@ -47,7 +47,7 @@ public class CompareEditorConfiguration extends CompareConfiguration {
 
         setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(true));
 
-        hasCompareFilters = CompareFilterContributionsHandler.hasContribution();
+        hasCompareFilterContribution = CompareFilterContributionsHandler.hasContribution();
     }
 
     public boolean isIgnoreCase() {
@@ -135,6 +135,6 @@ public class CompareEditorConfiguration extends CompareConfiguration {
     }
 
     public boolean hasCompareFilters() {
-        return hasCompareFilters;
+        return hasCompareFilterContribution;
     }
 }

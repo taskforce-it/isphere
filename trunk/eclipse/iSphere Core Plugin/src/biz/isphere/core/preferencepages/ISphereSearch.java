@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     private Button buttonMessageFileSearchAutoSaveEnabled;
     private Text textMessageFileSearchAutoSaveFileName;
 
-    private boolean messageFileSettingsEnabled;
+    private boolean hasIBMiHostContribution;
 
     public ISphereSearch() {
         super();
@@ -68,13 +68,13 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
     public void init(IWorkbench workbench) {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
         if (IBMiHostContributionsHandler.hasContribution()) {
-            messageFileSettingsEnabled = true;
+            hasIBMiHostContribution = true;
         } else {
-            messageFileSettingsEnabled = false;
+            hasIBMiHostContribution = false;
         }
 
     }
@@ -325,7 +325,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
          * Does not work, because we cannot create an AS400 object, when loading
          * a search result.
          */
-        if (!messageFileSettingsEnabled) {
+        if (!hasIBMiHostContribution) {
             return;
         }
 
@@ -464,7 +464,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         preferences.setStreamFileSearchResultsAutoSaveEnabled(buttonStreamFileSearchAutoSaveEnabled.getSelection());
         preferences.setStreamFileSearchResultsAutoSaveFileName(textStreamFileSearchAutoSaveFileName.getText());
 
-        if (messageFileSettingsEnabled) {
+        if (hasIBMiHostContribution) {
             preferences.setMessageFileSearchResultsSaveDirectory(textMessageFileSearchSaveDirectory.getText());
             preferences.setMessageFileSearchResultsAutoSaveEnabled(buttonMessageFileSearchAutoSaveEnabled.getSelection());
             preferences.setMessageFileSearchResultsAutoSaveFileName(textMessageFileSearchAutoSaveFileName.getText());
@@ -488,7 +488,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         buttonStreamFileSearchAutoSaveEnabled.setSelection(preferences.isStreamFileSearchResultsAutoSaveEnabled());
         textStreamFileSearchAutoSaveFileName.setText(preferences.getStreamFileSearchResultsAutoSaveFileName());
 
-        if (messageFileSettingsEnabled) {
+        if (hasIBMiHostContribution) {
             setComboSearchEditMode(comboMessageFileSearchEditMode, preferences.isMessageFileSearchResultsEditEnabled());
             textMessageFileSearchSaveDirectory.setText(preferences.getMessageFileSearchResultsAutoSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.isMessageFileSearchResultsAutoSaveEnabled());
@@ -514,7 +514,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
         buttonStreamFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultStreamFileSearchResultsAutoSaveEnabled());
         textStreamFileSearchAutoSaveFileName.setText(preferences.getDefaultStreamFileSearchResultsAutoSaveFileName());
 
-        if (messageFileSettingsEnabled) {
+        if (hasIBMiHostContribution) {
             setComboSearchEditMode(comboMessageFileSearchEditMode, preferences.getDefaultMessageFileSearchResultsEditEnabled());
             textMessageFileSearchSaveDirectory.setText(preferences.getDefaultMessageFileSearchResultsSaveDirectory());
             buttonMessageFileSearchAutoSaveEnabled.setSelection(preferences.getDefaultMessageFileSearchResultsAutoSaveEnabled());
@@ -694,7 +694,7 @@ public class ISphereSearch extends PreferencePage implements IWorkbenchPreferenc
             textSourceFileSearchAutoSaveFileName.setEnabled(false);
         }
 
-        if (messageFileSettingsEnabled) {
+        if (hasIBMiHostContribution) {
             if (buttonMessageFileSearchAutoSaveEnabled.getSelection()) {
                 textMessageFileSearchAutoSaveFileName.setEnabled(true);
             } else {

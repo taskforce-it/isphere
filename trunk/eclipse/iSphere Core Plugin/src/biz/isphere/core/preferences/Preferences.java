@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -503,8 +503,8 @@ public final class Preferences {
     public boolean isSourceFileSearchResultsAutoSaveEnabled() {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
         if (!IBMiHostContributionsHandler.hasContribution()) {
             return false;
@@ -554,8 +554,8 @@ public final class Preferences {
     public boolean isStreamFileSearchResultsAutoSaveEnabled() {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
         if (!IBMiHostContributionsHandler.hasContribution()) {
             return false;
@@ -601,8 +601,8 @@ public final class Preferences {
     public boolean isMessageFileSearchResultsAutoSaveEnabled() {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
         if (!IBMiHostContributionsHandler.hasContribution()) {
             return false;
@@ -2003,9 +2003,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED,
-            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
-                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
+            + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

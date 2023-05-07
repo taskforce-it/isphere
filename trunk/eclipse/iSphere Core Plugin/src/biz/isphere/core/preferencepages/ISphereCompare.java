@@ -55,7 +55,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private static final String[] IMPORT_FILE_EXTENSIONS = new String[] { "*.properties", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private Text textMessageFileCompareLineWith;
-    private boolean messageFileCompareEnabled;
+    private boolean hasIBMiHostContribution;
 
     private Combo chkLoadingPreviousValuesRightMemberEnabled;
     private Combo chkLoadingPreviousValuesAncestorMemberEnabled;
@@ -69,7 +69,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private Button btnRemove;
     private Button btnExport;
     private Button btnImport;
-    private boolean sourceFileCompareEnabled;
+    private boolean hasCompareFilterContribution;
 
     public ISphereCompare() {
         super();
@@ -80,19 +80,19 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     public void init(IWorkbench workbench) {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
         if (IBMiHostContributionsHandler.hasContribution()) {
-            messageFileCompareEnabled = true;
+            hasIBMiHostContribution = true;
         } else {
-            messageFileCompareEnabled = false;
+            hasIBMiHostContribution = false;
         }
 
         if (CompareFilterContributionsHandler.hasContribution()) {
-            sourceFileCompareEnabled = true;
+            hasCompareFilterContribution = true;
         } else {
-            sourceFileCompareEnabled = false;
+            hasCompareFilterContribution = false;
         }
 
     }
@@ -120,10 +120,10 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
     private void createSectionMessageFileCompare(Composite parent) {
 
         /*
-         * Does not work, because we cannot create an AS400 object, when loading
-         * a search result.
+         * Does not work without the contribution, because we cannot create an
+         * AS400 object, when loading a search result.
          */
-        if (!messageFileCompareEnabled) {
+        if (!hasIBMiHostContribution) {
             return;
         }
 
@@ -153,7 +153,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceMemberCompareDialog(Composite parent) {
 
-        if (!sourceFileCompareEnabled) {
+        if (!hasCompareFilterContribution) {
             return;
         }
 
@@ -201,7 +201,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceStreamFileCompareDialog(Composite parent) {
 
-        if (!sourceFileCompareEnabled) {
+        if (!hasCompareFilterContribution) {
             return;
         }
 
@@ -249,7 +249,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void createSectionSourceFileCompare(Composite parent) {
 
-        if (!sourceFileCompareEnabled) {
+        if (!hasCompareFilterContribution) {
             return;
         }
 
@@ -403,12 +403,12 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         Preferences preferences = getPreferences();
 
-        if (messageFileCompareEnabled) {
+        if (hasIBMiHostContribution) {
             int defaultLineWidth = preferences.getDefaultMessageFileCompareMinLineWidth();
             preferences.setMessageFileCompareLineWidth(IntHelper.tryParseInt(textMessageFileCompareLineWith.getText(), defaultLineWidth));
         }
 
-        if (sourceFileCompareEnabled) {
+        if (hasCompareFilterContribution) {
             LoadPreviousMemberValue previousMemberValue;
             previousMemberValue = LoadPreviousMemberValue.valueOfLabel(chkLoadingPreviousValuesRightMemberEnabled.getText());
             preferences.setSourceMemberCompareLoadingPreviousValuesOfRightMemberEnabled(previousMemberValue);
@@ -433,11 +433,11 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         Preferences preferences = getPreferences();
 
-        if (messageFileCompareEnabled) {
+        if (hasIBMiHostContribution) {
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getMessageFileCompareLineWidth()));
         }
 
-        if (sourceFileCompareEnabled) {
+        if (hasCompareFilterContribution) {
             setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
                 preferences.getSourceMemberCompareLoadingPreviousValuesOfRightMember());
             setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
@@ -484,11 +484,11 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         Preferences preferences = getPreferences();
 
-        if (messageFileCompareEnabled) {
+        if (hasIBMiHostContribution) {
             textMessageFileCompareLineWith.setText(Integer.toString(preferences.getDefaultMessageFileCompareMinLineWidth()));
         }
 
-        if (sourceFileCompareEnabled) {
+        if (hasCompareFilterContribution) {
             setPreviousMemberValueSelection(chkLoadingPreviousValuesRightMemberEnabled,
                 preferences.getDefaultSourceMemberCompareLoadingPreviousValuesEnabled());
             setPreviousMemberValueSelection(chkLoadingPreviousValuesAncestorMemberEnabled,
@@ -510,7 +510,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private boolean validateMessageFileCompareLineWidth() {
 
-        if (!messageFileCompareEnabled) {
+        if (!hasIBMiHostContribution) {
             return true;
         }
 
@@ -536,7 +536,7 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
     private void setControlsEnablement() {
 
-        if (sourceFileCompareEnabled) {
+        if (hasCompareFilterContribution) {
 
             btnNew.setEnabled(true);
             btnImport.setEnabled(true);
