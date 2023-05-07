@@ -104,17 +104,17 @@ public class ISphereCompare extends PreferencePage implements IWorkbenchPreferen
 
         TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
 
-        TabItem tabMessageFiles = new TabItem(tabFolder, SWT.NONE);
-        tabMessageFiles.setText(Messages.Message_files);
-        tabMessageFiles.setControl(createTabMessageFiles(tabFolder));
-
-        TabItem tabSourceMembers = new TabItem(tabFolder, SWT.NONE);
-        tabSourceMembers.setText(Messages.Source_Files);
-        tabSourceMembers.setControl(createTabSourceMembers(tabFolder));
+        TabItem tabSourceFiles = new TabItem(tabFolder, SWT.NONE);
+        tabSourceFiles.setText(Messages.Source_Files);
+        tabSourceFiles.setControl(createTabSourceMembers(tabFolder));
 
         TabItem tabStreamFiles = new TabItem(tabFolder, SWT.NONE);
         tabStreamFiles.setText(Messages.Stream_Files);
         tabStreamFiles.setControl(createTabStreamFiles(tabFolder));
+
+        TabItem tabMessageFiles = new TabItem(tabFolder, SWT.NONE);
+        tabMessageFiles.setText(Messages.Message_files);
+        tabMessageFiles.setControl(createTabMessageFiles(tabFolder));
 
         setScreenToValues();
 
