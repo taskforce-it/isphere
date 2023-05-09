@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.help"
       label="iSphere Help (optional)"
-      version="5.2.7.b001"
+      version="5.2.8.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -11,7 +11,7 @@
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
-      Copyright (c) 2012-2022 iSphere Project Team. All rights reserved.
+      Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">

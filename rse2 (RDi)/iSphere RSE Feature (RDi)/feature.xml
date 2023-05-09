@@ -2,7 +2,7 @@
 <feature
       id="biz.isphere.rse"
       label="iSphere for RDi 9.5.1.3+ (recommended)"
-      version="5.2.7.b001"
+      version="5.2.8.r"
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
@@ -12,7 +12,7 @@ The &quot;iSphere RSE Feature (RDi)&quot; delivers services that are specific to
    </description>
 
    <copyright url="https://sourceforge.net/projects/isphere/">
-      Copyright (c) 2012-2022 iSphere Project Team. All rights reserved.
+      Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">
@@ -22,7 +22,7 @@ this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
    </license>
 
    <requires>
-      <import feature="biz.isphere.core" version="5.2.7.b001" match="perfect"/>
+      <import feature="biz.isphere.core" version="5.2.8.r" match="perfect"/>
    </requires>
 
    <plugin
