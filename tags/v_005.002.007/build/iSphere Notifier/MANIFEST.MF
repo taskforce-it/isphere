@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 5.2.6.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Fixed problem that iSphere did not return a connection to CMOne in certain cases.
+X-Beta-Version: 5.2.7.b001
+X-Beta-Update-Library: false
+X-Beta-Update-Library-Info: .
+X-Beta-Info: Added option 'Ignore unsaved changes error' to 'Copy Members' dialog.
