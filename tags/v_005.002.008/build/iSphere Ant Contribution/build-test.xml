@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="iSphere Ant Contribution">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="iSphere Ant Contribution.classpath">
+        <pathelement location="${basedir}/bin"/>
+        <pathelement location="${basedir}/lib/jacob.jar"/>
+        <pathelement location="${basedir}/lib/jsch-0.1.55.jar"/>
+        <pathelement location="${basedir}/lib/jzlib-1.1.3.jar"/>
+        <pathelement location="${basedir}/lib/junit-4.11.jar"/>
+    	<pathelement location="${basedir}/lib/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="cleanall,build-project,StringUtil,WinwordTest" name="build"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}" includeantruntime="true">
+            <src path="src"/>
+            <classpath refid="iSphere Ant Contribution.classpath"/>
+        </javac>
+    </target>
+    <target name="StringUtil" depends="build-project">
+    	<echo>Target: StringUtil</echo>
+    	<junit printsummary="true" fork="false" haltonfailure="true" haltonerror="true" showoutput="true" >
+			<test name="biz.isphere.antcontrib.junit.TestStringUtil" outfile="c:\temp\result.junit" />
+    		<classpath refid="iSphere Ant Contribution.classpath"/>
+    	</junit>
+    </target>
+    <target name="WinwordTest" depends="build-project">
+        <java classname="biz.isphere.antcontrib.test.WinwordTest" failonerror="true" fork="yes">
+            <jvmarg line="-Djacob.dll.path='${basedir}/lib/jacob-1.17-x64.dll'"/>
+        	<classpath refid="iSphere Ant Contribution.classpath"/>
+        </java>
+    </target>
+</project>
