@@ -1,4 +1,9 @@
 
+Changelog: iSphere 5.2.9.r
+--------------------------
+ • Removed obsolete dependency to 'org.eclipse.platform' to
+   fix incompatibility to RDi 9.8.
+
 Changelog: iSphere 5.2.8.r
 --------------------------
  • Updated STRPREPRC to v2.2 to fix a bug.
