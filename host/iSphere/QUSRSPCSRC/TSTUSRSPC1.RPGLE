@@ -79,7 +79,7 @@
      D  textTiny             264    264i 0 inz(x'37')
      D  boolean              301    312a   inz('Boolean:')
      D  textBoolean          314    314n   inz('1')
-     D  decimal              351    362a   inz('Boolean:')
+     D  decimal              351    362a   inz('Decimal:')
      D  textDecimal          364    369s 2 inz(1234.12)
      D  listInt              401    425a   inz('List on int Values:')
 
