@@ -14,4 +14,8 @@ public class DShortInteger extends AbstractDInteger {
     DShortInteger(String label, int offset) {
         super(label, offset, 2);
     }
+
+    @Override
+    void setLength(int length) {
+    }
 }

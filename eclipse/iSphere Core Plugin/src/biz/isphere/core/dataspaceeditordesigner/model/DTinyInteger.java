@@ -14,4 +14,8 @@ public class DTinyInteger extends AbstractDInteger {
     DTinyInteger(String label, int offset) {
         super(label, offset, 1);
     }
+
+    @Override
+    void setLength(int length) {
+    }
 }

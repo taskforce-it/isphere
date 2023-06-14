@@ -14,4 +14,8 @@ public class DBoolean extends AbstractDWidget {
     DBoolean(String label, int offset) {
         super(label, offset, 1);
     }
+
+    @Override
+    void setLength(int length) {
+    }
 }

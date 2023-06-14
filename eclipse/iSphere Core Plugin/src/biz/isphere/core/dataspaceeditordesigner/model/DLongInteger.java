@@ -14,4 +14,8 @@ public class DLongInteger extends AbstractDInteger {
     DLongInteger(String label, int offset) {
         super(label, offset, 8);
     }
+
+    @Override
+    void setLength(int length) {
+    }
 }

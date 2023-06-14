@@ -14,4 +14,8 @@ public class DInteger extends AbstractDInteger {
     DInteger(String label, int offset) {
         super(label, offset, 4);
     }
+
+    @Override
+    void setLength(int length) {
+    }
 }
