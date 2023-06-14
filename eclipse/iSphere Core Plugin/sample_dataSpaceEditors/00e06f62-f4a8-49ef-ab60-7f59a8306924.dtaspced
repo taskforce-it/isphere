@@ -1,140 +1,135 @@
 <dialog>
-  <name>TSTDTAARA1 - 1</name>
-  <description>Allmost all items</description>
+  <name>TSTDTAARA1</name>
+  <description>Example: iSphere Test Data Area - All Types</description>
   <widgets>
     <entry>
       <string>22</string>
       <integer>
-        <label>Int 14</label>
+        <label>#14</label>
         <offset>502</offset>
         <length>4</length>
         <sequence>22</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>23</string>
       <integer>
-        <label>Int 15</label>
+        <label>#15</label>
         <offset>506</offset>
         <length>4</length>
         <sequence>23</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>24</string>
       <integer>
-        <label>Int 16</label>
+        <label>#16</label>
         <offset>510</offset>
         <length>4</length>
         <sequence>24</sequence>
-      </integer>
-    </entry>
-    <entry>
-      <string>25</string>
-      <integer>
-        <label>Int 17</label>
-        <offset>514</offset>
-        <length>4</length>
-        <sequence>25</sequence>
-      </integer>
-    </entry>
-    <entry>
-      <string>26</string>
-      <integer>
-        <label>Int 18</label>
-        <offset>518</offset>
-        <length>4</length>
-        <sequence>26</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>10</string>
       <integer>
-        <label>Int 2</label>
+        <label>#2</label>
         <offset>454</offset>
         <length>4</length>
         <sequence>10</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>11</string>
       <integer>
-        <label>Int 3</label>
+        <label>#3</label>
         <offset>458</offset>
         <length>4</length>
         <sequence>11</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>12</string>
       <integer>
-        <label>Int 4</label>
+        <label>#4</label>
         <offset>462</offset>
         <length>4</length>
         <sequence>12</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>13</string>
       <integer>
-        <label>Int 5</label>
+        <label>#5</label>
         <offset>466</offset>
         <length>4</length>
         <sequence>13</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>14</string>
       <integer>
-        <label>Int 6</label>
+        <label>#6</label>
         <offset>470</offset>
         <length>4</length>
         <sequence>14</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>15</string>
       <integer>
-        <label>Int 7</label>
+        <label>#7</label>
         <offset>474</offset>
         <length>4</length>
         <sequence>15</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>16</string>
       <integer>
-        <label>Int 8</label>
+        <label>#8</label>
         <offset>478</offset>
         <length>4</length>
         <sequence>16</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>17</string>
       <integer>
-        <label>Int 9</label>
+        <label>#9</label>
         <offset>482</offset>
         <length>4</length>
         <sequence>17</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>18</string>
       <integer>
-        <label>Int 10</label>
+        <label>#10</label>
         <offset>486</offset>
         <length>4</length>
         <sequence>18</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>19</string>
       <integer>
-        <label>Int 11</label>
+        <label>#11</label>
         <offset>490</offset>
         <length>4</length>
         <sequence>19</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
@@ -144,6 +139,7 @@
         <offset>50</offset>
         <length>50</length>
         <sequence>1</sequence>
+        <horizontalSpan>2</horizontalSpan>
       </text>
     </entry>
     <entry>
@@ -153,6 +149,7 @@
         <offset>113</offset>
         <length>8</length>
         <sequence>2</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </longInt>
     </entry>
     <entry>
@@ -162,6 +159,7 @@
         <offset>163</offset>
         <length>4</length>
         <sequence>3</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
@@ -171,6 +169,7 @@
         <offset>213</offset>
         <length>2</length>
         <sequence>4</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </shortInt>
     </entry>
     <entry>
@@ -180,6 +179,7 @@
         <offset>263</offset>
         <length>1</length>
         <sequence>5</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </tinyInt>
     </entry>
     <entry>
@@ -189,52 +189,58 @@
         <offset>313</offset>
         <length>1</length>
         <sequence>6</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </boolean>
     </entry>
     <entry>
       <string>7</string>
-      <text>
-        <label>List on int Values</label>
-        <offset>400</offset>
-        <length>25</length>
+      <decimal>
+        <label>Decimal (6,2)</label>
+        <offset>363</offset>
+        <length>6</length>
         <sequence>7</sequence>
-      </text>
+        <horizontalSpan>1</horizontalSpan>
+        <fraction>2</fraction>
+      </decimal>
     </entry>
     <entry>
       <string>8</string>
-      <decimal>
-        <label>Count</label>
-        <offset>425</offset>
-        <length>10</length>
+      <biz.isphere.core.dataspaceeditordesigner.model.DComment>
+        <label>Array of integer values:</label>
+        <offset>-1</offset>
+        <length>-1</length>
         <sequence>8</sequence>
-        <fraction>0</fraction>
-      </decimal>
+        <horizontalSpan>2</horizontalSpan>
+      </biz.isphere.core.dataspaceeditordesigner.model.DComment>
     </entry>
     <entry>
       <string>9</string>
       <integer>
-        <label>Int </label>
+        <label>#1</label>
         <offset>450</offset>
         <length>4</length>
         <sequence>9</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>20</string>
       <integer>
-        <label>Int 12</label>
+        <label>#12</label>
         <offset>494</offset>
         <length>4</length>
         <sequence>20</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
     <entry>
       <string>21</string>
       <integer>
-        <label>Int 13</label>
+        <label>#13</label>
         <offset>498</offset>
         <length>4</length>
         <sequence>21</sequence>
+        <horizontalSpan>1</horizontalSpan>
       </integer>
     </entry>
   </widgets>
@@ -250,5 +256,6 @@
     </entry>
   </referencedBy>
   <columns>2</columns>
-  <key>23cdd7cc-4e02-4699-affb-c6a683f8c59e</key>
+  <key>00e06f62-f4a8-49ef-ab60-7f59a8306924</key>
+  <columnsEqualWidth>false</columnsEqualWidth>
 </dialog>

@@ -1,21 +1,20 @@
 Sample Data Space Editors
 -------------------------
 
-The content of this folder needs to be copied to the
-following location, to see the sample editors in the
-"iSphere Data Space Editor Designer":
+The content of this folder is automatically copied to the following
+location, presumed the user has confirmed that:
 
   [workspace]\.metadata\.plugins\biz.isphere.core\dataSpaceEditors
 
-The editors match with the following supplied test
-data areas like this:
+The example editors have been assigned to the following example
+objects as shown below:
 
   Editor              Object
-  --------------      ---------------------------
-  TSTDTAARA1 - 1      TSTDTAARA1 (*DTAARA *CHAR)
-  TSTDTAARA2          TSTDTAARA2 (*DTAARA *DEC)
-  TSTDTAARA3          TSTDTAARA3 (*DTAARA *LGL)
-  TSTUSRSPC1 - 1      TSTDTAARA1 (*DTAARA *CHAR)
-                      TSTUSRSPC1 (*USRSPC)
+  --------------      ----------------------
+  HYBRID1             TSTDTAARA1 (*DTAARA)
+                      TSTUSRSPC1 (*DTAARA)
+  TSTDTAARA1          TSTDTAARA1 (*DTAARA)
+  TSTUSRSPC1          TSTUSRSPC1 (*DTAARA)
 
-The editor "TSTUSRSPC1 - 1" has both objects assigned.
+The editor "HYBRID1" has both objects assigned and has a less
+fields than the other editors.
