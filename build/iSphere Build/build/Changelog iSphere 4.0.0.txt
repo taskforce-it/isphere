@@ -1,6 +1,11 @@
 
 Changelog: iSphere 5.2.10.b001
 ------------------------------
+ • Added option to load example data space editors.
+ • Updated example data area and user space editors.
+   (TSTDTAARA1 and TSTUSRSPC1)
+ • Fixed producing key of DEdtor widgets.
+ • Fixed updating properties of DEditor widgets.
  • Changed data area editor to show an error dialog on save errors.
  • Fixed data area editor to correctly save data with single quotes.
    (quotes must be doubled)

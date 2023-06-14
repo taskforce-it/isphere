@@ -33,6 +33,7 @@ public interface DoNotAskMeAgain {
     public static final String CONFIRM_REMOVE_STRPREPRC_HEADER = "REMOVE_STRPREPRC_HEADER"; //$NON-NLS-1$
     public static final String TN5250_FAST_CURSOR_MAPPING_CONFLICT = "TN5250_FAST_CURSOR_MAPPING_CONFLICT"; //$NON-NLS-1$
     public static final String CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG = "CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG"; //$NON-NLS-1$
+    public static final String CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS = "CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS"; //$NON-NLS-1$
 
     /*
      * Question message keys

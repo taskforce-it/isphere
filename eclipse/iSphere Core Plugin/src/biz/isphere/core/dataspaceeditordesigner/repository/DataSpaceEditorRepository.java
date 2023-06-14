@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,21 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.FileLocator;
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataspaceeditordesigner.model.DBoolean;
 import biz.isphere.core.dataspaceeditordesigner.model.DDecimal;
 import biz.isphere.core.dataspaceeditordesigner.model.DEditor;
@@ -36,9 +44,8 @@ import biz.isphere.core.internal.ObjectHelper;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.exception.DeleteFileException;
 import biz.isphere.core.internal.exception.SaveFileException;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 
 /**
  * Class that manages holds the available editors for 'data space objects'.
@@ -60,6 +67,7 @@ public final class DataSpaceEditorRepository {
     private String repositoryLocation;
     private Map<String, DEditor> dEditors;
     private DataSpaceEditorManager manager;
+    private Boolean createExampleDataSpaceEditorsConfirmed;
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -227,18 +235,54 @@ public final class DataSpaceEditorRepository {
     private Map<String, DEditor> getOrLoadEditors() {
 
         if (dEditors.size() == 0) {
-            dEditors = loadEditors();
+            dEditors.clear();
+            dEditors = loadEditors(getRepositoryLocation());
+            if (dEditors.size() == 0) {
+
+                if (createExampleDataSpaceEditorsConfirmed == null) {
+                    createExampleDataSpaceEditorsConfirmed = DoNotAskMeAgainDialog.openConfirm(UIHelper.getActiveShell(),
+                        DoNotAskMeAgain.CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS, Messages.Create_example_data_space_editors);
+                }
+
+                if (createExampleDataSpaceEditorsConfirmed) {
+                    loadExampleEditors();
+                }
+            }
         }
 
         return dEditors;
     }
 
-    private Map<String, DEditor> loadEditors() {
+    private void loadExampleEditors() {
+
+        try {
+
+            dEditors = loadEditors(getExamplesLocation());
+            for (DEditor dEditor : dEditors.values()) {
+                saveToXml(dEditor);
+            }
+
+        } catch (Exception e) {
+        }
+    }
+
+    private String getExamplesLocation() {
+
+        try {
+            URL resourceUrl = getClass().getClassLoader().getResource("sample_dataSpaceEditors");
+            return FileLocator.toFileURL(resourceUrl).getPath();
+        } catch (Exception e) {
+        }
+
+        return null;
+    }
+
+    private Map<String, DEditor> loadEditors(String repositoryPath) {
 
         Map<String, DEditor> dEditors = new HashMap<String, DEditor>();
 
         FileFilter filter = new DynamicDialogFileFilter();
-        File[] dEditorFiles = new File(getRepositoryLocation()).listFiles(filter);
+        File[] dEditorFiles = new File(repositoryPath).listFiles(filter);
         if (dEditorFiles == null) {
             return dEditors;
         }

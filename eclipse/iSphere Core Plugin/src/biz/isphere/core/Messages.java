@@ -1778,6 +1778,8 @@ public class Messages extends NLS {
 
     public static String File_has_been_saved_successfully_Would_you_like_to_open_it;
 
+    public static String Create_example_data_space_editors;
+
     /*
      * Warning messages
      */
