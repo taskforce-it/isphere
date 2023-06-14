@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,13 @@
 package biz.isphere.core.dataspaceeditordesigner.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 import java.util.Vector;
+
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import biz.isphere.core.dataspaceeditordesigner.listener.DataModifiedEvent;
 import biz.isphere.core.dataspaceeditordesigner.listener.IWidgetModifyListener;
-
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Serializable {
@@ -128,7 +129,7 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
         }
 
         if (key == null) {
-            key = "" + getSequence();
+            key = UUID.randomUUID().toString();
         }
         return key;
     }
@@ -144,6 +145,6 @@ public abstract class AbstractDWidget implements Comparable<AbstractDWidget>, Se
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "('" + label + "', length=" + length + ")";
+        return getClass().getSimpleName() + "('" + label + "', offset=" + offset + "', length=" + length + ")";
     }
 }
