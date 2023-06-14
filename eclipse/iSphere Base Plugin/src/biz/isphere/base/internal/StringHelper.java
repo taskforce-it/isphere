@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,17 +243,31 @@ public final class StringHelper {
 
         StringBuffer stringWithQuotes = new StringBuffer("");
         stringWithQuotes.append("'");
-
-        for (int idx = 0; idx < stringToBeQuoted.length(); idx++) {
-            String character = stringToBeQuoted.substring(idx, idx + 1);
-            stringWithQuotes.append(character);
-            if (character.equals("'")) {
-                stringWithQuotes.append("'");
-            }
-        }
+        stringWithQuotes.append(doubleQuotes(stringToBeQuoted));
         stringWithQuotes.append("'");
 
         return stringWithQuotes.toString();
+    }
+
+    /**
+     * Doubles quotes of a given string.
+     * 
+     * @param string - String whose quotes are doubled.
+     * @return string with doubled quotes
+     */
+    public static String doubleQuotes(String string) {
+
+        StringBuffer stringWithDoubledQuotes = new StringBuffer("");
+
+        for (int idx = 0; idx < string.length(); idx++) {
+            String character = string.substring(idx, idx + 1);
+            stringWithDoubledQuotes.append(character);
+            if (character.equals("'")) {
+                stringWithDoubledQuotes.append("'");
+            }
+        }
+
+        return stringWithDoubledQuotes.toString();
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ package biz.isphere.core.dataspaceeditor.delegates;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
@@ -24,6 +25,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.part.EditorPart;
 
 import biz.isphere.base.internal.ExceptionHelper;
+import biz.isphere.core.Messages;
 import biz.isphere.core.dataspace.rse.AbstractWrappedDataSpace;
 import biz.isphere.core.dataspaceeditor.AbstractDataSpaceEditor;
 import biz.isphere.core.dataspaceeditor.StatusLine;
@@ -146,9 +148,12 @@ public abstract class AbstractDataSpaceEditorDelegate implements IFindReplaceTar
     protected void handleSaveResult(IProgressMonitor aMonitor, Throwable anException) {
         if (anException != null) {
             setStatusMessage(ExceptionHelper.getLocalizedMessage(anException));
+            updateStatusLine();
             aMonitor.setCanceled(true);
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(anException));
         } else {
             setStatusMessage(null);
+            updateStatusLine();
             resetDirtyFlag();
         }
     }

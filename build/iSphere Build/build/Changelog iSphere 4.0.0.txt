@@ -1,4 +1,11 @@
 
+Changelog: iSphere 5.2.10.b001
+------------------------------
+ • Changed data area editor to show an error dialog on save errors.
+ • Fixed data area editor to correctly save data with single quotes.
+   (quotes must be doubled)
+ • Fixed updating status line of data area editor on save errors.
+
 Changelog: iSphere 5.2.9.r
 --------------------------
  • Removed obsolete dependency to 'org.eclipse.platform' to

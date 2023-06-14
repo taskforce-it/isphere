@@ -26,6 +26,6 @@
 	<classpathentry kind="lib" path="lib/jt400.jar" sourcepath="C:/Users/Thomas/AppData/Local/Temp/.org.sf.feeling.decompiler1639305182770/source/jt400-9.6-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere IDE Base Plugin"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/iSphere Job Trace Explorer Core Plugin"/>
-	<classpathentry kind="var" path="IBM_SHARED_PLUGINS/org.eclipse.osgi_3.17.201.v20220323-0814.jar"/>
+	<classpathentry kind="var" path="IBM_SHARED_PLUGINS/org.eclipse.osgi_3.11.4.v20191007-1806.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

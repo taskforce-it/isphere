@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,6 @@ package biz.isphere.core.dataspace.rse;
 
 import java.math.BigDecimal;
 
-import biz.isphere.base.internal.BigDecimalHelper;
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.dataspaceeditor.QWCRDTAA;
-import biz.isphere.core.internal.ISeries;
-import biz.isphere.core.internal.RemoteObject;
-import biz.isphere.core.internal.exception.IllegalMethodAccessException;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.CharacterDataArea;
 import com.ibm.as400.access.DataArea;
@@ -24,6 +17,14 @@ import com.ibm.as400.access.DecimalDataArea;
 import com.ibm.as400.access.LogicalDataArea;
 import com.ibm.as400.access.QSYSObjectPathName;
 import com.ibm.as400.access.UserSpace;
+
+import biz.isphere.base.internal.BigDecimalHelper;
+import biz.isphere.base.internal.StringHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.dataspaceeditor.QWCRDTAA;
+import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.RemoteObject;
+import biz.isphere.core.internal.exception.IllegalMethodAccessException;
 
 public abstract class AbstractWrappedDataSpace {
 
@@ -223,6 +224,7 @@ public abstract class AbstractWrappedDataSpace {
         }
 
         try {
+            aValue = StringHelper.doubleQuotes(aValue);
             ((CharacterDataArea)getOrLoadDataSpace()).write(aValue);
             return null;
         } catch (Throwable e) {
@@ -407,7 +409,6 @@ public abstract class AbstractWrappedDataSpace {
 
     private byte[] getUserSpaceBytes() throws Throwable {
 
-        
         byte[] bytes;
         UserSpace userSpace = (UserSpace)getOrLoadDataSpace();
         bytes = new byte[userSpace.getLength()];
