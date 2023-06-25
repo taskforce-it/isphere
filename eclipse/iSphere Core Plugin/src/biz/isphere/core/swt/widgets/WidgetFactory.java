@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -850,18 +850,7 @@ public final class WidgetFactory {
     }
 
     /**
-     * Produces a StringListEditor.
-     * 
-     * @param parent a composite control which will be the parent of the new
-     *        instance (cannot be null)
-     * @return editor for editing a list of strings
-     */
-    public static StringListEditor createStringListEditor(Composite parent) {
-        return createStringListEditor(parent, SWT.NONE);
-    }
-
-    /**
-     * Produces a StringListEditor.
+     * Produces an editable StringListEditor.
      * 
      * @param parent a composite control which will be the parent of the new
      *        instance (cannot be null)
@@ -869,7 +858,19 @@ public final class WidgetFactory {
      * @return editor for editing a list of strings
      */
     public static StringListEditor createStringListEditor(Composite parent, int style) {
-        return WidgetFactory.getInstance().produceStringListEditor(parent, style);
+        return WidgetFactory.getInstance().produceStringListEditor(parent, true, style);
+    }
+
+    /**
+     * Produces a read-only StringListEditor.
+     * 
+     * @param parent a composite control which will be the parent of the new
+     *        instance (cannot be null)
+     * @param style the style of control to construct
+     * @return editor for editing a list of strings
+     */
+    public static StringListEditor createReadOnlyStringListEditor(Composite parent, int style) {
+        return WidgetFactory.getInstance().produceStringListEditor(parent, false, style);
     }
 
     /**
@@ -1089,8 +1090,8 @@ public final class WidgetFactory {
         return separator;
     }
 
-    private StringListEditor produceStringListEditor(Composite parent, int style) {
-        return new StringListEditor(parent, style);
+    private StringListEditor produceStringListEditor(Composite parent, boolean isEditable, int style) {
+        return new StringListEditor(parent, isEditable, style);
     }
 
     private SqlEditor produceSqlEditor(Composite parent, String historyKey, DialogSettingsManager dialogSettingsManager, boolean showTableControl,

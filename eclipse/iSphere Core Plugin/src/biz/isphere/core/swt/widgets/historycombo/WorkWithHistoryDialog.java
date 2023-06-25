@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2019 iSphere Project Team
+ * Copyright (c) 2012-2023 iSphere Project Team
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 
 public class WorkWithHistoryDialog extends XDialog {
@@ -32,7 +33,7 @@ public class WorkWithHistoryDialog extends XDialog {
     protected Control createDialogArea(Composite parent) {
         Composite dialogArea = (Composite)super.createDialogArea(parent);
 
-        historyListEditor = new StringListEditor(dialogArea, false, SWT.NONE);
+        historyListEditor = WidgetFactory.createReadOnlyStringListEditor(dialogArea, SWT.NONE);
         setItems(items);
 
         return dialogArea;

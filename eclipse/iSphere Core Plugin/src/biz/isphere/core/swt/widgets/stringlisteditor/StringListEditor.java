@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public class StringListEditor extends Composite implements SelectionListener {
     private static final int COLUMN_ITEM = 0;
 
     private static final String COLUMN_PROPERTY_ITEM = "ITEM"; //$NON-NLS-1$
-    private static final String[] COLUMN_PROPERTIES = { COLUMN_PROPERTY_ITEM }; //$NON-NLS-1$
+    private static final String[] COLUMN_PROPERTIES = { COLUMN_PROPERTY_ITEM }; // $NON-NLS-1$
 
     private boolean isEditable;
     private Shell shell;
@@ -75,10 +75,6 @@ public class StringListEditor extends Composite implements SelectionListener {
     private IStringValidator validator;
 
     private CellEditor[] cellEditors;
-
-    public StringListEditor(Composite parent, int style) {
-        this(parent, true, style);
-    }
 
     public StringListEditor(Composite parent, boolean isEditable, int style) {
         super(parent, style);

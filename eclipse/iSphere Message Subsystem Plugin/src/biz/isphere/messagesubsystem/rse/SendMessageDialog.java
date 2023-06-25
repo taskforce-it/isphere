@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.QueuedMessage;
+
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
@@ -47,9 +50,6 @@ import biz.isphere.core.swt.widgets.stringlisteditor.StringListEditor;
 import biz.isphere.core.swt.widgets.stringlisteditor.ValidationEvent;
 import biz.isphere.messagesubsystem.Messages;
 import biz.isphere.messagesubsystem.internal.QEZSNDMG;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.QueuedMessage;
 
 public class SendMessageDialog extends XDialog implements IStringValidator {
 
@@ -74,9 +74,9 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
     private static final int DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY = 0;
 
     private static final String RECIPIENT_LIST = "*LIST"; //$NON-NLS-1$
-    private static final String REPLY_MSGQ_NAME_SENDER = "*SENDER"; //$NON-NLS-1$ 
-    private static final String REPLY_MSGQ_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$ 
-    private static final String REPLY_MSGQ_LIBRARY_CURLIB = "*CURLIB"; //$NON-NLS-1$ 
+    private static final String REPLY_MSGQ_NAME_SENDER = "*SENDER"; //$NON-NLS-1$
+    private static final String REPLY_MSGQ_LIBRARY_LIBL = "*LIBL"; //$NON-NLS-1$
+    private static final String REPLY_MSGQ_LIBRARY_CURLIB = "*CURLIB"; //$NON-NLS-1$
     private static final int BUTTON_RESET_ID = -1;
 
     private static final String LIBRARY_CURLIB = "*CURLIB"; //$NON-NLS-1$
@@ -267,7 +267,7 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
 
         new Label(mainPanel, SWT.NONE); // place holder
 
-        recipientsEditor = WidgetFactory.createStringListEditor(mainPanel);
+        recipientsEditor = WidgetFactory.createStringListEditor(mainPanel, SWT.NONE);
         recipientsEditor.setTextLimit(10);
         recipientsEditor.setEnableLowerCase(true);
         recipientsEditor.setValidator(this);
@@ -549,14 +549,14 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
         }
 
         if (isALL && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
-            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_ALL,
-                QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
+            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter,
+                new String[] { QEZSNDMG.RECIPIENT_ALL, QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
             recipientsEditor.setFocus();
             return false;
         }
         if (isSysOpr && QEZSNDMG.RECIPIENT_TYPE_DISPLAY.equals(comboRecipientTypes.getText())) {
-            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter, new String[] { QEZSNDMG.RECIPIENT_SYSOPR,
-                QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
+            setErrorMessage(Messages.bind(Messages.A_cannot_be_used_if_B_is_specified_for_the_C_parameter,
+                new String[] { QEZSNDMG.RECIPIENT_SYSOPR, QEZSNDMG.RECIPIENT_TYPE_DISPLAY, Messages.Recipient_type }));
             recipientsEditor.setFocus();
             return false;
         }
@@ -733,7 +733,7 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
         comboDeliveryMode.setText(loadValue(DELIVERY_MODE, comboDeliveryMode.getItems()[DEFAULT_INDEX_DELIVERY_MODE]));
         textMessageText.setText(loadValue(MESSAGE_TEXT, "")); //$NON-NLS-1$
         comboRecipientTypes.setText(loadValue(MESSAGE_RECIPIENT_TYPES, comboRecipientTypes.getItem(DEFAULT_INDEX_RECIPIENT_TYPES)));
-        comboRecipient.setText(loadValue(MESSAGE_RECIPIENT, comboRecipient.getItem(DEFAULT_INDEX_RECIPIENT))); //$NON-NLS-1$
+        comboRecipient.setText(loadValue(MESSAGE_RECIPIENT, comboRecipient.getItem(DEFAULT_INDEX_RECIPIENT))); // $NON-NLS-1$
 
         int count = loadIntValue(MESSAGE_RECIPIENTS_COUNT, 0);
         String[] recipients = new String[count];
@@ -747,8 +747,8 @@ public class SendMessageDialog extends XDialog implements IStringValidator {
         recipientsEditor.setItems(recipients);
 
         comboReplyMessageQueueName.setText(loadValue(MESSAGE_REPLY_QUEUE_NAME, comboReplyMessageQueueName.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_NAME)));
-        comboReplyMessageQueueLibrary.setText(loadValue(MESSAGE_REPLY_QUEUE_LIBRARY,
-            comboReplyMessageQueueLibrary.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY)));
+        comboReplyMessageQueueLibrary
+            .setText(loadValue(MESSAGE_REPLY_QUEUE_LIBRARY, comboReplyMessageQueueLibrary.getItem(DEFAULT_REPLY_MESSAGE_QUEUE_LIBRARY)));
 
         overWriteInitialValues();
 
