@@ -4,87 +4,97 @@
 
    <extension
          point="org.eclipse.ui.popupMenus">
-      	
-      	<!--
-      	  ==========================================
-      	    File contributions
-      	  ==========================================
-      	-->
-      	
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteMember"
-            id="biz.isphere.journalexplorer.menu.mbr.displayjournalentries">
-	         
-	         <action
-                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
-                enablesFor="*"
-                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
-                label="%Display_Journal_Entries"
-                icon="icons/display_journal_entries.gif"
-                menubarPath="additions">
-	         </action>
-      	</objectContribution>
-      	
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemotePhysicalFile"
-            id="biz.isphere.journalexplorer.menu.pf.displayjournalentries">
-	         
-	         <action
-                class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
-                enablesFor="*"
-                id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
-                label="%Display_Journal_Entries"
-                icon="icons/display_journal_entries.gif"
-                menubarPath="additions">
-	         </action>
-      	</objectContribution>
-      	
-      	<!--
-      	  ==========================================
-      	    Journal contributions
-      	  ==========================================
-      	-->
-      	
-      	<objectContribution
-            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+
+         <!--
+          ==========================================
+            Display Journal Entries contribution for:
+            - Physical files         QSysRemoteDataFile,     Type: *FILE    SubType: PF-DTA
+            - Physical file Members  QSysRemoteDataMember,   Type: MBR      SubType: DTA
+            - Source files           QSysRemoteSourceFile,   Type: *FILE    SubType: PF-SRC
+            - Source file Members    QSysRemoteSourceMember, Type: any      SubType: SRC
+            - Data Areas (local)     QsysRemoteObject,       Type: *DTAARA  SubType: empty
+            - Data Queues (local)    QsysRemoteObject,       Type: *DTAQ    SubType: empty
+            - Journals (local)       QsysRemoteObject,       Type: *JRN     SubType: empty
+          ==========================================
+        -->
+
+        <objectContribution
+            objectClass="com.ibm.etools.iseries.comm.interfaces.ISeriesHostObjectBrief"
             id="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject">
 
-			 <visibility>
-			 	<or>
-				    <objectState name="type" value="*JRN" />
-				    <objectState name="type" value="*DTAARA" />
-				    <objectState name="type" value="*DTAQ" />
-			    </or>
-			 </visibility>
-	         
-	         <action
+            <enablement>
+                <or>
+                    <and>
+                        <!-- physical file -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteDataFile" />
+                    </and>
+
+                    <and>
+                        <!-- physical file members -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteDataMember" />
+                    </and>
+
+                    <and>
+                        <!-- source files -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceFile" />
+                    </and>
+
+                    <and>
+                        <!-- source file members -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteSourceMember" />
+                    </and>
+
+                    <and>
+                        <!-- local data areas -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject" />
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*DTAARA"/>
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value=""/>
+                    </and>
+
+                    <and>
+                        <!-- local data queues -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject" />
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*DTAQ"/>
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value=""/>
+                    </and>
+
+                    <and>
+                        <!-- local journals -->
+                        <instanceof value="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject" />
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*JRN"/>
+                        <test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value=""/>
+                    </and>
+                </or>
+             </enablement>
+             
+             <action
                 class="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 enablesFor="*"
                 id="biz.isphere.journalexplorer.rse.actions.DisplayJournalEntriesAction"
                 label="%Display_Journal_Entries"
                 icon="icons/display_journal_entries.gif"
                 menubarPath="additions">
-	         </action>
-      	</objectContribution>
-      	
+             </action>
+        </objectContribution>
+
    </extension>
-      	
-      	<!--
-      	  ==========================================
-      	    Journal Explorer Perspective
-      	  ==========================================
-      	-->
+        
+        <!--
+          ==========================================
+            Journal Explorer Perspective
+          ==========================================
+        -->
 
    <extension point="org.eclipse.ui.perspectives">
-   
+
       <!-- ID does not match package, because perspective was moved from core to rse plugin. 21.03.2021 -->
       <perspective 
-	       id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
-	       name="%Perspective_Journal_Explorer"
-	       class="biz.isphere.journalexplorer.rse.shared.ui.perspectives.JournalExplorerPerspectiveLayout"
-	       icon="icons/journal_explorer.png">
+           id="biz.isphere.journalexplorer.core.ui.perspectives.JournalExplorerPerspectiveLayout" 
+           name="%Perspective_Journal_Explorer"
+           class="biz.isphere.journalexplorer.rse.shared.ui.perspectives.JournalExplorerPerspectiveLayout"
+           icon="icons/journal_explorer.png">
       </perspective>
        
-   </extension>   
+   </extension>
 
 </plugin>
