@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,8 +182,7 @@ public class Messages extends NLS {
     public static String Calling_API;
     public static String RJE0001_Retrieve_journal_entry_buffer_is_to_small_to_return_the_next_journal_entry;
 
-    public static String Exception_No_entries_converted_or_received_from_Json_file_A;
-    public static String Exception_No_entries_converted_or_received_from_journal_A_B;
+    public static String Exception_No_journal_entries_converted_or_received_Object_A_B;
     public static String Exception_Buffer_too_small_to_retrieve_next_journal_entry_Check_preferences;
 
     public static String Warning_Not_all_journal_entries_loaded;

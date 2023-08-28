@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,9 @@ import biz.isphere.journalexplorer.core.internals.SelectionProviderIntermediate;
 import biz.isphere.journalexplorer.core.model.AbstractJournalExplorerInput;
 import biz.isphere.journalexplorer.core.model.JournalEntries;
 import biz.isphere.journalexplorer.core.model.JournalEntry;
+import biz.isphere.journalexplorer.core.model.JournalExplorerJournalInput;
+import biz.isphere.journalexplorer.core.model.JournalExplorerJsonFileInput;
+import biz.isphere.journalexplorer.core.model.JournalExplorerOutputFileInput;
 import biz.isphere.journalexplorer.core.model.MetaDataCache;
 import biz.isphere.journalexplorer.core.model.MetaTable;
 import biz.isphere.journalexplorer.core.model.OutputFile;
@@ -94,8 +97,8 @@ import biz.isphere.journalexplorer.core.ui.views.JournalExplorerView;
  * @see JournalEntry
  * @see JournalEntryViewerView
  */
-public class JournalExplorerTab extends CTabItem implements IResizableTableColumnsViewer, ISelectionChangedListener, ISelectionProvider,
-    IPropertyChangeListener {
+public class JournalExplorerTab extends CTabItem
+    implements IResizableTableColumnsViewer, ISelectionChangedListener, ISelectionProvider, IPropertyChangeListener {
 
     private static final String EMPTY = ""; //$NON-NLS-1$
 
@@ -692,7 +695,7 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
             if (value != null) {
                 return value;
             }
-            return ""; //$NON-NLS-1$;
+            return ""; //$NON-NLS-1$ ;
         }
     }
 
@@ -794,7 +797,17 @@ public class JournalExplorerTab extends CTabItem implements IResizableTableColum
                     if (isBufferTooSmallException(messages)) {
                         throw new BufferTooSmallException();
                     } else if (isNoDataLoadedException(messages)) {
-                        throw new NoJournalEntriesLoadedException(input.getName());
+                        String objectType;
+                        if (input instanceof JournalExplorerJournalInput) {
+                            objectType = ISeries.JRN;
+                        } else if (input instanceof JournalExplorerOutputFileInput) {
+                            objectType = ISeries.FILE;
+                        } else if (input instanceof JournalExplorerJsonFileInput) {
+                            objectType = "*JSON"; //$NON-NLS-1$
+                        } else {
+                            objectType = "*N"; //$NON-NLS-1$
+                        }
+                        throw new NoJournalEntriesLoadedException(input.getName(), objectType);
                     } else {
                         throw new Exception("Error loading journal entries. \n" + messages[0].getID() + ": " + messages[0].getText());
                     }
