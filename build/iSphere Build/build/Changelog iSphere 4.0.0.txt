@@ -14,6 +14,7 @@ Changelog: iSphere 5.2.10.b001
    members.
  • Added method getText() to ConnectionCombo to return the simple
    connection name.
+ • Fixed isValidObjectType() in JournalExplorerHelper.
 
 Changelog: iSphere 5.2.9.r
 --------------------------
