@@ -12,6 +12,8 @@ Changelog: iSphere 5.2.10.b001
  • Fixed updating status line of data area editor on save errors.
  • Enable option 'Display journal entries' for source files and
    members.
+ • Added method getText() to ConnectionCombo to return the simple
+   connection name.
 
 Changelog: iSphere 5.2.9.r
 --------------------------
