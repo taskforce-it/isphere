@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
+import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.annotations.CMOne;
 import biz.isphere.core.compareeditor.CompareDialog;
 import biz.isphere.core.compareeditor.LoadPreviousMemberValue;
@@ -317,6 +318,10 @@ public class RSECompareDialog extends CompareDialog {
         memberPrompt.getMemberCombo().addModifyListener(modifyListener);
         memberPrompt.getFileCombo().addModifyListener(modifyListener);
         memberPrompt.getLibraryCombo().addModifyListener(modifyListener);
+
+        memberPrompt.getMemberCombo().getCombo().addVerifyListener(new UpperCaseOnlyVerifier());
+        memberPrompt.getFileCombo().getCombo().addVerifyListener(new UpperCaseOnlyVerifier());
+        memberPrompt.getLibraryCombo().getCombo().addVerifyListener(new UpperCaseOnlyVerifier());
 
         return memberPrompt;
     }
