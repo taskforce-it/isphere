@@ -385,7 +385,11 @@ public class LoadJournalEntriesDialog extends XDialog {
             setRadioButtonSelected(radioBtnLastUsedValues);
         }
 
-        chkboxRecordsOnly.setSelection(loadBooleanValue(SHOW_RECORDS_ONLY, true));
+        if (haveFileObjects()) {
+            chkboxRecordsOnly.setSelection(loadBooleanValue(SHOW_RECORDS_ONLY, true));
+        } else {
+            chkboxRecordsOnly.setSelection(false);
+        }
 
         for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
             boolean isSelected = loadBooleanValue("JOURNAL_ENTRY_TYPE_" + journalEntryType.getLabel(), true);
@@ -393,6 +397,21 @@ public class LoadJournalEntriesDialog extends XDialog {
         }
 
         tableViewer.refresh(true);
+    }
+
+    private boolean haveFileObjects() {
+
+        if (objects == null) {
+            return false;
+        }
+
+        for (ISelectedObject object : objects) {
+            if (object instanceof ISelectedFile) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void setRadioButtonSelected(Button button) {
@@ -413,11 +432,14 @@ public class LoadJournalEntriesDialog extends XDialog {
 
         Calendar startingDate = getTimestamp(startingDateDateTime, startingTimeDateTime);
         Calendar endingDate = getTimestamp(endingDateDateTime, endingTimeDateTime);
-        boolean recordsOnly = chkboxRecordsOnly.getSelection();
 
         storeValue(STARTING_DATE, startingDate.getTime());
         storeValue(ENDING_DATE, endingDate.getTime());
-        storeValue(SHOW_RECORDS_ONLY, recordsOnly);
+
+        boolean recordsOnly = chkboxRecordsOnly.getSelection();
+        if (haveFileObjects()) {
+            storeValue(SHOW_RECORDS_ONLY, recordsOnly);
+        }
 
         for (SelectableJournalEntryType journalEntryType : journalEntryTypes) {
             storeValue("JOURNAL_ENTRY_TYPE_" + journalEntryType.getLabel(), journalEntryType.isSelected());
