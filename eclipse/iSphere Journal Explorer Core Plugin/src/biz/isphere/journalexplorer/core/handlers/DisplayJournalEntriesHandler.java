@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.dialog.ConfirmErrorsDialog;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -29,9 +31,7 @@ import biz.isphere.journalexplorer.core.externalapi.Access;
 import biz.isphere.journalexplorer.core.model.shared.Journal;
 import biz.isphere.journalexplorer.core.model.shared.JournaledFile;
 import biz.isphere.journalexplorer.core.model.shared.JournaledObject;
-import biz.isphere.journalexplorer.core.ui.dialogs.LoadJournalEntriesDialog;
-
-import com.ibm.as400.access.AS400;
+import biz.isphere.journalexplorer.core.ui.dialogs.rse.LoadJournalEntriesDialog;
 
 public class DisplayJournalEntriesHandler {
 
@@ -40,7 +40,7 @@ public class DisplayJournalEntriesHandler {
     private SelectionCriteria selectionCriteria;
 
     /**
-     * Displays the journal entries of a given list of objects.
+     * Displays the journal entries of a given list of journals.
      * 
      * @param selectedObjects - list of objects
      */

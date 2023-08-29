@@ -269,6 +269,7 @@
                label="%menu_iSphere">
 	         <separator name="group0" visible="true" />
 	         <separator name="additions" visible="true" />
+	         <separator name="additions2" visible="true" />
 	         <separator name="transferlibrary" visible="true" />
 	         <command
 	               id="biz.isphere.core.menu.iSphereLibrary.transfer"

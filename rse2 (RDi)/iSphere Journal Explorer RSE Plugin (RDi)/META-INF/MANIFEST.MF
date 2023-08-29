@@ -18,6 +18,8 @@ Require-Bundle: org.eclipse.ui,
  biz.isphere.core,
  biz.isphere.rse,
  biz.isphere.journalexplorer.base,
- biz.isphere.journalexplorer.core
+ biz.isphere.journalexplorer.core,
+ biz.isphere.adapter,
+ com.ibm.etools.iseries.rse.ui
 Bundle-ActivationPolicy: lazy
 Eclipse-LazyStart: true

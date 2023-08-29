@@ -76,7 +76,7 @@
                 menubarPath="additions">
              </action>
         </objectContribution>
-
+        
    </extension>
         
         <!--
@@ -95,6 +95,63 @@
            icon="icons/journal_explorer.png">
       </perspective>
        
+   </extension>
+
+        <!--
+          ==========================================
+            iSphere Menu Contribution
+          ==========================================
+        -->
+
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution locationURI="menu:biz.isphere.core.menu.isphere?after=additions2">
+
+         <command
+           id="biz.isphere.journalexplorer.menu.journalEntries.display"
+           commandId="biz.isphere.journalexplorer.rse.command.journalEntries.display"
+           icon="icons/journal_explorer.png">
+         </command>
+
+      </menuContribution>
+   </extension>
+
+        <!--
+          ==========================================
+            iSphere Key Bindings
+          ==========================================
+        -->
+
+   <extension point="org.eclipse.ui.bindings">
+
+      <key 
+        sequence="Ctrl+I E"
+        commandId="biz.isphere.journalexplorer.rse.command.journalEntries.display"
+        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        contextId="org.eclipse.ui.contexts.window"/>
+
+   </extension>
+
+        <!--
+          ==========================================
+            Journal Explorer Commands
+          ==========================================
+        -->
+
+   <extension
+         point="org.eclipse.ui.commands">
+
+      <category
+            name="iSphere"
+            id="biz.isphere.category.Commands">
+      </category>
+
+      <command
+            defaultHandler="biz.isphere.journalexplorer.rse.handler.DisplayJournalEntriesCommandHandler"
+            id="biz.isphere.journalexplorer.rse.command.journalEntries.display"
+            categoryId="biz.isphere.category.Commands"
+            name="%Display_Journal_Entries">
+      </command>
+
    </extension>
 
 </plugin>
