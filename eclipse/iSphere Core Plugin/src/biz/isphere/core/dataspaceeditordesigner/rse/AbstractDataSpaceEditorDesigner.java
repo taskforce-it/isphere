@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
 package biz.isphere.core.dataspaceeditordesigner.rse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -121,6 +122,8 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     private DEditor currentEditedEditor;
     private DDataSpaceValue currentSampleData;
 
+    private DEditor[] treeViewerInput;
+
     public AbstractDataSpaceEditorDesigner() {
         manager = new DataSpaceEditorManager();
         repository = DataSpaceEditorRepository.getInstance();
@@ -155,12 +158,19 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
     public void deleteDataSpaceEditors() {
         DEditor[] dEditors = getSelectedEditors();
+        Set<DEditor> input = new HashSet<DEditor>(Arrays.asList(treeViewerInput));
         for (DEditor dEditor : dEditors) {
-            treeViewer.remove(treeViewer.getInput(), new Object[] { dEditor });
+            // treeViewer.remove(input, new Object[] { dEditor });
+            treeViewer.remove(dEditor);
+            input.remove(dEditor);
             setEditorDeleted(dEditor);
             if (dEditor == currentEditedEditor) {
                 setDataSpaceEditor(null);
             }
+        }
+        treeViewerInput = input.toArray(new DEditor[input.size()]);
+        if (treeViewerInput.length == 0) {
+            treeViewer.setInput(treeViewerInput);
         }
     }
 
@@ -399,7 +409,9 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
         treeViewer.setContentProvider(new TreeViewContentProvider());
         treeViewer.setLabelProvider(new TreeViewLabelProvider());
         treeViewer.setSorter(new TreeViewSorter());
-        treeViewer.setInput(DataSpaceEditorRepository.getInstance().getCopyOfDataSpaceEditors());
+
+        treeViewerInput = DataSpaceEditorRepository.getInstance().getCopyOfDataSpaceEditors();
+        treeViewer.setInput(treeViewerInput);
         // treeViewer.addDropSupport(DND.DROP_NONE, new Transfer[] {}, new
         // DropVetoListerner());
         addDropSupportOnViewer(treeViewer);
@@ -566,9 +578,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
                             DTemplateReferencedObject template = new DTemplateReferencedObject(name, library, type);
                             addReferencedObjectToEditor(dEditor, template);
                         } else {
-                            MessageDialog.openError(
-                                getShell(),
-                                Messages.E_R_R_O_R,
+                            MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
                                 Messages.bind(Messages.Object_A_has_already_been_assigned_to_editor_B,
                                     new String[] { remoteObject.getQualifiedObject(), dEditor.getName() }));
                         }

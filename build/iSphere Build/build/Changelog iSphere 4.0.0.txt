@@ -16,6 +16,8 @@ Changelog: iSphere 5.2.10.b001
    connection name.
  • Fixed isValidObjectType() in JournalExplorerHelper.
  • Fixed NoJournalEntriesLoadedException() text.
+ • Added menu option 'iSphere -> Display Journal Entries'.
+ • Fixed deleting data space editors.
 
 Changelog: iSphere 5.2.9.r
 --------------------------
