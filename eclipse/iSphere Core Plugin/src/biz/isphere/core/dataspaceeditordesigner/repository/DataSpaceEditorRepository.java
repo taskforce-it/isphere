@@ -26,6 +26,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import biz.isphere.base.internal.FileHelper;
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -67,7 +68,6 @@ public final class DataSpaceEditorRepository {
     private String repositoryLocation;
     private Map<String, DEditor> dEditors;
     private DataSpaceEditorManager manager;
-    private Boolean createExampleDataSpaceEditorsConfirmed;
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -204,7 +204,7 @@ public final class DataSpaceEditorRepository {
             stream.flush();
             stream.close();
         } catch (Exception e) {
-            ISpherePlugin.logError(e.getMessage(), e);
+            ISpherePlugin.logError("*** Could not save data space editor " + getNameOrDescription(dEditor) + " to XML ***", e); //$NON-NLS-1$
             throw new SaveFileException(file);
         }
     }
@@ -235,14 +235,11 @@ public final class DataSpaceEditorRepository {
     private Map<String, DEditor> getOrLoadEditors() {
 
         if (dEditors.size() == 0) {
-            dEditors.clear();
             dEditors = loadEditors(getRepositoryLocation());
             if (dEditors.size() == 0) {
 
-                if (createExampleDataSpaceEditorsConfirmed == null) {
-                    createExampleDataSpaceEditorsConfirmed = DoNotAskMeAgainDialog.openConfirm(UIHelper.getActiveShell(),
-                        DoNotAskMeAgain.CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS, Messages.Create_example_data_space_editors);
-                }
+                Boolean createExampleDataSpaceEditorsConfirmed = DoNotAskMeAgainDialog.openConfirm(UIHelper.getActiveShell(),
+                    DoNotAskMeAgain.CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS, Messages.Create_example_data_space_editors);
 
                 if (createExampleDataSpaceEditorsConfirmed) {
                     loadExampleEditors();
@@ -257,12 +254,16 @@ public final class DataSpaceEditorRepository {
 
         try {
 
-            dEditors = loadEditors(getExamplesLocation());
-            for (DEditor dEditor : dEditors.values()) {
+            // Load editors and save them to xml.
+            Map<String, DEditor> dExampleEditors = loadEditors(getExamplesLocation());
+            for (DEditor dEditor : dExampleEditors.values()) {
                 saveToXml(dEditor);
             }
 
+            dEditors.putAll(dExampleEditors);
+
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Failed loading data space example editors ***", e); //$NON-NLS-1$
         }
     }
 
@@ -272,6 +273,7 @@ public final class DataSpaceEditorRepository {
             URL resourceUrl = getClass().getClassLoader().getResource("sample_dataSpaceEditors");
             return FileLocator.toFileURL(resourceUrl).getPath();
         } catch (Exception e) {
+            ISpherePlugin.logError("*** Failed getting location of data space example editors ***", e); //$NON-NLS-1$
         }
 
         return null;
@@ -288,13 +290,9 @@ public final class DataSpaceEditorRepository {
         }
 
         for (File dEditorFile : dEditorFiles) {
-            try {
-                DEditor dialog = loadFromXml(dEditorFile);
-                if (!dEditors.containsKey(dialog.getKey())) {
-                    dEditors.put(dialog.getKey(), dialog);
-                }
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not load data space designer repository ***", e);
+            DEditor dialog = loadFromXml(dEditorFile);
+            if (!dEditors.containsKey(dialog.getKey())) {
+                dEditors.put(dialog.getKey(), dialog);
             }
         }
 
@@ -307,6 +305,7 @@ public final class DataSpaceEditorRepository {
     }
 
     private DEditor loadFromXml(File file) {
+
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
@@ -319,7 +318,7 @@ public final class DataSpaceEditorRepository {
             return (DEditor)getXStream().fromXML(xml.toString());
 
         } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not load XML of data space editor ***", e);
+            ISpherePlugin.logError("*** Could not load XML of data space editor from file: " + getPath(file) + " ***", e);
             return null;
         }
     }
@@ -352,6 +351,28 @@ public final class DataSpaceEditorRepository {
         xstream.alias("text", DText.class);
         xstream.alias("decimal", DDecimal.class);
         return xstream;
+    }
+
+    private String getNameOrDescription(DEditor dEditor) {
+
+        if (dEditor == null) {
+            return "[null]"; //$NON-NLS-1$
+        }
+
+        if (!StringHelper.isNullOrEmpty(dEditor.getDescription())) {
+            return dEditor.getDescription();
+        } else {
+            return dEditor.getName();
+        }
+    }
+
+    private String getPath(File file) {
+
+        if (file == null) {
+            return "[null]"; //$NON-NLS-1$
+        }
+
+        return file.getAbsolutePath();
     }
 
     /**
