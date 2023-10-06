@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,21 +48,16 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
     private List<AbstractSearchArgumentEditor> searchArgumentEditors;
     private int maxNumSearchArguments;
+    private int maxSearchArgumentLength;
     private SearchOptionConfig[] rdoAdditionalMatchOptions;
     private Listener listener;
     private boolean regularExpressionsOption;
 
-    public SearchArgumentsListEditor(int aMaxNumSearchArguments) {
-        this(aMaxNumSearchArguments, false);
-    }
-
-    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption) {
-        this(aMaxNumSearchArguments, aRegularExpressionsOption, null);
-    }
-
-    public SearchArgumentsListEditor(int aMaxNumSearchArguments, boolean aRegularExpressionsOption, SearchOptionConfig[] anAdditionalMatchOptions) {
+    public SearchArgumentsListEditor(int aMaxNumSearchArguments, int aMaxSearchArgumentLength, boolean aRegularExpressionsOption,
+        SearchOptionConfig[] anAdditionalMatchOptions) {
         regularExpressionsOption = aRegularExpressionsOption;
         maxNumSearchArguments = aMaxNumSearchArguments;
+        maxSearchArgumentLength = aMaxSearchArgumentLength;
         rdoAdditionalMatchOptions = anAdditionalMatchOptions;
         listener = null;
     }
@@ -131,6 +126,10 @@ public abstract class SearchArgumentsListEditor implements Listener {
 
     protected boolean isRegularExpressions() {
         return regularExpressionsOption;
+    }
+
+    protected int getMaxSearchArgumentLength() {
+        return maxSearchArgumentLength;
     }
 
     private void addSearchArgumentEditorAndLayout() {

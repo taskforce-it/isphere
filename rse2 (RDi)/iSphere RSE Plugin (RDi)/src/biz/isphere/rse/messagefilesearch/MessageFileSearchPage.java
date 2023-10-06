@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,8 +206,8 @@ public class MessageFileSearchPage extends AbstractSearchPage {
 
     protected SearchArgumentsListEditor createSearchArgumentsListEditor(Composite parent) {
 
-        SearchArgumentsListEditor searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE, false,
-            SearchOptionConfig.getAdditionalMessageFileSearchOptions());
+        SearchArgumentsListEditor searchArgumentsListEditor = new SearchArgumentsListEditor(SearchOptions.ARGUMENTS_SIZE,
+            SearchOptions.MAX_STRING_SIZE_MESSAGE_FILE_SEARCH, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
         searchArgumentsListEditor.setListener(this);
         searchArgumentsListEditor.createControl(parent);
 

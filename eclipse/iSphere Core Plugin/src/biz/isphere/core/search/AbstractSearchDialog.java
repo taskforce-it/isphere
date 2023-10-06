@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     private Label labelToColumn;
     private Button okButton;
     private int maxColumns;
+    private int maxSearchArgumentLength;
     private boolean regularExpressionsOption;
     private SearchOptionConfig[] searchOptionConfig;
     private List listArea;
@@ -70,15 +71,17 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
     @CMOne(info = "CMOne settings")
     private static final String IGNORE_CASE = "ignoreCase";
 
-    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption) {
-        this(parentShell, maxColumns, searchArgumentsListEditor, regularExpressionsOption, null);
+    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, int maxSearchArgumentLength,
+        boolean regularExpressionsOption) {
+        this(parentShell, maxColumns, searchArgumentsListEditor, maxSearchArgumentLength, regularExpressionsOption, null);
     }
 
-    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, boolean regularExpressionsOption,
-        SearchOptionConfig[] searchOptionConfig) {
+    public AbstractSearchDialog(Shell parentShell, int maxColumns, boolean searchArgumentsListEditor, int maxSearchArgumentLength,
+        boolean regularExpressionsOption, SearchOptionConfig[] searchOptionConfig) {
         super(parentShell);
 
         this.maxColumns = maxColumns;
+        this.maxSearchArgumentLength = maxSearchArgumentLength;
         _fromColumn = 1;
         _toColumn = maxColumns;
         if (searchArgumentsListEditor) {
@@ -130,7 +133,8 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
 
     private void createSearchStringEditorGroup(Composite container) {
 
-        _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(regularExpressionsOption, searchOptionConfig);
+        _listEditor = ISpherePlugin.getSearchArgumentsListEditorProvider().getListEditor(maxSearchArgumentLength, regularExpressionsOption,
+            searchOptionConfig);
         _listEditor.createControl(container);
         _listEditor.setListener(this);
     }
@@ -217,7 +221,7 @@ public abstract class AbstractSearchDialog<M> extends XDialog implements Listene
 
         textString = WidgetFactory.createText(parent);
         textString.setText(searchString);
-        textString.setTextLimit(40);
+        textString.setTextLimit(SearchOptions.MAX_STRING_SIZE);
         textString.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         textString.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent event) {

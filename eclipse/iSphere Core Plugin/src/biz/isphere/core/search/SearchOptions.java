@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2020 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,22 @@ public class SearchOptions implements Serializable {
     private static final String NEW_LINE = "\n";
 
     public static int ARGUMENTS_SIZE = 16;
-    public static int MAX_STRING_SIZE = 40;
+
+    // Maximum length of search argument. See: reference field
+    // 'searchArgument_t.string' of source member SRCHOPTS_T.RPGLE.
+    public static int MAX_STRING_SIZE = 256;
+
+    // Maximum length of search argument of iSphere Source File Search. See:
+    // variable LILINE of procedure performSearch() in module FNDSTR.
+    public static int MAX_STRING_SIZE_SOURCE_FILE_SEARCH = 228;
+
+    // Maximum length of search argument of iSphere Message File Search. See:
+    // variable LIMSG of procedure XFNDSTR_search() in module XFNDSTR.
+    public static int MAX_STRING_SIZE_MESSAGE_FILE_SEARCH = 132;
+
+    // Maximum length of search argument of iSphere Stream File Search. See:
+    // variable l_LINE of procedure performSearch() in module ZFNDSTR.
+    public static int MAX_STRING_SIZE_STREAM_FILE_SEARCH = MAX_STRING_SIZE;
 
     public static final int CONTAINS = 1;
     public static final int CONTAINS_NOT = -1;

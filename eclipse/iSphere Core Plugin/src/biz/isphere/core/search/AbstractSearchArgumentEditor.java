@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2017 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@ package biz.isphere.core.search;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -90,6 +92,17 @@ public abstract class AbstractSearchArgumentEditor {
             helpItem.setImage(ISpherePlugin.getDefault().getImageRegistry().get(ISpherePlugin.IMAGE_SYSTEM_HELP));
             helpItem.addMouseListener(new DisplayRegularExpressionHelpListener());
             helpItem.setToolTipText(Messages.Opens_the_IBM_regular_expressions_help_page);
+            btnRegularExpression.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    widgetSelected(e);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    updateSearchStringTextLimit();
+                }
+            });
         }
 
         btnAdd = WidgetFactory.createPushButton(container);
@@ -180,6 +193,7 @@ public abstract class AbstractSearchArgumentEditor {
         }
 
         btnRegularExpression.setSelection(anIsRegularExpression);
+        updateSearchStringTextLimit();
     }
 
     public Rectangle getBounds() {
@@ -199,6 +213,8 @@ public abstract class AbstractSearchArgumentEditor {
     public abstract void addSearchStringListener(Listener aListener);
 
     public abstract String getSearchString();
+
+    public abstract void updateSearchStringTextLimit();
 
     public abstract void setSearchString(String aString);
 

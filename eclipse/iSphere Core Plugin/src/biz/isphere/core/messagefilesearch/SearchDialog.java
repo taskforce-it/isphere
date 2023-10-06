@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.search.AbstractSearchDialog;
 import biz.isphere.core.search.GenericSearchOption;
+import biz.isphere.core.search.SearchArgument;
 import biz.isphere.core.search.SearchOptionConfig;
 import biz.isphere.core.search.SearchOptions;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -46,12 +47,13 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     private Button includeMessageIdButton;
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
-        super(parentShell, 132, false, false);
+        super(parentShell, SearchArgument.MAX_MESSAGE_FILE_SEARCH_COLUMN, false, SearchOptions.MAX_STRING_SIZE_MESSAGE_FILE_SEARCH, false);
         init(searchElements);
     }
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, 132, searchArgumentsListEditor, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
+        super(parentShell, SearchArgument.MAX_MESSAGE_FILE_SEARCH_COLUMN, searchArgumentsListEditor,
+            SearchOptions.MAX_STRING_SIZE_MESSAGE_FILE_SEARCH, false, SearchOptionConfig.getAdditionalMessageFileSearchOptions());
         init(searchElements);
     }
 

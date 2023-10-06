@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2023 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     @Deprecated
     @CMOne(info = "Do not change the constructor. May be used by CMOne.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements) {
-        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, false);
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, SearchOptions.MAX_STRING_SIZE, false);
         init(searchElements);
     }
 
@@ -69,18 +69,18 @@ public class SearchDialog extends AbstractSearchDialog<SearchElement> {
     @Deprecated
     @CMOne(info = "Do not change the constructor.")
     public SearchDialog(Shell parentShell, HashMap<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true,
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, SearchOptions.MAX_STRING_SIZE, true,
             SearchOptionConfig.getAdditionalLineModeSearchOptions());
         init(searchElements);
     }
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements) {
-        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, false);
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, false, SearchOptions.MAX_STRING_SIZE, false);
         init(searchElements);
     }
 
     public SearchDialog(Shell parentShell, Map<String, SearchElement> searchElements, boolean searchArgumentsListEditor) {
-        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, true,
+        super(parentShell, SearchArgument.MAX_STREAM_FILE_SEARCH_COLUMN, searchArgumentsListEditor, SearchOptions.MAX_STRING_SIZE, true,
             SearchOptionConfig.getAdditionalLineModeSearchOptions());
         init(searchElements);
     }
