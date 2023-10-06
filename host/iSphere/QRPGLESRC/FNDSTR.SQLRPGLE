@@ -25,7 +25,7 @@
       //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
-      //*         --PARM--  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*ALL)');                           *
+      //*         --PARM--  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -776,6 +776,7 @@
      dLISTR            S              3S 0                                      Start
      dLILNG            S              3S 0                                      Length
      dLISTMT           S              6S 0                                      Statement
+      * Length must match SearchOptions.MAX_STRING_SIZE_SOURCE_FILE_SEARCH.
      dLILINE           S            228A                                        Line
      dLISTG            S                   Like(searchArgument_t.string)        String
      dLIIDX            S             10I 0                                      Search arg. index

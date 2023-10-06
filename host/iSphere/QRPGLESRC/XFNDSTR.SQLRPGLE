@@ -25,6 +25,7 @@
       //*         >>PARM<<  RPGPPOPT(*LVL2);                                                       *
       //*         >>PARM<<  OPTION(*EVENTF);                                                       *
       //*         >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');                                         *
+      //*         --PARM--  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');                          *
       //*       >>END-COMPILE<<                                                                    *
       //*       >>EXECUTE<<                                                                        *
       //*   >>END-PRE-COMPILER<<                                                                   *
@@ -210,6 +211,7 @@
      dLICNL            S             10A                                        Cancel
      dLIRTVOPT         S             10A                                        Retrieve options
      dLIMSGID          S              7A                                        Message ID
+      * Length must match SearchOptions.MAX_STRING_SIZE_MESSAGE_FILE_SEARCH.
      dLIMSG            S            132A                                        Message
      dLISTR            S              3S 0                                      Start
      dLILNG            S              3S 0                                      Length
