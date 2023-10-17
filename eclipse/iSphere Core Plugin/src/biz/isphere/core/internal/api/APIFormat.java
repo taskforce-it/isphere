@@ -41,9 +41,6 @@ public class APIFormat extends AbstractAPIFieldDescription {
     private Map<String, AbstractAPIFieldDescription> fields = new LinkedHashMap<String, AbstractAPIFieldDescription>();
     private byte[] bytes;
 
-    // private APIFormat parent;
-    // private String offsetFieldName;
-
     private CharConverter charConv;
     private AS400Bin2 int2Conv;
     private AS400Bin4 int4Conv;
@@ -338,7 +335,7 @@ public class APIFormat extends AbstractAPIFieldDescription {
      * @param name - field name
      * @param value - byte value
      */
-    protected void setByteValue(String name, byte[] value) throws CharConversionException, UnsupportedEncodingException {
+    protected void setByteValue(String name, byte[] value) {
 
         AbstractAPIFieldDescription field = getFieldDescription(name);
         checkFieldDescription(field, APICharFieldDescription.class);
