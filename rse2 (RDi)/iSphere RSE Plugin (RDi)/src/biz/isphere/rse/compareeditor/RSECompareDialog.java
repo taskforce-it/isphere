@@ -41,6 +41,7 @@ import biz.isphere.rse.internal.RSEMember;
 
 public class RSECompareDialog extends CompareDialog {
 
+    private Group leftGroup;
     private Group ancestorGroup;
 
     private ConnectionCombo leftConnectionCombo;
@@ -200,7 +201,7 @@ public class RSECompareDialog extends CompareDialog {
     @Override
     protected void createEditableLeftArea(Composite parent) {
 
-        Group leftGroup = createMemberGroup(parent, Messages.Left);
+        leftGroup = createMemberGroup(parent, getLeftGroupLabel());
 
         SelectionListener selectionListener = new SelectionAdapter() {
             @Override
@@ -274,6 +275,14 @@ public class RSECompareDialog extends CompareDialog {
         };
 
         ancestorMemberPrompt = createMemberPrompt(ancestorGroup, modifyListener, PREFIX_ANCESTOR);
+    }
+
+    protected void setLeftGroupLabel(String label) {
+        if (leftGroup == null) {
+            super.setLeftGroupLabel(label);
+        } else {
+            leftGroup.setText(label);
+        }
     }
 
     private Group createMemberGroup(Composite parent, String label) {

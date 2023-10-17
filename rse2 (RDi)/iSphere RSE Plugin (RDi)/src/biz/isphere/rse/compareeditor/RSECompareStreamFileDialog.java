@@ -58,6 +58,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     private String rightDirectory;
     private String rightStreamFile;
 
+    private Group leftGroup;
     private Group ancestorGroup;
     private ConnectionCombo ancestorConnectionCombo;
     private StreamFilePrompt ancestorStreamFilePrompt;
@@ -218,7 +219,7 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
     @Override
     protected void createEditableLeftArea(Composite parent) {
 
-        Group leftGroup = createStreamFileGroup(parent, Messages.Left);
+        leftGroup = createStreamFileGroup(parent, Messages.Left);
 
         SelectionListener selectionListener = new SelectionAdapter() {
             @Override
@@ -293,6 +294,14 @@ public class RSECompareStreamFileDialog extends CompareStreamFileDialog {
 
         ancestorStreamFilePrompt = createStreamFilePrompt(ancestorGroup, modifyListener, ANCESTOR_HISTORY_KEY);
         ancestorStreamFilePrompt.setConnection(getHost(getCurrentAncestorConnectionName()));
+    }
+
+    protected void setLeftGroupLabel(String label) {
+        if (leftGroup == null) {
+            super.setLeftGroupLabel(label);
+        } else {
+            leftGroup.setText(label);
+        }
     }
 
     private Group createStreamFileGroup(Composite parent, String label) {

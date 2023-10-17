@@ -19,6 +19,10 @@ Changelog: iSphere 5.2.10.b002
  • Added menu option 'iSphere -> Display Journal Entries'.
  • Fixed deleting data space editors.
  • Fixed maximum length of of search string in Java dialogs.
+ • Fixed UI connection name, when selecting stream files for the
+   compare editor.
+ • Changed label of left group, when selecting items for compare.
+   '(editable)' is added to 'Left' when 'Open for edit' is selected.
 
 Changelog: iSphere 5.2.9.r
 --------------------------

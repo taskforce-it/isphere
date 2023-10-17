@@ -102,6 +102,8 @@ public class Messages extends NLS {
 
     public static String E_R_R_O_R;
 
+    public static String Editable;
+
     public static String Field;
 
     public static String Field_format;

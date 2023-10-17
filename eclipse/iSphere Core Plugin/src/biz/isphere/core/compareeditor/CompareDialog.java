@@ -99,6 +99,7 @@ public abstract class CompareDialog extends XDialog {
 
     private Image switchImage;
 
+    private Group leftGroup;
     private Text leftConnectionText;
     private Text leftLibraryText;
     private Text leftFileText;
@@ -374,9 +375,9 @@ public abstract class CompareDialog extends XDialog {
                         dontIgnoreCaseButton.setSelection(true);
                         ignoreCaseButton.setSelection(false);
                     }
+                    setLeftGroupLabel(getLeftGroupLabel());
                 }
             });
-
         }
 
         if (dateOptionsEditable) {
@@ -414,6 +415,7 @@ public abstract class CompareDialog extends XDialog {
                     if (ignoreCaseButton.getSelection()) {
                         browseButton.setSelection(true);
                         editButton.setSelection(false);
+                        setLeftGroupLabel(getLeftGroupLabel());
                     }
                 }
             }
@@ -630,10 +632,23 @@ public abstract class CompareDialog extends XDialog {
     protected void setAncestorVisible(boolean visible) {
     }
 
+    protected String getLeftGroupLabel() {
+
+        if (editButton.getSelection()) {
+            return Messages.Left + " " + Messages.Editable;
+        } else {
+            return Messages.Left;
+        }
+    }
+
+    protected void setLeftGroupLabel(String label) {
+        leftGroup.setText(label);
+    }
+
     private void createReadOnlyLeftArea(Composite parent) {
 
-        Group leftGroup = new Group(parent, SWT.NONE);
-        leftGroup.setText(Messages.Left);
+        leftGroup = new Group(parent, SWT.NONE);
+        leftGroup.setText(getLeftGroupLabel());
         GridLayout leftLayout = new GridLayout(2, false);
         leftGroup.setLayout(leftLayout);
         leftGroup.setLayoutData(getGridData());
@@ -895,6 +910,7 @@ public abstract class CompareDialog extends XDialog {
             } else {
                 editButton.setSelection(false);
             }
+            setLeftGroupLabel(getLeftGroupLabel());
         }
 
         if (dateOptionsEditable) {

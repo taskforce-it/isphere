@@ -29,6 +29,7 @@ import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.StreamFile;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -70,6 +71,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
     private boolean hasAncestorStreamFile;
     private boolean switchStreamFileAllowed = true;
     private Image switchImage;
+    private Group leftGroup;
     private Text leftConnectionText;
     private Text leftDirectoryText;
     private Text leftStreamFileText;
@@ -279,6 +281,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
                         dontIgnoreCaseButton.setSelection(true);
                         ignoreCaseButton.setSelection(false);
                     }
+                    setLeftGroupLabel(getLeftGroupLabel());
                 }
             });
 
@@ -302,6 +305,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
                     if (ignoreCaseButton.getSelection()) {
                         browseButton.setSelection(true);
                         editButton.setSelection(false);
+                        setLeftGroupLabel(getLeftGroupLabel());
                     }
                 }
             }
@@ -398,13 +402,13 @@ public abstract class CompareStreamFileDialog extends XDialog {
         StreamFile tempStreamFile = leftStreamFile;
         this.leftStreamFile = rightStreamFile;
 
-        leftConnectionText.setText(this.leftStreamFile.getConnection());
+        leftConnectionText.setText(getUIConnectionName(this.leftStreamFile));
         leftDirectoryText.setText(this.leftStreamFile.getDirectory());
         leftStreamFileText.setText(this.leftStreamFile.getStreamFile());
 
         this.rightStreamFile = tempStreamFile;
 
-        rightConnectionText.setText(this.rightStreamFile.getConnection());
+        rightConnectionText.setText(getUIConnectionName(this.rightStreamFile));
         rightDirectoryText.setText(this.rightStreamFile.getDirectory());
         rightStreamFileText.setText(this.rightStreamFile.getStreamFile());
     }
@@ -459,10 +463,23 @@ public abstract class CompareStreamFileDialog extends XDialog {
     protected void setAncestorVisible(boolean visible) {
     }
 
+    protected String getLeftGroupLabel() {
+
+        if (editButton.getSelection()) {
+            return Messages.Left + " " + Messages.Editable;
+        } else {
+            return Messages.Left;
+        }
+    }
+
+    protected void setLeftGroupLabel(String label) {
+        leftGroup.setText(label);
+    }
+
     private void createReadOnlyLeftArea(Composite parent) {
 
-        Group leftGroup = new Group(parent, SWT.NONE);
-        leftGroup.setText(Messages.Left);
+        leftGroup = new Group(parent, SWT.NONE);
+        leftGroup.setText(getLeftGroupLabel());
         GridLayout leftLayout = new GridLayout(2, false);
         leftGroup.setLayout(leftLayout);
         leftGroup.setLayoutData(getGridData());
@@ -472,7 +489,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
         leftConnectionText = WidgetFactory.createReadOnlyText(leftGroup);
         leftConnectionText.setLayoutData(getGridData());
-        leftConnectionText.setText(leftStreamFile.getConnection());
+        leftConnectionText.setText(getUIConnectionName(leftStreamFile));
 
         Label leftDirectoryLabel = new Label(leftGroup, SWT.NONE);
         leftDirectoryLabel.setText(Messages.Directory_colon);
@@ -521,7 +538,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
         rightConnectionText = WidgetFactory.createReadOnlyText(rightGroup);
         rightConnectionText.setLayoutData(getGridData());
-        rightConnectionText.setText(rightStreamFile.getConnection());
+        rightConnectionText.setText(getUIConnectionName(rightStreamFile));
 
         Label rightDirectoryLabel = new Label(rightGroup, SWT.NONE);
         rightDirectoryLabel.setText(Messages.Directory_colon);
@@ -570,7 +587,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
 
         Text ancestorConnectionText = WidgetFactory.createReadOnlyText(ancestorGroup);
         ancestorConnectionText.setLayoutData(getGridData());
-        ancestorConnectionText.setText(ancestorStreamFile.getConnection());
+        ancestorConnectionText.setText(getUIConnectionName(ancestorStreamFile));
 
         Label ancestorDirectoryLabel = new Label(ancestorGroup, SWT.NONE);
         ancestorDirectoryLabel.setText(Messages.Directory_colon);
@@ -600,6 +617,10 @@ public abstract class CompareStreamFileDialog extends XDialog {
             ancestorTimeText.setLayoutData(getGridData());
             ancestorTimeText.setText(ancestorStreamFile.getArchiveDate() + " - " + ancestorStreamFile.getArchiveTime()); //$NON-NLS-1$
         }
+    }
+
+    private String getUIConnectionName(StreamFile streamFile) {
+        return new BasicQualifiedConnectionName(streamFile.getConnection()).getUIConnectionName();
     }
 
     private void createSwitchStreamFileButton(Composite parent) {
@@ -674,6 +695,7 @@ public abstract class CompareStreamFileDialog extends XDialog {
             } else {
                 editButton.setSelection(false);
             }
+            setLeftGroupLabel(getLeftGroupLabel());
         }
 
         if (!isIgnoreCase()) {
