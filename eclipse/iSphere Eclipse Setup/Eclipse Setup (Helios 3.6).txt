@@ -175,11 +175,22 @@ d) Preferences -> Team -> SVN -> Label Decorations -> Text Decorations
    Folder:  {name} {revision}
    Project: {name} {revision} [{location_label}]{root_prefix}: {first_branchOrTag_child}
       or
-           {name} {revision} [{url_short}]
+            {name} {revision} [{url_short}]
 
 e) Preferences -> Team -> SVN -> Label Decorations -> Icons Decorations
 
    Check: Outgoing changes
+
+a) Preferences -> General -> Workspace
+
+   Refresh using native hook polling (enabled)
+
+   The following settings are not really necessary, because the 
+   options are set in the settings properties of the projects:
+
+   Text file encoding: UTF-8
+
+   New text file line delimiter: Unix
 
 
 Useful LPEX Editor Settings (no more required for RDi 9.6+):
@@ -225,13 +236,18 @@ RDi 9.6:
 Name:     Enhanced Class Decompiler
 Location: Enhanced Class Decompiler Project Update - https://ecd-plugin.github.io/update/
 
+Autodetect Encoding Eclipse Plugin:
+
+Name:     Autodetect Encoding
+Location: Install from Eclipse Marketplace
+
 
 Useful Color Settings:
 ======================
 
 General - Appearance:
   Theme: Classic
-General - Appearance - Colors and Fonts:
+General - Appearance - Colors and Fonts (filter for: active part background):
   View and Editor Folders
     Active part background begin: R=255, G=128, B=128
     Active part background end  : R=255, G=0, B=0
