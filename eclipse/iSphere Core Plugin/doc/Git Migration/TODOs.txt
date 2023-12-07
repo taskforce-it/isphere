@@ -1,4 +1,12 @@
 
+Rename files of extension points from *.xsd to *.exsd:
+
+[WORKSPACE]\iSphere Core Plugin\schema\biz.isphere.core.comparefilter.contributions.extension.point.ICompareFilterContributions.xsd
+[WORKSPACE]\iSphere Core Plugin\schema\biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions.xsd
+[WORKSPACE]\iSphere Core Plugin\schema\biz.isphere.core.spooledfiles.popupmenu.extension.point.ISpooledFilePopupMenuContributions.xsd
+[WORKSPACE]\iSphere Core Plugin\schema\biz.isphere.core.swt.widgets.extension.point.IWidgetFactory.xsd
+[WORKSPACE]\iSphere Journal Explorer RSE Plugin (RDi)\schema\biz.isphere.journalexplorer.rse.handlers.contributions.extension.point.IDisplayJournalEntriesContributions.xsd
+
 Convert old office formats to current formats:
 
 [WORKSPACE]\iSphere Core Plugin\doc\Defining width height and margins for pdf.doc
