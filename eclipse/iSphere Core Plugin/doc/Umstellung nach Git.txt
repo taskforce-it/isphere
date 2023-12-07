@@ -1,0 +1,79 @@
+
+Umstellung nach Git
+===================
+
+Sonderdateien
+-------------
+COPYING
+_htaccess
+README.ssl
+
+iSphere Dateitypen
+------------------
+
+Suchmaske Total Commander
+| *.clp *.clle *.rpgle *.dspf *.pf *.prtf *.sqlrpgle *.txt *.index *.table *.bnd *.cmd *.xml *.xsd *.project *.settings *.classpath *.prefs *.properties *.mf *.html *.css *.java *.ini *.dtaspced *.epf *.gif *.bmp *.doc *.docx *.png *.js *.jar *.ico *.zip *.xls *.rexx *.php *.pdf *.svg *.pcml *.jpg *.launch *.pnlgrp *.props *.policy *.pdn *.ttf *.xlsx *.xcf *.icns *.graphml *.savf *.tag
+
+Text Dateien
+------------
+*.pnlgrp
+*.clp
+*.clle
+*.rpgle
+*.dspf
+*.pf
+*.prtf
+*.sqlrpgle
+*.txt
+*.index
+*.table
+*.bnd
+*.cmd
+*.rexx
+- - - 
+*.dtaspced
+*.epf
+*.js
+*.props
+*.policy
+*.tag
+- - - Eclipse
+*.launch
+*.xml
+*.xsd
+*.project
+*.settings
+*.classpath
+*.prefs
+*.properties
+*.mf
+*.html
+*.css
+*.java
+*.ini
+*.php
+*.pcml
+
+
+
+Binär Dateien
+-------------
+*.graphml
+*.icns
+*.xcf
+*.ttf
+*.ico
+*.png
+*.gif
+*.bmp
+*.svg
+*.pdn
+*.jpg
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.pdf
+*.jar
+*.zip
+*.savf
