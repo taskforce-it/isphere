@@ -1,0 +1,7 @@
+
+# Java Compiler
+bin/
+**/*.class
+
+# Windows
+Thumbs.db

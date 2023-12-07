@@ -1,0 +1,14 @@
+
+Convert old office formats to current formats:
+
+[WORKSPACE]\iSphere Core Plugin\doc\Defining width height and margins for pdf.doc
+[WORKSPACE]\iSphere Core Plugin\doc\Font Size Pitch versus CPI.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere Problems Between IDEs.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere Retrieve Field Description API.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere Retrieve Message API.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere Roadmap.doc
+[WORKSPACE]\iSphere Core Plugin\doc\iSphere Test Instructions.doc
+[WORKSPACE]\iSphere Help 5250 Emulator\doc\TN5250J - iSphere.doc
+
+[WORKSPACE]\iSphere Journal Explorer Core Plugin\doc\DSPJRN Output File Types.xlsx

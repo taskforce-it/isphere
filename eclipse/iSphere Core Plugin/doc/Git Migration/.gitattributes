@@ -1,0 +1,73 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+ 
+
+# Git stuff
+.gitattributes text eol=lf
+.gitignore text eol=lf
+ 
+# Project specific
+*.java text eol=lf
+*.pcml text eol=lf
+*.xsd text eol=lf
+*.jar binary
+ 
+# Eclipse specific
+.project text eol=lf
+.classpath text eol=lf
+org.eclipse.jdt.core.prefs text eol=lf
+org.eclipse.jdt.ui.prefs text eol=lf
+MANIFEST.MF text eol=lf
+
+# Miscellaneous
+*.xml text eol=lf
+*.properties text eol=lf
+
+# Graphics
+*.ico binary
+*.png binary
+*.jpg binary
+*.bmp binary
+*.gif binary
+*.ttf binary
+
+# Binary files
+*.zip binary
+*.savf binary
+
+# Test files
+*.ini text eol=lf
+*.php text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.prefs text eol=lf
+*.xml text eol=lf
+*.launch text eol=lf
+*.dtaspced text eol=lf
+*.epf text eol=lf
+*.js text eol=lf
+*.props text eol=lf
+*.policy text eol=lf
+*.tag text eol=lf
+
+# IBM i Source Members
+*.pnlgrp text eol=lf
+*.clp text eol=lf
+*.clle text eol=lf
+*.rpgle text eol=lf
+*.dspf text eol=lf
+*.pf text eol=lf
+*.prtf text eol=lf
+*.sqlrpgle text eol=lf
+*.txt text eol=lf
+*.index text eol=lf
+*.table text eol=lf
+*.bnd text eol=lf
+*.cmd text eol=lf
+*.rexx text eol=lf
+
+# Files without type
+COPYING text eol=lf
+_htaccess text eol=lf
+README.ssl text eol=lf
