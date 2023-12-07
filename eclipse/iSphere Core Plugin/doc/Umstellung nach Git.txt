@@ -2,6 +2,8 @@
 Umstellung nach Git
 ===================
 
+Dies ist eine vollständige Liste der in den iSphere Projekten verwendeten Dateitypen.
+
 Sonderdateien
 -------------
 COPYING
