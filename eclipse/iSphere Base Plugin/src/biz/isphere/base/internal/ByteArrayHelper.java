@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 Robert Köpferl
+ * Copyright (c) 2004 Robert Koepferl
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * or in the file license.txt
  * 
  * Contributors:
- *      Robert Köpferl <quellkode@koepferl.de> - Initial writing
+ *      Robert Koepferl <quellkode@koepferl.de> - Initial writing
  * Created:
  * 		16.02.2004
  * Project:
@@ -24,7 +24,7 @@ package biz.isphere.base.internal;
  * to String and vice versa. These functions are used by the control to
  * implement the copy and paste functionality.
  * 
- * @author Robert Köpferl
+ * @author Robert Koepferl
  */
 public class ByteArrayHelper {
 

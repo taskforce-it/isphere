@@ -2,7 +2,7 @@
 Umstellung nach Git
 ===================
 
-Dies ist eine vollständige Liste der in den iSphere Projekten verwendeten Dateitypen.
+Dies ist eine vollstaendige Liste der in den iSphere Projekten verwendeten Dateitypen.
 
 Sonderdateien
 -------------
@@ -58,7 +58,7 @@ Text Dateien
 
 
 
-Binär Dateien
+Binaer Dateien
 -------------
 *.graphml
 *.icns
