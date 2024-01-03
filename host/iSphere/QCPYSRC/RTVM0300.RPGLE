@@ -37,7 +37,7 @@
      d RTVMLenSVFElm                 10I 0                                      <-- Length of SVF el
      d RTVMVarAra                  8192A                                        <-- Varriable area
       *
-      * Datenstruktur für Format 'RTVM0300' für Prozedur 'QMHRTVM' (Substitution Variable Format)
+      * Datenstruktur fÃ¼r Format 'RTVM0300' fÃ¼r Prozedur 'QMHRTVM' (Substitution Variable Format)
       *
      dRTVM0300SVF      DS                  Based(RTVM0300SVFPtr)
      d RTVMSVFLenRplDta...

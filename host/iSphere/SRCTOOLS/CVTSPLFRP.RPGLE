@@ -367,7 +367,7 @@
      C/Free
        // ***?Create catalog object
        WritePDF('%PDF-1.0');
-       WritePDF('%‚„œ”');
+       WritePDF('%√¢√£√è√ì');
        NewObject();
        WritePDF(%trim(NumToText(wiObject))+' 0 obj');
        WritePDF('<<');

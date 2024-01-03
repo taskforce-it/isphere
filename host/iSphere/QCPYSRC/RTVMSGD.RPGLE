@@ -10,7 +10,7 @@
       *                                                                                           *
       *-------------------------------------------------------------------------------------------*
 
-     d rtvMsgText      pr           250a   Varying                              <-- Rückkehrwert
+     d rtvMsgText      pr           250a   Varying                              <-- RÃ¼ckkehrwert
      D                                     extproc('RTVMSGD_+
      D                                     rtvMsgText+
      D                                     ')
@@ -19,7 +19,7 @@
      d  i_lib                        10a   Const                                --> Bibliothek Nachr
      d  i_data                      256a   Const Varying                        --> Nachrichtendaten
 
-     d rtvMsgHelp      pr          3000a   Varying                              <-- Rückkehrwert
+     d rtvMsgHelp      pr          3000a   Varying                              <-- RÃ¼ckkehrwert
      D                                     extproc('RTVMSGD_+
      D                                     rtvMsgHelp+
      D                                     ')

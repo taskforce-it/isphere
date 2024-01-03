@@ -52,10 +52,10 @@
       *
      A            D_CHAR273     20A         TEXT('Chr Ccsid 273 20-bytes')
      A                                      CCSID(273)
-     A                                      DFT('<Char-273-öäüÖÄÜß-->')
+     A                                      DFT('<Char-273-Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ-->')
      A            D_CHAR37      20A         TEXT('Char Ccsid 37 20-bytes')
      A                                      CCSID(37)
-     A                                      DFT('<Char-37-öäüÖÄÜß--->')
+     A                                      DFT('<Char-37-Ã¶Ã¤Ã¼Ã–Ã„ÃœÃŸ--->')
      A            D_VARCHAR    100A         TEXT('Varchar 100-bytes')
      A                                      VARLEN(20)
      A                                      CCSID(273)

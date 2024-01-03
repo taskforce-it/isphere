@@ -35,19 +35,19 @@
 
       /Copy QCPYSRC,TYPES
 
-      // Prozedurenprototyp für Prozedur 'RtvMsgText, ...'
+      // Prozedurenprototyp fÃ¼r Prozedur 'RtvMsgText, ...'
 
       /Copy QCPYSRC,RTVMSGD
 
-      // Prozedurenprototyp für Prozedur 'QMHRTVM'
+      // Prozedurenprototyp fÃ¼r Prozedur 'QMHRTVM'
 
       /Copy QCPYSRC,QMHRTVM
 
-      // Datenstruktur für Format 'RTVM0100' für Prozedur 'QMHRTVM'
+      // Datenstruktur fÃ¼r Format 'RTVM0100' fÃ¼r Prozedur 'QMHRTVM'
 
       /Copy QCPYSRC,RTVM0100
 
-      // Datenstruktur für Format 'ERRC0100' für Fehlercode
+      // Datenstruktur fÃ¼r Format 'ERRC0100' fÃ¼r Fehlercode
 
       /Copy QCPYSRC,ERRC0100
 
