@@ -1,27 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.comparefilters.ignoredate;
+package biz.isphere.core.compareeditor.filters;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.eclipse.compare.ICompareFilter;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IRegion;
 
+import biz.isphere.base.internal.BooleanHelper;
 import biz.isphere.base.internal.FileHelper;
-import biz.isphere.comparefilters.preferences.Preferences;
-import biz.isphere.core.ISpherePlugin;
-import biz.isphere.core.compareeditor.CompareDialog;
+import biz.isphere.core.preferences.Preferences;
 
 public class IgnoreDateCompareFilter implements ICompareFilter {
+
+    public static final String JVM_PROPERTY_IGNORE_DATE = "iSphere.IgnoreDateCompareFilter.enabled";
 
     private boolean isEnabled;
 
@@ -46,13 +46,9 @@ public class IgnoreDateCompareFilter implements ICompareFilter {
     }
 
     public boolean isEnabledInitially() {
+        String property = System.getProperty(JVM_PROPERTY_IGNORE_DATE);
+        return BooleanHelper.tryParseBoolean(property, true);
 
-        IDialogSettings dialogSettings = ISpherePlugin.getDefault().getDialogSettings().getSection(CompareDialog.DIALOG_SETTINGS);
-        if (dialogSettings == null) {
-            return false;
-        }
-
-        return !dialogSettings.getBoolean(CompareDialog.CONSIDER_DATE_PROPERTY);
     }
 
     public void setInput(Object input, Object ancestor, Object left, Object right) {

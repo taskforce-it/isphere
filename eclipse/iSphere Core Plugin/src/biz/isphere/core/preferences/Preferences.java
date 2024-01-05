@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2023 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,6 +70,13 @@ public final class Preferences {
      * List of suggested spooled file names.
      */
     private Map<String, String> suggestedSpooledFileNames;
+
+    /**
+     * List of file extensions that are supported by the date compare filter.
+     */
+    private HashSet<String> fileExtensionsSet;
+
+    private static final String TOKEN_SEPARATOR = "|"; //$NON-NLS-1$
 
     /*
      * Preferences keys:
@@ -192,6 +200,9 @@ public final class Preferences {
     private static final String APPEARANCE_SHOW_ERROR_LOG = APPEARANCE_AUTO_REFRESH + "APPEARANCE_SHOW_ERROR_LOG"; //$NON-NLS-1$
 
     private static final String JDBC_USE_ISPHERE_MANAGER = "USE_ISPHERE_MANAGER"; //$NON-NLS-1$
+
+    public static final String COMPARE_FILTER_FILE_EXTENSIONS = DOMAIN + "fileextensions"; //$NON-NLS-1$
+    public static final String COMPARE_FILTER_IMPORT_EXPORT_LOCATION = DOMAIN + "importexportlocation"; //$NON-NLS-1$
 
     /**
      * Private constructor to ensure the Singleton pattern.
@@ -752,6 +763,26 @@ public final class Preferences {
         return IBMiHostContributionsHandler.isKerberosAuthentication();
     }
 
+    public String[] getFileExtensions() {
+        return getFileExtensions(false);
+    }
+
+    public String[] getDefaultFileExtensions() {
+        String tList = getDefaultFileExtensionsAsString();
+        return StringHelper.getTokens(tList, TOKEN_SEPARATOR);
+    }
+
+    public boolean supportsFileExtension(String fileExtension) {
+        if (fileExtension != null && getOrCreateFileExtensionsSet().contains(fileExtension.toUpperCase())) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getImportExportLocation() {
+        return preferenceStore.getString(COMPARE_FILTER_IMPORT_EXPORT_LOCATION);
+    }
+
     /*
      * Preferences: SETTER
      */
@@ -1063,6 +1094,14 @@ public final class Preferences {
         preferenceStore.setValue(JDBC_USE_ISPHERE_MANAGER, enabled);
     }
 
+    public void setFileExtensions(String[] anExtensions) {
+        saveFileExtensions(anExtensions);
+    }
+
+    public void setImportExportLocation(String aLocation) {
+        saveImportExportLocation(aLocation);
+    }
+
     /*
      * Preferences: Default Initializer
      */
@@ -1183,6 +1222,9 @@ public final class Preferences {
         }
 
         preferenceStore.setDefault(BACKUP_MEMBER_NAME_ENABLE_MEMBER_PRECHECK, getDefaultIsMemberRenamingPrecheck());
+
+        preferenceStore.setDefault(COMPARE_FILTER_FILE_EXTENSIONS, getDefaultFileExtensionsAsString());
+        preferenceStore.setDefault(COMPARE_FILTER_IMPORT_EXPORT_LOCATION, getDefaultImportExportLocation());
     }
 
     /*
@@ -1522,7 +1564,7 @@ public final class Preferences {
      * @return default 'replacement character'.
      */
     public String getDefaultDataQueueReplacementCharacter() {
-        return "÷";
+        return "Ã·";
     }
 
     /**
@@ -1842,6 +1884,46 @@ public final class Preferences {
         return true;
     }
 
+    public String getDefaultFileExtensionsAsString() {
+        return "bnd,c,cle,cbl,cblle,clle,clp,cmd,dspf,lf,menu,mnu,mnucmd,mnudds,pf,pnlgrp,prtf,rexx,rpg,rpgle,sqlc,sqlcbl,sqlcblle,sqlcpp,sqlrpg,sqlrpgle,tbl,txt" //$NON-NLS-1$
+            .replaceAll(",", TOKEN_SEPARATOR);
+    }
+
+    public String getDefaultImportExportLocation() {
+        return "";
+    }
+
+    /*
+     * Preferences: Save Values
+     */
+
+    private void saveFileExtensions(String[] anExtensions) {
+        preferenceStore.setValue(COMPARE_FILTER_FILE_EXTENSIONS, StringHelper.concatTokens(anExtensions, TOKEN_SEPARATOR));
+        fileExtensionsSet = null;
+    }
+
+    private void saveImportExportLocation(String aLocation) {
+        if (new File(aLocation).exists()) {
+            preferenceStore.setValue(COMPARE_FILTER_IMPORT_EXPORT_LOCATION, aLocation);
+        }
+    }
+
+    private HashSet<String> getOrCreateFileExtensionsSet() {
+        if (fileExtensionsSet == null) {
+            fileExtensionsSet = new HashSet<String>(Arrays.asList(getFileExtensions(true)));
+        }
+        return fileExtensionsSet;
+    }
+
+    private String[] getFileExtensions(boolean anUpperCase) {
+        String tList = preferenceStore.getString(COMPARE_FILTER_FILE_EXTENSIONS);
+        if (anUpperCase) {
+            return StringHelper.getTokens(tList.toUpperCase(), TOKEN_SEPARATOR);
+        } else {
+            return StringHelper.getTokens(tList, TOKEN_SEPARATOR);
+        }
+    }
+
     /**
      * Returns an arrays of maximum lengths values for retrieving data queue
      * entries.
@@ -2003,9 +2085,9 @@ public final class Preferences {
 
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_DEFAULT, "spooled_file"); //$NON-NLS-1$
         suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_SIMPLE, SpooledFile.VARIABLE_SPLF);
-        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED, SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE
-            + SpooledFile.VARIABLE_JOBSYS);
+        suggestedSpooledFileNames.put(SPOOLED_FILE_NAME_QUALIFIED,
+            SpooledFile.VARIABLE_SPLF + UNDERSCORE + SpooledFile.VARIABLE_SPLFNBR + UNDERSCORE + SpooledFile.VARIABLE_JOBNBR + UNDERSCORE
+                + SpooledFile.VARIABLE_JOBUSR + UNDERSCORE + SpooledFile.VARIABLE_JOBNAME + UNDERSCORE + SpooledFile.VARIABLE_JOBSYS);
 
         return suggestedSpooledFileNames;
     }

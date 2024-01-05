@@ -1,6 +1,9 @@
 
-Changelog: iSphere 5.2.10.b002
+Changelog: iSphere 5.2.10.b003
 ------------------------------
+ • Remove iSphere Compare Filters plug-in. Class
+   IgnoreDateCompareFilter has been moved to the iSphere Core
+    plug-in.
  • Added option to load example data space editors.
  • Updated example data area and user space editors.
    (TSTDTAARA1 and TSTUSRSPC1)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
 package biz.isphere.core.preferences;
 
 public interface DoNotAskMeAgain {
+
+    /*
+     * Values are stored in: biz.isphere.core.prefs
+     */
 
     /*
      * Warning message keys
@@ -34,6 +38,11 @@ public interface DoNotAskMeAgain {
     public static final String TN5250_FAST_CURSOR_MAPPING_CONFLICT = "TN5250_FAST_CURSOR_MAPPING_CONFLICT"; //$NON-NLS-1$
     public static final String CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG = "CONFIRM_CLOSE_UPLOAD_LIBRARY_DIALOG"; //$NON-NLS-1$
     public static final String CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS = "CONFIRM_CREATE_EXAMPLE_DATA_SPACE_EDITORS"; //$NON-NLS-1$
+
+    /*
+     * Updater messages.
+     */
+    public static final String INFORMATION_UPDATE_5_2_10 = "INFORMATION_UPDATE_5_2_10"; //$NON-NLS-1$
 
     /*
      * Question message keys

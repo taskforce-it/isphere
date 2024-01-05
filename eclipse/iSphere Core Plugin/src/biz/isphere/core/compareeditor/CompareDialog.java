@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,6 @@
 
 package biz.isphere.core.compareeditor;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,17 +24,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.progress.UIJob;
-import org.osgi.framework.Version;
 
 import biz.isphere.base.jface.dialogs.XDialog;
-import biz.isphere.base.versioncheck.PluginCheck;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.Member;
-import biz.isphere.core.preferences.DoNotAskMeAgain;
-import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -128,8 +120,6 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, null, null, null);
         this.hasMultipleRightMembers = false;
-
-        checkCompareFilters();
     }
 
     /**
@@ -144,8 +134,6 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, null, null);
         this.hasMultipleRightMembers = false;
-
-        checkCompareFilters();
     }
 
     /**
@@ -161,8 +149,6 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, null);
         this.hasMultipleRightMembers = false;
-
-        checkCompareFilters();
     }
 
     /**
@@ -179,8 +165,6 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, leftMember, rightMember, ancestorMember);
         this.hasMultipleRightMembers = false;
-
-        checkCompareFilters();
     }
 
     /**
@@ -196,8 +180,6 @@ public abstract class CompareDialog extends XDialog {
         super(parentShell);
         initialize(parentShell, selectEditable, selectedMembers[0], selectedMembers[0], null);
         this.hasMultipleRightMembers = true;
-
-        checkCompareFilters();
     }
 
     protected void setHistoryValuesCategoryKey(String historyValuesCategoryKey) {
@@ -943,24 +925,6 @@ public abstract class CompareDialog extends XDialog {
         }
 
         getDialogBoundsSettings().put(IGNORE_CASE_PROPERTY, ignoreCase);
-    }
-
-    private void checkCompareFilters() {
-
-        Version platformVersion = PluginCheck.getVersion("org.eclipse.platform"); //$NON-NLS-1$
-        if (platformVersion.compareTo(new Version("4.4.0")) >= 0) { //$NON-NLS-1$
-            if (!PluginCheck.hasPlugin("biz.isphere.comparefilters")) { //$NON-NLS-1$
-                UIJob job = new UIJob("") {
-                    @Override
-                    public IStatus runInUIThread(IProgressMonitor monitor) {
-                        DoNotAskMeAgainDialog.openWarning(getShell(), DoNotAskMeAgain.WARNING_COMPARE_FILTERS_NOT_INSTALLED,
-                            Messages.Compare_Filters_not_installed_message);
-                        return Status.OK_STATUS;
-                    }
-                };
-                job.schedule();
-            }
-        }
     }
 
     /**

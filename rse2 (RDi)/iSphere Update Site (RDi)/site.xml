@@ -15,9 +15,6 @@
    <feature url="features/biz.isphere.messagesubsystem.rse_5.2.10.b002.jar" id="biz.isphere.messagesubsystem.rse" version="5.2.10.b002">
       <category name="iSphere for RDi 9.5.1.3+ (Base Component)"/>
    </feature>
-   <feature url="features/biz.isphere.comparefilters_5.2.10.b002.jar" id="biz.isphere.comparefilters" version="5.2.10.b002">
-      <category name="iSphere Additions for RDi 9.5+ (recommended)"/>
-   </feature>
    <feature url="features/org.eclipse.albireo_0.0.3.v20081031.jar" id="org.eclipse.albireo" version="0.0.3.v20081031">
       <category name="iSphere TN5250J for RDi 9.5.1.3+"/>
    </feature>
@@ -45,11 +42,6 @@
    <category-def name="iSphere for RDi 9.5.1.3+ (Base Component)" label="iSphere for 9.5.1.3+ (Base Component)">
       <description>
          iSphere for 9.5.1.3+. Base component of the iSphere plug-in. This component is required for all RDi versions.
-      </description>
-   </category-def>
-   <category-def name="iSphere Additions for RDi 9.5+ (recommended)" label="iSphere Additions for RDi 9.5+ (recommended)">
-      <description>
-         Optional additions for RDi 9.5+. Requires installing the iSphere base component &quot;iSphere for RDi 9.5.1.3+&quot;.
       </description>
    </category-def>
    <category-def name="iSphere TN5250J for RDi 9.5.1.3+" label="iSphere TN5250J for RDi 9.5.1.3+">

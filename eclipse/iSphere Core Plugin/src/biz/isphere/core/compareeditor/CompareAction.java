@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.annotations.CMOne;
+import biz.isphere.core.compareeditor.filters.IgnoreDateCompareFilter;
 import biz.isphere.core.internal.Member;
 
 public class CompareAction {
@@ -170,6 +171,23 @@ public class CompareAction {
                     }
                     fInput.setTitle(title);
                 }
+
+                /*
+                 * Using a JVM property for changing the 'isEnabledInitially'
+                 * property of class 'IgnoreDateCompareFilter' is ugly. But I
+                 * could not figure out how to do it right. The
+                 * 'IgnoreDateCompareFilter' is created in the constructor of
+                 * 'ChangeCompareFilterPropertyAction'. The 'enabled' status of
+                 * the compare filter can be changed with method setProperty(),
+                 * which is called by the run() method. But how can we trigger
+                 * the run() method?
+                 */
+
+                // See:
+                // org.eclipse.compare.internal.ChangeCompareFilterPropertyAction
+
+                boolean compareFilterEnabled = !cc.isConsiderDate();
+                System.setProperty(IgnoreDateCompareFilter.JVM_PROPERTY_IGNORE_DATE, Boolean.toString(compareFilterEnabled));
 
                 IEditorReference editorReference = findCompareEditor(leftMember, rightMember);
                 if (editorReference != null) {

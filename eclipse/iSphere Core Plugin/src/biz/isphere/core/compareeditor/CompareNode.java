@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,13 @@ public class CompareNode extends BufferedContent implements ITypedElement, IEdit
     private File tempFile;
     private String yymmdd;
 
+    // TODO: remove parameter 'useCompareFilters'
+    // TODO: remove hasCompareFilters() from class CompareEditorConfiguration
     public CompareNode(IResource fResource, boolean considerDate, boolean ignoreCase, boolean useCompareFilters, boolean hasDateAndSequenceColumns) {
+
+        // System.out.println("Compare node: considerDate=" + considerDate + "
+        // ignoreCase=" + ignoreCase + " useCompareFilters=" + useCompareFilters
+        // + " hasDateAndSequenceColumns=" + hasDateAndSequenceColumns);
 
         this.fResource = fResource;
         this.ignoreCase = ignoreCase;

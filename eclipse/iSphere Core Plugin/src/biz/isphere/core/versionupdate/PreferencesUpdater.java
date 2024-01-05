@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2014 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,23 @@
 
 package biz.isphere.core.versionupdate;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
 
+import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.versioncheck.IObsoleteBundles;
 import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.preferences.DoNotAskMeAgain;
+import biz.isphere.core.preferences.DoNotAskMeAgainDialog;
 import biz.isphere.core.preferences.Preferences;
 
 public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePreferences {
+
+    private static boolean performUpdate_v5210 = false;
 
     private PreferencesUpdater() {
     }
@@ -23,6 +32,11 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
     public static void update() {
         PreferencesUpdater tUpdater = new PreferencesUpdater();
         tUpdater.performSettingsUpdate();
+    }
+
+    public static void displayUpdateInformation() {
+        PreferencesUpdater tUpdater = new PreferencesUpdater();
+        tUpdater.displayInformation_v5210();
     }
 
     private void performSettingsUpdate() {
@@ -107,6 +121,30 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
         tValue = getValue(DE_TASKFORCE_ISPHERE_MESSAGEFILESEARCH_SEARCHSTRING);
         if (tValue != null) {
             Preferences.getInstance().setMessageFileSearchString(tValue);
+        }
+    }
+
+    private synchronized void displayInformation_v5210() {
+        if (hasBundle(BIZ_ISPHERE_COMPAREFILTER)) {
+            if (!performUpdate_v5210) {
+                performUpdate_v5210 = true;
+                System.out.println("Scheduling job.");
+                new UIJob("") {
+                    @Override
+                    public IStatus runInUIThread(IProgressMonitor monitor) {
+                        //@formatter:off
+                        String message =
+                            "The 'iSphere Compare Filters for RDi 9.5+' plug-in has been removed.\nPlease uninstall the plug-in:\n\n"
+                          + "1. Go to 'Help -> About -> Installation Details -> Installed Software'.\n"
+                          + "2. filter for 'iSphere Compare Filters'.\n"
+                          + "3. Select the plug-in.\n" 
+                          + "4. Click the 'Uninstall...' button.'.";
+                        //@formatter:on
+                        DoNotAskMeAgainDialog.openInformation(UIHelper.getActiveShell(), DoNotAskMeAgain.INFORMATION_UPDATE_5_2_10, message);
+                        return Status.OK_STATUS;
+                    }
+                }.schedule();
+            }
         }
     }
 
