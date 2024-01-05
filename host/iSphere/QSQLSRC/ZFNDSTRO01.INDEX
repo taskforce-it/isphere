@@ -1,35 +1,35 @@
-000100220309-- *------------------------------------------------------------------------*
-000200220309-- *                                                                        *
-000300220309-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
-000400220309-- * All rights reserved. This program and the accompanying materials       *
-000500220309-- * are made available under the terms of the Common Public License v1.0   *
-000600220309-- * which accompanies this distribution, and is available at               *
-000700220309-- * http://www.eclipse.org/legal/cpl-v10.html                              *
-000800220309-- *                                                                        *
-000900220309-- *------------------------------------------------------------------------*
-001000220309-- *                                                                        *
-001100220309-- * Find String in Stream File (Output)                                    *
-001200220309-- *                                                                        *
-001300220309-- *------------------------------------------------------------------------*
-001400220309-- * STRPREPRC Compile Options:                                             *
-001500220309-- *   >>PRE-COMPILER<<                                                     *
-001600220309-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
-001700220309-- *       >>COMPILE<<                                                      *
-001800220309-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
-001900220309-- *       >>END-COMPILE<<                                                  *
-002000220309-- *       >>EXECUTE<<                                                      *
-002100220309-- *   >>END-PRE-COMPILER<<                                                 *
-002200220309-- *------------------------------------------------------------------------*
-002300220309
-002400220309CREATE UNIQUE INDEX ZFNDSTRO01
-002500220309ON ZFNDSTRO
-002600220309(
-002700220309 XOHDL ASC,
-002800220309 XODIR ASC,
-002900220309 XOSTMF ASC,
-003000220309 XOSTMT ASC
-003100220309)
-003200220309WITH 4 DISTINCT VALUES;
-003300220309
-003400220309--LABEL ON INDEX ZFNDSTRO01
-003500220309-- IS 'Find String in Stream File (Output)';
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
+-- * All rights reserved. This program and the accompanying materials       *
+-- * are made available under the terms of the Common Public License v1.0   *
+-- * which accompanies this distribution, and is available at               *
+-- * http://www.eclipse.org/legal/cpl-v10.html                              *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Find String in Stream File (Output)                                    *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
+
+CREATE UNIQUE INDEX ZFNDSTRO01
+ON ZFNDSTRO
+(
+ XOHDL ASC,
+ XODIR ASC,
+ XOSTMF ASC,
+ XOSTMT ASC
+)
+WITH 4 DISTINCT VALUES;
+
+--LABEL ON INDEX ZFNDSTRO01
+-- IS 'Find String in Stream File (Output)';

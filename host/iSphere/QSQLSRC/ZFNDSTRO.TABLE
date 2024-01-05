@@ -1,58 +1,58 @@
-000100220309-- *------------------------------------------------------------------------*
-000200220309-- *                                                                        *
-000300220309-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
-000400220309-- * All rights reserved. This program and the accompanying materials       *
-000500220309-- * are made available under the terms of the Common Public License v1.0   *
-000600220309-- * which accompanies this distribution, and is available at               *
-000700220309-- * http://www.eclipse.org/legal/cpl-v10.html                              *
-000800220309-- *                                                                        *
-000900220309-- *------------------------------------------------------------------------*
-001000220309-- *                                                                        *
-001100220309-- * Find String in Stream File (Output)                                    *
-001200220309-- *                                                                        *
-001300220309-- *------------------------------------------------------------------------*
-001400220309-- * STRPREPRC Compile Options:                                             *
-001500220309-- *   >>PRE-COMPILER<<                                                     *
-001600220309-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
-001700220309-- *       >>COMPILE<<                                                      *
-001800220309-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
-001900220309-- *       >>END-COMPILE<<                                                  *
-002000220309-- *       >>EXECUTE<<                                                      *
-002100220309-- *   >>END-PRE-COMPILER<<                                                 *
-002200220309-- *------------------------------------------------------------------------*
-002300220309
-002400220309CREATE TABLE ZFNDSTRO
-002500220309(
-002600220309 XOHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
-002700220309 XODIR CHAR(256) NOT NULL WITH DEFAULT,
-002800220309 XOSTMF CHAR(256) NOT NULL WITH DEFAULT,
-002900220309 XOTYPE CHAR(10) NOT NULL WITH DEFAULT,
-003000220309 XOSTMT DECIMAL(6, 0) NOT NULL WITH DEFAULT,
-003100220309 XOLINE CHAR(512) NOT NULL WITH DEFAULT,
-003200220309 XOFLCD TIMESTAMP NOT NULL WITH DEFAULT
-003300220309);
-003400220309
-003500220309LABEL ON TABLE ZFNDSTRO
-003600220309 IS 'Find String in Stream File (Output)';
-003700220309
-003800220309LABEL ON COLUMN ZFNDSTRO
-003900220309(
-004000220309 XOHDL IS 'Handle' ,
-004100220309 XODIR IS 'Directory',
-004200220309 XOSTMF IS 'Stream file',
-004300220309 XOTYPE IS 'Type',
-004400220309 XOSTMT IS 'Statement',
-004500220309 XOLINE IS 'Line',
-004600220309 XOFLCD IS 'File Last Changed'
-004700220309);
-004800220309
-004900220309LABEL ON COLUMN ZFNDSTRO
-005000220309(
-005100220309 XOHDL TEXT IS 'Handle' ,
-005200220309 XODIR TEXT IS 'Directory',
-005300220309 XOSTMF TEXT IS 'Stream file',
-005400220309 XOTYPE TEXT IS 'Type',
-005500220309 XOSTMT TEXT IS 'Statement',
-005600220309 XOLINE TEXT IS 'Line',
-005700220309 XOFLCD TEXT IS 'File Last Changed'
-005800220309);
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
+-- * All rights reserved. This program and the accompanying materials       *
+-- * are made available under the terms of the Common Public License v1.0   *
+-- * which accompanies this distribution, and is available at               *
+-- * http://www.eclipse.org/legal/cpl-v10.html                              *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Find String in Stream File (Output)                                    *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
+
+CREATE TABLE ZFNDSTRO
+(
+ XOHDL DECIMAL(10, 0) NOT NULL WITH DEFAULT,
+ XODIR CHAR(256) NOT NULL WITH DEFAULT,
+ XOSTMF CHAR(256) NOT NULL WITH DEFAULT,
+ XOTYPE CHAR(10) NOT NULL WITH DEFAULT,
+ XOSTMT DECIMAL(6, 0) NOT NULL WITH DEFAULT,
+ XOLINE CHAR(512) NOT NULL WITH DEFAULT,
+ XOFLCD TIMESTAMP NOT NULL WITH DEFAULT
+);
+
+LABEL ON TABLE ZFNDSTRO
+ IS 'Find String in Stream File (Output)';
+
+LABEL ON COLUMN ZFNDSTRO
+(
+ XOHDL IS 'Handle' ,
+ XODIR IS 'Directory',
+ XOSTMF IS 'Stream file',
+ XOTYPE IS 'Type',
+ XOSTMT IS 'Statement',
+ XOLINE IS 'Line',
+ XOFLCD IS 'File Last Changed'
+);
+
+LABEL ON COLUMN ZFNDSTRO
+(
+ XOHDL TEXT IS 'Handle' ,
+ XODIR TEXT IS 'Directory',
+ XOSTMF TEXT IS 'Stream file',
+ XOTYPE TEXT IS 'Type',
+ XOSTMT TEXT IS 'Statement',
+ XOLINE TEXT IS 'Line',
+ XOFLCD TEXT IS 'File Last Changed'
+);

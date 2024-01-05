@@ -1,42 +1,42 @@
-000100220309     /*-----------------------------------------------------------------------*/
-000200220309     /*                                                                       */
-000300220309     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
-000400220309     /* All rights reserved. This program and the accompanying materials      */
-000500220309     /* are made available under the terms of the Common Public License v1.0  */
-000600220309     /* which accompanies this distribution, and is available at              */
-000700220309     /* http://www.eclipse.org/legal/cpl-v10.html                             */
-000800220309     /*                                                                       */
-000900220309     /*-----------------------------------------------------------------------*/
-001000220309     /*                                                                       */
-001100220309     /* Find String in Stream File                                            */
-001200220309     /*                                                                       */
-001300220309     /*-----------------------------------------------------------------------*/
-001400220309     /* STRPREPRC Compile Options:                                            */
-001500220309     /*   >>PRE-COMPILER<<                                                    */
-001600220309     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
-001700220309     /*       >>COMPILE<<                                                     */
-001800220309     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
-001900220309     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
-002000220309     /*         >>PARM<<  BNDSRVPGM(*LIBL/NBRRNG);                            */
-002100220309     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
-002200220309     /*         >>PARM<<  TGTRLS(&TR);                                        */
-002300220309     /*         >>PARM<<  MODULE(&LI/ZFNDSTR);                                */
-002400220309     /*         >>PARM<<  DETAIL(*BASIC);                                     */
-002500220309     /*         >>PARM<<  TEXT('Find String in Stream File');                 */
-002600220309     /*       >>END-COMPILE<<                                                 */
-002700220309     /*       >>EXECUTE<<                                                     */
-002800220309     /*   >>END-PRE-COMPILER<<                                                */
-002900220309     /*-----------------------------------------------------------------------*/
-003000220309
-003100220309     /* Start Export */
-003200220309             STRPGMEXP
-003300220309
-003400220309     /* Export */
-003500220309             EXPORT     SYMBOL('ZFNDSTR_GETHANDLE')
-003600220309             EXPORT     SYMBOL('ZFNDSTR_RESOLVEGENERICSEARCHELEMENTS')
-003700220309             EXPORT     SYMBOL('ZFNDSTR_GETNUMBEROFSEARCHELEMENTS')
-003800220309             EXPORT     SYMBOL('ZFNDSTR_SEARCH')
-003900220309             EXPORT     SYMBOL('ZFNDSTR_CLEAR')
-004000220309
-004100220309     /* End Export */
-004200220309             ENDPGMEXP
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Copyright (c) 2012-2014 iSphere Project Owners                        */
+     /* All rights reserved. This program and the accompanying materials      */
+     /* are made available under the terms of the Common Public License v1.0  */
+     /* which accompanies this distribution, and is available at              */
+     /* http://www.eclipse.org/legal/cpl-v10.html                             */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /*                                                                       */
+     /* Find String in Stream File                                            */
+     /*                                                                       */
+     /*-----------------------------------------------------------------------*/
+     /* STRPREPRC Compile Options:                                            */
+     /*   >>PRE-COMPILER<<                                                    */
+     /*     >>CRTCMD<< CRTSRVPGM  SRVPGM(&LI/&OB);                            */
+     /*       >>COMPILE<<                                                     */
+     /*         >>PARM<<  EXPORT(*SRCFILE);                                   */
+     /*         >>PARM<<  SRCFILE(&SL/&SF) SRCMBR(&SM);                       */
+     /*         >>PARM<<  BNDSRVPGM(*LIBL/NBRRNG);                            */
+     /*         >>PARM<<  ACTGRP(ISPHERE);                                    */
+     /*         >>PARM<<  TGTRLS(&TR);                                        */
+     /*         >>PARM<<  MODULE(&LI/ZFNDSTR);                                */
+     /*         >>PARM<<  DETAIL(*BASIC);                                     */
+     /*         >>PARM<<  TEXT('Find String in Stream File');                 */
+     /*       >>END-COMPILE<<                                                 */
+     /*       >>EXECUTE<<                                                     */
+     /*   >>END-PRE-COMPILER<<                                                */
+     /*-----------------------------------------------------------------------*/
+
+     /* Start Export */
+             STRPGMEXP
+
+     /* Export */
+             EXPORT     SYMBOL('ZFNDSTR_GETHANDLE')
+             EXPORT     SYMBOL('ZFNDSTR_RESOLVEGENERICSEARCHELEMENTS')
+             EXPORT     SYMBOL('ZFNDSTR_GETNUMBEROFSEARCHELEMENTS')
+             EXPORT     SYMBOL('ZFNDSTR_SEARCH')
+             EXPORT     SYMBOL('ZFNDSTR_CLEAR')
+
+     /* End Export */
+             ENDPGMEXP
