@@ -36,7 +36,7 @@
 :IMHELP name='BUILD/TGTRLS    '.
 :EHELP.
 .*--------------------------------------------------------------------
-.* Helptext für den Befehl
+.* Command Help Text
 .*--------------------------------------------------------------------
 :HELP NAME='BUILD'.
 iSphere Build (BUILD) - Help
