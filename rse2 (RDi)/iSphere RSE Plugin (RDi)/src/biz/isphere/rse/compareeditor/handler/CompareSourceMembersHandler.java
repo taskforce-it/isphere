@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+
 import biz.isphere.core.compareeditor.CompareAction;
 import biz.isphere.core.compareeditor.CompareEditorConfiguration;
 import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
@@ -23,8 +25,6 @@ import biz.isphere.core.internal.handler.AbstractCommandHandler;
 import biz.isphere.rse.compareeditor.RSECompareDialog;
 import biz.isphere.rse.connection.ConnectionManager;
 import biz.isphere.rse.internal.RSEMember;
-
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 
 public class CompareSourceMembersHandler extends AbstractCommandHandler {
 
@@ -87,20 +87,20 @@ public class CompareSourceMembersHandler extends AbstractCommandHandler {
             cc.setDropSequenceNumbersAndDateFields(!hasSequenceNumbersAndDateFields(selectedMembers));
 
             if (selectedMembers.length > 2) {
-                RSEMember dialogRightMember = dialog.getRightRSEMember();
-                String rightConnection = dialogRightMember.getConnection();
-                String rightLibrary = dialogRightMember.getLibrary();
-                String rightSourceFile = dialogRightMember.getSourceFile();
-                for (Member rseSelectedMember : selectedMembers) {
-                    String rightMember = rseSelectedMember.getMember();
-                    RSEMember rseRightMember = getMember(shell, rightConnection, rightLibrary, rightSourceFile, rightMember);
+                Member rseRightMember = dialog.getRightRSEMember();
+                String rightConnection = rseRightMember.getConnection();
+                String rightLibrary = rseRightMember.getLibrary();
+                String rightSourceFile = rseRightMember.getSourceFile();
+                for (Member rseCurrentLeftMember : selectedMembers) {
+                    String currentMemberName = rseCurrentLeftMember.getMember();
+                    rseRightMember = getMember(shell, rightConnection, rightLibrary, rightSourceFile, currentMemberName);
                     if (!rseRightMember.exists()) {
                         String message = biz.isphere.core.Messages.bind(biz.isphere.core.Messages.Member_2_of_file_1_in_library_0_not_found,
-                            new Object[] { rightLibrary, rightSourceFile, rightMember });
+                            new Object[] { rightLibrary, rightSourceFile, currentMemberName });
                         MessageDialog.openError(shell, biz.isphere.core.Messages.Error, message);
 
                     } else {
-                        CompareAction action = new CompareAction(cc, rseAncestorMember, rseSelectedMember, rseRightMember, null);
+                        CompareAction action = new CompareAction(cc, rseAncestorMember, rseCurrentLeftMember, rseRightMember, null);
                         action.run();
                     }
                 }
