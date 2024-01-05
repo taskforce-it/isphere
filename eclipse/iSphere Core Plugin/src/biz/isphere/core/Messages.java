@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1781,6 +1781,42 @@ public class Messages extends NLS {
     public static String File_has_been_saved_successfully_Would_you_like_to_open_it;
 
     public static String Create_example_data_space_editors;
+
+    public static String Warning_Both_sides_show_the_same_source_members;
+
+    public static String Loading_source_members;
+
+    public static String Setting_compare_items;
+
+    public static String Resolving_generic_compare_items;
+
+    public static String Updating_compare_items;
+
+    public static String Loading_compare_items;
+
+    public static String Deleting_compare_data;
+
+    public static String Warning_The_left_and_right_site_display_the_same_object;
+
+    public static String Label_Ignore_date;
+
+    public static String Tooltip_Ignore_date;
+
+    public static String Label_Return_changed_only;
+
+    public static String Tooltip_Return_changed_only;
+
+    public static String Source_Type;
+
+    public static String Source_Type_colon;
+
+    public static String Last_Changed;
+
+    public static String Last_Changed_colon;
+
+    public static String Checksum_colon;
+
+    public static String Tooltip_Member_name_and_source_type_filter;
 
     /*
      * Warning messages

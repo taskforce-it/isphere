@@ -1,0 +1,82 @@
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Copyright (c) 2012-2014 iSphere Project Owners                         *
+-- * All rights reserved. This program and the accompanying materials       *
+-- * are made available under the terms of the Common Public License v1.0   *
+-- * which accompanies this distribution, and is available at               *
+-- * http://www.eclipse.org/legal/cpl-v10.html                              *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- *                                                                        *
+-- * Synchronize Source Members (Work)                                      *
+-- *                                                                        *
+-- *------------------------------------------------------------------------*
+-- * STRPREPRC Compile Options:                                             *
+-- *   >>PRE-COMPILER<<                                                     *
+-- *     >>CRTCMD<<    RUNSQLSTM  SRCFILE(&SL/&SF) SRCMBR(&SM);             *
+-- *       >>COMPILE<<                                                      *
+-- *         >>PARM<<  DFTRDBCOL(&LI);                                      *
+-- *       >>END-COMPILE<<                                                  *
+-- *       >>EXECUTE<<                                                      *
+-- *   >>END-PRE-COMPILER<<                                                 *
+-- *------------------------------------------------------------------------*
+
+CREATE TABLE SYNCMBRW
+(
+ XWHDL      DECIMAL(10, 0) NOT NULL WITH DEFAULT,
+ XWMBR      CHAR(10)       NOT NULL WITH DEFAULT,
+ XWLEFTLIB  CHAR(10)       NOT NULL WITH DEFAULT,
+ XWLEFTFILE CHAR(10)       NOT NULL WITH DEFAULT,
+ XWLEFTTYPE CHAR(10)       NOT NULL WITH DEFAULT,
+ XWLEFTLCHG TIMESTAMP      NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWLEFTCRC  BIGINT         NOT NULL WITH DEFAULT 0,
+ XWLEFTTEXT CHAR(50)       NOT NULL WITH DEFAULT,
+ XWRGHTLIB  CHAR(10)       NOT NULL WITH DEFAULT,
+ XWRGHTFILE CHAR(10)       NOT NULL WITH DEFAULT,
+ XWRGHTTYPE CHAR(10)       NOT NULL WITH DEFAULT,
+ XWRGHTLCHG TIMESTAMP      NOT NULL WITH DEFAULT '0001-01-01-00.00.00.000000',
+ XWRGHTCRC  BIGINT         NOT NULL WITH DEFAULT 0,
+ XWRGHTTEXT CHAR(50)       NOT NULL WITH DEFAULT,
+ XWRESULT   INTEGER        NOT NULL WITH DEFAULT
+);
+
+LABEL ON TABLE SYNCMBRW
+ IS 'Synchronize Source Members (Work)';
+
+LABEL ON COLUMN SYNCMBRW
+(
+ XWHDL      IS 'Handle' ,
+ XWMBR      IS 'Member',
+ XWLEFTLIB  IS 'Left Library',
+ XWLEFTFILE IS 'Left File',
+ XWLEFTTYPE IS 'Left Type',
+ XWLEFTLCHG IS 'Left Last Changed',
+ XWLEFTCRC  IS 'Left Checksum',
+ XWLEFTTEXT IS 'Left Text',
+ XWRGHTLIB  IS 'Right Library',
+ XWRGHTFILE IS 'Right File',
+ XWRGHTTYPE IS 'Right Type',
+ XWRGHTLCHG IS 'Right Last Changed',
+ XWRGHTCRC  IS 'Right Checksum',
+ XWRGHTTEXT IS 'Right Text',
+ XWRESULT   IS 'Compare Result      0=Equal, 1=Type     2=Date, 4=CRC, 8=NF '
+);
+
+LABEL ON COLUMN SYNCMBRW
+(
+ XWHDL      TEXT IS 'Handle' ,
+ XWMBR      TEXT IS 'Member',
+ XWLEFTLIB  TEXT IS 'Left Library',
+ XWLEFTFILE TEXT IS 'Left File',
+ XWLEFTTYPE TEXT IS 'Left Type',
+ XWLEFTLCHG TEXT IS 'Left Last Changed',
+ XWLEFTCRC  TEXT IS 'Left Checksum',
+ XWLEFTTEXT TEXT IS 'Left Text',
+ XWRGHTLIB  TEXT IS 'Right Library',
+ XWRGHTFILE TEXT IS 'Right File',
+ XWRGHTTYPE TEXT IS 'Right Type',
+ XWRGHTLCHG TEXT IS 'Right Last Changed',
+ XWRGHTCRC  TEXT IS 'Right Checksum',
+ XWRGHTTEXT TEXT IS 'Right Text',
+ XWRESULT   TEXT IS 'Compare Result'
+);

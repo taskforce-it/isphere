@@ -616,7 +616,7 @@ public abstract class CompareDialog extends XDialog {
 
     protected String getLeftGroupLabel() {
 
-        if (editButton.getSelection()) {
+        if (editButton != null && editButton.getSelection()) {
             return Messages.Left + " " + Messages.Editable;
         } else {
             return Messages.Left;

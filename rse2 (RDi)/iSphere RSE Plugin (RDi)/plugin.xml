@@ -187,6 +187,12 @@
                 menubarPath="additions">
 	         </action>
       	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Message File Compare Editor Contributions
+      	  ==========================================
+      	-->
          
       	<objectContribution
             objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
@@ -204,6 +210,51 @@
                 id="biz.isphere.rse.actions.OpenMessageFileCompareEditorAction"
                 label="%iSphere_Compare_Message_File_Editor"
                 icon="icons/compare_message_files.png"
+                menubarPath="additions">
+	         </action>
+      	</objectContribution>
+      	
+      	<!--
+      	  ==========================================
+      	    Synchronize Members Editor Contribution
+      	  ==========================================
+      	-->
+         
+      	<objectContribution
+            objectClass="com.ibm.etools.iseries.subsystems.qsys.objects.QSYSRemoteObject"
+            id="biz.isphere.core.menu.msgf">
+            
+            <enablement>
+            	<or>
+            		<!-- Rules to detect source members -->
+            		<!-- test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="SRC"/ -->
+            		<!--  or'd with                     -->
+            		<!-- rules to detect source files   -->
+					<or>
+		            	<and>
+		            		<!-- a file -->
+		            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*FILE"/>
+		            		<!-- must be of one of the following sub types -->
+		            		<or>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF-SRC"/>
+		            			<test property="biz.isphere.adapter.propertytester.hostobjectbrief.subtype" value="PF38-SRC"/>
+		            		</or>
+		            	</and>
+					</or>
+            		<!--  or'd with                     -->
+            		<!-- rules to detect libraries   -->
+					<or>
+	            		<test property="biz.isphere.adapter.propertytester.hostobjectbrief.type" value="*LIB"/>
+					</or>
+				</or>
+         	</enablement>
+            
+	         <action
+                class="biz.isphere.rse.actions.OpenSynchronizeMemberEditorAction"
+                enablesFor="2"
+                id="biz.isphere.rse.actions.OpenSynchronizeMemberEditorAction"
+                label="%iSphere_Synchronize_Members_Editor"
+			    icon="icons\synchronize_members.gif"
                 menubarPath="additions">
 	         </action>
       	</objectContribution>

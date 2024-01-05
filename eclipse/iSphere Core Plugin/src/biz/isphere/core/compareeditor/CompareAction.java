@@ -44,6 +44,7 @@ public class CompareAction {
     private Member leftMember;
     private Member rightMember;
     private String editorTitle;
+    private boolean onPage;
     private CompareInput fInput;
 
     @CMOne(info = "Don`t change/remove this method due to CMOne compatibility reasons.")
@@ -54,7 +55,7 @@ public class CompareAction {
         this.leftMember = leftMember;
         this.rightMember = rightMember;
         this.editorTitle = editorTitle;
-
+        this.onPage = cc.isOpenInEditor();
     }
 
     public void run() {
@@ -158,6 +159,7 @@ public class CompareAction {
                     fInput = new CompareInput(cc, ancestorMember, leftMember, rightMember);
                 }
 
+                // Set editor title displayed at the top of the Eclipse window.
                 if (editorTitle != null) {
                     fInput.setTitle(editorTitle);
                 } else {
@@ -189,11 +191,25 @@ public class CompareAction {
                 boolean compareFilterEnabled = !cc.isConsiderDate();
                 System.setProperty(IgnoreDateCompareFilter.JVM_PROPERTY_IGNORE_DATE, Boolean.toString(compareFilterEnabled));
 
+                if (onPage) {
+                    openCompareEditorOnPage();
+                } else {
+                    openCompareEditorDialog();
+                }
+
+                for (int index = 0; index < cleanupListener.size(); index++) {
+                    (cleanupListener.get(index)).cleanup();
+                }
+
+            }
+
+            private void openCompareEditorOnPage() {
+
                 IEditorReference editorReference = findCompareEditor(leftMember, rightMember);
                 if (editorReference != null) {
 
-                    // TODO: make decision, what is better: close editor or
-                    // restore part. Now the part is brought to front
+                    // TODO: make a decision, what is better: closing the editor
+                    // or restoring it. Now the part is brought to front
                     // IEditorPart editorPart =
                     // editorReference.getEditor(false);
                     // editorPart.getEditorSite().getPage().closeEditor(editorPart,
@@ -202,12 +218,11 @@ public class CompareAction {
                     UIHelper.getActivePage().activate(editorReference.getPart(false));
                     return;
                 }
-
                 CompareUI.openCompareEditorOnPage(fInput, UIHelper.getActivePage());
-                for (int index = 0; index < cleanupListener.size(); index++) {
-                    (cleanupListener.get(index)).cleanup();
-                }
+            }
 
+            private void openCompareEditorDialog() {
+                CompareUI.openCompareDialog(fInput);
             }
 
             private String createLabel(Member member) {
@@ -260,9 +275,6 @@ public class CompareAction {
                 for (IEditorReference editorReference : page.getEditorReferences()) {
                     try {
                         IEditorInput editorInput = editorReference.getEditorInput();
-
-                        // FIXME: add FileEditorInput
-
                         if (editorInput instanceof CompareInput) {
                             CompareInput compareInput = (CompareInput)editorInput;
                             IFile leftMember = compareInput.getLeft().getLocalResource();

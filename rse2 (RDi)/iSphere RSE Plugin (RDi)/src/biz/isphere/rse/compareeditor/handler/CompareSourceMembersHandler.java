@@ -39,6 +39,30 @@ public class CompareSourceMembersHandler extends AbstractCommandHandler {
         return null;
     }
 
+    // TODO: consider replacing the other handle* methods with this method
+    public void handleSourceCompare(Member[] members, CompareEditorConfiguration cc) {
+
+        if (cc.isShowDialog()) {
+            if (cc.isEditMode()) {
+                handleSourceCompare(members);
+            } else {
+                handleReadOnlySourceCompare(members);
+            }
+        } else {
+            handleSourceCompareWithoutDialog(members, cc);
+        }
+    }
+
+    private void handleSourceCompareWithoutDialog(Member[] members, CompareEditorConfiguration cc) {
+
+        cc.setDropSequenceNumbersAndDateFields(!hasSequenceNumbersAndDateFields(members));
+
+        Member leftMember = members[0];
+        Member rightMember = members[1];
+        CompareAction action = new CompareAction(cc, null, leftMember, rightMember, null);
+        action.run();
+    }
+
     public void handleReadOnlySourceCompare(Member[] selectedMembers) {
         handleSourceCompareInternally(getShell(), selectedMembers, false);
     }

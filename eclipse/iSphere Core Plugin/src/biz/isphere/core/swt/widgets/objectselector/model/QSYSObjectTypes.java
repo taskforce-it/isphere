@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ import biz.isphere.core.internal.ISeries;
 
 public enum QSYSObjectTypes {
     LIB (ISeries.LIB, Messages.Library),
-    MSGF (ISeries.MSGF, Messages.Message_file);
+    MSGF (ISeries.MSGF, Messages.Message_file),
+    FILE (ISeries.FILE, Messages.Source_file);
 
     private String type;
     private String label;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,10 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
     public static SelectRemoteQSYSObjectDialog createSelectMessageFileDialog(Shell shell, String connection) {
         return new SelectRemoteQSYSObjectDialog(shell, connection, ISeries.MSGF, Messages.Message_file);
+    }
+
+    public static SelectRemoteQSYSObjectDialog createSelectSourceFileDialog(Shell shell, String connection) {
+        return new SelectRemoteQSYSObjectDialog(shell, connection, ISeries.FILE, Messages.Source_file);
     }
 
     private SelectRemoteQSYSObjectDialog(Shell parentShell, String connectionName, String objectType, String objectLabel) {
@@ -297,7 +301,8 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
                 return;
             }
 
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
+            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectLibraryDialog(getShell(),
+                comboConnectionName.getQualifiedConnectionName());
             dialog.setLibraryListEnabled(true);
             dialog.setExpandLibraryListsEnabled(true);
             if (dialog.open() == Dialog.OK) {
@@ -334,7 +339,16 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
                 return;
             }
 
-            ISelectQSYSObjectDialog dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
+            ISelectQSYSObjectDialog dialog;
+
+            if (ISeries.MSGF.equals(objectType)) {
+                dialog = SelectQSYSObjectDialog.createSelectMessageFileDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
+            } else if (ISeries.FILE.equals(objectType)) {
+                dialog = SelectQSYSObjectDialog.createSelectSourceFileDialog(getShell(), comboConnectionName.getQualifiedConnectionName());
+            } else {
+                throw new IllegalArgumentException("Incorrect object type: " + objectType);
+            }
+
             dialog.setLibraryListEnabled(true);
 
             if (!StringHelper.isNullOrEmpty(comboLibraryName.getText())) {

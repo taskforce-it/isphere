@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ import com.ibm.etools.systems.editor.RemoteResourcePropertiesFactoryManager;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.connection.rse.ConnectionProperties;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
@@ -584,13 +585,11 @@ public class XRDiContributions implements IIBMiHostContributions {
      * contains the members, which are compared one by one with the selected
      * members.
      * 
-     * @param qualifiedConnectionName - name that uniquely identifies the
-     *        connection
      * @param members - members that are compared
      * @param enableEditMode - specifies whether edit mode is enabled
      * @throws Exception
      */
-    public void compareSourceMembers(String qualifiedConnectionName, List<Member> members, boolean enableEditMode) throws Exception {
+    public void compareSourceMembers(List<Member> members, boolean enableEditMode) throws Exception {
 
         CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
 
@@ -599,6 +598,39 @@ public class XRDiContributions implements IIBMiHostContributions {
         } else {
             handler.handleReadOnlySourceCompare(members.toArray(new Member[members.size()]));
         }
+    }
+
+    /**
+     * Opens the iSphere compare editor for the given members.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty member list</b> <br>
+     * Opens the compare dialog to let the user specify the members that are
+     * compares.
+     * <p>
+     * <b>One member</b> <br>
+     * Opens the compare dialog with that member set as the left (editable)
+     * member. The right member is initialized with the properties of the left
+     * member.
+     * <p>
+     * <b>Two members</b> <br>
+     * Opens the compare dialog with the first member set as the left (editable)
+     * and the second member set as the right member.
+     * <p>
+     * <b>More than 2 members</b> <br>
+     * Opens the compare dialog to let the user specify the source file that
+     * contains the members, which are compared one by one with the selected
+     * members.
+     * 
+     * @param members - members that are compared
+     * @param compareConfiguration - configuration of the Eclipse compare editor
+     * @throws Exception
+     */
+    public void compareSourceMembers(List<Member> members, SourceMemberCompareEditorConfiguration compareConfiguration) throws Exception {
+
+        CompareSourceMembersHandler handler = new CompareSourceMembersHandler();
+        handler.handleSourceCompare(members.toArray(new Member[members.size()]), compareConfiguration);
     }
 
     /**

@@ -66,6 +66,12 @@
             class="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"
             contributorClass="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditorActionBarContributor"
             id="biz.isphere.core.messagefilecompare.rse.MessageFileCompareEditor"/>
+      <editor
+            name=""
+            icon="icons\synchronize_members.gif"
+            class="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"
+            contributorClass="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditorActionBarContributor"
+            id="biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"/>
    </extension>
       	
       	<!--
@@ -213,9 +219,9 @@
 
       	<!--
       	  ==========================================
-            iSphere Compare Filter Extensions
-          ==========================================
-        -->
+      	    iSphere Compare Filter Extensions
+      	  ==========================================
+      	-->
    
    <extension
          point="org.eclipse.compare.compareFilters">
@@ -237,25 +243,25 @@
       
    </extension>
 
-    <extension
-           point="org.eclipse.ui.commands">
+	<extension
+	       point="org.eclipse.ui.commands">
          
-        <category
+		<category
             name="iSphere"
             id="biz.isphere.category.Commands">
-        </category>
-        
-        <command
-            id="biz.isphere.comparefilters.command.Compare.ignoredate"
-            categoryId="biz.isphere.category.Commands"
-            name="%Ignore_IBM_i_source_member_date_column_command"
-            icon="icons/ignore_date.png" >
-        </command>
-        
-    </extension>
+		</category>
+	    
+		<command
+	        id="biz.isphere.comparefilters.command.Compare.ignoredate"
+	        categoryId="biz.isphere.category.Commands"
+	        name="%Ignore_IBM_i_source_member_date_column_command"
+	        icon="icons/ignore_date.png" >
+		</command>
+	    
+	</extension>
 
-        <!--
-          ==========================================
+      	<!--
+      	  ==========================================
       	    Extension point: IWidgetFactory
       	  ==========================================
       	-->

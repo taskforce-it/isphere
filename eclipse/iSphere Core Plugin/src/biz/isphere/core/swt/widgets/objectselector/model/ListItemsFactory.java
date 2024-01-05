@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@ package biz.isphere.core.swt.widgets.objectselector.model;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.Job;
+
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.swt.widgets.objectselector.SelectQSYSObjectDialog;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.Job;
 
 /**
  * This class is a factory for producing list items suitable for a
@@ -102,6 +102,20 @@ public final class ListItemsFactory {
     }
 
     /**
+     * Produces a <i>file</i> list item.
+     * 
+     * @param system - the system (AS400) the object resides on.
+     * @param libraryName - name of the library
+     * @param fileName - name of the file
+     * @param objectTypeFilter - type of the object that is to be opened
+     * @return message file list item
+     */
+    public static FileItem createFile(AS400 system, String libraryName, String fileName, String objectTypeFilter) {
+        Image image = ISpherePlugin.getDefault().getImage(ISpherePlugin.IMAGE_PHYSICAL_FILE);
+        return new FileItem(system, libraryName, fileName, image, objectTypeFilter);
+    }
+
+    /**
      * Produces a list item of any object type.
      * 
      * @param system - the system (AS400) the object resides on.
@@ -119,6 +133,8 @@ public final class ListItemsFactory {
 
         if (ISeries.MSGF.equals(objectType)) {
             return createMessageFile(system, libraryName, objectName, objectTypeFilter);
+        } else if (ISeries.FILE.equals(objectType)) {
+            return createFile(system, libraryName, objectName, objectTypeFilter);
         }
 
         throw new IllegalArgumentException("Invalid objecttype: " + objectTypeFilter); //$NON-NLS-1$

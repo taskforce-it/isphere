@@ -1,0 +1,144 @@
+/*******************************************************************************
+ * Copyright (c) 2012-2024 iSphere Project Owners
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *******************************************************************************/
+
+package biz.isphere.core.objectsynchronization.jobs;
+
+import java.sql.Connection;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import com.ibm.as400.access.AS400;
+
+import biz.isphere.base.internal.SqlHelper;
+import biz.isphere.core.ISpherePlugin;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
+
+/**
+ * This class is the base class for all worker jobs that take part when
+ * comparing members in the <i>iSphere Synchronize Members</i> editor.
+ */
+public abstract class AbstractCompareMembersJob {
+
+    protected static final int ERROR_HANDLE = -1;
+
+    private IProgressMonitor monitor;
+    private CompareMembersSharedJobValues sharedValues;
+
+    private String connectionName;
+    private AS400 system;
+    private String currentLibrary;
+    private String iSphereLibrary;
+    private Connection jdbcConnection;
+    private SqlHelper sqlHelper;
+
+    /**
+     * Produces a new compare members job.
+     * 
+     * @param monitor - progress monitor
+     * @param sharedValues - values shared between compare jobs
+     */
+    public AbstractCompareMembersJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+
+        this.monitor = monitor;
+        this.sharedValues = sharedValues;
+    }
+
+    /**
+     * Initializes the compare job. THis method must be called first.
+     * 
+     * @param connectionName - name of the connection the objects reside on
+     */
+    protected void initialize(String connectionName) {
+
+        if (connectionName.equals(this.connectionName)) {
+            return;
+        }
+
+        this.connectionName = connectionName;
+        this.system = IBMiHostContributionsHandler.getSystem(connectionName);
+        this.currentLibrary = null;
+        this.iSphereLibrary = null;
+        this.jdbcConnection = null;
+        this.sqlHelper = null;
+    }
+
+    protected IProgressMonitor getMonitor() {
+        return monitor;
+    }
+
+    protected CompareMembersSharedJobValues getSharedValues() {
+        return sharedValues;
+    }
+
+    protected boolean isSameSystem() {
+        return getSharedValues().isSameSystem();
+    }
+
+    protected boolean setCurrentLibrary() {
+
+        try {
+
+            currentLibrary = ISphereHelper.getCurrentLibrary(system);
+            ISphereHelper.setCurrentLibrary(system, getISphereLibrary());
+            return true;
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not set current library.", e); //$NON-NLS-1$
+            return false;
+        }
+    }
+
+    protected void restoreCurrentLibrary() {
+
+        if (currentLibrary == null) {
+            return;
+        }
+
+        try {
+            ISphereHelper.setCurrentLibrary(system, currentLibrary);
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not restore current library to: " + currentLibrary + " ***", e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
+
+    protected AS400 getSystem() {
+        return system;
+    }
+
+    protected String getISphereLibrary() {
+
+        if (iSphereLibrary == null) {
+            iSphereLibrary = ISpherePlugin.getISphereLibrary(connectionName);
+        }
+
+        return iSphereLibrary;
+    }
+
+    protected Connection getJdbcConnection() {
+
+        if (jdbcConnection == null) {
+            jdbcConnection = IBMiHostContributionsHandler.getJdbcConnection(connectionName);
+        }
+
+        return jdbcConnection;
+    }
+
+    protected SqlHelper getSqlHelper() {
+
+        if (sqlHelper == null) {
+            sqlHelper = new SqlHelper(getJdbcConnection());
+        }
+
+        return sqlHelper;
+    }
+
+    public abstract int getWorkCount();
+
+    public abstract int execute(int worked);
+}

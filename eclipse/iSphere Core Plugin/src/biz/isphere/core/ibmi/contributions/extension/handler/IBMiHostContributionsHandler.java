@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.ui.IFileEditorInput;
 import com.ibm.as400.access.AS400;
 
 import biz.isphere.core.clcommands.ICLPrompter;
+import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.ibmi.contributions.extension.point.IIBMiHostContributions;
 import biz.isphere.core.internal.Member;
@@ -440,7 +441,47 @@ public class IBMiHostContributionsHandler {
             return;
         }
 
-        factory.compareSourceMembers(qualifiedConnectionName, members, enableEditMode);
+        factory.compareSourceMembers(members, enableEditMode);
+    }
+
+    /**
+     * Opens the iSphere compare editor for the given members.
+     * <p>
+     * The available options are:
+     * <p>
+     * <b>Empty member list</b> <br>
+     * Opens the compare dialog to let the user specify the members that are
+     * compared.
+     * <p>
+     * <b>One member</b> <br>
+     * Opens the compare dialog with that member set as the left (editable)
+     * member. The right member is initialized with the properties of the left
+     * member.
+     * <p>
+     * <b>Two members</b> <br>
+     * Opens the compare dialog with the first member set as the left (editable)
+     * and the second member set as the right member.
+     * <p>
+     * <b>More than 2 members</b> <br>
+     * Opens the compare dialog to let the user specify the source file that
+     * contains the members, which are compared one by one with the selected
+     * members.
+     * 
+     * @param qualifiedConnectionName - name that uniquely identifies the
+     *        connection
+     * @param members - members that are compared
+     * @param enableEditMode - specifies whether edit mode is enabled
+     * @throws Exception
+     */
+    public static void compareSourceMembers(List<Member> members, SourceMemberCompareEditorConfiguration compareConfiguration) throws Exception {
+
+        IIBMiHostContributions factory = getContributionsFactory();
+
+        if (factory == null) {
+            return;
+        }
+
+        factory.compareSourceMembers(members, compareConfiguration);
     }
 
     /**

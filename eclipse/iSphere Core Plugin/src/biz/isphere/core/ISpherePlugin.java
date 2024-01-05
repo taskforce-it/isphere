@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class ISpherePlugin extends AbstractUIPlugin {
     // WDSCi 7.0 = Eclipse 3.2
     private static final Version WDSCI70 = new Version(3, 2, 0);
 
-    private static final String MIN_SERVER_VERSION = "5.0.0"; //$NON-NLS-1$
+    private static final String MIN_SERVER_VERSION = "5.2.10"; //$NON-NLS-1$
 
     private static ISpherePlugin plugin;
     private static URL installURL;
@@ -145,10 +145,13 @@ public class ISpherePlugin extends AbstractUIPlugin {
     public static final String IMAGE_UNLOCKED = "unlocked.png";
     public static final String IMAGE_DISPLAY_MODULE_VIEW = "module_view.gif";
     public static final String IMAGE_RETRIEVE_BINDER_SOURCE = "retrieve_binder_source.gif";
-    public static final String IMAGE_SYSTEM = "system.gif"; //$NON-NLS-1$
-    public static final String IMAGE_LIBRARY = "library.gif"; //$NON-NLS-1$
-    public static final String IMAGE_CURRENT_LIBRARY = "current_library.gif"; //$NON-NLS-1$
-    public static final String IMAGE_LIBRARY_LIST = "library_list.gif"; //$NON-NLS-1$
+    public static final String IMAGE_SYSTEM = "system.gif";
+    public static final String IMAGE_LIBRARY = "library.gif";
+    public static final String IMAGE_CURRENT_LIBRARY = "current_library.gif";
+    public static final String IMAGE_LIBRARY_LIST = "library_list.gif";
+    public static final String IMAGE_SYNCHRONIZE_MEMBERS = "synchronize_members.gif";
+    public static final String IMAGE_PHYSICAL_FILE = "physicalfile.gif";
+    public static final String IMAGE_SOURCE_FILE = "sourcefile.gif";
 
     private static boolean searchArgumentsListEditor = false;
     private static ISearchArgumentsListEditorProvider searchArgumentsListEditorProvider = null;
@@ -336,6 +339,9 @@ public class ISpherePlugin extends AbstractUIPlugin {
         reg.put(IMAGE_LIBRARY, getImageDescriptor(IMAGE_LIBRARY));
         reg.put(IMAGE_CURRENT_LIBRARY, getImageDescriptor(IMAGE_CURRENT_LIBRARY));
         reg.put(IMAGE_LIBRARY_LIST, getImageDescriptor(IMAGE_LIBRARY_LIST));
+        reg.put(IMAGE_SYNCHRONIZE_MEMBERS, getImageDescriptor(IMAGE_SYNCHRONIZE_MEMBERS));
+        reg.put(IMAGE_PHYSICAL_FILE, getImageDescriptor(IMAGE_PHYSICAL_FILE));
+        reg.put(IMAGE_SOURCE_FILE, getImageDescriptor(IMAGE_SOURCE_FILE));
     }
 
     public static ImageDescriptor getImageDescriptor(String name) {

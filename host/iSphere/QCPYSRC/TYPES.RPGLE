@@ -10,17 +10,17 @@
       //*                                                                                          *
       //*------------------------------------------------------------------------------------------*
 
-     d qObj_t          ds                  qualified based(pTemplate)
+     d qObj_t          ds                  qualified template
      d  name                         10a
      d  lib                          10a
 
-     d qJob_t          ds                  qualified based(pTemplate)
+     d qJob_t          ds                  qualified template
      d  name                         10a
      d  user                         10a
      d  nbr                           6a
 
-     d errCode_t       ds                  qualified based(pTemplate)
-     d  bytPrv                       10i 0
+     d errCode_t       ds                  qualified template
+     d  bytPrv                       10i 0 inz(272)
      d  bytAvl                       10i 0
      d  excId                         7a
      d  reserved                      1a
