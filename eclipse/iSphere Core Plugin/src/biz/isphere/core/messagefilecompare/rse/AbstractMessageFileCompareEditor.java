@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,8 +90,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     private static final String BUTTON_SINGLES = "BUTTON_SINGLES"; //$NON-NLS-1$
     private static final String BUTTON_DUPLICATES = "BUTTON_DUPLICATES"; //$NON-NLS-1$
     private static final String BUTTON_COMPARE_AFTER_SYNC = "BUTTON_COMPARE_AFTER_SYNC"; //$NON-NLS-1$
-
-    private MessageFileCompareEditorInput input;
 
     private boolean selectionChanged;
     private boolean isLeftMessageFileValid;
@@ -448,7 +446,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         tableViewer.addFilter(tableFilter);
         tableViewer.setLabelProvider(getTableLabelProvider(tableViewer, 3));
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
-        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, input.getConfiguration()));
+        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, getEditorInput().getConfiguration()));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
         TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
@@ -496,7 +494,6 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         setInput(input);
         setPartName(input.getName());
         setTitleImage(((MessageFileCompareEditorInput)input).getTitleImage());
-        this.input = (MessageFileCompareEditorInput)input;
     }
 
     @Override
@@ -567,8 +564,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         MessageFileCompareEditorInput editorInput = getEditorInput();
         if (editorInput != null) {
-            lblLeftMessageFile.setText(input.getLeftMessageFileName());
-            lblRightMessageFile.setText(input.getRightMessageFileName());
+            lblLeftMessageFile.setText(getEditorInput().getLeftMessageFileName());
+            lblRightMessageFile.setText(getEditorInput().getRightMessageFileName());
         } else {
             lblLeftMessageFile.setText(""); //$NON-NLS-1$
             lblRightMessageFile.setText(""); //$NON-NLS-1$
@@ -628,7 +625,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
     }
 
     private boolean isSynchronizationEnabled() {
-        IMessageFileCompareEditorConfiguration config = input.getConfiguration();
+        IMessageFileCompareEditorConfiguration config = getEditorInput().getConfiguration();
         return config.isLeftEditorEnabled() || config.isRightEditorEnabled();
     }
 
@@ -637,8 +634,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
 
-        if (input.getLeftMessageFile() != null && !isLeftMessageFileValid) {
-            String connectionName = input.getLeftMessageFile().getConnectionName();
+        if (getEditorInput().getLeftMessageFile() != null && !isLeftMessageFileValid) {
+            String connectionName = getEditorInput().getLeftMessageFile().getConnectionName();
             if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
@@ -648,8 +645,8 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         }
 
-        if (input.getRightMessageFile() != null && !isRightMessageFileValid) {
-            String connectionName = input.getRightMessageFile().getConnectionName();
+        if (getEditorInput().getRightMessageFile() != null && !isRightMessageFileValid) {
+            String connectionName = getEditorInput().getRightMessageFile().getConnectionName();
             if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
@@ -659,7 +656,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
             }
         }
 
-        if (input.getLeftMessageFile() == null || input.getRightMessageFile() == null) {
+        if (getEditorInput().getLeftMessageFile() == null || getEditorInput().getRightMessageFile() == null) {
             isCompareEnabled = false;
         }
 
@@ -684,7 +681,7 @@ public abstract class AbstractMessageFileCompareEditor extends EditorPart {
 
         btnCompare.setEnabled(isCompareEnabled);
 
-        IMessageFileCompareEditorConfiguration config = input.getConfiguration();
+        IMessageFileCompareEditorConfiguration config = getEditorInput().getConfiguration();
 
         if (btnSynchronize != null && chkCompareAfterSync != null) {
             if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
