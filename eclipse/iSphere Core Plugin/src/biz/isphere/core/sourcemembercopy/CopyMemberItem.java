@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
     private String toMember;
     private String toSrcType;
 
+    private Object data;
+
     private String errorMessage;
     private boolean copied;
 
@@ -54,6 +56,7 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         this.toSrcType = fromSrcType.trim();
         this.errorMessage = null;
         this.copied = false;
+        this.data = null;
     }
 
     public String getFromFile() {
@@ -74,6 +77,14 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
 
     public String getToFile() {
         return toFile;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    public Object getData() {
+        return data;
     }
 
     public void setToFile(String toFile) {

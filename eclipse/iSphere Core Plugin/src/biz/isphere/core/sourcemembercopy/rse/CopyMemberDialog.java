@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import biz.isphere.core.sourcemembercopy.Columns;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
+import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
@@ -65,6 +66,7 @@ import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
 public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun {
 
+    public static String FROMFILE = "*FROMFILE";
     private static final String SINGLE_QUOTE = "'";
 
     private static int BUTTON_COPY_ID = IDialogConstants.OK_ID;
@@ -111,7 +113,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     protected void cancelPressed() {
 
         if (isValidating()) {
-            copyMemberValidator.cancel();
+            copyMemberValidator.cancelOperation();
             return;
         }
 
@@ -177,21 +179,41 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         tableViewer.setSelection(null);
 
-        copyMemberService.setToConnection(getToConnectionName());
-        copyMemberService.setToLibrary(getToLibraryName());
-        copyMemberService.setToFile(getToFileName());
         copyMemberService.setExistingMemberAction(getExistingMemberAction());
+
+        String fromConnectionName = copyMemberService.getFromConnectionName();
+        CopyMemberItem[] fromMembers = copyMemberService.getItems();
+        updateMembersWithTargetSourceFile(getToLibraryName(), getToFileName(), fromMembers);
 
         boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
 
-        copyMemberValidator = new CopyMemberValidator(copyMemberService, getExistingMemberAction(), chkBoxIgnoreDataLostError.getSelection(),
-            chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
+        copyMemberValidator = new CopyMemberValidator(fromConnectionName, fromMembers, getExistingMemberAction(),
+            chkBoxIgnoreDataLostError.getSelection(), chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
+
+        copyMemberValidator.setToConnectionName(getToConnectionName());
+        copyMemberValidator.setToLibraryName(getToLibraryName());
+        copyMemberValidator.setToFileName(getToFileName());
+        copyMemberValidator.setToCcsid(copyMemberService.getToConnectionCcsid());
 
         setControlEnablement();
         copyMemberValidator.start();
     }
 
-    public void returnResult(final int errorItem, final String errorMessage) {
+    public void updateMembersWithTargetSourceFile(String toLibraryName, String toFileName, CopyMemberItem[] fromMembers) {
+
+        for (CopyMemberItem member : fromMembers) {
+            member.setToLibrary(toLibraryName);
+            if (FROMFILE.equals(toFileName)) {
+                member.setToFile(member.getFromFile());
+            } else {
+                member.setToFile(toFileName);
+            }
+            member.setErrorMessage(null);
+        }
+
+    }
+
+    public void returnResult(final MemberValidationError errorId, final String errorMessage) {
 
         copyMemberValidator = null;
 
@@ -204,25 +226,14 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
                     setErrorMessage(errorMessage);
 
-                    switch (errorItem) {
-                    case CopyMemberValidator.ERROR_TO_CONNECTION:
+                    if (errorId == MemberValidationError.ERROR_TO_CONNECTION) {
                         comboToConnection.setFocus();
-                        break;
-
-                    case CopyMemberValidator.ERROR_TO_LIBRARY:
+                    } else if (errorId == MemberValidationError.ERROR_TO_LIBRARY) {
                         textToLibrary.setFocus();
-                        break;
-
-                    case CopyMemberValidator.ERROR_TO_FILE:
+                    } else if (errorId == MemberValidationError.ERROR_TO_FILE) {
                         comboToFile.setFocus();
-                        break;
-
-                    case CopyMemberValidator.ERROR_CANCELED:
+                    } else if (errorId == MemberValidationError.ERROR_CANCELED) {
                         comboToFile.setFocus();
-                        break;
-
-                    default:
-                        break;
                     }
 
                     setControlEnablement();
@@ -283,7 +294,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         labelToFile.setText(Messages.To_file_colon);
 
         comboToFile = WidgetFactory.createCombo(mainArea);
-        comboToFile.setItems(new String[] { CopyMemberService.TO_FILE_FROMFILE });
+        comboToFile.setItems(new String[] { FROMFILE });
         comboToFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         comboToFile.setTextLimit(10);
         comboToFile.addVerifyListener(new UpperCaseOnlyVerifier());
@@ -440,7 +451,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         } else if (StringHelper.isNullOrEmpty(textToLibrary.getText())) {
             textToLibrary.setFocus();
         } else {
-            if (CopyMemberService.TO_FILE_FROMFILE.equals(comboToFile.getText())) {
+            if (FROMFILE.equals(comboToFile.getText())) {
                 comboToFile.setFocus();
             } else {
                 comboToConnection.setFocus();
@@ -464,7 +475,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         if (copyMemberService.getFromFileNamesCount() == 1) {
             comboToFile.setText(copyMemberService.getFromFileNames()[0]);
         } else {
-            comboToFile.setText(CopyMemberService.TO_FILE_FROMFILE);
+            comboToFile.setText(FROMFILE);
         }
 
         tableViewer.setInput(copyMemberService);
