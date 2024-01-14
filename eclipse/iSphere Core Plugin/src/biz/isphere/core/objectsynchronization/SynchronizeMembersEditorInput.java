@@ -71,7 +71,6 @@ public class SynchronizeMembersEditorInput implements IEditorInput {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
     public Object getAdapter(Class adapter) {
         return null;
     }

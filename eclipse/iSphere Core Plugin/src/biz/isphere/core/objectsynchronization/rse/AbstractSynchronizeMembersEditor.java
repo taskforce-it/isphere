@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -66,6 +67,7 @@ import biz.isphere.core.internal.Size;
 import biz.isphere.core.objectsynchronization.CompareOptions;
 import biz.isphere.core.objectsynchronization.MemberDescription;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersEditorInput;
+import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
 import biz.isphere.core.objectsynchronization.TableContentProvider;
 import biz.isphere.core.objectsynchronization.TableFilter;
 import biz.isphere.core.objectsynchronization.TableFilterData;
@@ -74,14 +76,17 @@ import biz.isphere.core.objectsynchronization.TableStatistics;
 import biz.isphere.core.objectsynchronization.jobs.AbstractCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.CompareMembersSharedJobValues;
 import biz.isphere.core.objectsynchronization.jobs.FinishCompareMembersJob;
+import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
 import biz.isphere.core.objectsynchronization.jobs.LoadCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.ResolveGenericCompareElementsJob;
 import biz.isphere.core.objectsynchronization.jobs.StartCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
+import biz.isphere.core.sourcemembercopy.CopyMemberItem;
+import biz.isphere.core.sourcemembercopy.IItemErrorListener;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
-public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
+public abstract class AbstractSynchronizeMembersEditor extends EditorPart implements ISynchronizeMembersPostRun, IItemErrorListener {
 
     public static final String ID = "biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"; //$NON-NLS-1$
 
@@ -97,9 +102,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
     private static final String MEMBER_FILTER_HISTORY_KEY = "memberFilterHistory"; //$NON-NLS-1$
 
-    private SynchronizeMembersEditorInput input;
+    // private SynchronizeMembersEditorInput input;
 
-    private boolean selectionChanged;
     private boolean isLeftObjectValid;
     private boolean isRightObjectValid;
 
@@ -112,7 +116,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
     private Button btnSynchronize;
     private Button btnCancel;
     private Button chkCompareAfterSync;
-    private IProgressMonitor jobToCancel;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -137,18 +140,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
     private Composite headerArea;
     private Composite optionsArea;
 
-    private boolean isComparing;
-    private boolean isSynchronizing;
-
     private StatusLine statusLine;
     private String statusMessage;
     private int numFilteredItems;
 
     private CompareMembersSharedJobValues sharedValues;
 
+    private boolean isComparing;
+    private boolean isSynchronizing;
+    private IProgressMonitor jobToCancel;
+
     public AbstractSynchronizeMembersEditor() {
 
-        selectionChanged = true;
         isLeftObjectValid = false;
         isRightObjectValid = false;
 
@@ -208,10 +211,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
                 }
                 RemoteObject object = performSelectRemoteObject(connectionName, libraryName, objectName);
                 if (object != null) {
-                    selectionChanged = true;
                     isLeftObjectValid = false;
                     getEditorInput().setLeftObject(object);
                     refreshAndCheckObjectNames();
+                } else {
+                    setButtonEnablementAndDisplayCompareStatus();
                 }
             }
 
@@ -257,10 +261,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
                 }
                 RemoteObject sourceFile = performSelectRemoteObject(connectionName, libraryName, fileName);
                 if (sourceFile != null) {
-                    selectionChanged = true;
                     isRightObjectValid = false;
                     getEditorInput().setRightObject(sourceFile);
                     refreshAndCheckObjectNames();
+                } else {
+                    setButtonEnablementAndDisplayCompareStatus();
                 }
             }
 
@@ -549,7 +554,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
         labelProvider = getTableLabelProvider(tableViewer, 7);
         tableViewer.setLabelProvider(labelProvider);
         Menu menuTableViewerContextMenu = new Menu(tableViewer.getTable());
-        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, input.getConfiguration()));
+        menuTableViewerContextMenu.addMenuListener(new TableContextMenu(menuTableViewerContextMenu, getEditorInput().getConfiguration()));
         tableViewer.getTable().setMenu(menuTableViewerContextMenu);
 
         TableAutoSizeControlListener tableAutoSizeAdapter = new TableAutoSizeControlListener(tableViewer.getTable());
@@ -599,7 +604,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
         setInput(input);
         setPartName(input.getName());
         setTitleImage(((SynchronizeMembersEditorInput)input).getTitleImage());
-        this.input = (SynchronizeMembersEditorInput)input;
     }
 
     @Override
@@ -670,8 +674,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
         SynchronizeMembersEditorInput editorInput = getEditorInput();
         if (editorInput != null) {
-            lblLeftObject.setText(input.getLeftObjectName());
-            lblRightObject.setText(input.getRightObjectName());
+            lblLeftObject.setText(getEditorInput().getLeftObjectName());
+            lblRightObject.setText(getEditorInput().getRightObjectName());
         } else {
             lblLeftObject.setText(Messages.EMPTY);
             lblRightObject.setText(Messages.EMPTY);
@@ -731,7 +735,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
     }
 
     private boolean isSynchronizationEnabled() {
-        ISynchronizeMembersEditorConfiguration config = input.getConfiguration();
+        ISynchronizeMembersEditorConfiguration config = getEditorInput().getConfiguration();
         return config.isLeftEditorEnabled() || config.isRightEditorEnabled();
     }
 
@@ -740,8 +744,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
         boolean isCompareEnabled = true;
         boolean isSynchronizeEnabled = true;
 
-        if (input.getLeftObject() != null && !isLeftObjectValid) {
-            String connectionName = input.getLeftObject().getConnectionName();
+        if (getEditorInput().getLeftObject() != null && !isLeftObjectValid) {
+            String connectionName = getEditorInput().getLeftObject().getConnectionName();
             if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
@@ -751,8 +755,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
             }
         }
 
-        if (input.getRightObject() != null && !isRightObjectValid) {
-            String connectionName = input.getRightObject().getConnectionName();
+        if (getEditorInput().getRightObject() != null && !isRightObjectValid) {
+            String connectionName = getEditorInput().getRightObject().getConnectionName();
             if (!ISphereHelper.checkISphereLibrary(getShell(), connectionName)) {
                 isCompareEnabled = false;
                 isSynchronizeEnabled = false;
@@ -762,7 +766,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
             }
         }
 
-        if (input.getLeftObject() == null || input.getRightObject() == null) {
+        if (getEditorInput().getLeftObject() == null || getEditorInput().getRightObject() == null) {
             isCompareEnabled = false;
         }
 
@@ -787,15 +791,20 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
         btnCompare.setEnabled(isCompareEnabled);
 
-        ISynchronizeMembersEditorConfiguration config = input.getConfiguration();
+        ISynchronizeMembersEditorConfiguration config = getEditorInput().getConfiguration();
 
         if (btnSynchronize != null && chkCompareAfterSync != null) {
-            if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
-                btnSynchronize.setEnabled(isSynchronizeEnabled);
-                chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
-            } else {
+            if (isWorking()) {
                 btnSynchronize.setEnabled(false);
                 chkCompareAfterSync.setEnabled(false);
+            } else {
+                if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
+                    btnSynchronize.setEnabled(isSynchronizeEnabled);
+                    chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
+                } else {
+                    btnSynchronize.setEnabled(false);
+                    chkCompareAfterSync.setEnabled(false);
+                }
             }
         }
 
@@ -840,13 +849,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
         if (isWorking()) {
             statusMessage = Messages.Working;
-        } else if (selectionChanged) {
-            if (StringHelper.isNullOrEmpty(lblLeftObject.getText()) || StringHelper.isNullOrEmpty(lblRightObject.getText())) {
-                statusMessage = Messages.Please_select_the_missing_message_file_then_press_Compare_to_start;
-            } else {
-                statusMessage = Messages.Please_press_Compare_to_start;
-            }
-            numFilteredItems = 0;// $NON-NLS-1$
         } else {
             TableStatistics tableStatistics = getTableStatistics();
             statusMessage = tableStatistics.toString();
@@ -950,6 +952,16 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
         final SynchronizeMembersEditorInput editorInput = getEditorInput();
 
+        if (editorInput.getLeftObject() == null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Left source file or library is missing.");
+            return;
+        }
+
+        if (editorInput.getRightObject() == null) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Right source file or library is missing.");
+            return;
+        }
+
         if (editorInput.getLeftObjectName().equals(editorInput.getRightObjectName())) {
             MessageDialog dialog = new MessageDialog(getShell(), Messages.Warning, null, Messages.Warning_Both_sides_show_the_same_source_members,
                 MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
@@ -1024,7 +1036,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
 
                     monitor.done();
 
-                    UIJob job = new UIJob(Messages.EMPTY) {
+                    UIJob uiJob = new UIJob(Messages.EMPTY) {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             if (tableViewer.getTable().isDisposed()) {
@@ -1032,13 +1044,12 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
                             }
                             jobToCancel = null;
                             tableViewer.setInput(getEditorInput());
-                            selectionChanged = false;
                             setIsComparing(false);
                             setButtonEnablementAndDisplayCompareStatus();
                             return Status.OK_STATUS;
                         }
                     };
-                    job.schedule();
+                    uiJob.schedule();
                 }
 
                 return Status.OK_STATUS;
@@ -1088,93 +1099,74 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
     private void performSynchronizeMembers() {
 
         setIsSynchronizing(true);
+        setButtonEnablementAndDisplayCompareStatus();
 
-        try {
+        RemoteObject leftObject = getEditorInput().getLeftObject();
+        RemoteObject rightObject = getEditorInput().getRightObject();
 
-            setButtonEnablementAndDisplayCompareStatus();
+        SynchronizeMembersJob synchronizeMembersJob = new SynchronizeMembersJob(leftObject, rightObject, this);
+        synchronizeMembersJob.setItemErrorListener(this);
+        // TODO: create action control on UI
+        // synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.REPLACE);
 
-            RemoteObject leftSourceFile = getEditorInput().getLeftObject();
-            RemoteObject rightSourceFile = getEditorInput().getRightObject();
-
-            for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
-                MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getElementAt(i);
-
-                getTableStatistics().removeElement(compareItem, filterData);
-                if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.LEFT_MISSING) {
-                    performCopyToLeft(compareItem, leftSourceFile);
-                } else if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.RIGHT_MISSING) {
-                    performCopyToRight(compareItem, rightSourceFile);
-                }
-                getTableStatistics().addElement(compareItem, filterData);
-            }
-
-            if (isSynchronizationEnabled()) {
-                if (chkCompareAfterSync.getSelection()) {
-                    performCompareMembers();
-                }
-            }
-
-        } finally {
-
-            setIsSynchronizing(false);
-            tableViewer.getTable().redraw();
-            setButtonEnablementAndDisplayCompareStatus();
-
+        for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
+            MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getElementAt(i);
+            compareItem.setErrorStatus(null);
+            synchronizeMembersJob.addItem(compareItem, sharedValues.getCompareOptions());
         }
+
+        synchronizeMembersJob.schedule();
     }
 
-    private void performCopyToLeft(MemberCompareItem compareItem, RemoteObject toSourceFile) {
+    public void reportError(CopyMemberItem item, String errorMessage) {
 
-        try {
+        final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
+        compareItem.setErrorStatus(errorMessage);
 
-            // TODO: fix it performCopyToLeft()
-            // String errorMessage =
-            // MessageDescriptionHelper.mergeMessageDescription(getShell(),
-            // compareItem.getRightMessageDescription(),
-            // toSourceFile.getConnectionName(), toSourceFile.getName(),
-            // toSourceFile.getLibrary());
-            // if (errorMessage == null) {
-            // compareItem.setLeftMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toSourceFile.getConnectionName(),
-            // toSourceFile.getName(), toSourceFile.getLibrary(),
-            // compareItem.getMessageId()));
-            // compareItem.clearCompareStatus();
-            // } else {
-            // MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-            // errorMessage);
-            // }
-            //
-            // tableViewer.update(compareItem, null);
-
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-        }
+        UIJob uiJob = new UIJob(Messages.EMPTY) {
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+                // tableViewer.refresh(compareItem, true, true);
+                return Status.OK_STATUS;
+            }
+        };
+        uiJob.schedule();
     }
 
-    private void performCopyToRight(MemberCompareItem compareItem, RemoteObject toSourceFile) {
+    public void returnResult(boolean isError, int countMembersCopied) {
 
-        try {
+        UIJob uiJob = new UIJob(Messages.EMPTY) {
 
-            // TODO: fix it performCopyToRight()
-            // String errorMessage =
-            // MessageDescriptionHelper.mergeMessageDescription(getShell(),
-            // compareItem.getLeftMessageDescription(),
-            // toSourceFile.getConnectionName(), toSourceFile.getName(),
-            // toSourceFile.getLibrary());
-            // if (errorMessage == null) {
-            // compareItem.setRightMessageDescription(MessageDescriptionHelper.retrieveMessageDescription(toSourceFile.getConnectionName(),
-            // toSourceFile.getName(), toSourceFile.getLibrary(),
-            // compareItem.getMessageId()));
-            // compareItem.clearCompareStatus();
-            // } else {
-            // MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-            // errorMessage);
-            // }
-            //
-            // tableViewer.update(compareItem, null);
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
 
-        } catch (Exception e) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, e.getLocalizedMessage());
-        }
+                debug("Compare result:");
+                TableItem[] items = tableViewer.getTable().getItems();
+                for (TableItem tableItem : items) {
+                    MemberCompareItem memberCompareItem = (MemberCompareItem)tableItem.getData();
+                    if (memberCompareItem.isError()) {
+                        debug(memberCompareItem.toString() + ": " + memberCompareItem.getErrorMessage());
+                    }
+                }
+
+                if (tableViewer.getTable().isDisposed()) {
+                    return Status.OK_STATUS;
+                }
+
+                jobToCancel = null;
+                setIsSynchronizing(false);
+                setButtonEnablementAndDisplayCompareStatus();
+
+                if (isSynchronizationEnabled()) {
+                    if (chkCompareAfterSync.getSelection()) {
+                        performCompareMembers();
+                    }
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        uiJob.schedule();
+
     }
 
     protected void performOpenCompareMembersDialog(MemberCompareItem compareItem) {
@@ -1214,6 +1206,93 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
             ISpherePlugin.logError("*** Clould not open source member compare editor ***", e); //$NON-NLS-1$
         }
     }
+
+    // private boolean isValidating() {
+    //
+    // if (copyMemberValidator != null && copyMemberValidator.isActive()) {
+    // return true;
+    // }
+    //
+    // return false;
+    // }
+
+    // private boolean isCopying() {
+    //
+    // if (copyMemberService != null && copyMemberService.isActive()) {
+    // return true;
+    // }
+    //
+    // return false;
+    // }
+
+    // private void setControlEnablement() {
+    //
+    // if (copyMemberService == null) {
+    // setButtonEnablement(btnCompare, true);
+    // setButtonEnablement(btnSynchronize, true);
+    // setButtonEnablement(btnCancel, false);
+    // setControlsEnables(true);
+    // } else {
+    //
+    // if (isValidating()) {
+    // setButtonEnablement(btnCompare, false);
+    // setButtonEnablement(btnSynchronize, false);
+    // setButtonEnablement(btnCancel, true);
+    // setControlsEnables(false);
+    // // setStatusMessage(Messages.Validating_dots);
+    // } else if (isCopying()) {
+    // setButtonEnablement(btnCompare, false);
+    // setButtonEnablement(btnSynchronize, false);
+    // setButtonEnablement(btnCancel, true);
+    // setControlsEnables(false);
+    // // setStatusMessage(Messages.Copying_dots);
+    // } else {
+    //
+    // if (copyMemberService.hasItemsToCopy()) {
+    // setButtonEnablement(btnSynchronize, true);
+    // } else {
+    // setButtonEnablement(btnSynchronize, false);
+    // }
+    //
+    // setButtonEnablement(btnCompare, true);
+    // setButtonEnablement(btnCancel, true);
+    //
+    // setControlsEnables(true);
+    //
+    // if (copyMemberService.isCanceled()) {
+    // MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+    // Messages.Operation_has_been_canceled_by_the_user);
+    // }
+    // }
+    // }
+    // }
+
+    // private void setControlsEnables(boolean enabled) {
+    //
+    // if (optionsArea == null) {
+    // // not yet created
+    // return;
+    // }
+    //
+    // chkIgnoreDate.setEnabled(enabled);
+    // chkRtnChgOnly.setEnabled(enabled);
+    //
+    // btnCopyRight.setEnabled(enabled);
+    // btnEqual.setEnabled(enabled);
+    // btnNoCopy.setEnabled(enabled);
+    // btnCopyLeft.setEnabled(enabled);
+    //
+    // btnDuplicates.setEnabled(enabled);
+    // btnSingles.setEnabled(enabled);
+    // }
+
+    // private void setButtonEnablement(Button button, boolean enabled) {
+    // if (button == null) {
+    // return;
+    // }
+    //
+    // button.setEnabled(enabled);
+    // }
 
     private String createLabel(Member member) {
 
@@ -1518,12 +1597,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
     }
 
     public void updateActionsStatusAndStatusLine() {
-        updateActionsStatus();
         updateStatusLine();
-    }
-
-    private void updateActionsStatus() {
-
     }
 
     private void updateStatusLine() {
@@ -1539,6 +1613,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart {
             statusLine.setMessage(statusMessage);
             statusLine.setNumItems(numFilteredItems);
         }
+    }
 
+    private void debug(String message) {
+        System.out.println(message);
     }
 }

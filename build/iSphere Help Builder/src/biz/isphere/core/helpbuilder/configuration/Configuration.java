@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public final class Configuration {
 
     private static final String MAIN_CONFIG_FILE = "build.properties";
     private static final String PROJECT_CONFIG_FILE = "helpbuilder.properties";
-    private static final String BUILD_PROJECT_NAME = "build.project.name";
+    private static final String BUILD_PROJECT_PATH = "build.project.path";
     private static final String OUTPUT_FILE = "build.output.file";
     private static final String BUILD_OUTPUT_DIRECTORY = "build.output.dir";
     private static final String PROJECTS = "build.help.projects";
@@ -80,6 +80,7 @@ public final class Configuration {
             projects = new Project[configString.length];
             for (int i = 0; i < projects.length; i++) {
                 projects[i] = new Project(configString[i]);
+                LogUtil.debug("Added project: " + configString[i]);
             }
         }
 
@@ -88,17 +89,50 @@ public final class Configuration {
 
     public File getWorkspace() throws JobCanceledException {
         if (workspace == null) {
-            workspace = new File(new File(getResourcePath(mainConfigResource)).getParentFile().getParentFile().getParent());
+            File mainConfigResourceFile = new File(getResourcePath(mainConfigResource));
+            File directory = mainConfigResourceFile.getParentFile();
+            while (directory != null && !isWorkspace(directory)) {
+                directory = directory.getParentFile();
+            }
+            if (directory != null) {
+                workspace = directory;
+            } else {
+                throw new JobCanceledException("Help Builder Error: Could not find workspace directory.");
+            }
         }
+        LogUtil.debug("Using workspace: " + workspace);
         return workspace;
+    }
+
+    private boolean isWorkspace(File directory) {
+        File metadataDirectory = new File(directory, ".metadata");
+        if (metadataDirectory.exists() && metadataDirectory.isDirectory()) {
+            return true;
+        }
+        return false;
+    }
+
+    public String getHelpBuilderDirectory() throws JobCanceledException {
+
+        String fileName = getWorkspace() + File.separator + getString(BUILD_PROJECT_PATH);
+
+        try {
+            String path = FileUtil.resolvePath(fileName);
+            LogUtil.debug("Running from directory: " + path);
+            return path;
+        } catch (IOException e) {
+            throw new JobCanceledException(e.getLocalizedMessage(), e);
+        }
     }
 
     public String getOutputDirectory() throws JobCanceledException {
 
-        String fileName = getWorkspace() + File.separator + getString(BUILD_PROJECT_NAME) + File.separator + getString(BUILD_OUTPUT_DIRECTORY);
+        String fileName = getHelpBuilderDirectory() + File.separator + getString(BUILD_OUTPUT_DIRECTORY);
 
         try {
-            return FileUtil.resolvePath(fileName);
+            String path = FileUtil.resolvePath(fileName);
+            LogUtil.debug("Using output directory: " + path);
+            return path;
         } catch (IOException e) {
             throw new JobCanceledException(e.getLocalizedMessage(), e);
         }
@@ -106,20 +140,22 @@ public final class Configuration {
 
     public String getOutputFile() throws JobCanceledException {
 
-        String fileName = getWorkspace() + File.separator + getString(BUILD_PROJECT_NAME) + File.separator + getString(OUTPUT_FILE);
+        String fileName = getHelpBuilderDirectory() + File.separator + getString(OUTPUT_FILE);
 
         try {
-            return FileUtil.resolvePath(fileName);
+            String path = FileUtil.resolvePath(fileName);
+            LogUtil.debug("Using output file: " + path);
+            return path;
         } catch (IOException e) {
             throw new JobCanceledException(e.getLocalizedMessage(), e);
         }
     }
 
     private String getResourcePath(String configResource) throws JobCanceledException {
-        
+
         File file = new File(configResource);
         URI configurationURI = null;
-        
+
         if (file.exists()) {
             configurationURI = file.toURI();
         } else {
@@ -130,16 +166,16 @@ public final class Configuration {
                     // ignore exception
                 }
             } else {
-                throw new JobCanceledException("Configuration file not found: " + configResource);
+                throw new JobCanceledException("Help Builder: Configuration file not found: " + configResource);
             }
         }
-        
+
         if (configurationURI == null) {
             String message = "Configuration file not found: " + configResource;
             LogUtil.error(message);
             throw new JobCanceledException(message);
         }
-        
+
         return configurationURI.getPath();
     }
 
@@ -148,58 +184,58 @@ public final class Configuration {
     }
 
     private String[] getStringArray(String key) throws JobCanceledException {
-        
+
         String value = getProperties().getProperty(key);
         if (value.trim().length() == 0) {
             return new String[] {};
         }
-        
+
         return value.split("\\s*,\\s*");
     }
 
     private Properties getProperties() throws JobCanceledException {
-        
+
         if (properties == null) {
             properties = loadProperties(getResourcePath(mainConfigResource), getResourcePath(projectConfigResource));
         }
-        
+
         return properties;
     }
 
     private Properties loadProperties(String mainPath, String projectConfigPath) throws JobCanceledException {
-        
+
         Properties nlsProps = new Properties();
         InputStream in = null;
-        
+
         try {
-            
+
             in = new FileInputStream(mainPath);
             nlsProps.load(in);
             in.close();
-            
+
         } catch (Exception e) {
             LogUtil.error("Failed to load properties from file: " + getResourcePath(mainConfigResource));
             throw new JobCanceledException(e.getLocalizedMessage());
         }
-        
+
         try {
-        
+
             Properties tmpNlsProps = new Properties();
-            
+
             in = new FileInputStream(projectConfigPath);
             tmpNlsProps.load(in);
             in.close();
-            
+
             Set<Map.Entry<Object, Object>> properties = tmpNlsProps.entrySet();
             for (Map.Entry<Object, Object> entry : properties) {
                 nlsProps.put(entry.getKey(), entry.getValue());
             }
-            
+
         } catch (Exception e) {
             LogUtil.error("Failed to load properties from file: " + getResourcePath(projectConfigPath));
             throw new JobCanceledException(e.getLocalizedMessage());
         }
-        
+
         return nlsProps;
     }
 

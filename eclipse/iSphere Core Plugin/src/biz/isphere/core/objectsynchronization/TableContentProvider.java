@@ -24,13 +24,13 @@ public class TableContentProvider implements IStructuredContentProvider {
 
     private TableStatistics tableStatistics;
     private SynchronizeMembersEditorInput editorInput;
-    private Map<String, MemberCompareItem> compareItems;
+    private MemberCompareItem[] compareItemsArray;
 
     public TableContentProvider(TableStatistics tableStatistics) {
 
         this.tableStatistics = tableStatistics;
         this.editorInput = null;
-        this.compareItems = null;
+        this.compareItemsArray = null;
     }
 
     public TableStatistics getTableStatistics() {
@@ -39,40 +39,39 @@ public class TableContentProvider implements IStructuredContentProvider {
 
     public Object[] getElements(Object inputElement) {
 
-        if (compareItems == null) {
+        if (compareItemsArray != null) {
+            return compareItemsArray;
+        }
 
-            tableStatistics.clearStatistics();
-            compareItems = new LinkedHashMap<String, MemberCompareItem>();
+        tableStatistics.clearStatistics();
 
-            if (editorInput != null) {
+        Map<String, MemberCompareItem> compareItems = new LinkedHashMap<String, MemberCompareItem>();
 
-                for (MemberDescription leftMemberDescription : editorInput.getLeftMemberDescriptions()) {
-                    compareItems.put(leftMemberDescription.getMemberName(), new MemberCompareItem(leftMemberDescription, null));
-                }
+        if (editorInput != null) {
 
-                for (MemberDescription rightMemberDescription : editorInput.getRightMemberDescriptions()) {
-                    MemberCompareItem item = compareItems.get(rightMemberDescription.getMemberName());
-                    if (item == null) {
-                        compareItems.put(rightMemberDescription.getMemberName(), new MemberCompareItem(null, rightMemberDescription));
-                    } else {
-                        item.setRightMemberDescription(rightMemberDescription);
-                    }
+            for (MemberDescription leftMemberDescription : editorInput.getLeftMemberDescriptions()) {
+                compareItems.put(leftMemberDescription.getMemberName(), new MemberCompareItem(leftMemberDescription, null));
+            }
+
+            for (MemberDescription rightMemberDescription : editorInput.getRightMemberDescriptions()) {
+                MemberCompareItem item = compareItems.get(rightMemberDescription.getMemberName());
+                if (item == null) {
+                    compareItems.put(rightMemberDescription.getMemberName(), new MemberCompareItem(null, rightMemberDescription));
+                } else {
+                    item.setRightMemberDescription(rightMemberDescription);
                 }
             }
         }
 
-        MemberCompareItem[] compareItemsArray = compareItems.values().toArray(new MemberCompareItem[compareItems.size()]);
+        compareItemsArray = compareItems.values().toArray(new MemberCompareItem[compareItems.size()]);
         Arrays.sort(compareItemsArray);
 
         return compareItemsArray;
     }
 
-    public void dispose() {
-    }
-
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         editorInput = (SynchronizeMembersEditorInput)newInput;
-        compareItems = null;
+        compareItemsArray = null;
     }
 }

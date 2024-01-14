@@ -33,6 +33,9 @@ public class MemberDescription implements Serializable, Comparable<MemberDescrip
     private Timestamp lastChangedDate;
     private Long checksum;
 
+    public MemberDescription() {
+    }
+
     /**
      * Textual description of the member. This attribute is not used when
      * comparing two member descriptions. Hence it is not honored in

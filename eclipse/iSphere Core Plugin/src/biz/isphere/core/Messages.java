@@ -1818,6 +1818,8 @@ public class Messages extends NLS {
 
     public static String Tooltip_Member_name_and_source_type_filter;
 
+    public static String Copying_source_members;
+
     /*
      * Warning messages
      */

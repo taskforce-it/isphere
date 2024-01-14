@@ -45,6 +45,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
     protected Image copyToRight;
     protected Image copyNotEqual;
     protected Image copyEqual;
+    protected Image error;
 
     private CompareOptions compareOptions;
 
@@ -55,7 +56,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
         this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
         this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
-        this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
+        this.error = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_ERROR).createImage();
 
         if (useCompareStatusImagePainter()) {
             tableViewer.getTable().addListener(SWT.PaintItem, new CompareStatusImagePainter(columnIndex));
@@ -94,6 +95,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             return copyEqual;
         } else if (compareStatus == MemberCompareItem.NOT_EQUAL) {
             return copyNotEqual;
+        } else if (compareStatus == MemberCompareItem.ERROR) {
+            return error;
         }
 
         return null;
@@ -207,12 +210,19 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
     @Override
     public void dispose() {
 
-        copyToLeft.dispose();
-        copyToRight.dispose();
-        copyNotEqual.dispose();
-        copyEqual.dispose();
+        dispose(copyToLeft);
+        dispose(copyToRight);
+        dispose(copyNotEqual);
+        dispose(copyEqual);
+        dispose(error);
 
         super.dispose();
+    }
+
+    private void dispose(Image image) {
+        if (!image.isDisposed()) {
+            image.dispose();
+        }
     }
 
     protected class CompareStatusImagePainter implements Listener {
@@ -264,6 +274,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
                 return copyEqual;
             } else if (compareStatus == MemberCompareItem.NOT_EQUAL) {
                 return copyNotEqual;
+            } else if (compareStatus == MemberCompareItem.ERROR) {
+                return error;
             }
             return null;
         }

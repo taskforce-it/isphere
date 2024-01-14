@@ -8,6 +8,7 @@
 
 package biz.isphere.core.objectsynchronization.rse;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.objectsynchronization.CompareOptions;
 import biz.isphere.core.objectsynchronization.MemberDescription;
 import biz.isphere.core.objectsynchronization.TableFilterData;
@@ -20,12 +21,15 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
     public static final int RIGHT_MISSING = 3;
     public static final int LEFT_EQUALS_RIGHT = 4;
     public static final int NOT_EQUAL = 5;
+    public static final int ERROR = 6;
 
     private MemberDescription leftMemberDescription;
     private MemberDescription rightMemberDescription;
 
     private int overridenCompareStatus;
+    private int oldOverridenCompareStatus;
     private String memberName;
+    private String errorMessage;
 
     public MemberCompareItem(MemberDescription leftMemberDescription, MemberDescription rightMemberDescription) {
 
@@ -54,6 +58,10 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     public void setLeftMemberDescription(MemberDescription memberDescription) {
 
+        if (memberDescription == null) {
+            return;
+        }
+
         if (memberName != null && memberDescription != null && !memberName.equals(memberDescription.getMemberName())) {
             throw new IllegalArgumentException("Illegal message ID: " + memberDescription.getMemberName()); //$NON-NLS-1$
         }
@@ -66,6 +74,10 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
     }
 
     public void setRightMemberDescription(MemberDescription memberDescription) {
+
+        if (memberDescription == null) {
+            return;
+        }
 
         if (memberName != null && memberDescription != null && !memberName.equals(memberDescription.getMemberName())) {
             throw new IllegalArgumentException("Illegal message ID: " + memberDescription.getMemberName()); //$NON-NLS-1$
@@ -96,6 +108,39 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         } else {
             return NOT_EQUAL;
         }
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorStatus(String errorMessage) {
+        if (StringHelper.isNullOrEmpty(errorMessage)) {
+            clearErrorStatus();
+        } else {
+            this.oldOverridenCompareStatus = overridenCompareStatus;
+            this.overridenCompareStatus = ERROR;
+            this.errorMessage = errorMessage;
+        }
+    }
+
+    public boolean isError() {
+
+        if (overridenCompareStatus == ERROR) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private void clearErrorStatus() {
+
+        if (errorMessage == null) {
+            return; // there is no error
+        }
+
+        this.errorMessage = null;
+        this.overridenCompareStatus = oldOverridenCompareStatus;
     }
 
     public void setCompareStatus(int status, CompareOptions compareOptions) {
@@ -178,8 +223,6 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         if (compareOptions == null) {
             throw new IllegalArgumentException("Parameter 'compareOptions' is [null]."); //$NON-NLS-1$
         }
-
-        // System.out.println("isIgnoreDate: " + compareOptions.isIgnoreDate());
 
         int rc = left.getMemberName().compareTo(right.getMemberName());
         if (rc == 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ public class Toc {
 
     @XStreamOmitField
     private String pluginTocPath;
+
+    @XStreamOmitField
+    private Project project;
 
     public Toc(String label) {
         this.label = label;
@@ -96,6 +99,14 @@ public class Toc {
         this.pluginTocPath = pluginTocPath;
     }
 
+    public Project getParent() {
+        return project;
+    }
+
+    public void setParent(Project project) {
+        this.project = project;
+    }
+
     private List<Topic> getOrCreateTopics() {
         if (topic == null) {
             topic = new ArrayList<Topic>();
@@ -105,7 +116,7 @@ public class Toc {
 
     @Override
     public String toString() {
-        return getLabel() + " -> "+ getLinkToFile();
+        return getLabel() + " -> " + getLinkToFile();
     }
-    
+
 }

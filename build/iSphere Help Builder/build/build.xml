@@ -41,6 +41,8 @@
 		
 		<echo>Cleaning help builder upload directory ...</echo>
 
+		<mkdir dir="${build.upload.dir}" />
+
 		<delete includeEmptyDirs="true">
 			<fileset dir="${build.upload.dir}" includes="**/*" />
 		</delete>
@@ -79,6 +81,8 @@
 				<pathelement location="${build.lib.dir}/xstream-1.4.7.jar"/>
 			</classpath>
 		</java>
+		
+		<echo>... finished help builder</echo>
 		
 		<eclipse.refreshLocal resource="${build.project.name}" depth="infinite" />
 		

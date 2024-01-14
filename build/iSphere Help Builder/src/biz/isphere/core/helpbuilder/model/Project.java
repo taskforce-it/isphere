@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2015 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,10 +15,11 @@ import java.io.IOException;
 import biz.isphere.core.helpbuilder.configuration.Configuration;
 import biz.isphere.core.helpbuilder.exception.JobCanceledException;
 import biz.isphere.core.helpbuilder.utils.FileUtil;
+import biz.isphere.core.helpbuilder.utils.LogUtil;
 
 public class Project {
 
-    private String name;
+    private String pluginPath;
     private String id;
     private String[] tocs;
     private Bundle bundle;
@@ -26,16 +27,20 @@ public class Project {
 
     public Project(String configString) throws JobCanceledException {
 
-        name = configString;
+        if ("\\".equals(File.separator)) {
+            pluginPath = configString.replaceAll("/", "\\\\");
+        } else {
+            pluginPath = configString.replaceAll("/", File.separator);
+        }
 
-        String projectPath = Configuration.getInstance().getWorkspace().getPath() + File.separator + name;
+        String projectPath = Configuration.getInstance().getWorkspace().getPath() + File.separator + pluginPath;
         tocs = findTocs(projectPath);
         id = getProjectId(projectPath);
         helpDirectory = findHelpDirectory(projectPath);
     }
 
-    public String getName() {
-        return name;
+    public String getPluginPath() {
+        return pluginPath;
     }
 
     public String getId() {
@@ -55,7 +60,6 @@ public class Project {
     }
 
     private String[] findTocs(String path) throws JobCanceledException {
-
         File tocDir = new File(path, "toc");
         String[] tocFiles = tocDir.list(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -66,18 +70,19 @@ public class Project {
             }
         });
 
-        if (tocFiles.length == 0) {
+        if (tocFiles == null || tocFiles.length == 0) {
             throw new JobCanceledException("Table of content file not found.");
         }
 
         try {
-            
+
             for (int i = 0; i < tocFiles.length; i++) {
                 tocFiles[i] = FileUtil.resolvePath(tocDir.getPath(), tocFiles[i]);
+                LogUtil.debug("Added table of content file: " + tocFiles[i]);
             }
-            
+
             return tocFiles;
-            
+
         } catch (IOException e) {
             throw new JobCanceledException("Table of content file not found.", e);
         }
@@ -105,7 +110,10 @@ public class Project {
     private String findHelpDirectory(String path) throws JobCanceledException {
 
         try {
-            return FileUtil.resolvePath(path, "html");
+            LogUtil.debug("Resolving path of help directory: " + path + "...");
+            String resolvedPath = FileUtil.resolvePath(path, "html");
+            LogUtil.debug("... using help files stored in: " + resolvedPath);
+            return resolvedPath;
         } catch (IOException e) {
             throw new JobCanceledException("Table of content file not found.", e);
         }
@@ -124,9 +132,9 @@ public class Project {
 
         return bundle;
     }
-    
+
     @Override
     public String toString() {
-        return getName() + " (" + getId() + ")";
+        return getPluginPath() + " (" + getId() + ")";
     }
 }
