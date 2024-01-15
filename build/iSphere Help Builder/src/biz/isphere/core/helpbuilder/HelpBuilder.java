@@ -211,10 +211,19 @@ public class HelpBuilder {
 
         File tBaseDir;
         if (linkToFile.startsWith(".")) {
+            // e.g.: ./toc/toc.xml#integration
             linkToFile = linkToFile.substring(1);
             tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
+        } else if (linkToFile.startsWith("..")) {
+            // should never happen
+            throw new IllegalArgumentException("Unexpected argument 'linkToFile' value: " + linkToFile);
+        } else if (linkToFile.startsWith("/")) {
+            // e.g.: /toc/toc.xml#integration
+            tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
         } else {
-            tBaseDir = baseDir;
+            // e.g.: toc/toc.xml#integration
+            linkToFile = "/" + linkToFile;
+            tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
         }
 
         String linkToTocPath = FileUtil.resolvePath(tBaseDir, linkToFile);
