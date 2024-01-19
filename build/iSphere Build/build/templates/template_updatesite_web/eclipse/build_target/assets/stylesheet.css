@@ -41,20 +41,12 @@ h3 {
     color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
 }
 
-/*
- *  Table header.
- */
-
-th {
-    color: #000000; line-height: 1.6em; font-weight: bold; font-style: italic;
+li {
+	list-style-type: circle; margin-left: -25;
 }
 
-/*
- *  Table as grid.
- */
-
-.grid {
-    border-collapse: collapse; border: 1px solid lightgrey; padding: 4px;
+.section {
+	margin-left: 26; margin-top: 20px; margin-bottom: 30px;
 }
 
 /*
@@ -95,12 +87,18 @@ img {
     margin-bottom: 5px;
 }
 
+img.noborder {
+    margin-left: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 /*
  *  Indention of tables that appear between paragraphs.
  */
 
 table {
-    margin-left: 10px;
+    margin-left: -10px;
     border-spacing: 15px 5px;
 }
 

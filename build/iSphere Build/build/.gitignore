@@ -1,1 +1,4 @@
-/ftp.properties
+/ftp-credentials.properties
+/temp/
+/temp-downloads/
+/localUpdateSite.properties
