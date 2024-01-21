@@ -1,0 +1,162 @@
+<html>
+    <head>
+        <meta http-equiv="cache-control" content="no-cache">
+        <meta name="description" content="iSphere Plug-in Homepage">
+        <meta name="author" content="iSphere Project Team">
+        <meta name="keywords" content="iSphere, Plugin, RDP, RDI, Eclipse, AS400">
+        <link href="assets/stylesheet.css" rel="stylesheet" type="text/css" />
+        <title>iSphere Plug-in</title>
+    </head>
+    <body>
+        <table width="100%" border="0">
+        <tr><td align="left" >
+        <a href="https://taskforce-it.github.io/isphere"><img src="assets/iSphere.gif" alt="iSphere - Extensions for IBM's Rational Developer for i" width="122" height="79" border="0" style="padding-right: 10px;"/></a>
+        </td>
+        <td align="left" width="100%" >
+        <h1>iSphere Plug-in</h1>
+        <p>Hi, this is the home of the iSphere plug-in for IBM Rational Developer for i.</p>
+        </td>
+        <td valign="bottom" align="right" nowrap>
+        <b>Version: 5.2.10.b002</b>
+        </td>
+        </tr>
+        </table>
+
+        <h2 class="release">Introduction</h2>
+        <div class="section">
+        iSphere is an open source plug-in for RDi 9.5.1.3+. It delivers high quality extensions 
+        for WDSC, RDP and RDi to further improve developer productivity. The current version is <?php echo $current_version; ?>.
+        <p/>
+        IBM's current Eclipse based Integrated Development Environment (IDE) is a huge step beyond SEU, but 
+        it still lacks features available only on the green screen. That is where the iSphere Project comes 
+        into play, filling in those gaps.
+        <p/>
+        iSphere features are driven from our ideas and needs, but everybody is encouraged to contribute 
+        suggestions and manpower to improve the power of iSphere.
+        <p/>
+        <table  border="0">
+        <tr><td valign="top">
+            <table border="0" style="border-spacing: 0px 0px; ">
+            <tr><td valign="top"><h2>The iSphere Project Owners</h2></td></tr>
+            <tr><td nowrap><a target="_owner" href="http://www.taskforce-it.de/"><img class="noborder" src="./assets/task-force.jpg" ></a><br>Task Force IT-Consulting GmbH, Frank Hildebrandt</td>
+                <td width="60px"></td>
+                <td nowrap><a target="_owner" href="http://www.tools400.de/"><img class="noborder" src="./assets/tools400.png" ></a><br>Tools/400, Thomas Raddatz</td></tr>
+            </table>
+        </td>
+        <td width="60px"></td>
+        <td valign="top">
+            <table border="0" style="border-spacing: 0px 0px; ">
+            <tr><td valign="top"><h2>Contributors</h2></td></tr>
+            <tr><td height="15px"></td></tr>
+            <tr><td nowrap>Peter Colpaert</td><td>-</td><td nowrap>Dutch Translation</td></tr>
+            <tr><td height="20px"></td></tr>
+            <tr><td nowrap>Wim Jongman</td><td>-</td><td nowrap>Dutch Translation</td></tr>
+            <tr><td height="20px"></td></tr>
+            <tr><td nowrap>Nicola Brion</td><td>-</td><td nowrap>Italian Translation</td></tr>
+            <tr><td height="20px"></td></tr>
+            <tr><td nowrap>Marco Riva</td><td>-</td><td nowrap>Italian Translation</td></tr>
+            <tr><td height="20px"></td></tr>
+            <tr><td nowrap>Sam Lennon</td><td>-</td><td nowrap>Documentation</td></tr>
+            <tr><td height="20px"></td></tr>
+            <tr><td nowrap>Buck Calabro</td><td>-</td><td nowrap>Documentation</td></tr>
+            </table>
+        </td></tr>
+        </table>
+        </div>
+        <p/>
+        <div class="section">
+        <table width="100%">
+        <tr><td class="notice" ><b>Notice</b>: iSphere v3.8.x is the last version that is compatible with RDP 8.0 and WDSCi 7.0. The next iSphere version will require at least RDi 9.5.1.3.</td></tr> 
+        </table>
+        </div>
+        <p/>
+
+        <h2 class="release">Features</h2>
+        <div class="section">
+        Click to enlarge:
+        <table class="nomargin">
+        <tr>
+            <td><a href="./assets/isphere_screenshot_1.png"><img class="noborder" src="./assets/isphere_screenshot_1_preview.png"></a><br>Objects, spooled files, TODOs</td>
+            <td><a href="./assets/isphere_screenshot_2.png"><img class="noborder" src="./assets/isphere_screenshot_2_preview.png"></a><br>Extended search</td>
+            <td><a href="./assets/isphere_screenshot_3.png"><img class="noborder" src="./assets/isphere_screenshot_3_preview.png"></a><br>Message file editor</td>
+            <td><a href="./assets/isphere_screenshot_4.png"><img class="noborder" src="./assets/isphere_screenshot_4_preview.png"></a><br>Message file compare</td>
+            <td><a href="./assets/isphere_screenshot_5.png"><img class="noborder" src="./assets/isphere_screenshot_5_preview.png"></a><br>Data area editor/monitor</td>
+            <td><a href="./assets/isphere_screenshot_6.png"><img class="noborder" src="./assets/isphere_screenshot_6_preview.png"></a><br>Job log explorer</td>
+        </tr>
+        <tr>
+            <td>Run a unit test suite from the <i>Remote Systems</i> view.</td><td>&nbsp;</td>
+            <td>Display the result spooled file of a unit test with a mouse click.</td><td>&nbsp;</td>
+            <td>Open a failed test statement with a mouse click.</td><td>&nbsp;</td>
+            <td>Command log of a unit test with errors.</td>
+        </tr>
+        </table>
+        <ul>
+            <li>Groups test cases in a test suite.</li>
+            <li>Executes a test suite or one or more selected test cases.</li>
+            <li>Optionally create a test report.</li>
+            <li>Open the test report with a mouse click on test suite.</li>
+            <li>Open the source member with a mouse click on the failed assertion.</li>
+        </ul>
+        </div>
+        <p/>
+
+        <h2 class="release">Installation</h2>
+        <div class="section">
+        The easiest way to install the iSphere plug-in is using Eclipse Marketplace. Search for <a href="https://marketplace.eclipse.org/content/isphere-rdi-9513"><i>iSphere</i></a>:
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/eclipse_marketplace.png"></td><td><a href="https://marketplace.eclipse.org/content/isphere-rdi-9513">Eclipse Marketplace</a></td></tr>
+        </table>
+        <p/>
+	        But you can also use the official update site at GitHub:
+	        <p/>
+	        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/updatesite.png"></td><td><a href="https://taskforce-it.github.io/isphere/update-site/eclipse/rdi8.0">IBM Rational Developer for i - RDi 9.5.1.3+</a></td></tr>
+        </table>
+        Last but not least you can download the local update site as a zip file and install iSphere from there:
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/zip_file.png"></td><td><a href="https://taskforce-it.github.io/isphere/files">GitHub Files</a></td></tr>
+        </table>
+        Refer to the iSphere <a target="_help" href="https://taskforce-it.github.io/isphere/help/">help</a> page for detailed installation instructions.
+        <p/>
+        The iSphere beta version is available here: 
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/updatesite_beta.png"></td><td><a href="https://taskforce-it.github.io/isphere/beta-version/update-site/eclipse/rdi8.0">IBM Rational Developer for i - RDi 9.5.1.3+</a></td></tr>
+        </table>
+        <p/>
+        <table class="nomargin">
+        <tr><td><img class="noborder" src="./assets/zip_file.png"></td><td><a href="https://taskforce-it.github.io/isphere/files">GitHub Files</a></td></tr>
+        </table>
+        <p/>
+        Refer to the iSphere <a target="_help" href="https://taskforce-it.github.io/isphere/beta-version/help/">help (beta version)</a> page for detailed installation instructions.
+        </div>
+
+        <h2 class="release">Help</h2>
+        <div class="section">
+        <table>
+        <tr><td>Visit the iSphere <a target="_help" href="https://taskforce-it.github.io/isphere/help/">help</a> page.</td></tr>
+        <tr><td>Ask your questions at the <a target="_wdsci-l" href="http://lists.midrange.com/mailman/listinfo/wdsci-l">WDSCI-L</a> mailing list at <a target="_wdsci-l" href="http://www.midrange.com">midrange.com</a>.</td></tr>
+        <tr><td>For bug reports open a ticket at the <a href="https://sourceforge.net/p/isphere/tickets/">iSphere bug tracker.</a></td></tr>
+        </table>
+        </div>
+        <p/>
+
+        <h2 class="release">Trademarks</h2>
+        <div class="section">
+        The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
+        <ul>
+        <li>IBM Rational Developer for i 9.5.1.3+</li>
+        </ul>
+        </div>
+        <p/>
+
+        <br>
+        <hr>
+        <table border="0" class="copyright">
+        <tr><td class="copyright" align="left" width="50%">Version: 5.2.10.b002 - Copyright: 2024, iSphere project team</td><td class="copyright" align="right" width="50%">Updated: 19.01.2024 - 21:01:36</td></tr>
+        </table>
+        <br>
+    </body>
+</html>
