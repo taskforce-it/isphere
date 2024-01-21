@@ -1,14 +1,14 @@
 @echo off
 rem **************************************************************
 rem *  This is an MS-DOS BATCH file for uploading the
-rem *  RPGUNIT save file to a System i server.
+rem *  ISPHERE save file to a System i server.
 rem **************************************************************
-set TEMPFILE=rpgunit.ftpcmds
+set TEMPFILE=ftp_upload.ftpcmds
 set HOST=%1
 set USER=%2
 set PASSWORD=%3
 set LIB=QGPL
-set RMT_FILE=RPGUNIT
+set RMT_FILE=ISPHERE
 set LCL_FILE=
 
 if "%HOST%"=="" goto help
@@ -58,12 +58,8 @@ echo   Successfully uploaded %LCL_FILE% to library %LIB% on
 echo   host %HOST%.
 echo   Now log on to host %HOST% and execute the
 echo   following commands:
-echo      1. RSTLIB SAVLIB(RPGUNIT) DEV(*SAVF)
+echo      1. RSTLIB SAVLIB(ISPHERE) DEV(*SAVF)
 echo            SAVF(%LIB%/%RMT_FILE%)
-echo      2. ADDLIBLE RPGUNIT
-echo      3. CRTBNDCL PGM(RPGUNIT/A_INSTALL)
-echo            SRCFILE(RPGUNIT/RPGUNIT1) SRCMBR(*PGM)
-echo      4. CALL PGM(RPGUNIT/A_INSTALL) PARM('RPGUNIT')
 echo *************************************************************
 goto end
 
@@ -74,13 +70,13 @@ for %%f in (*.SAVF) do (
    echo.        %%f
 )
 echo.
-echo. Stopped uploading RPGUNIT to host: %HOST%.
+echo. Stopped uploading ISPHERE to host: %HOST%.
 echo.
 goto end
 
 :help
 echo.
-echo Uploads the RPGUNIT save file to your iSeries.
+echo Uploads the ISPHERE save file to your iSeries.
 echo.
 echo. upload_savf.cmd HOST USER PASSWORD
 echo.
