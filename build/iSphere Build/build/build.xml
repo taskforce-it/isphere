@@ -214,20 +214,20 @@
 		<equals arg1="${build.target}" arg2="RDi" />
 		<then>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.rdi}" />
-			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
+			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.rdi}" />
 			<property name="target.ide.exclude.web.files" value="**/wdsci*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*wdsci*" />
 		</then>
 		<else>
 			<property name="target.ide.ide.product.name.long" value="${target.ide.product.name.long.wdsci}" />
-			<property name="target.ide.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
+			<property name="target.ide.product.name.short" value="${target.ide.product.name.short.wdsci}" />
 			<property name="target.ide.exclude.web.files" value="**/rdi*.*,**/*.snippet" />
 			<property name="target.ide.exclude.download.files" value="*rdi*"/>
 		</else>
 	</if>
 
-	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.ide.product.name.short}" />
-	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.ide.product.name.short} (v${build.version} Update Site).zip" />
+	<property name="target.ide.ide.product.full.name" value="${target.ide.product.name.long.rdi} - ${target.ide.product.name.short}" />
+	<property name="target.ide.zip.file.name" value="${build.public.project.name} for ${target.ide.product.name.short} (v${build.version} Update Site).zip" />
 	<property name="target.ide.uload.dir" value="${build.ftp.project}/${build.pages.root}" />
 
     <!-- Set regular expressions and replacement values that use property "beta.dir" and "target.ide.zip.file.name" -->
@@ -322,7 +322,7 @@
 	      Erstellt eine neue Update-Site.
 	      Alle alten Dateien werden überschrieben, bzw. gelöscht.
 	     ============================================================= -->
-	<target name="build" depends="checkBuildTarget, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2">
+	<target name="build" depends="checkBuildTarget, checkProjectPaths, clean, updateVersionNumber, updateHelpProject, createTagFile, refreshProjects" description="Step 2">
 
 		<echo>+------------------------------------------------------+</echo>
 		<echo>|  Finished RPGUnit build ${build.version}             |</echo>
@@ -447,7 +447,7 @@
 
 		<echo>Replacing '@' variables ...</echo>
 
-		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.ide.product.name.short}" />
+		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_SHORT@" value="${target.ide.product.name.short}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@IDE_PRODUCT_NAME_LONG@"  value="${target.ide.ide.product.name.long}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@VERSION_INFO@"    value="${version.info}" />
 		<replace file="${build.upload.dir.web.eclipse}/index.html" token="@TODAY@"           value="${today.timestamp}" />
@@ -587,7 +587,7 @@
             <then>
                 <delete>
                     <!-- Create a beta version -->
-                    <!-- delete: [workspace]/isphere/docs/beta-version -->
+                    <!-- delete: [workspace]/[project]/docs/beta-version -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}">
                         <include name="**/*"/>
                         <exclude name="${files.page}"/>
@@ -600,7 +600,7 @@
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
-                    <!-- delete: [workspace]/isphere/docs/ (exclude: beta-version) -->
+                    <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}">
                         <include name="**/*"/>
                         <exclude name="${build.pages.beta.version}/"/>
@@ -634,14 +634,14 @@
             <then>
                 <delete>
                     <!-- Create a beta version -->
-                    <!-- delete: [workspace]/isphere/docs/beta-version -->
+                    <!-- delete: [workspace]/[project]/docs/beta-version -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.help}" />
                 </delete>
             </then>
             <else>
                 <delete includeemptydirs="true" failonerror="no">
                     <!-- Create a release version -->
-                    <!-- delete: [workspace]/isphere/docs/ (exclude: beta-version) -->
+                    <!-- delete: [workspace]/[project]/docs/ (exclude: beta-version) -->
                     <fileset dir="${workspace.home}/${target.ide.uload.dir}/${build.pages.help}" />
                 </delete>
             </else>
@@ -941,7 +941,7 @@
     *     - feature.xml
     *     - site.xml
     * ===================================================================== -->
-	<target name="updateVersionNumber" depends="validateVersionNumber">
+	<target name="updateVersionNumber" depends="checkProjectPaths,validateVersionNumber">
 
 		<echo>Updating version number to: ${build.version} ...</echo>
 
@@ -993,6 +993,9 @@
 
 						<eclipse.refreshLocal resource="@{project}" depth="infinite" />
 					</then>
+					<else>
+						<echo message="** Problem? Project not found: ${workspace.home}\@{project} **" />
+					</else>
 				</if>
 			</sequential>
 		</for>
@@ -1008,13 +1011,11 @@
     * ===================================================================== -->
 	<target name="updateHelpProject" unless="ignore.build.help">
 
-		<!--
 		<echo>Updating: ${upload_savf.cmd} ...</echo>
 
 		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.projects}/html/appendix/assets" />
 
 		<antcall target="refreshProjects" />
-		-->
 
 	<echo>Done.</echo>
 
@@ -1112,6 +1113,36 @@
 				<fail>*** Error: Update site ${build.updatesite} not found! ***</fail>
 			</else>
 		</if>
+
+	</target>
+
+	<!--
+    * =====================================================================
+    *   Updates the version numbers of the following files:
+    *     - MANIFEST.MF
+    *     - feature.xml
+    *     - site.xml
+    * ===================================================================== -->
+	<target name="checkProjectPaths">
+
+		<echo>Checking project paths: ${build.target}</echo>
+
+		<for list="${build.projects}" delimiter="," param="project">
+			<sequential>
+
+				<if>
+					<available file="${workspace.home}\@{project}" type="dir" />
+					<then>
+						<!-- Fine. Nothing to do. -->
+					</then>
+					<else>
+						<fail message="Project not found: ${workspace.home}\@{project}"/>
+					</else>
+				</if>
+			</sequential>
+		</for>
+
+		<echo>Done.</echo>
 
 	</target>
 
