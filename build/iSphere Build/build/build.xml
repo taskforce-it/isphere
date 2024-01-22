@@ -975,18 +975,22 @@
 							</then>
 						</if>
 
+						<!-- feature.xml: version -->
 						<replaceregexp match="${feature.1.version.regex}" replace="${feature.1.version.replace}" flags="s" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 
-						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="s" byline="false">
+						<!-- feature.xml: requires version -->
+						<replaceregexp match="${feature.2.version.regex}" replace="${feature.2.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="feature.xml" />
 						</replaceregexp>
 
+						<!-- site.xml: feature version -->
 						<replaceregexp match="${site.1.version.regex}" replace="${site.1.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
 						</replaceregexp>
 
+						<!-- site.xml: *_5.2.10.b002.jar -->
 						<replaceregexp match="${site.2.version.regex}" replace="${site.2.version.replace}" flags="g" byline="false">
 							<fileset dir="${workspace.home}\@{project}" includes="site.xml" />
 						</replaceregexp>
