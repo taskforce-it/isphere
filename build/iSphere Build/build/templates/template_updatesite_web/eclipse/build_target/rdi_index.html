@@ -8,12 +8,19 @@
         <title>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
     </head>
     <body>
-    	<a href="@PROJECT_HOME@"><img src="assets/project-logo.gif" alt="iSphere - Eclipse Update Site for RDi" border="0" align="left" style="padding-right:10px;"/></a>
-        <h1>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
-        <p>Hi, this is the <a href="@PROJECT_HOME@">iSphere</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
-        <p>Visit the <a href="@HELP_SITE_URL@">iSphere help</a> site to find out more about the plug-in.</p>
-        <br>
-        <br>
+        <table width="100%" border="0">
+        <tr>
+        	<td align="left" >
+		    	<a href="@HOME_PAGE@"><img src="assets/project-logo.gif" alt="iSphere - Eclipse Update Site for RDi" border="0" style="padding-right:10px;"/></a>
+   			</td>
+   			<td align="left" width="100%" >
+		        <h1>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
+		        <p>Hi, this is the <a href="@PROJECT_HOME@">iSphere</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
+            <p>Visit the <a href="@HELP_URL@">iSphere</a> help site to find out more about the plug-in.</p>
+	        </td>
+        </tr>
+        </table>
+        <p>
         @VERSION_INFO@
         <br>
         <div class="section">
@@ -31,7 +38,7 @@
         Then select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
         <h3>Using a Local Update Directory</h3>
         <p>
-        Go to the iSphere <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        Go to the iSphere <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -43,7 +50,7 @@
         </ul>
         <h3>Using a Local Update Archive</h3>
         <p>
-        Go to the iSphere <a href="@PROJECT_HOME@" target="_blank">download page</a> at SourceForge and download the zip file for your environment.
+        Go to the iSphere <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -78,7 +85,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @YEAR@, iSphere project owners</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, iSphere project team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
         </table>
         <br>
         </div>
