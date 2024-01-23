@@ -38,6 +38,6 @@ Please refer to the [iSphere Version History](<https://ibm-i-isphere.github.io/i
 
 ## Credits
 
-The iRPGUnit plug-in uses a fork of the [RPGUnit](https://sourceforge.net/projects/rpgunit/) library, which was started by Lacton back in September 2006.
+Thank you to all the people that helped translating iSphere.
 
-Some bugs have been fixed and Mihael Schmidt at [RPG Next Gen](http://www.rpgnextgen.com/http://www.rpgnextgen.com/) added an interface to the IBM Rational Developer for i and started developing the iRPGUnit plug-in. I took over the project and widely enhanced the plug-in. Now the project is supported by Mihael and me.
+Please find the list of contributors on the [iSphere Web Site](https://ibm-i-isphere.github.io/isphere/).
