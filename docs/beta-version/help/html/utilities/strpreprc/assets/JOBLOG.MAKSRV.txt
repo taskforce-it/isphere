@@ -1,0 +1,41 @@
+     /* ===================================================================== */
+     /*  Job Log API                                                          */
+     /* ===================================================================== */
+     /*  Author  :  Thomas Raddatz                                            */
+     /*  Date    :  19.05.2013                                                */
+     /*  E-mail  :  thomas.raddatz@Tools400.de                                */
+     /*  Homepage:  www.tools400.de                                           */
+     /* ===================================================================== */
+     /* >>PRE-COMPILER<<                                                      */
+     /*   >>CRTCMD<< CRTSRVPGM    SRVPGM(&LI/JOBLOG);                         */
+     /*   >>LINK<<                                                            */
+     /*     >>PARM<< MODULE(+                                                 */
+     /*                     &LI/JOBLOG1   +                                   */
+     /*                     );                                                */
+     /*     >>PARM<< EXPORT(*SRCFILE);                                        */
+     /*     >>PARM<<   SRCFILE(&SL/&SF);                                      */
+     /*     >>PARM<<   SRCMBR(&SM);                                           */
+     /*     >>PARM<< ACTGRP(*CALLER);                                         */
+     /*     >>PARM<< ALWUPD(*YES);                                            */
+     /*     >>PARM<< ALWLIBUPD(*YES);                                         */
+     /*     >>PARM<< BNDSRVPGM(&LI/BASICS1);                                  */
+     /*     >>PARM<< TEXT('Job Log API');                                     */
+     /*     >>PARM<< DETAIL(*BASIC);                                          */
+     /*   >>END-LINK<<                                                        */
+     /*   >>EXECUTE<<                                                         */
+     /* >>END-PRE-COMPILER<<                                                  */
+     /* ===================================================================== */
+
+STRPGMEXP PGMLVL(*CURRENT) SIGNATURE('Job_Log_API')
+
+  EXPORT SYMBOL('JOBLOG1_JobLog_open')
+  EXPORT SYMBOL('JOBLOG1_JobLog_getEntry')
+  EXPORT SYMBOL('JOBLOG1_JobLog_close')
+
+  EXPORT SYMBOL('JOBLOG1_JobLog_getNewest')
+  EXPORT SYMBOL('JOBLOG1_JobLog_getOldest')
+  EXPORT SYMBOL('JOBLOG1_JobLog_getMessageType')
+
+  EXPORT SYMBOL('JOBLOG1_JobLog_isNull')
+  EXPORT SYMBOL('JOBLOG1_JobLog_null')
+ENDPGMEXP
