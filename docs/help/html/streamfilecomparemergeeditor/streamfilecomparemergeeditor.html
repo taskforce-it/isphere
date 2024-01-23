@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<title>Stream File Compare/Merge Editor</title>
+</head>
+
+<body>
+	<h1>Stream File Compare/Merge Editor</h1>
+	<p>The Compare/Merge Editor allows you to compare and merge source
+		stream files. The results of the compare are shown in left
+		and right panes and you can easily copy some or all of the differences
+		from the right pane to the left pane.
+	<p>
+	<ul>
+	<li><a href="#comparing_remote_stream_files">Comparing Remote Stream Files</a></li>
+	<li><a href="#selecting_multiple_stream_files_at_once">Selecting Multiple Stream Files at Once</a></li>
+	<li><a href="#starting_the_compare_editor_from_an_lpex_editor">Starting The Compare Editor From an Lpex Editor</a></li>
+	<li><a href="#starting_the_compare_editor_from_the_isphere_menu">Starting The Compare Editor From the iSphere menu</a></li>
+	<li><a href="#loading_previous_values">Loading Previous Values</a></li>
+	</ul>
+	<p>
+	<a id="#comparing_remote_stream_files" />
+	<h2>Comparing Remote Stream Files</h2>
+	<p>To compare/merge source stream files:
+	<p>
+	<ul>
+		<li>In the Remote Systems Explorer open the context menu (right
+			click) of a source stream file. This is the source file that
+			will be opened in the left pane.</li>
+		<li>Select menu item "iSphere Stream File Compare Editor".</li>
+	</ul>
+	<p>
+	<table border="0">
+        <tr>
+		  <td valign="top"><img src="assets/compare_merge_select.png" align="middle" style="float: left; margin-right: 5em";></td>
+		<td valign="top">
+			<p>Set the Mode for the compare:
+			<ul style="list-style-type: circle">
+				<li>Use "Open for browse" or "Open for edit" to specify how the
+					left pane of the compare opens.</li>
+				<li>Use "Don't ignore case" of "Ignore case" to specify if the
+					compare should be case sensitive of insensitive.</li>
+				<li>Use "Two way compare" to compare two source stream files.</li>
+				<li>Use "Three way compare" to include an ancestor to the source
+					in the right pane.<br>
+				</li>
+			</ul>
+			<P>&nbsp;</P>
+			<p>Note that in the &quot;Left&quot; section the name of the
+				source stream file for the left pane is specified and cannot be changed.</p>
+			<P>&nbsp;</P>
+			<p>
+				In the "Right" section the Directory and Stream file have been
+				defaulted to the &quot;Left&quot; values. <br>Change as needed
+				to specify the source stream file that is to be compared to the source
+				stream file in the "Left" section.
+			<P>&nbsp;</P>
+			Click the [OK] button to start the compare.
+			<P>&nbsp;</P>
+        </td></tr>
+	</table>
+	<p>The compare tab opens, showing the differences.
+	<p>
+		<img src="assets/compare_merge_editor.png" align="middle">
+	<p>
+	<p>Use buttons in the top right corner buttons to move from change to change, and to copy
+		lines from the left pane to the right pane. (Hover over each button for help text.)
+	<p>
+		<img src="assets/compare_merge_editor.buttons.png" align="middle">
+	<p>
+	<a id="#selecting_multiple_stream_files_at_once" />
+	<h2>Selecting Multiple Stream Files at Once</h2>
+	<p>
+	<h3>Two Stream Files</h3>
+	<p>
+		If two stream files are selected at once, the first stream file is the <i>Left
+		stream file</i> and the second one is the <i>Right stream file</i>. <p>The stream files
+		can be switched with the switch stream file button located between the &quot;Left&quot;
+		and &quot;Right&quot; stream file sections:
+	<p>
+		<img src="assets/switch_stream_files_button.png" align="middle">
+	<p>
+	<h3>Three or More Stream Files</h3>
+	<p>This is a special case where you want to compare stream files of the
+		same name in different directories. For example, comparing stream
+		files at the development level with those in production. You have to
+		enter the specifications in the right pane only once.
+	<P>Consider this example where we want to compare three stream files in
+		a development directory with the same three stream files in the production
+		directory.
+	<p>We have highlighted the three stream files in the RSE view, right
+		clicked, and clicked "iSphere Stream File Compare Editor".
+	<p>
+	<p>
+		<img src="assets/three_or_more_stream_files.png" align="middle"
+			style="float: none">
+	<p>
+		In the "Left" section the stream file is set to <i>*SELECTED</i> and cannot
+		be changed. This means that it will be replaced successively by the
+		stream file names that have been selected in the RSE view, and each will be compared
+		to the same stream file in the "Right" section.
+	<p>
+		In the "Right" section the Connection or Directory may be changed,
+		but the name of the right stream file is set to <i>*LEFT</i> and cannot be
+		changed.
+	<p>To compare to the production directory, we set the &quot;Directory&quot;
+		field to "../ISPHEREPRD/.." and click [OK]. A compare is run for each selected
+		stream file and a tab opens for each stream file where there are differences. In this
+		example, there are changes only  in DEMO1 and DEMO3 so there are two compare tabs.
+		There are no changes in DEMO2.
+	<p>
+		<img src="assets/three_or_more_stream_files.results.png" align="middle"
+			style="float: initial">
+	<p>
+	<table>
+		<tr>
+			<td class="notice">Note: The information message that pops up
+				when there are no differences between the stream files is part of the
+				Eclipse compare framework and cannot be disabled with the current
+				Eclipse support.</td>
+		</tr>
+	</table>
+	<p>
+	<a id="#starting_the_compare_editor_from_an_lpex_editor" />
+	<h2>Starting The Compare Editor From an Lpex Editor</h2>
+	<p>The iSphere compare editor can be started from the context menu of a Lpex 
+	   editor. Select <i>Source -> Compare...</i> to do so. Please notice that:
+	<p>
+	<ul>
+	<li>There is no edit option when the compare editor is started from an Lpex editor.</li>
+	</ul>
+	<p>
+	<a id="#starting_the_compare_editor_from_the_isphere_menu" />
+	<h2>Starting The Compare Editor From the iSphere menu</h2>
+	<p>The iSphere compare editor can be started from the iSphere menu of the main menu 
+	   bar. Select <i>iSphere -> Compare Stream Files</i> to do so.
+	<p>
+	<a id="#loading_previous_values" />
+	<h2>Loading Previous Values</h2>
+	<p>The iSphere compare editor can be configured to load the values of the right and/or ancestor 
+	   stream file of the previous compare action. The associated options can be configured on the
+	   <a href="preferences/preferences.html"><i>preferences</i></a> page.
+	   The rules for loading previous values are: 
+	<p>
+	<ul>
+	<li>Previous values for left, right and ancestor stream files are always loaded, when the compare
+	    editor is started from the iSphere menu.</li>
+    <li>The previously used values of the right stream file are loaded when the associated option 
+        has been selected on the preference page.</li>
+    <li>The previously used values of the ancestor stream file are loaded when the associated option 
+        has been selected on the preference page.</li>
+	</ul>
+	<p>
+	The history values of directories and stream files are always updated. The history values are the 
+	values that you can select from the combo box. These values can be edited with the little button 
+	at the right hand side of the combo box.
+	<p>
+	The previously used values are the connection, directory and stream file names of the last compare
+	operation.
+	<p>
+	Both types of values are stored as independent value sets depending on the number of stream files selected for a 
+	compare operation. For example, when you star the compare editor from the iSphere menu, there are no stream files 
+	selected. But when you right-click a stream file to start a compare operation, then there is one selected stream file.
+	<p>
+		<iframe src="../copyright.html" width="100%" frameborder="0"
+			marginheight="0" marginwidth="0"></iframe>
+</body>
+</html>
