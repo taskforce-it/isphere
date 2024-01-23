@@ -54,5 +54,8 @@
       <topic label="SSL Connection Problems" href="html/troubleshooting/ssl_connections/ssl_connections.html" />
       <topic label="Mysterious Problems" href="html/troubleshooting/mysterious_problems/mysterious_problems.html" />
    </topic>
+   <topic label="Appendix">
+      <anchor id="appendix" />
+   </topic>
    <topic label="Links" href="html/links/links.html" />
 </toc>
