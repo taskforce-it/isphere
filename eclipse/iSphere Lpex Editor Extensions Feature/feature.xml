@@ -6,7 +6,7 @@
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description url="https://github.com/rdi-open-source/isphere/">
       The &quot;iSphere Lpex Editor Extensions&quot; feature adds options for commenting
 and uncommenting source lines to the Lpex editor as well as options for 
 indenting and unindenting source lines. It is mainly
@@ -18,7 +18,7 @@ these options. Both development environments have no shortcuts for
 indenting and unindenting source lines.
    </description>
 
-   <copyright url="https://sourceforge.net/projects/isphere/">
+   <copyright url="https://github.com/rdi-open-source/isphere/">
       Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 

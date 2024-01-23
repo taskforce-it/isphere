@@ -6,11 +6,11 @@
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description url="https://github.com/rdi-open-source/isphere/">
       iSphere help pages.
    </description>
 
-   <copyright url="https://sourceforge.net/projects/isphere/">
+   <copyright url="https://github.com/rdi-open-source/isphere/">
       Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 

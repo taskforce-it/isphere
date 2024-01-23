@@ -5,11 +5,11 @@
       version="5.2.10.b002"
       provider-name="iSphere Project Team">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description url="https://github.com/rdi-open-source/isphere/">
       TN5250J for RDi 9.5.1.3+
    </description>
 
-   <copyright url="https://sourceforge.net/projects/isphere/">
+   <copyright url="https://github.com/rdi-open-source/isphere/">
       Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 

@@ -6,14 +6,14 @@
       provider-name="iSphere Project Team"
       plugin="biz.isphere.core">
 
-   <description url="https://sourceforge.net/projects/isphere/">
+   <description url="https://github.com/rdi-open-source/isphere/">
       iSphere STRPREPRC Support (optional)
 The &quot;iSphere STRPREPRC Support&quot; feature delivers services that are 
 specific to RDi. It completely relies on and extends the iSphere Core 
 Feature regarding to RDi.
    </description>
 
-   <copyright url="https://sourceforge.net/projects/isphere/">
+   <copyright url="https://github.com/rdi-open-source/isphere/">
       Copyright (c) 2012-2023 iSphere Project Team. All rights reserved.
    </copyright>
 
