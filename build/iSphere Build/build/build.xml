@@ -1039,11 +1039,12 @@
     * ===================================================================== -->
 	<target name="updateHelpProject" unless="ignore.build.help">
 
-		<echo>Updating: ${upload_savf.cmd} ...</echo>
+		<echo>Updating upload_savf.cmd in ${workspace.home}/${build.help.base.project} ...</echo>
 
-		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.projects}/html/appendix/assets" />
+		<copy file="${build.template.dir.web.assets}/upload_savf.cmd" todir="${workspace.home}/${build.help.base.project}/html/appendix/assets" />
 
-		<antcall target="refreshProjects" />
+		<echo>Refreshing: ${build.help.base.project}</echo>
+		<eclipse.refreshLocal resource="${build.help.base.project}" depth="infinite" />
 
 	<echo>Done.</echo>
 
