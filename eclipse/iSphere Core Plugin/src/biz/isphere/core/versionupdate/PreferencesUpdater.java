@@ -35,8 +35,11 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
     }
 
     public static void displayUpdateInformation() {
-        PreferencesUpdater tUpdater = new PreferencesUpdater();
-        tUpdater.displayInformation_v5210();
+        // TODO: remove iSphere Compare Filters Plugin
+        // Disabled to avoid user problems right now. (24.1.2024)
+        // We can enable it whenever we want.
+        // PreferencesUpdater tUpdater = new PreferencesUpdater();
+        // tUpdater.displayInformation_v5210();
     }
 
     private void performSettingsUpdate() {
