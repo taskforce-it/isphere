@@ -264,6 +264,7 @@
 	<property name="zip.base.directory"                  location="${workspace.home}/${build.updatesite}" />
 	<property name="project.doc"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.doc}" />
 	<property name="project.pdf"                         location="${workspace.home}/${build.project.core}/${build.folder.doc}/${build.project.pdf}" />
+	<property name="project.notifier"                    location="${workspace.home}/${build.project.notifier}/${build.project.notify}" />
 	
 	<!-- Set the name of the default home page file -->
 	<property name="home.page" value="index.html" />
@@ -375,7 +376,7 @@
 	<!-- =============================================================
 	      Kopiert alle erforderlichen Assets-Dateien.
 	     ============================================================= -->
-	<target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, cleanUpdateSite, refreshProjects" description="Step 3">
+	<target name="createGitHubFiles" depends="updatePdfFile, prepareUpdateSite, createZipFile, createUpdateSite, createUpdateSiteHtmlPages, createHelpHtmlPages, createHomePageHtml, createFilesHtml, refreshProjects" description="Step 3">
 
 		<echo>GitHub files have been created in: </echo>
 		
@@ -583,6 +584,10 @@
             <fileset file="${project.pdf}" />
     	</copy>
 
+        <copy todir="${build.upload.dir.files}" >
+            <fileset file="${project.notifier}" />
+    	</copy>
+
 		<loadfile property="tmp.files.page" srcfile="${build.upload.dir.home}/${files.page}" />
 		<propertyregex property="replace.error.files.page" input="${tmp.files.page}" regexp="${regex.check.variables}" select="\1"/>
 		<echo>Found variable: ${replace.error.files.page}</echo>
@@ -738,14 +743,21 @@
 		<!-- Zipped Update Site -->
 		<copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/${target.ide.sf.dir}" >
 			<fileset dir="${build.upload.dir.files}">
-				<include name="*.zip"/>
+				<include name="${target.ide.zip.file.name}"/>
 			</fileset>
 		</copy>
 
         <!-- Documentation pdf -->
         <copy todir="${workspace.home}/${target.ide.uload.dir}/${beta.dir}/${build.pages.files}/" >
             <fileset dir="${build.upload.dir.files}">
-                <include name="*.pdf"/>
+                <include name="${build.project.pdf}"/>
+            </fileset>
+        </copy>
+
+        <!-- Notifier -->
+        <copy todir="${workspace.home}/${target.ide.uload.dir}/${build.pages.files}/" >
+            <fileset dir="${build.upload.dir.files}">
+                <include name="${build.project.notify}"/>
             </fileset>
         </copy>
 

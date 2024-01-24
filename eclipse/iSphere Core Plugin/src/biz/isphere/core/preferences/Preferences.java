@@ -1301,7 +1301,7 @@ public final class Preferences {
      * @return default URL for updates.
      */
     public String getDefaultURLForUpdates() {
-        return "http://isphere.sourceforge.net/MANIFEST.MF?raw";
+        return "https://rdi-open-source.github.io/isphere/files/MANIFEST.MF";
     }
 
     /**
