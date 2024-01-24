@@ -138,7 +138,9 @@ public final class PreferencesUpdater implements IObsoleteBundles, IObsoletePref
                           + "1. Go to 'Help -> About -> Installation Details -> Installed Software'.\n"
                           + "2. filter for 'iSphere Compare Filters'.\n"
                           + "3. Select the plug-in.\n" 
-                          + "4. Click the 'Uninstall...' button.'.";
+                          + "4. Click the 'Uninstall...' button.'.\n\n"
+                          + "The plug-in will be removed with the next iSphere version. You will not be able to update iSphere "
+                          + "as long as the plug-in is installed.";
                         //@formatter:on
                         DoNotAskMeAgainDialog.openInformation(UIHelper.getActiveShell(), DoNotAskMeAgain.INFORMATION_UPDATE_5_2_10, message);
                         return Status.OK_STATUS;
