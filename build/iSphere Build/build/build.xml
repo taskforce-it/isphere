@@ -272,7 +272,7 @@
 	<property name="files.page" value="${build.pages.files}/index.html" />
 
 	<!-- Set update site values -->
-	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.public.project.name} Update Site v${build.version}.tag" />
+	<property name="updatesite.tag.file" location="${workspace.home}\${build.updatesite}\${build.public.project.name} Update Site (${build.target}) v${build.version}.tag" />
 	
 	<!-- Check what shall be build -->
 	<if>
@@ -689,7 +689,7 @@
     *   This target must be run, after the GitHub files have been built.
     *   This target is specific to RDi/WDSCi and controlled by build.target.
     * ===================================================================== -->
-	<target name="uploadGitHubFiles" depends="checkBuildTarget, cleanDocsDirectory, refreshProjects" description="Step 4">
+	<target name="uploadGitHubFiles" depends="checkBuildTarget, cleanDocsDirectory, uploadGitHubNotifier, refreshProjects" description="Step 4">
 
 		<echo>Creating GitHub '${build.pages.root}' directory ...</echo>
 
@@ -754,14 +754,33 @@
             </fileset>
         </copy>
 
-        <!-- Notifier -->
-        <copy todir="${workspace.home}/${target.ide.uload.dir}/${build.pages.files}/" >
-            <fileset dir="${build.upload.dir.files}">
-                <include name="${build.project.notify}"/>
-            </fileset>
-        </copy>
+    </target>
 
-	</target>
+    <!--
+    * =====================================================================
+    *   Uploads the entire project files to GitHub.
+    *   This target must be run, after the GitHub files have been built.
+    *   This target is specific to RDi/WDSCi and controlled by build.target.
+    * ===================================================================== -->
+    <target name="uploadGitHubNotifier">
+
+        <if>
+            <equals arg1="${build.notifier.enable}" arg2="true" />
+            <then>
+
+                <echo>Adding notifier to '${build.pages.root}' directory ...</echo>
+        
+                <!-- Notifier -->
+                <copy todir="${workspace.home}/${target.ide.uload.dir}/${build.pages.files}/" >
+                    <fileset dir="${build.upload.dir.files}">
+                        <include name="${build.project.notify}"/>
+                    </fileset>
+                </copy>
+
+            </then>
+        </if>
+
+    </target>
 
 	<!--
     * =====================================================================
