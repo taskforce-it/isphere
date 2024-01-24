@@ -3,7 +3,6 @@
 
 <toc label="iSphere">
    <topic label="Introduction" href="html/introduction/introduction.html" />
-   <topic label="Upgrade Instructions" href="html/upgrade/upgrade_instructions.html" />
    <topic label="Install Instructions" >
       <topic label="Install Plugin for WDSCi 7.0" href="html/install/wdsci7.0/install_wdsci.html" />
       <topic label="Install Plugin for RDi 9.5.1.3+" href="html/install/rdi8.0/install_rdi.html" />
