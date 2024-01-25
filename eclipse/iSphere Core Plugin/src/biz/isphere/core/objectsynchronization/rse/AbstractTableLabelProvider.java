@@ -55,6 +55,7 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
 
         this.copyToLeft = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_LEFT).createImage();
         this.copyToRight = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_RIGHT).createImage();
+        this.copyEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_EQUAL).createImage();
         this.copyNotEqual = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_COPY_NOT_EQUAL).createImage();
         this.error = ISpherePlugin.getImageDescriptor(ISpherePlugin.IMAGE_ERROR).createImage();
 
