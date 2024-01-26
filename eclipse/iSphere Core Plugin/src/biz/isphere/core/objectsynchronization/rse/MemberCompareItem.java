@@ -114,7 +114,16 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         return errorMessage;
     }
 
+    public void resetErrorStatus() {
+        clearErrorStatus();
+    }
+
     public void setErrorStatus(String errorMessage) {
+
+        if (this.oldOverridenCompareStatus != 0) {
+            throw new IllegalArgumentException("Error status not set: overridenCompareStatus <> 0");
+        }
+
         if (StringHelper.isNullOrEmpty(errorMessage)) {
             clearErrorStatus();
         } else {
@@ -141,6 +150,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
         this.errorMessage = null;
         this.overridenCompareStatus = oldOverridenCompareStatus;
+        this.oldOverridenCompareStatus = 0;
     }
 
     public void setCompareStatus(int status, CompareOptions compareOptions) {
@@ -150,6 +160,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         }
 
         this.overridenCompareStatus = checkCompareStatus(status, compareOptions);
+        this.oldOverridenCompareStatus = 0;
     }
 
     public void clearCompareStatus() {

@@ -9,6 +9,8 @@
 package biz.isphere.core.objectsynchronization;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -18,7 +20,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
@@ -48,8 +53,8 @@ public class SynchronizeMembersJob extends Job {
     public SynchronizeMembersJob(RemoteObject leftFileOrLibrary, RemoteObject rightFileOrLibrary, ISynchronizeMembersPostRun postRun) {
         super(Messages.Copying_source_members);
 
-        this.copyToLeftItems = new TreeSet();
-        this.copyToRightItems = new TreeSet();
+        this.copyToLeftItems = new TreeSet<MemberCompareItem>();
+        this.copyToRightItems = new TreeSet<MemberCompareItem>();
 
         this.copyToLeftErrors = new HashMap<Integer, String>();
         this.copyToRightErrors = new HashMap<Integer, String>();
@@ -101,15 +106,11 @@ public class SynchronizeMembersJob extends Job {
             }
 
         } finally {
-            postRun.returnResult(doSynchronizeMembers.isError(), doSynchronizeMembers.getMembersCopiedCount());
+            postRun.returnResultPostRun(doSynchronizeMembers.isError(), doSynchronizeMembers.getMembersCopiedCount());
             endProcess();
         }
 
         return Status.OK_STATUS;
-    }
-
-    public void reportError(CopyMemberItem item, String errorMessage) {
-        return;
     }
 
     public void cancelOperation() {
@@ -160,11 +161,19 @@ public class SynchronizeMembersJob extends Job {
 
         private ExistingMemberAction existingMemberAction;
 
-        private boolean isError;
+        // Set is returnResult() callbacks.
+        private boolean isValidationError;
+        private boolean isCopyError;
+
         private int countMembersCopied;
 
         public DoSynchronizeMembers(RemoteObject leftFileOrLibrary, RemoteObject rightFileOrLibrary, Map<Integer, String> copyToLeftErrors,
             Map<Integer, String> copyToRightErrors) {
+
+            if (!leftFileOrLibrary.getObjectType().equals(rightFileOrLibrary.getObjectType())) {
+                throw new IllegalArgumentException(
+                    String.format("Object types do not match: %s vs. %s", leftFileOrLibrary.getObjectType(), rightFileOrLibrary.getObjectType()));
+            }
 
             this.leftFileOrLibrary = leftFileOrLibrary;
             this.rightFileOrLibrary = rightFileOrLibrary;
@@ -213,44 +222,142 @@ public class SynchronizeMembersJob extends Job {
 
             try {
 
-                CopyMemberItem[] toLeftMembers = createMemberArray(rightFileOrLibrary, leftFileOrLibrary, copyToLeftItems,
-                    MemberCompareItem.LEFT_MISSING);
-                CopyMemberItem[] toRightMembers = createMemberArray(leftFileOrLibrary, rightFileOrLibrary, copyToRightItems,
-                    MemberCompareItem.RIGHT_MISSING);
+                CopyMemberItem[] toLeftMembers = createMemberArray(leftFileOrLibrary, copyToLeftItems, MemberCompareItem.LEFT_MISSING);
+                CopyMemberItem[] toRightMembers = createMemberArray(rightFileOrLibrary, copyToRightItems, MemberCompareItem.RIGHT_MISSING);
 
-                boolean isPreCheck = false;
-                if (isPreCheck) {
-                    isError = false;
-                    validateMembers(rightFileOrLibrary, leftFileOrLibrary, toLeftMembers);
-                    isLeftValidationError = isError;
-
-                    isError = false;
-                    validateMembers(leftFileOrLibrary, leftFileOrLibrary, toRightMembers);
-                    isRightValidationError = isError;
+                if (leftFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
+                    validateFileSync(toLeftMembers, toRightMembers);
+                } else if (leftFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
+                    validateLibrarySync(toLeftMembers, toRightMembers);
+                } else {
+                    throw new IllegalArgumentException("Inavlid taget object type: " + leftFileOrLibrary.getObjectType());
                 }
 
-                isError = false;
-                copyToLeftOrRight(rightFileOrLibrary, leftFileOrLibrary, toLeftMembers);
+                isCopyToRightError = copyToLeftOrRight(rightFileOrLibrary, leftFileOrLibrary, toLeftMembers);
                 copiedToRightCount = countMembersCopied;
+                if (mustCancel(isCopyToRightError)) {
+                    return;
+                }
 
-                isError = false;
-                copyToLeftOrRight(leftFileOrLibrary, leftFileOrLibrary, toRightMembers);
+                isCopyToLeftError = copyToLeftOrRight(leftFileOrLibrary, leftFileOrLibrary, toRightMembers);
                 copiedToLeftCount = countMembersCopied;
+                if (mustCancel(isCopyToLeftError)) {
+                    return;
+                }
 
             } finally {
                 monitor.done();
             }
         }
 
-        private void validateMembers(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary, CopyMemberItem[] copyMemberItems) {
+        private void validateLibrarySync(CopyMemberItem[] toLeftMembers, CopyMemberItem[] toRightMembers) {
 
-            // TODO: implement validation
-            return;
+            isLeftValidationError = validateFileOfLibrarySync(leftFileOrLibrary, rightFileOrLibrary, toRightMembers);
+
+            isRightValidationError = validateFileOfLibrarySync(rightFileOrLibrary, leftFileOrLibrary, toLeftMembers);
         }
 
-        private void copyToLeftOrRight(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary, CopyMemberItem[] copyMemberItems) {
+        private boolean validateFileOfLibrarySync(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary, CopyMemberItem[] toRMembers) {
 
-            isError = false;
+            boolean isFileValidationError = false;
+
+            List<CopyMemberItem> tempMembers = new LinkedList<CopyMemberItem>();
+            String lastFileName = null;
+            for (CopyMemberItem copyMemberItem : toRMembers) {
+
+                String fileName = copyMemberItem.getFromFile();
+                if (lastFileName == null) {
+                    lastFileName = fileName;
+                    tempMembers.clear();
+                }
+
+                if (fileName.equals(lastFileName)) {
+                    tempMembers.add(copyMemberItem);
+                } else {
+                    boolean isMemberValidationError = validateMembers(fromFileOrLibrary, toFileOrLibrary,
+                        tempMembers.toArray(new CopyMemberItem[tempMembers.size()]));
+                    if (isFileValidationError == false) {
+                        isFileValidationError = isMemberValidationError;
+                    }
+                    lastFileName = null;
+                }
+            }
+
+            return isFileValidationError;
+        }
+
+        private void validateFileSync(CopyMemberItem[] toLeftMembers, CopyMemberItem[] toRightMembers) {
+
+            isLeftValidationError = validateMembers(rightFileOrLibrary, leftFileOrLibrary, toLeftMembers);
+            if (mustCancel(isLeftValidationError)) {
+                return;
+            }
+
+            isRightValidationError = validateMembers(leftFileOrLibrary, rightFileOrLibrary, toRightMembers);
+            if (mustCancel(isRightValidationError)) {
+                return;
+            }
+        }
+
+        private boolean mustCancel(boolean isLastError) {
+            // TODO: add a flag indicating that the job must be canceled on the
+            // first error
+            return isLastError;
+        }
+
+        private boolean validateMembers(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary, CopyMemberItem[] copyMemberItems) {
+
+            // Updated in
+            isValidationError = false;
+
+            String fromConnectionName = fromFileOrLibrary.getConnectionName();
+
+            // Report all errors to the caller
+            boolean ignoreDataLostError = false;
+            boolean ignoreUnsavedChangesError = false;
+            boolean fullErrorCheck = true;
+
+            CopyMemberValidator validatorJob = new CopyMemberValidator(fromConnectionName, copyMemberItems, ExistingMemberAction.ERROR,
+                ignoreDataLostError, ignoreUnsavedChangesError, fullErrorCheck, this);
+            validatorJob.addItemErrorListener(itemErrorListener);
+
+            String toLibraryName;
+            String toFileName;
+
+            if (toFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
+                toLibraryName = toFileOrLibrary.getLibrary();
+                toFileName = toFileOrLibrary.getName();
+            } else if (toFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
+                // TODO: create groups per source file.
+                throw new IllegalArgumentException("not yet implemented");
+                // toLibraryName = toFileOrLibrary.getLibrary();
+                // toFileName = toFileOrLibrary;
+            } else {
+                throw new IllegalArgumentException("Inavlid taget object type: " + toFileOrLibrary.getObjectType());
+            }
+
+            validatorJob.setToConnectionName(toFileOrLibrary.getConnectionName());
+            validatorJob.setToLibraryName(toLibraryName);
+            validatorJob.setToFileName(toFileName);
+            validatorJob.setToCcsid(getSystemCcsid(toFileOrLibrary.getConnectionName()));
+
+            validatorJob.runInSameThread(monitor);
+
+            return isValidationError;
+        }
+
+        private int getSystemCcsid(String connectionName) {
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            if (system != null) {
+                return system.getCcsid();
+            }
+
+            return -1;
+        }
+
+        private boolean copyToLeftOrRight(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary, CopyMemberItem[] copyMemberItems) {
+
+            isCopyError = false;
             countMembersCopied = 0;
 
             String fromConnectionName = fromFileOrLibrary.getConnectionName();
@@ -259,10 +366,11 @@ public class SynchronizeMembersJob extends Job {
             CopyMembersJob copyJob = new CopyMembersJob(fromConnectionName, toConnectionName, copyMemberItems, existingMemberAction, this);
             copyJob.addItemErrorListener(itemErrorListener);
             copyJob.runInSameThread(monitor);
+
+            return isCopyError;
         }
 
-        private CopyMemberItem[] createMemberArray(RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary,
-            MemberCompareItem[] memberCompareItems, int compareStatus) {
+        private CopyMemberItem[] createMemberArray(RemoteObject toFileOrLibrary, MemberCompareItem[] memberCompareItems, int compareStatus) {
 
             SortedSet<CopyMemberItem> membersToCopy = new TreeSet<CopyMemberItem>();
 
@@ -324,9 +432,12 @@ public class SynchronizeMembersJob extends Job {
         public void returnResult(MemberValidationError errorId, String errorMessage) {
 
             if (errorId != MemberValidationError.ERROR_NONE) {
-                isError = true;
+                isValidationError = true;
             }
 
+            debug("\nSynchronizeMembersJob.validateMembersPostRun:");
+            debug("errorId: " + errorId);
+            debug("errorMessage: " + errorMessage);
         }
 
         /**
@@ -340,12 +451,12 @@ public class SynchronizeMembersJob extends Job {
          */
         public void returnResult(boolean isError, int countMembersCopied, long averageTime) {
 
-            this.isError = isError;
+            this.isCopyError = isError;
             this.countMembersCopied = countMembersCopied;
 
-            System.out.println("copyMembersPostRun:");
-            System.out.println("isError: " + isError);
-            System.out.println("countMembersCopied: " + countMembersCopied);
+            debug("\nSynchronizeMembersJob.copyMembersPostRun:");
+            debug("isError: " + isError);
+            debug("countMembersCopied: " + countMembersCopied);
         }
 
         public void cancel() {
@@ -370,5 +481,9 @@ public class SynchronizeMembersJob extends Job {
         public int getMembersCopiedCount() {
             return copiedToLeftCount + copiedToRightCount;
         }
+    }
+
+    private void debug(String message) {
+        System.out.println(message);
     }
 }

@@ -171,8 +171,13 @@ public class CopyMembersJob extends Job {
                         break;
                     }
 
+                    monitor.worked(count);
+
                     if (member.isCopied()) {
-                        monitor.worked(count);
+                        continue;
+                    }
+
+                    if (member.isError()) {
                         continue;
                     }
 
@@ -199,7 +204,6 @@ public class CopyMembersJob extends Job {
                     } else {
                         copiedCount++;
                     }
-                    copiedCount++;
 
                     monitor.worked(count);
                 }
@@ -238,7 +242,6 @@ public class CopyMembersJob extends Job {
                 String message = ISphereHelper.executeCommand(system, command, rtnMessages);
 
                 if (message != null) {
-                    // printDebug(message);
                     StringBuilder errorMessage = new StringBuilder();
                     for (AS400Message as400Message : rtnMessages) {
                         if (errorMessage.length() > 0) {
@@ -265,7 +268,9 @@ public class CopyMembersJob extends Job {
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    errorListener.reportError(member, errorMessage);
+                    if (errorListener.reportError(CopyMembersJob.this, member, errorMessage)) {
+                        cancel();
+                    }
                 }
             }
         }

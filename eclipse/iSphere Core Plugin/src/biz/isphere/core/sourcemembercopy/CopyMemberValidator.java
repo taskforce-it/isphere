@@ -220,13 +220,32 @@ public class CopyMemberValidator extends Thread {
             }
         }
 
+        private void setTargetFileError(MemberValidationError errorId, String errorMessage) {
+
+            if (!(errorId == MemberValidationError.ERROR_TO_CONNECTION || errorId == MemberValidationError.ERROR_TO_LIBRARY
+                || errorId == MemberValidationError.ERROR_TO_FILE)) {
+                throw new IllegalArgumentException("Update Javadoc in IItemErrorListener, is you want to allow: " + errorId.name());
+            }
+
+            CopyMemberValidator.this.errorId = errorId;
+            CopyMemberValidator.this.errorMessage = errorMessage;
+
+            if (itemErrorListeners != null) {
+                for (IItemErrorListener errorListener : itemErrorListeners) {
+                    errorListener.reportError(CopyMemberValidator.this, errorId, errorMessage);
+                }
+            }
+        }
+
         private void setMemberError(CopyMemberItem member, String errorMessage) {
 
             member.setErrorMessage(errorMessage);
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    errorListener.reportError(member, errorMessage);
+                    if (errorListener.reportError(CopyMemberValidator.this, member, errorMessage)) {
+                        cancel();
+                    }
                 }
             }
         }
@@ -242,26 +261,21 @@ public class CopyMemberValidator extends Thread {
             boolean isError = false;
 
             if (!hasConnection(toConnectionName)) {
-                errorId = MemberValidationError.ERROR_TO_CONNECTION;
-                errorMessage = Messages.bind(Messages.Connection_A_not_found, toConnectionName);
+                setTargetFileError(MemberValidationError.ERROR_TO_CONNECTION, toConnectionName);
                 isError = true;
             } else if (!nameValidator.validate(toLibrary)) {
-                errorId = MemberValidationError.ERROR_TO_LIBRARY;
-                errorMessage = Messages.bind(Messages.Invalid_library_name, toLibrary);
+                setTargetFileError(MemberValidationError.ERROR_TO_LIBRARY, Messages.bind(Messages.Invalid_library_name, toLibrary));
                 isError = true;
             } else {
                 AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
                 if (!ISphereHelper.checkLibrary(toSystem, toLibrary)) {
-                    errorId = MemberValidationError.ERROR_TO_LIBRARY;
-                    errorMessage = Messages.bind(Messages.Library_A_not_found, toLibrary);
+                    setTargetFileError(MemberValidationError.ERROR_TO_LIBRARY, Messages.bind(Messages.Library_A_not_found, toLibrary));
                     isError = true;
                 } else if (!nameValidator.validate(toFile)) {
-                    errorId = MemberValidationError.ERROR_TO_FILE;
-                    errorMessage = Messages.bind(Messages.Invalid_file_name, toFile);
+                    setTargetFileError(MemberValidationError.ERROR_TO_FILE, Messages.bind(Messages.Invalid_file_name, toFile));
                     isError = true;
                 } else if (!ISphereHelper.checkFile(toSystem, toLibrary, toFile)) {
-                    errorId = MemberValidationError.ERROR_TO_FILE;
-                    errorMessage = Messages.bind(Messages.File_A_not_found, toFile);
+                    setTargetFileError(MemberValidationError.ERROR_TO_FILE, Messages.bind(Messages.File_A_not_found, toFile));
                     isError = true;
                 }
             }
@@ -280,7 +294,7 @@ public class CopyMemberValidator extends Thread {
         private boolean validateMembers(String fromConnectionName, String toConnectionName, ExistingMemberAction existingMemberAction,
             boolean ignoreDataLostError, boolean ignoreUnsavedChangesError, boolean fullErrorCheck) {
 
-            boolean isError = false;
+            boolean isFinalError = false;
             boolean isSeriousError = false;
 
             AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
@@ -304,6 +318,8 @@ public class CopyMemberValidator extends Thread {
                 }
 
                 for (CopyMemberItem member : fromMembers) {
+
+                    boolean isCurrentError = false;
 
                     if (isCanceled()) {
                         break;
@@ -331,20 +347,20 @@ public class CopyMemberValidator extends Thread {
 
                     if (dirtyFiles.contains(localResourcePath)) {
                         setMemberError(member, Messages.Member_is_open_in_editor_and_has_unsaved_changes);
-                        isError = true;
+                        isCurrentError = true;
                     } else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
                         setMemberError(member, Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
-                        isError = true;
+                        isCurrentError = true;
                     } else if (targetMembers.contains(to)) {
                         setMemberError(member, Messages.Can_not_copy_member_twice_to_same_target_member);
-                        isError = true;
+                        isCurrentError = true;
                     } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
                         member.getFromFile(), member.getFromMember())) {
                         setMemberError(member, Messages.bind(Messages.From_member_A_not_found, from));
-                        isError = true;
+                        isCurrentError = true;
                     }
 
-                    if (!isError) {
+                    if (!isCurrentError) {
                         if (fullErrorCheck) {
                             if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(toConnectionName), member.getToLibrary(),
                                 member.getToFile(), member.getToMember())) {
@@ -357,21 +373,21 @@ public class CopyMemberValidator extends Thread {
                                         actor.produceNewMemberName(member.getToLibrary(), member.getToFile(), member.getToMember()); // $NON-NLS-1$
                                     } catch (NoMoreNamesAvailableException e) {
                                         setMemberError(member, Messages.Error_No_more_names_available_Delete_old_backups);
-                                        isError = true;
+                                        isCurrentError = true;
                                     } catch (Exception e) {
                                         setMemberError(member, e.getLocalizedMessage());
-                                        isError = true;
+                                        isCurrentError = true;
                                     }
 
                                 } else {
                                     setMemberError(member, Messages.bind(Messages.Target_member_A_already_exists, to));
-                                    isError = true;
+                                    isCurrentError = true;
                                 }
                             }
                         }
                     }
 
-                    if (!isError) {
+                    if (!isCurrentError) {
                         if (!ignoreDataLostError) {
 
                             RecordFormatDescription fromRecordFormatDescription = fromSourceFiles.get(member.getFromFile(), member.getFromLibrary());
@@ -381,7 +397,7 @@ public class CopyMemberValidator extends Thread {
                             if (fromSrcDta == null) {
                                 setMemberError(member, Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
                                     new String[] { member.getFromFile(), member.getFromLibrary(), "SRCDTA" }));
-                                isError = true;
+                                isCurrentError = true;
                                 isSeriousError = true;
                             } else {
 
@@ -389,24 +405,25 @@ public class CopyMemberValidator extends Thread {
                                 if (toSrcDta == null) {
                                     setMemberError(member, Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
                                         new String[] { member.getToFile(), member.getToLibrary(), "SRCDTA" }));
-                                    isError = true;
+                                    isCurrentError = true;
                                     isSeriousError = true;
                                 } else {
 
                                     if (fromSrcDta.getLength() > toSrcDta.getLength()) {
                                         setMemberError(member, Messages.Data_lost_error_From_source_line_is_longer_than_target_source_line);
-                                        isError = true;
+                                        isCurrentError = true;
                                     }
                                 }
                             }
                         }
                     }
 
-                    if (!isError) {
+                    if (!isCurrentError) {
                         setMemberError(member, Messages.EMPTY);
                     } else {
-                        errorId = MemberValidationError.ERROR_TO_MEMBER;
-                        errorMessage = Messages.Validation_ended_with_errors_Request_canceled;
+                        if (!isFinalError) {
+                            isFinalError = isCurrentError;
+                        }
                     }
 
                     targetMembers.add(to);
@@ -418,7 +435,12 @@ public class CopyMemberValidator extends Thread {
                 MessageDialogAsync.displayError(Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
 
-            return !isError;
+            if (isFinalError) {
+                errorId = MemberValidationError.ERROR_TO_MEMBER;
+                errorMessage = Messages.Validation_ended_with_errors_Request_canceled;
+            }
+
+            return !isFinalError;
         }
 
         private Set<String> getDirtyFiles() throws Exception {
