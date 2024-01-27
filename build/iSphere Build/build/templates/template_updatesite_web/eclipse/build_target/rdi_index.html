@@ -1,23 +1,23 @@
 <html>
     <head>
         <meta http-equiv="cache-control" content="no-cache">
-        <meta name="description" content="iSphere Plug-in Update Site">
-        <meta name="author" content="iSphere Project Team">
-        <meta name="keywords" content="iSphere, Plugin, RDI, Eclipse, AS400">
+        <meta name="description" content="@PLUGIN_NAME@ Plug-in Update Site">
+        <meta name="author" content="@PLUGIN_NAME@ Project Team">
+        <meta name="keywords" content="@PLUGIN_NAME@, Plugin, RDI, Eclipse, AS400">
         <link href="assets/stylesheet.css" rel="stylesheet" type="text/css" />
-        <title>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
+        <title>@PLUGIN_NAME@ Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</title>
     </head>
     <body>
         <table width="100%" border="0">
         <tr>
-        	<td align="left" >
-		    	<a href="@HOME_PAGE@"><img src="assets/project-logo.gif" alt="iSphere - Eclipse Update Site for RDi" border="0" style="padding-right:10px;"/></a>
-   			</td>
-   			<td align="left" width="100%" >
-		        <h1>iSphere Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
-		        <p>Hi, this is the <a href="@PROJECT_HOME@">iSphere</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
-            <p>Visit the <a href="@HELP_URL@">iSphere</a> help site to find out more about the plug-in.</p>
-	        </td>
+            <td align="left" >
+                <a href="@HOME_PAGE@"><img src="./assets/project-logo.gif" alt="@PLUGIN_NAME@ - Eclipse Update Site for RDi" height="79" border="0" style="padding-right:10px;"/></a>
+            </td>
+            <td align="left" width="100%" >
+                <h1>@PLUGIN_NAME@ Plug-in Update Site @IDE_PRODUCT_NAME_SHORT@</h1>
+                <p>Hi, this is the <a href="@PROJECT_HOME@">@PLUGIN_NAME@</a> plug-in update site for @IDE_PRODUCT_NAME_LONG@.</p>
+                <p>Visit the <a href="@HELP_URL@">@PLUGIN_NAME@</a> help site to find out more about the plug-in.</p>
+            </td>
         </tr>
         </table>
         <p>
@@ -30,7 +30,7 @@
         <p>
 @MARKETPLACE_INSTALLATION@
         <p>
-        <h3>Using the iSphere Update Site</h3>
+        <h3>Using the @PLUGIN_NAME@ Update Site</h3>
         <p>From the main menu, select "Help > Install New Software..." to enter the "Install" dialog.<br><br>
         Drag-and-drop the URL of the <a href="@UPDATE_SITE_URL@">update site</a> into the "Work with:" field:<br><br></p>
         <img class="indent" src="./assets/rdi_InstallDragDrop.png" alt="RDi: Install new software">
@@ -38,7 +38,7 @@
         Then select the options you want to install, press the [Next] button and follow the instructions given on the following pages.
         <h3>Using a Local Update Directory</h3>
         <p>
-        Go to the iSphere <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
+        Go to the @PLUGIN_NAME@ <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -50,7 +50,7 @@
         </ul>
         <h3>Using a Local Update Archive</h3>
         <p>
-        Go to the iSphere <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
+        Go to the @PLUGIN_NAME@ <a href="@FILES_PAGE@" target="_blank">@REPOSITORY_NAME@ Files</a> page and download the zip file for your environment.
         <p>
         Then follow these steps to create your local update site:
         <p>
@@ -62,21 +62,21 @@
         <li>Use the [Archive...] button to select the zip file.</li>
         </ul>
         <p>
-        <h2>Installing the ISPHERE Library</h2>
+        <h2>Installing the @PROJECT_LIBRARY@ Library</h2>
         <p class="indent">
-        The most easiest way to install the library is to upload it from the preference page of the iSphere 
+        The most easiest way to install the library is to upload it from the preference page of the @PLUGIN_NAME@ 
         plug-in. However that requires that you are allowed to start a FTP connection to your host.
         <p>
         Take these steps to use the embedded installer:
         <ul>
         <li>Goto 'Window -> Preferences'.</li>
-        <li>Select 'iSphere -> Library'.</li>
-        <li>Click the [Transfer iSphere Library] button.</li>
+        <li>Select '@PLUGIN_NAME@ -> Library'.</li>
+        <li>Click the [Transfer @PLUGIN_NAME@ Library] button.</li>
         <li>Select a connection.</li>
         <li>Click the [Start Transfer] button.</li>
         </ul>
         <p>
-        Refer to the iSphere <a target="_help" href="@HELP_URL@">help</a> page to see more options for installing the library.
+        Refer to the @PLUGIN_NAME@ <a target="_help" href="@HELP_URL@">help</a> page to see more options for installing the library.
         <p>
         The following terms are trademarks of the IBM Corporation in the United States or other countries or both:
         <ul>
@@ -85,7 +85,7 @@
         <br>
         <hr>
         <table border="0" class="copyright">
-        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, iSphere project team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
+        <tr><td class="copyright" align="left" width="50%">Version: @VERSION_NUMBER@ - Copyright: @TODAY_YEAR@, @PLUGIN_NAME@ Project Team</td><td class="copyright" align="right" width="50%">Updated: @TODAY@</td></tr>
         </table>
         <br>
         </div>
