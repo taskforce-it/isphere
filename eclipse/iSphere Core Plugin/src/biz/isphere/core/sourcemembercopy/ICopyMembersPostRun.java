@@ -8,8 +8,19 @@
 
 package biz.isphere.core.sourcemembercopy;
 
+import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
+
 public interface ICopyMembersPostRun {
 
+    /**
+     * PostRun methods called by {@link CopyMembersJob} at the end of the copy
+     * member process.
+     * 
+     * @param isError - <code>true</code> if there was an error; otherwise
+     *        <code>false</code>
+     * @param countMembersCopied - number of members that have been copied
+     * @param averageTime - average time it took for copying a member
+     */
     public void returnResult(boolean isError, int countMembersCopied, long averageTime);
 
 }

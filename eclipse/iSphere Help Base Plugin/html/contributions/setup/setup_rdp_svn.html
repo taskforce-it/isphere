@@ -10,20 +10,14 @@
 <body>
 <h1>Setting up RDP and SVN</h1>
 <p>
-<h2>Preconditions</h2>
-<p>
-In order to work on iSphere you should have RDP 8.0 or higher and a copy of WDSCi 7.0. The reason for that is that 
-we try to keep iSphere compatible to both product lines. Hence you need both products to test your functions.
-<p>
 <h2>Setting Up the IDE</h2>
 <p>
-The following steps describe how to setup an iSphere development environment for RDP 8.0. Most of the steps are 
-identical with what to do for WDSCi 7.0. Differences are highlighted where necessary.
+The following steps describe how to setup an iSphere development environment in RDi.
 <p>
-<h2>Installing RDP 8.0 with Fix Pack 8.0.3.1</h2>
+<h2>Installing RDi 9.5 with Fix Pack 9.5.1.3</h2>
 <p>
-Start the installer from the RDP 8.0 installation disk and follow the steps of the install program. You may 
-consider to install RDP in a directory different from the standard Windows "Program Files" folder, to avoid
+Start the installer from the RDi 9.5 installation disk and follow the steps of the install program. You may 
+consider to install RDi in a directory different from the standard Windows "Program Files" folder, to avoid
 requiring administrator rights when installing plug-ins.
 <p>
 <u>For example:</u>
@@ -48,55 +42,33 @@ long file names:
 <img alt="RDP: Select workspace" src="./assets/select_workspace.gif">
 <p>
 <a id="install_svn_adapter"></a>
-<h2>Installing the SVN Adapter</h2>
+<h2>Installing the Git Plug-in</h2>
 <p>
-Next you can install the SVN adapter to access the iSphere repository at SourceForge.
+Next you can install the Eclipse <i>EGit - Git Integration for Eclipse</i> plug-into access the iSphere repository. You should
+install one of the following plug-ins, depending on your version of RDi:
 <p>
-<table>
-<tr><td class="notice" >WDSCi: You need to install the Subclipse SVN Team provider. You can 
-    <a href="https://sourceforge.net/p/isphere/code/HEAD/tree/trunk/eclipse/iSphere%20Eclipse%20Setup/plug-ins/subclipse-local-update-site-1.8.22.zip" target="_blank">download</a> it from the iSphere repository at SourceForge.</td></tr>
+<table border="0">
+<tr><td>9.5.1.3</td><td>org.eclipse.egit.repository-4.2.0.201601211800-r.zip</td></tr>
+<tr><td>9.6.x</td><td>org.eclipse.egit.repository-4.6.1.201703071140-r.zip</td></tr>
+<tr><td>9.8.x</td><td>org.eclipse.egit.repository-6.5.0.202303070854-r.zip</td></tr>
 </table>
-<p>
-Select "Help -&gt; Install New Software..." to open the "Install" dialog. Click "Available Software Sites" and enable the Eclipse 
-<i>Helios</i> update site at: <a href="http://download.eclipse.org/releases/helios">http://download.eclipse.org/releases/helios</a>.
-<p>
-Open "Collaboration" and select the "Subversive SVN Team Provider":
-<p>
-<img alt="Select the Subversive SVN Team Provider" src="./assets/select_subversive.gif">
-<p>
-After having restarted RDP, select "Window -&gt; Preferences -&gt; Team" and click "SVN". Select the "SVN Kit 1.3.5" and click "Finish" 
-to install the SVN Adapter. 
-<p>
-<img alt="Select the Subversive SVN Team Provider" src="./assets/select_svn_connector.gif">
-<p>
-Confirm to install the "Subversive SVN Connectors" and "SVNKit 1.3.5 Implementation" plug-ins and click "Next". Restart RDP again.
 <p>
 <a id="install_svn_adapter"></a>
-<h2>Configuring the SVN Adapter</h2>
+<h2>Configuring the Git Repository</h2>
 <p>
-<h3>SVN Text Decorations</h3>
+GitHub requires a "ed25519" private/public SSH key. Create it like this:
+<pre class="codeIndent">ssh-keygen -t ed25519 -C "your_email@example.com"</pre>
 <p>
-The following settings are not required but may help to display the SVN status information more clearly:
+For RDi 9.5.1.3 add the following line to "eclipse.ini":
+<pre class="codeIndent">-Dhttps.protocols=TLSv1.2</pre>
 <p>
-<img alt="SVN Text Decorations" src="assets/svn_text_decorations.png" align="middle">
+Set SSH preferences in RDi:
 <p>
-<table>
-<tr><td nowrap>File</td><td>-</td><td>{name} {revision} {author}</td></tr>
-<tr><td nowrap>Folder</td><td>-</td><td>{name} {revision} {author}</td></tr>
-<tr><td nowrap>Project</td><td>-</td><td>{name} {revision} [{location_label}{root_prefix}: {first_branchOrTag_child}]</td></tr>
+Window -> Preferences -> General -> Network Connections -> SSGH2:
+<table border="0">
+<tr><td>SSH2 home:</td><td>C:\Users\traddatz\.ssh</td></tr>
+<tr><td>Private keys:</td><td>id_dsa,id_rsa,id_ecdsa_rdi_github</td></tr>
 </table>
-<p>
-Some of the above mentioned variables are not available for WDSCi. So for WDSCi you may want to set <i>Project</i> as shown below:
-<p>
-<table>
-<tr><td nowrap>Project</td><td>-</td><td>{name} {revision} [{label}]</td></tr>
-</table>
-<p>
-<h3>SVN Label Decorations</h3>
-<p>
-The following settings are not required but may help to display the SVN status information more clearly:
-<p>
-<img alt="SVN Label Decorations" src="assets/svn_label_decorations.png" align="middle">
 <p>
 <iframe src="../../copyright.html" width="100%" frameborder="0" marginheight="0" marginwidth="0"></iframe>
 </body>

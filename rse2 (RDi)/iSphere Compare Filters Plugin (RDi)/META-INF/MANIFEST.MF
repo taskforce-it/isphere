@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iSphere Compare Filters for RDi 9.5+ (obsolete)
+Bundle-SymbolicName: biz.isphere.comparefilters;singleton:=true
+Bundle-Version: 5.2.10.b002
+Bundle-Activator: biz.isphere.comparefilters.ISphereCompareFiltersPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.jface.text,
+ org.eclipse.compare,
+ biz.isphere.base,
+ biz.isphere.core,
+ biz.isphere.rse,
+ biz.isphere.adapter
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: iSphere Project Team
+Bundle-Localization: plugin
+Eclipse-LazyStart: true

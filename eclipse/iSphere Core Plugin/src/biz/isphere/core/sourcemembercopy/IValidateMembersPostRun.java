@@ -12,6 +12,13 @@ import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationErr
 
 public interface IValidateMembersPostRun {
 
+    /**
+     * PostRun method called by {@link CopyMemberValidator} at the end of the
+     * validation process.
+     * 
+     * @param errorId - value indicating the error type
+     * @param errorMessage - error message text
+     */
     public void returnResult(MemberValidationError errorId, String errorMessage);
 
 }

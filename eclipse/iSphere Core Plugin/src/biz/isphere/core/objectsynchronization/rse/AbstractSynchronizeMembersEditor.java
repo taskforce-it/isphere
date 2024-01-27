@@ -82,6 +82,8 @@ import biz.isphere.core.objectsynchronization.jobs.ResolveGenericCompareElements
 import biz.isphere.core.objectsynchronization.jobs.StartCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
+import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
+import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.IItemErrorListener;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -1111,34 +1113,63 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
         for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
             MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getElementAt(i);
-            compareItem.setErrorStatus(null);
+            compareItem.resetErrorStatus();
             synchronizeMembersJob.addItem(compareItem, sharedValues.getCompareOptions());
         }
 
         synchronizeMembersJob.schedule();
     }
 
-    public void reportError(CopyMemberItem item, String errorMessage) {
+    /**
+     * File error callback of {@link CopyMemberValidator}.
+     * <p>
+     * {@inheritDoc}
+     */
+    public boolean reportError(Object sender, MemberValidationError errorId, String errorMessage) {
+
+        debug(sender.getClass().getSimpleName() + " -> Validation error: " + errorMessage);
+
+        return false; // continue
+    }
+
+    /**
+     * Member error callback of {@link CopyMemberValidator}.
+     * <p>
+     * {@inheritDoc}
+     */
+    public boolean reportError(Object sender, CopyMemberItem item, String errorMessage) {
+
+        debug(sender.getClass().getSimpleName() + " -> " + "Item " + item.getFromMember() + " validation error: " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
         compareItem.setErrorStatus(errorMessage);
 
         UIJob uiJob = new UIJob(Messages.EMPTY) {
             @Override
-            public IStatus runInUIThread(IProgressMonitor arg0) {
-                // tableViewer.refresh(compareItem, true, true);
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                debug("Refreshing table item: " + compareItem.getMemberName());
+                tableViewer.refresh(compareItem, true, true);
                 return Status.OK_STATUS;
             }
         };
         uiJob.schedule();
+
+        return false; // continue
     }
 
-    public void returnResult(boolean isError, int countMembersCopied) {
+    /**
+     * PostRun of {@link SynchronizeMembersJob}.
+     * <p>
+     * {@inheritDoc}
+     */
+    public void returnResultPostRun(boolean isError, int countMembersCopied) {
+
+        debug("\nAbstractSynchronizeMembersEditor.copyMembersPostRun:");
 
         UIJob uiJob = new UIJob(Messages.EMPTY) {
 
             @Override
-            public IStatus runInUIThread(IProgressMonitor arg0) {
+            public IStatus runInUIThread(IProgressMonitor monitor) {
 
                 debug("Compare result:");
                 TableItem[] items = tableViewer.getTable().getItems();

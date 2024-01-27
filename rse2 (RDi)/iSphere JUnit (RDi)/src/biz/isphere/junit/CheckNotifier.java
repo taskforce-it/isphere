@@ -18,13 +18,12 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.eclipse.osgi.util.ManifestElement;
 import org.junit.Test;
 import org.osgi.framework.BundleException;
 
 import biz.isphere.core.internal.Version;
+import junit.framework.JUnit4TestAdapter;
 
 /**
  * <b>JUnit 4 Test Case</b>
@@ -54,7 +53,7 @@ public class CheckNotifier {
     @Test
     public void testReleaseProperties() throws Exception {
 
-        String path = workspace + "/iSphere Notifier/MANIFEST.MF";
+        String path = workspace + "/build/iSphere Notifier/MANIFEST.MF";
         URL url = new URL("file:" + path);
         URLConnection connection = url.openConnection();
         InputStream is = connection.getInputStream();
@@ -93,7 +92,7 @@ public class CheckNotifier {
             fullPath = fullPath.substring(0, fullPath.length() - 1);
 
             // Remove trailing '/bin' and project name from path
-            for (int c = 1; c <= 2; c++) {
+            for (int c = 1; c <= 3; c++) {
                 int i = fullPath.lastIndexOf("/");
                 if (i != -1) {
                     fullPath = fullPath.substring(0, i);
@@ -112,7 +111,7 @@ public class CheckNotifier {
     @Test
     public void testBetaProperties() throws Exception {
 
-        String path = workspace + "/iSphere Notifier/MANIFEST.MF";
+        String path = workspace + "/build/iSphere Notifier/MANIFEST.MF";
         URL url = new URL("file:" + path);
         URLConnection connection = url.openConnection();
         InputStream is = connection.getInputStream();
