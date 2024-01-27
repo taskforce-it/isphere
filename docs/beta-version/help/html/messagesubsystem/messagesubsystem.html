@@ -82,20 +82,11 @@
  			storage area.<br>See: Windows | Preferences | General | Security | Secure Storage</td>
 		</tr>
  	</table>
- 	
-    <p>
- 	<table>
- 		<tr>
- 			<td class="important" >Important: Eclipse 3.2, which is used by WDSCi, does not have
- 			a secure storage container. Here the password is encrypted and stored by iSphere, which
- 			might not be as secure as the Eclipse secure storage area.</td>
-		</tr>
- 	</table>
 	   
 	<p>The message monitor requires an <b>exclusive lock</b> on your message
 		queue. It will not get the lock if the message queue is locked by
 		another job, such as a 5250 session. Therefore it is recommended you
-		start RDi/WDSCi before any 5250 session. But you can also use the 
+		start RDi before any 5250 session. But you can also use the 
 		following CL command to unlock the message queue:
 	<p>   
 	<table>
@@ -295,7 +286,7 @@
 	<p>
 	<a id="acknowledgement"></a>
 	<h2>Acknowledgement</h2>
-	<p>Over several  months,  many on the WDSC_L mailing list at
+	<p>Over several  months,  many on the WDSCI-L mailing list at
 		midrange.com have asked us to adopt the Message Subsystem feature from
 		the RSE Extensions Plug-in of Softlandings Systems.
 	<p>In our opinion, forking another open source project is

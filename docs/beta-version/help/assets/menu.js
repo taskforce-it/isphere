@@ -3,17 +3,14 @@
 // ---------------------------------------------------------- //
 document.write('\<ul id="treemenu" class="treeview">\
   <li><a href="../html/introduction/introduction.html" target="content" style="text-decoration:none">Introduction</a></li>\
-  <li><a href="../html/upgrade/upgrade_instructions.html" target="content" style="text-decoration:none">Upgrade Instructions</a></li>\
   <li>Install Instructions\
   <ul>\
-    <li><a href="../html/install/wdsci7.0/install_wdsci.html" target="content" style="text-decoration:none">Install Plugin for WDSCi 7.0</a></li>\
     <li><a href="../html/install/rdi8.0/install_rdi.html" target="content" style="text-decoration:none">Install Plugin for RDi 9.5.1.3+</a></li>\
     <li><a href="../html/install/install_library.html" target="content" style="text-decoration:none">Install iSphere Library</a></li>\
   </ul>\
   </li>\
   <li>Uninstall Instructions\
   <ul>\
-    <li><a href="../html/uninstall/uninstall_wdsci/uninstall_wdsci.html" target="content" style="text-decoration:none">Uninstall WDSC</a></li>\
     <li><a href="../html/uninstall/uninstall_rdi.html" target="content" style="text-decoration:none">Uninstall RDi</a></li>\
     <li><a href="../html/uninstall/uninstall_library.html" target="content" style="text-decoration:none">Uninstall Library</a></li>\
   </ul>\
@@ -25,7 +22,6 @@ document.write('\<ul id="treemenu" class="treeview">\
     <li><a href="../html/contributions/setup/setup_rdp_svn.html" target="content" style="text-decoration:none">Setting up RDP and SVN</a></li>\
     <li><a href="../html/contributions/setup/setup_isphere.html" target="content" style="text-decoration:none">Setting up iSphere</a></li>\
     <li><a href="../html/contributions/build/build_isphere.html" target="content" style="text-decoration:none">Building iSphere</a></li>\
-    <li><a href="../html/contributions/specialprojects/specialprojects.html" target="content" style="text-decoration:none">Special Projects</a></li>\
   </ul>\
   </li>\
   <li><a href="../html/api/api.html" target="content" style="text-decoration:none">API</a>\
