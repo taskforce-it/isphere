@@ -952,23 +952,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     private void performCompareMembers() {
 
-        System.out.println("Non blocking error message dialog");
-        MessageDialogAsync.displayNonBlockingError(getShell(), "Non Blocking Error", "Non blocking error message dialog");
-
-        System.out.println("Non blocking error message dialog, default title");
-        MessageDialogAsync.displayNonBlockingError(getShell(), "Non blocking error message dialog with default title");
-
-        System.out.println("Non blocking information message dialog");
-        MessageDialogAsync.displayNonBlockingInformation(getShell(), "Non Blocking Information", "Non blocking information message dialog");
-
-        System.out.println("Blocking error message dialog");
-        MessageDialogAsync.displayBlockingError("Blocking Error", "Blocking error message dialog");
-
-        System.out.println("Blocking error message dialog, default title");
-        MessageDialogAsync.displayBlockingError("Blocking error message dialog with default title");
-
-        System.out.println("Starting compare job...");
-
         final SynchronizeMembersEditorInput editorInput = getEditorInput();
 
         if (editorInput.getLeftObject() == null) {
