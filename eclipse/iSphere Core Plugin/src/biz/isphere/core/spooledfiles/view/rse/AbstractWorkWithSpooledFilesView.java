@@ -294,13 +294,13 @@ public abstract class AbstractWorkWithSpooledFilesView extends XViewPart impleme
             if (isPinned()) {
                 setPinned(false);
             }
-            MessageDialogAsync.displayError(shell, Messages.bind(Messages.Could_not_get_RSE_connection_A, connectionName));
+            MessageDialogAsync.displayNonBlockingError(shell, Messages.bind(Messages.Could_not_get_RSE_connection_A, connectionName));
             return;
         }
 
         String message = ISphereHelper.checkISphereLibrary(connectionName);
         if (message != null) {
-            MessageDialogAsync.displayError(shell, message);
+            MessageDialogAsync.displayNonBlockingError(shell, message);
             return;
         }
 

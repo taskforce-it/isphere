@@ -25,6 +25,7 @@ import com.ibm.as400.access.AS400;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.internal.ISeries;
+import biz.isphere.core.internal.MessageDialogAsync;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
 import biz.isphere.core.objectsynchronization.rse.MemberCompareItem;
@@ -205,6 +206,8 @@ public class SynchronizeMembersJob extends Job {
 
         @Override
         public void run() {
+
+            new MessageDialogAsync().displayBlockingError("Information 2", "Hello World");
 
             isCanceled = false;
 

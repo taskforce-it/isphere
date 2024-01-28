@@ -73,7 +73,7 @@ public class AutoRefreshJob extends Job implements IJobFinishedListener {
                 break;
             } catch (Throwable e) {
                 ISpherePlugin.logError(e.getMessage(), e);
-                MessageDialogAsync.displayError(view.getShell(), e.getLocalizedMessage());
+                MessageDialogAsync.displayNonBlockingError(view.getShell(), e.getLocalizedMessage());
                 break;
             }
         }

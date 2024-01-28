@@ -432,7 +432,7 @@ public class CopyMemberValidator extends Thread {
             } catch (Exception e) {
                 errorId = MemberValidationError.ERROR_EXCEPTION;
                 errorMessage = Messages.Validation_ended_with_errors_Request_canceled;
-                MessageDialogAsync.displayError(Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+                MessageDialogAsync.displayBlockingError(Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
 
             if (isFinalError) {

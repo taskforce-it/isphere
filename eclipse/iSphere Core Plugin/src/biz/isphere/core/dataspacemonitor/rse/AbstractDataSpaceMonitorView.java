@@ -243,7 +243,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void setData(RemoteObject[] remoteObjects) {
 
         if (isAutoRefreshOn()) {
-            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
             return;
         }
 
@@ -337,13 +337,13 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
     public void dropData(RemoteObject[] remoteObjects, Object target) {
 
         if (isPinned()) {
-            MessageDialogAsync.displayError(getShell(),
+            MessageDialogAsync.displayNonBlockingError(getShell(),
                 Messages.The_object_cannot_be_monitored_because_the_view_is_pinned_Please_use_the_context_menu_to_open_a_new_view);
             return;
         }
 
         if (isAutoRefreshOn()) {
-            MessageDialogAsync.displayError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.The_object_cannot_be_monitored_because_auto_refresh_is_active);
             return;
         }
 
@@ -818,7 +818,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
                 AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
                 if (dataSpace == null) {
-                    MessageDialogAsync.displayError(
+                    MessageDialogAsync.displayNonBlockingError(
                         getShell(),
                         Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
                             new String[] { remoteObject.getName(), remoteObject.getLibrary(), remoteObject.getObjectType() }));
@@ -841,7 +841,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
             } catch (Throwable e) {
                 ISpherePlugin.logError(e.getMessage(), e);
-                MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+                MessageDialogAsync.displayNonBlockingError(getShell(), e.getLocalizedMessage());
             }
 
             return Status.OK_STATUS;
@@ -966,7 +966,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
 
                     AbstractWrappedDataSpace dataSpace = createDataSpaceWrapper(remoteObject);
                     if (dataSpace == null) {
-                        MessageDialogAsync.displayError(
+                        MessageDialogAsync.displayNonBlockingError(
                             getShell(),
                             Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
                                 new String[] { remoteObject.getName(), remoteObject.getLibrary(), remoteObject.getObjectType() }));
@@ -996,7 +996,7 @@ public abstract class AbstractDataSpaceMonitorView extends ViewPart implements I
                     break;
                 } catch (Throwable e) {
                     ISpherePlugin.logError(e.getMessage(), e);
-                    MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+                    MessageDialogAsync.displayNonBlockingError(getShell(), e.getLocalizedMessage());
                     break;
                 }
             }

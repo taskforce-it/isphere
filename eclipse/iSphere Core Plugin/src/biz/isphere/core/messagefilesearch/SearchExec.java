@@ -196,7 +196,7 @@ public class SearchExec {
                 } else {
                     ISpherePlugin.logError("*** Message file search: Could not read status record (" + _handle + ") from file XFNDSTRS ***", error);
                     monitor.setCanceled(true);
-                    MessageDialogAsync.displayError(Messages.bind(Messages.Could_not_read_status_from_file_B_A_for_search_job_handle_C, new Object[] {
+                    MessageDialogAsync.displayBlockingError(Messages.bind(Messages.Could_not_read_status_from_file_B_A_for_search_job_handle_C, new Object[] {
                         "XFNDSTRS", iSphereLibrary, new Integer(_handle) }));
                 }
             } catch (SQLException e) {
@@ -221,7 +221,7 @@ public class SearchExec {
 
             if (error != null) {
                 monitor.setCanceled(true);
-                MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(error));
+                MessageDialogAsync.displayBlockingError(ExceptionHelper.getLocalizedMessage(error));
                 ISpherePlugin.logError("*** Message file search: Unexpected connection error. ***", error);
             }
 

@@ -101,7 +101,7 @@ public class MembersToExcelExporter {
                 FileManager.askAndOpenSavedFile(shell, file);
 
             } catch (Exception e) {
-                MessageDialogAsync.displayError(shell, e.getLocalizedMessage());
+                MessageDialogAsync.displayNonBlockingError(shell, e.getLocalizedMessage());
             }
 
         }

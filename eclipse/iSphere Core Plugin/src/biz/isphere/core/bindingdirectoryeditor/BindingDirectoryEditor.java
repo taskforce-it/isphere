@@ -41,7 +41,7 @@ public class BindingDirectoryEditor extends EditorPart {
         try {
             level = input.getLevel();
         } catch (Exception e) {
-            MessageDialogAsync.displayError(getSite().getShell(), Messages.Retrieving_host_release_level, ExceptionHelper.getLocalizedMessage(e));
+            MessageDialogAsync.displayNonBlockingError(getSite().getShell(), Messages.Retrieving_host_release_level, ExceptionHelper.getLocalizedMessage(e));
             level = "V0R0M0";
         }
 

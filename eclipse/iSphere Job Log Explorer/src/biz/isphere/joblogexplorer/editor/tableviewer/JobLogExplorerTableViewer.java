@@ -576,7 +576,7 @@ public class JobLogExplorerTableViewer implements SelectionListener {
                         }
                     }
                 } catch (ParseException e) {
-                    MessageDialogAsync.displayError(e.getLocalizedMessage());
+                    MessageDialogAsync.displayBlockingError(e.getLocalizedMessage());
                 } finally {
                     tableViewer.getTable().setLinesVisible(true);
                     notifyStatusChangedListeners(JobLogExplorerStatusChangedEvent.EventType.FILTER_CHANGED);

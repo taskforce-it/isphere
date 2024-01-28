@@ -114,7 +114,7 @@ public class SearchForUpdates extends Job {
             } catch (InvalidVersionNumberException e) {
                 ISpherePlugin.logError("Could not read properties from manifest file.", e);
                 if (showResultAlways) {
-                    MessageDialogAsync.displayError(Messages.E_R_R_O_R,
+                    MessageDialogAsync.displayBlockingError(Messages.E_R_R_O_R,
                         "Could not read properties from manifest file:\n" + ExceptionHelper.getLocalizedMessage(e));
                 }
                 return Status.OK_STATUS;
@@ -124,7 +124,7 @@ public class SearchForUpdates extends Job {
                 if (numTries == 0) {
                     ISpherePlugin.logError(Messages.Failed_to_connect_to_iSphere_update_server, e);
                     if (showResultAlways) {
-                        MessageDialogAsync.displayError(Messages.E_R_R_O_R,
+                        MessageDialogAsync.displayBlockingError(Messages.E_R_R_O_R,
                             Messages.Failed_to_connect_to_iSphere_update_server + "\n\n" + e.getLocalizedMessage());
                     }
                     return Status.OK_STATUS;

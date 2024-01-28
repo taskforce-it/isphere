@@ -83,7 +83,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
             if (editable) {
                 if (leftMember.isLocked()) {
-                    MessageDialogAsync.displayError(leftMember.getMemberLockedMessages());
+                    MessageDialogAsync.displayBlockingError(leftMember.getMemberLockedMessages());
                     editable = false;
                 }
             }

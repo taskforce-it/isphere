@@ -132,7 +132,7 @@ public class RSESearchExec extends SearchExec {
                 postRun.setSearchElements(searchElements);
 
                 if (filteredElements.size() == 0) {
-                    MessageDialogAsync.displayInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
+                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
                         Messages.No_objects_found_that_match_the_selection_criteria);
                     return Status.OK_STATUS;
                 }
@@ -143,7 +143,7 @@ public class RSESearchExec extends SearchExec {
                 monitor.worked(1);
 
             } catch (Exception e) {
-                MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+                MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
                 return Status.OK_STATUS;
             } finally {
                 monitor.done();
@@ -198,7 +198,7 @@ public class RSESearchExec extends SearchExec {
                 postRun.setSearchElements(searchElements);
 
                 if (filteredElements.size() == 0) {
-                    MessageDialogAsync.displayInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
+                    MessageDialogAsync.displayNonBlockingInformation(getShell(), biz.isphere.core.Messages.iSphere_Source_File_Search,
                         Messages.No_objects_found_that_match_the_selection_criteria);
                     return Status.OK_STATUS;
                 }
@@ -209,7 +209,7 @@ public class RSESearchExec extends SearchExec {
                 monitor.worked(1);
 
             } catch (Exception e) {
-                MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+                MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
                 return Status.OK_STATUS;
             } finally {
                 monitor.done();

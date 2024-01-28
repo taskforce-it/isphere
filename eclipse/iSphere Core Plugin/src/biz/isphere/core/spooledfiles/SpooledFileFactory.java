@@ -286,7 +286,7 @@ public class SpooledFileFactory {
                     } else {
                         String message = new SPLF_getErrorMessage().run(as400);
                         if (!StringHelper.isNullOrEmpty(message)) {
-                            MessageDialogAsync.displayError(message);
+                            MessageDialogAsync.displayBlockingError(message);
                         }
                     }
 

@@ -79,7 +79,7 @@ public class JobLogParserConfiguration {
 
     // Global values
     private String JOB_NUMBER = "[0-9]{6}"; //$NON-NLS-1$
-    private String OBJECT_NAME = "[\\$§#A-Z][A-Z0-9._\\$§#]{0,9}"; //$NON-NLS-1$
+    private String OBJECT_NAME = "[\\$ï¿½#A-Z][A-Z0-9._\\$ï¿½#]{0,9}"; //$NON-NLS-1$
     private String PROGRAM = OBJECT_NAME;
     private String LIBRARY = OBJECT_NAME;
     private String LICENSED_PROGRAM = "[0-9]{4}SS[0-9]{1}"; //$NON-NLS-1$
@@ -316,7 +316,7 @@ public class JobLogParserConfiguration {
 
         } catch (Throwable e) {
             ISpherePlugin.logError("*** Could not load job log parser configuration ***", e); //$NON-NLS-1$
-            MessageDialogAsync.displayError(Messages.bind(Messages.Could_not_load_job_log_parser_configuration, pathName));
+            MessageDialogAsync.displayBlockingError(Messages.bind(Messages.Could_not_load_job_log_parser_configuration, pathName));
         } finally {
             if (inStream != null) {
                 try {

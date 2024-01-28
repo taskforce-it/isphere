@@ -540,7 +540,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     public void dropData(RemoteObject[] remoteObjects, Object target) {
 
         if (remoteObjects == null || remoteObjects.length == 0) {
-            MessageDialogAsync.displayError(getShell(), Messages.Dropped_object_does_not_match_expected_type);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Dropped_object_does_not_match_expected_type);
             return;
         }
 
@@ -556,7 +556,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
         for (RemoteObject remoteObject : remoteObjects) {
             if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
-                MessageDialogAsync.displayError(getShell(),
+                MessageDialogAsync.displayNonBlockingError(getShell(),
                     Messages.bind(Messages.Selected_object_does_not_match_expected_type_A, ISeries.DTAARA + "/" + ISeries.USRSPC));
                 return;
             }
@@ -594,13 +594,13 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
     private void dropExampleData(RemoteObject[] remoteObjects) {
 
         if (remoteObjects.length > 1) {
-            MessageDialogAsync.displayError(getShell(), Messages.Only_one_data_space_object_must_be_selected_to_provide_sample_data);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Only_one_data_space_object_must_be_selected_to_provide_sample_data);
             return;
         }
 
         RemoteObject remoteObject = remoteObjects[0];
         if (!(ISeries.DTAARA.equals(remoteObject.getObjectType()) || ISeries.USRSPC.equals(remoteObject.getObjectType()))) {
-            MessageDialogAsync.displayError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
             return;
         }
 
@@ -610,7 +610,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
             if (ISeries.DTAARA.equals(remoteObject.getObjectType())) {
                 if (!AbstractWrappedDataSpace.CHARACTER.equals(dataArea.getDataType())) {
-                    MessageDialogAsync.displayError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
+                    MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Only_character_data_areas_or_user_spaces_are_allowed_to_provide_sample_data);
                     return;
                 }
             }
@@ -633,7 +633,7 @@ public abstract class AbstractDataSpaceEditorDesigner extends EditorPart impleme
 
         } catch (Throwable e) {
             ISpherePlugin.logError(e.getMessage(), e);
-            MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+            MessageDialogAsync.displayNonBlockingError(getShell(), e.getLocalizedMessage());
         }
     }
 

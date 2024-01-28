@@ -174,7 +174,7 @@ public class MessageMonitorThread extends Thread {
                     if (Calendar.getInstance().getTimeInMillis() > startTimeout) {
                         monitoringAttributes.setMonitoring(false);
                         monitoring = false;
-                        MessageDialogAsync.displayError(Messages.Message_Queue_Monitoring_Error, ExceptionHelper.getLocalizedMessage(e));
+                        MessageDialogAsync.displayBlockingError(Messages.Message_Queue_Monitoring_Error, ExceptionHelper.getLocalizedMessage(e));
                     } else {
                         try {
                             // wait a second, then try again
@@ -238,11 +238,11 @@ public class MessageMonitorThread extends Thread {
             }
 
             if (isError) {
-                MessageDialogAsync.displayError(Messages.One_or_more_messages_could_not_be_removed);
+                MessageDialogAsync.displayBlockingError(Messages.One_or_more_messages_could_not_be_removed);
             }
 
         } catch (Throwable e) {
-            MessageDialogAsync.displayError(ExceptionHelper.getLocalizedMessage(e));
+            MessageDialogAsync.displayBlockingError(ExceptionHelper.getLocalizedMessage(e));
         }
     }
 

@@ -670,7 +670,7 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
                     source = ISPHERE_IFS_TMP_DIRECTORY + IBMI_FILE_SEPARATOR + getTemporaryName(format);
                     final IFile file = getLocalSpooledFile(format, source);
                     if (file == null) {
-                        MessageDialogAsync.displayError(shell, Messages.Could_not_create_stream_file_for_spooled_file_on_host);
+                        MessageDialogAsync.displayNonBlockingError(shell, Messages.Could_not_create_stream_file_for_spooled_file_on_host);
                         return Status.OK_STATUS;
                     }
 
@@ -689,14 +689,14 @@ public class SpooledFile implements ISpooledFileBrief, IPropertySource {
                     uiJob.schedule();
 
                 } catch (Exception e) {
-                    MessageDialogAsync.displayError(shell, ExceptionHelper.getLocalizedMessage(e));
+                    MessageDialogAsync.displayNonBlockingError(shell, ExceptionHelper.getLocalizedMessage(e));
                 } finally {
 
                     if (hasSpooledFile) {
                         try {
                             deleteStreamFile(source);
                         } catch (Exception e) {
-                            MessageDialogAsync.displayError(shell, ExceptionHelper.getLocalizedMessage(e));
+                            MessageDialogAsync.displayNonBlockingError(shell, ExceptionHelper.getLocalizedMessage(e));
                         }
                     }
 

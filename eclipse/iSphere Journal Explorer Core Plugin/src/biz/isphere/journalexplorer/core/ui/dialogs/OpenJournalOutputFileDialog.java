@@ -160,7 +160,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
         isInitializing = false;
 
         if (!haveConnections()) {
-            MessageDialogAsync.displayError(getShell(), Messages.Error_No_connections_available);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Error_No_connections_available);
         }
 
         return container;
@@ -578,7 +578,7 @@ public class OpenJournalOutputFileDialog extends XDialog {
                         MetaDataCache.getInstance().removeMetaData(metaData);
                     }
                 } catch (Exception e) {
-                    MessageDialogAsync.displayError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
+                    MessageDialogAsync.displayNonBlockingError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
                 }
 
                 List<ContentAssistProposal> proposals = new LinkedList<ContentAssistProposal>();

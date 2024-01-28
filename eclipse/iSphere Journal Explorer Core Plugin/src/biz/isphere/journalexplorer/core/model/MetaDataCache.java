@@ -197,7 +197,7 @@ public final class MetaDataCache {
                 timeTaken.stop();
 
             } catch (Exception e) {
-                MessageDialogAsync.displayError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
+                MessageDialogAsync.displayNonBlockingError(shell, Messages.Status_Loading_meta_data, ExceptionHelper.getLocalizedMessage(e));
             }
 
             return Status.OK_STATUS;

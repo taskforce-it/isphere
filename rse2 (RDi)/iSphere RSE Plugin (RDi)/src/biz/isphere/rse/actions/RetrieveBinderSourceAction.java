@@ -145,12 +145,12 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
 
                     errorMessage = executeCommand(file, clCommand.toString());
                     if (errorMessage != null) {
-                        MessageDialogAsync.displayError(getShell(), errorMessage);
+                        MessageDialogAsync.displayNonBlockingError(getShell(), errorMessage);
                         return;
                     }
 
                 } catch (Exception e) {
-                    MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+                    MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
                 }
             }
 
@@ -208,12 +208,12 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
 
                     errorMessage = executeCommand(file, clCommand.toString());
                     if (errorMessage != null) {
-                        MessageDialogAsync.displayError(getShell(), errorMessage);
+                        MessageDialogAsync.displayNonBlockingError(getShell(), errorMessage);
                         return;
                     }
 
                 } catch (Exception e) {
-                    MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+                    MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
                 }
 
             }
@@ -249,7 +249,7 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
 
         errorMessage = executeCommand(connection, clCommand.toString());
         if (errorMessage != null) {
-            MessageDialogAsync.displayError(getShell(), errorMessage);
+            MessageDialogAsync.displayNonBlockingError(getShell(), errorMessage);
             return false;
         }
 
@@ -291,7 +291,7 @@ public class RetrieveBinderSourceAction implements IObjectActionDelegate {
             try {
                 as400File.close();
             } catch (Throwable e) {
-                MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+                MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
             }
         }
 

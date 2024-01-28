@@ -51,7 +51,7 @@ public class ForwardMessageAction extends ISeriesAbstractQSYSPopupMenuAction {
                 }
             }
         } catch (SystemMessageException e) {
-            MessageDialogAsync.displayError(getShell(), e.getLocalizedMessage());
+            MessageDialogAsync.displayNonBlockingError(getShell(), e.getLocalizedMessage());
         }
     }
 

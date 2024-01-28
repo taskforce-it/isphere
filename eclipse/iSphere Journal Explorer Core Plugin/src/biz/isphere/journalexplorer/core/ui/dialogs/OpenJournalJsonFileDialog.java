@@ -131,7 +131,7 @@ public class OpenJournalJsonFileDialog extends XDialog {
         loadValues();
 
         if (!haveConnections()) {
-            MessageDialogAsync.displayError(getShell(), Messages.Error_No_connections_available);
+            MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Error_No_connections_available);
         }
 
         return container;

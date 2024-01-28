@@ -676,7 +676,7 @@ public abstract class AbstractJournalEntriesViewerTab extends CTabItem implement
                 }
 
             } catch (Exception e) {
-                MessageDialogAsync.displayError(Messages.Status_Loading_meta_data, e.getLocalizedMessage());
+                MessageDialogAsync.displayBlockingError(Messages.Status_Loading_meta_data, e.getLocalizedMessage());
             }
 
             return Status.OK_STATUS;

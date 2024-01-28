@@ -143,7 +143,7 @@ public class CompareEditorLpexAction implements LpexAction {
             // new Object[] { libraryName, fileName, memberName }));
 
         } catch (Throwable e) {
-            MessageDialogAsync.displayError(getShell(), ExceptionHelper.getLocalizedMessage(e));
+            MessageDialogAsync.displayNonBlockingError(getShell(), ExceptionHelper.getLocalizedMessage(e));
         }
     }
 
