@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-Version: 5.2.9.r
+X-Bundle-Update-Library: false
+X-Bundle-Update-Library-Info: .
+X-Bundle-Info: Compatibility update for RDi 9.8.\nRefactored 'Compare' and 'Search' preferences.\nFixed 'Ignore white spaces' option.
+X-Beta-Version: 5.2.10.b003
+X-Beta-Update-Library: false
+X-Beta-Update-Library-Info: .
+X-Beta-Info: iSphere moved to GitHub.\nNew iSphere Synchronize Members editor.\nEnhancements and bugfixes of the Journal Explorer and iSphere Searches.\nMinor other bugfixes. 
