@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,18 +20,22 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
+import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
+import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
+import com.ibm.etools.systems.editor.SystemTextEditor;
+
 import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.internal.IEditor;
 import biz.isphere.rse.Messages;
 import biz.isphere.rse.connection.ConnectionManager;
 
-import com.ibm.etools.iseries.rse.ui.resources.QSYSEditableRemoteSourceFileMember;
-import com.ibm.etools.iseries.services.qsys.api.IQSYSMember;
-import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
-import com.ibm.etools.systems.editor.SystemTextEditor;
-
 public class Editor implements IEditor {
+
+    public void openEditor(String connectionName, String library, String file, String member, String mode) {
+        openEditor(connectionName, library, file, member, 0, mode);
+    }
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 

@@ -122,7 +122,7 @@ public class CompareAction {
                         if (part instanceof EditorPart) {
                             EditorPart editorPart = (EditorPart)part;
                             if (editorPart.getEditorInput() == fInput) {
-                                fInput.cleanup();
+                                fInput.cleanup(); // Removes the member lock
                                 IWorkbenchPage workbenchPage = UIHelper.getActivePage();
                                 if (workbenchPage != null) {
                                     workbenchPage.removePartListener(this);

@@ -229,6 +229,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     private void addIgnoreFile() {
         leftMember.addIgnoreFile();
         try {
+            // Adds a *SHHRD lock on the member
             leftMember.openStream();
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open stream of left file ***", e); //$NON-NLS-1$
@@ -238,6 +239,7 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
     private void removeIgnoreFile() {
         leftMember.removeIgnoreFile();
         try {
+            // Removes the *SHHRD lock from the member
             leftMember.closeStream();
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not close stream of left file ***", e); //$NON-NLS-1$

@@ -107,6 +107,10 @@ public class MemberDescription implements Serializable, Comparable<MemberDescrip
         this.text = text;
     }
 
+    public String getQualifiedMemberName() {
+        return getLibraryName() + "/" + getFileName() + "." + getMemberName();
+    }
+
     /**
      * Compares this member description with another member description. The
      * <i>text</i> attribute is intentionally not compared.

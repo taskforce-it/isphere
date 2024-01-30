@@ -51,6 +51,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 
 import biz.isphere.base.internal.DialogSettingsManager;
+import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.internal.UIHelper;
 import biz.isphere.base.swt.events.TableAutoSizeControlListener;
@@ -59,6 +60,8 @@ import biz.isphere.core.Messages;
 import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
+import biz.isphere.core.internal.IEditor;
 import biz.isphere.core.internal.ISphereHelper;
 import biz.isphere.core.internal.Member;
 import biz.isphere.core.internal.MessageDialogAsync;
@@ -286,7 +289,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         btnCompare = WidgetFactory.createPushButton(optionsArea);
         btnCompare.setLayoutData(createButtonLayoutData(1));
         btnCompare.setText(Messages.Compare);
-        btnCompare.setToolTipText(Messages.Tooltip_start_compare);
+        btnCompare.setToolTipText(Messages.Tooltip_start_compare_source_members);
         btnCompare.addSelectionListener(new SelectionListener() {
 
             public void widgetSelected(SelectionEvent event) {
@@ -304,7 +307,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             btnSynchronize = WidgetFactory.createPushButton(optionsArea);
             btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
             btnSynchronize.setText(Messages.Synchronize);
-            btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize);
+            btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize_source_members);
             btnSynchronize.addSelectionListener(new SelectionListener() {
                 public void widgetSelected(SelectionEvent event) {
                     performSynchronizeMembers();
@@ -950,17 +953,63 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         setButtonEnablementAndDisplayCompareStatus();
     }
 
+    private void performEditMember(MemberDescription memberDescription) {
+
+        String connectionName = memberDescription.getConnectionName();
+        String libraryName = memberDescription.getLibraryName();
+        String fileName = memberDescription.getFileName();
+        String memberName = memberDescription.getMemberName();
+
+        IEditor editor = ISpherePlugin.getEditor();
+        if (editor != null) {
+            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.EDIT);
+        }
+    }
+
+    private void performDisplayMember(MemberDescription memberDescription) {
+
+        String connectionName = memberDescription.getConnectionName();
+        String libraryName = memberDescription.getLibraryName();
+        String fileName = memberDescription.getFileName();
+        String memberName = memberDescription.getMemberName();
+
+        IEditor editor = ISpherePlugin.getEditor();
+        if (editor != null) {
+            editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.DISPLAY);
+        }
+    }
+
+    private void performDeleteMember(String message, MemberDescription memberDescription) {
+
+        if (MessageDialog.openConfirm(getShell(), Messages.Confirmation, message)) {
+
+            String libraryName = memberDescription.getLibraryName();
+            String fileName = memberDescription.getFileName();
+            String memberName = memberDescription.getMemberName();
+
+            String rmvMbrCmd = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
+
+            try {
+                // TODO enable delete command
+                // ISphereHelper.executeCommand(system, rmvMbrCmd);
+                System.out.println("Executing command: " + rmvMbrCmd);
+            } catch (Exception e) {
+                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            }
+        }
+    }
+
     private void performCompareMembers() {
 
         final SynchronizeMembersEditorInput editorInput = getEditorInput();
 
         if (editorInput.getLeftObject() == null) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Left source file or library is missing.");
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Left_source_file_or_library_is_missing);
             return;
         }
 
         if (editorInput.getRightObject() == null) {
-            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, "Right source file or library is missing.");
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Right_source_file_or_library_is_missing);
             return;
         }
 
@@ -1100,9 +1149,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     private void performSynchronizeMembers() {
 
-        setIsSynchronizing(true);
-        setButtonEnablementAndDisplayCompareStatus();
-
         RemoteObject leftObject = getEditorInput().getLeftObject();
         RemoteObject rightObject = getEditorInput().getRightObject();
 
@@ -1117,7 +1163,15 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             synchronizeMembersJob.addItem(compareItem, sharedValues.getCompareOptions());
         }
 
-        synchronizeMembersJob.schedule();
+        String leftToRight = Messages.bind(Messages.Copy_A_source_members_from_left_to_right, synchronizeMembersJob.getNumCopyLeftToRight());
+        String rightToLeft = Messages.bind(Messages.Copy_A_source_members_from_right_to_left, synchronizeMembersJob.getNumCopyRightToLeft());
+
+        if (MessageDialog.openConfirm(getShell(), Messages.Confirmation,
+            Messages.Do_you_want_to_start_synchronizing_members + "\n\n" + leftToRight + "\n" + rightToLeft)) {
+            setIsSynchronizing(true);
+            setButtonEnablementAndDisplayCompareStatus();
+            synchronizeMembersJob.schedule();
+        }
     }
 
     /**
@@ -1238,93 +1292,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
     }
 
-    // private boolean isValidating() {
-    //
-    // if (copyMemberValidator != null && copyMemberValidator.isActive()) {
-    // return true;
-    // }
-    //
-    // return false;
-    // }
-
-    // private boolean isCopying() {
-    //
-    // if (copyMemberService != null && copyMemberService.isActive()) {
-    // return true;
-    // }
-    //
-    // return false;
-    // }
-
-    // private void setControlEnablement() {
-    //
-    // if (copyMemberService == null) {
-    // setButtonEnablement(btnCompare, true);
-    // setButtonEnablement(btnSynchronize, true);
-    // setButtonEnablement(btnCancel, false);
-    // setControlsEnables(true);
-    // } else {
-    //
-    // if (isValidating()) {
-    // setButtonEnablement(btnCompare, false);
-    // setButtonEnablement(btnSynchronize, false);
-    // setButtonEnablement(btnCancel, true);
-    // setControlsEnables(false);
-    // // setStatusMessage(Messages.Validating_dots);
-    // } else if (isCopying()) {
-    // setButtonEnablement(btnCompare, false);
-    // setButtonEnablement(btnSynchronize, false);
-    // setButtonEnablement(btnCancel, true);
-    // setControlsEnables(false);
-    // // setStatusMessage(Messages.Copying_dots);
-    // } else {
-    //
-    // if (copyMemberService.hasItemsToCopy()) {
-    // setButtonEnablement(btnSynchronize, true);
-    // } else {
-    // setButtonEnablement(btnSynchronize, false);
-    // }
-    //
-    // setButtonEnablement(btnCompare, true);
-    // setButtonEnablement(btnCancel, true);
-    //
-    // setControlsEnables(true);
-    //
-    // if (copyMemberService.isCanceled()) {
-    // MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-    // Messages.Operation_has_been_canceled_by_the_user);
-    // }
-    // }
-    // }
-    // }
-
-    // private void setControlsEnables(boolean enabled) {
-    //
-    // if (optionsArea == null) {
-    // // not yet created
-    // return;
-    // }
-    //
-    // chkIgnoreDate.setEnabled(enabled);
-    // chkRtnChgOnly.setEnabled(enabled);
-    //
-    // btnCopyRight.setEnabled(enabled);
-    // btnEqual.setEnabled(enabled);
-    // btnNoCopy.setEnabled(enabled);
-    // btnCopyLeft.setEnabled(enabled);
-    //
-    // btnDuplicates.setEnabled(enabled);
-    // btnSingles.setEnabled(enabled);
-    // }
-
-    // private void setButtonEnablement(Button button, boolean enabled) {
-    // if (button == null) {
-    // return;
-    // }
-    //
-    // button.setEnabled(enabled);
-    // }
-
     private String createLabel(Member member) {
 
         StringBuilder buffer = new StringBuilder();
@@ -1396,6 +1363,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
      * Class that implements the context menu for the table rows.
      */
     private class TableContextMenu extends MenuAdapter {
+
+        private static final int LEFT = 1;
+        private static final int RIGHT = 2;
 
         private Menu parent;
         private ISynchronizeMembersEditorConfiguration configuration;
@@ -1535,7 +1505,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             menuItemEditLeft.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    // performEditMessageDescriptions(LEFT, isEditable);
+                    performEditMember(LEFT, isEditable);
                 }
             });
 
@@ -1558,7 +1528,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             menuItemEditRight.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    // performEditMessageDescriptions(RIGHT, isEditable);
+                    performEditMember(RIGHT, isEditable);
                 }
             });
 
@@ -1588,7 +1558,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             menuItemDeleteLeft.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    // performDeleteMessageDescriptions(LEFT);
+                    performDeleteMember(LEFT);
                 }
             });
 
@@ -1603,7 +1573,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             menuItemDeleteRight.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    // performDeleteMessageDescriptions(RIGHT);
+                    performDeleteMember(RIGHT);
                 }
             });
 
@@ -1620,6 +1590,59 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             }
 
             return null;
+        }
+
+        private void performEditMember(int side, boolean isEditable) {
+
+            MemberCompareItem selectedItem = getTheSelectedItem();
+
+            if (side == LEFT) {
+                if (isEditable) {
+                    AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getLeftMemberDescription());
+                } else {
+                    AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription());
+                }
+            } else if (side == RIGHT) {
+                if (isEditable) {
+                    AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getRightMemberDescription());
+                } else {
+                    AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription());
+                }
+            }
+        }
+
+        private void performDeleteMember(int side) {
+
+            MemberCompareItem selectedItem = getTheSelectedItem();
+
+            MemberDescription memberDescription;
+            String qualifiedConnectionName;
+            String qualifiedMemberName;
+            StringBuilder message = new StringBuilder();
+
+            if (side == LEFT) {
+                memberDescription = selectedItem.getLeftMemberDescription();
+                qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
+                qualifiedMemberName = memberDescription.getQualifiedMemberName();
+                message.append("<-- ");
+                message.append(Messages.Delete_left_member_colon);
+            } else if (side == RIGHT) {
+                memberDescription = selectedItem.getRightMemberDescription();
+                qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
+                qualifiedMemberName = memberDescription.getQualifiedMemberName();
+                message.append(Messages.Delete_right_member_colon);
+                message.append(" -->");
+            } else {
+                throw new IllegalArgumentException("Unexpected value in 'side': " + side);
+            }
+
+            message.append("\n");
+            message.append("\n");
+            message.append(qualifiedConnectionName);
+            message.append("\n");
+            message.append(qualifiedMemberName);
+
+            AbstractSynchronizeMembersEditor.this.performDeleteMember(message.toString(), memberDescription);
         }
     }
 

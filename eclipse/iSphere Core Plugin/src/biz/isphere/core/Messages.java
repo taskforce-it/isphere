@@ -1820,6 +1820,24 @@ public class Messages extends NLS {
 
     public static String Copying_source_members;
 
+    public static String Delete_left_member_colon;
+
+    public static String Delete_right_member_colon;
+
+    public static String Left_source_file_or_library_is_missing;
+
+    public static String Right_source_file_or_library_is_missing;
+
+    public static String Tooltip_start_compare_source_members;
+
+    public static String Tooltip_start_synchronize_source_members;
+
+    public static String Do_you_want_to_start_synchronizing_members;
+
+    public static String Copy_A_source_members_from_left_to_right;
+
+    public static String Copy_A_source_members_from_right_to_left;
+
     /*
      * Warning messages
      */
