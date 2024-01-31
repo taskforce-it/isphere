@@ -14,11 +14,15 @@
 
 	<!-- Set directory names -->
 	<property name="build.dir" location="${workspace.home}/${build.project.name}/build" />
-	<property name="build.project.dir" location="${build.dir}/../../../.." />
+	<property name="build.project.dir" location="${build.dir}/.." />
 	<property name="build.template.dir" location="${build.dir}/templates" />
 	<property name="build.upload.dir" location="${build.project.dir}/upload" />
 	<property name="build.lib.dir" location="${build.project.dir}/lib" />
 	<property name="build.bin.dir" location="${build.project.dir}/bin" />
+
+    <echo>build.dir:         ${build.dir}</echo>
+	<echo>build.project.dir: ${build.project.dir}</echo>
+    <echo>build.bin.dir:     ${build.bin.dir}</echo>
 	
 	<property name="help.build.properties.dir" location="${build.dir}" />
 	
