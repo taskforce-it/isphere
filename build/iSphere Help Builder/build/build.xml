@@ -3,18 +3,18 @@
  *  This Ant script build a folder with all help pages of the 
  *  given help projects.
  * ===================================================================== -->
-<project basedir="." default="build">
+<project name="iSphere Help Builder" default="build" basedir=".">
 
 	<!-- Load project names and new version number -->
 	<property file="helpproject.properties" />
 	<property file="build.properties" />
 
 	<!-- Set workspace home directory -->
-	<property name="workspace.home" location="${basedir}/../.." />
+    <property name="workspace.home" location="${basedir}/../../../.." />
 
 	<!-- Set directory names -->
 	<property name="build.dir" location="${workspace.home}/${build.project.name}/build" />
-	<property name="build.project.dir" location="${build.dir}/.." />
+	<property name="build.project.dir" location="${build.dir}/../../../.." />
 	<property name="build.template.dir" location="${build.dir}/templates" />
 	<property name="build.upload.dir" location="${build.project.dir}/upload" />
 	<property name="build.lib.dir" location="${build.project.dir}/lib" />
