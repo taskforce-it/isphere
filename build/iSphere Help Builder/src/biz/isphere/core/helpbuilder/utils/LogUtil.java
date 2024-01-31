@@ -15,7 +15,7 @@ public final class LogUtil {
     }
 
     public static void warn(String text) {
-        // System.out.println("Help Builder Warning: " + text);
+        System.out.println("Help Builder Warning: " + text);
     }
 
     public static void debug(String text) {

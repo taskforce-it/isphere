@@ -27,16 +27,19 @@ public class Project {
 
     public Project(String configString) throws JobCanceledException {
 
+        String workspacePath = Configuration.getInstance().getWorkspace().getPath();
+
         if ("\\".equals(File.separator)) {
             pluginPath = configString.replaceAll("/", "\\\\");
         } else {
             pluginPath = configString.replaceAll("/", File.separator);
         }
 
-        String projectPath = Configuration.getInstance().getWorkspace().getPath() + File.separator + pluginPath;
-        tocs = findTocs(projectPath);
-        id = getProjectId(projectPath);
-        helpDirectory = findHelpDirectory(projectPath);
+        pluginPath = workspacePath + File.separator + pluginPath;
+
+        tocs = findTocs(pluginPath);
+        id = getProjectId(pluginPath);
+        helpDirectory = findHelpDirectory(pluginPath);
     }
 
     public String getPluginPath() {

@@ -25,6 +25,8 @@ import biz.isphere.core.helpbuilder.utils.LogUtil;
 
 public final class Configuration {
 
+    private static final String DUMMY_RESOURCE = "dummy.resource";
+
     public static final String REGEX_BACK_SLASH = "\\\\";
     public static final String REGEX_PIPE = "\\|";
     public static final String FORWARD_SLASH = "/";
@@ -36,8 +38,7 @@ public final class Configuration {
     private static Configuration instance;
 
     private static final String MAIN_CONFIG_FILE = "build.properties";
-    private static final String PROJECT_CONFIG_FILE = "helpbuilder.properties";
-    private static final String BUILD_PROJECT_PATH = "build.project.path";
+    private static final String PROJECT_CONFIG_FILE = "helpproject.properties";
     private static final String OUTPUT_FILE = "build.output.file";
     private static final String BUILD_OUTPUT_DIRECTORY = "build.output.dir";
     private static final String PROJECTS = "build.help.projects";
@@ -51,9 +52,13 @@ public final class Configuration {
 
     /**
      * Private constructor to ensure the Singleton pattern.
+     * 
+     * @throws JobCanceledException
      */
-    private Configuration() {
-        setConfigurationFile(MAIN_CONFIG_FILE, PROJECT_CONFIG_FILE);
+    private Configuration() throws JobCanceledException {
+        String mainConfigFile = getHelpBuilderDirectory() + File.separator + "build" + File.separator + MAIN_CONFIG_FILE;
+        String projectConfigFile = getHelpBuilderDirectory() + File.separator + "build" + File.separator + PROJECT_CONFIG_FILE;
+        setConfigurationFile(mainConfigFile, projectConfigFile);
         workspace = null;
     }
 
@@ -89,8 +94,8 @@ public final class Configuration {
 
     public File getWorkspace() throws JobCanceledException {
         if (workspace == null) {
-            File mainConfigResourceFile = new File(getResourcePath(mainConfigResource));
-            File directory = mainConfigResourceFile.getParentFile();
+            File dummyResourceFile = new File(getResourcePath(DUMMY_RESOURCE));
+            File directory = dummyResourceFile.getParentFile();
             while (directory != null && !isWorkspace(directory)) {
                 directory = directory.getParentFile();
             }
@@ -114,15 +119,11 @@ public final class Configuration {
 
     public String getHelpBuilderDirectory() throws JobCanceledException {
 
-        String fileName = getWorkspace() + File.separator + getString(BUILD_PROJECT_PATH);
-
-        try {
-            String path = FileUtil.resolvePath(fileName);
-            LogUtil.debug("Running from directory: " + path);
-            return path;
-        } catch (IOException e) {
-            throw new JobCanceledException(e.getLocalizedMessage(), e);
-        }
+        String dummyResource = getResourcePath(DUMMY_RESOURCE);
+        File dummyResourceFile = new File(dummyResource);
+        String path = dummyResourceFile.getParentFile().getParent();
+        LogUtil.debug("Running from directory: " + path);
+        return path;
     }
 
     public String getOutputDirectory() throws JobCanceledException {

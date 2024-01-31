@@ -116,7 +116,7 @@ public class Toc {
 
     @Override
     public String toString() {
-        return getLabel() + " -> " + getLinkToFile();
+        return getLabel() + " -> " + getLinkToFile() + " (" + getPluginTocPath() + ")";
     }
 
 }

@@ -30,7 +30,6 @@ import biz.isphere.core.helpbuilder.model.Anchor;
 import biz.isphere.core.helpbuilder.model.Project;
 import biz.isphere.core.helpbuilder.model.Toc;
 import biz.isphere.core.helpbuilder.model.Topic;
-import biz.isphere.core.helpbuilder.utils.FileUtil;
 import biz.isphere.core.helpbuilder.utils.LogUtil;
 
 public class HelpBuilder {
@@ -202,42 +201,46 @@ public class HelpBuilder {
 
     private Topic findReferencedTopic(File baseDir, Toc toc, Toc[] tocs) throws IOException {
 
-        LogUtil.debug("Starting to find referenced topic: " + toc.getLabel() + " in folder: " + baseDir);
+        LogUtil.debug("Resolving references of toc: " + toc.getPluginTocPath());
 
         String linkToFile = toc.getLinkToFile();
-        if (linkToFile.startsWith("..")) {
-            linkToFile = linkToFile.substring(2);
-        }
+        // if (linkToFile.startsWith("..")) {
+        // linkToFile = linkToFile.substring(2);
+        // }
+
+        File currentFolder = new File(toc.getParent().getId());
 
         File tBaseDir;
-        if (linkToFile.startsWith(".")) {
-            // e.g.: ./toc/toc.xml#integration
+        if (linkToFile.startsWith("..")) {
+            // e.g.: link_to="../biz.isphere.base.help/toc/toc.xml#reference"
+            linkToFile = linkToFile.substring(3);
+            File parentFolder = currentFolder.getParentFile();
+            tBaseDir = new File(parentFolder, linkToFile);
+        } else if (linkToFile.startsWith(".")) {
+            // e.g.: link_to="./toc/toc.xml#integration"
             linkToFile = linkToFile.substring(1);
-            tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
-        } else if (linkToFile.startsWith("..")) {
-            // should never happen
-            throw new IllegalArgumentException("Unexpected argument 'linkToFile' value: " + linkToFile);
+            tBaseDir = new File(currentFolder, linkToFile);
         } else if (linkToFile.startsWith("/")) {
-            // e.g.: /toc/toc.xml#integration
-            tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
+            // e.g.: href="/biz.isphere.base.help/html/sql/sql_reference.html"
+            tBaseDir = new File(linkToFile);
         } else {
-            // e.g.: toc/toc.xml#integration
-            linkToFile = "/" + linkToFile;
-            tBaseDir = new File(baseDir, toc.getParent().getPluginPath());
+            throw new IllegalArgumentException("Unexpected argument 'linkToFile' value: " + linkToFile);
         }
 
-        String linkToTocPath = FileUtil.resolvePath(tBaseDir, linkToFile);
+        String linkToTocPath = tBaseDir.getPath().replaceAll(Configuration.REGEX_BACK_SLASH, Configuration.FORWARD_SLASH);
         String linkToReference = toc.getLinkToReference();
 
         if (linkToTocPath == null || linkToReference == null) {
-            LogUtil.warn("...attributes 'linkToTocPath' or 'linkToReference' are [null].");
+            LogUtil.warn("...attributes 'linkToTocPath' or 'linkToReference' is [null].");
             return null;
         }
 
+        String linkToPluginId = linkToTocPath.substring(0, linkToTocPath.indexOf(Configuration.FORWARD_SLASH));
+
+        LogUtil.debug("   link_to: '" + linkToReference + "' of plug-in '" + linkToPluginId + "' in file: " + linkToTocPath);
+
         for (Toc tocItem : tocs) {
-            String pluginTocPath = tocItem.getPluginTocPath();
-            if (linkToTocPath.equals(pluginTocPath)) {
-                LogUtil.debug("...found referenced topic: " + linkToTocPath);
+            if (linkToPluginId.equals(tocItem.getParent().getId())) {
                 return findAnchor(linkToReference, tocItem.getTopics());
             }
         }
@@ -247,7 +250,6 @@ public class HelpBuilder {
     }
 
     private Topic findAnchor(String linkToReference, Topic[] topics) {
-        LogUtil.debug("Start searching for anchor '" + linkToReference + "'...");
         if (topics != null) {
             for (Topic topic : topics) {
                 Anchor anchor = topic.getAnchor();
@@ -263,7 +265,6 @@ public class HelpBuilder {
                 }
             }
         }
-        LogUtil.warn("Could not find topic reference: " + linkToReference);
         return null;
     }
 
@@ -323,10 +324,12 @@ public class HelpBuilder {
 
     private String generatePluginTocPath(Project project, int index) {
 
+        String projectDirectory = new File(project.getPluginPath()).getName();
+
         String tocPath = project.getTocs()[index];
         String[] parts = tocPath.split(Configuration.FORWARD_SLASH);
         for (int i = 0; i < parts.length; i++) {
-            if (parts[i].equalsIgnoreCase(project.getPluginPath())) {
+            if (parts[i].equalsIgnoreCase(projectDirectory)) {
                 parts[i] = project.getId();
             }
         }
