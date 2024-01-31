@@ -11,47 +11,37 @@
 <h1>Setting up iSphere</h1>
 <p>
 <a id="connect_to_sourceforge"></a>
-<h2>Connecting to SourceForge</h2>
+<h2>Connecting to GitHub</h2>
 <p>
-Open the "SVN Repository Exploring" perspective and click the "New Repository Location" icon on the
-"SVN Repositories" view.
+Open the "Git Repositories" view and paste the SSH URL for cloning the iSphere
+repository into the view. A <i>Clone Git Repository</i> window should open. Confirm
+the settings and click "Next". Confirm cloning the <i>main</i> branch and click
+"Next". Validate the suggested repository folder on your computer and click "Finish".
 <p>
-Now enter the URL of iSphere repository at SourceForge <a href="https://svn.code.sf.net/p/isphere/code" target="_blank">https://svn.code.sf.net/p/isphere/code</a>:
+<div class="codeIndent">git@github.com:rdi-open-source/isphere.git</div>
 <p>
-<img alt="iSphere repository location at SourceForge" src="./assets/isphere_repository_location.gif">
-<p>
-Click the "Finish" button. Now you should see the iSphere repository like this:
-<p>
-<img alt="iSphere repository at SourceForge" src="./assets/isphere_repository.gif">
-<p>
-<h2>Checking out the iSphere Eclipse Setup Project</h2>
-<p>
-Let us go ahead and check out the "iSphere Eclipse Setup". Open the "SVN repository Exploring" view, right click 
-the "iSphere Eclipse Setup" project and select "Checkout". The checkout process will start immediately and checkout 
-the project to your workspace.
-<p>
-<img alt="iSphere project in the workspace" src="./assets/isphere_project.gif">
+<img alt="iSphere repository SSH URL" src="./assets/git_repositories_view.png">
 <p>
 <h2>Installing the iSphere Ant Plug-in</h2>
 <p>
-Next we want to install the "iSphere Ant Plugin", which provides some Ant tasks that we need to build the 
+Next let's install the <i>iSphere Ant Plugin</i>, which provides some Ant tasks that we need to build the 
 plug-in. Open "Help -&gt; Install New Software..." and click the "Add" button. Enter a descriptive name, such
 as <i>iSphere Ant Plugin</i> and the location of the "iSphere Ant Contribution" zip file that you can find
 in directory "plug-ins" of the "iSphere Eclipse Setup" project.
 <p>
-<img alt="Install iSphere Ant Contribution" src="./assets/install_ant_contribution.gif">
+<img alt="Install iSphere Ant Contribution" src="./assets/install_ant_contribution.png">
 <p>
 <h2>Setting the Java JREs</h2>
 <p>
 Now we need to set the Java JRE that we need to compile the iSphere plug-in. Since we want to be compatible with 
-WDSCi 7.0, we use that JRE to compile the classes. 
+RDi 9.5.1.3, we use that JRE to compile the classes. 
 <p>
 Open "Windows -&gt; Preferences -&gt; Java -&gt; Installed JREs". Click the "Add" button, select "Standard VM" and click "Next".
-Now select the WDSCi 7.0 JRE and give it the name "JRE 1.5.0 IBM J9". Please enter the same as shown. Do not change it.
-Usually the JRE is located in the <i>jdk</i> directory of the WDSCi <i>SDP</i> folder, e.g.:
-<div class="codeIndent">C:\IBM\SDP_070\jdk</div>
+Now select the RDi 9.5.1.3 JRE and give it the name "JRE 1.8.0 IBM J9". Please enter the same as shown. Do not change it:
 <p>
-<img alt="Install Java JRE" src="./assets/install_jre.gif">
+<img alt="Install Java JRE" src="./assets/install_jre.png">
+<p>
+Message <i>The selected JRE does not support the current compiler compliance level of 11</i> can be ignored.
 <p>
 <h2>Setting Clean Up Defaults</h2>
 <p>
@@ -62,12 +52,7 @@ that there are, for example, no missing <i>@override</i> annotations or unnecess
 <p>
 Import the clean up profile from file "Preferences_Java_CodeStyle_CleanUp (iSphere)_3.6.xml" of the "iSphere Eclipse Setup".
 <p>
-<img alt="Set up the cleanup profile" src="./assets/codestyle_cleanup.gif">
-<p>
-<table>
-<tr><td class="notice" >WDSCi: Restore default values for all "Clean Up" tabs. 
-    Uncheck "Change all accesses through subtypes" on "Member Accesses" tab.</td></tr>
-</table>
+<img alt="Set up the cleanup profile" src="./assets/codestyle_cleanup.png">
 <p>
 <h2>Setting Code Formatter Defaults</h2>
 <p>
@@ -77,7 +62,7 @@ when the source code is stored in a repository, such as SVN, to avoid changes ju
 <p>
 Import the code formatter profile from file "Preferences_Java_CodeStyle_Formatter (iSphere)_3.6.xml" of the "iSphere Eclipse Setup".
 <p>
-<img alt="Set up the code formatter profile" src="./assets/codestyle_formatter.gif">
+<img alt="Set up the code formatter profile" src="./assets/codestyle_formatter.png">
 <p>
 <h2>Setting Code Templates Defaults</h2>
 <p>
@@ -86,7 +71,7 @@ to add the iSphere copyright notice.
 <p>
 Import the code templates from file "Preferences_Java_CodeStyle_Code_Template (iSphere)_3.6.xml" of the "iSphere Eclipse Setup".
 <p>
-<img alt="Set up the code formatter profile" src="./assets/codestyle_codetemplates.gif">
+<img alt="Set up the code formatter profile" src="./assets/codestyle_codetemplates.png">
 <p>
 <h2>Setting Save Actions</h2>
 <p>
@@ -101,7 +86,7 @@ to automatically clean up and format our Java source files. Please set your save
 <tr><td>Disabled:</td><td>Additional actions<td></tr>
 </table>
 <p>
-<img alt="Set up the save actions" src="./assets/editor_saveactions.gif">
+<img alt="Set up the save actions" src="./assets/editor_saveactions.png">
 <p>
 <h2>Classpath Variables</h2>
 <p>
@@ -123,29 +108,33 @@ Classpath variables are maintained from <i>Window - Preferences - Java - Build P
 <p>
 <h2>The iSphere Projects</h2>
 <p>
-The iSphere SVN repository follows the standard SVN naming convention. The <i>trunk</i> folder contains the actual development
-code. The <i>branches</i> folder is used in rare cases, when it is required to do something that cannot be done with the
-current code base in the <i>trunk</i> folder, for example someone wants to try out something new, that at the end may or may not 
-go into the project. Last but not least the <i>tags</i> folder is used to create tags of the iSphere releases. With a tag it is 
+The iSphere Git repository follows the standard naming conventions. The <i>main</i> branch contains the actual development
+code. The <i>tag</i> branches are used for creating tags of iSphere releases. With a tag it is 
 easy to check out a specific version of the project.
 <p>
-<img alt="The iSphere repository" src="./assets/svn_repository.gif">
-<p>
-The folders below the <i>trunk</i> contains the following project types:
-<p>
-<table>
-<tr><td valign="top">eclipse</td><td valign="top">-</td><td>Projects commonly used by RDi and WDSCi<td></tr>
-<tr><td valign="top">host</td><td valign="top">-</td><td>IBM i library<td></tr>
-<tr><td valign="top">rse1</td><td valign="top">-</td><td>WDSCi related projects<td></tr>
-<tr><td valign="top">rse2</td><td valign="top">-</td><td>RDi related projects<td></tr>
-<tr><td valign="top" colspan="3"><br>The following projects are not shipped with iSphere:</td></tr>
-<tr><td valign="top">build</td><td valign="top">-</td><td>Projects that are used to build the iSphere plug-in<td></tr>
-<tr><td valign="top">development</td><td valign="top">-</td><td>Projects that stores development utilities<td></tr>
+<table border="0">
+<tr>
+  <td>Tags</td>
+  <td>Branches</td>
+</tr>
+<tr>
+  <td><img alt="Git tags" src="./assets/git_tags.png"></td>
+  <td><img alt="Git branches" src="./assets/git_branches.png"></td>
+</tr>
 </table>
 <p>
-Usually there is no need for checking out all projects. For example you may not want to check out the WDSCi related projects
-if your IDE is RDP or RDi. There is also no need for checking out the four Ant projects of the <i>build</i> folder. These projects
-are only needed when there is something to change in the <i>iSphere Ant Contribution</i> plug-in.
+On your computer you will find the following folders:
+<p>
+<img alt="Git branches" src="./assets/local_folders.png">
+<p>
+<table>
+<tr><td valign="top">build</td><td valign="top">-</td><td>Projects used for building the plug-in.<td></tr>
+<tr><td valign="top">development</td><td valign="top">-</td><td>Development utilities.<td></tr>
+<tr><td valign="top">docs</td><td valign="top">-</td><td>iSphere homepage and update site.<td></tr>
+<tr><td valign="top">eclipse</td><td valign="top">-</td><td>Base projects not related to a target IDE.<td></tr>
+<tr><td valign="top">host</td><td valign="top">-</td><td>iSphere library.<td></tr>
+<tr><td valign="top">rse2</td><td valign="top">-</td><td>Projects specific to a target IDE.<td></tr>
+</table>
 <p>
 <a id="host_project"></a>
 <h2>The iSphere Host Project</h2>
@@ -163,15 +152,10 @@ sequence numbers in the repository:
 repository without sequence numbers.</td></tr>
 </table>
 <p>
-If you did not yet connect to SourceForge, refer to <a href="../setup/setup_rdp_svn.html#install_svn_adapter">Installing the SVN Adapter</a> 
-to learn how to install the SVN adapter. Then right-click the <i>iSphere</i> project and check it out to your workspace:  
-<p>
-<img alt="Checking out the iSphere host project" src="./assets/checkout_isphere.gif">
-<p>
 Now switch to the <i>i Projects</i> perspective and right-click the <i>iSphere</i> project. Select <i>Properties</i> and <i>i Project</i>
 and specify the connection to your host and the name of your iSphere library:
 <p>
-<img alt="Checking out the iSphere host project" src="./assets/isphere_iproject.gif">
+<img alt="Checking out the iSphere host project" src="./assets/isphere_iproject.png">
 <p>
 We use ISPHEREDVP for developing iSphere and ISPHERE for the production library. Library ISPHERE is built
 with the iSphere BUILD command from the command line as described in <a href="../build/build_isphere.html#library_build">Library Build</a>.
