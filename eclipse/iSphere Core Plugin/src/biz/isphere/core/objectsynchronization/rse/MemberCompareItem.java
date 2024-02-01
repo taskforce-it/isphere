@@ -144,7 +144,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     private void clearErrorStatus() {
 
-        if (errorMessage == null) {
+        if (overridenCompareStatus != ERROR) {
             return; // there is no error
         }
 
@@ -159,8 +159,9 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
             throw new IllegalArgumentException("Illegal status value: " + status); //$NON-NLS-1$
         }
 
+        clearErrorStatus();
+
         this.overridenCompareStatus = checkCompareStatus(status, compareOptions);
-        this.oldOverridenCompareStatus = 0;
     }
 
     public void clearCompareStatus() {
