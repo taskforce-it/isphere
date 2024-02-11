@@ -65,7 +65,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
     }
 
     protected boolean useCompareStatusImagePainter() {
-        return true;
+        // Must be false; otherwise image is not updated properly in TreeViewer.
+        return false;
     }
 
     public void setCompareOptions(CompareOptions compareOptions) {
@@ -77,6 +78,8 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
         if (columnIndex != COLUMN_COMPARE_RESULT) {
             return null;
         }
+
+        System.out.println("Repainting 'Selection' image ...");
 
         if (useCompareStatusImagePainter()) {
             return null;

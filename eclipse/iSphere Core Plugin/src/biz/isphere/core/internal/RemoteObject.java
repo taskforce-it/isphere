@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2016 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,10 @@
 
 package biz.isphere.core.internal;
 
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.QSYSObjectPathName;
+
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 
 /**
  * The RemoteObject class is used by the RDI and WDSCi plug-in as an adapter to
@@ -26,6 +26,14 @@ public class RemoteObject {
     private String description;
 
     private AS400 system;
+
+    public static RemoteObject newLibrary(String connectionName, String libraryName) {
+        return new RemoteObject(connectionName, libraryName, "QSYS", ISeries.LIB, null);
+    }
+
+    public static RemoteObject newFile(String connectionName, String fileName, String libraryName) {
+        return new RemoteObject(connectionName, fileName, libraryName, ISeries.FILE, null);
+    }
 
     public RemoteObject(String connectionName, String name, String library, String objectType, String description) {
         this.connectionName = connectionName;
@@ -49,6 +57,13 @@ public class RemoteObject {
         if (!objectType.startsWith("*")) {
             throw new IllegalArgumentException("Invalid object type. Object type must start with an asterisk: " + objectType);
         }
+    }
+
+    public void setConnectionName(String connectionName) {
+        if (this.connectionName != null) {
+            throw new IllegalAccessError("Attribute 'connectionName' cannot be changed.");
+        }
+        this.connectionName = connectionName;
     }
 
     public AS400 getSystem() {

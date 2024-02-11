@@ -1300,7 +1300,7 @@ public class Messages extends NLS {
 
     public static String Ignore_unsaved_changes_error;
 
-    public static String Data_lost_error_From_source_line_is_longer_than_target_source_line;
+    public static String Data_lost_error_From_source_line_A_is_longer_than_target_source_line_B;
 
     public static String C_O_P_I_E_D;
 
@@ -1837,6 +1837,18 @@ public class Messages extends NLS {
     public static String Copy_A_source_members_from_left_to_right;
 
     public static String Copy_A_source_members_from_right_to_left;
+
+    public static String Tooltip_Compare_after_member_synchronization;
+
+    public static String Property_No_action;
+
+    public static String Property_Copy_to_left;
+
+    public static String Property_Copy_to_right;
+
+    public static String Property_Left_equals_right;
+
+    public static String Property_Left_unequal_right;
 
     /*
      * Warning messages

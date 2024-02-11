@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2021 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@ package biz.isphere.core.internal;
 import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Shell;
@@ -24,8 +25,11 @@ import com.ibm.as400.access.CommandCall;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.Job;
+import com.ibm.as400.access.ObjectDescription;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+import com.ibm.as400.access.ObjectList;
 import com.ibm.as400.access.QSYSObjectPathName;
+import com.ibm.as400.access.RequestNotSupportedException;
 
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.IntHelper;
@@ -400,6 +404,32 @@ public class ISphereHelper {
         }
 
         return false;
+    }
+
+    public static RemoteObject resolveFile(AS400 system, String libraryName, String fileName) throws AS400Exception, AS400SecurityException,
+        ErrorCompletingRequestException, InterruptedException, IOException, ObjectDoesNotExistException, RequestNotSupportedException {
+
+        ObjectList listObjects = new ObjectList(system, libraryName, fileName, ISeries.FILE);
+        listObjects.addObjectAttributeToRetrieve(ObjectDescription.EXTENDED_ATTRIBUTE);
+        Enumeration<?> objects = listObjects.getObjects();
+        while (objects.hasMoreElements()) {
+            Object object = (Object)objects.nextElement();
+            if (object instanceof ObjectDescription) {
+                ObjectDescription objectDescription = (ObjectDescription)object;
+
+                String library = objectDescription.getValueAsString(ObjectDescription.LIBRARY);
+                String name = objectDescription.getValueAsString(ObjectDescription.NAME);
+                String description = objectDescription.getValueAsString(ObjectDescription.TEXT_DESCRIPTION);
+                String type = objectDescription.getValueAsString(ObjectDescription.TYPE);
+                String extAttr = objectDescription.getValueAsString(ObjectDescription.EXTENDED_ATTRIBUTE);
+
+                if ("FILE".equals(type) && "PF".equals(extAttr)) {
+                    return new RemoteObject(system, name, library, ISeries.FILE, description);
+                }
+            }
+        }
+
+        return null;
     }
 
     public static String resolveMemberName(AS400 system, String libraryName, String fileName, String memberName) throws AS400Exception,

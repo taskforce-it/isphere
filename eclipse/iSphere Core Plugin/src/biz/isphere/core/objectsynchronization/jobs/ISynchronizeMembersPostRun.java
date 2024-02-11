@@ -8,6 +8,7 @@
 
 package biz.isphere.core.objectsynchronization.jobs;
 
+import biz.isphere.core.objectsynchronization.SynchronizationResult;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
 
 public interface ISynchronizeMembersPostRun {
@@ -16,9 +17,10 @@ public interface ISynchronizeMembersPostRun {
      * PostRun methods called by {@link SynchronizeMembersJob} at the end of the
      * copy member process.
      * 
-     * @param isError - <code>true</code> if there was an error; otherwise
-     *        <code>false</code>
+     * @param status - status of the synchronization operation. See:
+     *        {@link SynchronizationResult}
      * @param countMembersCopied - number of members that have been copied
+     * @param message - error or canceled message
      */
-    public void returnResultPostRun(boolean isError, int countMembersCopied);
+    public void returnResultPostRun(String status, int countMembersCopied, String message);
 }

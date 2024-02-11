@@ -19,14 +19,16 @@ public interface IItemErrorListener {
      * <li>ERROR_TO_CONNECTION</li>
      * <li>ERROR_TO_LIBRARY</li>
      * <li>ERROR_TO_FILE</li>
+     * <li>ERROR_FROM_FILE</li>
      * </ul>
      * 
      * @param sender - anything useful for identifying the sender of the event
      * @param errorId - ID identifying the error
+     * @param errorContext - objects effected by the error
      * @param errorMessage - error message text
      * @return true for canceling the job; otherwise false
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, String errorMessage);
+    public boolean reportError(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage);
 
     /**
      * Methods called by the {@link CopyMemberValidator} for each member error.

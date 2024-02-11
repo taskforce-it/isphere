@@ -8,14 +8,19 @@
 
 package biz.isphere.core.objectsynchronization.rse;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertySource;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.objectsynchronization.CompareOptions;
 import biz.isphere.core.objectsynchronization.MemberDescription;
 import biz.isphere.core.objectsynchronization.TableFilterData;
+import biz.isphere.core.objectsynchronization.properties.MemberCompareItemPropertySource;
 
-public class MemberCompareItem implements Comparable<MemberCompareItem> {
+public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdaptable {
 
     private static final int OVERRIDE_STATUS_NULL = -1;
+
     public static final int NO_ACTION = 1;
     public static final int LEFT_MISSING = 2;
     public static final int RIGHT_MISSING = 3;
@@ -26,10 +31,13 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
     private MemberDescription leftMemberDescription;
     private MemberDescription rightMemberDescription;
 
+    private CompareOptions compareOptions;
     private int overridenCompareStatus;
     private int oldOverridenCompareStatus;
     private String memberName;
     private String errorMessage;
+
+    private MemberCompareItemPropertySource propertySource;
 
     public MemberCompareItem(MemberDescription leftMemberDescription, MemberDescription rightMemberDescription) {
 
@@ -88,6 +96,8 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     public int getCompareStatus(CompareOptions compareOptions) {
 
+        setCompareOptions(compareOptions);
+
         if (overridenCompareStatus != OVERRIDE_STATUS_NULL) {
             return overridenCompareStatus;
         }
@@ -95,7 +105,16 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         return compareMemberDescriptions(compareOptions);
     }
 
+    public int getOriginalCompareStatus(CompareOptions compareOptions) {
+        if (oldOverridenCompareStatus != 0) {
+            return oldOverridenCompareStatus;
+        }
+        return getCompareStatus(compareOptions);
+    }
+
     public int compareMemberDescriptions(CompareOptions compareOptions) {
+
+        setCompareOptions(compareOptions);
 
         if (getLeftMemberDescription() == null && getRightMemberDescription() == null) {
             return LEFT_EQUALS_RIGHT;
@@ -161,6 +180,8 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
         clearErrorStatus();
 
+        setCompareOptions(compareOptions);
+
         this.overridenCompareStatus = checkCompareStatus(status, compareOptions);
     }
 
@@ -184,7 +205,13 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     public boolean isSelected(TableFilterData filterData, CompareOptions compareOptions) {
 
+        setCompareOptions(compareOptions);
+
         int compareStatus = getCompareStatus(compareOptions);
+
+        if (compareStatus == MemberCompareItem.ERROR) {
+            return true;
+        }
 
         if (isDuplicate() && !filterData.isDuplicates()) {
             return false;
@@ -219,6 +246,8 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     private int checkCompareStatus(int status, CompareOptions compareOptions) {
 
+        setCompareOptions(compareOptions);
+
         if (compareOptions == null) {
             throw new IllegalArgumentException("Parameter 'compareOptions' is [null]."); //$NON-NLS-1$
         }
@@ -235,6 +264,8 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
         if (compareOptions == null) {
             throw new IllegalArgumentException("Parameter 'compareOptions' is [null]."); //$NON-NLS-1$
         }
+
+        setCompareOptions(compareOptions);
 
         int rc = left.getMemberName().compareTo(right.getMemberName());
         if (rc == 0) {
@@ -269,6 +300,21 @@ public class MemberCompareItem implements Comparable<MemberCompareItem> {
 
     public int compareTo(MemberCompareItem o) {
         return memberName.compareTo(o.getMemberName());
+    }
+
+    private void setCompareOptions(CompareOptions compareOptions) {
+        this.compareOptions = compareOptions;
+    }
+
+    public Object getAdapter(Class adapter) {
+        if (adapter == IPropertySource.class) {
+            if (propertySource == null) {
+                propertySource = new MemberCompareItemPropertySource(this);
+                propertySource.setCompareOptions(compareOptions);
+            }
+            return propertySource;
+        }
+        return null;
     }
 
     private String getLeftFileName() {

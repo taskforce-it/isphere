@@ -22,6 +22,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -50,6 +52,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.FieldDescription;
+
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
 import biz.isphere.base.internal.StringHelper;
@@ -59,6 +65,8 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
+import biz.isphere.core.file.description.RecordFormatDescription;
+import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.IEditor;
@@ -69,6 +77,7 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.objectsynchronization.CompareOptions;
 import biz.isphere.core.objectsynchronization.MemberDescription;
+import biz.isphere.core.objectsynchronization.SynchronizationResult;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersEditorInput;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
 import biz.isphere.core.objectsynchronization.TableContentProvider;
@@ -87,7 +96,10 @@ import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ErrorContext;
 import biz.isphere.core.sourcemembercopy.IItemErrorListener;
+import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
+import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 
@@ -140,6 +152,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private Button chkRtnChgOnly;
     private Button chkIgnoreDate;
 
+    private Group existingMembersActionGroup;
+    private Button chkBoxError;
+    private Button chkBoxReplace;
+    // private Link lnkPreferences;
+
     private Shell shell;
 
     private Composite headerArea;
@@ -154,6 +171,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private boolean isComparing;
     private boolean isSynchronizing;
     private IProgressMonitor jobToCancel;
+
+    private SynchronizationResult synchronizationResult;
 
     public AbstractSynchronizeMembersEditor() {
 
@@ -182,6 +201,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         if (getEditorInput().areSameObjects()) {
             MessageDialogAsync.displayNonBlockingError(getShell(), Messages.Warning_The_left_and_right_site_display_the_same_object);
         }
+
+        getSite().setSelectionProvider(tableViewer);
     }
 
     private void createHeaderArea(Composite parent) {
@@ -282,11 +303,23 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private void createOptionsArea(Composite parent) {
 
         optionsArea = new Composite(parent, SWT.NONE);
-        optionsArea.setLayout(createGridLayoutNoBorder(3, false));
+        optionsArea.setLayout(createGridLayoutNoBorder(5, false));
         optionsArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        int verticalSpan = 3;
-        btnCompare = WidgetFactory.createPushButton(optionsArea);
+        createCompareControlsArea(optionsArea);
+        createFilterOptionsArea(optionsArea);
+        new Composite(optionsArea, SWT.NONE).setLayoutData(new GridData(GridData.FILL_BOTH));
+        createExistingMembersActionArea(optionsArea);
+        createSynchronizeControlsArea(optionsArea);
+    }
+
+    private void createCompareControlsArea(Composite parent) {
+
+        Composite area = new Composite(parent, SWT.NONE);
+        area.setLayout(createGridLayoutNoBorder(1, false));
+        area.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, true));
+
+        btnCompare = WidgetFactory.createPushButton(area);
         btnCompare.setLayoutData(createButtonLayoutData(1));
         btnCompare.setText(Messages.Compare);
         btnCompare.setToolTipText(Messages.Tooltip_start_compare_source_members);
@@ -301,62 +334,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             }
         });
 
-        createFilterOptionsArea(optionsArea, verticalSpan);
+        chkIgnoreDate = WidgetFactory.createCheckbox(area, Messages.Label_Ignore_date);
+        chkIgnoreDate.setToolTipText(Messages.Tooltip_Ignore_date);
 
-        if (isSynchronizationEnabled()) {
-            btnSynchronize = WidgetFactory.createPushButton(optionsArea);
-            btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
-            btnSynchronize.setText(Messages.Synchronize);
-            btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize_source_members);
-            btnSynchronize.addSelectionListener(new SelectionListener() {
-                public void widgetSelected(SelectionEvent event) {
-                    performSynchronizeMembers();
-                }
-
-                public void widgetDefaultSelected(SelectionEvent event) {
-                }
-            });
-        }
-
-        if (isSynchronizationEnabled()) {
-            createCompareOptionsArea(optionsArea, verticalSpan - 1);
-        }
-
-        btnCancel = WidgetFactory.createPushButton(optionsArea);
-        btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
-        btnCancel.setText(Messages.Cancel);
-        btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
-        btnCancel.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent event) {
-                performCancelOperation();
-            }
-
-            public void widgetDefaultSelected(SelectionEvent event) {
-            }
-        });
-
-        if (isSynchronizationEnabled()) {
-            chkCompareAfterSync = WidgetFactory.createCheckbox(optionsArea);
-            chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
-            chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_synchronization);
-            chkCompareAfterSync.addSelectionListener(new SelectionListener() {
-                public void widgetSelected(SelectionEvent paramSelectionEvent) {
-                    storeScreenValues();
-                }
-
-                public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
-                }
-            });
-        } else {
-            createCompareOptionsArea(optionsArea, verticalSpan - 1);
-        }
+        chkRtnChgOnly = WidgetFactory.createCheckbox(area, Messages.Label_Return_changed_only);
+        chkRtnChgOnly.setToolTipText(Messages.Tooltip_Return_changed_only);
     }
 
-    private void createFilterOptionsArea(Composite parent, int verticalSpan) {
+    private void createFilterOptionsArea(Composite parent) {
 
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
         filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
-        filterOptionsGroup.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, verticalSpan));
+        filterOptionsGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, false, true));
         filterOptionsGroup.setText(Messages.Display);
 
         filterData = new TableFilterData();
@@ -439,21 +428,107 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         });
     }
 
-    private void createCompareOptionsArea(Composite parent, int verticalSpan) {
+    private void createExistingMembersActionArea(Composite parent) {
 
-        Composite compareOptionsGroup = new Composite(parent, SWT.NONE);
-        GridLayout gridLayout = new GridLayout(1, false);
-        gridLayout.marginWidth = 0;
-        gridLayout.marginLeft = 1;
-        compareOptionsGroup.setLayout(gridLayout);
-        compareOptionsGroup.setLayoutData(new GridData(SWT.BEGINNING, SWT.FILL, false, true, 1, 2));
+        if (isSynchronizationEnabled()) {
 
-        chkIgnoreDate = WidgetFactory.createCheckbox(compareOptionsGroup, Messages.Label_Ignore_date);
-        chkIgnoreDate.setToolTipText(Messages.Tooltip_Ignore_date);
+            existingMembersActionGroup = new Group(parent, SWT.NONE);
+            existingMembersActionGroup.setLayout(new GridLayout(1, false));
+            existingMembersActionGroup.setLayoutData(new GridData(GridData.END, GridData.FILL, false, true));
+            existingMembersActionGroup.setText(Messages.Label_Existing_members_action_colon);
 
-        chkRtnChgOnly = WidgetFactory.createCheckbox(compareOptionsGroup, Messages.Label_Return_changed_only);
-        chkRtnChgOnly.setToolTipText(Messages.Tooltip_Return_changed_only);
+            chkBoxError = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Error);
+            chkBoxError.setLayoutData(new GridData(GridData.BEGINNING));
+
+            chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Replace_existing_members);
+            chkBoxError.setLayoutData(new GridData(GridData.BEGINNING));
+
+            // lnkPreferences = new Link(existingMembersActionGroup, SWT.MULTI |
+            // SWT.WRAP);
+            // lnkPreferences.setLayoutData(new GridData(GridData.BEGINNING));
+            // setLinkPreferencesText();
+            //
+            // lnkPreferences.pack();
+            // lnkPreferences.addSelectionListener(new SelectionAdapter() {
+            // @Override
+            // public void widgetSelected(SelectionEvent e) {
+            // PreferenceDialog dialog =
+            // PreferencesUtil.createPreferenceDialogOn(getShell(), e.text,
+            // null, null);
+            // dialog.open();
+            // setLinkPreferencesText();
+            // }
+            // });
+        }
     }
+
+    private void createSynchronizeControlsArea(Composite parent) {
+
+        Composite area = new Composite(parent, SWT.NONE);
+        area.setLayout(createGridLayoutNoBorder(1, false));
+        area.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, true));
+
+        if (isSynchronizationEnabled()) {
+
+            btnSynchronize = WidgetFactory.createPushButton(area);
+            btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
+            btnSynchronize.setText(Messages.Synchronize);
+            btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize_source_members);
+            btnSynchronize.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent event) {
+                    performSynchronizeMembers();
+                }
+
+                public void widgetDefaultSelected(SelectionEvent event) {
+                }
+            });
+
+        }
+
+        btnCancel = WidgetFactory.createPushButton(area);
+        btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
+        btnCancel.setText(Messages.Cancel);
+        btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
+        btnCancel.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                performCancelOperation();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+            }
+        });
+
+        if (isSynchronizationEnabled()) {
+
+            chkCompareAfterSync = WidgetFactory.createCheckbox(area);
+            chkCompareAfterSync.setText(Messages.Compare_after_synchronization);
+            chkCompareAfterSync.setToolTipText(Messages.Tooltip_Compare_after_member_synchronization);
+            chkCompareAfterSync.addSelectionListener(new SelectionListener() {
+                public void widgetSelected(SelectionEvent paramSelectionEvent) {
+                    storeScreenValues();
+                }
+
+                public void widgetDefaultSelected(SelectionEvent paramSelectionEvent) {
+                }
+            });
+        }
+    }
+
+    // private void setLinkPreferencesText() {
+    //
+    // IMemberRenamingRule rule =
+    // Preferences.getInstance().getMemberRenamingRule();
+    // String ruleLabel = rule.getLabel();
+    //
+    // String lnkLabel =
+    // Messages.bind(Messages.Link_to_copy_member_preferences_A_B,
+    // new Object[] { "<a
+    // href=\"biz.isphere.core.preferencepages.ISphereCopyMembers\">", "</a>",
+    // ruleLabel });
+    //
+    // lnkPreferences.setLayoutData(new GridData());
+    // lnkPreferences.setText(lnkLabel);
+    // }
 
     private void createCompareArea(Composite parent) {
 
@@ -568,6 +643,24 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         tableViewer.getTable().addControlListener(tableAutoSizeAdapter);
 
         tableViewer.setSorter(new TableSorter(SyncMbrMode.LEFT_SYSTEM));
+
+        tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            public void selectionChanged(SelectionChangedEvent event) {
+                String errorMessage = null;
+                Object source = event.getSource();
+                if (source instanceof TableViewer) {
+                    TableViewer tableViewer = (TableViewer)source;
+                    int countSelected = tableViewer.getTable().getSelectionCount();
+                    if (countSelected == 1) {
+                        TableItem tableItem = tableViewer.getTable().getItem(tableViewer.getTable().getSelectionIndex());
+                        MemberCompareItem item = (MemberCompareItem)tableItem.getData();
+                        errorMessage = item.getErrorMessage();
+                    }
+                }
+                displayCompareStatus(errorMessage);
+            }
+        });
     }
 
     private void createrFooterArea(Composite parent) {
@@ -798,12 +891,30 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
         ISynchronizeMembersEditorConfiguration config = getEditorInput().getConfiguration();
 
+        if (existingMembersActionGroup != null) {
+            if (isWorking()) {
+                chkBoxError.setEnabled(false);
+                chkBoxReplace.setEnabled(false);
+                // lnkPreferences.setEnabled(false);
+            } else {
+                if (isSynchronizationEnabled()) {
+                    chkBoxError.setEnabled(isSynchronizeEnabled);
+                    chkBoxReplace.setEnabled(isSynchronizeEnabled);
+                    // lnkPreferences.setEnabled(isSynchronizeEnabled);
+                } else {
+                    chkBoxError.setEnabled(false);
+                    chkBoxReplace.setEnabled(false);
+                    // lnkPreferences.setEnabled(false);
+                }
+            }
+        }
+
         if (btnSynchronize != null && chkCompareAfterSync != null) {
             if (isWorking()) {
                 btnSynchronize.setEnabled(false);
                 chkCompareAfterSync.setEnabled(false);
             } else {
-                if (config.isLeftEditorEnabled() || config.isRightEditorEnabled()) {
+                if (isSynchronizationEnabled()) {
                     btnSynchronize.setEnabled(isSynchronizeEnabled);
                     chkCompareAfterSync.setEnabled(isSynchronizeEnabled);
                 } else {
@@ -851,12 +962,24 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     }
 
     private void displayCompareStatus() {
+        displayCompareStatus(null);
+    }
+
+    private void displayCompareStatus(String errorMessage) {
 
         if (isWorking()) {
             statusMessage = Messages.Working;
         } else {
             TableStatistics tableStatistics = getTableStatistics();
-            statusMessage = tableStatistics.toString();
+
+            if (StringHelper.isNullOrEmpty(errorMessage)) {
+                statusMessage = tableStatistics.toString();
+            } else {
+                // statusMessage = String.format("%s - %s",
+                // tableStatistics.toString(), errorMessage);
+                statusMessage = errorMessage;
+            }
+
             numFilteredItems = tableStatistics.getFilteredElements();
         }
 
@@ -891,6 +1014,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         btnDuplicates.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_DUPLICATES, true));
         if (isSynchronizationEnabled()) {
             chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
+        }
+
+        if (chkBoxError != null) {
+            chkBoxError.setSelection(true);
         }
 
         loadHistory();
@@ -983,16 +1110,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
         if (MessageDialog.openConfirm(getShell(), Messages.Confirmation, message)) {
 
-            String libraryName = memberDescription.getLibraryName();
-            String fileName = memberDescription.getFileName();
-            String memberName = memberDescription.getMemberName();
-
-            String rmvMbrCmd = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
-
             try {
-                // TODO enable delete command
-                // ISphereHelper.executeCommand(system, rmvMbrCmd);
-                System.out.println("Executing command: " + rmvMbrCmd);
+
+                AS400 system = IBMiHostContributionsHandler.getSystem(memberDescription.getConnectionName());
+                String libraryName = memberDescription.getLibraryName();
+                String fileName = memberDescription.getFileName();
+                String memberName = memberDescription.getMemberName();
+
+                String rmvMbrCmd = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
+
+                ISphereHelper.executeCommand(system, rmvMbrCmd);
+                debug("Executing command: " + rmvMbrCmd);
+
             } catch (Exception e) {
                 MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
             }
@@ -1149,13 +1278,19 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     private void performSynchronizeMembers() {
 
+        synchronizationResult = new SynchronizationResult();
+
         RemoteObject leftObject = getEditorInput().getLeftObject();
         RemoteObject rightObject = getEditorInput().getRightObject();
 
         SynchronizeMembersJob synchronizeMembersJob = new SynchronizeMembersJob(leftObject, rightObject, this);
         synchronizeMembersJob.setItemErrorListener(this);
-        // TODO: create action control on UI
-        // synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.REPLACE);
+
+        if (chkBoxReplace.getSelection()) {
+            synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.REPLACE);
+        } else {
+            synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.ERROR);
+        }
 
         for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
             MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getElementAt(i);
@@ -1174,41 +1309,121 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
     }
 
+    private RemoteObject createMissingSourceFileFromTemplate(String connectionName, String libraryName, String fileName, RemoteObject template) {
+
+        AS400 templateSystem = IBMiHostContributionsHandler.getSystem(template.getConnectionName());
+        RecordFormatDescriptionsStore templateRecordFormat = new RecordFormatDescriptionsStore(templateSystem);
+        RecordFormatDescription toRecordFormatDescription = templateRecordFormat.get(template.getName(), template.getLibrary());
+
+        String description = template.getDescription();
+        if (description == null) {
+            AS400 system = IBMiHostContributionsHandler.getSystem(template.getConnectionName());
+            String templateLibraryName = template.getLibrary();
+            String templateFileName = template.getName();
+            try {
+                template = ISphereHelper.resolveFile(system, templateLibraryName, templateFileName);
+                description = template.getDescription();
+            } catch (Exception e) {
+                ISpherePlugin.logError("*** Could not find template file " + templateFileName + " in library " + templateLibraryName + " ***", e);
+                MessageDialogAsync.displayNonBlockingError(getShell(), "Unexpected exception. See Eclipse error log.");
+            }
+        }
+
+        int recordLength = 0;
+
+        for (FieldDescription fieldDescription : toRecordFormatDescription.getFieldDescriptions()) {
+            recordLength += fieldDescription.getLength();
+        }
+
+        try {
+
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            String command = String.format("CRTSRCPF FILE(%s/%s) RCDLEN(%s) TEXT('%s')", libraryName, fileName, recordLength, description);
+            List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
+            String message = ISphereHelper.executeCommand(system, command, rtnMessages);
+            if (!StringHelper.isNullOrEmpty(message)) {
+                StringBuilder buffer = new StringBuilder();
+                for (AS400Message as400Message : rtnMessages) {
+                    if (buffer.length() > 0) {
+                        buffer.append("\n");
+                    }
+                    buffer.append(as400Message.getText());
+                }
+                buffer.append("\n\nCommand:\n");
+                buffer.append(command);
+                MessageDialogAsync.displayNonBlockingError(getShell(), buffer.toString());
+                return null;
+            }
+
+            RemoteObject newFile = ISphereHelper.resolveFile(system, libraryName, fileName);
+            newFile.setConnectionName(connectionName);
+            return newFile;
+
+        } catch (Exception e) {
+            ISpherePlugin.logError("*** Could not create source file " + fileName + " in library " + libraryName + " from template ***", e);
+            MessageDialogAsync.displayNonBlockingError(getShell(), "Unexpected exception. See Eclipse error log.");
+            return null;
+        }
+    }
+
     /**
      * File error callback of {@link CopyMemberValidator}.
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, String errorMessage) {
+    public boolean reportError(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
+
+        if (errorId == MemberValidationError.ERROR_NONE) {
+            throw new IllegalArgumentException("Unexpected argument value 'errorId': " + errorId.name());
+        }
 
         debug(sender.getClass().getSimpleName() + " -> Validation error: " + errorMessage);
 
-        return false; // continue
+        synchronizationResult.addMessage(errorMessage);
+
+        if (errorId == MemberValidationError.ERROR_TO_FILE) {
+
+            RemoteObject templateFile = errorContext.getFromObject();
+            RemoteObject missingFile = errorContext.getToObject();
+
+            String connectionName = missingFile.getConnectionName();
+            String libraryName = missingFile.getLibrary();
+            String fileName = missingFile.getName();
+
+            RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
+            if (newFile != null) {
+                // File successfully created...
+                return false; // ...continue
+            }
+            ;
+        } else if (errorId == MemberValidationError.ERROR_TO_MEMBER) {
+            // Member validation error...
+            return false; // ...continue
+        }
+
+        // Any other error...
+        return true; // ...cancel!
     }
 
     /**
-     * Member error callback of {@link CopyMemberValidator}.
+     * Member error callback of {@link CopyMembersJob}.
      * <p>
      * {@inheritDoc}
      */
     public boolean reportError(Object sender, CopyMemberItem item, String errorMessage) {
 
-        debug(sender.getClass().getSimpleName() + " -> " + "Item " + item.getFromMember() + " validation error: " + errorMessage);
+        debug(sender.getClass().getSimpleName() + " -> Copy error: " + item.getFromMember() + " - " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
         compareItem.setErrorStatus(errorMessage);
 
-        UIJob uiJob = new UIJob(Messages.EMPTY) {
-            @Override
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                debug("Refreshing table item: " + compareItem.getMemberName());
-                tableViewer.refresh(compareItem, true, true);
-                return Status.OK_STATUS;
-            }
-        };
+        synchronizationResult.addMessage(errorMessage);
+
+        UIJob uiJob = new UpdateCompareResultUIJob(sender, compareItem, errorMessage);
         uiJob.schedule();
 
-        return false; // continue
+        // Always...
+        return false; // ...continue
     }
 
     /**
@@ -1216,40 +1431,15 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
      * <p>
      * {@inheritDoc}
      */
-    public void returnResultPostRun(boolean isError, int countMembersCopied) {
+    public void returnResultPostRun(final String status, final int countMembersCopied, final String message) {
 
         debug("\nAbstractSynchronizeMembersEditor.copyMembersPostRun:");
 
-        UIJob uiJob = new UIJob(Messages.EMPTY) {
+        synchronizationResult.setStatus(status);
+        synchronizationResult.setJobFinishedMessage(message);
+        synchronizationResult.setCountCopied(countMembersCopied);
 
-            @Override
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-
-                debug("Compare result:");
-                TableItem[] items = tableViewer.getTable().getItems();
-                for (TableItem tableItem : items) {
-                    MemberCompareItem memberCompareItem = (MemberCompareItem)tableItem.getData();
-                    if (memberCompareItem.isError()) {
-                        debug(memberCompareItem.toString() + ": " + memberCompareItem.getErrorMessage());
-                    }
-                }
-
-                if (tableViewer.getTable().isDisposed()) {
-                    return Status.OK_STATUS;
-                }
-
-                jobToCancel = null;
-                setIsSynchronizing(false);
-                setButtonEnablementAndDisplayCompareStatus();
-
-                if (isSynchronizationEnabled()) {
-                    if (chkCompareAfterSync.getSelection()) {
-                        performCompareMembers();
-                    }
-                }
-                return Status.OK_STATUS;
-            }
-        };
+        UIJob uiJob = new EndSynchronisationUIJob(status, countMembersCopied, message);
         uiJob.schedule();
 
     }
@@ -1358,6 +1548,72 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName);
 
     protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
+
+    private class UpdateCompareResultUIJob extends UIJob {
+
+        private Object sender;
+        private MemberCompareItem compareItem;
+        private String errorMessage;
+
+        public UpdateCompareResultUIJob(Object sender, MemberCompareItem compareItem, String errorMessage) {
+            super(Messages.EMPTY);
+
+            this.sender = sender;
+            this.compareItem = compareItem;
+            this.errorMessage = errorMessage;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+            debug("Refreshing table item: " + compareItem.getMemberName());
+            tableViewer.refresh(compareItem, true, true);
+            return Status.OK_STATUS;
+        }
+    }
+
+    private class EndSynchronisationUIJob extends UIJob {
+
+        private String status;
+        private int countMembersCopied;
+        private String message;
+
+        public EndSynchronisationUIJob(String status, int countMembersCopied, String message) {
+            super(Messages.EMPTY);
+
+            this.status = status;
+            this.countMembersCopied = countMembersCopied;
+            this.message = message;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor monitor) {
+
+            debug("-- End synchronisation job: --");
+            String[] items = synchronizationResult.getMesssages();
+            for (String message : items) {
+                debug("Result error: " + message);
+            }
+
+            if (SynchronizationResult.CANCELED.equals(status)) {
+                MessageDialogAsync.displayNonBlockingInformation(getShell(), Messages.Informational, message);
+            }
+
+            if (tableViewer.getTable().isDisposed()) {
+                return Status.OK_STATUS;
+            }
+
+            jobToCancel = null;
+            setIsSynchronizing(false);
+            setButtonEnablementAndDisplayCompareStatus();
+
+            if (isSynchronizationEnabled()) {
+                if (chkCompareAfterSync.getSelection()) {
+                    performCompareMembers();
+                }
+            }
+            return Status.OK_STATUS;
+        }
+    }
 
     /**
      * Class that implements the context menu for the table rows.
