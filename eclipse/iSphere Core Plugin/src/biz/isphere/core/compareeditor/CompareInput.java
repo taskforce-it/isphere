@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2022 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,9 +123,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             if (fRoot == null) {
                 cleanup();
             } else {
-                if (editable) {
-                    addIgnoreFile();
-                }
+                // TODO: remove disabled "if" statement after review
+                // if (editable) {
+                addIgnoreFile();
+                // }
             }
 
             return fRoot;
@@ -163,9 +164,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     public void cleanup() {
 
-        if (editable) {
-            removeIgnoreFile();
-        }
+        // TODO: remove disabled "if" statement after review
+        // if (editable) {
+        removeIgnoreFile();
+        // }
 
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);
