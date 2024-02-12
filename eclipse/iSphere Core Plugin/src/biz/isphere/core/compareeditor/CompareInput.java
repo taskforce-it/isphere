@@ -123,10 +123,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
             if (fRoot == null) {
                 cleanup();
             } else {
-                // TODO: remove disabled "if" statement after review
-                // if (editable) {
                 addIgnoreFile();
-                // }
+                if (editable) {
+                    openFile(leftMember);
+                }
             }
 
             return fRoot;
@@ -164,10 +164,10 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     public void cleanup() {
 
-        // TODO: remove disabled "if" statement after review
-        // if (editable) {
+        if (editable) {
+            closeFile(leftMember);
+        }
         removeIgnoreFile();
-        // }
 
         if (threeWay && fAncestor != null) {
             File ancestorTemp = fAncestor.getTempFile(ignoreCase);
@@ -230,19 +230,25 @@ public class CompareInput extends CompareEditorInput implements IFileEditorInput
 
     private void addIgnoreFile() {
         leftMember.addIgnoreFile();
+    }
+
+    private void removeIgnoreFile() {
+        leftMember.removeIgnoreFile();
+    }
+
+    private void openFile(Member member) {
         try {
             // Adds a *SHHRD lock on the member
-            leftMember.openStream();
+            member.openStream();
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not open stream of left file ***", e); //$NON-NLS-1$
         }
     }
 
-    private void removeIgnoreFile() {
-        leftMember.removeIgnoreFile();
+    private void closeFile(Member member) {
         try {
             // Removes the *SHHRD lock from the member
-            leftMember.closeStream();
+            member.closeStream();
         } catch (Exception e) {
             ISpherePlugin.logError("*** Could not close stream of left file ***", e); //$NON-NLS-1$
         }
