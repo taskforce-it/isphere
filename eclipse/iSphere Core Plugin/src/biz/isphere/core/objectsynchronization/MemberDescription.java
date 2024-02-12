@@ -121,17 +121,17 @@ public class MemberDescription implements Serializable, Comparable<MemberDescrip
             return 1;
         }
 
-        int rc = libraryName.compareTo(other.getLibraryName());
+        int rc = compareTo(libraryName, other.getLibraryName());
         if (rc == 0) {
-            rc = fileName.compareTo(other.getFileName());
+            rc = compareTo(fileName, other.getFileName());
             if (rc == 0) {
-                rc = memberName.compareTo(other.getMemberName());
+                rc = compareTo(memberName, other.getMemberName());
                 if (rc == 0) {
-                    rc = sourceType.compareTo(other.getSourceType());
+                    rc = compareTo(sourceType, other.getSourceType());
                     if (rc == 0) {
-                        rc = lastChangedDate.compareTo(other.getLastChangedDate());
+                        rc = compareTo(lastChangedDate, other.getLastChangedDate());
                         if (rc == 0) {
-                            rc = checksum.compareTo(other.getChecksum());
+                            rc = compareTo(checksum, other.getChecksum());
                         }
                     }
                 }
@@ -139,6 +139,42 @@ public class MemberDescription implements Serializable, Comparable<MemberDescrip
         }
 
         return rc;
+    }
+
+    private int compareTo(String me, String other) {
+        if (me == null && other == null) {
+            return 0;
+        } else if (me == null && other != null) {
+            return -1;
+        } else if (me != null && other == null) {
+            return 1;
+        } else {
+            return me.compareTo(other);
+        }
+    }
+
+    private int compareTo(Timestamp me, Timestamp other) {
+        if (me == null && other == null) {
+            return 0;
+        } else if (me == null && other != null) {
+            return -1;
+        } else if (me != null && other == null) {
+            return 1;
+        } else {
+            return me.compareTo(other);
+        }
+    }
+
+    private int compareTo(Long me, Long other) {
+        if (me == null && other == null) {
+            return 0;
+        } else if (me == null && other != null) {
+            return -1;
+        } else if (me != null && other == null) {
+            return 1;
+        } else {
+            return me.compareTo(other);
+        }
     }
 
     /**

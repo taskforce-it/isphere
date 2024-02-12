@@ -8,6 +8,7 @@
 
 package biz.isphere.core.objectsynchronization.rse;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -102,6 +103,7 @@ import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
+import biz.isphere.core.swt.widgets.dialogs.ConfirmationMessageDialog;
 
 public abstract class AbstractSynchronizeMembersEditor extends EditorPart implements ISynchronizeMembersPostRun, IItemErrorListener {
 
@@ -1106,26 +1108,36 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
     }
 
-    private void performDeleteMember(String message, MemberDescription memberDescription) {
+    private boolean performDeleteMember(MemberDescription memberDescription) {
 
-        if (MessageDialog.openConfirm(getShell(), Messages.Confirmation, message)) {
+        try {
 
-            try {
+            AS400 system = IBMiHostContributionsHandler.getSystem(memberDescription.getConnectionName());
+            String libraryName = memberDescription.getLibraryName();
+            String fileName = memberDescription.getFileName();
+            String memberName = memberDescription.getMemberName();
 
-                AS400 system = IBMiHostContributionsHandler.getSystem(memberDescription.getConnectionName());
-                String libraryName = memberDescription.getLibraryName();
-                String fileName = memberDescription.getFileName();
-                String memberName = memberDescription.getMemberName();
+            // if (ISphereHelper.checkMember(system, libraryName, fileName,
+            // memberName)) {
 
-                String rmvMbrCmd = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
+            String command = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
 
-                ISphereHelper.executeCommand(system, rmvMbrCmd);
-                debug("Executing command: " + rmvMbrCmd);
-
-            } catch (Exception e) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
+            debug("Executing command: " + command);
+            List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
+            String errorMessageId = ISphereHelper.executeCommand(system, command, rtnMessages);
+            if (!StringHelper.isNullOrEmpty(errorMessageId)) {
+                ISphereHelper.displayCommandExecutionError(getShell(), command, rtnMessages);
+                return false;
             }
+            // }
+
+            return true;
+
+        } catch (Exception e) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, ExceptionHelper.getLocalizedMessage(e));
         }
+
+        return false;
     }
 
     private void performCompareMembers() {
@@ -1342,16 +1354,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
             String message = ISphereHelper.executeCommand(system, command, rtnMessages);
             if (!StringHelper.isNullOrEmpty(message)) {
-                StringBuilder buffer = new StringBuilder();
-                for (AS400Message as400Message : rtnMessages) {
-                    if (buffer.length() > 0) {
-                        buffer.append("\n");
-                    }
-                    buffer.append(as400Message.getText());
-                }
-                buffer.append("\n\nCommand:\n");
-                buffer.append(command);
-                MessageDialogAsync.displayNonBlockingError(getShell(), buffer.toString());
+                ISphereHelper.displayCommandExecutionError(command, rtnMessages);
                 return null;
             }
 
@@ -1410,16 +1413,44 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportError(Object sender, CopyMemberItem item, String errorMessage) {
+    public boolean reportError(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
 
         debug(sender.getClass().getSimpleName() + " -> Copy error: " + item.getFromMember() + " - " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
         compareItem.setErrorStatus(errorMessage);
 
+        if (MemberValidationError.ERROR_NONE.equals(errorId)) {
+            MemberCompareItem memberCompareItem = (MemberCompareItem)item.getData();
+            if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.LEFT_MISSING) {
+                MemberDescription rightMemberDescription = memberCompareItem.getRightMemberDescription();
+                String connectionName = getEditorInput().getLeftObject().getConnectionName();
+                String libraryName = item.getToLibrary();
+                String fileName = item.getToFile();
+                String memberName = item.getToMember();
+                String srcType = item.getToSrcType();
+                Timestamp lastChanged = rightMemberDescription.getLastChangedDate();
+                Long checksum = rightMemberDescription.getChecksum();
+                String text = rightMemberDescription.getText();
+                compareItem.setLeftMemberDescription(connectionName, libraryName, fileName, memberName, srcType, lastChanged, checksum, text);
+            } else if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.RIGHT_MISSING) {
+                MemberDescription leftMemberDescription = memberCompareItem.getLeftMemberDescription();
+                String connectionName = getEditorInput().getRightObject().getConnectionName();
+                String libraryName = item.getToLibrary();
+                String fileName = item.getToFile();
+                String memberName = item.getToMember();
+                String srcType = item.getToSrcType();
+                Timestamp lastChanged = leftMemberDescription.getLastChangedDate();
+                Long checksum = leftMemberDescription.getChecksum();
+                String text = leftMemberDescription.getText();
+                compareItem.setRightMemberDescription(connectionName, libraryName, fileName, memberName, srcType, lastChanged, checksum, text);
+            }
+            compareItem.setCompareStatus(MemberCompareItem.LEFT_EQUALS_RIGHT, sharedValues.getCompareOptions());
+        }
+
         synchronizationResult.addMessage(errorMessage);
 
-        UIJob uiJob = new UpdateCompareResultUIJob(sender, compareItem, errorMessage);
+        UIJob uiJob = new UpdateValidationErrorUIJob(sender, compareItem, errorMessage);
         uiJob.schedule();
 
         // Always...
@@ -1549,13 +1580,13 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
 
-    private class UpdateCompareResultUIJob extends UIJob {
+    private class UpdateValidationErrorUIJob extends UIJob {
 
         private Object sender;
         private MemberCompareItem compareItem;
         private String errorMessage;
 
-        public UpdateCompareResultUIJob(Object sender, MemberCompareItem compareItem, String errorMessage) {
+        public UpdateValidationErrorUIJob(Object sender, MemberCompareItem compareItem, String errorMessage) {
             super(Messages.EMPTY);
 
             this.sender = sender;
@@ -1850,55 +1881,91 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
         private void performEditMember(int side, boolean isEditable) {
 
-            MemberCompareItem selectedItem = getTheSelectedItem();
+            MemberCompareItem[] selectedItems = getSelectedItems();
+            for (MemberCompareItem selectedItem : selectedItems) {
 
-            if (side == LEFT) {
-                if (isEditable) {
-                    AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getLeftMemberDescription());
-                } else {
-                    AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription());
+                if (side == LEFT) {
+                    if (isEditable) {
+                        AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getLeftMemberDescription());
+                    } else {
+                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription());
+                    }
+                } else if (side == RIGHT) {
+                    if (isEditable) {
+                        AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getRightMemberDescription());
+                    } else {
+                        AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription());
+                    }
                 }
-            } else if (side == RIGHT) {
-                if (isEditable) {
-                    AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getRightMemberDescription());
-                } else {
-                    AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription());
-                }
+
+                tableViewer.refresh(selectedItem, true, true);
             }
         }
 
         private void performDeleteMember(int side) {
 
-            MemberCompareItem selectedItem = getTheSelectedItem();
+            boolean isYesToAll = false;
 
-            MemberDescription memberDescription;
-            String qualifiedConnectionName;
-            String qualifiedMemberName;
-            StringBuilder message = new StringBuilder();
+            MemberCompareItem[] selectedItems = getSelectedItems();
+            for (MemberCompareItem selectedItem : selectedItems) {
 
-            if (side == LEFT) {
-                memberDescription = selectedItem.getLeftMemberDescription();
-                qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
-                qualifiedMemberName = memberDescription.getQualifiedMemberName();
-                message.append("<-- ");
-                message.append(Messages.Delete_left_member_colon);
-            } else if (side == RIGHT) {
-                memberDescription = selectedItem.getRightMemberDescription();
-                qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
-                qualifiedMemberName = memberDescription.getQualifiedMemberName();
-                message.append(Messages.Delete_right_member_colon);
-                message.append(" -->");
-            } else {
-                throw new IllegalArgumentException("Unexpected value in 'side': " + side);
+                MemberDescription memberDescription;
+                String qualifiedConnectionName;
+                String qualifiedMemberName;
+
+                StringBuilder confirmationMessage = new StringBuilder();
+
+                if (side == LEFT) {
+                    memberDescription = selectedItem.getLeftMemberDescription();
+                    qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
+                    qualifiedMemberName = memberDescription.getQualifiedMemberName();
+                    confirmationMessage.append("<-- ");
+                    confirmationMessage.append(Messages.Delete_left_member_colon);
+                } else if (side == RIGHT) {
+                    memberDescription = selectedItem.getRightMemberDescription();
+                    qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
+                    qualifiedMemberName = memberDescription.getQualifiedMemberName();
+                    confirmationMessage.append(Messages.Delete_right_member_colon);
+                    confirmationMessage.append(" -->");
+                } else {
+                    throw new IllegalArgumentException("Unexpected value in 'side': " + side);
+                }
+
+                confirmationMessage.append("\n");
+                confirmationMessage.append("\n");
+                confirmationMessage.append(qualifiedConnectionName);
+                confirmationMessage.append("\n");
+                confirmationMessage.append(qualifiedMemberName);
+
+                int rc;
+                if (isYesToAll) {
+                    rc = IDialogConstants.YES_TO_ALL_ID;
+                } else {
+                    ConfirmationMessageDialog dialog = new ConfirmationMessageDialog(getShell(), confirmationMessage.toString());
+                    rc = dialog.open();
+                }
+
+                if (rc == IDialogConstants.YES_TO_ALL_ID) {
+                    rc = IDialogConstants.YES_ID;
+                    isYesToAll = true;
+                }
+
+                if (rc == IDialogConstants.YES_ID) {
+
+                    if (AbstractSynchronizeMembersEditor.this.performDeleteMember(memberDescription)) {
+                        if (side == LEFT) {
+                            selectedItem.setLeftMemberDescription(null);
+                            selectedItem.setCompareStatus(MemberCompareItem.LEFT_MISSING, sharedValues.getCompareOptions());
+                        } else {
+                            selectedItem.setRightMemberDescription(null);
+                            selectedItem.setCompareStatus(MemberCompareItem.RIGHT_MISSING, sharedValues.getCompareOptions());
+                        }
+                        tableViewer.refresh(selectedItem, true, true);
+                    }
+                } else {
+                    break;
+                }
             }
-
-            message.append("\n");
-            message.append("\n");
-            message.append(qualifiedConnectionName);
-            message.append("\n");
-            message.append(qualifiedMemberName);
-
-            AbstractSynchronizeMembersEditor.this.performDeleteMember(message.toString(), memberDescription);
         }
     }
 

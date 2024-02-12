@@ -16,6 +16,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.ibm.as400.access.AS400;
@@ -30,6 +31,7 @@ import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
+import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 import biz.isphere.core.sourcemembercopy.IItemErrorListener;
 
@@ -145,7 +147,7 @@ public class CopyMembersJob extends Job {
         }
 
         public void setMonitor(IProgressMonitor monitor) {
-            this.monitor = monitor;
+            this.monitor = SubMonitor.convert(monitor);
         }
 
         @Override
@@ -193,7 +195,8 @@ public class CopyMembersJob extends Job {
                             canCopy = true;
                         } else {
                             canCopy = false;
-                            setMemberError(member, Messages.bind(Messages.Target_member_A_already_exists, member.getToMember()));
+                            setMemberError(MemberValidationError.ERROR_TO_MEMBER, member,
+                                Messages.bind(Messages.Target_member_A_already_exists, member.getToMember()));
                         }
                     } else {
                         canCopy = true;
@@ -249,26 +252,26 @@ public class CopyMembersJob extends Job {
                         }
                         errorMessage.append(as400Message.getText());
                     }
-                    setMemberError(copyMemberItem, errorMessage.toString());
+                    setMemberError(MemberValidationError.ERROR_TO_MEMBER, copyMemberItem, errorMessage.toString());
                     return false;
                 }
 
                 return true;
 
             } catch (Exception e) {
-                setMemberError(copyMemberItem, ExceptionHelper.getLocalizedMessage(e));
+                setMemberError(MemberValidationError.ERROR_TO_MEMBER, copyMemberItem, ExceptionHelper.getLocalizedMessage(e));
                 return false;
             }
 
         }
 
-        private void setMemberError(CopyMemberItem member, String errorMessage) {
+        private void setMemberError(MemberValidationError errorId, CopyMemberItem member, String errorMessage) {
 
             member.setErrorMessage(errorMessage);
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    if (errorListener.reportError(CopyMembersJob.this, member, errorMessage)) {
+                    if (errorListener.reportError(CopyMembersJob.this, errorId, member, errorMessage)) {
                         cancel();
                     }
                 }

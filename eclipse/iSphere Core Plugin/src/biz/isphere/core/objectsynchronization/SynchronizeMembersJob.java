@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.ibm.as400.access.AS400;
@@ -166,6 +167,7 @@ public class SynchronizeMembersJob extends Job {
         private MemberCompareItem[] copyToRightItems;
 
         private IProgressMonitor monitor;
+        private int totalWorked;
 
         private boolean isCanceled;
         private IItemErrorListener itemErrorListener;
@@ -213,7 +215,7 @@ public class SynchronizeMembersJob extends Job {
         }
 
         public void setMonitor(IProgressMonitor monitor) {
-            this.monitor = monitor;
+            this.monitor = SubMonitor.convert(monitor);
         }
 
         public void setCopyToLeftMembers(MemberCompareItem[] compareIems) {
@@ -237,7 +239,11 @@ public class SynchronizeMembersJob extends Job {
             isCopyToLeftError = false;
             isCopyToRightError = false;
 
+            // Size is 2 times the number of members because of:
+            // - validation
+            // - copy
             int totalSize = (copyToLeftItems.length + copyToRightItems.length) * 2;
+            totalWorked = 0;
 
             monitor.beginTask(Messages.Copying_dots, totalSize);
 
@@ -486,6 +492,9 @@ public class SynchronizeMembersJob extends Job {
 
             validatorJob.runInSameThread(monitor);
 
+            totalWorked = totalWorked + copyMemberItems.length;
+            monitor.worked(totalWorked);
+
             return isValidationError;
         }
 
@@ -525,6 +534,9 @@ public class SynchronizeMembersJob extends Job {
             CopyMembersJob copyJob = new CopyMembersJob(fromConnectionName, toConnectionName, copyMemberItems, existingMemberAction, this);
             copyJob.addItemErrorListener(itemErrorListener);
             copyJob.runInSameThread(monitor);
+
+            totalWorked = totalWorked + copyMemberItems.length;
+            monitor.worked(totalWorked);
 
             return isCopyError;
         }

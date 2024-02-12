@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -45,6 +46,7 @@ public class CopyMemberValidator extends Thread {
     public enum MemberValidationError {
         ERROR_NONE,
         ERROR_FROM_FILE,
+        ERROR_FROM_MEMBER,
         ERROR_TO_CONNECTION,
         ERROR_TO_FILE,
         ERROR_TO_LIBRARY,
@@ -198,7 +200,7 @@ public class CopyMemberValidator extends Thread {
         }
 
         public void setMonitor(IProgressMonitor monitor) {
-            this.monitor = monitor;
+            this.monitor = SubMonitor.convert(monitor);
         }
 
         @Override
@@ -234,12 +236,12 @@ public class CopyMemberValidator extends Thread {
 
         private boolean setFileError(MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
 
-            boolean isError = true;
-
             if (!(errorId == MemberValidationError.ERROR_TO_CONNECTION || errorId == MemberValidationError.ERROR_TO_LIBRARY
                 || errorId == MemberValidationError.ERROR_TO_FILE || errorId == MemberValidationError.ERROR_FROM_FILE)) {
                 throw new IllegalArgumentException("Update Javadoc in IItemErrorListener, is you want to allow: " + errorId.name());
             }
+
+            boolean isError = true;
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
@@ -257,7 +259,7 @@ public class CopyMemberValidator extends Thread {
             return isError;
         }
 
-        private boolean setMemberError(CopyMemberItem member, String errorMessage) {
+        private boolean setMemberError(MemberValidationError errorId, CopyMemberItem member, String errorMessage) {
 
             boolean isError = true;
 
@@ -265,7 +267,7 @@ public class CopyMemberValidator extends Thread {
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    if (errorListener.reportError(CopyMemberValidator.this, member, errorMessage)) {
+                    if (errorListener.reportError(CopyMemberValidator.this, errorId, member, errorMessage)) {
                         monitor.setCanceled(true);
                     } else {
                         isError = false;
@@ -278,7 +280,7 @@ public class CopyMemberValidator extends Thread {
 
         public void cancel() {
             isCanceled = true;
-            if (this.monitor != null) {
+            if (monitor != null) {
                 monitor.setCanceled(true);
             }
         }
@@ -430,17 +432,17 @@ public class CopyMemberValidator extends Thread {
                     String to = member.getToQSYSName();
 
                     if (dirtyFiles.contains(localResourcePath)) {
-                        setMemberError(member, Messages.Member_is_open_in_editor_and_has_unsaved_changes);
-                        isCurrentError = true;
-                    } else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-                        setMemberError(member, Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
-                        isCurrentError = true;
-                    } else if (targetMembers.contains(to)) {
-                        setMemberError(member, Messages.Can_not_copy_member_twice_to_same_target_member);
+                        setMemberError(MemberValidationError.ERROR_FROM_MEMBER, member, Messages.Member_is_open_in_editor_and_has_unsaved_changes);
                         isCurrentError = true;
                     } else if (!ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(fromConnectionName), member.getFromLibrary(),
                         member.getFromFile(), member.getFromMember())) {
-                        setMemberError(member, Messages.bind(Messages.From_member_A_not_found, from));
+                        setMemberError(MemberValidationError.ERROR_FROM_MEMBER, member, Messages.bind(Messages.From_member_A_not_found, from));
+                        isCurrentError = true;
+                    } else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
+                        setMemberError(MemberValidationError.ERROR_TO_MEMBER, member, Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
+                        isCurrentError = true;
+                    } else if (targetMembers.contains(to)) {
+                        setMemberError(MemberValidationError.ERROR_TO_MEMBER, member, Messages.Can_not_copy_member_twice_to_same_target_member);
                         isCurrentError = true;
                     }
 
@@ -456,15 +458,17 @@ public class CopyMemberValidator extends Thread {
                                     try {
                                         actor.produceNewMemberName(member.getToLibrary(), member.getToFile(), member.getToMember()); // $NON-NLS-1$
                                     } catch (NoMoreNamesAvailableException e) {
-                                        setMemberError(member, Messages.Error_No_more_names_available_Delete_old_backups);
+                                        setMemberError(MemberValidationError.ERROR_TO_MEMBER, member,
+                                            Messages.Error_No_more_names_available_Delete_old_backups);
                                         isCurrentError = true;
                                     } catch (Exception e) {
-                                        setMemberError(member, e.getLocalizedMessage());
+                                        setMemberError(MemberValidationError.ERROR_TO_MEMBER, member, e.getLocalizedMessage());
                                         isCurrentError = true;
                                     }
 
                                 } else {
-                                    setMemberError(member, Messages.bind(Messages.Target_member_A_already_exists, to));
+                                    setMemberError(MemberValidationError.ERROR_TO_MEMBER, member,
+                                        Messages.bind(Messages.Target_member_A_already_exists, to));
                                     isCurrentError = true;
                                 }
                             }
@@ -472,7 +476,7 @@ public class CopyMemberValidator extends Thread {
                     }
 
                     if (!isCurrentError) {
-                        setMemberError(member, Messages.EMPTY);
+                        setMemberError(MemberValidationError.ERROR_NONE, member, Messages.EMPTY);
                     } else {
                         if (!isFinalError) {
                             isFinalError = isCurrentError;

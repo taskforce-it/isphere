@@ -38,5 +38,5 @@ public interface IItemErrorListener {
      * @param errorMessage - error message text
      * @return true for canceling the job; otherwise false
      */
-    public boolean reportError(Object sender, CopyMemberItem item, String errorMessage);
+    public boolean reportError(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage);
 }

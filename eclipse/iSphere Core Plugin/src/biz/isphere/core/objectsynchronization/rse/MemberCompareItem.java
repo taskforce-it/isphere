@@ -8,6 +8,8 @@
 
 package biz.isphere.core.objectsynchronization.rse;
 
+import java.sql.Timestamp;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.views.properties.IPropertySource;
 
@@ -77,21 +79,53 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
         this.leftMemberDescription = memberDescription;
     }
 
+    public void setLeftMemberDescription(String connectionName, String libraryName, String fileName, String memberName, String srcType,
+        Timestamp lastChanged, Long checksum, String text) {
+
+        MemberDescription memberDescription = new MemberDescription();
+        memberDescription.setConnectionName(connectionName);
+        memberDescription.setLibraryName(libraryName);
+        memberDescription.setFileName(fileName);
+        memberDescription.setMemberName(memberName);
+        memberDescription.setSourceType(srcType);
+        memberDescription.setLastChangedDate(lastChanged);
+        memberDescription.setChecksum(checksum);
+        memberDescription.setText(text);
+
+        setLeftMemberDescription(memberDescription);
+    }
+
     public MemberDescription getRightMemberDescription() {
         return rightMemberDescription;
     }
 
     public void setRightMemberDescription(MemberDescription memberDescription) {
 
-        if (memberDescription == null) {
-            return;
-        }
-
-        if (memberName != null && memberDescription != null && !memberName.equals(memberDescription.getMemberName())) {
-            throw new IllegalArgumentException("Illegal message ID: " + memberDescription.getMemberName()); //$NON-NLS-1$
+        if (memberDescription != null) {
+            String newMemberName = memberDescription.getMemberName();
+            if (memberName != null && !memberName.equals(newMemberName)) {
+                throw new IllegalArgumentException(
+                    "Member name of member description (" + newMemberName + ") does not match member name: " + memberName); //$NON-NLS-1$
+            }
         }
 
         this.rightMemberDescription = memberDescription;
+    }
+
+    public void setRightMemberDescription(String connectionName, String libraryName, String fileName, String memberName, String srcType,
+        Timestamp lastChanged, Long checksum, String text) {
+
+        MemberDescription memberDescription = new MemberDescription();
+        memberDescription.setConnectionName(connectionName);
+        memberDescription.setLibraryName(libraryName);
+        memberDescription.setFileName(fileName);
+        memberDescription.setMemberName(memberName);
+        memberDescription.setSourceType(srcType);
+        memberDescription.setLastChangedDate(lastChanged);
+        memberDescription.setChecksum(checksum);
+        memberDescription.setText(text);
+
+        setRightMemberDescription(memberDescription);
     }
 
     public int getCompareStatus(CompareOptions compareOptions) {
