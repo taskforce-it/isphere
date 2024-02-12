@@ -8,13 +8,11 @@
 
 package biz.isphere.core.internal;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import biz.isphere.base.internal.UIHelper;
 import biz.isphere.core.Messages;
 
 /**
@@ -24,21 +22,37 @@ import biz.isphere.core.Messages;
 public class MessageDialogAsync {
 
     /**
-     * Displays a non-blocking information message.
+     * Displays a non-blocking information message. This method can be called
+     * from non UI jobs.
      * 
-     * @param shell - Shell used for displaying the message dialog
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
      * @param title - title of the message dialog
      * @param message - information message that is displayed
      */
     public static void displayNonBlockingInformation(Shell shell, String title, String message) {
-        MessageDialog dialog = createInformationMessageDialog(shell, title, message);
-        displayNonBlockingDialog(shell, dialog);
+        displayNonBlockingDialog(shell, MessageDialog.INFORMATION, title, message);
     }
 
     /**
-     * Displays a non-blocking error message.
+     * Displays a non-blocking information message. This method can be called
+     * from non UI jobs.
      * 
-     * @param shell - Shell used for displaying the message dialog
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
+     * @param title - title of the message dialog
+     * @param messages - information message that is displayed
+     */
+    public static void displayNonBlockingInformation(Shell shell, String title, String[] messages) {
+        displayNonBlockingDialog(shell, MessageDialog.INFORMATION, title, messages);
+    }
+
+    /**
+     * Displays a non-blocking error message. This method can be called from non
+     * UI jobs.
+     * 
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
      * @param message - information message that is displayed
      */
     public static void displayNonBlockingError(Shell shell, String message) {
@@ -46,98 +60,101 @@ public class MessageDialogAsync {
     }
 
     /**
-     * Displays a non-blocking error message.
+     * Displays a non-blocking error message. This method can be called from non
+     * UI jobs.
      * 
-     * @param shell - Shell used for displaying the message dialog
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
+     * @param messages - information message that is displayed
+     */
+    public static void displayNonBlockingError(Shell shell, String[] messages) {
+        displayNonBlockingError(shell, Messages.E_R_R_O_R, messages);
+    }
+
+    /**
+     * Displays a non-blocking error message. This method can be called from non
+     * UI jobs.
+     * 
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
      * @param title - title of the message dialog
      * @param message - information message that is displayed
      */
-    public static void displayNonBlockingError(Shell shell, String title, String message) {
-        MessageDialog dialog = createErrorMessageDialog(shell, title, message);
-        displayNonBlockingDialog(shell, dialog);
+    public static void displayNonBlockingError(Shell shell, String title, String... message) {
+        displayNonBlockingDialog(shell, MessageDialog.INFORMATION, title, message);
     }
 
     /**
      * Displays a non-blocking dialog.
      * 
-     * @param dialog - dialog that is displayed
+     * @param shell - Shell used for displaying the message dialog. If shell is
+     *        null, the default display is used.
+     * @param kind - kind of the message dialog
+     * @param title - title of the message dialog
+     * @param message - information message that is displayed
      */
-    public static void displayNonBlockingDialog(Shell shell, Dialog dialog) {
-        DialogUIJob job = new DialogUIJob(shell.getDisplay(), dialog);
+    public static void displayNonBlockingDialog(Shell shell, int kind, String title, String... message) {
+        Display display;
+        if (shell != null) {
+            display = shell.getDisplay();
+        } else {
+            display = null;
+        }
+        DialogUIJob job = new DialogUIJob(display, title, createFinalMessage(message), kind);
         job.schedule();
     }
 
     /**
-     * Displays a blocking error message.
+     * Displays a blocking error message. This method can be called from non UI
+     * jobs.
      * 
      * @param message - error message that is displayed
      */
-    public static void displayBlockingError(final String message) {
-        displayBlockingError(Messages.E_R_R_O_R, message);
+    public static int displayBlockingError(final String message) {
+        return displayBlockingError(Messages.E_R_R_O_R, message);
     }
 
     /**
-     * Displays a blocking error message.
+     * Displays a blocking error message. This method can be called from non UI
+     * jobs.
      * 
      * @param title - title of the message dialog
      * @param message - error message that is displayed
      */
-    public static void displayBlockingError(final String title, final String message) {
-        MessageDialog dialog = createErrorMessageDialog(getShell(), title, message);
-        displayBlockingDialog(dialog);
+    public static int displayBlockingError(final String title, final String... messages) {
+        return displayBlockingDialog(MessageDialog.ERROR, title, messages);
     }
 
     /**
-     * Displays a blocking dialog.
+     * Displays a blocking dialog. This method can be called from non UI jobs.
      * 
-     * @param dialog - dialog that is displayed
-     */
-    public static void displayBlockingDialog(Dialog dialog) {
-        Runnable runnable = new DialogUIRunnable(dialog);
-        Display.getDefault().syncExec(runnable);
-    }
-
-    /**
-     * Produces an information message dialog.
-     * 
-     * @param shell - Shell used for displaying the message dialog
-     * @param title - title of the message dialog
-     * @param message - information message that is displayed
-     * @return information message dialog
-     */
-    private static MessageDialog createInformationMessageDialog(Shell shell, String title, String message) {
-        if (shell == null) {
-            shell = UIHelper.getActiveShell();
-        }
-        return createDialog(shell, title, message, MessageDialog.INFORMATION);
-    }
-
-    /**
-     * Produces an error message dialog.
-     * 
-     * @param shell - Shell used for displaying the message dialog
-     * @param title - title of the message dialog
-     * @param message - error message that is displayed
-     * @return error message dialog
-     */
-    private static MessageDialog createErrorMessageDialog(Shell shell, String title, String message) {
-        if (shell == null) {
-            shell = UIHelper.getActiveShell();
-        }
-        return createDialog(shell, title, message, MessageDialog.ERROR);
-    }
-
-    /**
-     * Produces a message dialog of a given kind.
-     * 
-     * @param shell - Shell used for displaying the message dialog
-     * @param title - title of the message dialog
-     * @param message - information message that is displayed
      * @param kind - kind of the message dialog
-     * @return message dialog of the specified kind
+     * @param title - title of the message dialog
+     * @param message - error message that is displayed
      */
-    private static MessageDialog createDialog(Shell shell, String title, String message, int kind) {
-        return new MessageDialog(shell, title, null, message, kind, getButtonLabels(kind), 0);
+    public static int displayBlockingDialog(int kind, String title, String... messages) {
+        DialogUIRunnable runnable = new DialogUIRunnable(title, createFinalMessage(messages), kind);
+        Display.getDefault().syncExec(runnable);
+        return runnable.getResult();
+    }
+
+    /**
+     * Produces the final message that is displayed.
+     * 
+     * @param message - one or more messages that are concatenated.
+     * @return final message
+     */
+    private static String createFinalMessage(String[] messages) {
+
+        StringBuilder buffer = new StringBuilder();
+        for (String message : messages) {
+            if (buffer.length() > 0) {
+                buffer.append("\n");
+            }
+            buffer.append(message);
+        }
+
+        return buffer.toString();
     }
 
     /**
@@ -160,13 +177,9 @@ public class MessageDialogAsync {
             break;
         }
         default: {
-            throw new IllegalArgumentException("Illegal value for kind in MessageDialog.open()"); //$NON-NLS-1$
+            throw new IllegalArgumentException("Illegal value for kind: " + kind); //$NON-NLS-1$
         }
         }
         return dialogButtonLabels;
-    }
-
-    private static Shell getShell() {
-        return UIHelper.getActiveShell();
     }
 }
