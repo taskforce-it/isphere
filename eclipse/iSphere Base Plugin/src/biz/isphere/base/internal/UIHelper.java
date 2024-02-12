@@ -73,6 +73,10 @@ public final class UIHelper {
         return "org.eclipse.e4.ui.css.theme.e4_dark".equals(activeTheme.getId());
     }
 
+    public static Display getDefaultDisplay() {
+        return Display.getDefault();
+    }
+
     public static Shell getActiveShell() {
 
         Shell shell = null;
