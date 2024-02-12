@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import com.ibm.as400.access.AS400;
@@ -268,6 +269,41 @@ public class ISphereHelper {
             ISpherePlugin.logError("*** Failed to execute command: " + command + " ***", e); //$NON-NLS-1$//$NON-NLS-2$
             return ExceptionHelper.getLocalizedMessage(e);
         }
+    }
+
+    public static void displayCommandExecutionError(String command, List<AS400Message> errorMessages) {
+
+        String message = buildErrorMessage(command, errorMessages);
+        MessageDialogAsync.displayBlockingError(Messages.E_R_R_O_R, message);
+    }
+
+    public static void displayCommandExecutionError(Shell shell, String command, List<AS400Message> errorMessages) {
+
+        String message = buildErrorMessage(command, errorMessages);
+        MessageDialog.openError(shell, Messages.E_R_R_O_R, message);
+    }
+
+    private static String buildErrorMessage(String command, List<AS400Message> errorMessages) {
+
+        final String INDENTION = "  ";
+
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Could not execute command:");
+        buffer.append("\n");
+        buffer.append(INDENTION);
+        buffer.append(command);
+        buffer.append("\n\n");
+
+        buffer.append("Reason:");
+        buffer.append(INDENTION);
+
+        for (AS400Message as400Message : errorMessages) {
+            buffer.append("\n");
+            buffer.append(INDENTION);
+            buffer.append(as400Message.getText());
+        }
+
+        return buffer.toString();
     }
 
     public static String getCurrentLibrary(AS400 _as400) throws Exception {
