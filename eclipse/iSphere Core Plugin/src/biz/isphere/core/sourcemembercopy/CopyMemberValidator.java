@@ -94,7 +94,7 @@ public class CopyMemberValidator extends Thread {
         endProcess();
     }
 
-    public void addItemErrorListener(IItemErrorListener listener) {
+    public void addItemErrorListener(IItemMessageListener listener) {
         doValidateMembers.addItemErrorListener(listener);
     }
 
@@ -147,7 +147,7 @@ public class CopyMemberValidator extends Thread {
 
     private class DoValidateMembers extends Thread {
 
-        private Set<IItemErrorListener> itemErrorListeners;
+        private Set<IItemMessageListener> itemErrorListeners;
 
         private String fromConnectionName;
         private CopyMemberItem[] fromMembers;
@@ -168,7 +168,7 @@ public class CopyMemberValidator extends Thread {
         public DoValidateMembers(String fromConnectionName, CopyMemberItem[] fromMembers, ExistingMemberAction existingMemberAction,
             boolean ignoreDataLostError, boolean ignoreUnsavedChangesError, boolean fullErrorCheck) {
 
-            this.itemErrorListeners = new HashSet<IItemErrorListener>();
+            this.itemErrorListeners = new HashSet<IItemMessageListener>();
 
             this.fromConnectionName = fromConnectionName;
             this.fromMembers = fromMembers;
@@ -179,7 +179,7 @@ public class CopyMemberValidator extends Thread {
             this.isCanceled = false;
         }
 
-        public void addItemErrorListener(IItemErrorListener listener) {
+        public void addItemErrorListener(IItemMessageListener listener) {
             itemErrorListeners.add(listener);
         }
 
@@ -246,7 +246,7 @@ public class CopyMemberValidator extends Thread {
             boolean isError = true;
 
             if (itemErrorListeners != null) {
-                for (IItemErrorListener errorListener : itemErrorListeners) {
+                for (IItemMessageListener errorListener : itemErrorListeners) {
                     boolean isCancelRequested = errorListener.reportFileMessage(CopyMemberValidator.this, errorId, errorContext, errorMessage);
                     if (isCancelRequested) {
                         CopyMemberValidator.this.errorId = errorId;
@@ -268,7 +268,7 @@ public class CopyMemberValidator extends Thread {
             member.setErrorMessage(errorMessage);
 
             if (itemErrorListeners != null) {
-                for (IItemErrorListener errorListener : itemErrorListeners) {
+                for (IItemMessageListener errorListener : itemErrorListeners) {
                     if (errorListener.reportMemberMessage(CopyMemberValidator.this, errorId, member, errorMessage)) {
                         monitor.setCanceled(true);
                     } else {

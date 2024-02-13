@@ -98,14 +98,14 @@ import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ErrorContext;
-import biz.isphere.core.sourcemembercopy.IItemErrorListener;
+import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.dialogs.ConfirmationMessageDialog;
 
-public abstract class AbstractSynchronizeMembersEditor extends EditorPart implements ISynchronizeMembersPostRun, IItemErrorListener {
+public abstract class AbstractSynchronizeMembersEditor extends EditorPart implements ISynchronizeMembersPostRun, IItemMessageListener {
 
     public static final String ID = "biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"; //$NON-NLS-1$
 

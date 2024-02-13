@@ -10,7 +10,7 @@ package biz.isphere.core.sourcemembercopy;
 
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 
-public interface IItemErrorListener {
+public interface IItemMessageListener {
 
     /**
      * Methods called by the {@link CopyMemberValidator} each time it encounters

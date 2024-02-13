@@ -36,7 +36,7 @@ import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
-import biz.isphere.core.sourcemembercopy.IItemErrorListener;
+import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
@@ -67,7 +67,7 @@ public class SynchronizeMembersJob extends Job {
         this.postRun = postRun;
     }
 
-    public void setItemErrorListener(IItemErrorListener itemErrorListener) {
+    public void setItemErrorListener(IItemMessageListener itemErrorListener) {
         doSynchronizeMembers.setItemErrorListener(itemErrorListener);
     }
 
@@ -170,7 +170,7 @@ public class SynchronizeMembersJob extends Job {
         private int totalWorked;
 
         private boolean isCanceled;
-        private IItemErrorListener itemErrorListener;
+        private IItemMessageListener itemErrorListener;
 
         private boolean isLeftValidationError;
         private boolean isRightValidationError;
@@ -206,7 +206,7 @@ public class SynchronizeMembersJob extends Job {
             this.existingMemberAction = ExistingMemberAction.ERROR;
         }
 
-        public void setItemErrorListener(IItemErrorListener itemErrorListener) {
+        public void setItemErrorListener(IItemMessageListener itemErrorListener) {
             this.itemErrorListener = itemErrorListener;
         }
 

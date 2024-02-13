@@ -33,7 +33,7 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
-import biz.isphere.core.sourcemembercopy.IItemErrorListener;
+import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 
 public class CopyMembersJob extends Job {
 
@@ -58,7 +58,7 @@ public class CopyMembersJob extends Job {
         endProcess();
     }
 
-    public void addItemErrorListener(IItemErrorListener itemErrorListener) {
+    public void addItemErrorListener(IItemMessageListener itemErrorListener) {
         doCopyMembers.addItemErrorListener(itemErrorListener);
     }
 
@@ -116,7 +116,7 @@ public class CopyMembersJob extends Job {
 
     private class DoCopyMembers extends Thread {
 
-        private Set<IItemErrorListener> itemErrorListeners;
+        private Set<IItemMessageListener> itemErrorListeners;
 
         private String fromConnectionName;
         private String toConnectionName;
@@ -133,7 +133,7 @@ public class CopyMembersJob extends Job {
         public DoCopyMembers(String fromConnectionName, String toConnectionName, CopyMemberItem[] members,
             ExistingMemberAction existingMemberAction) {
 
-            this.itemErrorListeners = new HashSet<IItemErrorListener>();
+            this.itemErrorListeners = new HashSet<IItemMessageListener>();
 
             this.fromConnectionName = fromConnectionName;
             this.toConnectionName = toConnectionName;
@@ -142,7 +142,7 @@ public class CopyMembersJob extends Job {
             this.isCanceled = false;
         }
 
-        public void addItemErrorListener(IItemErrorListener listener) {
+        public void addItemErrorListener(IItemMessageListener listener) {
             itemErrorListeners.add(listener);
         }
 
@@ -270,7 +270,7 @@ public class CopyMembersJob extends Job {
             member.setErrorMessage(errorMessage);
 
             if (itemErrorListeners != null) {
-                for (IItemErrorListener errorListener : itemErrorListeners) {
+                for (IItemMessageListener errorListener : itemErrorListeners) {
                     if (errorListener.reportMemberMessage(CopyMembersJob.this, errorId, member, errorMessage)) {
                         cancel();
                     }
