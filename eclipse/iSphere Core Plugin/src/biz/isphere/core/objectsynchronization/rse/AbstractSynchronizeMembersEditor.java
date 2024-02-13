@@ -135,6 +135,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private Button btnSynchronize;
     private Button btnCancel;
     private Button chkCompareAfterSync;
+    private Button chkDisplayErrorsOnly;
 
     private DialogSettingsManager dialogSettingsManager;
 
@@ -345,8 +346,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     private void createFilterOptionsArea(Composite parent) {
 
+        int numColumns = 5;
+
         Group filterOptionsGroup = new Group(parent, SWT.NONE);
-        filterOptionsGroup.setLayout(createGridLayoutNoBorder(5, false));
+        filterOptionsGroup.setLayout(createGridLayoutNoBorder(numColumns, false));
         filterOptionsGroup.setLayoutData(new GridData(GridData.BEGINNING, GridData.FILL, false, true));
         filterOptionsGroup.setText(Messages.Display);
 
@@ -400,8 +403,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             }
         });
 
-        Composite displayOccurences = new Composite(filterOptionsGroup, SWT.NONE);
+        Composite displayOccurences = new Composite(filterOptionsGroup, SWT.BORDER);
         displayOccurences.setLayout(new GridLayout());
+        displayOccurences.setLayoutData(new GridData());
 
         btnDuplicates = WidgetFactory.createToggleButton(displayOccurences);
         btnDuplicates.setLayoutData(createButtonLayoutData());
@@ -473,7 +477,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         if (isSynchronizationEnabled()) {
 
             btnSynchronize = WidgetFactory.createPushButton(area);
-            btnSynchronize.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
+            btnSynchronize.setLayoutData(createButtonLayoutData(1, 1, SWT.RIGHT));
             btnSynchronize.setText(Messages.Synchronize);
             btnSynchronize.setToolTipText(Messages.Tooltip_start_synchronize_source_members);
             btnSynchronize.addSelectionListener(new SelectionListener() {
@@ -484,11 +488,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
                 public void widgetDefaultSelected(SelectionEvent event) {
                 }
             });
-
         }
 
         btnCancel = WidgetFactory.createPushButton(area);
-        btnCancel.setLayoutData(createButtonLayoutData(1, SWT.RIGHT));
+        btnCancel.setLayoutData(createButtonLayoutData(1, 1, SWT.RIGHT));
         btnCancel.setText(Messages.Cancel);
         btnCancel.setToolTipText(Messages.Tooltip_cancel_operation);
         btnCancel.addSelectionListener(new SelectionListener() {
@@ -514,6 +517,17 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
                 }
             });
         }
+
+        chkDisplayErrorsOnly = WidgetFactory.createCheckbox(area, Messages.Errors_only);
+        chkDisplayErrorsOnly.setLayoutData(createButtonLayoutData(1, 1));
+        chkDisplayErrorsOnly.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent event) {
+                refreshTableFilter();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent event) {
+            }
+        });
     }
 
     // private void setLinkPreferencesText() {
@@ -686,14 +700,19 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     }
 
     private GridData createButtonLayoutData(int verticalSpan) {
-        return createButtonLayoutData(verticalSpan, SWT.LEFT);
+        return createButtonLayoutData(verticalSpan, 1);
     }
 
-    private GridData createButtonLayoutData(int verticalSpan, int horizontalAlignment) {
+    private GridData createButtonLayoutData(int verticalSpan, int horizontalSpan) {
+        return createButtonLayoutData(verticalSpan, horizontalSpan, SWT.LEFT);
+    }
+
+    private GridData createButtonLayoutData(int verticalSpan, int horizontalSpan, int horizontalAlignment) {
 
         GridData gridData = new GridData(horizontalAlignment, SWT.TOP, false, false, 1, 1);
         gridData.widthHint = 120;
         gridData.verticalSpan = verticalSpan;
+        gridData.horizontalSpan = horizontalSpan;
 
         return gridData;
     }
@@ -804,6 +823,12 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
                 filterData.setSingles(btnSingles.getSelection());
                 filterData.setDuplicates(btnDuplicates.getSelection());
 
+                if (isSynchronizationEnabled()) {
+                    filterData.setErrorsOnly(chkDisplayErrorsOnly.getSelection());
+                } else {
+                    filterData.setErrorsOnly(false);
+                }
+
                 if (tableFilter == null) {
                     tableFilter = new TableFilter(getTableStatistics());
                 }
@@ -897,16 +922,13 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             if (isWorking()) {
                 chkBoxError.setEnabled(false);
                 chkBoxReplace.setEnabled(false);
-                // lnkPreferences.setEnabled(false);
             } else {
                 if (isSynchronizationEnabled()) {
                     chkBoxError.setEnabled(isSynchronizeEnabled);
                     chkBoxReplace.setEnabled(isSynchronizeEnabled);
-                    // lnkPreferences.setEnabled(isSynchronizeEnabled);
                 } else {
                     chkBoxError.setEnabled(false);
                     chkBoxReplace.setEnabled(false);
-                    // lnkPreferences.setEnabled(false);
                 }
             }
         }
@@ -1014,8 +1036,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         btnNoCopy.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_NO_COPY, true));
         btnSingles.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_SINGLES, true));
         btnDuplicates.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_DUPLICATES, true));
+
         if (isSynchronizationEnabled()) {
             chkCompareAfterSync.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COMPARE_AFTER_SYNC, true));
+            setDisplayErrorsOnly(false);
         }
 
         if (chkBoxError != null) {
@@ -1163,6 +1187,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
 
         tableViewer.setInput(getEditorInput().clearAll());
+
+        if (isSynchronizationEnabled()) {
+            setDisplayErrorsOnly(false);
+        }
 
         setIsComparing(true);
         setButtonEnablementAndDisplayCompareStatus();
@@ -1324,8 +1352,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private RemoteObject createMissingSourceFileFromTemplate(String connectionName, String libraryName, String fileName, RemoteObject template) {
 
         AS400 templateSystem = IBMiHostContributionsHandler.getSystem(template.getConnectionName());
-        RecordFormatDescriptionsStore templateRecordFormat = new RecordFormatDescriptionsStore(templateSystem);
-        RecordFormatDescription toRecordFormatDescription = templateRecordFormat.get(template.getName(), template.getLibrary());
+        int recordLength = getRecordLength(templateSystem, template.getLibrary(), template.getName());
 
         String description = template.getDescription();
         if (description == null) {
@@ -1339,12 +1366,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
                 ISpherePlugin.logError("*** Could not find template file " + templateFileName + " in library " + templateLibraryName + " ***", e);
                 MessageDialogAsync.displayNonBlockingError(getShell(), "Unexpected exception. See Eclipse error log.");
             }
-        }
-
-        int recordLength = 0;
-
-        for (FieldDescription fieldDescription : toRecordFormatDescription.getFieldDescriptions()) {
-            recordLength += fieldDescription.getLength();
         }
 
         try {
@@ -1369,20 +1390,31 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
     }
 
+    private int getRecordLength(AS400 system, String libraryName, String fileName) {
+
+        RecordFormatDescriptionsStore templateRecordFormat = new RecordFormatDescriptionsStore(system);
+        RecordFormatDescription toRecordFormatDescription = templateRecordFormat.get(fileName, libraryName);
+
+        int recordLength = 0;
+        for (FieldDescription fieldDescription : toRecordFormatDescription.getFieldDescriptions()) {
+            recordLength += fieldDescription.getLength();
+        }
+
+        return recordLength;
+    }
+
     /**
      * File error callback of {@link CopyMemberValidator}.
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
+    public boolean reportFileMessage(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
 
         if (errorId == MemberValidationError.ERROR_NONE) {
             throw new IllegalArgumentException("Unexpected argument value 'errorId': " + errorId.name());
         }
 
         debug(sender.getClass().getSimpleName() + " -> Validation error: " + errorMessage);
-
-        synchronizationResult.addMessage(errorMessage);
 
         if (errorId == MemberValidationError.ERROR_TO_FILE) {
 
@@ -1393,18 +1425,23 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             String libraryName = missingFile.getLibrary();
             String fileName = missingFile.getName();
 
-            RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
-            if (newFile != null) {
-                // File successfully created...
-                return false; // ...continue
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            if (!ISphereHelper.checkFile(system, libraryName, fileName)) {
+                RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
+                if (newFile != null) {
+                    // File successfully created...
+                    return false; // ...continue
+                }
             }
-            ;
+
         } else if (errorId == MemberValidationError.ERROR_TO_MEMBER) {
             // Member validation error...
+            synchronizationResult.addErrorMessage(errorMessage);
             return false; // ...continue
         }
 
         // Any other error...
+        synchronizationResult.setJobFinishedMessage(errorMessage);
         return true; // ...cancel!
     }
 
@@ -1413,7 +1450,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
+    public boolean reportMemberMessage(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
 
         debug(sender.getClass().getSimpleName() + " -> Copy error: " + item.getFromMember() + " - " + errorMessage);
 
@@ -1448,7 +1485,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             compareItem.setCompareStatus(MemberCompareItem.LEFT_EQUALS_RIGHT, sharedValues.getCompareOptions());
         }
 
-        synchronizationResult.addMessage(errorMessage);
+        synchronizationResult.addErrorMessage(errorMessage);
 
         UIJob uiJob = new UpdateValidationErrorUIJob(sender, compareItem, errorMessage);
         uiJob.schedule();
@@ -1467,9 +1504,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         debug("\nAbstractSynchronizeMembersEditor.copyMembersPostRun:");
 
         synchronizationResult.setStatus(status);
-        synchronizationResult.setJobFinishedMessage(message);
         synchronizationResult.setCountCopied(countMembersCopied);
 
+        synchronizationResult.setJobFinishedMessage(message);
         UIJob uiJob = new EndSynchronisationUIJob(status, countMembersCopied, message);
         uiJob.schedule();
 
@@ -1546,6 +1583,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
     }
 
+    private void setDisplayErrorsOnly(boolean enabled) {
+        chkDisplayErrorsOnly.setSelection(enabled);
+        refreshTableFilter();
+    }
+
     @Override
     public void dispose() {
 
@@ -1620,12 +1662,12 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
             debug("-- End synchronisation job: --");
-            String[] items = synchronizationResult.getMesssages();
-            for (String message : items) {
+            String[] errorMessages = synchronizationResult.getErrorMesssages();
+            for (String message : errorMessages) {
                 debug("Result error: " + message);
             }
 
-            if (SynchronizationResult.CANCELED.equals(status)) {
+            if (SynchronizationResult.CANCELED.equals(status) || SynchronizationResult.ERROR.equals(status)) {
                 MessageDialogAsync.displayNonBlockingInformation(getShell(), Messages.Informational, message);
             }
 
@@ -1638,10 +1680,16 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             setButtonEnablementAndDisplayCompareStatus();
 
             if (isSynchronizationEnabled()) {
+
                 if (chkCompareAfterSync.getSelection()) {
                     performCompareMembers();
                 }
+
+                if (synchronizationResult.hasErrorMessages()) {
+                    setDisplayErrorsOnly(true);
+                }
             }
+
             return Status.OK_STATUS;
         }
     }

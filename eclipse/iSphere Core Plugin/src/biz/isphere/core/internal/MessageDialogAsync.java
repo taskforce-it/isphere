@@ -100,7 +100,7 @@ public class MessageDialogAsync {
         } else {
             display = null;
         }
-        DialogUIJob job = new DialogUIJob(display, title, createFinalMessage(message), kind);
+        DialogUIJob job = new DialogUIJob(shell, title, createFinalMessage(message), kind);
         job.schedule();
     }
 

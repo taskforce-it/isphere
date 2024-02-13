@@ -247,6 +247,10 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
             return true;
         }
 
+        if (filterData.isErrorsOnly()) {
+            return false;
+        }
+
         if (isDuplicate() && !filterData.isDuplicates()) {
             return false;
         }

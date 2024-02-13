@@ -49,11 +49,19 @@ public class SynchronizationResult {
         this.jobFinishedMessage = jobFinishedMessage;
     }
 
-    public void addMessage(String message) {
+    public void addErrorMessage(String message) {
         errorMessages.add(message);
     }
 
-    public String[] getMesssages() {
+    public boolean hasErrorMessages() {
+        if (errorMessages.size() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public String[] getErrorMesssages() {
         return errorMessages.toArray(new String[errorMessages.size()]);
     }
 

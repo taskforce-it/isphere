@@ -19,6 +19,7 @@ public class TableFilterData {
     private boolean equal;
     private boolean singles;
     private boolean duplicates;
+    private boolean errorsOnly;
 
     public boolean isCopyRight() {
         return copyRight;
@@ -66,5 +67,13 @@ public class TableFilterData {
 
     public void setDuplicates(boolean duplicates) {
         this.duplicates = duplicates;
+    }
+
+    public boolean isErrorsOnly() {
+        return errorsOnly;
+    }
+
+    public void setErrorsOnly(boolean errorsOnly) {
+        this.errorsOnly = errorsOnly;
     }
 }

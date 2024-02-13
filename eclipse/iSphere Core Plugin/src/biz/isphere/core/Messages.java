@@ -1850,6 +1850,8 @@ public class Messages extends NLS {
 
     public static String Property_Left_unequal_right;
 
+    public static String Errors_only;
+
     /*
      * Warning messages
      */

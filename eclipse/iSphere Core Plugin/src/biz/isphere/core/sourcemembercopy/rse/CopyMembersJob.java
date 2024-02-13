@@ -271,7 +271,7 @@ public class CopyMembersJob extends Job {
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    if (errorListener.reportError(CopyMembersJob.this, errorId, member, errorMessage)) {
+                    if (errorListener.reportMemberMessage(CopyMembersJob.this, errorId, member, errorMessage)) {
                         cancel();
                     }
                 }

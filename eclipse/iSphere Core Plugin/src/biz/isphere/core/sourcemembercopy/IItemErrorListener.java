@@ -28,7 +28,7 @@ public interface IItemErrorListener {
      * @param errorMessage - error message text
      * @return true for canceling the job; otherwise false
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage);
+    public boolean reportFileMessage(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage);
 
     /**
      * Methods called by the {@link CopyMemberValidator} for each member error.
@@ -38,5 +38,5 @@ public interface IItemErrorListener {
      * @param errorMessage - error message text
      * @return true for canceling the job; otherwise false
      */
-    public boolean reportError(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage);
+    public boolean reportMemberMessage(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage);
 }

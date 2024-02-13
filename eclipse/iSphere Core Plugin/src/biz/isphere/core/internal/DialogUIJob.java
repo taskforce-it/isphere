@@ -12,12 +12,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.progress.UIJob;
+
+import biz.isphere.base.internal.UIHelper;
 
 public class DialogUIJob extends UIJob {
 
-    private Display display;
+    private Shell shell;
     private String title;
     private String message;
     private int kind;
@@ -27,9 +29,9 @@ public class DialogUIJob extends UIJob {
         this(null, title, message, kind);
     }
 
-    public DialogUIJob(Display display, String title, String message, int kind) {
+    public DialogUIJob(Shell shell, String title, String message, int kind) {
         super("");
-        this.display = display;
+        this.shell = shell;
         this.title = title;
         this.message = message;
         this.kind = kind;
@@ -38,18 +40,15 @@ public class DialogUIJob extends UIJob {
 
     @Override
     public IStatus runInUIThread(IProgressMonitor monitor) {
-        MessageDialog dialog = new MessageDialog(ensureDisplay().getActiveShell(), title, null, message, kind, buttonLabels, 0);
+        MessageDialog dialog = new MessageDialog(ensureShell(), title, null, message, kind, buttonLabels, 0);
         dialog.open();
         return Status.OK_STATUS;
     }
 
-    private Display ensureDisplay() {
-        if (display == null) {
-            display = Display.getCurrent();
-            if (display == null) {
-                display = Display.getDefault();
-            }
+    private Shell ensureShell() {
+        if (shell == null) {
+            shell = UIHelper.getActiveShell();
         }
-        return display;
+        return shell;
     }
 }

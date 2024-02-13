@@ -229,8 +229,10 @@ public class CopyMemberValidator extends Thread {
             }
 
             if (isCanceled()) {
-                errorId = MemberValidationError.ERROR_CANCELED;
-                errorMessage = Messages.Operation_has_been_canceled_by_the_user;
+                if (errorId == MemberValidationError.ERROR_NONE) {
+                    errorId = MemberValidationError.ERROR_CANCELED;
+                    errorMessage = Messages.Operation_has_been_canceled_by_the_user;
+                }
             }
         }
 
@@ -245,7 +247,7 @@ public class CopyMemberValidator extends Thread {
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    boolean isCancelRequested = errorListener.reportError(CopyMemberValidator.this, errorId, errorContext, errorMessage);
+                    boolean isCancelRequested = errorListener.reportFileMessage(CopyMemberValidator.this, errorId, errorContext, errorMessage);
                     if (isCancelRequested) {
                         CopyMemberValidator.this.errorId = errorId;
                         CopyMemberValidator.this.errorMessage = errorMessage;
@@ -267,7 +269,7 @@ public class CopyMemberValidator extends Thread {
 
             if (itemErrorListeners != null) {
                 for (IItemErrorListener errorListener : itemErrorListeners) {
-                    if (errorListener.reportError(CopyMemberValidator.this, errorId, member, errorMessage)) {
+                    if (errorListener.reportMemberMessage(CopyMemberValidator.this, errorId, member, errorMessage)) {
                         monitor.setCanceled(true);
                     } else {
                         isError = false;
