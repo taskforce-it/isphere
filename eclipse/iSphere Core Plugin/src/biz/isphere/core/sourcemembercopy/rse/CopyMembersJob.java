@@ -31,7 +31,7 @@ import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 

@@ -95,8 +95,8 @@ import biz.isphere.core.objectsynchronization.jobs.ResolveGenericCompareElements
 import biz.isphere.core.objectsynchronization.jobs.StartCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ErrorContext;
 import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
@@ -1404,7 +1404,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     }
 
     /**
-     * File error callback of {@link CopyMemberValidator}.
+     * File error callback of {@link ValidateMembersJob}.
      * <p>
      * {@inheritDoc}
      */

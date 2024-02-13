@@ -33,8 +33,8 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
 import biz.isphere.core.objectsynchronization.rse.MemberCompareItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 import biz.isphere.core.sourcemembercopy.IItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
@@ -471,7 +471,7 @@ public class SynchronizeMembersJob extends Job {
             boolean ignoreUnsavedChangesError = false;
             boolean fullErrorCheck = true;
 
-            CopyMemberValidator validatorJob = new CopyMemberValidator(fromConnectionName, copyMemberItems, existingMemberAction, ignoreDataLostError,
+            ValidateMembersJob validatorJob = new ValidateMembersJob(fromConnectionName, copyMemberItems, existingMemberAction, ignoreDataLostError,
                 ignoreUnsavedChangesError, fullErrorCheck, this);
             validatorJob.addItemErrorListener(itemErrorListener);
 
@@ -599,7 +599,7 @@ public class SynchronizeMembersJob extends Job {
         }
 
         /**
-         * PostRun method called by {@link CopyMemberValidator} at the end of
+         * PostRun method called by {@link ValidateMembersJob} at the end of
          * the validation process.
          * 
          * @param errorId - value indicating the error type

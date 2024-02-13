@@ -8,12 +8,12 @@
 
 package biz.isphere.core.sourcemembercopy;
 
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 
 public interface IItemMessageListener {
 
     /**
-     * Methods called by the {@link CopyMemberValidator} each time it encounters
+     * Methods called by the {@link ValidateMembersJob} each time it encounters
      * an error. Possible error IDs of type {@link MemberValidationError}:
      * <ul>
      * <li>ERROR_TO_CONNECTION</li>
@@ -31,7 +31,7 @@ public interface IItemMessageListener {
     public boolean reportFileMessage(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage);
 
     /**
-     * Methods called by the {@link CopyMemberValidator} for each member error.
+     * Methods called by the {@link ValidateMembersJob} for each member error.
      * 
      * @param sender - anything useful for identifying the sender of the event
      * @param item - copy member item in error

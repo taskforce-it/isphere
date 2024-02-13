@@ -41,7 +41,7 @@ import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 
-public class CopyMemberValidator extends Thread {
+public class ValidateMembersJob extends Thread {
 
     public enum MemberValidationError {
         ERROR_NONE,
@@ -63,7 +63,7 @@ public class CopyMemberValidator extends Thread {
 
     private boolean isActive;
 
-    public CopyMemberValidator(String fromConnectionName, CopyMemberItem[] fromMembers, ExistingMemberAction existingMemberAction,
+    public ValidateMembersJob(String fromConnectionName, CopyMemberItem[] fromMembers, ExistingMemberAction existingMemberAction,
         boolean ignoreDataLostError, boolean ignoreUnsavedChangesError, boolean fullErrorCheck, IValidateMembersPostRun postRun) {
         doValidateMembers = new DoValidateMembers(fromConnectionName, fromMembers, existingMemberAction, ignoreDataLostError,
             ignoreUnsavedChangesError, fullErrorCheck);
@@ -247,10 +247,10 @@ public class CopyMemberValidator extends Thread {
 
             if (itemErrorListeners != null) {
                 for (IItemMessageListener errorListener : itemErrorListeners) {
-                    boolean isCancelRequested = errorListener.reportFileMessage(CopyMemberValidator.this, errorId, errorContext, errorMessage);
+                    boolean isCancelRequested = errorListener.reportFileMessage(ValidateMembersJob.this, errorId, errorContext, errorMessage);
                     if (isCancelRequested) {
-                        CopyMemberValidator.this.errorId = errorId;
-                        CopyMemberValidator.this.errorMessage = errorMessage;
+                        ValidateMembersJob.this.errorId = errorId;
+                        ValidateMembersJob.this.errorMessage = errorMessage;
                         monitor.setCanceled(true);
                     } else {
                         isError = false;
@@ -269,7 +269,7 @@ public class CopyMemberValidator extends Thread {
 
             if (itemErrorListeners != null) {
                 for (IItemMessageListener errorListener : itemErrorListeners) {
-                    if (errorListener.reportMemberMessage(CopyMemberValidator.this, errorId, member, errorMessage)) {
+                    if (errorListener.reportMemberMessage(ValidateMembersJob.this, errorId, member, errorMessage)) {
                         monitor.setCanceled(true);
                     } else {
                         isError = false;
@@ -414,7 +414,7 @@ public class CopyMemberValidator extends Thread {
 
                     if (isCanceled()) {
                         this.cancel();
-                        CopyMemberValidator.this.cancelOperation();
+                        ValidateMembersJob.this.cancelOperation();
                         break;
                     }
 

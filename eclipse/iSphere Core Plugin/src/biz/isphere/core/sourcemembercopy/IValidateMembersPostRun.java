@@ -8,12 +8,12 @@
 
 package biz.isphere.core.sourcemembercopy;
 
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 
 public interface IValidateMembersPostRun {
 
     /**
-     * PostRun method called by {@link CopyMemberValidator} at the end of the
+     * PostRun method called by {@link ValidateMembersJob} at the end of the
      * validation process.
      * 
      * @param errorId - value indicating the error type

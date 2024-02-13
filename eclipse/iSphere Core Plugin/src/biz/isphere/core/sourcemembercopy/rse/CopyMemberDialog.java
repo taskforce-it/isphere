@@ -56,9 +56,9 @@ import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.Columns;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator;
-import biz.isphere.core.sourcemembercopy.CopyMemberValidator.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
@@ -74,7 +74,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     private static int BUTTON_CLOSE_CANCEL = IDialogConstants.CANCEL_ID;
 
     private CopyMemberService copyMemberService;
-    private CopyMemberValidator copyMemberValidator;
+    private ValidateMembersJob validateMembersJob;
 
     private ConnectionCombo comboToConnection;
     private Combo comboToFile;
@@ -113,7 +113,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
     protected void cancelPressed() {
 
         if (isValidating()) {
-            copyMemberValidator.cancelOperation();
+            validateMembersJob.cancelOperation();
             return;
         }
 
@@ -148,7 +148,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
     private boolean isValidating() {
 
-        if (copyMemberValidator != null && copyMemberValidator.isActive()) {
+        if (validateMembersJob != null && validateMembersJob.isActive()) {
             return true;
         }
 
@@ -187,16 +187,16 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
 
-        copyMemberValidator = new CopyMemberValidator(fromConnectionName, fromMembers, getExistingMemberAction(),
+        validateMembersJob = new ValidateMembersJob(fromConnectionName, fromMembers, getExistingMemberAction(),
             chkBoxIgnoreDataLostError.getSelection(), chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
 
-        copyMemberValidator.setToConnectionName(getToConnectionName());
-        copyMemberValidator.setToLibraryName(getToLibraryName());
-        copyMemberValidator.setToFileName(getToFileName());
-        copyMemberValidator.setToCcsid(copyMemberService.getToConnectionCcsid());
+        validateMembersJob.setToConnectionName(getToConnectionName());
+        validateMembersJob.setToLibraryName(getToLibraryName());
+        validateMembersJob.setToFileName(getToFileName());
+        validateMembersJob.setToCcsid(copyMemberService.getToConnectionCcsid());
 
         setControlEnablement();
-        copyMemberValidator.start();
+        validateMembersJob.start();
     }
 
     public void updateMembersWithTargetSourceFile(String toLibraryName, String toFileName, CopyMemberItem[] fromMembers) {
@@ -215,7 +215,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
     public void returnResult(final MemberValidationError errorId, final String errorMessage) {
 
-        copyMemberValidator = null;
+        validateMembersJob = null;
 
         new UIJob(Messages.EMPTY) {
 
