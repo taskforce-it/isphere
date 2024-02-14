@@ -370,8 +370,10 @@ public class ValidateMembersJob extends Thread {
                                 ErrorContext errorContext = new ErrorContext();
                                 errorContext.setFromObject(RemoteObject.newFile(fromConnectionName, fromFile, fromLibrary));
                                 errorContext.setToObject(RemoteObject.newFile(toConnectionName, toFile, toLibrary));
-                                isError = setFileError(MemberValidationError.ERROR_TO_FILE, errorContext, Messages
-                                    .bind(Messages.Data_lost_error_From_source_line_A_is_longer_than_target_source_line_B, fromLength, toLength));
+                                Object[] values = new Object[] { fromLength, fromLibrary, fromFile, toLength, toLibrary, toFile };
+                                isError = setFileError(MemberValidationError.ERROR_TO_FILE, errorContext, Messages.bind(
+                                    Messages.Data_lost_error_From_source_line_length_A_of_file_B_C_is_longer_than_target_source_line_length_D_of_file_E_F,
+                                    values));
                             }
                         }
                     }

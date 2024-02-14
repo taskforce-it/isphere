@@ -1300,7 +1300,7 @@ public class Messages extends NLS {
 
     public static String Ignore_unsaved_changes_error;
 
-    public static String Data_lost_error_From_source_line_A_is_longer_than_target_source_line_B;
+    public static String Data_lost_error_From_source_line_length_A_of_file_B_C_is_longer_than_target_source_line_length_D_of_file_E_F;
 
     public static String C_O_P_I_E_D;
 
@@ -1784,17 +1784,15 @@ public class Messages extends NLS {
 
     public static String Warning_Both_sides_show_the_same_source_members;
 
-    public static String Loading_source_members;
+    public static String Job_Loading_source_members;
 
-    public static String Setting_compare_items;
+    public static String Task_Preparing;
 
-    public static String Resolving_generic_compare_items;
+    public static String Task_Resolving_generic_items;
 
-    public static String Updating_compare_items;
+    public static String Task_Loading_compare_data;
 
-    public static String Loading_compare_items;
-
-    public static String Deleting_compare_data;
+    public static String Task_Cleaning_up;
 
     public static String Warning_The_left_and_right_site_display_the_same_object;
 

@@ -8,7 +8,7 @@
 
 package biz.isphere.core.objectsynchronization.jobs;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.objectsynchronization.SYNCMBR_clear;
@@ -20,37 +20,43 @@ import biz.isphere.core.objectsynchronization.SYNCMBR_clear;
  */
 public class FinishCompareMembersJob extends AbstractCompareMembersJob {
 
-    public FinishCompareMembersJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+    public FinishCompareMembersJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
         super(monitor, sharedValues);
     }
 
-    public int getWorkCount() {
+    protected int getNumWorkItems() {
         return 2;
     }
 
     @Override
-    public int execute(int worked) {
+    protected void execute(SubMonitor monitor) {
 
-        getMonitor().setTaskName(Messages.Deleting_compare_data);
+        SubMonitor subMonitor = split(monitor, 2);
 
-        CompareMembersSharedJobValues sharedValues = getSharedValues();
+        try {
 
-        if (sharedValues.getLeftHandle() != ERROR_HANDLE) {
-            cleanupCompareData(sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle());
-            worked++;
+            CompareMembersSharedJobValues sharedValues = getSharedValues();
+
+            if (sharedValues.getLeftHandle() != ERROR_HANDLE) {
+                consume(subMonitor, Messages.Task_Cleaning_up);
+                cleanupCompareData(sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle());
+            }
+
+            if (sharedValues.getRightHandle() != ERROR_HANDLE) {
+                consume(subMonitor, Messages.Task_Cleaning_up);
+                cleanupCompareData(sharedValues.getRightConnectionName(), sharedValues.getRightHandle());
+            }
+
+        } finally {
+            done(subMonitor);
         }
-
-        if (sharedValues.getRightHandle() != ERROR_HANDLE) {
-            cleanupCompareData(sharedValues.getRightConnectionName(), sharedValues.getRightHandle());
-            worked++;
-        }
-
-        return worked;
     }
 
     private void cleanupCompareData(String connectionName, int handle) {
 
-        initialize(connectionName);
+        if (!initialize(connectionName)) {
+            return;
+        }
 
         try {
 

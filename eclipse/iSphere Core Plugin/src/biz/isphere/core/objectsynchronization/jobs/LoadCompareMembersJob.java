@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.base.internal.SqlHelper;
 import biz.isphere.core.Messages;
@@ -29,31 +29,39 @@ import biz.isphere.core.objectsynchronization.MemberDescription;
  */
 public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
+    private static final MemberDescription[] EMPTY_RESULT = new MemberDescription[0];
+
     private MemberDescription[] leftMembers;
     private MemberDescription[] rightMembers;
 
-    public LoadCompareMembersJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+    public LoadCompareMembersJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
         super(monitor, sharedValues);
     }
 
-    public int getWorkCount() {
+    protected int getNumWorkItems() {
         return 2;
     }
 
     @Override
-    public int execute(int worked) {
+    protected void execute(SubMonitor monitor) {
 
-        getMonitor().setTaskName(Messages.Loading_compare_items);
+        SubMonitor subMonitor = split(monitor, 2);
 
-        CompareMembersSharedJobValues sharedValues = getSharedValues();
+        try {
 
-        leftMembers = loadMemberDescriptions(sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle(), SyncMbrMode.LEFT_SYSTEM);
-        worked++;
+            CompareMembersSharedJobValues sharedValues = getSharedValues();
 
-        rightMembers = loadMemberDescriptions(sharedValues.getRightConnectionName(), sharedValues.getRightHandle(), SyncMbrMode.RIGHT_SYSTEM);
-        worked++;
+            consume(subMonitor, Messages.Task_Loading_compare_data);
+            leftMembers = loadMemberDescriptions(subMonitor, sharedValues.getLeftConnectionName(), sharedValues.getLeftHandle(),
+                SyncMbrMode.LEFT_SYSTEM);
 
-        return worked;
+            consume(subMonitor, Messages.Task_Loading_compare_data);
+            rightMembers = loadMemberDescriptions(subMonitor, sharedValues.getRightConnectionName(), sharedValues.getRightHandle(),
+                SyncMbrMode.RIGHT_SYSTEM);
+
+        } finally {
+            done(subMonitor);
+        }
     }
 
     public MemberDescription[] getLeftMembers() {
@@ -64,14 +72,20 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         return rightMembers;
     }
 
-    private MemberDescription[] loadMemberDescriptions(String connectionName, int handle, SyncMbrMode mode) {
+    private MemberDescription[] loadMemberDescriptions(SubMonitor subMonitor, String connectionName, int handle, SyncMbrMode mode) {
 
-        initialize(connectionName);
+        if (!initialize(connectionName)) {
+            return EMPTY_RESULT;
+        }
 
         try {
 
+            if (subMonitor.isCanceled()) {
+                return EMPTY_RESULT;
+            }
+
             if (!setCurrentLibrary()) {
-                return new MemberDescription[0];
+                return EMPTY_RESULT;
             }
 
             return doLoadMemberDescriptions(connectionName, handle, mode);
@@ -94,7 +108,7 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
         try {
 
             if (handle == ERROR_HANDLE) {
-                return new MemberDescription[0];
+                return EMPTY_RESULT;
             }
 
             final int LIBRARY = 1;

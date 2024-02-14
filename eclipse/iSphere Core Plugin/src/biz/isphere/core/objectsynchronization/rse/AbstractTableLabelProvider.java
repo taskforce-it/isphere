@@ -79,8 +79,6 @@ public abstract class AbstractTableLabelProvider extends LabelProvider implement
             return null;
         }
 
-        System.out.println("Repainting 'Selection' image ...");
-
         if (useCompareStatusImagePainter()) {
             return null;
         }

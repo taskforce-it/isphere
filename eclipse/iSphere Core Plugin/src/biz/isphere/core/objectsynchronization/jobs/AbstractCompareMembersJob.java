@@ -10,7 +10,7 @@ package biz.isphere.core.objectsynchronization.jobs;
 
 import java.sql.Connection;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import com.ibm.as400.access.AS400;
 
@@ -27,7 +27,7 @@ public abstract class AbstractCompareMembersJob {
 
     protected static final int ERROR_HANDLE = -1;
 
-    private IProgressMonitor monitor;
+    private SubMonitor monitor;
     private CompareMembersSharedJobValues sharedValues;
 
     private String connectionName;
@@ -37,16 +37,20 @@ public abstract class AbstractCompareMembersJob {
     private Connection jdbcConnection;
     private SqlHelper sqlHelper;
 
+    private boolean isDone;
+
     /**
      * Produces a new compare members job.
      * 
      * @param monitor - progress monitor
      * @param sharedValues - values shared between compare jobs
      */
-    public AbstractCompareMembersJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+    public AbstractCompareMembersJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
 
         this.monitor = monitor;
         this.sharedValues = sharedValues;
+
+        this.isDone = false;
     }
 
     /**
@@ -54,10 +58,10 @@ public abstract class AbstractCompareMembersJob {
      * 
      * @param connectionName - name of the connection the objects reside on
      */
-    protected void initialize(String connectionName) {
+    protected boolean initialize(String connectionName) {
 
-        if (connectionName.equals(this.connectionName)) {
-            return;
+        if (connectionName == null || connectionName.equals(this.connectionName)) {
+            return false;
         }
 
         this.connectionName = connectionName;
@@ -66,10 +70,8 @@ public abstract class AbstractCompareMembersJob {
         this.iSphereLibrary = null;
         this.jdbcConnection = null;
         this.sqlHelper = null;
-    }
 
-    protected IProgressMonitor getMonitor() {
-        return monitor;
+        return true;
     }
 
     protected CompareMembersSharedJobValues getSharedValues() {
@@ -138,7 +140,49 @@ public abstract class AbstractCompareMembersJob {
         return sqlHelper;
     }
 
-    public abstract int getWorkCount();
+    public void run() {
+        if (isDone) {
+            return;
+        }
+        execute(monitor);
+        isDone = true;
+    }
 
-    public abstract int execute(int worked);
+    protected SubMonitor split(SubMonitor subMonitor, int numSubTasks) {
+
+        if (subMonitor == null) {
+            return null;
+        }
+
+        if (!subMonitor.isCanceled()) {
+            subMonitor = subMonitor.split(numSubTasks);
+        }
+
+        return subMonitor;
+    }
+
+    protected void consume(SubMonitor subMonitor, String subTaskName) {
+
+        if (subMonitor == null) {
+            return;
+        }
+
+        subMonitor.setTaskName(subTaskName);
+        if (!subMonitor.isCanceled()) {
+            subMonitor.setWorkRemaining(100).split(100 / getNumWorkItems());
+        }
+    }
+
+    protected void done(SubMonitor subMonitor) {
+
+        if (subMonitor == null) {
+            return;
+        }
+
+        subMonitor.done();
+    }
+
+    protected abstract int getNumWorkItems();
+
+    protected abstract void execute(SubMonitor monitor);
 }

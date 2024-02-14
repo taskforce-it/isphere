@@ -10,7 +10,7 @@ package biz.isphere.core.objectsynchronization.jobs;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
@@ -39,8 +39,7 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
     private RemoteObject rightObject;
     private String objectType;
 
-    public StartCompareMembersJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues, RemoteObject leftObject,
-        RemoteObject rightObject) {
+    public StartCompareMembersJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues, RemoteObject leftObject, RemoteObject rightObject) {
         super(monitor, sharedValues);
 
         this.leftObject = leftObject;
@@ -49,42 +48,55 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
         this.objectType = leftObject.getObjectType();
     }
 
-    public int getWorkCount() {
+    protected int getNumWorkItems() {
         return 2;
     }
 
-    public int execute(int worked) {
+    protected void execute(SubMonitor monitor) {
 
-        CompareMembersSharedJobValues sharedValues = getSharedValues();
-
-        sharedValues.setLeftHandle(null, ERROR_HANDLE);
-        sharedValues.setRightHandle(null, ERROR_HANDLE);
-
-        getMonitor().setTaskName(Messages.Setting_compare_items);
-
-        int handle = doSystem(leftObject.getConnectionName(), SyncMbrMode.LEFT_SYSTEM);
-        if (handle != ERROR_HANDLE) {
-            sharedValues.setLeftHandle(leftObject.getConnectionName(), handle);
-            worked++;
-            handle = doSystem(rightObject.getConnectionName(), SyncMbrMode.RIGHT_SYSTEM);
-            if (handle != ERROR_HANDLE) {
-                sharedValues.setRightHandle(rightObject.getConnectionName(), handle);
-                worked++;
-            } else {
-                ISpherePlugin.logError("*** Could not get SYNCMBR handle for *RIGHT system ***", null);
-            }
-        } else {
-            ISpherePlugin.logError("*** Could not get SYNCMBR handle for *LEFT system ***", null);
-        }
-
-        return worked;
-    }
-
-    private int doSystem(String connectionName, SyncMbrMode mode) {
-
-        initialize(connectionName);
+        SubMonitor subMonitor = split(monitor, 2);
 
         try {
+
+            CompareMembersSharedJobValues sharedValues = getSharedValues();
+
+            sharedValues.setLeftHandle(null, ERROR_HANDLE);
+            sharedValues.setRightHandle(null, ERROR_HANDLE);
+
+            consume(subMonitor, Messages.Task_Preparing);
+            int handle = doSystem(subMonitor, leftObject.getConnectionName(), SyncMbrMode.LEFT_SYSTEM);
+
+            if (handle != ERROR_HANDLE) {
+                sharedValues.setLeftHandle(leftObject.getConnectionName(), handle);
+
+                consume(subMonitor, Messages.Task_Preparing);
+                handle = doSystem(subMonitor, rightObject.getConnectionName(), SyncMbrMode.RIGHT_SYSTEM);
+
+                if (handle != ERROR_HANDLE) {
+                    sharedValues.setRightHandle(rightObject.getConnectionName(), handle);
+                } else {
+                    ISpherePlugin.logError("*** Could not get SYNCMBR handle for *RIGHT system ***", null);
+                }
+            } else {
+                ISpherePlugin.logError("*** Could not get SYNCMBR handle for *LEFT system ***", null);
+            }
+
+        } finally {
+            done(subMonitor);
+        }
+    }
+
+    private int doSystem(SubMonitor subMonitor, String connectionName, SyncMbrMode mode) {
+
+        if (!initialize(connectionName)) {
+            return ERROR_HANDLE;
+        }
+
+        try {
+
+            if (subMonitor.isCanceled()) {
+                return ERROR_HANDLE;
+            }
 
             if (!setCurrentLibrary()) {
                 return ERROR_HANDLE;

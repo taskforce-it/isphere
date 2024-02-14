@@ -8,7 +8,7 @@
 
 package biz.isphere.core.objectsynchronization.jobs;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import biz.isphere.core.Messages;
 import biz.isphere.core.objectsynchronization.CompareOptions;
@@ -21,38 +21,48 @@ import biz.isphere.core.objectsynchronization.SYNCMBR_resolveGenericCompareEleme
  */
 public class ResolveGenericCompareElementsJob extends AbstractCompareMembersJob {
 
-    public ResolveGenericCompareElementsJob(IProgressMonitor monitor, CompareMembersSharedJobValues sharedValues) {
+    public ResolveGenericCompareElementsJob(SubMonitor monitor, CompareMembersSharedJobValues sharedValues) {
         super(monitor, sharedValues);
     }
 
-    public int getWorkCount() {
+    protected int getNumWorkItems() {
         return 2;
     }
 
     @Override
-    public int execute(int worked) {
+    protected void execute(SubMonitor monitor) {
 
-        getMonitor().setTaskName(Messages.Resolving_generic_compare_items);
-
-        CompareMembersSharedJobValues sharedValues = getSharedValues();
-        CompareOptions compareOptions = getSharedValues().getCompareOptions();
-
-        resolveGenericCompareElements(sharedValues.getLeftHandle(), sharedValues.getLeftConnectionName(), SyncMbrMode.LEFT_SYSTEM,
-            compareOptions.getMemberFilter());
-        worked++;
-
-        resolveGenericCompareElements(sharedValues.getRightHandle(), sharedValues.getRightConnectionName(), SyncMbrMode.RIGHT_SYSTEM,
-            compareOptions.getMemberFilter());
-        worked++;
-
-        return worked;
-    }
-
-    private void resolveGenericCompareElements(int handle, String connectionName, SyncMbrMode mode, String memberFilter) {
-
-        initialize(connectionName);
+        SubMonitor subMonitor = split(monitor, 2);
 
         try {
+
+            CompareMembersSharedJobValues sharedValues = getSharedValues();
+            CompareOptions compareOptions = getSharedValues().getCompareOptions();
+
+            consume(subMonitor, Messages.Task_Resolving_generic_items);
+            resolveGenericCompareElements(subMonitor, sharedValues.getLeftHandle(), sharedValues.getLeftConnectionName(), SyncMbrMode.LEFT_SYSTEM,
+                compareOptions.getMemberFilter());
+
+            consume(subMonitor, Messages.Task_Resolving_generic_items);
+            resolveGenericCompareElements(subMonitor, sharedValues.getRightHandle(), sharedValues.getRightConnectionName(), SyncMbrMode.RIGHT_SYSTEM,
+                compareOptions.getMemberFilter());
+
+        } finally {
+            done(subMonitor);
+        }
+    }
+
+    private void resolveGenericCompareElements(SubMonitor subMonitor, int handle, String connectionName, SyncMbrMode mode, String memberFilter) {
+
+        if (!initialize(connectionName)) {
+            return;
+        }
+
+        try {
+
+            if (subMonitor.isCanceled()) {
+                return;
+            }
 
             if (handle == ERROR_HANDLE) {
                 return;

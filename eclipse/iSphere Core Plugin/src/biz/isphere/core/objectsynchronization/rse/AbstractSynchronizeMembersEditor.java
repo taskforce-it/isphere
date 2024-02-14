@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -86,26 +85,25 @@ import biz.isphere.core.objectsynchronization.TableFilter;
 import biz.isphere.core.objectsynchronization.TableFilterData;
 import biz.isphere.core.objectsynchronization.TableSorter;
 import biz.isphere.core.objectsynchronization.TableStatistics;
-import biz.isphere.core.objectsynchronization.jobs.AbstractCompareMembersJob;
+import biz.isphere.core.objectsynchronization.jobs.CompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.CompareMembersSharedJobValues;
-import biz.isphere.core.objectsynchronization.jobs.FinishCompareMembersJob;
+import biz.isphere.core.objectsynchronization.jobs.ICancelableJob;
+import biz.isphere.core.objectsynchronization.jobs.ICompareMembersPostrun;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
-import biz.isphere.core.objectsynchronization.jobs.LoadCompareMembersJob;
-import biz.isphere.core.objectsynchronization.jobs.ResolveGenericCompareElementsJob;
-import biz.isphere.core.objectsynchronization.jobs.StartCompareMembersJob;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
-import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
-import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ErrorContext;
 import biz.isphere.core.sourcemembercopy.IItemMessageListener;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
+import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.dialogs.ConfirmationMessageDialog;
 
-public abstract class AbstractSynchronizeMembersEditor extends EditorPart implements ISynchronizeMembersPostRun, IItemMessageListener {
+public abstract class AbstractSynchronizeMembersEditor extends EditorPart
+    implements ICompareMembersPostrun, ISynchronizeMembersPostRun, IItemMessageListener {
 
     public static final String ID = "biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"; //$NON-NLS-1$
 
@@ -173,7 +171,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
     private boolean isComparing;
     private boolean isSynchronizing;
-    private IProgressMonitor jobToCancel;
+    private ICancelableJob jobToCancel;
 
     private SynchronizationResult synchronizationResult;
 
@@ -403,7 +401,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             }
         });
 
-        Composite displayOccurences = new Composite(filterOptionsGroup, SWT.BORDER);
+        Composite displayOccurences = new Composite(filterOptionsGroup, SWT.NONE);
         displayOccurences.setLayout(new GridLayout());
         displayOccurences.setLayoutData(new GridData());
 
@@ -1197,94 +1195,24 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
 
         sharedValues = createSharedValues();
 
-        Job job = new Job(Messages.Loading_source_members) {
+        jobToCancel = new CompareMembersJob(getEditorInput(), sharedValues, this);
+        setButtonEnablementAndDisplayCompareStatus();
+        jobToCancel.schedule();
+    }
 
-            @Override
-            protected IStatus run(IProgressMonitor monitor) {
+    public void returnResult(boolean isCanceled, MemberDescription[] leftMemberDescriptions, MemberDescription[] rightMemberDescriptions) {
 
-                List<AbstractCompareMembersJob> workerJobs = new LinkedList<AbstractCompareMembersJob>();
-                workerJobs.add(new StartCompareMembersJob(monitor, sharedValues, editorInput.getLeftObject(), editorInput.getRightObject()));
+        if (isCanceled) {
+            getEditorInput().setLeftMemberDescriptions(new MemberDescription[0]);
+            getEditorInput().setRightMemberDescriptions(new MemberDescription[0]);
+        } else {
+            getEditorInput().setLeftMemberDescriptions(leftMemberDescriptions);
+            getEditorInput().setRightMemberDescriptions(rightMemberDescriptions);
+        }
 
-                ResolveGenericCompareElementsJob resolveGenericCompareElementsJob = new ResolveGenericCompareElementsJob(monitor, sharedValues);
-                workerJobs.add(resolveGenericCompareElementsJob);
+        jobToCancel = null;
 
-                LoadCompareMembersJob loadMembersJob = new LoadCompareMembersJob(monitor, sharedValues);
-                workerJobs.add(loadMembersJob);
-
-                FinishCompareMembersJob finishCompareMembersJob = new FinishCompareMembersJob(monitor, sharedValues);
-                workerJobs.add(finishCompareMembersJob);
-
-                // Get number of work items.
-                int work = 0;
-                for (AbstractCompareMembersJob job : workerJobs) {
-                    work = work + job.getWorkCount();
-                }
-
-                int worked = 0;
-
-                try {
-
-                    jobToCancel = monitor;
-                    UIJob job = new UIJob(Messages.EMPTY) {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            setButtonEnablementAndDisplayCompareStatus();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
-
-                    monitor.beginTask(Messages.EMPTY, work);
-
-                    // Process work items.
-                    for (AbstractCompareMembersJob workerJob : workerJobs) {
-                        if (monitor.isCanceled()) {
-                            return cancelOperation();
-                        }
-                        worked = workerJob.execute(worked);
-                    }
-
-                    MemberDescription[] leftMessageDescriptions = loadMembersJob.getLeftMembers();
-                    MemberDescription[] rightMessageDescriptions = loadMembersJob.getRightMembers();
-
-                    getEditorInput().setLeftMemberDescriptions(leftMessageDescriptions);
-                    getEditorInput().setRightMemberDescriptions(rightMessageDescriptions);
-
-                } finally {
-
-                    worked = finishCompareMembersJob.execute(worked);
-
-                    monitor.done();
-
-                    UIJob uiJob = new UIJob(Messages.EMPTY) {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            if (tableViewer.getTable().isDisposed()) {
-                                return Status.OK_STATUS;
-                            }
-                            jobToCancel = null;
-                            tableViewer.setInput(getEditorInput());
-                            setIsComparing(false);
-                            setButtonEnablementAndDisplayCompareStatus();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    uiJob.schedule();
-                }
-
-                return Status.OK_STATUS;
-
-            }
-
-            private IStatus cancelOperation() {
-
-                getEditorInput().setLeftMemberDescriptions(new MemberDescription[0]);
-                getEditorInput().setRightMemberDescriptions(new MemberDescription[0]);
-
-                return Status.OK_STATUS;
-            }
-
-        };
+        EndLoadMembersUIJob job = new EndLoadMembersUIJob(isCanceled);
         job.schedule();
     }
 
@@ -1419,18 +1347,24 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         if (errorId == MemberValidationError.ERROR_TO_FILE) {
 
             RemoteObject templateFile = errorContext.getFromObject();
-            RemoteObject missingFile = errorContext.getToObject();
+            RemoteObject fileWithError = errorContext.getToObject();
 
-            String connectionName = missingFile.getConnectionName();
-            String libraryName = missingFile.getLibrary();
-            String fileName = missingFile.getName();
+            String connectionName = fileWithError.getConnectionName();
+            String libraryName = fileWithError.getLibrary();
+            String fileName = fileWithError.getName();
 
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
             if (!ISphereHelper.checkFile(system, libraryName, fileName)) {
-                RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
-                if (newFile != null) {
-                    // File successfully created...
-                    return false; // ...continue
+
+                String[] messages = new String[] { errorMessage, "Create missing file?" };
+                if (MessageDialogAsync.displayBlockingConfirmation(messages) == IDialogConstants.OK_ID) {
+
+                    // Try to fix the error if the file is missing.
+                    RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
+                    if (newFile != null) {
+                        // File successfully created...
+                        return false; // ...continue
+                    }
                 }
             }
 
@@ -1441,7 +1375,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
         }
 
         // Any other error...
-        synchronizationResult.setJobFinishedMessage(errorMessage);
         return true; // ...cancel!
     }
 
@@ -1579,7 +1512,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     private void performCancelOperation() {
 
         if (jobToCancel != null) {
-            jobToCancel.setCanceled(true);
+            jobToCancel.cancelOperation();
         }
     }
 
@@ -1592,7 +1525,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
     public void dispose() {
 
         if (jobToCancel != null) {
-            jobToCancel.setCanceled(true);
+            jobToCancel.cancelOperation();
         }
 
         dispose(btnSelectLeftObject);
@@ -1642,6 +1575,35 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart implem
             tableViewer.refresh(compareItem, true, true);
             return Status.OK_STATUS;
         }
+    }
+
+    private class EndLoadMembersUIJob extends UIJob {
+
+        private boolean isCanceled;
+
+        public EndLoadMembersUIJob(boolean isCanceled) {
+            super(Messages.EMPTY);
+            this.isCanceled = isCanceled;
+        }
+
+        @Override
+        public IStatus runInUIThread(IProgressMonitor arg0) {
+
+            if (tableViewer.getTable().isDisposed()) {
+                return Status.OK_STATUS;
+            }
+
+            tableViewer.setInput(getEditorInput());
+            setIsComparing(false);
+            setButtonEnablementAndDisplayCompareStatus();
+
+            if (isCanceled) {
+                MessageDialogAsync.displayNonBlockingInformation(getShell(), Messages.Operation_has_been_canceled_by_the_user);
+            }
+
+            return Status.OK_STATUS;
+        }
+
     }
 
     private class EndSynchronisationUIJob extends UIJob {
