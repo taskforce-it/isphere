@@ -121,15 +121,15 @@ public class LoadCompareMembersJob extends AbstractCompareMembersJob {
 
             if (SyncMbrMode.LEFT_SYSTEM.equals(mode)) {
                 preparedStatementSelect = jdbcConnection.prepareStatement(
-                    "SELECT XWLEFTLIB, XWLEFTFILE, XWMBR, XWLEFTTYPE, XWLEFTLCHG, XWLEFTCRC, XWLEFTTEXT FROM "
-                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRW")
-                        + " WHERE XWHDL = ? ORDER BY XWHDL, XWLEFTLIB, XWLEFTFILE, XWMBR, XWLEFTTYPE",
+                    "SELECT XWLEFTLIB, XWLEFTFILE, XWMBR, XWLEFTTYPE, XWLEFTLCHG, XWLEFTCRC, XWLEFTTEXT FROM " //$NON-NLS-1$
+                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRW") //$NON-NLS-1$
+                        + " WHERE XWHDL = ? ORDER BY XWHDL, XWLEFTLIB, XWLEFTFILE, XWMBR, XWLEFTTYPE", //$NON-NLS-1$
                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             } else if (SyncMbrMode.RIGHT_SYSTEM.equals(mode)) {
                 preparedStatementSelect = jdbcConnection.prepareStatement(
-                    "SELECT XWRGHTLIB, XWRGHTFILE, XWMBR, XWRGHTTYPE, XWRGHTLCHG, XWRGHTCRC, XWRGHTTEXT FROM "
-                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRW")
-                        + " WHERE XWHDL = ? ORDER BY XWHDL, XWRGHTLIB, XWRGHTFILE, XWMBR, XWRGHTTYPE",
+                    "SELECT XWRGHTLIB, XWRGHTFILE, XWMBR, XWRGHTTYPE, XWRGHTLCHG, XWRGHTCRC, XWRGHTTEXT FROM " //$NON-NLS-1$
+                        + sqlHelper.getObjectName(getISphereLibrary(), "SYNCMBRW") //$NON-NLS-1$
+                        + " WHERE XWHDL = ? ORDER BY XWHDL, XWRGHTLIB, XWRGHTFILE, XWMBR, XWRGHTTYPE", //$NON-NLS-1$
                     ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             } else {
                 throw new IllegalArgumentException("Incorrect mode: " + mode.mode()); //$NON-NLS-1$

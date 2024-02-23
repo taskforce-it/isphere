@@ -10,7 +10,10 @@ package biz.isphere.core.sourcemembercopy;
 
 public enum MemberValidationError {
     ERROR_NONE (false, SynchronizeMembersAction.CONTINUE),
-    ERROR_FROM_FILE_NOT_FOUND (false, SynchronizeMembersAction.CANCEL),
+    ERROR_FROM_CONNECTION_NOT_FOUND (true, SynchronizeMembersAction.CANCEL),
+    ERROR_FROM_LIBRARY_NAME_NOT_VALID (true, SynchronizeMembersAction.CANCEL),
+    ERROR_FROM_LIBRARY_NOT_FOUND (true, SynchronizeMembersAction.CANCEL),
+    ERROR_FROM_FILE_NOT_FOUND (true, SynchronizeMembersAction.CANCEL),
     ERROR_FROM_MEMBER_IS_DIRTY (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
     ERROR_FROM_MEMBER_NOT_FOUND (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
     ERROR_TO_CONNECTION_NOT_FOUND (true, SynchronizeMembersAction.CANCEL),

@@ -23,7 +23,7 @@ public class SYNCMBR_clear {
 
         try {
 
-            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_clear",
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_clear", //$NON-NLS-1$
                 this.getClass().getClassLoader());
 
             pcml.setIntValue("SYNCMBR_clear.handle", handle);
@@ -34,9 +34,9 @@ public class SYNCMBR_clear {
 
                 AS400Message[] msgs = pcml.getMessageList("SYNCMBR_clear");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                 }
-                ISpherePlugin.logError("*** Call to SYNCMBR_clear failed. See messages above ***", null);
+                ISpherePlugin.logError("*** Call to SYNCMBR_clear failed. See messages above ***", null); //$NON-NLS-1$
 
                 errno = -1;
 
@@ -49,7 +49,7 @@ public class SYNCMBR_clear {
         } catch (PcmlException e) {
 
             errno = -1;
-            ISpherePlugin.logError("*** Call to SYNCMBR_clear failed. See messages above ***", e);
+            ISpherePlugin.logError("*** Call to SYNCMBR_clear failed. See messages above ***", e); //$NON-NLS-1$
         }
 
         return errno;

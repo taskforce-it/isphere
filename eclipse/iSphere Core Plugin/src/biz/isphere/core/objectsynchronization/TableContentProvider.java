@@ -77,7 +77,7 @@ public class TableContentProvider implements IStructuredContentProvider {
         if (isFileSynchronization) {
             return memberDescription.getMemberName();
         } else {
-            return String.format("%s.%s", memberDescription.getFileName(), memberDescription.getMemberName());
+            return String.format("%s.%s", memberDescription.getFileName(), memberDescription.getMemberName()); //$NON-NLS-1$
         }
     }
 

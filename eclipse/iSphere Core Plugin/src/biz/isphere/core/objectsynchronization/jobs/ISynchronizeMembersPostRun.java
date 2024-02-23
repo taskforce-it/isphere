@@ -14,6 +14,21 @@ import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
 public interface ISynchronizeMembersPostRun {
 
     /**
+     * Job finished successfully.
+     */
+    public static final String OK = "OK"; //$NON-NLS-1$
+
+    /**
+     * Job ended with errors.
+     */
+    public static final String ERROR = "ERROR"; //$NON-NLS-1$
+
+    /**
+     * Job has been canceled.
+     */
+    public static final String CANCELED = "CANCELED"; //$NON-NLS-1$
+
+    /**
      * PostRun methods called by {@link SynchronizeMembersJob} at the end of the
      * copy member process.
      * 

@@ -26,7 +26,7 @@ import biz.isphere.core.internal.FontHelper;
  */
 public final class StatusLine {
 
-    public static final String STATUS_LINE_ID = "biz.isphere.core.objectsynchronization.rse.AbstractSynchronizeMembersEditorActionBarContributor.StatusLine";
+    public static final String STATUS_LINE_ID = "biz.isphere.core.objectsynchronization.rse.AbstractSynchronizeMembersEditorActionBarContributor.StatusLine"; //$NON-NLS-1$
 
     private CLabel messageLabel;
     private CLabel numItemsLabel;

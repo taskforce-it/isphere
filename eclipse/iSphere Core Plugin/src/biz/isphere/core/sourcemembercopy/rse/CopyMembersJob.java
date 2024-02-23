@@ -177,7 +177,6 @@ public class CopyMembersJob extends Job {
 
                 if (isCopied) {
                     reportMemberCopied(member);
-                    copyResult.addProcessed();
                 }
             }
 

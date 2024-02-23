@@ -1102,16 +1102,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             String fileName = memberDescription.getFileName();
             String memberName = memberDescription.getMemberName();
 
+            if (!ISphereHelper.checkMember(system, libraryName, fileName, memberName)) {
+                return true;
+            }
+
             String command = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
 
-            debug("Executing command: " + command);
             List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
             String errorMessageId = ISphereHelper.executeCommand(system, command, rtnMessages);
             if (!StringHelper.isNullOrEmpty(errorMessageId)) {
                 ISphereHelper.displayCommandExecutionError(getShell(), command, rtnMessages);
                 return false;
             }
-            // }
 
             return true;
 
@@ -1242,7 +1244,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         String rightToLeft = Messages.bind(Messages.Copy_A_source_members_from_right_to_left, synchronizeMembersJob.getNumCopyRightToLeft());
 
         if (MessageDialog.openConfirm(getShell(), Messages.Confirmation,
-            Messages.Do_you_want_to_start_synchronizing_members + "\n\n" + leftToRight + "\n" + rightToLeft)) {
+            Messages.Do_you_want_to_start_synchronizing_members + "\n\n" + leftToRight + "\n" + rightToLeft)) { // //$NON-NLS-1$ //$NON-NLS-2$
             setIsSynchronizing(true);
             setButtonEnablementAndDisplayCompareStatus();
             jobToCancel = synchronizeMembersJob;
@@ -1272,6 +1274,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             synchronizationResult.addErrorMessage(errorMessage);
         }
 
+        synchronizationResult.addDirtyMember(compareItem);
+
         return errorId.getDefaultAction();
     }
 
@@ -1282,7 +1286,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      */
     public SynchronizeMembersAction reportCopyMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
 
-        debug("CopyMembersJob -> Copy error: " + item.getFromMember() + " - " + errorMessage);
+        if (MemberCopyError.ERROR_NONE == errorId) {
+            debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);
+        } else {
+            debug("CopyMembersJob -> Copied: " + item.getFromFile() + "." + item.getFromMember());
+        }
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
 
@@ -1320,6 +1328,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             synchronizationResult.addErrorMessage(errorMessage);
         }
 
+        synchronizationResult.addDirtyMember(compareItem);
+
         return errorId.getDefaultAction();
     }
 
@@ -1332,9 +1342,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         synchronizationResult.setStatus(status);
         synchronizationResult.setCountCopied(countCopied);
-
+        synchronizationResult.setCountErrors(countErrors);
         synchronizationResult.setJobFinishedMessage(message);
-        UIJob uiJob = new EndSynchronisationUIJob(status, countCopied, message);
+
+        UIJob uiJob = new EndSynchronisationUIJob(synchronizationResult);
         uiJob.schedule();
 
         debug("\nSynchronizeMembersEditor.synchronizeMembersPostRun:");
@@ -1485,29 +1496,32 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     private class EndSynchronisationUIJob extends UIJob {
 
-        private String status;
-        private int countCopied;
-        private String message;
+        private SynchronizationResult result;
 
-        public EndSynchronisationUIJob(String status, int countCopied, String message) {
+        public EndSynchronisationUIJob(SynchronizationResult result) {
             super(Messages.EMPTY);
 
-            this.status = status;
-            this.countCopied = countCopied;
-            this.message = message;
+            this.result = result;
         }
 
         @Override
         public IStatus runInUIThread(IProgressMonitor monitor) {
 
             debug("-- End synchronisation job: --");
+
+            debug("Copied #: " + result.getCountCopied());
+            debug("Errors #: " + result.getCountErrors());
+
+            debug("Errors:");
             String[] errorMessages = synchronizationResult.getErrorMesssages();
             for (String message : errorMessages) {
-                debug("Result error: " + message);
+                debug("   " + message);
             }
 
-            if (SynchronizationResult.CANCELED.equals(status) || SynchronizationResult.ERROR.equals(status)) {
-                MessageDialogAsync.displayNonBlockingInformation(getShell(), Messages.Informational, message);
+            if (!ISynchronizeMembersPostRun.OK.equals(result.getStatus())) {
+                MessageDialogAsync.displayNonBlockingError(getShell(), result.getJobFinishedMessage());
+            } else {
+                MessageDialogAsync.displayNonBlockingInformation(getShell(), result.getJobFinishedMessage());
             }
 
             if (tableViewer.getTable().isDisposed()) {
@@ -1524,10 +1538,14 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     performCompareMembers();
                 }
 
-                if (synchronizationResult.hasErrorMessages()) {
-                    setDisplayErrorsOnly(true);
+                if (synchronizationResult.hasDirtyMembers()) {
+                    for (MemberCompareItem memberCompareItem : synchronizationResult.getDirtyMembers()) {
+                        tableViewer.refresh(memberCompareItem);
+                    }
                 }
             }
+
+            synchronizationResult = null;
 
             return Status.OK_STATUS;
         }
@@ -1785,7 +1803,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     }
                 }
 
-                tableViewer.refresh(selectedItem, true, true);
+                // TODO: refresh compare attributes
+
+                tableViewer.refresh(selectedItem);
             }
         }
 
@@ -1806,22 +1826,22 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     memberDescription = selectedItem.getLeftMemberDescription();
                     qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
                     qualifiedMemberName = memberDescription.getQualifiedMemberName();
-                    confirmationMessage.append("<-- ");
+                    confirmationMessage.append("<-- "); //$NON-NLS-1$
                     confirmationMessage.append(Messages.Delete_left_member_colon);
                 } else if (side == RIGHT) {
                     memberDescription = selectedItem.getRightMemberDescription();
                     qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
                     qualifiedMemberName = memberDescription.getQualifiedMemberName();
                     confirmationMessage.append(Messages.Delete_right_member_colon);
-                    confirmationMessage.append(" -->");
+                    confirmationMessage.append(" -->"); //$NON-NLS-1$
                 } else {
                     throw new IllegalArgumentException("Unexpected value in 'side': " + side);
                 }
 
-                confirmationMessage.append("\n");
-                confirmationMessage.append("\n");
+                confirmationMessage.append("\n"); //$NON-NLS-1$
+                confirmationMessage.append("\n"); //$NON-NLS-1$
                 confirmationMessage.append(qualifiedConnectionName);
-                confirmationMessage.append("\n");
+                confirmationMessage.append("\n"); //$NON-NLS-1$
                 confirmationMessage.append(qualifiedMemberName);
 
                 int rc;
@@ -1847,7 +1867,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                             selectedItem.setRightMemberDescription(null);
                             selectedItem.setCompareStatus(MemberCompareItem.RIGHT_MISSING, sharedValues.getCompareOptions());
                         }
-                        tableViewer.refresh(selectedItem, true, true);
+                        tableViewer.refresh(selectedItem);
                     }
                 } else {
                     break;

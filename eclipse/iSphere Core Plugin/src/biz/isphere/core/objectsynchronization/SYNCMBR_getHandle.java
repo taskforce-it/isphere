@@ -23,7 +23,7 @@ public class SYNCMBR_getHandle {
 
         try {
 
-            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_getHandle",
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_getHandle", //$NON-NLS-1$
                 this.getClass().getClassLoader());
 
             boolean rc = pcml.callProgram("SYNCMBR_getHandle");
@@ -32,22 +32,22 @@ public class SYNCMBR_getHandle {
 
                 AS400Message[] msgs = pcml.getMessageList("SYNCMBR_getHandle");
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                 }
-                ISpherePlugin.logError("*** Call to SYNCMBR_getHandle failed. See messages above ***", null);
+                ISpherePlugin.logError("*** Call to SYNCMBR_getHandle failed. See messages above ***", null); //$NON-NLS-1$
 
                 handle = -1;
 
             } else {
 
-                handle = pcml.getIntValue("SYNCMBR_getHandle.handle");
+                handle = pcml.getIntValue("SYNCMBR_getHandle.handle"); //$NON-NLS-1$
 
             }
 
         } catch (PcmlException e) {
 
             handle = -1;
-            ISpherePlugin.logError("*** Call to SYNCMBR_getHandle failed. See messages above ***", e);
+            ISpherePlugin.logError("*** Call to SYNCMBR_getHandle failed. See messages above ***", e); //$NON-NLS-1$
         }
 
         return handle;

@@ -68,12 +68,11 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
 
     public void setLeftMemberDescription(MemberDescription memberDescription) {
 
-        if (memberDescription == null) {
-            return;
-        }
-
-        if (memberName != null && memberDescription != null && !memberName.equals(memberDescription.getMemberName())) {
-            throw new IllegalArgumentException("Illegal message ID: " + memberDescription.getMemberName()); //$NON-NLS-1$
+        if (memberDescription != null) {
+            String newMemberName = memberDescription.getMemberName();
+            if (memberName != null && !memberName.equals(newMemberName)) {
+                throw new IllegalArgumentException("New left member name '" + newMemberName + "' does not match member name: " + memberName); //$NON-NLS-1$
+            }
         }
 
         this.leftMemberDescription = memberDescription;
@@ -104,8 +103,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
         if (memberDescription != null) {
             String newMemberName = memberDescription.getMemberName();
             if (memberName != null && !memberName.equals(newMemberName)) {
-                throw new IllegalArgumentException(
-                    "Member name of member description (" + newMemberName + ") does not match member name: " + memberName); //$NON-NLS-1$
+                throw new IllegalArgumentException("New right member name '" + newMemberName + "' does not match member name: " + memberName); //$NON-NLS-1$
             }
         }
 

@@ -42,7 +42,6 @@ import biz.isphere.core.memberrename.RenameMemberActor;
 import biz.isphere.core.memberrename.exceptions.NoMoreNamesAvailableException;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
-import biz.isphere.core.sourcemembercopy.FileValidationStatusMap.FileValidationStatus;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
 
 public class ValidateMembersJob extends Job {
@@ -63,7 +62,6 @@ public class ValidateMembersJob extends Job {
     private int toCcsid;
 
     private ValidationResult validationResult;
-    private FileValidationStatusMap targetFileValidationStatusMap;
 
     public ValidateMembersJob(String fromConnectionName, CopyMemberItem[] fromMembers, ExistingMemberAction existingMemberAction,
         boolean ignoreDataLostError, boolean ignoreUnsavedChangesError, boolean fullErrorCheck, IValidateMembersPostRun postRun) {
@@ -78,8 +76,6 @@ public class ValidateMembersJob extends Job {
         this.ignoreUnsavedChangesError = ignoreUnsavedChangesError;
         this.fullErrorCheck = fullErrorCheck;
         this.postRun = postRun;
-
-        this.targetFileValidationStatusMap = new FileValidationStatusMap();
     }
 
     public void addItemErrorListener(IValidateItemMessageListener listener) {
@@ -146,6 +142,7 @@ public class ValidateMembersJob extends Job {
                     continue;
                 }
 
+                // Prepare validation ...
                 AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
                 String fromLibraryName = member.getFromLibrary();
                 String fromFileName = member.getFromFile();
@@ -173,73 +170,102 @@ public class ValidateMembersJob extends Job {
                 // Clear member error message
                 member.setErrorMessage(Messages.EMPTY);
 
-                // Ensure file validation status entry
-                FileValidationStatus fileValidationStatus = targetFileValidationStatusMap.getFileValidationStatus(toLibraryName, toFileName);
-                if (fileValidationStatus == null) {
-                    fileValidationStatus = targetFileValidationStatusMap.addItem(toLibraryName, toFileName);
-                }
+                try {
 
-                // Is 'to' file valid?
-                if (!isTargetFileValid(fromConnectionName, toConnectionName, member, fileValidationStatus)) {
-                    // nothing to do here, everything has been done in
-                    // isTargetFileValid()
-                    // setMemberError(MemberValidationError.ERROR_TO_MEMBER,
-                    // member, errorMessage);
-                }
-                // Is member not 'dirty' (open in editor)
-                else if (dirtyFiles.contains(localResourcePath)) {
-                    setMemberError(MemberValidationError.ERROR_FROM_MEMBER_IS_DIRTY, errorContext,
-                        Messages.Member_is_open_in_editor_and_has_unsaved_changes, fileValidationStatus);
-                }
-                // Have 'from' member?
-                else if (!isMember(fromSystem, fromLibraryName, fromFileName, member.getFromMember())) {
-                    setMemberError(MemberValidationError.ERROR_FROM_MEMBER_NOT_FOUND, errorContext,
-                        Messages.bind(Messages.From_member_A_not_found, from), fileValidationStatus);
-                }
-                // Do not copy member to same name?
-                else if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
-                    setMemberError(MemberValidationError.ERROR_TO_MEMBER_COPY_TO_SAME_NAME, errorContext,
-                        Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from), fileValidationStatus);
-                } else if (targetMembers.contains(to)) {
-                    setMemberError(MemberValidationError.ERROR_TO_MEMBER_COPY_TO_SAME_NAME, errorContext,
-                        Messages.Can_not_copy_member_twice_to_same_target_member, fileValidationStatus);
-                }
-                // Is full error check enabled?
-                else if (fullErrorCheck) {
-
-                    errorContext.setCopyMemberItem(member);
-
-                    // Does the 'to' member exist?
-                    if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(toConnectionName), toLibraryName, toFileName,
-                        member.getToMember())) {
-
-                        if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
-                            // that is fine, go ahead
-                        } else if (existingMemberAction.equals(ExistingMemberAction.RENAME)) {
-
-                            try {
-                                actor.produceNewMemberName(member.getToLibrary(), member.getToFile(), member.getToMember()); // $NON-NLS-1$
-                            } catch (NoMoreNamesAvailableException e) {
-                                setMemberError(MemberValidationError.ERROR_TO_MEMBER_OUT_OF_NAMES, errorContext,
-                                    Messages.Error_No_more_names_available_Delete_old_backups, fileValidationStatus);
-                            } catch (Exception e) {
-                                setMemberError(MemberValidationError.ERROR_TO_MEMBER_RENAME_EXCEPTION, errorContext, e.getLocalizedMessage(),
-                                    fileValidationStatus);
-                            }
-
-                        } else {
-                            setMemberError(MemberValidationError.ERROR_TO_MEMBER_EXISTS, errorContext,
-                                Messages.bind(Messages.Target_member_A_already_exists, to), fileValidationStatus);
-                        }
-                    } else {
+                    if (!isFromLibraryValid(fromConnectionName, member, errorContext)) {
+                        // nothing to do here, everything has been done in
+                        // isTargetLibraryValid()
+                        continue;
                     }
-                }
+                    if (skipNextToMember(member)) continue;
 
-                targetMembers.add(to);
+                    // Is 'to' file valid?
+                    if (!isTargetLibraryValid(toConnectionName, member, errorContext)) {
+                        // nothing to do here, everything has been done in
+                        // isTargetLibraryValid()
+                        continue;
+                    }
+                    if (skipNextToMember(member)) continue;
 
-                if (!member.isError()) {
-                    reportMemberValidated(member, fileValidationStatus);
-                    validationResult.addProcessed();
+                    // Is 'to' file valid?
+                    if (!isTargetFileValid(fromConnectionName, toConnectionName, member, errorContext)) {
+                        // nothing to do here, everything has been done in
+                        // isTargetFileValid()
+                        continue;
+                    }
+                    if (skipNextToMember(member)) continue;
+
+                    // Is member not 'dirty' (open in editor)
+                    if (dirtyFiles.contains(localResourcePath)) {
+                        setMemberError(MemberValidationError.ERROR_FROM_MEMBER_IS_DIRTY, errorContext,
+                            Messages.Member_is_open_in_editor_and_has_unsaved_changes);
+                        continue;
+                    }
+                    if (skipNextToMember(member)) continue;
+
+                    // Have 'from' member?
+                    if (!isMember(fromSystem, fromLibraryName, fromFileName, member.getFromMember())) {
+                        setMemberError(MemberValidationError.ERROR_FROM_MEMBER_NOT_FOUND, errorContext,
+                            Messages.bind(Messages.From_member_A_not_found, from));
+                        continue;
+                    }
+                    if (skipNextToMember(member)) continue;
+
+                    // Do not copy member to same name?
+                    if (from.equals(to) && fromConnectionName.equalsIgnoreCase(toConnectionName)) {
+                        setMemberError(MemberValidationError.ERROR_TO_MEMBER_COPY_TO_SAME_NAME, errorContext,
+                            Messages.bind(Messages.Cannot_copy_A_to_the_same_name, from));
+                        continue;
+                    } else if (targetMembers.contains(to)) {
+                        setMemberError(MemberValidationError.ERROR_TO_MEMBER_COPY_TO_SAME_NAME, errorContext,
+                            Messages.Can_not_copy_member_twice_to_same_target_member);
+                        continue;
+                    }
+                    if (skipNextToMember(member)) continue;
+
+                    // Is full error check enabled?
+                    if (fullErrorCheck) {
+
+                        errorContext.setCopyMemberItem(member);
+
+                        // Does the 'to' member exist?
+                        if (ISphereHelper.checkMember(IBMiHostContributionsHandler.getSystem(toConnectionName), toLibraryName, toFileName,
+                            member.getToMember())) {
+
+                            if (existingMemberAction.equals(ExistingMemberAction.REPLACE)) {
+                                // that is fine, go ahead
+                            } else if (existingMemberAction.equals(ExistingMemberAction.RENAME)) {
+
+                                try {
+                                    actor.produceNewMemberName(member.getToLibrary(), member.getToFile(), member.getToMember()); // $NON-NLS-1$
+                                } catch (NoMoreNamesAvailableException e) {
+                                    setMemberError(MemberValidationError.ERROR_TO_MEMBER_OUT_OF_NAMES, errorContext,
+                                        Messages.Error_No_more_names_available_Delete_old_backups);
+                                    continue;
+                                } catch (Exception e) {
+                                    setMemberError(MemberValidationError.ERROR_TO_MEMBER_RENAME_EXCEPTION, errorContext, e.getLocalizedMessage());
+                                    continue;
+                                }
+
+                            } else {
+                                setMemberError(MemberValidationError.ERROR_TO_MEMBER_EXISTS, errorContext,
+                                    Messages.bind(Messages.Target_member_A_already_exists, to));
+                                continue;
+                            }
+                        } else {
+                            // Fine. Member does not exist.
+                        }
+                    }
+
+                } finally {
+
+                    // Always do the following things ...
+                    // No matter whether the is an error or not.
+                    targetMembers.add(to);
+
+                    if (!member.isError()) {
+                        reportMemberValidated(member);
+                    }
                 }
             }
 
@@ -256,6 +282,15 @@ public class ValidateMembersJob extends Job {
                     validationResult.getCancelErrorId(), validationResult.getCancelMessage());
             }
         }
+    }
+
+    private boolean skipNextToMember(CopyMemberItem member) {
+        // Skip next step if the member has an error but the user voted for
+        // going further down the list.
+        if (member.isError()) {
+            return true;
+        }
+        return false;
     }
 
     private Set<String> getDirtyFiles() throws Exception {
@@ -290,47 +325,76 @@ public class ValidateMembersJob extends Job {
         return openFiles;
     }
 
-    private boolean isTargetFileValid(String fromConnectionName, String toConnectionName, CopyMemberItem member,
-        FileValidationStatus fileValidationStatus) {
+    private boolean isFromLibraryValid(String fromConnectionName, CopyMemberItem member, ErrorContext errorContext) {
 
         String fromLibraryName = member.getFromLibrary();
-        String fromFileName = member.getFromFile();
-
-        String toLibraryName = member.getToLibrary();
-        String toFileName = member.getToFile();
-
-        RemoteObject fromObject = RemoteObject.newFile(fromConnectionName, fromFileName, fromLibraryName);
-        RemoteObject toObject = RemoteObject.newFile(toConnectionName, toFileName, toLibraryName);
 
         MemberValidationError errorId;
         String errorMessage;
-        ErrorContext errorContext;
 
-        // Check file validation status of previous members
-        if (!fileValidationStatus.isFileErrorNull()) {
+        // Validate library...
+        Validator nameValidator = Validator.getNameInstance(toCcsid);
 
-            errorContext = (ErrorContext)fileValidationStatus.getUserData();
-            errorContext.setCopyMemberItem(member);
+        // Have 'to' connection ?
+        if (!hasConnection(fromConnectionName)) {
 
-            errorId = fileValidationStatus.getErrorId();
-            errorMessage = fileValidationStatus.getErrorMessage();
+            errorId = MemberValidationError.ERROR_FROM_CONNECTION_NOT_FOUND;
+            errorMessage = Messages.bind(Messages.Connection_A_not_found, fromConnectionName);
+            setMemberError(errorId, errorContext, errorMessage);
 
-            if (fileValidationStatus.isFileError()) {
-                setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting. Default is: CANCEL
+            if (isCanceled()) {
                 return false;
             } else {
-                fileValidationStatus.clearFileError();
-                return true;
+                // Continue, error has or will bee fixed.
             }
         }
 
-        errorContext = new ErrorContext();
-        errorContext.setCopyMemberItem(member);
-        errorContext.setFromObject(fromObject);
-        errorContext.setToObject(toObject);
-        errorContext.setCopyMemberItem(member);
+        // 'to' library name valid?
+        if (!nameValidator.validate(fromLibraryName)) {
 
-        // No file validation status found. Validate file...
+            errorId = MemberValidationError.ERROR_FROM_LIBRARY_NAME_NOT_VALID;
+            errorMessage = Messages.bind(Messages.Invalid_library_name, fromLibraryName);
+            setMemberError(errorId, errorContext, errorMessage);
+
+            // Check user voting. Default is: CANCEL
+            if (isCanceled()) {
+                return false;
+            } else {
+                // Continue, error has or will bee fixed.
+            }
+        }
+
+        AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
+
+        // Have 'to' library?
+        if (!ISphereHelper.checkLibrary(toSystem, fromLibraryName)) {
+
+            errorId = MemberValidationError.ERROR_FROM_LIBRARY_NOT_FOUND;
+            errorMessage = Messages.bind(Messages.Library_A_not_found, fromLibraryName);
+            setMemberError(errorId, errorContext, errorMessage);
+
+            // Check user voting. Default is: CANCEL
+            if (isCanceled()) {
+                return false;
+            } else {
+                // Continue, error has or will bee fixed.
+            }
+            return false;
+        }
+
+        // All fine. Continue with validation.
+        return true;
+    }
+
+    private boolean isTargetLibraryValid(String toConnectionName, CopyMemberItem member, ErrorContext errorContext) {
+
+        String toLibraryName = member.getToLibrary();
+
+        MemberValidationError errorId;
+        String errorMessage;
+
+        // Validate library...
         Validator nameValidator = Validator.getNameInstance(toCcsid);
 
         // Have 'to' connection ?
@@ -338,8 +402,9 @@ public class ValidateMembersJob extends Job {
 
             errorId = MemberValidationError.ERROR_TO_CONNECTION_NOT_FOUND;
             errorMessage = Messages.bind(Messages.Connection_A_not_found, toConnectionName);
+            setMemberError(errorId, errorContext, errorMessage);
 
-            setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting. Default is: CANCEL
             if (isCanceled()) {
                 return false;
             } else {
@@ -352,8 +417,9 @@ public class ValidateMembersJob extends Job {
 
             errorId = MemberValidationError.ERROR_TO_LIBRARY_NAME_NOT_VALID;
             errorMessage = Messages.bind(Messages.Invalid_library_name, toLibraryName);
+            setMemberError(errorId, errorContext, errorMessage);
 
-            setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting. Default is: CANCEL
             if (isCanceled()) {
                 return false;
             } else {
@@ -368,22 +434,45 @@ public class ValidateMembersJob extends Job {
 
             errorId = MemberValidationError.ERROR_TO_LIBRARY_NOT_FOUND;
             errorMessage = Messages.bind(Messages.Library_A_not_found, toLibraryName);
+            setMemberError(errorId, errorContext, errorMessage);
 
-            setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting. Default is: CANCEL
             if (isCanceled()) {
                 return false;
             } else {
                 // Continue, error has or will bee fixed.
             }
+            return false;
         }
+
+        // All fine. Continue with validation.
+        return true;
+    }
+
+    private boolean isTargetFileValid(String fromConnectionName, String toConnectionName, CopyMemberItem member, ErrorContext errorContext) {
+
+        String fromLibraryName = member.getFromLibrary();
+        String fromFileName = member.getFromFile();
+
+        String toLibraryName = member.getToLibrary();
+        String toFileName = member.getToFile();
+
+        RemoteObject toObject = RemoteObject.newFile(toConnectionName, toFileName, toLibraryName);
+
+        MemberValidationError errorId;
+        String errorMessage;
+
+        // Validate file...
+        Validator nameValidator = Validator.getNameInstance(toCcsid);
 
         // 'to' file name valid?
         if (!nameValidator.validate(toFileName)) {
 
             errorId = MemberValidationError.ERROR_TO_FILE_NAME_NOT_VALID;
             errorMessage = Messages.bind(Messages.Invalid_file_name, toFileName);
+            setMemberError(errorId, errorContext, errorMessage);
 
-            setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting.
             if (isCanceled()) {
                 return false;
             } else {
@@ -393,12 +482,15 @@ public class ValidateMembersJob extends Job {
 
         // Have 'to'file?
         boolean haveToFile = false;
+
+        AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
         if (!ISphereHelper.checkFile(toSystem, toLibraryName, toFileName)) {
 
             errorId = MemberValidationError.ERROR_TO_FILE_NOT_FOUND;
             errorMessage = Messages.bind(Messages.File_A_not_found, toObject.getQSYSName());
+            setMemberError(errorId, errorContext, errorMessage);
 
-            setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+            // Check user voting.
             if (isCanceled()) {
                 return false;
             } else {
@@ -422,8 +514,9 @@ public class ValidateMembersJob extends Job {
                     errorId = MemberValidationError.ERROR_FROM_FILE_NOT_FOUND;
                     errorMessage = Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
                         new String[] { fromFileName, fromLibraryName, "SRCDTA" });
+                    setMemberError(errorId, errorContext, errorMessage);
 
-                    setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+                    // Check user voting.
                     if (isCanceled()) {
                         return false;
                     } else {
@@ -441,8 +534,9 @@ public class ValidateMembersJob extends Job {
                     errorId = MemberValidationError.ERROR_TO_FILE_NOT_FOUND;
                     errorMessage = Messages.bind(Messages.Could_not_retrieve_field_description_of_field_C_of_file_B_A,
                         new String[] { toFileName, toLibraryName, "SRCDTA" });
+                    setMemberError(errorId, errorContext, errorMessage);
 
-                    setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+                    // Check user voting.
                     if (isCanceled()) {
                         return false;
                     } else {
@@ -460,8 +554,9 @@ public class ValidateMembersJob extends Job {
                 errorId = MemberValidationError.ERROR_TO_FILE_DATA_LOST;
                 errorMessage = Messages.bind(
                     Messages.Data_lost_error_From_source_line_length_A_of_file_B_C_is_longer_than_target_source_line_length_D_of_file_E_F, values);
+                setMemberError(errorId, errorContext, errorMessage);
 
-                setMemberError(errorId, errorContext, errorMessage, fileValidationStatus);
+                // Check user voting.
                 if (isCanceled()) {
                     return false;
                 } else {
@@ -472,8 +567,7 @@ public class ValidateMembersJob extends Job {
             }
         }
 
-        fileValidationStatus.clearFileError();
-
+        // All fine. Continue with validation.
         return true;
     }
 
@@ -513,48 +607,7 @@ public class ValidateMembersJob extends Job {
         return isMember;
     }
 
-    // private void setFileError(MemberValidationError errorId, ErrorContext
-    // errorContext, String errorMessage,
-    // FileValidationStatus fileValidationStatus) {
-
-    //@formatter:off
-//        if (!(errorId == MemberValidationError.ERROR_FROM_FILE_NOT_FOUND
-//            || errorId == MemberValidationError.ERROR_TO_CONNECTION_NOT_FOUND
-//            || errorId == MemberValidationError.ERROR_TO_LIBRARY_NAME_NOT_VALID
-//            || errorId == MemberValidationError.ERROR_TO_LIBRARY_NOT_FOUND
-//            || errorId == MemberValidationError.ERROR_TO_FILE_NAME_NOT_VALID
-//            || errorId == MemberValidationError.ERROR_TO_FILE_NOT_FOUND
-//            || errorId == MemberValidationError.ERROR_TO_FILE_DATA_LOST)) {
-            //@formatter:on
-    // throw new IllegalArgumentException("Update Javadoc in
-    // IValidateItemMessageListener, if you want to allow: " +
-    // errorId.name());
-    // }
-    //
-    // if (itemMessageListeners != null) {
-    // for (IValidateItemMessageListener errorListener : itemMessageListeners) {
-    // SynchronizeMembersAction response = null; //
-    // errorListener.reportValidateFileMessage(errorId,
-    // // errorContext,
-    // // errorMessage);
-    // if (response == SynchronizeMembersAction.CANCEL) {
-    // errorContext.getCopyMemberItem().setErrorMessage(errorMessage);
-    // fileValidationStatus.addCountMemberError(1);
-    // fileValidationStatus.setFileError(errorId, errorMessage, errorContext);
-    // cancelOperation();
-    // } else if (response == SynchronizeMembersAction.CONTINUE_WITH_ERROR) {
-    // errorContext.getCopyMemberItem().setErrorMessage(errorMessage);
-    // fileValidationStatus.addCountMemberError(1);
-    // fileValidationStatus.setFileError(errorId, errorMessage, errorContext);
-    // } else {
-    // // Continue without error
-    // }
-    // }
-    // }
-    // }
-
-    private void setMemberError(MemberValidationError errorId, ErrorContext errorContext, String errorMessage,
-        FileValidationStatus fileValidationStatus) {
+    private void setMemberError(MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
 
         if (errorId == MemberValidationError.ERROR_NONE) {
             throw new IllegalArgumentException("Update Javadoc in IValidateItemMessageListener, if you want to allow: " + errorId.name());
@@ -571,12 +624,10 @@ public class ValidateMembersJob extends Job {
                     member.setErrorMessage(errorMessage);
                     validationResult.addError();
                     validationResult.setCancel(errorId, errorMessage);
-                    fileValidationStatus.setFileError(errorId, errorMessage, errorContext);
                     cancelOperation();
                 } else if (response == SynchronizeMembersAction.CONTINUE_WITH_ERROR) {
                     member.setErrorMessage(errorMessage);
                     validationResult.addError();
-                    fileValidationStatus.setFileError(errorId, errorMessage, errorContext);
                 } else {
                     // Continue
                 }
@@ -584,7 +635,7 @@ public class ValidateMembersJob extends Job {
         }
     }
 
-    private void reportMemberValidated(CopyMemberItem member, FileValidationStatus fileValidationStatus) {
+    private void reportMemberValidated(CopyMemberItem member) {
 
         MemberValidationError errorId = MemberValidationError.ERROR_NONE;
 

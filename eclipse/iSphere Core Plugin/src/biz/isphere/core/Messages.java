@@ -174,6 +174,8 @@ public class Messages extends NLS {
 
     public static String Mode;
 
+    public static String Selection;
+
     public static String Multiple_selection;
 
     public static String New;
@@ -1853,6 +1855,8 @@ public class Messages extends NLS {
     public static String Could_not_copy_A_members_due_to_errors;
 
     public static String Successfully_copied_A_members;
+
+    public static String Other;
 
     /*
      * Warning messages

@@ -23,34 +23,34 @@ public class SYNCMBR_getNumberOfCompareElements {
 
         try {
 
-            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_getNumberOfCompareElements",
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_getNumberOfCompareElements", //$NON-NLS-1$
                 this.getClass().getClassLoader());
 
-            pcml.setIntValue("SYNCMBR_getNumberOfCompareElements.handle", handle);
-            pcml.setStringValue("SYNCMBR_getNumberOfCompareElements.mode", mode);
+            pcml.setIntValue("SYNCMBR_getNumberOfCompareElements.handle", handle); //$NON-NLS-1$
+            pcml.setStringValue("SYNCMBR_getNumberOfCompareElements.mode", mode); //$NON-NLS-1$
 
-            boolean rc = pcml.callProgram("SYNCMBR_getNumberOfCompareElements");
+            boolean rc = pcml.callProgram("SYNCMBR_getNumberOfCompareElements"); //$NON-NLS-1$
 
             if (rc == false) {
 
-                AS400Message[] msgs = pcml.getMessageList("SYNCMBR_getNumberOfCompareElements");
+                AS400Message[] msgs = pcml.getMessageList("SYNCMBR_getNumberOfCompareElements"); //$NON-NLS-1$
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                 }
-                ISpherePlugin.logError("*** Call to SYNCMBR_getNumberOfCompareElements failed. See messages above ***", null);
+                ISpherePlugin.logError("*** Call to SYNCMBR_getNumberOfCompareElements failed. See messages above ***", null); //$NON-NLS-1$
 
                 numberOfSearchElements = -1;
 
             } else {
 
-                numberOfSearchElements = pcml.getIntValue("SYNCMBR_getNumberOfCompareElements.numberOfSearchElements");
+                numberOfSearchElements = pcml.getIntValue("SYNCMBR_getNumberOfCompareElements.numberOfSearchElements"); //$NON-NLS-1$
 
             }
 
         } catch (PcmlException e) {
 
             numberOfSearchElements = -1;
-            ISpherePlugin.logError("*** Call to SYNCMBR_getNumberOfCompareElements failed. See messages above ***", e);
+            ISpherePlugin.logError("*** Call to SYNCMBR_getNumberOfCompareElements failed. See messages above ***", e); //$NON-NLS-1$
         }
 
         return numberOfSearchElements;

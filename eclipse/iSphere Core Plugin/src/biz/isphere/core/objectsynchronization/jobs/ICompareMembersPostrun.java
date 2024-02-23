@@ -12,5 +12,13 @@ import biz.isphere.core.objectsynchronization.MemberDescription;
 
 public interface ICompareMembersPostrun {
 
+    /**
+     * PostRun methods called by {@link CompareMembersJob} at the end of the
+     * member compare and load process.
+     * 
+     * @param isCanceled - true, if the job has been canceled;otherwise false
+     * @param leftMemberDescriptions - members descriptions of the left side
+     * @param rightMemberDescriptions - member descriptions of the right side
+     */
     public void compareMembersPostRun(boolean isCanceled, MemberDescription[] leftMemberDescriptions, MemberDescription[] rightMemberDescriptions);
 }

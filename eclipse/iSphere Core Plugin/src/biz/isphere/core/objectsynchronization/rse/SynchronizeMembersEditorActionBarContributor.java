@@ -14,7 +14,7 @@ public class SynchronizeMembersEditorActionBarContributor extends AbstractSynchr
 
     @Override
     public String getStatusLineId() {
-        return StatusLine.STATUS_LINE_ID + "_" + getClass().getName();
+        return StatusLine.STATUS_LINE_ID + "_" + getClass().getName(); //$NON-NLS-1$
     }
 
 }
