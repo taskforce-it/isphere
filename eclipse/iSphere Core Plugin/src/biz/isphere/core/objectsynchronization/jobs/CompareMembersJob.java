@@ -74,7 +74,7 @@ public class CompareMembersJob extends Job implements ICancelableJob {
 
             subMonitor.done();
 
-            postRun.returnResult(subMonitor.isCanceled(), leftMemberDescriptions, rightMemberDescriptions);
+            postRun.compareMembersPostRun(subMonitor.isCanceled(), leftMemberDescriptions, rightMemberDescriptions);
         }
 
         return Status.OK_STATUS;

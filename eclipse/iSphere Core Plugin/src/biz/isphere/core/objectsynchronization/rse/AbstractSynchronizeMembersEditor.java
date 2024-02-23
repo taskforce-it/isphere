@@ -54,7 +54,6 @@ import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
-import com.ibm.as400.access.FieldDescription;
 
 import biz.isphere.base.internal.DialogSettingsManager;
 import biz.isphere.base.internal.ExceptionHelper;
@@ -65,8 +64,6 @@ import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.compareeditor.SourceMemberCompareEditorConfiguration;
 import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
-import biz.isphere.core.file.description.RecordFormatDescription;
-import biz.isphere.core.file.description.RecordFormatDescriptionsStore;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.ibmi.contributions.extension.point.BasicQualifiedConnectionName;
 import biz.isphere.core.internal.IEditor;
@@ -92,18 +89,21 @@ import biz.isphere.core.objectsynchronization.jobs.ICompareMembersPostrun;
 import biz.isphere.core.objectsynchronization.jobs.ISynchronizeMembersPostRun;
 import biz.isphere.core.objectsynchronization.jobs.SyncMbrMode;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
-import biz.isphere.core.sourcemembercopy.ErrorContext;
-import biz.isphere.core.sourcemembercopy.IItemMessageListener;
+import biz.isphere.core.sourcemembercopy.ICopyItemMessageListener;
+import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
+import biz.isphere.core.sourcemembercopy.MemberCopyError;
+import biz.isphere.core.sourcemembercopy.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.SynchronizeMembersAction;
 import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
-import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
+import biz.isphere.core.sourcemembercopy.rse.MissingFileAction;
 import biz.isphere.core.swt.widgets.HistoryCombo;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.dialogs.ConfirmationMessageDialog;
 
 public abstract class AbstractSynchronizeMembersEditor extends EditorPart
-    implements ICompareMembersPostrun, ISynchronizeMembersPostRun, IItemMessageListener {
+    implements ICompareMembersPostrun, ISynchronizeMembersPostRun, IValidateItemMessageListener, ICopyItemMessageListener {
 
     public static final String ID = "biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditor"; //$NON-NLS-1$
 
@@ -118,8 +118,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private static final String BUTTON_COMPARE_AFTER_SYNC = "BUTTON_COMPARE_AFTER_SYNC"; //$NON-NLS-1$
 
     private static final String MEMBER_FILTER_HISTORY_KEY = "memberFilterHistory"; //$NON-NLS-1$
-
-    // private SynchronizeMembersEditorInput input;
 
     private boolean isLeftObjectValid;
     private boolean isRightObjectValid;
@@ -446,23 +444,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             chkBoxReplace = WidgetFactory.createRadioButton(existingMembersActionGroup, Messages.Label_Replace_existing_members);
             chkBoxError.setLayoutData(new GridData(GridData.BEGINNING));
-
-            // lnkPreferences = new Link(existingMembersActionGroup, SWT.MULTI |
-            // SWT.WRAP);
-            // lnkPreferences.setLayoutData(new GridData(GridData.BEGINNING));
-            // setLinkPreferencesText();
-            //
-            // lnkPreferences.pack();
-            // lnkPreferences.addSelectionListener(new SelectionAdapter() {
-            // @Override
-            // public void widgetSelected(SelectionEvent e) {
-            // PreferenceDialog dialog =
-            // PreferencesUtil.createPreferenceDialogOn(getShell(), e.text,
-            // null, null);
-            // dialog.open();
-            // setLinkPreferencesText();
-            // }
-            // });
         }
     }
 
@@ -527,22 +508,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             }
         });
     }
-
-    // private void setLinkPreferencesText() {
-    //
-    // IMemberRenamingRule rule =
-    // Preferences.getInstance().getMemberRenamingRule();
-    // String ruleLabel = rule.getLabel();
-    //
-    // String lnkLabel =
-    // Messages.bind(Messages.Link_to_copy_member_preferences_A_B,
-    // new Object[] { "<a
-    // href=\"biz.isphere.core.preferencepages.ISphereCopyMembers\">", "</a>",
-    // ruleLabel });
-    //
-    // lnkPreferences.setLayoutData(new GridData());
-    // lnkPreferences.setText(lnkLabel);
-    // }
 
     private void createCompareArea(Composite parent) {
 
@@ -997,8 +962,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             if (StringHelper.isNullOrEmpty(errorMessage)) {
                 statusMessage = tableStatistics.toString();
             } else {
-                // statusMessage = String.format("%s - %s",
-                // tableStatistics.toString(), errorMessage);
                 statusMessage = errorMessage;
             }
 
@@ -1139,9 +1102,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             String fileName = memberDescription.getFileName();
             String memberName = memberDescription.getMemberName();
 
-            // if (ISphereHelper.checkMember(system, libraryName, fileName,
-            // memberName)) {
-
             String command = String.format("RMVM FILE(%s/%s) MBR(%s)", libraryName, fileName, memberName); //$NON-NLS-1$
 
             debug("Executing command: " + command);
@@ -1200,7 +1160,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         jobToCancel.schedule();
     }
 
-    public void returnResult(boolean isCanceled, MemberDescription[] leftMemberDescriptions, MemberDescription[] rightMemberDescriptions) {
+    public void compareMembersPostRun(boolean isCanceled, MemberDescription[] leftMemberDescriptions, MemberDescription[] rightMemberDescriptions) {
 
         if (isCanceled) {
             getEditorInput().setLeftMemberDescriptions(new MemberDescription[0]);
@@ -1252,7 +1212,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         RemoteObject rightObject = getEditorInput().getRightObject();
 
         SynchronizeMembersJob synchronizeMembersJob = new SynchronizeMembersJob(leftObject, rightObject, this);
-        synchronizeMembersJob.setItemErrorListener(this);
+        synchronizeMembersJob.setValidateItemErrorListener(this);
+        synchronizeMembersJob.setCopyItemErrorListener(this);
+        synchronizeMembersJob.setMissingFileAction(MissingFileAction.ASK_USER);
 
         if (chkBoxReplace.getSelection()) {
             synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.REPLACE);
@@ -1260,10 +1222,20 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             synchronizeMembersJob.setExistingMemberAction(ExistingMemberAction.ERROR);
         }
 
+        CompareOptions compareOptions = sharedValues.getCompareOptions();
         for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
-            MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getElementAt(i);
-            compareItem.resetErrorStatus();
-            synchronizeMembersJob.addItem(compareItem, sharedValues.getCompareOptions());
+            MemberCompareItem compareItem = (MemberCompareItem)tableViewer.getTable().getItem(i).getData();
+            if (compareItem.getOriginalCompareStatus(compareOptions) == MemberCompareItem.LEFT_MISSING) {
+                synchronizeMembersJob.addCopyRightToLeftMember(compareItem);
+            } else if (compareItem.getOriginalCompareStatus(compareOptions) == MemberCompareItem.RIGHT_MISSING) {
+                synchronizeMembersJob.addCopyLeftToRightMember(compareItem);
+            }
+
+        }
+
+        if (synchronizeMembersJob.getNumCopyLeftToRight() == 0 && synchronizeMembersJob.getNumCopyRightToLeft() == 0) {
+            MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.No_items_selected_for_processing);
+            return;
         }
 
         String leftToRight = Messages.bind(Messages.Copy_A_source_members_from_left_to_right, synchronizeMembersJob.getNumCopyLeftToRight());
@@ -1273,109 +1245,34 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             Messages.Do_you_want_to_start_synchronizing_members + "\n\n" + leftToRight + "\n" + rightToLeft)) {
             setIsSynchronizing(true);
             setButtonEnablementAndDisplayCompareStatus();
+            jobToCancel = synchronizeMembersJob;
+            setButtonEnablementAndDisplayCompareStatus();
             synchronizeMembersJob.schedule();
         }
     }
 
-    private RemoteObject createMissingSourceFileFromTemplate(String connectionName, String libraryName, String fileName, RemoteObject template) {
-
-        AS400 templateSystem = IBMiHostContributionsHandler.getSystem(template.getConnectionName());
-        int recordLength = getRecordLength(templateSystem, template.getLibrary(), template.getName());
-
-        String description = template.getDescription();
-        if (description == null) {
-            AS400 system = IBMiHostContributionsHandler.getSystem(template.getConnectionName());
-            String templateLibraryName = template.getLibrary();
-            String templateFileName = template.getName();
-            try {
-                template = ISphereHelper.resolveFile(system, templateLibraryName, templateFileName);
-                description = template.getDescription();
-            } catch (Exception e) {
-                ISpherePlugin.logError("*** Could not find template file " + templateFileName + " in library " + templateLibraryName + " ***", e);
-                MessageDialogAsync.displayNonBlockingError(getShell(), "Unexpected exception. See Eclipse error log.");
-            }
-        }
-
-        try {
-
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            String command = String.format("CRTSRCPF FILE(%s/%s) RCDLEN(%s) TEXT('%s')", libraryName, fileName, recordLength, description);
-            List<AS400Message> rtnMessages = new LinkedList<AS400Message>();
-            String message = ISphereHelper.executeCommand(system, command, rtnMessages);
-            if (!StringHelper.isNullOrEmpty(message)) {
-                ISphereHelper.displayCommandExecutionError(command, rtnMessages);
-                return null;
-            }
-
-            RemoteObject newFile = ISphereHelper.resolveFile(system, libraryName, fileName);
-            newFile.setConnectionName(connectionName);
-            return newFile;
-
-        } catch (Exception e) {
-            ISpherePlugin.logError("*** Could not create source file " + fileName + " in library " + libraryName + " from template ***", e);
-            MessageDialogAsync.displayNonBlockingError(getShell(), "Unexpected exception. See Eclipse error log.");
-            return null;
-        }
-    }
-
-    private int getRecordLength(AS400 system, String libraryName, String fileName) {
-
-        RecordFormatDescriptionsStore templateRecordFormat = new RecordFormatDescriptionsStore(system);
-        RecordFormatDescription toRecordFormatDescription = templateRecordFormat.get(fileName, libraryName);
-
-        int recordLength = 0;
-        for (FieldDescription fieldDescription : toRecordFormatDescription.getFieldDescriptions()) {
-            recordLength += fieldDescription.getLength();
-        }
-
-        return recordLength;
-    }
-
     /**
-     * File error callback of {@link ValidateMembersJob}.
+     * Member error callback of {@link ValidateMembersJob}.
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportFileMessage(Object sender, MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
+    public SynchronizeMembersAction reportValidateMemberMessage(MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
 
-        if (errorId == MemberValidationError.ERROR_NONE) {
-            throw new IllegalArgumentException("Unexpected argument value 'errorId': " + errorId.name());
-        }
+        debug("ValidateMembersJob -> Validation error: " + item.getFromMember() + " - " + errorMessage);
 
-        debug(sender.getClass().getSimpleName() + " -> Validation error: " + errorMessage);
+        final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
 
-        if (errorId == MemberValidationError.ERROR_TO_FILE) {
+        compareItem.resetErrorStatus();
 
-            RemoteObject templateFile = errorContext.getFromObject();
-            RemoteObject fileWithError = errorContext.getToObject();
-
-            String connectionName = fileWithError.getConnectionName();
-            String libraryName = fileWithError.getLibrary();
-            String fileName = fileWithError.getName();
-
-            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-            if (!ISphereHelper.checkFile(system, libraryName, fileName)) {
-
-                String[] messages = new String[] { errorMessage, "Create missing file?" };
-                if (MessageDialogAsync.displayBlockingConfirmation(messages) == IDialogConstants.OK_ID) {
-
-                    // Try to fix the error if the file is missing.
-                    RemoteObject newFile = createMissingSourceFileFromTemplate(connectionName, libraryName, fileName, templateFile);
-                    if (newFile != null) {
-                        // File successfully created...
-                        return false; // ...continue
-                    }
-                }
-            }
-
-        } else if (errorId == MemberValidationError.ERROR_TO_MEMBER) {
-            // Member validation error...
+        if (MemberValidationError.ERROR_NONE == errorId) {
+            // Nothing to do here.
+            // Let the CopyMembersJob decide what to do.
+        } else {
+            compareItem.setErrorStatus(errorMessage, sharedValues.getCompareOptions());
             synchronizationResult.addErrorMessage(errorMessage);
-            return false; // ...continue
         }
 
-        // Any other error...
-        return true; // ...cancel!
+        return errorId.getDefaultAction();
     }
 
     /**
@@ -1383,14 +1280,16 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      * <p>
      * {@inheritDoc}
      */
-    public boolean reportMemberMessage(Object sender, MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
+    public SynchronizeMembersAction reportCopyMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
 
-        debug(sender.getClass().getSimpleName() + " -> Copy error: " + item.getFromMember() + " - " + errorMessage);
+        debug("CopyMembersJob -> Copy error: " + item.getFromMember() + " - " + errorMessage);
 
         final MemberCompareItem compareItem = (MemberCompareItem)item.getData();
-        compareItem.setErrorStatus(errorMessage);
 
-        if (MemberValidationError.ERROR_NONE.equals(errorId)) {
+        compareItem.resetErrorStatus();
+
+        // Update copy status...
+        if (MemberCopyError.ERROR_NONE == errorId) {
             MemberCompareItem memberCompareItem = (MemberCompareItem)item.getData();
             if (compareItem.getCompareStatus(sharedValues.getCompareOptions()) == MemberCompareItem.LEFT_MISSING) {
                 MemberDescription rightMemberDescription = memberCompareItem.getRightMemberDescription();
@@ -1416,15 +1315,12 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 compareItem.setRightMemberDescription(connectionName, libraryName, fileName, memberName, srcType, lastChanged, checksum, text);
             }
             compareItem.setCompareStatus(MemberCompareItem.LEFT_EQUALS_RIGHT, sharedValues.getCompareOptions());
+        } else {
+            compareItem.setErrorStatus(errorMessage, sharedValues.getCompareOptions());
+            synchronizationResult.addErrorMessage(errorMessage);
         }
 
-        synchronizationResult.addErrorMessage(errorMessage);
-
-        UIJob uiJob = new UpdateValidationErrorUIJob(sender, compareItem, errorMessage);
-        uiJob.schedule();
-
-        // Always...
-        return false; // ...continue
+        return errorId.getDefaultAction();
     }
 
     /**
@@ -1432,17 +1328,20 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      * <p>
      * {@inheritDoc}
      */
-    public void returnResultPostRun(final String status, final int countMembersCopied, final String message) {
-
-        debug("\nAbstractSynchronizeMembersEditor.copyMembersPostRun:");
+    public void synchronizeMembersPostRun(final String status, final int countCopied, final int countErrors, final String message) {
 
         synchronizationResult.setStatus(status);
-        synchronizationResult.setCountCopied(countMembersCopied);
+        synchronizationResult.setCountCopied(countCopied);
 
         synchronizationResult.setJobFinishedMessage(message);
-        UIJob uiJob = new EndSynchronisationUIJob(status, countMembersCopied, message);
+        UIJob uiJob = new EndSynchronisationUIJob(status, countCopied, message);
         uiJob.schedule();
 
+        debug("\nSynchronizeMembersEditor.synchronizeMembersPostRun:");
+        debug("status:         " + status);
+        debug("copied #:       " + countCopied);
+        debug("errors #:       " + countErrors);
+        debug("message:        " + message);
     }
 
     protected void performOpenCompareMembersDialog(MemberCompareItem compareItem) {
@@ -1555,28 +1454,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
 
-    private class UpdateValidationErrorUIJob extends UIJob {
-
-        private Object sender;
-        private MemberCompareItem compareItem;
-        private String errorMessage;
-
-        public UpdateValidationErrorUIJob(Object sender, MemberCompareItem compareItem, String errorMessage) {
-            super(Messages.EMPTY);
-
-            this.sender = sender;
-            this.compareItem = compareItem;
-            this.errorMessage = errorMessage;
-        }
-
-        @Override
-        public IStatus runInUIThread(IProgressMonitor monitor) {
-            debug("Refreshing table item: " + compareItem.getMemberName());
-            tableViewer.refresh(compareItem, true, true);
-            return Status.OK_STATUS;
-        }
-    }
-
     private class EndLoadMembersUIJob extends UIJob {
 
         private boolean isCanceled;
@@ -1609,14 +1486,14 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private class EndSynchronisationUIJob extends UIJob {
 
         private String status;
-        private int countMembersCopied;
+        private int countCopied;
         private String message;
 
-        public EndSynchronisationUIJob(String status, int countMembersCopied, String message) {
+        public EndSynchronisationUIJob(String status, int countCopied, String message) {
             super(Messages.EMPTY);
 
             this.status = status;
-            this.countMembersCopied = countMembersCopied;
+            this.countCopied = countCopied;
             this.message = message;
         }
 

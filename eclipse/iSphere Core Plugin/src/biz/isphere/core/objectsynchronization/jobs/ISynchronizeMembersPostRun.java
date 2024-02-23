@@ -19,8 +19,9 @@ public interface ISynchronizeMembersPostRun {
      * 
      * @param status - status of the synchronization operation. See:
      *        {@link SynchronizationResult}
-     * @param countMembersCopied - number of members that have been copied
+     * @param countCopied - number of members that have been copied
+     * @param countErrors - number of members that have errors
      * @param message - error or canceled message
      */
-    public void returnResultPostRun(String status, int countMembersCopied, String message);
+    public void synchronizeMembersPostRun(String status, int countCopied, int countErrors, String message);
 }

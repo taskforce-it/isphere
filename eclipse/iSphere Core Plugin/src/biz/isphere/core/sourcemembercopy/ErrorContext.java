@@ -14,6 +14,7 @@ public class ErrorContext {
 
     private RemoteObject fromObject;
     private RemoteObject toObject;
+    private CopyMemberItem copyMemberItem;
 
     public static ErrorContext newToLibrary(String toConnectionName, String toLibrary) {
         ErrorContext errorContext = new ErrorContext();
@@ -47,5 +48,13 @@ public class ErrorContext {
 
     public void setToObject(RemoteObject toObject) {
         this.toObject = toObject;
+    }
+
+    public CopyMemberItem getCopyMemberItem() {
+        return copyMemberItem;
+    }
+
+    public void setCopyMemberItem(CopyMemberItem copyMemberItem) {
+        this.copyMemberItem = copyMemberItem;
     }
 }

@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  *******************************************************************************/
 
-package biz.isphere.core.objectsynchronization.jobs;
+package biz.isphere.core.sourcemembercopy;
 
-import biz.isphere.core.objectsynchronization.MemberDescription;
-
-public interface ICompareMembersPostrun {
-
-    public void compareMembersPostRun(boolean isCanceled, MemberDescription[] leftMemberDescriptions, MemberDescription[] rightMemberDescriptions);
+public enum SynchronizeMembersAction {
+    CANCEL,
+    CONTINUE_WITH_ERROR,
+    CONTINUE;
 }

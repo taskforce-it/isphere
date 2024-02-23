@@ -54,14 +54,18 @@ public abstract class AbstractCompareMembersJob {
     }
 
     /**
-     * Initializes the compare job. THis method must be called first.
+     * Initializes the compare job. This method must be called first.
      * 
      * @param connectionName - name of the connection the objects reside on
      */
     protected boolean initialize(String connectionName) {
 
-        if (connectionName == null || connectionName.equals(this.connectionName)) {
+        if (connectionName == null) {
             return false;
+        }
+
+        if (connectionName.equals(this.connectionName)) {
+            return true;
         }
 
         this.connectionName = connectionName;
