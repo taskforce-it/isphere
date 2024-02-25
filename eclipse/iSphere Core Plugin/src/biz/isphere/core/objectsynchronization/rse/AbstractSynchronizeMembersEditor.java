@@ -10,9 +10,11 @@ package biz.isphere.core.objectsynchronization.rse;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -46,7 +48,13 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
@@ -74,6 +82,8 @@ import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.internal.Size;
 import biz.isphere.core.objectsynchronization.CompareOptions;
 import biz.isphere.core.objectsynchronization.MemberDescription;
+import biz.isphere.core.objectsynchronization.SYNCMBR_retrieveMemberAttributes;
+import biz.isphere.core.objectsynchronization.SYNCMBR_retrieveMemberAttributes.MemberAttributes;
 import biz.isphere.core.objectsynchronization.SynchronizationResult;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersEditorInput;
 import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
@@ -173,6 +183,8 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     private SynchronizationResult synchronizationResult;
 
+    private EditorCloseListener editorCloseListener;
+
     public AbstractSynchronizeMembersEditor() {
 
         isLeftObjectValid = false;
@@ -202,6 +214,28 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         }
 
         getSite().setSelectionProvider(tableViewer);
+
+        registerEditorListener(tableViewer.getTable());
+    }
+
+    private void registerEditorListener(Table table) {
+
+        editorCloseListener = new EditorCloseListener(this);
+
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IPartService partService = window.getPartService();
+        partService.addPartListener(editorCloseListener);
+
+        debug("Editor close liestener added.");
+    }
+
+    private void unregisterEditorListener(EditorCloseListener editorCloseListener) {
+
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        IPartService partService = window.getPartService();
+        partService.removePartListener(editorCloseListener);
+
+        debug("Editor close listener removed.");
     }
 
     private void createHeaderArea(Composite parent) {
@@ -1067,7 +1101,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         setButtonEnablementAndDisplayCompareStatus();
     }
 
-    private void performEditMember(MemberDescription memberDescription) {
+    private void performEditMember(MemberDescription memberDescription, MemberCompareItem parent) {
 
         String connectionName = memberDescription.getConnectionName();
         String libraryName = memberDescription.getLibraryName();
@@ -1077,7 +1111,12 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         IEditor editor = ISpherePlugin.getEditor();
         if (editor != null) {
             editor.openEditor(connectionName, libraryName, fileName, memberName, IEditor.EDIT);
+            IEditorPart editorPart = editor.findEditorPart(connectionName, libraryName, fileName, memberName);
+            if (editorPart != null) {
+                editorCloseListener.addMember(editorPart, new WatchedMember(memberDescription, parent));
+            }
         }
+
     }
 
     private void performDisplayMember(MemberDescription memberDescription) {
@@ -1322,7 +1361,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 String text = leftMemberDescription.getText();
                 compareItem.setRightMemberDescription(connectionName, libraryName, fileName, memberName, srcType, lastChanged, checksum, text);
             }
-            compareItem.setCompareStatus(MemberCompareItem.LEFT_EQUALS_RIGHT, sharedValues.getCompareOptions());
+            compareItem.clearCompareStatus();
         } else {
             compareItem.setErrorStatus(errorMessage, sharedValues.getCompareOptions());
             synchronizationResult.addErrorMessage(errorMessage);
@@ -1465,6 +1504,117 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
     protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
 
+    private class WatchedMember {
+
+        private MemberDescription memberDescription;
+        private MemberCompareItem parent;
+
+        public WatchedMember(MemberDescription memberDescription, MemberCompareItem parent) {
+            this.memberDescription = memberDescription;
+            this.parent = parent;
+        }
+
+        public MemberDescription getMemberDescription() {
+            return memberDescription;
+        }
+
+        public MemberCompareItem getParent() {
+            return parent;
+        }
+    }
+
+    private class EditorCloseListener implements IPartListener2 {
+
+        private AbstractSynchronizeMembersEditor owner;
+        Map<IEditorPart, WatchedMember> members;
+
+        public EditorCloseListener(AbstractSynchronizeMembersEditor editor) {
+            this.owner = editor;
+            this.members = new HashMap<IEditorPart, WatchedMember>();
+        }
+
+        public void addMember(IEditorPart editorPart, WatchedMember watchedMember) {
+            members.put(editorPart, watchedMember);
+            debug("Member added: " + watchedMember.getMemberDescription().getQualifiedMemberName());
+        }
+
+        public void removeMember(IEditorPart editorPart) {
+            WatchedMember watchedMember = members.remove(editorPart);
+            debug("Member removed: " + watchedMember.getMemberDescription().getQualifiedMemberName());
+        }
+
+        public void partClosed(IWorkbenchPartReference partRef) {
+
+            IWorkbenchPart closedPart = partRef.getPart(false);
+            if (closedPart == owner) {
+                unregisterEditorListener(this);
+            } else {
+                if (closedPart instanceof IEditorPart) {
+                    IEditorPart closedEditorPart = (IEditorPart)closedPart;
+                    WatchedMember watchedMember = members.get(closedEditorPart);
+                    if (watchedMember != null) {
+                        MemberDescription memberDescription = watchedMember.getMemberDescription();
+                        MemberCompareItem memberCompareItem = watchedMember.getParent();
+                        performUpdateMemberDescription(memberDescription, memberCompareItem);
+                        removeMember(closedEditorPart);
+                    }
+                }
+            }
+        }
+
+        private void performUpdateMemberDescription(MemberDescription memberDescription, MemberCompareItem parent) {
+
+            String connectionName = memberDescription.getConnectionName();
+            AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
+            String iSphereLibrary = ISpherePlugin.getISphereLibrary(connectionName);
+
+            if (ISphereHelper.checkISphereLibrary(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), connectionName)) {
+
+                String currentLibrary = null;
+                try {
+                    currentLibrary = ISphereHelper.getCurrentLibrary(system);
+                } catch (Exception e) {
+                    ISpherePlugin.logError("*** Could not retrieve current library ***", e); //$NON-NLS-1$
+                }
+
+                if (currentLibrary != null) {
+
+                    try {
+
+                        boolean ok = false;
+                        try {
+                            ok = ISphereHelper.setCurrentLibrary(system, iSphereLibrary);
+                        } catch (Exception e) {
+                            ISpherePlugin.logError("Could not set current library to: " + iSphereLibrary, e); //$NON-NLS-1$
+                        }
+
+                        if (ok) {
+                            String library = memberDescription.getLibraryName();
+                            String file = memberDescription.getFileName();
+                            String member = memberDescription.getMemberName();
+                            MemberAttributes memberAttributes = new SYNCMBR_retrieveMemberAttributes().run(system, library, file, member);
+                            if (memberAttributes != null) {
+                                memberDescription.setLastChangedDate(memberAttributes.getLastChanged());
+                                memberDescription.setChecksum(memberAttributes.getCheckSum());
+                                parent.clearCompareStatus();
+                                owner.tableViewer.refresh(parent);
+                                debug("Member updated: " + memberDescription.getQualifiedMemberName());
+                            }
+                        }
+
+                    } finally {
+                        try {
+                            ISphereHelper.setCurrentLibrary(system, currentLibrary);
+                        } catch (Exception e) {
+                            ISpherePlugin.logError("Could not restore current library to: " + currentLibrary, e); //$NON-NLS-1$
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     private class EndLoadMembersUIJob extends UIJob {
 
         private boolean isCanceled;
@@ -1491,7 +1641,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             return Status.OK_STATUS;
         }
-
     }
 
     private class EndSynchronisationUIJob extends UIJob {
@@ -1791,21 +1940,19 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
                 if (side == LEFT) {
                     if (isEditable) {
-                        AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getLeftMemberDescription());
+                        MemberDescription leftMemberDescription = selectedItem.getLeftMemberDescription();
+                        AbstractSynchronizeMembersEditor.this.performEditMember(leftMemberDescription, selectedItem);
                     } else {
                         AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getLeftMemberDescription());
                     }
                 } else if (side == RIGHT) {
                     if (isEditable) {
-                        AbstractSynchronizeMembersEditor.this.performEditMember(selectedItem.getRightMemberDescription());
+                        MemberDescription rightMemberDescription = selectedItem.getRightMemberDescription();
+                        AbstractSynchronizeMembersEditor.this.performEditMember(rightMemberDescription, selectedItem);
                     } else {
                         AbstractSynchronizeMembersEditor.this.performDisplayMember(selectedItem.getRightMemberDescription());
                     }
                 }
-
-                // TODO: refresh compare attributes
-
-                tableViewer.refresh(selectedItem);
             }
         }
 
@@ -1862,11 +2009,10 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                     if (AbstractSynchronizeMembersEditor.this.performDeleteMember(memberDescription)) {
                         if (side == LEFT) {
                             selectedItem.setLeftMemberDescription(null);
-                            selectedItem.setCompareStatus(MemberCompareItem.LEFT_MISSING, sharedValues.getCompareOptions());
                         } else {
                             selectedItem.setRightMemberDescription(null);
-                            selectedItem.setCompareStatus(MemberCompareItem.RIGHT_MISSING, sharedValues.getCompareOptions());
                         }
+                        selectedItem.clearCompareStatus();
                         tableViewer.refresh(selectedItem);
                     }
                 } else {

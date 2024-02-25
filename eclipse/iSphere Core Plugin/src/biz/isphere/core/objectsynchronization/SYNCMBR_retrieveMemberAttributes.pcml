@@ -1,0 +1,17 @@
+<pcml version="4.0">
+   <struct name="mbrAttrs_t">
+     <data name="file"        type="char"   length="10"  usage="output"/>
+     <data name="library"     type="char"   length="10"  usage="inherit"/>
+     <data name="member"      type="char"   length="10"  usage="inherit"/>
+     <data name="srcType"     type="char"   length="10"  usage="inherit"/>
+     <data name="text"        type="char"   length="50"  usage="inherit"/>
+     <data name="lastChanged" type="timestamp"           usage="inherit"/>
+     <data name="checkSum"    type="int"    length="8"  precision="63"  usage="inherit"/>
+   </struct>
+   <program name="SYNCMBR_retrieveMemberAttributes" path="/QSYS.LIB/%LIBL%.LIB/W005006.PGM">
+      <data name="library"   type="char"   length="10"  usage="input" />
+      <data name="file"      type="char"   length="10"  usage="input" />
+      <data name="member"    type="char"   length="10"  usage="input" />
+      <data name="mbrAttrs"  type="struct" struct="mbrAttrs_t" usage="output" outputsize="124" />
+   </program>
+</pcml>
