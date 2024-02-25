@@ -20,7 +20,7 @@
      d  nbr                           6a
 
      d errCode_t       ds                  qualified template
-     d  bytPrv                       10i 0 inz(272)
+     d  bytPrv                       10i 0 inz(%size(errCode_t))
      d  bytAvl                       10i 0
      d  excId                         7a
      d  reserved                      1a
