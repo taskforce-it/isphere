@@ -1,6 +1,13 @@
       /if not defined(QDBRTVFD)
       /define QDBRTVFD
       *
+      * Attributes bytes: Qdbfhflg
+     d QDBFHFPL        c                   x'2000'                              Type of file. 1=LF
+     d QDBFHFSU        c                   x'0800'                              File type.    1=SRC
+     d QDBFHFKY        c                   x'0200'                              Access path.  1=KEY
+     d QDBFHFLC        c                   x'0080'                              Level check.  1=on
+     d QDBFKFSO        c                   x'0040'                              Select/omit.  1=on
+      *
       *  Retrieve Database File Description (QDBRTVFD) API
      d QDBRTVFD...
      d                 pr                  extpgm('QDBRTVFD')
