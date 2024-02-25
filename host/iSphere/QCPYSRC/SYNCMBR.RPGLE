@@ -20,6 +20,16 @@ dcl-c LAST_CHANGED_NULL z'0001-01-01-00.00.00.000000';
 dcl-c CHECKSUM_NULL 0;
 dcl-c SRCTYPE_NULL '';
 
+dcl-ds mbrAttrs_t qualified template;
+  file          char(10);
+  library       char(10);
+  member        char(10);
+  srcType       char(10);
+  text          char(50);
+  lastChanged   timestamp;
+  checkSum      int(20);
+end-ds;
+
 dcl-pr SYNCMBR_getHandle zoned(10: 0) extproc(*dclcase);
 end-pr;
 
@@ -36,5 +46,11 @@ end-pr;
 
 dcl-pr SYNCMBR_clear extproc(*dclcase);
   i_handle       zoned(10: 0) const;
+end-pr;
+
+dcl-pr SYNCMBR_retrieveMemberAttributes likeds(mbrAttrs_t) extproc(*dclcase);
+  i_library      char(10) Options(*trim) const;
+  i_file         char(10) Options(*trim) const;
+  i_member       char(10) Options(*trim) const;
 end-pr;
 
