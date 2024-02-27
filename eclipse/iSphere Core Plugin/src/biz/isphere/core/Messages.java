@@ -1856,6 +1856,8 @@ public class Messages extends NLS {
 
     public static String Successfully_copied_A_members;
 
+    public static String A_members_copied_B_members_not_copied_due_to_errors;
+
     public static String Other;
 
     /*

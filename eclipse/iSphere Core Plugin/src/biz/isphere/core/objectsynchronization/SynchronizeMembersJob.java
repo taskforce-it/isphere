@@ -60,6 +60,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
     private MissingFileAction missingFileAction;
     private ExistingMemberAction existingMemberAction;
+    private boolean ignoreDataLostError;
 
     public SynchronizeMembersJob(RemoteObject leftFileOrLibrary, RemoteObject rightFileOrLibrary, ISynchronizeMembersPostRun postRun) {
         super(Messages.Copying_source_members);
@@ -78,6 +79,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
         this.missingFileAction = missingFileAction.ASK_USER;
         this.existingMemberAction = ExistingMemberAction.ERROR;
+        this.ignoreDataLostError = false;
 
         this.syncResult = null;
     }
@@ -131,6 +133,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
             CopyMemberItem[] toRightMembers = createMemberArray(rightFileOrLibrary, copyToRightItems, MemberCompareItem.RIGHT_MISSING);
 
             int totalMembers = toLeftMembers.length + toRightMembers.length;
+
             SubMonitor progress = SubMonitor.convert(monitor).setWorkRemaining(totalMembers * 2);
 
             SubMonitor subMonitorValidate = progress.split(totalMembers).setWorkRemaining(totalMembers);
@@ -140,7 +143,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
             } else if (leftFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
                 validateLibrarySync(subMonitorValidate, toLeftMembers, toRightMembers);
             } else {
-                throw new IllegalArgumentException("Invalid taget object type: " + leftFileOrLibrary.getObjectType()); //$NON-NLS-1$
+                throw new IllegalArgumentException("Invalid target object type: " + leftFileOrLibrary.getObjectType()); // $NON-NLS-1$
             }
 
             if (isCanceled()) {
@@ -154,7 +157,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
             } else if (leftFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
                 copyLibrarySync(subMonitorCopy, toLeftMembers, toRightMembers);
             } else {
-                throw new IllegalArgumentException("Invalid taget object type: " + leftFileOrLibrary.getObjectType()); //$NON-NLS-1$
+                throw new IllegalArgumentException("Invalid target object type: " + leftFileOrLibrary.getObjectType()); //$NON-NLS-1$
             }
 
             if (isCanceled()) {
@@ -165,7 +168,8 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
             monitor.done();
 
             if (isError()) {
-                postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.ERROR, getCountCopied(), getCountErrors(), getMemberErrorMessage());
+                postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.ERROR, getCountCopied(), getCountErrors(),
+                    getMemberErrorMessage(getCountCopied(), getCountErrors()));
             } else {
                 if (isCanceled()) {
                     postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.CANCELED, getCountCopied(), getCountErrors(),
@@ -352,7 +356,6 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
         String fromConnectionName = fromFileOrLibrary.getConnectionName();
 
-        boolean ignoreDataLostError = false;
         boolean ignoreUnsavedChangesError = false;
         boolean fullErrorCheck = true;
 
@@ -404,6 +407,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         CopyMembersJob copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, copyMemberItems, this);
         copyMembersJob.setExistingMemberAction(existingMemberAction);
         copyMembersJob.setMissingFileAction(missingFileAction);
+        copyMembersJob.setIgnoreDataLostError(ignoreDataLostError);
         copyMembersJob.addItemErrorListener(copyItemErrorListener);
 
         copyMembersJob.runInSameThread(subMonitor);
@@ -528,8 +532,12 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         return Messages.bind(Messages.Successfully_copied_A_members, getCountCopied());
     }
 
-    private String getMemberErrorMessage() {
-        return Messages.bind(Messages.Could_not_copy_A_members_due_to_errors, getCountErrors());
+    private String getMemberErrorMessage(int countCopied, int countErrors) {
+        if (countCopied == 0) {
+            return Messages.bind(Messages.Could_not_copy_A_members_due_to_errors, getCountErrors());
+        } else {
+            return Messages.bind(Messages.A_members_copied_B_members_not_copied_due_to_errors, countCopied, countErrors);
+        }
     }
 
     private int getCountCopied() {
