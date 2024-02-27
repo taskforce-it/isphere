@@ -336,14 +336,18 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
                     new Object[] { getFromLibrary(), getFromFile(), getFromMember() });
             }
 
-            if (!ISphereHelper.checkMember(system, getToLibrary(), getToFile(), getToMember())) {
-                message = addSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
-            } else {
-                message = prepareSourceMember(connectionName, getToLibrary(), getToFile(), getToMember());
-            }
-            if (message != null) {
-                return message;
-            }
+            // TODO: remove obsolete code
+            // if (!ISphereHelper.checkMember(system, getToLibrary(),
+            // getToFile(), getToMember())) {
+            // message = addSourceMember(connectionName, getToLibrary(),
+            // getToFile(), getToMember());
+            // } else {
+            // message = prepareSourceMember(connectionName, getToLibrary(),
+            // getToFile(), getToMember());
+            // }
+            // if (message != null) {
+            // return message;
+            // }
 
             List<AS400Message> rtnMessages = new ArrayList<AS400Message>();
             StringBuilder command = new StringBuilder();
@@ -585,7 +589,8 @@ public class CopyMemberItem implements Comparable<CopyMemberItem> {
         Iterator<AS400Message> iterator = rtnMessages.iterator();
         while (iterator.hasNext()) {
             if (message.length() > 0) {
-                message.append(" :: "); //$NON-NLS-1$
+                // message.append("\n"); //$NON-NLS-1$
+                message.append(" "); //$NON-NLS-1$
             }
             message.append(iterator.next().getText());
         }
