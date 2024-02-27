@@ -1271,7 +1271,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             } else if (compareItem.getOriginalCompareStatus(compareOptions) == MemberCompareItem.RIGHT_MISSING) {
                 synchronizeMembersJob.addCopyLeftToRightMember(compareItem);
             }
-
         }
 
         if (synchronizeMembersJob.getNumCopyLeftToRight() == 0 && synchronizeMembersJob.getNumCopyRightToLeft() == 0) {
@@ -1971,12 +1970,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
                 if (side == LEFT) {
                     memberDescription = selectedItem.getLeftMemberDescription();
+                    if (memberDescription == null) {
+                        continue;
+                    }
                     qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
                     qualifiedMemberName = memberDescription.getQualifiedMemberName();
                     confirmationMessage.append("<-- "); //$NON-NLS-1$
                     confirmationMessage.append(Messages.Delete_left_member_colon);
                 } else if (side == RIGHT) {
                     memberDescription = selectedItem.getRightMemberDescription();
+                    if (memberDescription == null) {
+                        continue;
+                    }
                     qualifiedConnectionName = new BasicQualifiedConnectionName(memberDescription.getConnectionName()).getUIConnectionName();
                     qualifiedMemberName = memberDescription.getQualifiedMemberName();
                     confirmationMessage.append(Messages.Delete_right_member_colon);
