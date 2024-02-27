@@ -143,18 +143,12 @@ public class ValidateMembersJob extends Job {
                 }
 
                 // Prepare validation ...
-                AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
                 String fromLibraryName = member.getFromLibrary();
                 String fromFileName = member.getFromFile();
-                String memberName = member.getFromMember();
                 String srcType = member.getFromSrcType();
 
                 String toLibraryName = member.getToLibrary();
                 String toFileName = member.getToFile();
-
-                IFile localResource = new IBMiHostContributionsHandler().getLocalResource(fromConnectionName, fromLibraryName, fromFileName,
-                    memberName, srcType);
-                String localResourcePath = localResource.getLocation().makeAbsolute().toOSString();
 
                 String from = member.getFromQSYSName();
                 String to = member.getToQSYSName();
@@ -195,6 +189,11 @@ public class ValidateMembersJob extends Job {
                     }
                     if (skipNextToMember(member)) continue;
 
+                    String memberName = member.getFromMember();
+                    IFile localResource = new IBMiHostContributionsHandler().getLocalResource(fromConnectionName, fromLibraryName, fromFileName,
+                        memberName, srcType);
+                    String localResourcePath = localResource.getLocation().makeAbsolute().toOSString();
+
                     // Is member not 'dirty' (open in editor)
                     if (dirtyFiles.contains(localResourcePath)) {
                         setMemberError(MemberValidationError.ERROR_FROM_MEMBER_IS_DIRTY, errorContext,
@@ -202,6 +201,8 @@ public class ValidateMembersJob extends Job {
                         continue;
                     }
                     if (skipNextToMember(member)) continue;
+
+                    AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
 
                     // Have 'from' member?
                     if (!isMember(fromSystem, fromLibraryName, fromFileName, member.getFromMember())) {
@@ -260,7 +261,7 @@ public class ValidateMembersJob extends Job {
                 } finally {
 
                     // Always do the following things ...
-                    // No matter whether the is an error or not.
+                    // No matter whether there is an error or not.
                     targetMembers.add(to);
 
                     if (!member.isError()) {
