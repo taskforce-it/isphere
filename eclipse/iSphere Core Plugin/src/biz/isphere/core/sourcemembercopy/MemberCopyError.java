@@ -12,7 +12,9 @@ public enum MemberCopyError {
     ERROR_NONE (false, SynchronizeMembersAction.CONTINUE),
     ERROR_TO_FILE_NOT_FOUND (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
     ERROR_TO_MEMBER_EXISTS (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
-    ERROR_TO_MEMBER_RENAME_EXCEPTION (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR);
+    ERROR_TO_MEMBER_RENAME_EXCEPTION (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
+    ERROR_TO_FILE_DATA_LOST (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR),
+    ERROR_HOST_COMMAND (true, SynchronizeMembersAction.CONTINUE_WITH_ERROR);
 
     private boolean isError;
     private SynchronizeMembersAction action;
