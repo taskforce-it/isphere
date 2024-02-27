@@ -27,12 +27,20 @@ public class DialogUIRunnable implements Runnable {
         this(null, title, message, kind);
     }
 
+    public DialogUIRunnable(String title, String message, int kind, String[] buttonLabels) {
+        this(null, title, message, kind, buttonLabels);
+    }
+
     public DialogUIRunnable(Shell shell, String title, String message, int kind) {
+        this(shell, title, message, kind, MessageDialogAsync.getButtonLabels(kind));
+    }
+
+    public DialogUIRunnable(Shell shell, String title, String message, int kind, String[] buttonLabels) {
         this.shell = shell;
         this.title = title;
         this.message = message;
         this.kind = kind;
-        this.buttonLabels = MessageDialogAsync.getButtonLabels(kind);
+        this.buttonLabels = buttonLabels;
     }
 
     public void run() {

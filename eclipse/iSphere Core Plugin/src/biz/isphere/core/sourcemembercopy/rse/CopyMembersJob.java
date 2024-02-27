@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
@@ -57,9 +58,10 @@ public class CopyMembersJob extends Job {
     private CopyMemberItem[] members;
     private ExistingMemberAction existingMemberAction;
     private MissingFileAction missingFileAction;
+    boolean ignoreDataLostError;
     private ICopyMembersPostRun postRun;
 
-    private Map<String, Boolean> haveTargetFileCheckResult;
+    private Map<String, Boolean> isTargetFileValidResult;
     private IProgressMonitor monitor;
 
     private CopyResult copyResult;
@@ -74,9 +76,10 @@ public class CopyMembersJob extends Job {
         this.members = members;
         this.existingMemberAction = ExistingMemberAction.ERROR;
         this.missingFileAction = MissingFileAction.ASK_USER;
+        this.ignoreDataLostError = false;
         this.postRun = postRun;
 
-        this.haveTargetFileCheckResult = new HashMap<String, Boolean>();
+        this.isTargetFileValidResult = new HashMap<String, Boolean>();
     }
 
     public void setMissingFileAction(MissingFileAction missingFileAction) {
@@ -85,6 +88,10 @@ public class CopyMembersJob extends Job {
 
     public void setExistingMemberAction(ExistingMemberAction existingMemberAction) {
         this.existingMemberAction = existingMemberAction;
+    }
+
+    public void setIgnoreDataLostError(boolean ignoreDataLostError) {
+        this.ignoreDataLostError = ignoreDataLostError;
     }
 
     public void addItemErrorListener(ICopyItemMessageListener listener) {
@@ -166,7 +173,7 @@ public class CopyMembersJob extends Job {
 
                 boolean isCopied;
                 if (canCopy) {
-                    if (haveTargetFile(fromConnectionName, toConnectionName, member, errorContext)) {
+                    if (isTargetFileValid(fromConnectionName, toConnectionName, member, errorContext)) {
                         isCopied = member.performCopyOperation(fromConnectionName, toConnectionName);
                     } else {
                         isCopied = false;
@@ -177,6 +184,8 @@ public class CopyMembersJob extends Job {
 
                 if (isCopied) {
                     reportMemberCopied(member);
+                } else {
+                    setMemberError(MemberCopyError.ERROR_HOST_COMMAND, errorContext, member.getErrorMessage());
                 }
             }
 
@@ -190,10 +199,13 @@ public class CopyMembersJob extends Job {
         }
     }
 
-    private boolean haveTargetFile(String fromConnectionName, String toConnectionName, CopyMemberItem copyMemberItem, ErrorContext errorContext) {
+    private boolean isTargetFileValid(String fromConnectionName, String toConnectionName, CopyMemberItem copyMemberItem, ErrorContext errorContext) {
 
+        AS400 fromSystem = IBMiHostContributionsHandler.getSystem(fromConnectionName);
         String fromLibraryName = copyMemberItem.getFromLibrary();
         String fromFileName = copyMemberItem.getFromFile();
+
+        AS400 toSystem = IBMiHostContributionsHandler.getSystem(toConnectionName);
         String toLibraryName = copyMemberItem.getToLibrary();
         String toFileName = copyMemberItem.getToFile();
 
@@ -202,10 +214,9 @@ public class CopyMembersJob extends Job {
         boolean haveTargetFile = false;
 
         String targetFileKey = String.format("%s:%s/%s", toConnectionName, toLibraryName, toFileName);
-        if (!haveTargetFileCheckResult.containsKey(targetFileKey)) {
+        if (!isTargetFileValidResult.containsKey(targetFileKey)) {
 
-            AS400 system = IBMiHostContributionsHandler.getSystem(toConnectionName);
-            if (isFile(system, toLibraryName, toFileName)) {
+            if (isFile(toSystem, toLibraryName, toFileName)) {
                 haveTargetFile = true;
             } else {
 
@@ -216,10 +227,15 @@ public class CopyMembersJob extends Job {
                     doCreateMissingFile = true;
                 } else {
                     String[] messages = new String[] { toQualifiedToFileName, "Create missing file?" };
-                    if (MessageDialogAsync.displayBlockingConfirmation(messages) == IDialogConstants.OK_ID) {
+                    String[] buttonLabels = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
+                    int result = MessageDialogAsync.displayBlockingDialog(MessageDialog.CONFIRM, buttonLabels, Messages.Confirmation, messages);
+                    if (result == 0) {
                         doCreateMissingFile = true;
+                    } else if (result == 1) {
+                        doCreateMissingFile = false;
                     } else {
                         doCreateMissingFile = false;
+                        cancelOperation();
                     }
                 }
 
@@ -234,18 +250,27 @@ public class CopyMembersJob extends Job {
             }
 
         } else {
-            haveTargetFile = haveTargetFileCheckResult.get(targetFileKey);
+            haveTargetFile = isTargetFileValidResult.get(targetFileKey);
+        }
+
+        // Target file does not exist
+        boolean isValid;
+        if (!haveTargetFile) {
+            String errorMessage = Messages.bind(Messages.File_A_not_found, toQualifiedToFileName);
+            setMemberError(MemberCopyError.ERROR_TO_FILE_NOT_FOUND, errorContext, errorMessage);
+            isValid = false;
+        } else {
+            if (!isTargetFileRecordLengthValid(fromSystem, toSystem, copyMemberItem, errorContext)) {
+                isValid = false;
+            } else {
+                isValid = true;
+            }
         }
 
         // Store result
-        haveTargetFileCheckResult.put(targetFileKey, haveTargetFile);
+        isTargetFileValidResult.put(targetFileKey, isValid);
 
-        // Target file does not exist
-        if (!haveTargetFile) {
-            setMemberError(MemberCopyError.ERROR_TO_FILE_NOT_FOUND, errorContext, Messages.bind(Messages.File_A_not_found, toQualifiedToFileName));
-        }
-
-        return haveTargetFile;
+        return isValid;
     }
 
     private boolean isFile(AS400 system, String libraryName, String fileName) {
@@ -301,6 +326,28 @@ public class CopyMembersJob extends Job {
             MessageDialogAsync.displayNonBlockingError(null, "Unexpected exception. See Eclipse error log.");
             return null;
         }
+    }
+
+    private boolean isTargetFileRecordLengthValid(AS400 fromSystem, AS400 toSystem, CopyMemberItem copyMemberItem, ErrorContext errorContext) {
+
+        String fromLibraryName = copyMemberItem.getFromLibrary();
+        String fromFileName = copyMemberItem.getFromFile();
+        String toLibraryName = copyMemberItem.getToLibrary();
+        String toFileName = copyMemberItem.getToFile();
+
+        int fromRecordLength = getRecordLength(fromSystem, fromLibraryName, fromFileName);
+        int toRecordLength = getRecordLength(toSystem, toLibraryName, toFileName);
+
+        if (fromRecordLength >= toRecordLength) {
+            return true;
+        }
+
+        Object[] values = new Object[] { fromRecordLength, fromLibraryName, fromFileName, toRecordLength, toLibraryName, toFileName };
+        String errorMessage = Messages
+            .bind(Messages.Data_lost_error_From_source_line_length_A_of_file_B_C_is_longer_than_target_source_line_length_D_of_file_E_F, values);
+        setMemberError(MemberCopyError.ERROR_TO_FILE_DATA_LOST, errorContext, errorMessage);
+
+        return false;
     }
 
     private int getRecordLength(AS400 system, String libraryName, String fileName) {

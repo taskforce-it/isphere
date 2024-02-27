@@ -92,7 +92,7 @@ public class MessageDialogAsync {
      * @param title - title of the message dialog
      * @param messages - information message that is displayed
      */
-    public static void displayNonBlockingError(Shell shell, String title, String...messages) {
+    public static void displayNonBlockingError(Shell shell, String title, String... messages) {
         displayNonBlockingDialog(shell, MessageDialog.INFORMATION, title, messages);
     }
 
@@ -182,6 +182,20 @@ public class MessageDialogAsync {
      */
     public static int displayBlockingDialog(int kind, String title, String... messages) {
         DialogUIRunnable runnable = new DialogUIRunnable(title, createFinalMessage(messages), kind);
+        Display.getDefault().syncExec(runnable);
+        return runnable.getResult();
+    }
+
+    /**
+     * Displays a blocking dialog. This method can be called from non UI jobs.
+     * 
+     * @param kind - kind of the message dialog
+     * @param buttonLabels - buttons to display
+     * @param title - title of the message dialog
+     * @param messages - error message that is displayed
+     */
+    public static int displayBlockingDialog(int kind, String[] buttonLabels, String title, String... messages) {
+        DialogUIRunnable runnable = new DialogUIRunnable(title, createFinalMessage(messages), kind, buttonLabels);
         Display.getDefault().syncExec(runnable);
         return runnable.getResult();
     }
