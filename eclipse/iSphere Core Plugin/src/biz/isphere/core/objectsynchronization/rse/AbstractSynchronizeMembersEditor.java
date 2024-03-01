@@ -102,7 +102,6 @@ import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
 import biz.isphere.core.sourcemembercopy.MemberCopyError;
-import biz.isphere.core.sourcemembercopy.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.SynchronizeMembersAction;
 import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
@@ -1296,7 +1295,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      * <p>
      * {@inheritDoc}
      */
-    public SynchronizeMembersAction reportValidateMemberMessage(MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
+    public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
 
         debug("ValidateMembersJob -> Validation error: " + item.getFromMember() + " - " + errorMessage);
 
@@ -1304,7 +1303,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         compareItem.resetErrorStatus();
 
-        if (MemberValidationError.ERROR_NONE == errorId) {
+        if (MemberCopyError.ERROR_NONE == errorId) {
             // Nothing to do here.
             // Let the CopyMembersJob decide what to do.
         } else {
@@ -1323,6 +1322,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
      * {@inheritDoc}
      */
     public SynchronizeMembersAction reportCopyMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
+
+        // File or library error.
+        if (item == null) {
+            return errorId.getDefaultAction();
+        }
 
         if (MemberCopyError.ERROR_NONE == errorId) {
             debug("CopyMembersJob -> Copy error: " + item.getFromFile() + "." + item.getFromMember() + " - " + errorMessage);

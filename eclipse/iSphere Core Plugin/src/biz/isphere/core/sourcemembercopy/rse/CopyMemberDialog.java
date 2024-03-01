@@ -68,7 +68,7 @@ import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
 import biz.isphere.core.sourcemembercopy.ErrorContext;
 import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
-import biz.isphere.core.sourcemembercopy.MemberValidationError;
+import biz.isphere.core.sourcemembercopy.MemberCopyError;
 import biz.isphere.core.sourcemembercopy.SynchronizeMembersAction;
 import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
 import biz.isphere.core.swt.widgets.WidgetFactory;
@@ -209,20 +209,29 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
             return;
         }
 
+        boolean isRenameMemberCheck = Preferences.getInstance().isMemberRenamingPrecheck();
+
         copyMemberService.setExistingMemberAction(getExistingMemberAction());
+        copyMemberService.setMissingFileAction(MissingFileAction.ERROR);
+        copyMemberService.setIgnoreDataLostError(chkBoxIgnoreDataLostError.getSelection());
+        copyMemberService.setIgnoreUnsavedChanges(chkBoxIgnoreDirtyFilesError.getSelection());
+        copyMemberService.setFullErrorCheck(false);
+        copyMemberService.setRenameMemberCheck(isRenameMemberCheck);
 
         String fromConnectionName = copyMemberService.getFromConnectionName();
         CopyMemberItem[] fromMembers = copyMemberService.getItems();
         updateMembersWithTargetSourceFile(getToLibraryName(), getToFileName(), fromMembers);
 
-        boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
-
-        validateMembersJob = new ValidateMembersJob(fromConnectionName, fromMembers, getExistingMemberAction(),
-            chkBoxIgnoreDataLostError.getSelection(), chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
+        validateMembersJob = new ValidateMembersJob(fromConnectionName, fromMembers, this);
         validateMembersJob.addItemErrorListener(this);
-
         validateMembersJob.setToConnectionName(getToConnectionName());
-        validateMembersJob.setToCcsid(copyMemberService.getToConnectionCcsid());
+
+        validateMembersJob.setExistingMemberAction(getExistingMemberAction());
+        validateMembersJob.setMissingFileAction(MissingFileAction.ERROR);
+        validateMembersJob.setIgnoreDataLostError(chkBoxIgnoreDataLostError.getSelection());
+        validateMembersJob.setIgnoreUnsavedChanges(chkBoxIgnoreDirtyFilesError.getSelection());
+        validateMembersJob.setFullErrorCheck(false);
+        validateMembersJob.setRenameMemberCheck(isRenameMemberCheck);
 
         setControlEnablement();
         validateMembersJob.schedule();
@@ -300,16 +309,16 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
     }
 
-    public SynchronizeMembersAction reportValidateFileMessage(MemberValidationError errorId, ErrorContext errorContext, String errorMessage) {
+    public SynchronizeMembersAction reportValidateFileMessage(MemberCopyError errorId, ErrorContext errorContext, String errorMessage) {
         return SynchronizeMembersAction.CANCEL;
     }
 
-    public SynchronizeMembersAction reportValidateMemberMessage(MemberValidationError errorId, CopyMemberItem item, String errorMessage) {
+    public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
         return SynchronizeMembersAction.CONTINUE_WITH_ERROR;
     }
 
     public void returnValidateMembersResult(final boolean isCanceled, final int countTotal, final int countSkipped, final int countValidated,
-        final int countErrors, final long averageTime, final MemberValidationError errorId, final String cancelMessage) {
+        final int countErrors, final long averageTime, final MemberCopyError errorId, final String cancelMessage) {
 
         validateMembersJob = null;
 
@@ -322,22 +331,22 @@ public class CopyMemberDialog extends XDialog implements IValidateItemMessageLis
 
                 if (cancelMessage != null) {
 
-                    if (errorId == MemberValidationError.ERROR_TO_CONNECTION_NOT_FOUND) {
+                    if (errorId == MemberCopyError.ERROR_TO_CONNECTION_NOT_FOUND) {
                         setErrorMessage(cancelMessage);
                         comboToConnection.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_LIBRARY_NAME_NOT_VALID) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_LIBRARY_NAME_NOT_VALID) {
                         setErrorMessage(cancelMessage);
                         textToLibrary.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_LIBRARY_NOT_FOUND) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_LIBRARY_NOT_FOUND) {
                         setErrorMessage(cancelMessage);
                         textToLibrary.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_FILE_NAME_NOT_VALID) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_NAME_NOT_VALID) {
                         setErrorMessage(cancelMessage);
                         comboToFile.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_FILE_NOT_FOUND) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_NOT_FOUND) {
                         setErrorMessage(cancelMessage);
                         comboToFile.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_FILE_DATA_LOST) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_DATA_LOST) {
                         setErrorMessage(cancelMessage);
                         comboToFile.setFocus();
                     }

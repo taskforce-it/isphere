@@ -24,6 +24,6 @@ public interface IValidateMembersPostRun {
      * @param cancelMessage - job cancel error message
      */
     public void returnValidateMembersResult(boolean isCanceled, int countTotal, int countSkipped, int countValidated, int countErrors,
-        long averageTime, MemberValidationError cancelErrorId, String cancelMessage);
+        long averageTime, MemberCopyError cancelErrorId, String cancelMessage);
 
 }

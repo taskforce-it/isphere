@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import com.ibm.as400.access.AS400;
 
+import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
@@ -36,7 +37,6 @@ import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
 import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
 import biz.isphere.core.sourcemembercopy.MemberCopyError;
-import biz.isphere.core.sourcemembercopy.MemberValidationError;
 import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.CopyMembersJob;
 import biz.isphere.core.sourcemembercopy.rse.ExistingMemberAction;
@@ -60,7 +60,8 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
     private MissingFileAction missingFileAction;
     private ExistingMemberAction existingMemberAction;
-    private boolean ignoreDataLostError;
+    private boolean isIgnoreDataLostError;
+    private boolean isPreCheck;
 
     public SynchronizeMembersJob(RemoteObject leftFileOrLibrary, RemoteObject rightFileOrLibrary, ISynchronizeMembersPostRun postRun) {
         super(Messages.Copying_source_members);
@@ -77,9 +78,10 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         this.copyToLeftItems = new TreeSet<MemberCompareItem>();
         this.copyToRightItems = new TreeSet<MemberCompareItem>();
 
-        this.missingFileAction = missingFileAction.ASK_USER;
+        this.missingFileAction = MissingFileAction.ASK_USER;
         this.existingMemberAction = ExistingMemberAction.ERROR;
-        this.ignoreDataLostError = false;
+        this.isIgnoreDataLostError = false;
+        this.isPreCheck = false;
 
         this.syncResult = null;
     }
@@ -105,10 +107,12 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
     }
 
     public void addCopyRightToLeftMember(MemberCompareItem compareIems) {
+        compareIems.resetErrorStatus();
         this.copyToLeftItems.add(compareIems);
     }
 
     public void addCopyLeftToRightMember(MemberCompareItem compareIems) {
+        compareIems.resetErrorStatus();
         this.copyToRightItems.add(compareIems);
     }
 
@@ -134,20 +138,26 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
             int totalMembers = toLeftMembers.length + toRightMembers.length;
 
-            SubMonitor progress = SubMonitor.convert(monitor).setWorkRemaining(totalMembers * 2);
-
-            SubMonitor subMonitorValidate = progress.split(totalMembers).setWorkRemaining(totalMembers);
-
-            if (leftFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
-                validateFileSync(subMonitorValidate, toLeftMembers, toRightMembers);
-            } else if (leftFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
-                validateLibrarySync(subMonitorValidate, toLeftMembers, toRightMembers);
+            SubMonitor progress;
+            if (!isPreCheck) {
+                progress = SubMonitor.convert(monitor).setWorkRemaining(totalMembers);
             } else {
-                throw new IllegalArgumentException("Invalid target object type: " + leftFileOrLibrary.getObjectType()); // $NON-NLS-1$
-            }
+                progress = SubMonitor.convert(monitor).setWorkRemaining(totalMembers * 2);
 
-            if (isCanceled()) {
-                return Status.OK_STATUS;
+                SubMonitor subMonitorValidate = progress.split(totalMembers).setWorkRemaining(totalMembers);
+
+                if (leftFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
+                    validateFileSync(subMonitorValidate, toLeftMembers, toRightMembers);
+                } else if (leftFileOrLibrary.getObjectType().equals(ISeries.LIB)) {
+                    validateLibrarySync(subMonitorValidate, toLeftMembers, toRightMembers);
+                } else {
+                    throw new IllegalArgumentException("Invalid target object type: " + leftFileOrLibrary.getObjectType()); // $NON-NLS-1$
+                }
+
+                if (isCanceled()) {
+                    return Status.OK_STATUS;
+                }
+
             }
 
             SubMonitor subMonitorCopy = progress.split(totalMembers).setWorkRemaining(totalMembers);
@@ -167,13 +177,19 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         } finally {
             monitor.done();
 
-            if (isError()) {
-                postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.ERROR, getCountCopied(), getCountErrors(),
-                    getMemberErrorMessage(getCountCopied(), getCountErrors()));
-            } else {
-                if (isCanceled()) {
+            if (isCanceled()) {
+                String cancelMessage = getCancelMessage();
+                if (!StringHelper.isNullOrEmpty(cancelMessage)) {
+                    postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.CANCELED, getCountCopied(), getCountErrors(),
+                        Messages.bind(Messages.Operation_has_been_canceled_Reason_A, cancelMessage));
+                } else {
                     postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.CANCELED, getCountCopied(), getCountErrors(),
                         Messages.Operation_has_been_canceled_by_the_user);
+                }
+            } else {
+                if (isError()) {
+                    postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.ERROR, getCountCopied(), getCountErrors(),
+                        getMemberErrorMessage(getCountCopied(), getCountErrors()));
                 } else {
                     postRun.synchronizeMembersPostRun(ISynchronizeMembersPostRun.OK, getCountCopied(), getCountErrors(), getJobSuccessfulMessage());
                 }
@@ -354,21 +370,22 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
     private void validateLeftOrRightMembers(SubMonitor subMonitor, RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary,
         CopyMemberItem[] copyMemberItems) {
 
-        String fromConnectionName = fromFileOrLibrary.getConnectionName();
-
-        boolean ignoreUnsavedChangesError = false;
-        boolean fullErrorCheck = true;
-
-        ValidateMembersJob validatorJob = new ValidateMembersJob(fromConnectionName, copyMemberItems, existingMemberAction, ignoreDataLostError,
-            ignoreUnsavedChangesError, fullErrorCheck, this);
-        validatorJob.addItemErrorListener(validateItemErrorListener);
-
         if (!toFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
             throw new IllegalArgumentException("Invalid target object type: " + toFileOrLibrary.getObjectType()); //$NON-NLS-1$
         }
 
+        String fromConnectionName = fromFileOrLibrary.getConnectionName();
+
+        ValidateMembersJob validatorJob = new ValidateMembersJob(fromConnectionName, copyMemberItems, this);
+        validatorJob.addItemErrorListener(validateItemErrorListener);
         validatorJob.setToConnectionName(toFileOrLibrary.getConnectionName());
-        validatorJob.setToCcsid(getSystemCcsid(toFileOrLibrary.getConnectionName()));
+
+        validatorJob.setExistingMemberAction(existingMemberAction);
+        validatorJob.setMissingFileAction(missingFileAction);
+        validatorJob.setIgnoreDataLostError(isIgnoreDataLostError);
+        validatorJob.setIgnoreUnsavedChanges(false);
+        validatorJob.setFullErrorCheck(false);
+        validatorJob.setRenameMemberCheck(true);
 
         validatorJob.runInSameThread(subMonitor);
     }
@@ -389,15 +406,6 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         }
     }
 
-    private int getSystemCcsid(String connectionName) {
-        AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
-        if (system != null) {
-            return system.getCcsid();
-        }
-
-        return -1;
-    }
-
     private void copyToLeftOrRight(SubMonitor subMonitor, RemoteObject fromFileOrLibrary, RemoteObject toFileOrLibrary,
         CopyMemberItem[] copyMemberItems) {
 
@@ -405,10 +413,14 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         String toConnectionName = toFileOrLibrary.getConnectionName();
 
         CopyMembersJob copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, copyMemberItems, this);
+        copyMembersJob.addItemErrorListener(copyItemErrorListener);
+
         copyMembersJob.setExistingMemberAction(existingMemberAction);
         copyMembersJob.setMissingFileAction(missingFileAction);
-        copyMembersJob.setIgnoreDataLostError(ignoreDataLostError);
-        copyMembersJob.addItemErrorListener(copyItemErrorListener);
+        copyMembersJob.setIgnoreDataLostError(isIgnoreDataLostError);
+        copyMembersJob.setIgnoreUnsavedChanges(false);
+        copyMembersJob.setFullErrorCheck(false);
+        copyMembersJob.setRenameMemberCheck(true);
 
         copyMembersJob.runInSameThread(subMonitor);
     }
@@ -477,10 +489,11 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
      * @param averageTime - average processing time per member
      */
     public void returnValidateMembersResult(boolean isCanceled, int countTotal, int countSkipped, int countValidated, int countErrors,
-        long averageTime, MemberValidationError errorId, String cancelMessage) {
+        long averageTime, MemberCopyError errorId, String cancelMessage) {
 
         syncResult.countErrors = syncResult.countErrors + countErrors;
         syncResult.countValidated = syncResult.countValidated + countValidated;
+        syncResult.cancelMessage = cancelMessage;
 
         debug("\nSynchronizeMembersJob.validateMembersPostRun:"); //$NON-NLS-1$
         debug("is canceled:    " + isCanceled); //$NON-NLS-1$
@@ -509,6 +522,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
         syncResult.countErrors = syncResult.countErrors + countErrors;
         syncResult.countCopied = syncResult.countCopied + countCopied;
+        syncResult.cancelMessage = cancelMessage;
 
         debug("\nSynchronizeMembersJob.copyMembersPostRun:"); //$NON-NLS-1$
         debug("is canceled:    " + isCanceled); //$NON-NLS-1$
@@ -550,6 +564,11 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
         return countErrors;
     }
 
+    private String getCancelMessage() {
+        String message = syncResult.cancelMessage;
+        return message;
+    }
+
     public void cancelOperation() {
         monitor.setCanceled(true);
     }
@@ -563,6 +582,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
     }
 
     private class SyncResult {
+        public String cancelMessage;
         public int countValidated;
         public int countCopied;
         public int countErrors;

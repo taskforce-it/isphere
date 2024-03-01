@@ -38,7 +38,7 @@ public class FileValidationStatusMap {
         private String libraryName;
         private String fileName;
         private Boolean isFileError;
-        private MemberValidationError errorId;
+        private MemberCopyError errorId;
         private String errorMessage;
         private Object userData;
 
@@ -51,18 +51,18 @@ public class FileValidationStatusMap {
 
         private void initialize() {
             this.isFileError = null;
-            this.errorId = MemberValidationError.ERROR_NONE;
+            this.errorId = MemberCopyError.ERROR_NONE;
             this.errorMessage = null;
             this.userData = null;
         }
 
         public void clearFileError() {
             this.isFileError = false;
-            this.errorId = MemberValidationError.ERROR_NONE;
+            this.errorId = MemberCopyError.ERROR_NONE;
             this.errorMessage = null;
         }
 
-        public void setFileError(MemberValidationError errorId, String errorMessage, Object userData) {
+        public void setFileError(MemberCopyError errorId, String errorMessage, Object userData) {
             this.isFileError = true;
             this.errorId = errorId;
             this.errorMessage = errorMessage;
@@ -83,7 +83,7 @@ public class FileValidationStatusMap {
             return isFileError;
         }
 
-        public MemberValidationError getErrorId() {
+        public MemberCopyError getErrorId() {
             return errorId;
         }
 

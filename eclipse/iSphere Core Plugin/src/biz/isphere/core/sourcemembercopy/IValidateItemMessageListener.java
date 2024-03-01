@@ -18,5 +18,5 @@ public interface IValidateItemMessageListener {
      * @param errorMessage - error message text
      * @return true for canceling the job; otherwise false
      */
-    public SynchronizeMembersAction reportValidateMemberMessage(MemberValidationError errorId, CopyMemberItem item, String errorMessage);
+    public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage);
 }
