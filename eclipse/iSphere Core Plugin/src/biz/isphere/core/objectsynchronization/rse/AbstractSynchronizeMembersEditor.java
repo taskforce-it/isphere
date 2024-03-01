@@ -1616,6 +1616,27 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 }
             }
         }
+
+        public void partActivated(IWorkbenchPartReference arg0) {
+        }
+
+        public void partBroughtToTop(IWorkbenchPartReference arg0) {
+        }
+
+        public void partDeactivated(IWorkbenchPartReference arg0) {
+        }
+
+        public void partHidden(IWorkbenchPartReference arg0) {
+        }
+
+        public void partInputChanged(IWorkbenchPartReference arg0) {
+        }
+
+        public void partOpened(IWorkbenchPartReference arg0) {
+        }
+
+        public void partVisible(IWorkbenchPartReference arg0) {
+        }
     }
 
     private class EndLoadMembersUIJob extends UIJob {
