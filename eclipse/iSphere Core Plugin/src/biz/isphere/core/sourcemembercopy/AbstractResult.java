@@ -70,6 +70,7 @@ public abstract class AbstractResult<M> {
 
     public void setCancel(M errorId, String message) {
         cancelErrorId = errorId;
+        cancelMessage = message;
     }
 
     public M getCancelErrorId() {
