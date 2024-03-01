@@ -123,13 +123,14 @@ public class ValidateMembersJob extends Job implements ICopyItemMessageListener 
             copyResult = new CopyResult();
 
             copyMembersJob = new CopyMembersJob(this.fromConnectionName, this.toConnectionName, members, null);
+            this.copyMembersJob.addItemErrorListener(this);
             this.copyMembersJob.setValidationMode(true);
             this.copyMembersJob.setMissingFileAction(this.missingFileAction);
             this.copyMembersJob.setExistingMemberAction(this.existingMemberAction);
             this.copyMembersJob.setIgnoreDataLostError(this.isIgnoreDataLostError);
             this.copyMembersJob.setIgnoreUnsavedChanges(this.isIgnoreUnsavedChangesError);
             this.copyMembersJob.setFullErrorCheck(this.isFullErrorCheck);
-            this.copyMembersJob.addItemErrorListener(this);
+            this.copyMembersJob.setRenameMemberCheck(this.isRenameMemberCheck);
             copyMembersJob.runInSameThread(subMonitor);
 
         } finally {

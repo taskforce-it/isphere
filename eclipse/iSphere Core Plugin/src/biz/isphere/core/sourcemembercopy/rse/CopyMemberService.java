@@ -225,6 +225,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         copyMembersJob.setIgnoreDataLostError(isIgnoreDataLostError);
         copyMembersJob.setIgnoreUnsavedChanges(isIgnoreUnsavedChangesError);
         copyMembersJob.setFullErrorCheck(isFullErrorCheck);
+        copyMembersJob.setRenameMemberCheck(isRenameMemberCheck);
         copyMembersJob.schedule();
     }
 
