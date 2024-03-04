@@ -1,6 +1,9 @@
 
 Changelog: iSphere 5.2.10.b003
 ------------------------------
+ • Added iSphere Synchronize Members editor for synchronizing source
+   members between two source files or all source files of two
+   libraries.
  • Remove iSphere Compare Filters plug-in. Class
    IgnoreDateCompareFilter has been moved to the iSphere Core
     plug-in.
