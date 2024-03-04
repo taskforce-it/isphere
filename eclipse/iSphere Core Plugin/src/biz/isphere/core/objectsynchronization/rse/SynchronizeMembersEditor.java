@@ -10,6 +10,7 @@ package biz.isphere.core.objectsynchronization.rse;
 
 import org.eclipse.jface.viewers.TableViewer;
 
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.swt.widgets.objectselector.ISelectRemoteQSYSObjectDialog;
 import biz.isphere.core.swt.widgets.objectselector.ISelectedObject;
@@ -22,11 +23,19 @@ public class SynchronizeMembersEditor extends AbstractSynchronizeMembersEditor {
     }
 
     @Override
-    protected RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName) {
+    protected RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName, String objectType) {
 
-        ISelectRemoteQSYSObjectDialog dialog = SelectRemoteQSYSObjectDialog.createSelectSourceFileDialog(getShell(), connectionName);
-        dialog.setLibraryName(libraryName);
-        dialog.setObjectName(objectName);
+        ISelectRemoteQSYSObjectDialog dialog;
+        if (ISeries.FILE.equals(objectType)) {
+            dialog = SelectRemoteQSYSObjectDialog.createSelectSourceFileDialog(getShell(), connectionName);
+            dialog.setLibraryName(libraryName);
+            dialog.setObjectName(objectName);
+        } else {
+            dialog = SelectRemoteQSYSObjectDialog.createSelectLibraryDialog(getShell(), connectionName);
+            dialog.setLibraryName(libraryName);
+            dialog.setObjectName(objectName);
+        }
+
         if (dialog.open() == SelectRemoteQSYSObjectDialog.CANCEL) {
             return null;
         }
@@ -36,10 +45,14 @@ public class SynchronizeMembersEditor extends AbstractSynchronizeMembersEditor {
         String connection = selectedObject.getConnectionName();
         String name = selectedObject.getName();
         String library = selectedObject.getLibrary();
-        String objectType = selectedObject.getObjectType();
+        String type = selectedObject.getObjectType();
         String description = selectedObject.getDescription();
 
-        return new RemoteObject(connection, name, library, objectType, description);
+        if (ISeries.FILE.equals(objectType)) {
+            return new RemoteObject(connection, name, library, type, description);
+        } else {
+            return new RemoteObject(connection, name, "QSYS", type, description);
+        }
     }
 
     @Override

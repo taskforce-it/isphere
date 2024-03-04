@@ -59,6 +59,10 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     private HistoryCombo cboObjectName;
     private Button btnSelectObject;
 
+    public static SelectRemoteQSYSObjectDialog createSelectLibraryDialog(Shell shell, String connection) {
+        return new SelectRemoteQSYSObjectDialog(shell, connection, ISeries.LIB, Messages.Library);
+    }
+
     public static SelectRemoteQSYSObjectDialog createSelectMessageFileDialog(Shell shell, String connection) {
         return new SelectRemoteQSYSObjectDialog(shell, connection, ISeries.MSGF, Messages.Message_file);
     }
@@ -105,13 +109,15 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
         new Label(dialogArea, SWT.NONE);
 
-        Label lblLibraryName = new Label(dialogArea, SWT.NONE);
-        lblLibraryName.setText(Messages.Library);
+        if (!isSelectLibraryDialog()) {
+            Label lblLibraryName = new Label(dialogArea, SWT.NONE);
+            lblLibraryName.setText(Messages.Library);
 
-        cboLibraryName = WidgetFactory.createNameHistoryCombo(dialogArea);
-        cboLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            cboLibraryName = WidgetFactory.createNameHistoryCombo(dialogArea);
+            cboLibraryName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        btnSelectLibrary = WidgetFactory.createPushButton(dialogArea, Messages.Browse);
+            btnSelectLibrary = WidgetFactory.createPushButton(dialogArea, Messages.Browse);
+        }
 
         Label lblObjectName = new Label(dialogArea, SWT.NONE);
         lblObjectName.setText(objectLabel);
@@ -133,15 +139,24 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     private void setControlsEnablement() {
 
         if (!cboConnectionName.hasConnection()) {
-            btnSelectLibrary.setEnabled(false);
-            btnSelectObject.setEnabled(false);
+            setEnabled(btnSelectLibrary, false);
+            setEnabled(btnSelectObject, false);
         } else {
-            btnSelectLibrary.setEnabled(true);
-            btnSelectObject.setEnabled(true);
+            setEnabled(btnSelectLibrary, true);
+            setEnabled(btnSelectObject, true);
         }
 
-        if (StringHelper.isNullOrEmpty(cboLibraryName.getText())) {
-            btnSelectObject.setEnabled(false);
+        if (!isSelectLibraryDialog()) {
+            if (StringHelper.isNullOrEmpty(cboLibraryName.getText())) {
+                setEnabled(btnSelectObject, false);
+            }
+        }
+    }
+
+    private void setEnabled(Control control, boolean enabled) {
+
+        if (control != null) {
+            control.setEnabled(enabled);
         }
     }
 
@@ -149,21 +164,58 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
 
         ControlEnablementListener controlsEnablementListerner = new ControlEnablementListener();
 
-        cboConnectionName.addSelectionListener(controlsEnablementListerner);
-        cboLibraryName.addModifyListener(controlsEnablementListerner);
-        cboObjectName.addModifyListener(controlsEnablementListerner);
+        addSelectionListener(cboConnectionName, controlsEnablementListerner);
 
-        btnSelectLibrary.addSelectionListener(new BrowseLibraryListener(cboConnectionName, cboLibraryName));
+        addModifyListener(cboLibraryName, controlsEnablementListerner);
+        addModifyListener(cboObjectName, controlsEnablementListerner);
 
-        btnSelectObject.addSelectionListener(new BrowseObjectListener(cboConnectionName, cboLibraryName, cboObjectName, objectType));
+        if (!isSelectLibraryDialog()) {
+            btnSelectLibrary.addSelectionListener(new BrowseLibraryListener(cboConnectionName, cboLibraryName));
+            btnSelectObject.addSelectionListener(new BrowseObjectListener(cboConnectionName, cboLibraryName, cboObjectName, objectType));
+        } else {
+            btnSelectObject.addSelectionListener(new BrowseLibraryListener(cboConnectionName, cboLibraryName));
+        }
+
+    }
+
+    private void addSelectionListener(ConnectionCombo combo, ControlEnablementListener selectionListener) {
+
+        if (combo != null) {
+            combo.addSelectionListener(selectionListener);
+        }
+    }
+
+    private void addModifyListener(HistoryCombo combo, ControlEnablementListener modifyListener) {
+
+        if (combo != null) {
+            combo.addModifyListener(modifyListener);
+        }
+    }
+
+    private String getText(ConnectionCombo combo) {
+
+        if (combo != null) {
+            return combo.getQualifiedConnectionName();
+        }
+
+        return "";
+    }
+
+    private String getText(HistoryCombo combo) {
+
+        if (combo != null) {
+            return combo.getText();
+        }
+
+        return "";
     }
 
     @Override
     protected void okPressed() {
 
-        connectionName = cboConnectionName.getQualifiedConnectionName();
-        libraryName = cboLibraryName.getText();
-        objectName = cboObjectName.getText();
+        connectionName = getText(cboConnectionName);
+        libraryName = getText(cboLibraryName);
+        objectName = getText(cboObjectName);
 
         try {
 
@@ -212,6 +264,15 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         return new SelectedObject(getConnectionName(), getLibraryName(), getObjectName(), getObjectType());
     }
 
+    private boolean isSelectLibraryDialog() {
+
+        if (ISeries.LIB.equals(objectType)) {
+            return true;
+        }
+
+        return false;
+    }
+
     private void loadScreenValues() {
 
         if (connectionName == null) {
@@ -221,11 +282,14 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
             cboConnectionName.setQualifiedConnectionName(connectionName);
         }
 
-        if (libraryName == null) {
-            libraryName = loadValue(LIBRARY_NAME, EMPTY);
-        }
-        if (!StringHelper.isNullOrEmpty(libraryName)) {
-            cboLibraryName.setText(libraryName);
+        if (!isSelectLibraryDialog()) {
+            if (libraryName == null) {
+                libraryName = loadValue(LIBRARY_NAME, EMPTY);
+            }
+            if (!StringHelper.isNullOrEmpty(libraryName)) {
+                cboLibraryName.setText(libraryName);
+            }
+            cboLibraryName.load(getDialogSettingsManager(), LIBRARY_NAME);
         }
 
         if (objectName == null) {
@@ -234,18 +298,19 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
         if (!StringHelper.isNullOrEmpty(objectName)) {
             cboObjectName.setText(objectName);
         }
-
-        cboLibraryName.load(getDialogSettingsManager(), LIBRARY_NAME);
         cboObjectName.load(getDialogSettingsManager(), FILE_NAME);
     }
 
     private void saveScreenValues() {
 
         storeValue(CONNECTION_NAME, cboConnectionName.getQualifiedConnectionName());
-        storeValue(LIBRARY_NAME, cboLibraryName.getText());
-        storeValue(FILE_NAME, cboObjectName.getText());
 
-        saveHistoryCombo(cboLibraryName);
+        if (!isSelectLibraryDialog()) {
+            storeValue(LIBRARY_NAME, cboLibraryName.getText());
+            saveHistoryCombo(cboLibraryName);
+        }
+
+        storeValue(FILE_NAME, cboObjectName.getText());
         saveHistoryCombo(cboObjectName);
     }
 

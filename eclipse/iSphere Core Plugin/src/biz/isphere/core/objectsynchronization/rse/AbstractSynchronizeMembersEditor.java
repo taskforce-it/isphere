@@ -261,12 +261,14 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 String connectionName = null;
                 String libraryName = null;
                 String objectName = null;
+                String objectType = null;
                 if (getEditorInput().getLeftObject() != null) {
                     connectionName = getEditorInput().getLeftObject().getConnectionName();
                     libraryName = getEditorInput().getLeftObject().getLibrary();
                     objectName = getEditorInput().getLeftObject().getName();
+                    objectType = getEditorInput().getLeftObject().getObjectType();
                 }
-                RemoteObject object = performSelectRemoteObject(connectionName, libraryName, objectName);
+                RemoteObject object = performSelectRemoteObject(connectionName, libraryName, objectName, objectType);
                 if (object != null) {
                     isLeftObjectValid = false;
                     getEditorInput().setLeftObject(object);
@@ -311,12 +313,14 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
                 String connectionName = null;
                 String libraryName = null;
                 String fileName = null;
+                String objectType = null;
                 if (getEditorInput().getRightObject() != null) {
                     connectionName = getEditorInput().getRightObject().getConnectionName();
                     libraryName = getEditorInput().getRightObject().getLibrary();
                     fileName = getEditorInput().getRightObject().getName();
+                    objectType = getEditorInput().getRightObject().getObjectType();
                 }
-                RemoteObject sourceFile = performSelectRemoteObject(connectionName, libraryName, fileName);
+                RemoteObject sourceFile = performSelectRemoteObject(connectionName, libraryName, fileName, objectType);
                 if (sourceFile != null) {
                     isRightObjectValid = false;
                     getEditorInput().setRightObject(sourceFile);
@@ -1495,7 +1499,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
         button.getImage().dispose();
     }
 
-    protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName);
+    protected abstract RemoteObject performSelectRemoteObject(String connectionName, String libraryName, String objectName, String objectType);
 
     protected abstract AbstractTableLabelProvider getTableLabelProvider(TableViewer tableViewer, int columnIndex);
 
