@@ -51,21 +51,22 @@
 005100211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((SPLF    *SRVPGM))
 005200211120             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((XFNDSTR *SRVPGM))
 005300220310             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((ZFNDSTR *SRVPGM))
-005400211120
-005500211120             RETURN
-005600211120
-005700211120             /* --------------------------------------------------- */
-005800211120             /*   Error Handler                                     */
-005900211120             /* --------------------------------------------------- */
-006000211120 ERRHDLR:    CALL       PGM(QMHMOVPM) PARM(&ERRMSGKEY  +
-006100211120                                           &ERRMSGTYPE +
-006200211120                                           &ERRNUMTYPE +
-006300211120                                           &ERRSTKE    +
-006400211120                                           &ERRSTKCNT  +
-006500211120                                           &ERRCODE    )
-006600211120             MONMSG     MSGID(CPF0000)
-006700211120
-006800211120             CALL       PGM(QMHRSNEM) PARM(&ERRMSGKEY  +
-006900211120                                           &ERRCODE    )
-007000211120
-007100211120             ENDPGM
+005400240224             ADDBNDDIRE BNDDIR(&LIB/&OBJ) OBJ((SYNCMBR *SRVPGM))
+005500240224
+005600211120             RETURN
+005700211120
+005800211120             /* --------------------------------------------------- */
+005900211120             /*   Error Handler                                     */
+006000211120             /* --------------------------------------------------- */
+006100211120 ERRHDLR:    CALL       PGM(QMHMOVPM) PARM(&ERRMSGKEY  +
+006200211120                                           &ERRMSGTYPE +
+006300211120                                           &ERRNUMTYPE +
+006400211120                                           &ERRSTKE    +
+006500211120                                           &ERRSTKCNT  +
+006600211120                                           &ERRCODE    )
+006700211120             MONMSG     MSGID(CPF0000)
+006800211120
+006900211120             CALL       PGM(QMHRSNEM) PARM(&ERRMSGKEY  +
+007000211120                                           &ERRCODE    )
+007100211120
+007200211120             ENDPGM

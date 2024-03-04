@@ -14,13 +14,29 @@ import biz.isphere.core.objectsynchronization.SynchronizeMembersJob;
 public interface ISynchronizeMembersPostRun {
 
     /**
+     * Job finished successfully.
+     */
+    public static final String OK = "OK"; //$NON-NLS-1$
+
+    /**
+     * Job ended with errors.
+     */
+    public static final String ERROR = "ERROR"; //$NON-NLS-1$
+
+    /**
+     * Job has been canceled.
+     */
+    public static final String CANCELED = "CANCELED"; //$NON-NLS-1$
+
+    /**
      * PostRun methods called by {@link SynchronizeMembersJob} at the end of the
      * copy member process.
      * 
      * @param status - status of the synchronization operation. See:
      *        {@link SynchronizationResult}
-     * @param countMembersCopied - number of members that have been copied
+     * @param countCopied - number of members that have been copied
+     * @param countErrors - number of members that have errors
      * @param message - error or canceled message
      */
-    public void returnResultPostRun(String status, int countMembersCopied, String message);
+    public void synchronizeMembersPostRun(String status, int countCopied, int countErrors, String message);
 }

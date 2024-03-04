@@ -20,8 +20,8 @@ import java.sql.Timestamp;
  */
 public class MemberDescription implements Serializable, Comparable<MemberDescription> {
 
-    private static final String CRLF = "\n";
-    private static final String TAB = "\t";
+    private static final String CRLF = "\n"; //$NON-NLS-1$
+    private static final String TAB = "\t"; //$NON-NLS-1$
 
     private static final long serialVersionUID = 6390106167717880849L;
 
@@ -108,7 +108,7 @@ public class MemberDescription implements Serializable, Comparable<MemberDescrip
     }
 
     public String getQualifiedMemberName() {
-        return getLibraryName() + "/" + getFileName() + "." + getMemberName();
+        return getLibraryName() + "/" + getFileName() + "." + getMemberName(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

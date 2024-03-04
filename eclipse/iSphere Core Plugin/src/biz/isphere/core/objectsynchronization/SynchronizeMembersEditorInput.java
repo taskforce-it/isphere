@@ -16,6 +16,7 @@ import org.eclipse.ui.IPersistableElement;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
+import biz.isphere.core.internal.ISeries;
 import biz.isphere.core.internal.RemoteObject;
 import biz.isphere.core.objectsynchronization.rse.SynchronizeMembersEditorConfiguration;
 
@@ -77,6 +78,17 @@ public class SynchronizeMembersEditorInput implements IEditorInput {
 
     public ISynchronizeMembersEditorConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public boolean isFileSynchronization() {
+        if (ISeries.FILE.equals(leftRemoteObject.getObjectType())) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isLibrarySynchronization() {
+        return !isFileSynchronization();
     }
 
     public RemoteObject getLeftObject() {

@@ -33,7 +33,7 @@ import biz.isphere.core.objectsynchronization.SYNCMBR_getHandle;
  */
 public class StartCompareMembersJob extends AbstractCompareMembersJob {
 
-    private static final String ALL_OBJECTS = "*";
+    private static final String ALL_OBJECTS = "*"; //$NON-NLS-1$
 
     private RemoteObject leftObject;
     private RemoteObject rightObject;
@@ -75,10 +75,10 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
                 if (handle != ERROR_HANDLE) {
                     sharedValues.setRightHandle(rightObject.getConnectionName(), handle);
                 } else {
-                    ISpherePlugin.logError("*** Could not get SYNCMBR handle for *RIGHT system ***", null);
+                    ISpherePlugin.logError("*** Could not get SYNCMBR handle for *RIGHT system ***", null); //$NON-NLS-1$
                 }
             } else {
-                ISpherePlugin.logError("*** Could not get SYNCMBR handle for *LEFT system ***", null);
+                ISpherePlugin.logError("*** Could not get SYNCMBR handle for *LEFT system ***", null); //$NON-NLS-1$
             }
 
         } finally {
@@ -144,28 +144,28 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
 
         StringBuffer sqlInsert = new StringBuffer();
         sqlInsert
-            .append("INSERT INTO " + getSqlHelper().getObjectName(getISphereLibrary(), "SYNCMBRW") + " (XWHDL, XWMBR, XWLEFTLIB, XWLEFTFILE) VALUES");
+            .append("INSERT INTO " + getSqlHelper().getObjectName(getISphereLibrary(), "SYNCMBRW") + " (XWHDL, XWMBR, XWLEFTLIB, XWLEFTFILE) VALUES"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        sqlInsert.append("('");
+        sqlInsert.append("('"); //$NON-NLS-1$
         sqlInsert.append(handle);
-        sqlInsert.append("', '");
+        sqlInsert.append("', '"); //$NON-NLS-1$
         sqlInsert.append(ALL_OBJECTS); // All members.
 
         if (ISeries.FILE.equals(objectType)) {
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(leftObject.getLibrary()); // Left library.
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(leftObject.getName()); // Left source file.
         } else if (ISeries.LIB.equals(objectType)) {
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(leftObject.getName()); // Left library.
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(ALL_OBJECTS); // All left source files.
         } else {
-            throw new IllegalArgumentException("Incorrect object type: " + objectType);
+            throw new IllegalArgumentException("Incorrect object type: " + objectType); //$NON-NLS-1$
         }
 
-        sqlInsert.append("')");
+        sqlInsert.append("')"); //$NON-NLS-1$
 
         return sqlInsert.toString();
     }
@@ -174,28 +174,28 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
 
         StringBuffer sqlInsert = new StringBuffer();
         sqlInsert
-            .append("INSERT INTO " + getSqlHelper().getObjectName(getISphereLibrary(), "SYNCMBRW") + " (XWHDL, XWMBR, XWRGHTLIB, XWRGHTFILE) VALUES");
+            .append("INSERT INTO " + getSqlHelper().getObjectName(getISphereLibrary(), "SYNCMBRW") + " (XWHDL, XWMBR, XWRGHTLIB, XWRGHTFILE) VALUES"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        sqlInsert.append("('");
+        sqlInsert.append("('"); //$NON-NLS-1$
         sqlInsert.append(handle);
-        sqlInsert.append("', '");
+        sqlInsert.append("', '"); //$NON-NLS-1$
         sqlInsert.append(ALL_OBJECTS); // All members.
 
         if (ISeries.FILE.equals(objectType)) {
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(rightObject.getLibrary()); // Right library.
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(rightObject.getName()); // Right source file.
         } else if (ISeries.LIB.equals(objectType)) {
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(rightObject.getName()); // Right library.
-            sqlInsert.append("', '");
+            sqlInsert.append("', '"); //$NON-NLS-1$
             sqlInsert.append(ALL_OBJECTS); // All right files.
         } else {
-            throw new IllegalArgumentException("Incorrect object type: " + objectType);
+            throw new IllegalArgumentException("Incorrect object type: " + objectType); //$NON-NLS-1$
         }
 
-        sqlInsert.append("')");
+        sqlInsert.append("')"); //$NON-NLS-1$
 
         return sqlInsert.toString();
     }

@@ -8,6 +8,8 @@
 
 package biz.isphere.core.internal;
 
+import org.eclipse.ui.IEditorPart;
+
 public interface IEditor {
 
     public static final String EDIT = "*EDIT";
@@ -21,5 +23,7 @@ public interface IEditor {
     public void openEditor(String connectionName, String library, String file, String member, String mode);
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode);
+
+    public IEditorPart findEditorPart(String connectionName, String libraryName, String fileName, String memberName);
 
 }

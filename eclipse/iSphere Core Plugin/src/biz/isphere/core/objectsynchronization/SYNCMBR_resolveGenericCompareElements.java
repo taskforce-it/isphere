@@ -27,22 +27,22 @@ public class SYNCMBR_resolveGenericCompareElements {
             // Trace.setTraceOn(true); // Turn on tracing function.
             // Trace.setTracePCMLOn(true); // Turn on PCML tracing.
 
-            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_resolveGenericCompareElements",
+            ProgramCallDocument pcml = new ProgramCallDocument(_as400, "biz.isphere.core.objectsynchronization.SYNCMBR_resolveGenericCompareElements", //$NON-NLS-1$
                 this.getClass().getClassLoader());
 
-            pcml.setIntValue("SYNCMBR_resolveGenericCompareElements.handle", _handle);
-            pcml.setStringValue("SYNCMBR_resolveGenericCompareElements.mode", mode);
-            pcml.setStringValue("SYNCMBR_resolveGenericCompareElements.memberFilter", memberFilter);
+            pcml.setIntValue("SYNCMBR_resolveGenericCompareElements.handle", _handle); //$NON-NLS-1$
+            pcml.setStringValue("SYNCMBR_resolveGenericCompareElements.mode", mode); //$NON-NLS-1$
+            pcml.setStringValue("SYNCMBR_resolveGenericCompareElements.memberFilter", memberFilter); //$NON-NLS-1$
 
-            boolean rc = pcml.callProgram("SYNCMBR_resolveGenericCompareElements");
+            boolean rc = pcml.callProgram("SYNCMBR_resolveGenericCompareElements"); //$NON-NLS-1$
 
             if (rc == false) {
 
-                AS400Message[] msgs = pcml.getMessageList("SYNCMBR_resolveGenericCompareElements");
+                AS400Message[] msgs = pcml.getMessageList("SYNCMBR_resolveGenericCompareElements"); //$NON-NLS-1$
                 for (int idx = 0; idx < msgs.length; idx++) {
-                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null);
+                    ISpherePlugin.logError(msgs[idx].getID() + " - " + msgs[idx].getText(), null); //$NON-NLS-1$
                 }
-                ISpherePlugin.logError("*** Call to SYNCMBR_resolveGenericCompareElements failed. See messages above ***", null);
+                ISpherePlugin.logError("*** Call to SYNCMBR_resolveGenericCompareElements failed. See messages above ***", null); //$NON-NLS-1$
 
                 errno = -1;
 
@@ -55,7 +55,7 @@ public class SYNCMBR_resolveGenericCompareElements {
         } catch (PcmlException e) {
 
             errno = -1;
-            ISpherePlugin.logError("*** Call to SYNCMBR_resolveGenericCompareElements failed. See messages above ***", e);
+            ISpherePlugin.logError("*** Call to SYNCMBR_resolveGenericCompareElements failed. See messages above ***", e); //$NON-NLS-1$
         }
 
         return errno;

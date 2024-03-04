@@ -55,6 +55,7 @@ ctl-opt NoMain;
 /include QCPYSRC,QUSPTRUS    // Procedure prototype for procedure 'QUSPTRUS'
 /include QCPYSRC,QUSRMBRD    // Procedure prototype for procedure 'QUSRMBRD'
 /include QCPYSRC,QUSLMBR     // Procedure prototype for procedure 'QUSLMBR'
+/include QCPYSRC,QUSRMBRD    // Procedure prototype for procedure 'QUSRMBRD'
 /include QCPYSRC,GHDR0300    // Data structure for format 'GHDR0300' for generic header
 /include QCPYSRC,MBRL0320    // Data structure for format 'MBRL0320' for procedure 'QUSLMBR'
 /include QCPYSRC,MBRD0200    // Data structure for format 'MBRD0200' for procedure 'QUSRMBRD'
@@ -70,14 +71,6 @@ dcl-ds updatedAttrs_t qualified template;
   exists        ind;
   srcType       char(10);
   checkSum      like(crc32_checkSum_t);
-  lastChanged   timestamp;
-end-ds;
-
-dcl-ds mbrAttrs_t qualified template;
-  file          char(10);
-  library       char(10);
-  member        char(10);
-  srcType       char(10);
   lastChanged   timestamp;
 end-ds;
 
@@ -275,6 +268,52 @@ dcl-proc SYNCMBR_clear export;
       SYNCMBRW
     WHERE
       XWHDL = :i_handle;
+
+end-proc;
+
+// ==========================================================================================
+//  Retrieve the attributes of a given member.
+// ==========================================================================================
+
+dcl-proc SYNCMBR_retrieveMemberAttributes export;
+  dcl-pi *n likeds(mbrAttrs_t);
+    i_library      char(10) Options(*trim) const;
+    i_file         char(10) Options(*trim) const;
+    i_member       char(10) Options(*trim) const;
+  end-pi;
+
+  // Return value
+  dcl-ds mbrAttrs likeds(mbrAttrs_t);
+
+  dcl-ds qFile likeds(qObj_t) inz;
+  dcl-ds errCode likeds(errCode_t) inz(*likeds);
+  dcl-ds mbrd0100 likeds(mbrd0100_t) inz;
+  // ----------------------------------------------------------------------------------------
+
+  qFile.name = i_file;
+  qFile.lib = i_library;
+
+  Reset errCode;
+    QUSRMBRD(
+      mbrd0100 :        // --> Receiver variable
+      %size(mbrd0100):  // --> Size of receiver variable
+      'MBRD0100' :      // --> Format name
+      qFile :           // --> Qual. file
+      i_member :        //  --> Member name
+      '0' :             // --> Override process
+      errCode           // <-> Error code
+      );
+
+  clear mbrAttrs;
+  mbrAttrs.file = i_file;
+  mbrAttrs.library = i_library;
+  mbrAttrs.member = i_member;
+  mbrAttrs.srcType = mbrd0100.srcType;
+  mbrAttrs.text = mbrd0100.text;
+  mbrAttrs.lastChanged = cvtApiTimestampToRpg(mbrd0100.srcChgDatTim);
+  mbrAttrs.checkSum = calculateChecksum(buildPath(i_library: i_file: i_member));
+
+  return mbrAttrs;
 
 end-proc;
 
@@ -742,7 +781,7 @@ dcl-proc resolveGenericMembers;
 
             // Append record to work file.
             checkSum = calculateChecksum(buildPath(MBRDFileLib: MBRDFile: MBRDMbr));
-            lastChanged = cvtApiTimestampToRpg(MBRDChgTime);
+            lastChanged = cvtApiTimestampToRpg(MBRDChgDate);
 
             select;
             when (i_mode = MODE_LEFT);
@@ -881,7 +920,7 @@ dcl-proc calculateChecksum;
 
   // ----------------------------------------------------------------------------------------
 
-  opnFlags = %bitor(O_SHARE_RDONLY: O_RDONLY);
+  opnFlags = %bitor(O_SHARE_RDWR: O_RDONLY);
 
   hFile = open(%trimr(i_path): opnFlags);
   if (hFile <> -1);

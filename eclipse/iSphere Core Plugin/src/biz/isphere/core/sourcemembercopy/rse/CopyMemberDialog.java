@@ -8,6 +8,10 @@
 
 package biz.isphere.core.sourcemembercopy.rse;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -46,25 +50,33 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.as400.access.AS400;
+
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.base.jface.dialogs.XDialog;
 import biz.isphere.base.swt.widgets.UpperCaseOnlyVerifier;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.internal.ISphereHelper;
+import biz.isphere.core.internal.Validator;
 import biz.isphere.core.memberrename.rules.IMemberRenamingRule;
 import biz.isphere.core.preferences.Preferences;
 import biz.isphere.core.sourcemembercopy.Columns;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.CopyMemberItemTableCellModifier;
+import biz.isphere.core.sourcemembercopy.ErrorContext;
+import biz.isphere.core.sourcemembercopy.IValidateItemMessageListener;
 import biz.isphere.core.sourcemembercopy.IValidateMembersPostRun;
+import biz.isphere.core.sourcemembercopy.MemberCopyError;
+import biz.isphere.core.sourcemembercopy.SynchronizeMembersAction;
 import biz.isphere.core.sourcemembercopy.ValidateMembersJob;
-import biz.isphere.core.sourcemembercopy.ValidateMembersJob.MemberValidationError;
 import biz.isphere.core.swt.widgets.WidgetFactory;
 import biz.isphere.core.swt.widgets.connectioncombo.ConnectionCombo;
 import biz.isphere.core.swt.widgets.tableviewer.TableViewerKeyBoardSupporter;
 import biz.isphere.core.swt.widgets.tableviewer.TooltipProvider;
 
-public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun {
+public class CopyMemberDialog extends XDialog implements IValidateItemMessageListener, IValidateMembersPostRun {
 
     public static String FROMFILE = "*FROMFILE";
     private static final String SINGLE_QUOTE = "'";
@@ -148,7 +160,7 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
     private boolean isValidating() {
 
-        if (validateMembersJob != null && validateMembersJob.isActive()) {
+        if (validateMembersJob != null) {
             return true;
         }
 
@@ -179,24 +191,108 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
         tableViewer.setSelection(null);
 
+        String qualifiedConnectionName = comboToConnection.getQualifiedConnectionName();
+        String connectionNameUI = comboToConnection.getText();
+        String libraryName = textToLibrary.getText();
+        String fileName = comboToFile.getText();
+        int ccsid = copyMemberService.getToConnectionCcsid();
+
+        if (!isConnectionValid(qualifiedConnectionName, connectionNameUI)) {
+            return;
+        }
+
+        if (!isLibraryValid(qualifiedConnectionName, libraryName, ccsid)) {
+            return;
+        }
+
+        if (!isFileValid(qualifiedConnectionName, libraryName, fileName, ccsid)) {
+            return;
+        }
+
+        boolean isRenameMemberCheck = Preferences.getInstance().isMemberRenamingPrecheck();
+
         copyMemberService.setExistingMemberAction(getExistingMemberAction());
+        copyMemberService.setMissingFileAction(MissingFileAction.ERROR);
+        copyMemberService.setIgnoreDataLostError(chkBoxIgnoreDataLostError.getSelection());
+        copyMemberService.setIgnoreUnsavedChanges(chkBoxIgnoreDirtyFilesError.getSelection());
+        copyMemberService.setFullErrorCheck(false);
+        copyMemberService.setRenameMemberCheck(isRenameMemberCheck);
 
         String fromConnectionName = copyMemberService.getFromConnectionName();
         CopyMemberItem[] fromMembers = copyMemberService.getItems();
         updateMembersWithTargetSourceFile(getToLibraryName(), getToFileName(), fromMembers);
 
-        boolean fullErrorCheck = Preferences.getInstance().isMemberRenamingPrecheck();
-
-        validateMembersJob = new ValidateMembersJob(fromConnectionName, fromMembers, getExistingMemberAction(),
-            chkBoxIgnoreDataLostError.getSelection(), chkBoxIgnoreDirtyFilesError.getSelection(), fullErrorCheck, this);
-
+        validateMembersJob = new ValidateMembersJob(fromConnectionName, fromMembers, this);
+        validateMembersJob.addItemErrorListener(this);
         validateMembersJob.setToConnectionName(getToConnectionName());
-        validateMembersJob.setToLibraryName(getToLibraryName());
-        validateMembersJob.setToFileName(getToFileName());
-        validateMembersJob.setToCcsid(copyMemberService.getToConnectionCcsid());
+
+        validateMembersJob.setExistingMemberAction(getExistingMemberAction());
+        validateMembersJob.setMissingFileAction(MissingFileAction.ERROR);
+        validateMembersJob.setIgnoreDataLostError(chkBoxIgnoreDataLostError.getSelection());
+        validateMembersJob.setIgnoreUnsavedChanges(chkBoxIgnoreDirtyFilesError.getSelection());
+        validateMembersJob.setFullErrorCheck(false);
+        validateMembersJob.setRenameMemberCheck(isRenameMemberCheck);
 
         setControlEnablement();
-        validateMembersJob.start();
+        validateMembersJob.schedule();
+    }
+
+    private boolean isConnectionValid(String qualifiedConnectionName, String connectionNameUI) {
+
+        Set<String> connectionNames = new HashSet<String>(Arrays.asList(IBMiHostContributionsHandler.getConnectionNames()));
+        boolean hasConnection = connectionNames.contains(qualifiedConnectionName);
+
+        if (!hasConnection) {
+            String message = Messages.bind(Messages.Connection_A_not_found, connectionNameUI);
+            setErrorMessage(message);
+            comboToConnection.setFocus();
+        }
+
+        return hasConnection;
+    }
+
+    private boolean isLibraryValid(String qualifiedConnectionName, String libraryName, int ccsid) {
+
+        Validator nameValidator = Validator.getNameInstance(ccsid);
+        if (!nameValidator.validate(libraryName)) {
+            String message = Messages.bind(Messages.Invalid_library_name, libraryName);
+            setErrorMessage(message);
+            textToLibrary.setFocus();
+            return false;
+        }
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(qualifiedConnectionName);
+        boolean isLibrary = ISphereHelper.checkLibrary(system, libraryName);
+
+        if (!isLibrary) {
+            String message = Messages.bind(Messages.Library_A_not_found, libraryName);
+            setErrorMessage(message);
+            textToLibrary.setFocus();
+        }
+
+        return isLibrary;
+    }
+
+    private boolean isFileValid(String qualifiedConnectionName, String libraryName, String fileName, int ccsid) {
+
+        Validator nameValidator = Validator.getNameInstance(ccsid);
+        if (!nameValidator.validate(fileName)) {
+            String message = Messages.bind(Messages.Invalid_file_name, libraryName);
+            setErrorMessage(message);
+            comboToFile.setFocus();
+            return false;
+        }
+
+        AS400 system = IBMiHostContributionsHandler.getSystem(qualifiedConnectionName);
+        boolean isFile = ISphereHelper.checkFile(system, libraryName, fileName);
+
+        if (!isFile) {
+            String message = Messages.bind(Messages.File_A_not_found, fileName);
+            setErrorMessage(message);
+            comboToFile.setFocus();
+        }
+
+        return isFile;
     }
 
     public void updateMembersWithTargetSourceFile(String toLibraryName, String toFileName, CopyMemberItem[] fromMembers) {
@@ -213,34 +309,56 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
 
     }
 
-    public void returnResult(final MemberValidationError errorId, final String errorMessage) {
+    public SynchronizeMembersAction reportValidateFileMessage(MemberCopyError errorId, ErrorContext errorContext, String errorMessage) {
+        return SynchronizeMembersAction.CANCEL;
+    }
+
+    public SynchronizeMembersAction reportValidateMemberMessage(MemberCopyError errorId, CopyMemberItem item, String errorMessage) {
+        return SynchronizeMembersAction.CONTINUE_WITH_ERROR;
+    }
+
+    public void returnValidateMembersResult(final boolean isCanceled, final int countTotal, final int countSkipped, final int countValidated,
+        final int countErrors, final long averageTime, final MemberCopyError errorId, final String cancelMessage) {
 
         validateMembersJob = null;
 
         new UIJob(Messages.EMPTY) {
 
             @Override
-            public IStatus runInUIThread(IProgressMonitor arg0) {
+            public IStatus runInUIThread(IProgressMonitor monitor) {
 
-                if (errorMessage != null) {
+                setControlEnablement();
 
-                    setErrorMessage(errorMessage);
+                if (cancelMessage != null) {
 
-                    if (errorId == MemberValidationError.ERROR_TO_CONNECTION) {
+                    if (errorId == MemberCopyError.ERROR_TO_CONNECTION_NOT_FOUND) {
+                        setErrorMessage(cancelMessage);
                         comboToConnection.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_LIBRARY) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_LIBRARY_NAME_NOT_VALID) {
+                        setErrorMessage(cancelMessage);
                         textToLibrary.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_TO_FILE) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_LIBRARY_NOT_FOUND) {
+                        setErrorMessage(cancelMessage);
+                        textToLibrary.setFocus();
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_NAME_NOT_VALID) {
+                        setErrorMessage(cancelMessage);
                         comboToFile.setFocus();
-                    } else if (errorId == MemberValidationError.ERROR_CANCELED) {
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_NOT_FOUND) {
+                        setErrorMessage(cancelMessage);
+                        comboToFile.setFocus();
+                    } else if (errorId == MemberCopyError.ERROR_TO_FILE_DATA_LOST) {
+                        setErrorMessage(cancelMessage);
                         comboToFile.setFocus();
                     }
 
-                    setControlEnablement();
-
                 } else {
-                    setErrorMessage(null);
-                    copyMemberService.execute();
+                    if (isCanceled) {
+                        setErrorMessage(Messages.Operation_has_been_canceled_by_the_user);
+                        comboToFile.setFocus();
+                    } else {
+                        setErrorMessage(null);
+                        copyMemberService.execute();
+                    }
                 }
 
                 return Status.OK_STATUS;
@@ -756,10 +874,13 @@ public class CopyMemberDialog extends XDialog implements IValidateMembersPostRun
         private String getErrorMessage(CopyMemberItem member) {
             if (member.isCopied()) {
                 return Messages.C_O_P_I_E_D;
-            } else if (!StringHelper.isNullOrEmpty(member.getErrorMessage())) {
-                return member.getErrorMessage();
             } else {
-                return Messages.EMPTY;
+                String errorMessage = member.getErrorMessage();
+                if (!StringHelper.isNullOrEmpty(errorMessage)) {
+                    return errorMessage.replaceAll("\n", " :: "); //$NON-NLS-1$ //$NON-NLS-2$
+                } else {
+                    return Messages.EMPTY;
+                }
             }
         }
     }

@@ -22,6 +22,7 @@ import com.ibm.as400.access.AS400;
 import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
 import biz.isphere.core.sourcemembercopy.CopyMemberItem;
 import biz.isphere.core.sourcemembercopy.ICopyMembersPostRun;
+import biz.isphere.core.sourcemembercopy.MemberCopyError;
 
 /**
  * This class copies a given list of members to another library, file or member
@@ -37,6 +38,11 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     private String toFile;
     private SortedSet<CopyMemberItem> members;
     private ExistingMemberAction existingMemberAction;
+    private MissingFileAction missingFileAction;
+    private boolean isIgnoreDataLostError;
+    private boolean isIgnoreUnsavedChangesError;
+    private boolean isFullErrorCheck;
+    private boolean isRenameMemberCheck;
 
     private Set<String> fromLibraryNames = new HashSet<String>();
     private Set<String> fromFileNames = new HashSet<String>();
@@ -56,10 +62,35 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
         this.toFile = null;
         this.members = new TreeSet<CopyMemberItem>();
         this.existingMemberAction = ExistingMemberAction.ERROR;
+        this.missingFileAction = MissingFileAction.ERROR;
+        this.isIgnoreDataLostError = false;
+        this.isIgnoreUnsavedChangesError = false;
+        this.isFullErrorCheck = false;
+        this.isRenameMemberCheck = true;
+    }
+
+    public void setMissingFileAction(MissingFileAction missingFileAction) {
+        this.missingFileAction = missingFileAction;
     }
 
     public void setExistingMemberAction(ExistingMemberAction action) {
         this.existingMemberAction = action;
+    }
+
+    public void setIgnoreDataLostError(boolean enabled) {
+        this.isIgnoreDataLostError = enabled;
+    }
+
+    public void setIgnoreUnsavedChanges(boolean enabled) {
+        this.isIgnoreUnsavedChangesError = enabled;
+    }
+
+    public void setFullErrorCheck(boolean enabled) {
+        this.isFullErrorCheck = enabled;
+    }
+
+    public void setRenameMemberCheck(boolean enabled) {
+        this.isRenameMemberCheck = enabled;
     }
 
     public CopyMemberItem addItem(String file, String library, String member, String srcType) {
@@ -188,18 +219,24 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
 
         notifyModifiedListeners(null);
 
-        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members.toArray(new CopyMemberItem[members.size()]),
-            existingMemberAction, this);
+        copyMembersJob = new CopyMembersJob(fromConnectionName, toConnectionName, members.toArray(new CopyMemberItem[members.size()]), this);
+        copyMembersJob.setExistingMemberAction(existingMemberAction);
+        copyMembersJob.setMissingFileAction(missingFileAction);
+        copyMembersJob.setIgnoreDataLostError(isIgnoreDataLostError);
+        copyMembersJob.setIgnoreUnsavedChanges(isIgnoreUnsavedChangesError);
+        copyMembersJob.setFullErrorCheck(isFullErrorCheck);
+        copyMembersJob.setRenameMemberCheck(isRenameMemberCheck);
         copyMembersJob.schedule();
     }
 
-    public void returnResult(boolean isError, int countMembersCopied, long averageTime) {
-
-        isCanceled = copyMembersJob.isCanceled();
+    public void returnCopyMembersResult(boolean isCanceled, int countTotal, int countSkipped, int countCopied, int countErrors, long averageTime,
+        MemberCopyError errorId, String cancelMessage) {
 
         this.copyMembersJob = null;
 
-        this.copiedCount = this.copiedCount + countMembersCopied;
+        this.isCanceled = isCanceled;
+
+        this.copiedCount = this.copiedCount + countCopied;
 
         if (isCanceled && !hasItemsToCopy()) {
             isCanceled = false;
@@ -211,7 +248,7 @@ public class CopyMemberService implements CopyMemberItem.ModifiedListener, ICopy
     public boolean isActive() {
 
         if (copyMembersJob != null) {
-            return copyMembersJob.isActive();
+            return true;
         }
 
         return false;

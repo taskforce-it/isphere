@@ -93,6 +93,21 @@ public class RemoteObject {
         return description;
     }
 
+    public String getQSYSName() {
+
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(library);
+
+        if (!ISeries.LIB.equals(objectType)) {
+            buffer.append(library);
+            buffer.append("/"); //$NON-NLS-1$
+            buffer.append(name);
+        }
+
+        return buffer.toString();
+    }
+
     public String getQualifiedObject() {
         return library + "/" + name + " (" + objectType + ")";
     }

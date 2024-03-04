@@ -29,40 +29,43 @@ public class TableSorter extends ViewerSorter {
         MemberCompareItem item2 = (MemberCompareItem)e2;
 
         int rc;
-
-        if (item1 == null) {
+        if (item1 == null && item2 == null) {
+            rc = 0;
+        } else if (item1 == null) {
             rc = -1;
         } else if (item2 == null) {
             rc = 1;
         } else {
+
             MemberDescription description1;
             MemberDescription description2;
             if (mode == SyncMbrMode.LEFT_SYSTEM) {
-                description1 = item1.getLeftMemberDescription();
-                description2 = item2.getLeftMemberDescription();
+                description1 = getSortMemberDescription(item1.getLeftMemberDescription(), item1.getRightMemberDescription());
+                description2 = getSortMemberDescription(item2.getLeftMemberDescription(), item2.getRightMemberDescription());
             } else {
-                description1 = item1.getRightMemberDescription();
-                description2 = item2.getRightMemberDescription();
+                description1 = getSortMemberDescription(item1.getRightMemberDescription(), item1.getLeftMemberDescription());
+                description2 = getSortMemberDescription(item2.getRightMemberDescription(), item2.getLeftMemberDescription());
             }
 
-            if (description1 == null) {
-                rc = -1;
-            } else if (description2 == null) {
-                rc = 1;
-            } else {
-                rc = description1.getLibraryName().compareTo(description2.getLibraryName());
+            // Library name must be ignored
+            rc = description1.getFileName().compareTo(description2.getFileName());
+            if (rc == 0) {
+                rc = description1.getMemberName().compareTo(description2.getMemberName());
                 if (rc == 0) {
-                    rc = description1.getFileName().compareTo(description2.getFileName());
-                    if (rc == 0) {
-                        rc = description1.getMemberName().compareTo(description2.getMemberName());
-                        if (rc == 0) {
-                            rc = description1.getSourceType().compareTo(description2.getSourceType());
-                        }
-                    }
+                    rc = description1.getSourceType().compareTo(description2.getSourceType());
                 }
             }
+            // }
+            // }
         }
 
         return rc;
+    }
+
+    private MemberDescription getSortMemberDescription(MemberDescription value, MemberDescription defaultValue) {
+        if (value == null) {
+            value = defaultValue;
+        }
+        return value;
     }
 }

@@ -68,12 +68,11 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
 
     public void setLeftMemberDescription(MemberDescription memberDescription) {
 
-        if (memberDescription == null) {
-            return;
-        }
-
-        if (memberName != null && memberDescription != null && !memberName.equals(memberDescription.getMemberName())) {
-            throw new IllegalArgumentException("Illegal message ID: " + memberDescription.getMemberName()); //$NON-NLS-1$
+        if (memberDescription != null) {
+            String newMemberName = memberDescription.getMemberName();
+            if (memberName != null && !memberName.equals(newMemberName)) {
+                throw new IllegalArgumentException("New left member name '" + newMemberName + "' does not match member name: " + memberName); //$NON-NLS-1$
+            }
         }
 
         this.leftMemberDescription = memberDescription;
@@ -104,8 +103,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
         if (memberDescription != null) {
             String newMemberName = memberDescription.getMemberName();
             if (memberName != null && !memberName.equals(newMemberName)) {
-                throw new IllegalArgumentException(
-                    "Member name of member description (" + newMemberName + ") does not match member name: " + memberName); //$NON-NLS-1$
+                throw new IllegalArgumentException("New right member name '" + newMemberName + "' does not match member name: " + memberName); //$NON-NLS-1$
             }
         }
 
@@ -140,7 +138,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
     }
 
     public int getOriginalCompareStatus(CompareOptions compareOptions) {
-        if (oldOverridenCompareStatus != 0) {
+        if (oldOverridenCompareStatus != OVERRIDE_STATUS_NULL) {
             return oldOverridenCompareStatus;
         }
         return getCompareStatus(compareOptions);
@@ -171,16 +169,20 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
         clearErrorStatus();
     }
 
-    public void setErrorStatus(String errorMessage) {
+    public void setErrorStatus(String errorMessage, CompareOptions compareOptions) {
 
-        if (this.oldOverridenCompareStatus != 0) {
-            throw new IllegalArgumentException("Error status not set: overridenCompareStatus <> 0");
+        if (this.oldOverridenCompareStatus != OVERRIDE_STATUS_NULL) {
+            throw new IllegalArgumentException("Error status not set: overridenCompareStatus <> -1");
         }
 
         if (StringHelper.isNullOrEmpty(errorMessage)) {
             clearErrorStatus();
         } else {
-            this.oldOverridenCompareStatus = overridenCompareStatus;
+            if (overridenCompareStatus != OVERRIDE_STATUS_NULL) {
+                this.oldOverridenCompareStatus = overridenCompareStatus;
+            } else {
+                this.oldOverridenCompareStatus = getCompareStatus(compareOptions);
+            }
             this.overridenCompareStatus = ERROR;
             this.errorMessage = errorMessage;
         }
@@ -203,7 +205,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
 
         this.errorMessage = null;
         this.overridenCompareStatus = oldOverridenCompareStatus;
-        this.oldOverridenCompareStatus = 0;
+        this.oldOverridenCompareStatus = OVERRIDE_STATUS_NULL;
     }
 
     public void setCompareStatus(int status, CompareOptions compareOptions) {
@@ -221,6 +223,7 @@ public class MemberCompareItem implements Comparable<MemberCompareItem>, IAdapta
 
     public void clearCompareStatus() {
         overridenCompareStatus = OVERRIDE_STATUS_NULL;
+        oldOverridenCompareStatus = OVERRIDE_STATUS_NULL;
     }
 
     public boolean isSingle() {

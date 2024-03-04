@@ -11,6 +11,7 @@ package biz.isphere.rse.internal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.rse.services.clientserver.messages.SystemMessageException;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -39,22 +40,19 @@ public class Editor implements IEditor {
 
     public void openEditor(String connectionName, String library, String file, String member, int statement, String mode) {
 
-        IBMiConnection _connection = ConnectionManager.getIBMiConnection(connectionName);
-
         try {
 
-            IQSYSMember _member = _connection.getMember(library, file, member, null);
-            if (_member != null) {
+            QSYSEditableRemoteSourceFileMember mbr = getEditableMember(connectionName, library, file, member);
+            if (mbr != null) {
 
                 String editor = "com.ibm.etools.systems.editor";
 
-                QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
                 if (statement == 0 && !isOpenInEditor(mbr)) {
 
                     String _editor = null;
-                    if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
+                    if (mbr.getMember().getType().equals("DSPF") || mbr.getMember().getType().equals("MNUDDS")) {
                         _editor = "Screen Designer";
-                    } else if (_member.getType().equals("PRTF")) {
+                    } else if (mbr.getMember().getType().equals("PRTF")) {
                         _editor = "Report Designer";
                     }
 
@@ -68,9 +66,9 @@ public class Editor implements IEditor {
                         final int dialogResult = dialog.open();
                         if (dialogResult == 0) {
 
-                            if (_member.getType().equals("DSPF") || _member.getType().equals("MNUDDS")) {
+                            if (mbr.getMember().getType().equals("DSPF") || mbr.getMember().getType().equals("MNUDDS")) {
                                 editor = "com.ibm.etools.iseries.dds.tui.editor.ScreenDesigner";
-                            } else if (_member.getType().equals("PRTF")) {
+                            } else if (mbr.getMember().getType().equals("PRTF")) {
                                 editor = "com.ibm.etools.iseries.dds.tui.editor.ReportDesigner";
                             }
 
@@ -121,11 +119,41 @@ public class Editor implements IEditor {
 
     }
 
+    public IEditorPart findEditorPart(String connectionName, String libraryName, String fileName, String memberName) {
+
+        try {
+            QSYSEditableRemoteSourceFileMember mbr = getEditableMember(connectionName, libraryName, fileName, memberName);
+            return findEditorPart(mbr);
+        } catch (Throwable e) {
+            ISpherePlugin.logError("Failed to find Lpex editor.", e); //$NON-NLS-1$
+        }
+
+        return null;
+    }
+
+    private QSYSEditableRemoteSourceFileMember getEditableMember(String connectionName, String libraryName, String fileName, String memberName)
+        throws SystemMessageException, InterruptedException {
+
+        IBMiConnection _connection = ConnectionManager.getIBMiConnection(connectionName);
+
+        IQSYSMember _member = _connection.getMember(libraryName, fileName, memberName, null);
+        if (_member != null) {
+            QSYSEditableRemoteSourceFileMember mbr = new QSYSEditableRemoteSourceFileMember(_member);
+            return mbr;
+        }
+
+        return null;
+    }
+
     private boolean isOpenInEditor(QSYSEditableRemoteSourceFileMember mbr) throws CoreException {
         return !(mbr.checkOpenInEditor() == -1);
     }
 
     private IEditorPart findEditorPart(QSYSEditableRemoteSourceFileMember member) {
+
+        if (member == null) {
+            return null;
+        }
 
         IFile localFileResource = member.getLocalResource();
         if (localFileResource == null) {

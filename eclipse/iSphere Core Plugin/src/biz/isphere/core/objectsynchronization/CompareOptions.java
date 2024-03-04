@@ -22,7 +22,7 @@ public class CompareOptions implements Serializable {
     private String memberFilter;
 
     public CompareOptions() {
-        this(false, false, "*");
+        this(false, false, "*"); //$NON-NLS-1$
     }
 
     public CompareOptions(boolean rtnChgOnly, boolean ignoreDate, String memberFilter) {

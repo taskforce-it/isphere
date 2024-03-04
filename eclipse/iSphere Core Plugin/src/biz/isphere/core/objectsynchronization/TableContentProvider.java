@@ -49,16 +49,20 @@ public class TableContentProvider implements IStructuredContentProvider {
 
         if (editorInput != null) {
 
+            boolean isFileSynchronization = editorInput.isFileSynchronization();
+
             for (MemberDescription leftMemberDescription : editorInput.getLeftMemberDescriptions()) {
-                compareItems.put(leftMemberDescription.getMemberName(), new MemberCompareItem(leftMemberDescription, null));
+                String key = produceKey(isFileSynchronization, leftMemberDescription);
+                compareItems.put(key, new MemberCompareItem(leftMemberDescription, null));
             }
 
             for (MemberDescription rightMemberDescription : editorInput.getRightMemberDescriptions()) {
-                MemberCompareItem item = compareItems.get(rightMemberDescription.getMemberName());
-                if (item == null) {
-                    compareItems.put(rightMemberDescription.getMemberName(), new MemberCompareItem(null, rightMemberDescription));
+                String key = produceKey(isFileSynchronization, rightMemberDescription);
+                MemberCompareItem compareItem = compareItems.get(key);
+                if (compareItem != null) {
+                    compareItem.setRightMemberDescription(rightMemberDescription);
                 } else {
-                    item.setRightMemberDescription(rightMemberDescription);
+                    compareItems.put(key, new MemberCompareItem(null, rightMemberDescription));
                 }
             }
         }
@@ -67,6 +71,14 @@ public class TableContentProvider implements IStructuredContentProvider {
         Arrays.sort(compareItemsArray);
 
         return compareItemsArray;
+    }
+
+    private String produceKey(boolean isFileSynchronization, MemberDescription memberDescription) {
+        if (isFileSynchronization) {
+            return memberDescription.getMemberName();
+        } else {
+            return String.format("%s.%s", memberDescription.getFileName(), memberDescription.getMemberName()); //$NON-NLS-1$
+        }
     }
 
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

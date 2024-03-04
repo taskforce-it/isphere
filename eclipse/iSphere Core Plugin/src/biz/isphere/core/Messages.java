@@ -174,6 +174,8 @@ public class Messages extends NLS {
 
     public static String Mode;
 
+    public static String Selection;
+
     public static String Multiple_selection;
 
     public static String New;
@@ -1308,8 +1310,6 @@ public class Messages extends NLS {
 
     public static String Copying_dots;
 
-    public static String Copying_A_B_of_C;
-
     public static String Go_to_location_headline;
 
     public static String Hex_label;
@@ -1696,6 +1696,8 @@ public class Messages extends NLS {
 
     public static String Operation_has_been_canceled_by_the_user;
 
+    public static String Operation_has_been_canceled_Reason_A;
+
     public static String Operation_in_progress_Cannot_close_dialog;
 
     public static String OpenAs;
@@ -1826,6 +1828,8 @@ public class Messages extends NLS {
 
     public static String Right_source_file_or_library_is_missing;
 
+    public static String No_items_selected_for_processing;
+
     public static String Tooltip_start_compare_source_members;
 
     public static String Tooltip_start_synchronize_source_members;
@@ -1849,6 +1853,14 @@ public class Messages extends NLS {
     public static String Property_Left_unequal_right;
 
     public static String Errors_only;
+
+    public static String Could_not_copy_A_members_due_to_errors;
+
+    public static String Successfully_copied_A_members;
+
+    public static String A_members_copied_B_members_not_copied_due_to_errors;
+
+    public static String Other;
 
     /*
      * Warning messages
