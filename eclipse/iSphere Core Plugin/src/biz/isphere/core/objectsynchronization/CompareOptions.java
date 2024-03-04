@@ -17,26 +17,16 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class CompareOptions implements Serializable {
 
-    private boolean isRtnChgOnly;
     private boolean isIgnoreDate;
     private String memberFilter;
 
     public CompareOptions() {
-        this(false, false, "*"); //$NON-NLS-1$
+        this(false, "*"); //$NON-NLS-1$
     }
 
-    public CompareOptions(boolean rtnChgOnly, boolean ignoreDate, String memberFilter) {
-        this.isRtnChgOnly = rtnChgOnly;
+    public CompareOptions(boolean ignoreDate, String memberFilter) {
         this.isIgnoreDate = ignoreDate;
         this.memberFilter = memberFilter;
-    }
-
-    public boolean isRtnChgOnly() {
-        return isRtnChgOnly;
-    }
-
-    public void setRtnChgOnly(boolean isRtnChgOnly) {
-        this.isRtnChgOnly = isRtnChgOnly;
     }
 
     public boolean isIgnoreDate() {

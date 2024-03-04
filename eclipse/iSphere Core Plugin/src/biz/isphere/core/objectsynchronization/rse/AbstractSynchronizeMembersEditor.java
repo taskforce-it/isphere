@@ -157,7 +157,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private Button btnDuplicates;
     private Button btnSingles;
 
-    private Button chkRtnChgOnly;
     private Button chkIgnoreDate;
 
     private Group existingMembersActionGroup;
@@ -368,9 +367,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         chkIgnoreDate = WidgetFactory.createCheckbox(area, Messages.Label_Ignore_date);
         chkIgnoreDate.setToolTipText(Messages.Tooltip_Ignore_date);
-
-        chkRtnChgOnly = WidgetFactory.createCheckbox(area, Messages.Label_Return_changed_only);
-        chkRtnChgOnly.setToolTipText(Messages.Tooltip_Return_changed_only);
     }
 
     private void createFilterOptionsArea(Composite parent) {
@@ -1022,7 +1018,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private void loadScreenValues() {
 
         chkIgnoreDate.setSelection(dialogSettingsManager.loadBooleanValue(CHKBOX_IGNORE_DATE, false));
-        chkRtnChgOnly.setSelection(dialogSettingsManager.loadBooleanValue(CHKBOX_RTN_CHG_ONLY, false));
 
         btnCopyLeft.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COPY_LEFT, true));
         btnCopyRight.setSelection(dialogSettingsManager.loadBooleanValue(BUTTON_COPY_RIGHT, true));
@@ -1054,7 +1049,6 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
     private void storeScreenValues() {
 
         dialogSettingsManager.storeValue(CHKBOX_IGNORE_DATE, chkIgnoreDate.getSelection());
-        dialogSettingsManager.storeValue(CHKBOX_RTN_CHG_ONLY, chkRtnChgOnly.getSelection());
 
         dialogSettingsManager.storeValue(BUTTON_COPY_LEFT, btnCopyLeft.getSelection());
         dialogSettingsManager.storeValue(BUTTON_COPY_RIGHT, btnCopyRight.getSelection());
@@ -1232,11 +1226,9 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
         CompareOptions compareOptions = sharedValues.getCompareOptions();
 
-        boolean rtnChgOnly = chkRtnChgOnly.getSelection();
         boolean ignoreDate = chkIgnoreDate.getSelection();
         String memberFilter = cboMemberFilter.getText();
 
-        compareOptions.setRtnChgOnly(rtnChgOnly);
         compareOptions.setIgnoreDate(ignoreDate);
         compareOptions.setMemberFilter(memberFilter);
 

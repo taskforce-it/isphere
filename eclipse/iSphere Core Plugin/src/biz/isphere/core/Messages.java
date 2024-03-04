@@ -1802,10 +1802,6 @@ public class Messages extends NLS {
 
     public static String Tooltip_Ignore_date;
 
-    public static String Label_Return_changed_only;
-
-    public static String Tooltip_Return_changed_only;
-
     public static String Source_Type;
 
     public static String Source_Type_colon;
