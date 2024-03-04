@@ -33,8 +33,8 @@
 //          >>PARM<<  DBGVIEW(*NONE);
 //          >>PARM<<  RPGPPOPT(*LVL2);
 //          >>PARM<<  OPTION(*EVENTF);
-//          --PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
-//          >>PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
+//          >>PARM<<  COMPILEOPT('OPTIMIZE(*FULL)');
+//          --PARM<<  COMPILEOPT('OPTIMIZE(*NONE) DBGVIEW(*LIST)');
 //        >>END-COMPILE<<
 //        >>EXECUTE<<
 //    >>END-PRE-COMPILER<<
@@ -781,7 +781,7 @@ dcl-proc resolveGenericMembers;
 
             // Append record to work file.
             checkSum = calculateChecksum(buildPath(MBRDFileLib: MBRDFile: MBRDMbr));
-            lastChanged = cvtApiTimestampToRpg(MBRDChgTime);
+            lastChanged = cvtApiTimestampToRpg(MBRDChgDate);
 
             select;
             when (i_mode = MODE_LEFT);
@@ -920,7 +920,7 @@ dcl-proc calculateChecksum;
 
   // ----------------------------------------------------------------------------------------
 
-  opnFlags = %bitor(O_SHARE_RDONLY: O_RDONLY);
+  opnFlags = %bitor(O_SHARE_RDWR: O_RDONLY);
 
   hFile = open(%trimr(i_path): opnFlags);
   if (hFile <> -1);
