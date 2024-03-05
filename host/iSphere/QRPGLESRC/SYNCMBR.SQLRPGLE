@@ -583,11 +583,11 @@ dcl-proc resolveGenericMembers;
   dcl-s numFilters int(10);
   dcl-ds nameTypeFilter qualified dim(50) inz;
     isNegated  ind;
-    name       char(10);
-    srcType    char(10);
+    name       varchar(10);
+    srcType    varchar(10);
   end-ds;
 
-  dcl-s parts char(10) dim(2);
+  dcl-s parts varchar(10) dim(2);
 
   dcl-s regexFilter varchar(1024);
 
@@ -595,6 +595,8 @@ dcl-proc resolveGenericMembers;
   dcl-s isNegated ind;
   dcl-s isFound ind;
   dcl-s cancel char(10);
+  dcl-s fullMemberName varchar(21);
+  dcl-s memberNameMask varchar(21);
 
   // ----------------------------------------------------------------------------------------
 
@@ -603,35 +605,38 @@ dcl-proc resolveGenericMembers;
     regexFilter = i_memberFilter;
   else;
     numFilters = 0;
+    isNegated = *off;
     for-each filterItem in %split(i_memberFilter: FILTER_DELIMITER_CHARS);
 
-      if (startsWith('!': filterItem));
+      // Starting with a pipe (|) all following
+      // entries are negated.
+      if (startsWith('|': filterItem));
         if (%len(filterItem) >= 2);
           filterItem = %subst(filterItem: 2);
         else;
           filterItem = '';
         endif;
         isNegated = *on;
-      else;
-        isNegated = *off;
       endif;
 
       if (filterItem = '');
         filterItem = '*.*';
       endif;
 
+      // First idea was to induvidially compare name and source type.
+      // There the name and source type were stored separately.
       if (%len(%trim(filterItem)) > 0);
         parts = %split(filterItem: '.'); // = name.type
         if (parts(1) <> '' or parts(2) <> '' );
           numFilters += 1;
           nameTypeFilter(numFilters).isNegated = isNegated;
           if (parts(1) <> '');
-            nameTypeFilter(numFilters).name = ucase(parts(1));
+            nameTypeFilter(numFilters).name = %trim(ucase(parts(1)));
           else;
             nameTypeFilter(numFilters).name = '*';
           endif;
           if (parts(2) <> '');
-            nameTypeFilter(numFilters).srcType = ucase(parts(2));
+            nameTypeFilter(numFilters).srcType = %trim(ucase(parts(2)));
           else;
             nameTypeFilter(numFilters).srcType = '*';
           endif;
@@ -776,38 +781,52 @@ dcl-proc resolveGenericMembers;
             endif;
 
             // Test filters: member name and source type
-            if (isNegated);
-              isFound = *off;
-            else;
-              isFound = *on;
+            // The code for comparing name and source type separately
+            // looked pretty ugly and complicated. Therefore name and
+            // source type are compared together and without any
+            // optimization regarding to '*.*'.
+            // Let's check performance before any optimization.
+            fullMemberName = %trim(MBRDMbr) + '.' + %trim(MBRDSrcTyp);
+
+            // Check non-negated patterns:
+            isFound = *off;
+            for i = 1 to numFilters;
+              if (nameTypeFilter(i).isNegated);
+                iter;
+              endif;
+
+              memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+
+              if (nameTypeFilter(i).isNegated);
+                isFound = not (matches(memberNameMask: fullMemberName));
+              else;
+                isFound = matches(memberNameMask: fullMemberName);
+              endif;
+
+              if (isFound);
+                leave;
+              endif;
+            endfor;
+
+            if (not isFound);
+              iter;
             endif;
 
+            // Check negated patterns:
             for i = 1 to numFilters;
-
-              // Check name filter
-              if (nameTypeFilter(i).name <> '*');
-                if (isNegated);
-                  isFound = not matches(nameTypeFilter(i).name: MBRDMbr);
-                else;
-                  isFound = matches(nameTypeFilter(i).name: MBRDMbr);
-                endif;
+              if (not nameTypeFilter(i).isNegated);
+                iter;
               endif;
 
-              // Check source type filter
+              memberNameMask = nameTypeFilter(i).name + '.' + nameTypeFilter(i).srcType;
+
+              if (nameTypeFilter(i).isNegated);
+                isFound = not (matches(memberNameMask: fullMemberName));
+              else;
+                isFound = matches(memberNameMask: fullMemberName);
+              endif;
+
               if (isFound);
-                if (nameTypeFilter(i).srcType <> '*');
-                  if (isNegated);
-                    isFound = not matches(nameTypeFilter(i).srcType: MBRDSrcTyp);
-                  else;
-                    isFound = matches(nameTypeFilter(i).srcType: MBRDSrcTyp);
-                  endif;
-                  if (not isFound);
-                    leave;
-                  endif;
-                endif;
-              endif;
-
-              if (not isFound);
                 leave;
               endif;
             endfor;
