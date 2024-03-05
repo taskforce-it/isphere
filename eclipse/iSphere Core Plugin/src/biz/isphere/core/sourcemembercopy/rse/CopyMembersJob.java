@@ -187,8 +187,6 @@ public class CopyMembersJob extends Job {
 
                 copyResult.addTotal();
 
-                Thread.sleep(125);
-
                 subMonitor.worked(1);
 
                 if (member.isCopied()) {
