@@ -63,9 +63,19 @@
     <p>
         <img src="assets/synchronize_members_editor_selected.png" align="middle">
     <p>In case you want to exclude members by name and/or type, you can negate
-       the selection mask by a preceding &quot;!&quot; (exclamation mark):
+       the selection mask by a preceding &quot;|&quot; (pipe symbol):
     <p>
         <img src="assets/filter_mask_negated.png" align="middle">
+    <p>You can add multiple patterns separated by a space, comma or semicolon, for
+    example: 
+    <pre class="codeIndent">
+    <b>*.rpgle, *.clle</b>.
+    </pre>
+    <p>Patterns can be negated by preceding a pipe symbol (|). All patterns following
+       the pipe symbol are considered negated, for example:
+    <pre class="codeIndent">
+    <b>*.rpgle, |demo*.*</b>.
+    </pre>
 
     <h3>Starting Comparison</h3>
     <p>Once there is a source file or library in both sides and after having set
