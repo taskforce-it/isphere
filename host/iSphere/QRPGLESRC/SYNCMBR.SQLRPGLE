@@ -581,9 +581,10 @@ dcl-proc resolveGenericMembers;
   dcl-s filterItem varchar(21); // = name.type
 
   dcl-s numFilters int(10);
-  dcl-ds nameTypeFilter qualified dim(50);
-    name    char(10);
-    srcType char(10);
+  dcl-ds nameTypeFilter qualified dim(50) inz;
+    isNegated  ind;
+    name       char(10);
+    srcType    char(10);
   end-ds;
 
   dcl-s parts char(10) dim(2);
@@ -591,21 +592,39 @@ dcl-proc resolveGenericMembers;
   dcl-s regexFilter varchar(1024);
 
   dcl-s i int(10);
+  dcl-s isNegated ind;
   dcl-s isFound ind;
   dcl-s cancel char(10);
 
   // ----------------------------------------------------------------------------------------
 
-  if (startsWith('!': i_memberFilter));
+  if (startsWith('<': i_memberFilter));
     // TODO: implement regex filter
     regexFilter = i_memberFilter;
   else;
     numFilters = 0;
     for-each filterItem in %split(i_memberFilter: FILTER_DELIMITER_CHARS);
+
+      if (startsWith('!': filterItem));
+        if (%len(filterItem) >= 2);
+          filterItem = %subst(filterItem: 2);
+        else;
+          filterItem = '';
+        endif;
+        isNegated = *on;
+      else;
+        isNegated = *off;
+      endif;
+
+      if (filterItem = '');
+        filterItem = '*.*';
+      endif;
+
       if (%len(%trim(filterItem)) > 0);
         parts = %split(filterItem: '.'); // = name.type
         if (parts(1) <> '' or parts(2) <> '' );
           numFilters += 1;
+          nameTypeFilter(numFilters).isNegated = isNegated;
           if (parts(1) <> '');
             nameTypeFilter(numFilters).name = ucase(parts(1));
           else;
@@ -757,21 +776,39 @@ dcl-proc resolveGenericMembers;
             endif;
 
             // Test filters: member name and source type
-            isFound = *on;
+            if (isNegated);
+              isFound = *off;
+            else;
+              isFound = *on;
+            endif;
+
             for i = 1 to numFilters;
+
               // Check name filter
               if (nameTypeFilter(i).name <> '*');
-                if (not matches(nameTypeFilter(i).name: MBRDMbr));
-                  isFound = *off;
-                  leave;
+                if (isNegated);
+                  isFound = not matches(nameTypeFilter(i).name: MBRDMbr);
+                else;
+                  isFound = matches(nameTypeFilter(i).name: MBRDMbr);
                 endif;
               endif;
+
               // Check source type filter
-              if (nameTypeFilter(i).srcType <> '*');
-                if (not matches(nameTypeFilter(i).srcType: MBRDSrcTyp));
-                  isFound = *off;
-                  leave;
+              if (isFound);
+                if (nameTypeFilter(i).srcType <> '*');
+                  if (isNegated);
+                    isFound = not matches(nameTypeFilter(i).srcType: MBRDSrcTyp);
+                  else;
+                    isFound = matches(nameTypeFilter(i).srcType: MBRDSrcTyp);
+                  endif;
+                  if (not isFound);
+                    leave;
+                  endif;
                 endif;
+              endif;
+
+              if (not isFound);
+                leave;
               endif;
             endfor;
 
