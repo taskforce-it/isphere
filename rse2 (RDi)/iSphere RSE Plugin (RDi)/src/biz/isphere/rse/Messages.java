@@ -180,6 +180,8 @@ public class Messages extends NLS {
 
     public static String Search_argument_to_long_The_maximum_length_of_the_search_argument_is_A_characters;
 
+    public static String Invalid_selection_Objects_must_be_of_the_same_type;
+
     static {
         // initialize resource bundle
         NLS.initializeMessages(BUNDLE_NAME, Messages.class);

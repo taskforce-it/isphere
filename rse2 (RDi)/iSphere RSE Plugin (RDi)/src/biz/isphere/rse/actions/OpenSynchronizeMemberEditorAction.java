@@ -99,7 +99,7 @@ public class OpenSynchronizeMemberEditorAction implements IObjectActionDelegate 
                     firstSelectedObject = object;
                 } else {
                     if (!firstSelectedObject.getClass().equals(object.getClass())) {
-                        MessageDialog.openError(shell, Messages.E_R_R_O_R, "Invalid selection. Objects must be of the same type.");
+                        MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Invalid_selection_Objects_must_be_of_the_same_type);
                         return false;
                     }
                 }

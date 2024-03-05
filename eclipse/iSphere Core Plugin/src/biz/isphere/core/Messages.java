@@ -1858,6 +1858,8 @@ public class Messages extends NLS {
 
     public static String Other;
 
+    public static String Invalid_selection_Objects_must_be_of_the_same_type;
+
     /*
      * Warning messages
      */

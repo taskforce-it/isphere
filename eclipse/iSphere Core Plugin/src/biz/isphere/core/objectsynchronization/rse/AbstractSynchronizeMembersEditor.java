@@ -1174,6 +1174,11 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             return;
         }
 
+        if (!editorInput.getLeftObject().getClass().equals(editorInput.getRightObject().getClass())) {
+            MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Invalid_selection_Objects_must_be_of_the_same_type);
+            return;
+        }
+
         if (editorInput.getLeftObjectName().equals(editorInput.getRightObjectName())) {
             MessageDialog dialog = new MessageDialog(getShell(), Messages.Warning, null, Messages.Warning_Both_sides_show_the_same_source_members,
                 MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);

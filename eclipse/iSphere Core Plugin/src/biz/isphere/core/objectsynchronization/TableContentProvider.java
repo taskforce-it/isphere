@@ -81,6 +81,9 @@ public class TableContentProvider implements IStructuredContentProvider {
         }
     }
 
+    public void dispose() {
+    }
+
     public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 
         editorInput = (SynchronizeMembersEditorInput)newInput;

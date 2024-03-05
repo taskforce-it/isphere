@@ -144,7 +144,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
             } else {
                 progress = SubMonitor.convert(monitor).setWorkRemaining(totalMembers * 2);
 
-                SubMonitor subMonitorValidate = progress.split(totalMembers).setWorkRemaining(totalMembers);
+                SubMonitor subMonitorValidate = progress.newChild(totalMembers).setWorkRemaining(totalMembers);
 
                 if (leftFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
                     validateFileSync(subMonitorValidate, toLeftMembers, toRightMembers);
@@ -160,7 +160,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
 
             }
 
-            SubMonitor subMonitorCopy = progress.split(totalMembers).setWorkRemaining(totalMembers);
+            SubMonitor subMonitorCopy = progress.newChild(totalMembers).setWorkRemaining(totalMembers);
 
             if (leftFileOrLibrary.getObjectType().equals(ISeries.FILE)) {
                 copyFileSync(subMonitorCopy, toLeftMembers, toRightMembers);
@@ -200,7 +200,7 @@ public class SynchronizeMembersJob extends Job implements ICancelableJob, IValid
     }
 
     private SubMonitor getSubMonitor(SubMonitor subMonitor, int partialLength) {
-        SubMonitor partialSubMonitor = subMonitor.split(partialLength).setWorkRemaining(partialLength);
+        SubMonitor partialSubMonitor = subMonitor.newChild(partialLength).setWorkRemaining(partialLength);
         return partialSubMonitor;
     }
 

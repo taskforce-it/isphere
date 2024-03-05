@@ -159,7 +159,7 @@ public abstract class AbstractCompareMembersJob {
         }
 
         if (!subMonitor.isCanceled()) {
-            subMonitor = subMonitor.split(numSubTasks);
+            subMonitor = subMonitor.newChild(numSubTasks);
         }
 
         return subMonitor;
@@ -173,7 +173,7 @@ public abstract class AbstractCompareMembersJob {
 
         subMonitor.setTaskName(subTaskName);
         if (!subMonitor.isCanceled()) {
-            subMonitor.setWorkRemaining(100).split(100 / getNumWorkItems());
+            subMonitor.worked(1);
         }
     }
 
