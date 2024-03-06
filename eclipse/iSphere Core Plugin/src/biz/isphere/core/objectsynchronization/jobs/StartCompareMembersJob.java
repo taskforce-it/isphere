@@ -12,6 +12,7 @@ import java.sql.Statement;
 
 import org.eclipse.core.runtime.SubMonitor;
 
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.Messages;
 import biz.isphere.core.internal.ISeries;
@@ -204,11 +205,7 @@ public class StartCompareMembersJob extends AbstractCompareMembersJob {
     protected boolean isSameSystem() {
 
         boolean isSameSystem;
-        // TODO: fix compare to getSystemName()
-        //@formatter:off
-        // if (leftObject.getSystem().getSystemName().equals(rightObject.getSystem().getSystemName())) {
-        //@formatter:on
-        if (leftObject.getConnectionName().equals(rightObject.getConnectionName())) {
+        if (IBMiHelper.isSameSystem(leftObject.getSystem(), rightObject.getSystem())) {
             isSameSystem = true;
         } else {
             isSameSystem = false;

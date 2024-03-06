@@ -15,6 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 
+import com.ibm.as400.access.AS400;
+
 public final class IBMiHelper {
 
     private static final SimpleDateFormat cyymmddFormatter = new SimpleDateFormat("yyyyMMdd");
@@ -23,6 +25,15 @@ public final class IBMiHelper {
     private static final SimpleDateFormat ddmmyyFormatter = new SimpleDateFormat("ddMMyy");
     private static final SimpleDateFormat mmddyyFormatter = new SimpleDateFormat("MMddyy");
     private static final SimpleDateFormat julianFormatter = new SimpleDateFormat("yyDDD");
+
+    public static boolean isSameSystem(AS400 system1, AS400 system2) {
+
+        if (system1.getSystemName().equals(system2.getSystemName())) {
+            return true;
+        }
+
+        return false;
+    }
 
     public static String quote(String text) {
 

@@ -13,6 +13,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import biz.isphere.base.internal.IBMiHelper;
 import biz.isphere.base.internal.StringHelper;
 import biz.isphere.core.ISpherePlugin;
 import biz.isphere.core.externalapi.ISynchronizeMembersEditorConfiguration;
@@ -57,7 +58,7 @@ public class SynchronizeMembersEditorInput implements IEditorInput {
             return false;
         }
 
-        if (!leftRemoteObject.getSystem().getSystemName().equals(rightRemoteObject.getSystem().getSystemName())) {
+        if (!IBMiHelper.isSameSystem(leftRemoteObject.getSystem(), rightRemoteObject.getSystem())) {
             return false;
         }
 
