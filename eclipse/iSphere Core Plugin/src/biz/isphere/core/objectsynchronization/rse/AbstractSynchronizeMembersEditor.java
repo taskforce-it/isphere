@@ -1708,13 +1708,18 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
 
             if (isSynchronizationEnabled()) {
 
-                if (chkCompareAfterSync.getSelection()) {
+                if (result.getCountErrors() == 0 && chkCompareAfterSync.getSelection()) {
                     performCompareMembers();
-                }
-
-                if (synchronizationResult.hasDirtyMembers()) {
-                    for (MemberCompareItem memberCompareItem : synchronizationResult.getDirtyMembers()) {
-                        tableViewer.refresh(memberCompareItem);
+                } else {
+                    if (synchronizationResult.hasDirtyMembers()) {
+                        try {
+                            tableViewer.getTable().setRedraw(false);
+                            for (MemberCompareItem memberCompareItem : synchronizationResult.getDirtyMembers()) {
+                                tableViewer.refresh(memberCompareItem);
+                            }
+                        } finally {
+                            tableViewer.getTable().setRedraw(true);
+                        }
                     }
                 }
             }
