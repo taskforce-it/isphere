@@ -1174,7 +1174,7 @@ public abstract class AbstractSynchronizeMembersEditor extends EditorPart
             return;
         }
 
-        if (!editorInput.getLeftObject().getClass().equals(editorInput.getRightObject().getClass())) {
+        if (!editorInput.getLeftObject().getObjectType().equals(editorInput.getRightObject().getObjectType())) {
             MessageDialog.openError(shell, Messages.E_R_R_O_R, Messages.Invalid_selection_Objects_must_be_of_the_same_type);
             return;
         }
