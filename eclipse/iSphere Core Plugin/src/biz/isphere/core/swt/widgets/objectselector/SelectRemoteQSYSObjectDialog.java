@@ -213,24 +213,50 @@ public class SelectRemoteQSYSObjectDialog extends XDialog implements ISelectRemo
     @Override
     protected void okPressed() {
 
-        connectionName = getText(cboConnectionName);
-        libraryName = getText(cboLibraryName);
-        objectName = getText(cboObjectName);
-
         try {
 
             AS400 system = IBMiHostContributionsHandler.getSystem(connectionName);
 
-            if (!ISphereHelper.checkLibrary(system, libraryName)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, libraryName));
-                return;
-            }
+            if (!isSelectLibraryDialog()) {
 
-            if (!ISphereHelper.checkObject(system, libraryName, objectName, objectType)) {
-                MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
-                    Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
-                        new Object[] { objectName, libraryName, objectType }));
-                return;
+                libraryName = getText(cboLibraryName);
+                objectName = getText(cboObjectName);
+
+                if (StringHelper.isNullOrEmpty(libraryName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Invalid_or_missing_value);
+                    return;
+                }
+
+                if (!ISphereHelper.checkLibrary(system, libraryName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, libraryName));
+                    return;
+                }
+
+                if (StringHelper.isNullOrEmpty(objectName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Invalid_or_missing_value);
+                    return;
+                }
+
+                if (!ISphereHelper.checkObject(system, libraryName, objectName, objectType)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R,
+                        Messages.bind(Messages.Object_A_of_type_C_in_Library_B_not_found_or_does_no_longer_exist,
+                            new Object[] { objectName, libraryName, objectType }));
+                    return;
+                }
+            } else {
+
+                // libraryName is QSYS
+                objectName = getText(cboObjectName);
+
+                if (StringHelper.isNullOrEmpty(objectName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.Invalid_or_missing_value);
+                    return;
+                }
+
+                if (!ISphereHelper.checkLibrary(system, objectName)) {
+                    MessageDialog.openError(getShell(), Messages.E_R_R_O_R, Messages.bind(Messages.Library_A_not_found, objectName));
+                    return;
+                }
             }
 
         } catch (Exception e) {
