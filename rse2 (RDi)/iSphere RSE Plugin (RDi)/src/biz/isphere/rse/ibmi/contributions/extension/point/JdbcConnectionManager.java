@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012-2018 iSphere Project Owners
+ * Copyright (c) 2012-2024 iSphere Project Owners
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,14 +22,14 @@ import org.eclipse.rse.core.subsystems.CommunicationsEvent;
 import org.eclipse.rse.core.subsystems.ICommunicationsListener;
 import org.eclipse.rse.core.subsystems.IConnectorService;
 
-import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
-import biz.isphere.core.preferences.Preferences;
-import biz.isphere.rse.ISphereRSEPlugin;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400JDBCDriver;
 import com.ibm.etools.iseries.subsystems.qsys.api.IBMiConnection;
 import com.ibm.etools.iseries.subsystems.qsys.commands.QSYSCommandSubSystem;
+
+import biz.isphere.core.ibmi.contributions.extension.handler.IBMiHostContributionsHandler;
+import biz.isphere.core.preferences.Preferences;
+import biz.isphere.rse.ISphereRSEPlugin;
 
 public class JdbcConnectionManager implements ICommunicationsListener {
 
@@ -102,13 +102,13 @@ public class JdbcConnectionManager implements ICommunicationsListener {
         if (properties != null && properties.size() > 0) {
             _properties = "";
             Set<Object> keys = properties.keySet();
-            for (Object _keys : keys){
+            for (Object _keys : keys) {
                 String key = (String)_keys;
                 String value = properties.getProperty(key);
                 _properties = _properties + ";" + key + "=" + value;
             }
         }
-        
+
         Connection jdbcConnection = null;
 
         try {
@@ -117,6 +117,7 @@ public class JdbcConnectionManager implements ICommunicationsListener {
             jdbcConnection = ibmiConnection.getJDBCConnection(_properties, false);
 
         } catch (Throwable e) {
+            ISphereRSEPlugin.logError("*** Could not get JDBC connection ***", e); // $NON-NLS-1$
             return null;
         }
 
